@@ -7,7 +7,7 @@ export const bulkSendWithTemplate: DropboxSignEndpoints['bulkSendWithTemplate'] 
 	async (ctx, input) => {
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['bulkSendWithTemplate']
-		>('signature_request/bulk_send_with_template', ctx.key, {
+		>('signature_request/bulk_send_with_template', ctx, {
 			method: 'POST',
 			body: input,
 		});
@@ -24,7 +24,7 @@ export const bulkCreateEmbeddedSigReqWithTemplate: DropboxSignEndpoints['bulkCre
 	async (ctx, input) => {
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['bulkCreateEmbeddedSigReqWithTemplate']
-		>('signature_request/bulk_create_embedded_with_template', ctx.key, {
+		>('signature_request/bulk_create_embedded_with_template', ctx, {
 			method: 'POST',
 			body: input,
 		});
@@ -44,7 +44,7 @@ export const getBulkSendJob: DropboxSignEndpoints['getBulkSendJob'] = async (
 	const { bulk_send_job_id } = input;
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['getBulkSendJob']
-	>(`bulk_send_job/${encodeURIComponent(bulk_send_job_id)}`, ctx.key, {
+	>(`bulk_send_job/${encodeURIComponent(bulk_send_job_id)}`, ctx, {
 		method: 'GET',
 	});
 	await logEventFromContext(
@@ -60,7 +60,7 @@ export const listBulkSendJobs: DropboxSignEndpoints['listBulkSendJobs'] =
 	async (ctx, input) => {
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['listBulkSendJobs']
-		>('bulk_send_job/list', ctx.key, {
+		>('bulk_send_job/list', ctx, {
 			method: 'GET',
 			query: input,
 		});

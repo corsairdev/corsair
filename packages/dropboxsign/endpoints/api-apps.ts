@@ -10,7 +10,7 @@ export const getApiApp: DropboxSignEndpoints['getApiApp'] = async (
 	const { client_id } = input;
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['getApiApp']
-	>(`api_app/${encodeURIComponent(client_id)}`, ctx.key, {
+	>(`api_app/${encodeURIComponent(client_id)}`, ctx, {
 		method: 'GET',
 	});
 	await logEventFromContext(
@@ -28,7 +28,7 @@ export const listApiApps: DropboxSignEndpoints['listApiApps'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['listApiApps']
-	>('api_app/list', ctx.key, {
+	>('api_app/list', ctx, {
 		method: 'GET',
 		query: input,
 	});
@@ -47,7 +47,7 @@ export const createApiApp: DropboxSignEndpoints['createApiApp'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['createApiApp']
-	>('api_app', ctx.key, {
+	>('api_app', ctx, {
 		method: 'POST',
 		body: input,
 	});
@@ -67,7 +67,7 @@ export const updateApiApp: DropboxSignEndpoints['updateApiApp'] = async (
 	const { client_id, ...body } = input;
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['updateApiApp']
-	>(`api_app/${encodeURIComponent(client_id)}`, ctx.key, {
+	>(`api_app/${encodeURIComponent(client_id)}`, ctx, {
 		method: 'PUT',
 		body,
 	});
@@ -87,7 +87,7 @@ export const deleteApiApp: DropboxSignEndpoints['deleteApiApp'] = async (
 	const { client_id } = input;
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['deleteApiApp']
-	>(`api_app/${encodeURIComponent(client_id)}`, ctx.key, {
+	>(`api_app/${encodeURIComponent(client_id)}`, ctx, {
 		method: 'DELETE',
 	});
 	await logEventFromContext(

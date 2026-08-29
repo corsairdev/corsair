@@ -1,10 +1,18 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { DropboxSignAPIError } from './client';
+
+function statusOf(error: Error): number | undefined {
+	if (error instanceof ApiError || error instanceof DropboxSignAPIError) {
+		return error.status;
+	}
+	return undefined;
+}
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (statusOf(error) === 429) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('rate_limit') ||
@@ -20,11 +28,8 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (
-				error instanceof ApiError &&
-				(error.status === 401 || error.status === 403)
-			)
-				return true;
+			const status = statusOf(error);
+			if (status === 401 || status === 403) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('unauthorized') ||
@@ -41,7 +46,7 @@ export const errorHandlers = {
 	},
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 404) return true;
+			if (statusOf(error) === 404) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('not_found') || msg.includes('404');
 		},

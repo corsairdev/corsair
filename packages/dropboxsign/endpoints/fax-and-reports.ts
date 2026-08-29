@@ -9,7 +9,7 @@ export const listFaxes: DropboxSignEndpoints['listFaxes'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['listFaxes']
-	>('fax/list', ctx.key, {
+	>('fax/list', ctx, {
 		method: 'GET',
 		query: input,
 	});
@@ -29,7 +29,7 @@ export const deleteFax: DropboxSignEndpoints['deleteFax'] = async (
 	const { fax_id } = input;
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['deleteFax']
-	>(`fax/${encodeURIComponent(fax_id)}`, ctx.key, {
+	>(`fax/${encodeURIComponent(fax_id)}`, ctx, {
 		method: 'DELETE',
 	});
 	await logEventFromContext(
@@ -47,7 +47,7 @@ export const listFaxLines: DropboxSignEndpoints['listFaxLines'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['listFaxLines']
-	>('fax_line/list', ctx.key, {
+	>('fax_line/list', ctx, {
 		method: 'GET',
 		query: input,
 	});
@@ -64,7 +64,7 @@ export const getFaxLineAreaCodes: DropboxSignEndpoints['getFaxLineAreaCodes'] =
 	async (ctx, input) => {
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['getFaxLineAreaCodes']
-		>('fax_line/area_codes', ctx.key, {
+		>('fax_line/area_codes', ctx, {
 			method: 'GET',
 			query: input,
 		});
@@ -83,7 +83,7 @@ export const createReport: DropboxSignEndpoints['createReport'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['createReport']
-	>('report/create', ctx.key, {
+	>('report/create', ctx, {
 		method: 'POST',
 		body: input,
 	});

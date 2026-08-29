@@ -33,11 +33,20 @@ describe('Dropbox Sign Plugin', () => {
 		expect(plugin.endpoints?.faxAndReports).toBeDefined();
 	});
 
-	it('validates endpoint schema shapes', () => {
-		expect(dropboxSignEndpointSchemas['account.get']).toBeDefined();
-		expect(dropboxSignEndpointSchemas['signatureRequests.send']).toBeDefined();
-		expect(dropboxSignEndpointSchemas['templates.create']).toBeDefined();
-		expect(dropboxSignEndpointSchemas['embedded.getSignUrl']).toBeDefined();
-		expect(dropboxSignEndpointSchemas['apiApps.create']).toBeDefined();
+	it('validates every endpoint schema', () => {
+		const plugin = dropboxsign();
+		const keys = Object.keys(dropboxSignEndpointSchemas);
+		expect(keys).toHaveLength(56);
+		for (const key of keys) {
+			const schemas =
+				dropboxSignEndpointSchemas[
+					key as keyof typeof dropboxSignEndpointSchemas
+				];
+			expect(schemas.input).toBeDefined();
+			expect(schemas.output).toBeDefined();
+			expect(
+				plugin.endpointMeta?.[key as keyof typeof plugin.endpointMeta],
+			).toBeDefined();
+		}
 	});
 });

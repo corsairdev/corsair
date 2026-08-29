@@ -7,7 +7,7 @@ export const createUnclaimedDraft: DropboxSignEndpoints['createUnclaimedDraft'] 
 	async (ctx, input) => {
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['createUnclaimedDraft']
-		>('unclaimed_draft/create', ctx.key, {
+		>('unclaimed_draft/create', ctx, {
 			method: 'POST',
 			body: input,
 		});
@@ -24,7 +24,7 @@ export const createEmbeddedUnclaimedDraftWithTemplate: DropboxSignEndpoints['cre
 	async (ctx, input) => {
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['createEmbeddedUnclaimedDraftWithTemplate']
-		>('unclaimed_draft/create_embedded_with_template', ctx.key, {
+		>('unclaimed_draft/create_embedded_with_template', ctx, {
 			method: 'POST',
 			body: input,
 		});
@@ -44,7 +44,7 @@ export const editAndResendUnclaimedDraft: DropboxSignEndpoints['editAndResendUnc
 			DropboxSignEndpointOutputs['editAndResendUnclaimedDraft']
 		>(
 			`unclaimed_draft/edit_and_resend/${encodeURIComponent(signature_request_id)}`,
-			ctx.key,
+			ctx,
 			{ method: 'POST', body },
 		);
 		await logEventFromContext(

@@ -1,4 +1,78 @@
 import { z } from 'zod';
+import {
+	DropboxSignAccount,
+	DropboxSignApiApp,
+	DropboxSignBulkSendJob,
+	DropboxSignFax,
+	DropboxSignSignatureRequest,
+	DropboxSignTeam,
+	DropboxSignTemplate,
+} from '../schema/database';
+
+const Signer = z
+	.object({
+		email_address: z.string().optional(),
+		name: z.string().optional(),
+		role: z.string().optional(),
+		order: z.number().optional(),
+	})
+	.loose();
+
+const Warnings = z
+	.object({
+		warning_msg: z.string(),
+		warning_name: z.string(),
+	})
+	.loose();
+
+const ListInfo = z
+	.object({
+		page: z.number().optional(),
+		num_pages: z.number().optional(),
+		num_results: z.number().optional(),
+		page_size: z.number().optional(),
+	})
+	.loose();
+
+const Envelope = {
+	account: z
+		.object({
+			account: DropboxSignAccount,
+			warnings: z.array(Warnings).optional(),
+		})
+		.loose(),
+	signatureRequest: z
+		.object({
+			signature_request: DropboxSignSignatureRequest,
+			warnings: z.array(Warnings).optional(),
+		})
+		.loose(),
+	template: z
+		.object({
+			template: DropboxSignTemplate,
+			warnings: z.array(Warnings).optional(),
+		})
+		.loose(),
+	apiApp: z
+		.object({
+			api_app: DropboxSignApiApp,
+			warnings: z.array(Warnings).optional(),
+		})
+		.loose(),
+	team: z
+		.object({ team: DropboxSignTeam, warnings: z.array(Warnings).optional() })
+		.loose(),
+	fax: z
+		.object({ fax: DropboxSignFax, warnings: z.array(Warnings).optional() })
+		.loose(),
+	bulkSendJob: z
+		.object({
+			bulk_send_job: DropboxSignBulkSendJob,
+			warnings: z.array(Warnings).optional(),
+		})
+		.loose(),
+	loose: z.object({}).loose(),
+};
 
 export const DropboxSignEndpointInputSchemas = {
 	getAccount: z
@@ -36,7 +110,7 @@ export const DropboxSignEndpointInputSchemas = {
 		title: z.string().optional(),
 		subject: z.string().optional(),
 		message: z.string().optional(),
-		signers: z.array(z.record(z.string(), z.any())).optional(),
+		signers: z.array(Signer).optional(),
 		files: z.array(z.string()).optional(),
 		file_urls: z.array(z.string().url()).optional(),
 		test_mode: z.boolean().optional(),
@@ -46,7 +120,7 @@ export const DropboxSignEndpointInputSchemas = {
 		title: z.string().optional(),
 		subject: z.string().optional(),
 		message: z.string().optional(),
-		signers: z.array(z.record(z.string(), z.any())).optional(),
+		signers: z.array(Signer).optional(),
 		files: z.array(z.string()).optional(),
 		file_urls: z.array(z.string().url()).optional(),
 		test_mode: z.boolean().optional(),
@@ -57,7 +131,7 @@ export const DropboxSignEndpointInputSchemas = {
 		title: z.string().optional(),
 		subject: z.string().optional(),
 		message: z.string().optional(),
-		signers: z.array(z.record(z.string(), z.any())).optional(),
+		signers: z.array(Signer).optional(),
 		test_mode: z.boolean().optional(),
 	}),
 	cancelSignatureRequest: z.object({
@@ -76,8 +150,7 @@ export const DropboxSignEndpointInputSchemas = {
 	}),
 	downloadSignatureRequestFiles: z.object({
 		signature_request_id: z.string(),
-		get_url: z.boolean().optional(),
-		get_data_uri: z.boolean().optional(),
+		file_type: z.enum(['pdf', 'zip']).optional(),
 	}),
 	getSignatureRequestFilesAsFileUrl: z.object({
 		signature_request_id: z.string(),
@@ -93,7 +166,7 @@ export const DropboxSignEndpointInputSchemas = {
 		title: z.string().optional(),
 		subject: z.string().optional(),
 		message: z.string().optional(),
-		signers: z.array(z.record(z.string(), z.any())).optional(),
+		signers: z.array(Signer).optional(),
 		files: z.array(z.string()).optional(),
 		file_urls: z.array(z.string().url()).optional(),
 	}),
@@ -101,13 +174,13 @@ export const DropboxSignEndpointInputSchemas = {
 		signature_request_id: z.string(),
 		client_id: z.string().optional(),
 		title: z.string().optional(),
-		signers: z.array(z.record(z.string(), z.any())).optional(),
+		signers: z.array(Signer).optional(),
 	}),
 	editAndResendEmbeddedSignatureRequestTemplate: z.object({
 		signature_request_id: z.string(),
 		client_id: z.string().optional(),
 		template_ids: z.array(z.string()).optional(),
-		signers: z.array(z.record(z.string(), z.any())).optional(),
+		signers: z.array(Signer).optional(),
 	}),
 
 	getTemplate: z.object({
@@ -125,13 +198,22 @@ export const DropboxSignEndpointInputSchemas = {
 		title: z.string().optional(),
 		subject: z.string().optional(),
 		message: z.string().optional(),
-		signer_roles: z.array(z.record(z.string(), z.any())).optional(),
+		signer_roles: z
+			.array(
+				z.object({ name: z.string(), order: z.number().optional() }).loose(),
+			)
+			.optional(),
 		files: z.array(z.string()).optional(),
+		file_urls: z.array(z.string().url()).optional(),
 	}),
 	createEmbeddedTemplateDraft: z.object({
 		client_id: z.string(),
 		title: z.string().optional(),
-		signer_roles: z.array(z.record(z.string(), z.any())).optional(),
+		signer_roles: z
+			.array(
+				z.object({ name: z.string(), order: z.number().optional() }).loose(),
+			)
+			.optional(),
 		files: z.array(z.string()).optional(),
 		test_mode: z.boolean().optional(),
 	}),
@@ -150,8 +232,7 @@ export const DropboxSignEndpointInputSchemas = {
 	}),
 	getTemplateFiles: z.object({
 		template_id: z.string(),
-		get_url: z.boolean().optional(),
-		get_data_uri: z.boolean().optional(),
+		file_type: z.enum(['pdf', 'zip']).optional(),
 	}),
 	getTemplateFilesAsFileUrl: z.object({
 		template_id: z.string(),
@@ -169,18 +250,18 @@ export const DropboxSignEndpointInputSchemas = {
 		type: z.enum(['send_document', 'request_signature']).optional(),
 		files: z.array(z.string()).optional(),
 		file_urls: z.array(z.string().url()).optional(),
-		signers: z.array(z.record(z.string(), z.any())).optional(),
+		signers: z.array(Signer).optional(),
 	}),
 	createEmbeddedUnclaimedDraftWithTemplate: z.object({
 		client_id: z.string(),
 		template_ids: z.array(z.string()),
-		signers: z.array(z.record(z.string(), z.any())).optional(),
+		signers: z.array(Signer).optional(),
 		requester_email_address: z.string().email().optional(),
 	}),
 	editAndResendUnclaimedDraft: z.object({
 		signature_request_id: z.string(),
-		client_id: z.string().optional(),
-		files: z.array(z.string()).optional(),
+		client_id: z.string(),
+		test_mode: z.boolean().optional(),
 	}),
 
 	getEmbeddedSignUrl: z.object({
@@ -188,20 +269,21 @@ export const DropboxSignEndpointInputSchemas = {
 	}),
 	getEmbeddedTemplateEditUrl: z.object({
 		template_id: z.string(),
-		skip_signer_roles: z.boolean().optional(),
-		skip_subject_message: z.boolean().optional(),
+		force_signer_roles: z.boolean().optional(),
+		force_subject_message: z.boolean().optional(),
+		test_mode: z.boolean().optional(),
 	}),
 
 	bulkSendWithTemplate: z.object({
 		template_ids: z.array(z.string()),
-		signer_list: z.array(z.record(z.string(), z.any())).optional(),
+		signer_list: z.array(z.record(z.string(), z.unknown())).optional(),
 		title: z.string().optional(),
 	}),
 	bulkCreateEmbeddedSigReqWithTemplate: z.object({
 		client_id: z.string(),
 		template_ids: z.array(z.string()),
 		signer_file: z.string().optional(),
-		signer_list: z.array(z.record(z.string(), z.any())).optional(),
+		signer_list: z.array(z.record(z.string(), z.unknown())).optional(),
 	}),
 	getBulkSendJob: z.object({
 		bulk_send_job_id: z.string(),
@@ -238,7 +320,6 @@ export const DropboxSignEndpointInputSchemas = {
 	addUserToTeam: z.object({
 		account_id: z.string().optional(),
 		email_address: z.string().email().optional(),
-		role: z.enum(['Admin', 'Member']).optional(),
 	}),
 
 	getApiApp: z.object({
@@ -254,9 +335,6 @@ export const DropboxSignEndpointInputSchemas = {
 		name: z.string(),
 		domains: z.array(z.string()).optional(),
 		callback_url: z.string().url().optional(),
-		custom_logo_file: z.string().optional(),
-		oauth: z.record(z.string(), z.any()).optional(),
-		white_labeling_options: z.record(z.string(), z.any()).optional(),
 	}),
 	updateApiApp: z.object({
 		client_id: z.string(),
@@ -295,7 +373,7 @@ export const DropboxSignEndpointInputSchemas = {
 	}),
 	createReport: z.object({
 		report_type: z.array(
-			z.enum(['user_activity', 'document_status', 'sms_activity']),
+			z.enum(['user_activity', 'document_status', 'sms_activity', 'fax_usage']),
 		),
 		start_date: z.string(),
 		end_date: z.string(),
@@ -303,72 +381,157 @@ export const DropboxSignEndpointInputSchemas = {
 };
 
 export const DropboxSignEndpointOutputSchemas = {
-	getAccount: z.record(z.string(), z.any()),
-	createAccount: z.record(z.string(), z.any()),
-	updateAccount: z.record(z.string(), z.any()),
-	verifyAccount: z.record(z.string(), z.any()),
+	getAccount: Envelope.account,
+	createAccount: Envelope.account,
+	updateAccount: Envelope.account,
+	verifyAccount: z
+		.object({
+			account: z.object({ email_address: z.string() }).loose(),
+			warnings: z.array(Warnings).optional(),
+		})
+		.loose(),
 
-	getSignatureRequest: z.record(z.string(), z.any()),
-	listSignatureRequests: z.record(z.string(), z.any()),
-	sendSignatureRequest: z.record(z.string(), z.any()),
-	createEmbeddedSignatureRequest: z.record(z.string(), z.any()),
-	createEmbeddedSignatureRequestWithTemplate: z.record(z.string(), z.any()),
-	cancelSignatureRequest: z.record(z.string(), z.any()),
-	sendRequestReminder: z.record(z.string(), z.any()),
-	updateSignatureRequest: z.record(z.string(), z.any()),
-	downloadSignatureRequestFiles: z.record(z.string(), z.any()),
-	getSignatureRequestFilesAsFileUrl: z.record(z.string(), z.any()),
-	getSignatureRequestFilesAsDataUri: z.record(z.string(), z.any()),
-	releaseSignatureRequestHold: z.record(z.string(), z.any()),
-	editAndResendSignatureRequest: z.record(z.string(), z.any()),
-	editAndResendEmbeddedSignatureRequest: z.record(z.string(), z.any()),
-	editAndResendEmbeddedSignatureRequestTemplate: z.record(z.string(), z.any()),
+	getSignatureRequest: Envelope.signatureRequest,
+	listSignatureRequests: z
+		.object({
+			signature_requests: z.array(DropboxSignSignatureRequest),
+			list_info: ListInfo.optional(),
+			warnings: z.array(Warnings).optional(),
+		})
+		.loose(),
+	sendSignatureRequest: Envelope.signatureRequest,
+	createEmbeddedSignatureRequest: Envelope.signatureRequest,
+	createEmbeddedSignatureRequestWithTemplate: Envelope.signatureRequest,
+	cancelSignatureRequest: Envelope.loose,
+	sendRequestReminder: Envelope.signatureRequest,
+	updateSignatureRequest: Envelope.signatureRequest,
+	downloadSignatureRequestFiles: Envelope.loose,
+	getSignatureRequestFilesAsFileUrl: z
+		.object({
+			file_url: z.string().optional(),
+			expires_at: z.number().optional(),
+		})
+		.loose(),
+	getSignatureRequestFilesAsDataUri: z
+		.object({ data_uri: z.string().optional() })
+		.loose(),
+	releaseSignatureRequestHold: Envelope.signatureRequest,
+	editAndResendSignatureRequest: Envelope.signatureRequest,
+	editAndResendEmbeddedSignatureRequest: Envelope.signatureRequest,
+	editAndResendEmbeddedSignatureRequestTemplate: Envelope.signatureRequest,
 
-	getTemplate: z.record(z.string(), z.any()),
-	listTemplates: z.record(z.string(), z.any()),
-	createTemplate: z.record(z.string(), z.any()),
-	createEmbeddedTemplateDraft: z.record(z.string(), z.any()),
-	deleteTemplate: z.record(z.string(), z.any()),
-	addUserToTemplate: z.record(z.string(), z.any()),
-	removeUserFromTemplate: z.record(z.string(), z.any()),
-	getTemplateFiles: z.record(z.string(), z.any()),
-	getTemplateFilesAsFileUrl: z.record(z.string(), z.any()),
-	getTemplateFilesAsDataUri: z.record(z.string(), z.any()),
-	updateTemplateFiles: z.record(z.string(), z.any()),
+	getTemplate: Envelope.template,
+	listTemplates: z
+		.object({
+			templates: z.array(DropboxSignTemplate),
+			list_info: ListInfo.optional(),
+			warnings: z.array(Warnings).optional(),
+		})
+		.loose(),
+	createTemplate: Envelope.template,
+	createEmbeddedTemplateDraft: Envelope.template,
+	deleteTemplate: Envelope.loose,
+	addUserToTemplate: Envelope.template,
+	removeUserFromTemplate: Envelope.template,
+	getTemplateFiles: Envelope.loose,
+	getTemplateFilesAsFileUrl: z
+		.object({
+			file_url: z.string().optional(),
+			expires_at: z.number().optional(),
+		})
+		.loose(),
+	getTemplateFilesAsDataUri: z
+		.object({ data_uri: z.string().optional() })
+		.loose(),
+	updateTemplateFiles: Envelope.template,
 
-	createUnclaimedDraft: z.record(z.string(), z.any()),
-	createEmbeddedUnclaimedDraftWithTemplate: z.record(z.string(), z.any()),
-	editAndResendUnclaimedDraft: z.record(z.string(), z.any()),
+	createUnclaimedDraft: Envelope.loose,
+	createEmbeddedUnclaimedDraftWithTemplate: Envelope.loose,
+	editAndResendUnclaimedDraft: Envelope.loose,
 
-	getEmbeddedSignUrl: z.record(z.string(), z.any()),
-	getEmbeddedTemplateEditUrl: z.record(z.string(), z.any()),
+	getEmbeddedSignUrl: z
+		.object({
+			embedded: z
+				.object({
+					sign_url: z.string().optional(),
+					expires_at: z.number().optional(),
+				})
+				.loose(),
+		})
+		.loose(),
+	getEmbeddedTemplateEditUrl: z
+		.object({
+			embedded: z
+				.object({
+					edit_url: z.string().optional(),
+					expires_at: z.number().optional(),
+				})
+				.loose(),
+		})
+		.loose(),
 
-	bulkSendWithTemplate: z.record(z.string(), z.any()),
-	bulkCreateEmbeddedSigReqWithTemplate: z.record(z.string(), z.any()),
-	getBulkSendJob: z.record(z.string(), z.any()),
-	listBulkSendJobs: z.record(z.string(), z.any()),
+	bulkSendWithTemplate: Envelope.bulkSendJob,
+	bulkCreateEmbeddedSigReqWithTemplate: Envelope.bulkSendJob,
+	getBulkSendJob: Envelope.bulkSendJob,
+	listBulkSendJobs: z
+		.object({
+			bulk_send_jobs: z.array(DropboxSignBulkSendJob),
+			list_info: ListInfo.optional(),
+		})
+		.loose(),
 
-	getTeamInfo: z.record(z.string(), z.any()),
-	getCurrentTeam: z.record(z.string(), z.any()),
-	listTeams: z.record(z.string(), z.any()),
-	listSubTeams: z.record(z.string(), z.any()),
-	listTeamMembers: z.record(z.string(), z.any()),
-	addUserToTeam: z.record(z.string(), z.any()),
+	getTeamInfo: Envelope.team,
+	getCurrentTeam: Envelope.team,
+	listTeams: Envelope.team,
+	listSubTeams: z
+		.object({
+			teams: z.array(DropboxSignTeam),
+			list_info: ListInfo.optional(),
+		})
+		.loose(),
+	listTeamMembers: z
+		.object({
+			team_members: z.array(DropboxSignAccount),
+			list_info: ListInfo.optional(),
+		})
+		.loose(),
+	addUserToTeam: Envelope.team,
 
-	getApiApp: z.record(z.string(), z.any()),
-	listApiApps: z.record(z.string(), z.any()),
-	createApiApp: z.record(z.string(), z.any()),
-	updateApiApp: z.record(z.string(), z.any()),
-	deleteApiApp: z.record(z.string(), z.any()),
+	getApiApp: Envelope.apiApp,
+	listApiApps: z
+		.object({
+			api_apps: z.array(DropboxSignApiApp),
+			list_info: ListInfo.optional(),
+		})
+		.loose(),
+	createApiApp: Envelope.apiApp,
+	updateApiApp: Envelope.apiApp,
+	deleteApiApp: Envelope.loose,
 	oAuthAuthorize: z.object({
 		url: z.string().url(),
 	}),
 
-	listFaxes: z.record(z.string(), z.any()),
-	deleteFax: z.record(z.string(), z.any()),
-	listFaxLines: z.record(z.string(), z.any()),
-	getFaxLineAreaCodes: z.record(z.string(), z.any()),
-	createReport: z.record(z.string(), z.any()),
+	listFaxes: z
+		.object({
+			faxes: z.array(DropboxSignFax),
+			list_info: ListInfo.optional(),
+		})
+		.loose(),
+	deleteFax: Envelope.loose,
+	listFaxLines: Envelope.loose,
+	getFaxLineAreaCodes: Envelope.loose,
+	createReport: z
+		.object({
+			report: z
+				.object({
+					success: z.string().optional(),
+					start_date: z.string().optional(),
+					end_date: z.string().optional(),
+					report_type: z.array(z.string()).optional(),
+				})
+				.loose(),
+		})
+		.loose(),
 };
 
 export type DropboxSignEndpointInputs = {

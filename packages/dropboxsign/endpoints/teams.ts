@@ -9,7 +9,7 @@ export const getTeamInfo: DropboxSignEndpoints['getTeamInfo'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['getTeamInfo']
-	>('team/info', ctx.key, {
+	>('team/info', ctx, {
 		method: 'GET',
 		query: input,
 	});
@@ -27,7 +27,7 @@ export const getCurrentTeam: DropboxSignEndpoints['getCurrentTeam'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['getCurrentTeam']
-	>('team', ctx.key, {
+	>('team', ctx, {
 		method: 'GET',
 	});
 	await logEventFromContext(
@@ -45,7 +45,7 @@ export const listTeams: DropboxSignEndpoints['listTeams'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['listTeams']
-	>('team/list', ctx.key, {
+	>('team', ctx, {
 		method: 'GET',
 		query: input,
 	});
@@ -65,7 +65,7 @@ export const listSubTeams: DropboxSignEndpoints['listSubTeams'] = async (
 	const { team_id, ...query } = input;
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['listSubTeams']
-	>(`team/sub_teams/${encodeURIComponent(team_id)}`, ctx.key, {
+	>(`team/sub_teams/${encodeURIComponent(team_id)}`, ctx, {
 		method: 'GET',
 		query,
 	});
@@ -85,7 +85,7 @@ export const listTeamMembers: DropboxSignEndpoints['listTeamMembers'] = async (
 	const { team_id, ...query } = input;
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['listTeamMembers']
-	>(`team/members/${encodeURIComponent(team_id)}`, ctx.key, {
+	>(`team/members/${encodeURIComponent(team_id)}`, ctx, {
 		method: 'GET',
 		query,
 	});
@@ -104,7 +104,7 @@ export const addUserToTeam: DropboxSignEndpoints['addUserToTeam'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['addUserToTeam']
-	>('team/add_member', ctx.key, {
+	>('team/add_member', ctx, {
 		method: 'POST',
 		body: input,
 	});

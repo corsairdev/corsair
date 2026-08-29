@@ -8,7 +8,7 @@ export const getEmbeddedSignUrl: DropboxSignEndpoints['getEmbeddedSignUrl'] =
 		const { signature_id } = input;
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['getEmbeddedSignUrl']
-		>(`embedded/sign_url/${encodeURIComponent(signature_id)}`, ctx.key, {
+		>(`embedded/sign_url/${encodeURIComponent(signature_id)}`, ctx, {
 			method: 'GET',
 		});
 		await logEventFromContext(
@@ -22,16 +22,11 @@ export const getEmbeddedSignUrl: DropboxSignEndpoints['getEmbeddedSignUrl'] =
 
 export const getEmbeddedTemplateEditUrl: DropboxSignEndpoints['getEmbeddedTemplateEditUrl'] =
 	async (ctx, input) => {
-		const { template_id, skip_signer_roles, skip_subject_message } = input;
-		const body: Record<string, any> = {};
-		if (skip_signer_roles !== undefined)
-			body.force_signer_roles = !skip_signer_roles;
-		if (skip_subject_message !== undefined)
-			body.force_subject_message = !skip_subject_message;
+		const { template_id, ...body } = input;
 
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['getEmbeddedTemplateEditUrl']
-		>(`embedded/edit_url/${encodeURIComponent(template_id)}`, ctx.key, {
+		>(`embedded/edit_url/${encodeURIComponent(template_id)}`, ctx, {
 			method: 'POST',
 			body,
 		});

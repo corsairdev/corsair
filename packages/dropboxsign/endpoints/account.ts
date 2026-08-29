@@ -9,7 +9,7 @@ export const getAccount: DropboxSignEndpoints['getAccount'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['getAccount']
-	>('account', ctx.key, {
+	>('account', ctx, {
 		method: 'GET',
 		query: input,
 	});
@@ -28,7 +28,7 @@ export const createAccount: DropboxSignEndpoints['createAccount'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['createAccount']
-	>('account/create', ctx.key, {
+	>('account/create', ctx, {
 		method: 'POST',
 		body: input,
 	});
@@ -47,7 +47,7 @@ export const updateAccount: DropboxSignEndpoints['updateAccount'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['updateAccount']
-	>('account', ctx.key, {
+	>('account', ctx, {
 		method: 'POST',
 		body: input,
 	});
@@ -66,7 +66,7 @@ export const verifyAccount: DropboxSignEndpoints['verifyAccount'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['verifyAccount']
-	>('account/verify', ctx.key, {
+	>('account/verify', ctx, {
 		method: 'POST',
 		body: input,
 	});

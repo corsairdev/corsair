@@ -10,7 +10,7 @@ export const getTemplate: DropboxSignEndpoints['getTemplate'] = async (
 	const { template_id } = input;
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['getTemplate']
-	>(`template/${encodeURIComponent(template_id)}`, ctx.key, {
+	>(`template/${encodeURIComponent(template_id)}`, ctx, {
 		method: 'GET',
 	});
 	await logEventFromContext(
@@ -28,7 +28,7 @@ export const listTemplates: DropboxSignEndpoints['listTemplates'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['listTemplates']
-	>('template/list', ctx.key, {
+	>('template/list', ctx, {
 		method: 'GET',
 		query: input,
 	});
@@ -47,7 +47,7 @@ export const createTemplate: DropboxSignEndpoints['createTemplate'] = async (
 ) => {
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['createTemplate']
-	>('template/create', ctx.key, {
+	>('template/create', ctx, {
 		method: 'POST',
 		body: input,
 	});
@@ -64,7 +64,7 @@ export const createEmbeddedTemplateDraft: DropboxSignEndpoints['createEmbeddedTe
 	async (ctx, input) => {
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['createEmbeddedTemplateDraft']
-		>('template/create_embedded_draft', ctx.key, {
+		>('template/create_embedded_draft', ctx, {
 			method: 'POST',
 			body: input,
 		});
@@ -84,7 +84,7 @@ export const deleteTemplate: DropboxSignEndpoints['deleteTemplate'] = async (
 	const { template_id } = input;
 	const result = await makeDropboxSignRequest<
 		DropboxSignEndpointOutputs['deleteTemplate']
-	>(`template/delete/${encodeURIComponent(template_id)}`, ctx.key, {
+	>(`template/delete/${encodeURIComponent(template_id)}`, ctx, {
 		method: 'POST',
 	});
 	await logEventFromContext(
@@ -101,7 +101,7 @@ export const addUserToTemplate: DropboxSignEndpoints['addUserToTemplate'] =
 		const { template_id, ...body } = input;
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['addUserToTemplate']
-		>(`template/add_user/${encodeURIComponent(template_id)}`, ctx.key, {
+		>(`template/add_user/${encodeURIComponent(template_id)}`, ctx, {
 			method: 'POST',
 			body,
 		});
@@ -119,7 +119,7 @@ export const removeUserFromTemplate: DropboxSignEndpoints['removeUserFromTemplat
 		const { template_id, ...body } = input;
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['removeUserFromTemplate']
-		>(`template/remove_user/${encodeURIComponent(template_id)}`, ctx.key, {
+		>(`template/remove_user/${encodeURIComponent(template_id)}`, ctx, {
 			method: 'POST',
 			body,
 		});
@@ -137,7 +137,7 @@ export const getTemplateFiles: DropboxSignEndpoints['getTemplateFiles'] =
 		const { template_id, ...query } = input;
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['getTemplateFiles']
-		>(`template/files/${encodeURIComponent(template_id)}`, ctx.key, {
+		>(`template/files/${encodeURIComponent(template_id)}`, ctx, {
 			method: 'GET',
 			query,
 		});
@@ -155,13 +155,9 @@ export const getTemplateFilesAsFileUrl: DropboxSignEndpoints['getTemplateFilesAs
 		const { template_id } = input;
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['getTemplateFilesAsFileUrl']
-		>(
-			`template/files_as_file_url/${encodeURIComponent(template_id)}`,
-			ctx.key,
-			{
-				method: 'GET',
-			},
-		);
+		>(`template/files_as_file_url/${encodeURIComponent(template_id)}`, ctx, {
+			method: 'GET',
+		});
 		await logEventFromContext(
 			ctx,
 			'dropboxsign.template.getFilesAsFileUrl',
@@ -176,13 +172,9 @@ export const getTemplateFilesAsDataUri: DropboxSignEndpoints['getTemplateFilesAs
 		const { template_id } = input;
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['getTemplateFilesAsDataUri']
-		>(
-			`template/files_as_data_uri/${encodeURIComponent(template_id)}`,
-			ctx.key,
-			{
-				method: 'GET',
-			},
-		);
+		>(`template/files_as_data_uri/${encodeURIComponent(template_id)}`, ctx, {
+			method: 'GET',
+		});
 		await logEventFromContext(
 			ctx,
 			'dropboxsign.template.getFilesAsDataUri',
@@ -197,7 +189,7 @@ export const updateTemplateFiles: DropboxSignEndpoints['updateTemplateFiles'] =
 		const { template_id, ...body } = input;
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['updateTemplateFiles']
-		>(`template/update_files/${encodeURIComponent(template_id)}`, ctx.key, {
+		>(`template/update_files/${encodeURIComponent(template_id)}`, ctx, {
 			method: 'POST',
 			body,
 		});
