@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: '../../.env' });
 
 import { corsair } from '@/server/corsair';
 
@@ -19,10 +19,17 @@ async function setInstagramCredentials() {
 }
 
 const main = async () => {
-	const res = await corsair.slack.api.messages.post({
-		channel: 'general',
-		text: 'hello',
+	const res = await corsair.claidai.api.backgroundRemove({
+		input:
+			'https://claid.ai/assets/cms/shoe_example_05fb154a3a/shoe_example_05fb154a3a.png',
+		operations: {
+			background: {
+				remove: true,
+			},
+		},
 	});
+
+	console.log('ClaidAi response:', res);
 };
 
 main().catch((err) => {
