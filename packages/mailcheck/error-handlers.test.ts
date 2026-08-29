@@ -80,11 +80,11 @@ describe('Mailcheck error handlers', () => {
 
 	describe('DEFAULT', () => {
 		it('matches any error', () => {
-			expect(errorHandlers.DEFAULT.match(new Error('anything'))).toBe(true);
+			expect(errorHandlers.DEFAULT.match()).toBe(true);
 		});
 
 		it('returns zero retries', async () => {
-			const strategy = await errorHandlers.DEFAULT.handler(new Error('test'));
+			const strategy = await errorHandlers.DEFAULT.handler();
 			expect(strategy.maxRetries).toBe(0);
 		});
 	});

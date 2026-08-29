@@ -27,7 +27,7 @@ export type MailcheckPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof mailcheckEndpointsNested>;
 };
 
-export type MailcheckContext = CorsairPluginContext
+export type MailcheckContext = CorsairPluginContext<
 	typeof MailcheckSchema,
 	MailcheckPluginOptions
 >;
@@ -36,9 +36,9 @@ export type MailcheckKeyBuilderContext = KeyBuilderContext<MailcheckPluginOption
 
 export type MailcheckBoundEndpoints = BindEndpoints<typeof mailcheckEndpointsNested>;
 
-type MailcheckEndpoint
+type MailcheckEndpoint<
 	K extends keyof MailcheckEndpointOutputs,
-> = CorsairEndpoint
+> = CorsairEndpoint<
 	MailcheckContext,
 	MailcheckEndpointInputs[K],
 	MailcheckEndpointOutputs[K]
@@ -88,7 +88,7 @@ export const mailcheckAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseMailcheckPlugin<T extends MailcheckPluginOptions> = CorsairPlugin
+export type BaseMailcheckPlugin<T extends MailcheckPluginOptions> = CorsairPlugin<
 	'mailcheck',
 	typeof MailcheckSchema,
 	typeof mailcheckEndpointsNested,
