@@ -1,4 +1,3 @@
-import { createHmac } from 'node:crypto';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
@@ -14,11 +13,6 @@ import {
 import { errorHandlers } from './error-handlers';
 import { faraday } from './index';
 import { FaradaySchema } from './schema';
-import {
-	FARADAY_WEBHOOK_TOLERANCE_SECONDS,
-	matchFaradayTenantWebhook,
-	verifyFaradayWebhookSignature,
-} from './webhooks';
 
 jest.mock('corsair/core', () => {
 	class AuthMissingError extends Error {
@@ -30,26 +24,6 @@ jest.mock('corsair/core', () => {
 	return {
 		AuthMissingError,
 		logEventFromContext: jest.fn().mockResolvedValue('evt-1'),
-		asRecord: (value: unknown) =>
-			value && typeof value === 'object' && !Array.isArray(value)
-				? value
-				: undefined,
-		firstString: (values: unknown[]) =>
-			values.find((value) => typeof value === 'string' && value) as
-				| string
-				| undefined,
-		readBodyRecord: (request: { body?: unknown }) => {
-			if (typeof request.body === 'string') {
-				try {
-					return JSON.parse(request.body);
-				} catch {
-					return null;
-				}
-			}
-			return request.body && typeof request.body === 'object'
-				? request.body
-				: null;
-		},
 	};
 });
 
@@ -125,6 +99,7 @@ describe('Faraday plugin', () => {
 			FARADAY_OPS.length,
 		);
 		expect(FARADAY_OPS.length).toBeGreaterThan(100);
+		expect(plugin.webhooks).toEqual({});
 	});
 
 	it('declares official Faraday entities', () => {
@@ -295,245 +270,6 @@ describe('makeFaradayRequest errors', () => {
 		expect(err).toBeInstanceOf(FaradayAPIError);
 		expect((err as FaradayAPIError).status).toBe(401);
 		expect(errorHandlers.AUTH_ERROR.match(err as Error)).toBe(true);
-	});
-});
-
-describe('Faraday webhook signature', () => {
-	it('rejects missing Standard Webhooks headers', () => {
-		const result = verifyFaradayWebhookSignature(
-			{
-				headers: {},
-				rawBody: '{}',
-				payload: {
-					timestamp: '2024-01-01T00:00:00Z',
-					type: 'resource.ready_with_update',
-					data: {
-						account_id: 'a',
-						resource_id: 'b',
-						resource_type: 'cohorts',
-					},
-				},
-			} as never,
-			'whsec_dGVzdA==',
-		);
-		expect(result.valid).toBe(false);
-	});
-
-	it('matches tenant from data.account_id', () => {
-		expect(
-			matchFaradayTenantWebhook({
-				body: {
-					type: 'resource.ready_with_update',
-					data: { account_id: 'acct-1' },
-				},
-			} as never),
-		).toEqual({ linkType: 'account_id', externalId: 'acct-1' });
-	});
-
-	it('matches tenant when the raw body is a JSON string', () => {
-		expect(
-			matchFaradayTenantWebhook({
-				body: JSON.stringify({
-					type: 'resource.ready_with_update',
-					data: { account_id: 'acct-2' },
-				}),
-			} as never),
-		).toEqual({ linkType: 'account_id', externalId: 'acct-2' });
-	});
-
-	it('HMACs the exact raw body, not a reconstructed payload', () => {
-		const secret = 'whsec_dGVzdA==';
-		const now = String(Math.floor(Date.now() / 1000));
-		const rawBody =
-			'{"type":"resource.ready_with_update","data":{"account_id":"a"}}';
-		const reconstructed = JSON.stringify(JSON.parse(rawBody), null, 2);
-		const sign = (body: string) =>
-			`v1,${createHmac('sha256', Buffer.from('dGVzdA==', 'base64'))
-				.update(`msg_raw.${now}.${body}`)
-				.digest('base64')}`;
-		const payload = {
-			timestamp: now,
-			type: 'resource.ready_with_update' as const,
-			data: { account_id: 'a', resource_id: 'b', resource_type: 'cohorts' },
-		};
-		expect(
-			verifyFaradayWebhookSignature(
-				{
-					headers: {
-						'svix-id': 'msg_raw',
-						'svix-timestamp': now,
-						'svix-signature': sign(rawBody),
-					},
-					rawBody,
-					payload,
-				} as never,
-				secret,
-			).valid,
-		).toBe(true);
-		expect(
-			verifyFaradayWebhookSignature(
-				{
-					headers: {
-						'svix-id': 'msg_raw',
-						'svix-timestamp': now,
-						'svix-signature': sign(rawBody),
-					},
-					rawBody: reconstructed,
-					payload,
-				} as never,
-				secret,
-			).valid,
-		).toBe(false);
-	});
-
-	it('rejects stale timestamps', () => {
-		const secret = 'whsec_dGVzdA==';
-		const rawBody = '{"type":"resource.ready_with_update"}';
-		const now = Math.floor(Date.now() / 1000);
-		const sign = (msgId: string, timestamp: string) =>
-			`v1,${createHmac('sha256', Buffer.from('dGVzdA==', 'base64'))
-				.update(`${msgId}.${timestamp}.${rawBody}`)
-				.digest('base64')}`;
-
-		const stale = String(now - FARADAY_WEBHOOK_TOLERANCE_SECONDS - 1);
-		const future = String(now + FARADAY_WEBHOOK_TOLERANCE_SECONDS + 1);
-		const signedOutOfWindow = (msgId: string, ts: string) =>
-			({
-				headers: {
-					'svix-id': msgId,
-					'svix-timestamp': ts,
-					'svix-signature': sign(msgId, ts),
-				},
-				rawBody,
-				payload: {
-					timestamp: ts,
-					type: 'resource.ready_with_update',
-					data: {
-						account_id: 'a',
-						resource_id: 'b',
-						resource_type: 'cohorts',
-					},
-				},
-			}) as never;
-		expect(
-			verifyFaradayWebhookSignature(
-				signedOutOfWindow('msg_stale', stale),
-				secret,
-				now,
-			).valid,
-		).toBe(false);
-		expect(
-			verifyFaradayWebhookSignature(
-				signedOutOfWindow('msg_future', future),
-				secret,
-				now,
-			).valid,
-		).toBe(false);
-	});
-
-	it('rejects a svix-id already stored on corsair_events', async () => {
-		const { resourceReady } = await import('./webhooks/resource-ready');
-		const secret = 'whsec_dGVzdA==';
-		const rawBody = '{"type":"resource.ready_with_update"}';
-		const now = String(Math.floor(Date.now() / 1000));
-		const msgId = 'msg_once';
-		const signature = `v1,${createHmac(
-			'sha256',
-			Buffer.from('dGVzdA==', 'base64'),
-		)
-			.update(`${msgId}.${now}.${rawBody}`)
-			.digest('base64')}`;
-		const request = {
-			headers: {
-				'svix-id': msgId,
-				'svix-timestamp': now,
-				'svix-signature': signature,
-			},
-			rawBody,
-			payload: {
-				timestamp: now,
-				type: 'resource.ready_with_update',
-				data: {
-					account_id: 'a',
-					resource_id: 'b',
-					resource_type: 'cohorts',
-				},
-			},
-		};
-		const seen = new Set<string>([msgId]);
-		const ctx = {
-			key: secret,
-			$getAccountId: async () => 'acct',
-			database: {
-				db: {
-					selectFrom: () => ({
-						select: () => ({
-							where: (_c: string, _op: string, id: string) => ({
-								executeTakeFirst: async () =>
-									seen.has(id) ? { id } : undefined,
-							}),
-						}),
-					}),
-					insertInto: () => ({
-						values: (row: { id: string }) => ({
-							execute: async () => {
-								if (seen.has(row.id)) throw new Error('unique');
-								seen.add(row.id);
-							},
-						}),
-					}),
-				},
-			},
-		};
-		const replayed = await resourceReady.handler(
-			ctx as never,
-			request as never,
-		);
-		expect(replayed.success).toBe(false);
-		expect(replayed.statusCode).toBe(409);
-	});
-
-	it('retries after a failed event insert', async () => {
-		const { resourceReady } = await import('./webhooks/resource-ready');
-		const secret = 'whsec_dGVzdA==';
-		const rawBody = '{"type":"resource.ready_with_update"}';
-		const now = String(Math.floor(Date.now() / 1000));
-		const msgId = 'msg_retry';
-		const signature = `v1,${createHmac(
-			'sha256',
-			Buffer.from('dGVzdA==', 'base64'),
-		)
-			.update(`${msgId}.${now}.${rawBody}`)
-			.digest('base64')}`;
-		const request = {
-			headers: {
-				'svix-id': msgId,
-				'svix-timestamp': now,
-				'svix-signature': signature,
-			},
-			rawBody,
-			payload: {
-				timestamp: now,
-				type: 'resource.ready_with_update',
-				data: {
-					account_id: 'a',
-					resource_id: 'b',
-					resource_type: 'cohorts',
-				},
-			},
-		};
-		jest.mocked(logEventFromContext).mockResolvedValueOnce(null);
-		const failed = await resourceReady.handler(
-			{ key: secret } as never,
-			request as never,
-		);
-		expect(failed.success).toBe(false);
-		jest.mocked(logEventFromContext).mockResolvedValueOnce('evt-2');
-		const retried = await resourceReady.handler(
-			{ key: secret } as never,
-			request as never,
-		);
-		expect(retried.success).toBe(true);
 	});
 });
 
