@@ -1,9 +1,6 @@
 import 'dotenv/config';
 import { makeArynBinaryRequest, makeArynRequest } from './client';
-import type {
-	ArynEndpointInputs,
-	ArynEndpointOutputs,
-} from './endpoints/types';
+import type { ArynEndpointOutputs } from './endpoints/types';
 import {
 	ArynEndpointInputSchemas,
 	ArynEndpointOutputSchemas,
