@@ -1,21 +1,18 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { Repository, Site, User } from './endpoints';
 import type {
 	SourcegraphEndpointInputs,
 	SourcegraphEndpointOutputs,
@@ -26,18 +23,13 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { SourcegraphSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveSourcegraphOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchSourcegraphTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, SourcegraphWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type SourcegraphPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
+	/** Sourcegraph instance origin. Defaults to https://sourcegraph.com */
+	instanceUrl?: string;
 	hooks?: InternalSourcegraphPlugin['hooks'];
-	webhookHooks?: InternalSourcegraphPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof sourcegraphEndpointsNested>;
 };
@@ -62,68 +54,113 @@ type SourcegraphEndpoint<K extends keyof SourcegraphEndpointOutputs> =
 	>;
 
 export type SourcegraphEndpoints = {
-	search: SourcegraphEndpoint<'search'>;
+	checkSiteSettingsEditPermission: SourcegraphEndpoint<'checkSiteSettingsEditPermission'>;
+	compareCommits: SourcegraphEndpoint<'compareCommits'>;
+	getCommitDetails: SourcegraphEndpoint<'getCommitDetails'>;
+	getCurrentUser: SourcegraphEndpoint<'getCurrentUser'>;
+	getFileContents: SourcegraphEndpoint<'getFileContents'>;
+	listRepositories: SourcegraphEndpoint<'listRepositories'>;
+	listRepositoryFiles: SourcegraphEndpoint<'listRepositoryFiles'>;
+	listRepositoryLanguages: SourcegraphEndpoint<'listRepositoryLanguages'>;
 };
-
-type SourcegraphWebhook<
-	K extends keyof SourcegraphWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<SourcegraphContext, TEvent, SourcegraphWebhookOutputs[K]>;
-
-export type SourcegraphWebhooks = {
-	example: SourcegraphWebhook<'example', ExampleEvent>;
-};
-
-export type SourcegraphBoundWebhooks = BindWebhooks<SourcegraphWebhooks>;
 
 const sourcegraphEndpointsNested = {
-	search: {
-		search: Example.search,
+	site: {
+		checkSettingsEditPermission: Site.checkSettingsEditPermission,
 	},
-} as const;
-
-const sourcegraphWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	user: {
+		getCurrent: User.getCurrent,
+	},
+	repository: {
+		compareCommits: Repository.compareCommits,
+		getCommitDetails: Repository.getCommitDetails,
+		getFileContents: Repository.getFileContents,
+		list: Repository.list,
+		listFiles: Repository.listFiles,
+		listLanguages: Repository.listLanguages,
 	},
 } as const;
 
 export const sourcegraphEndpointSchemas = {
-	'search.search': {
-		input: SourcegraphEndpointInputSchemas.search,
-		output: SourcegraphEndpointOutputSchemas.search,
+	'site.checkSettingsEditPermission': {
+		input: SourcegraphEndpointInputSchemas.checkSiteSettingsEditPermission,
+		output: SourcegraphEndpointOutputSchemas.checkSiteSettingsEditPermission,
+	},
+	'user.getCurrent': {
+		input: SourcegraphEndpointInputSchemas.getCurrentUser,
+		output: SourcegraphEndpointOutputSchemas.getCurrentUser,
+	},
+	'repository.compareCommits': {
+		input: SourcegraphEndpointInputSchemas.compareCommits,
+		output: SourcegraphEndpointOutputSchemas.compareCommits,
+	},
+	'repository.getCommitDetails': {
+		input: SourcegraphEndpointInputSchemas.getCommitDetails,
+		output: SourcegraphEndpointOutputSchemas.getCommitDetails,
+	},
+	'repository.getFileContents': {
+		input: SourcegraphEndpointInputSchemas.getFileContents,
+		output: SourcegraphEndpointOutputSchemas.getFileContents,
+	},
+	'repository.list': {
+		input: SourcegraphEndpointInputSchemas.listRepositories,
+		output: SourcegraphEndpointOutputSchemas.listRepositories,
+	},
+	'repository.listFiles': {
+		input: SourcegraphEndpointInputSchemas.listRepositoryFiles,
+		output: SourcegraphEndpointOutputSchemas.listRepositoryFiles,
+	},
+	'repository.listLanguages': {
+		input: SourcegraphEndpointInputSchemas.listRepositoryLanguages,
+		output: SourcegraphEndpointOutputSchemas.listRepositoryLanguages,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof sourcegraphEndpointsNested
 >;
 
-const sourcegraphWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof sourcegraphWebhooksNested
->;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
 const sourcegraphEndpointMeta = {
-	'search.search': {
+	'site.checkSettingsEditPermission': {
 		riskLevel: 'read',
-		description: 'Search code across Sourcegraph repositories',
+		description:
+			'Check whether the viewer can edit site settings through the GraphQL API',
+	},
+	'user.getCurrent': {
+		riskLevel: 'read',
+		description: 'Retrieve the currently authenticated Sourcegraph user',
+	},
+	'repository.compareCommits': {
+		riskLevel: 'read',
+		description: 'Compare two commits and list file diffs',
+	},
+	'repository.getCommitDetails': {
+		riskLevel: 'read',
+		description: 'Get details for a commit, branch, or tag',
+	},
+	'repository.getFileContents': {
+		riskLevel: 'read',
+		description: 'Fetch file contents on the default branch (HEAD)',
+	},
+	'repository.list': {
+		riskLevel: 'read',
+		description: 'List repositories on the Sourcegraph instance',
+	},
+	'repository.listFiles': {
+		riskLevel: 'read',
+		description: 'List files and directories in a repository path',
+	},
+	'repository.listLanguages': {
+		riskLevel: 'read',
+		description: 'List languages used in a repository',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof sourcegraphEndpointsNested
 >;
 
+const defaultAuthType = 'api_key' as const;
+
 export const sourcegraphAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -132,7 +169,7 @@ export type BaseSourcegraphPlugin<T extends SourcegraphPluginOptions> =
 		'sourcegraph',
 		typeof SourcegraphSchema,
 		typeof sourcegraphEndpointsNested,
-		typeof sourcegraphWebhooksNested,
+		Record<string, never>,
 		T,
 		typeof defaultAuthType
 	>;
@@ -147,7 +184,7 @@ export function sourcegraph<const T extends SourcegraphPluginOptions>(
 	incomingOptions: SourcegraphPluginOptions &
 		T = {} as SourcegraphPluginOptions & T,
 ): ExternalSourcegraphPlugin<T> {
-	const options = {
+	const options: SourcegraphPluginOptions & T = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
@@ -158,68 +195,48 @@ export function sourcegraph<const T extends SourcegraphPluginOptions>(
 		schema: SourcegraphSchema,
 		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: sourcegraphEndpointsNested,
-		webhooks: sourcegraphWebhooksNested,
 		endpointMeta: sourcegraphEndpointMeta,
 		endpointSchemas: sourcegraphEndpointSchemas,
-		webhookSchemas: sourcegraphWebhookSchemas,
-
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-
-			// TODO: Update to match your webhook signature headers
-			return 'x-sourcegraph-signature' in headers;
-		},
-
-		pluginTenantWebhookMatcher: matchSourcegraphTenantWebhook,
-
-		oauthWebhookTenantLinkResolver: resolveSourcegraphOAuthWebhookTenantLink,
-
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-
 		keyBuilder: async (ctx: SourcegraphKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-
-				return res ?? '';
+				const key = await ctx.keys.get_api_key();
+				if (!key) {
+					throw new AuthMissingError('sourcegraph', 'api_key');
+				}
+				return key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('sourcegraph', 'api_key');
 		},
 	} satisfies InternalSourcegraphPlugin;
 }
 
 export type {
-	SearchInput,
-	SearchResponse,
+	CheckSiteSettingsEditPermissionInput,
+	CheckSiteSettingsEditPermissionResponse,
+	CompareCommitsInput,
+	CompareCommitsResponse,
+	GetCommitDetailsInput,
+	GetCommitDetailsResponse,
+	GetCurrentUserInput,
+	GetCurrentUserResponse,
+	GetFileContentsInput,
+	GetFileContentsResponse,
+	ListRepositoriesInput,
+	ListRepositoriesResponse,
+	ListRepositoryFilesInput,
+	ListRepositoryFilesResponse,
+	ListRepositoryLanguagesInput,
+	ListRepositoryLanguagesResponse,
 	SourcegraphEndpointInputs,
 	SourcegraphEndpointOutputs,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	SourcegraphWebhookOutputs,
-} from './webhooks/types';
