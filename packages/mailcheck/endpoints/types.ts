@@ -9,7 +9,14 @@ export type VerifyEmailInput = z.infer<typeof VerifyEmailInputSchema>;
 
 const VerifyEmailResponseSchema = z.object({
 	email: z.string(),
-}).passthrough();
+	status: z.string(),
+	mx_status: z.string().optional(),
+	smtp_status: z.string().optional(),
+	breach_data: z.object({
+		has_breaches: z.boolean(),
+		sources: z.array(z.string()),
+	}).optional(),
+});
 export type VerifyEmailResponse = z.infer<typeof VerifyEmailResponseSchema>;
 
 const ValidateDomainInputSchema = z.object({
@@ -19,7 +26,14 @@ export type ValidateDomainInput = z.infer<typeof ValidateDomainInputSchema>;
 
 const ValidateDomainResponseSchema = z.object({
 	domain: z.string(),
-}).passthrough();
+	is_disposable: z.boolean(),
+	mx_records: z.boolean(),
+	domain_age: z.string().optional(),
+	spam_indicators: z.object({
+		forwarding: z.boolean().optional(),
+		catch_all: z.boolean().optional(),
+	}).optional(),
+});
 export type ValidateDomainResponse = z.infer<typeof ValidateDomainResponseSchema>;
 
 export type MailcheckEndpointInputs = {
