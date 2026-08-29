@@ -370,15 +370,24 @@ export const UploadDocumentInputSchema = z.object({
 	file_name: z.string().optional(),
 });
 export type UploadDocumentInput = z.input<typeof UploadDocumentInputSchema>;
-export const UploadDocumentOutputSchema = DocumentSchema.or(
-	z
-		.object({
-			id: z.union([z.string(), z.number()]),
-			status: z.string().optional(),
-			name: z.string().optional(),
-		})
-		.passthrough(),
-);
+export const UploadDocumentOutputSchema = z
+	.object({
+		message: z.string().optional(),
+		attachments: z
+			.array(
+				z
+					.object({
+						name: z.string().optional(),
+						DocumentID: z.string().optional(),
+					})
+					.passthrough(),
+			)
+			.optional(),
+		id: z.union([z.string(), z.number()]).optional(),
+		status: z.string().optional(),
+		name: z.string().optional(),
+	})
+	.passthrough();
 export type UploadDocumentOutput = z.infer<typeof UploadDocumentOutputSchema>;
 
 // 13. createEmailDocument

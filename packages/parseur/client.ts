@@ -21,7 +21,14 @@ export type ParseurRequestOptions = {
 	headers?: Record<string, string>;
 };
 
-function formatAuthHeader(apiKey: string): string {
+export type ParseurMultipartOptions = {
+	apiKey?: string;
+	file: Blob | Buffer | Uint8Array | string;
+	fileName?: string;
+	contentType?: string;
+};
+
+export function formatAuthHeader(apiKey: string): string {
 	if (apiKey.startsWith('Token ') || apiKey.startsWith('Bearer ')) {
 		return apiKey;
 	}
@@ -76,4 +83,65 @@ export async function makeParseurRequest<T>(
 	} catch (error) {
 		return handleRequestError(error);
 	}
+}
+
+export async function uploadParseurMultipart<T>(
+	endpoint: string,
+	options: ParseurMultipartOptions,
+): Promise<T> {
+	const { apiKey, file, fileName = 'document.pdf', contentType } = options;
+	const formData = new FormData();
+
+	if (typeof file === 'string') {
+		if (file.startsWith('data:')) {
+			const commaIndex = file.indexOf(',');
+			const base64Data = commaIndex !== -1 ? file.slice(commaIndex + 1) : file;
+			const mime =
+				file.slice(5, commaIndex).split(';')[0] || 'application/octet-stream';
+			const buffer = Buffer.from(base64Data, 'base64');
+			formData.append('file', new Blob([buffer], { type: mime }), fileName);
+		} else {
+			formData.append(
+				'file',
+				new Blob([file], { type: contentType || 'application/octet-stream' }),
+				fileName,
+			);
+		}
+	} else if (file instanceof Blob) {
+		formData.append('file', file, fileName);
+	} else {
+		const blob = new Blob([new Uint8Array(file)], {
+			type: contentType || 'application/octet-stream',
+		});
+		formData.append('file', blob, fileName);
+	}
+
+	const url = endpoint.startsWith('http')
+		? endpoint
+		: `${PARSEUR_API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+
+	const response = await fetch(url, {
+		method: 'POST',
+		headers: {
+			...(apiKey ? { Authorization: formatAuthHeader(apiKey) } : {}),
+		},
+		body: formData,
+	});
+
+	if (!response.ok) {
+		const text = await response.text();
+		throw new ApiError(
+			{ method: 'POST', url },
+			{
+				url,
+				ok: false,
+				status: response.status,
+				statusText: response.statusText,
+				body: text,
+			},
+			`Parseur upload failed (${response.status}): ${text}`,
+		);
+	}
+
+	return (await response.json()) as T;
 }

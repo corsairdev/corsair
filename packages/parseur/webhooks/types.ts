@@ -3,6 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { z } from 'zod';
 import { DocumentSchema } from '../endpoints/types';
 
@@ -99,9 +100,68 @@ export function matchParseurPluginWebhook(request: RawWebhookRequest): boolean {
 	);
 }
 
+function getHeader(
+	headers: Record<string, string | string[] | undefined>,
+	name: string,
+): string | undefined {
+	const lower = name.toLowerCase();
+	for (const [key, value] of Object.entries(headers)) {
+		if (key.toLowerCase() !== lower) continue;
+		return Array.isArray(value) ? value[0] : value;
+	}
+	return undefined;
+}
+
 export function verifyParseurWebhookSignature(
-	_request: WebhookRequest<unknown>,
-	_secret?: string,
+	request: WebhookRequest<unknown>,
+	secret?: string,
 ): { valid: boolean; error?: string } {
-	return { valid: true };
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret for verification' };
+	}
+
+	const headers = request.headers ?? {};
+	const providedSecret =
+		getHeader(headers, 'x-parseur-signature') ??
+		getHeader(headers, 'x-webhook-secret') ??
+		getHeader(headers, 'x-parseur-webhook-secret') ??
+		getHeader(headers, 'authorization');
+
+	if (!providedSecret) {
+		return {
+			valid: false,
+			error: 'Missing webhook secret or signature header',
+		};
+	}
+
+	const cleanProvided = providedSecret
+		.replace(/^(Bearer|Token)\s+/i, '')
+		.trim();
+	const cleanSecret = secret.replace(/^(Bearer|Token)\s+/i, '').trim();
+
+	const secretBuf = Buffer.from(cleanSecret, 'utf8');
+	const providedBuf = Buffer.from(cleanProvided, 'utf8');
+
+	if (
+		secretBuf.length === providedBuf.length &&
+		timingSafeEqual(secretBuf, providedBuf)
+	) {
+		return { valid: true };
+	}
+
+	const rawBody = request.rawBody;
+	if (rawBody) {
+		const expectedHmac = createHmac('sha256', secretBuf)
+			.update(rawBody)
+			.digest('hex');
+		const expectedBuf = Buffer.from(expectedHmac, 'utf8');
+		if (
+			expectedBuf.length === providedBuf.length &&
+			timingSafeEqual(expectedBuf, providedBuf)
+		) {
+			return { valid: true };
+		}
+	}
+
+	return { valid: false, error: 'Invalid webhook signature or secret' };
 }

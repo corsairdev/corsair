@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeParseurRequest } from '../client';
+import { makeParseurRequest, uploadParseurMultipart } from '../client';
 import type { ParseurEndpoints } from '../index';
 import {
 	CopyDocumentInputSchema,
@@ -136,15 +136,12 @@ export const uploadDocument: ParseurEndpoints['uploadDocument'] = async (
 	input,
 ) => {
 	const parsed = UploadDocumentInputSchema.parse(input);
-	const response = await makeParseurRequest<unknown>(
+	const response = await uploadParseurMultipart<unknown>(
 		`/parser/${parsed.id}/upload`,
 		{
 			apiKey: ctx.key,
-			method: 'POST',
-			body: {
-				file: parsed.file,
-				file_name: parsed.file_name,
-			},
+			file: parsed.file,
+			fileName: parsed.file_name,
 		},
 	);
 

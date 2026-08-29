@@ -13,7 +13,10 @@ import type { ParseurContext } from './index';
 import { parseur } from './index';
 import { DocumentWebhooks } from './webhooks';
 import { matchParseurTenantWebhook } from './webhooks/tenant-matcher';
-import { matchParseurPluginWebhook } from './webhooks/types';
+import {
+	matchParseurPluginWebhook,
+	verifyParseurWebhookSignature,
+} from './webhooks/types';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -294,27 +297,34 @@ describe('Document Endpoints (9 Operations)', () => {
 		expect(result.results.length).toBe(1);
 	});
 
-	it('12. uploadDocument: calls POST /parser/{id}/upload', async () => {
-		mockRequest.mockResolvedValueOnce({
-			id: 502,
-			name: 'uploaded.pdf',
-			status: 'NEW',
+	it('12. uploadDocument: calls POST /parser/{id}/upload via multipart/form-data', async () => {
+		const originalFetch = global.fetch;
+		global.fetch = jest.fn().mockResolvedValueOnce({
+			ok: true,
+			status: 201,
+			json: async () => ({
+				message: 'OK',
+				attachments: [{ name: 'uploaded.pdf', DocumentID: '502' }],
+			}),
 		});
 
-		const result = await Document.uploadDocument(testContext(), {
-			id: 101,
-			file: 'base64_data...',
-			file_name: 'uploaded.pdf',
-		});
+		try {
+			const result = await Document.uploadDocument(testContext(), {
+				id: 101,
+				file: 'sample-data',
+				file_name: 'uploaded.pdf',
+			});
 
-		const [, req] = lastCall();
-		expect(req.method).toBe('POST');
-		expect(req.url).toBe('/parser/101/upload');
-		expect(req.body).toEqual({
-			file: 'base64_data...',
-			file_name: 'uploaded.pdf',
-		});
-		expect(result.id).toBe(502);
+			expect(global.fetch).toHaveBeenCalled();
+			const [url, options] = (global.fetch as jest.Mock).mock.calls[0];
+			expect(url).toBe(`${PARSEUR_API_BASE}/parser/101/upload`);
+			expect(options.method).toBe('POST');
+			expect(options.headers?.Authorization).toBe('Token test-api-key');
+			expect(options.body).toBeInstanceOf(FormData);
+			expect(result.message).toBe('OK');
+		} finally {
+			global.fetch = originalFetch;
+		}
 	});
 
 	it('13. createEmailDocument: calls POST /email', async () => {
@@ -632,7 +642,7 @@ describe('Webhook Matchers & Handlers', () => {
 		const result = await DocumentWebhooks.documentProcessed.handler(
 			webhookCtx,
 			{
-				headers: {},
+				headers: { 'x-webhook-secret': 'test-api-key' },
 				payload: {
 					event: 'document.processed',
 					result: { Field1: 'Val1' },
@@ -641,5 +651,58 @@ describe('Webhook Matchers & Handlers', () => {
 		);
 
 		expect(result.success).toBe(true);
+	});
+
+	describe('verifyParseurWebhookSignature', () => {
+		it('returns valid when token matches x-webhook-secret', () => {
+			const res = verifyParseurWebhookSignature(
+				{
+					headers: { 'x-webhook-secret': 'my-secret-123' },
+					body: {},
+				} as any,
+				'my-secret-123',
+			);
+			expect(res.valid).toBe(true);
+		});
+
+		it('returns valid when token matches Authorization: Bearer <secret>', () => {
+			const res = verifyParseurWebhookSignature(
+				{
+					headers: { authorization: 'Bearer my-secret-123' },
+					body: {},
+				} as any,
+				'my-secret-123',
+			);
+			expect(res.valid).toBe(true);
+		});
+
+		it('returns invalid when secret is missing or mismatch', () => {
+			const missingSecret = verifyParseurWebhookSignature(
+				{
+					headers: { 'x-webhook-secret': 'my-secret-123' },
+					body: {},
+				} as any,
+				undefined,
+			);
+			expect(missingSecret.valid).toBe(false);
+
+			const mismatch = verifyParseurWebhookSignature(
+				{
+					headers: { 'x-webhook-secret': 'wrong-secret' },
+					body: {},
+				} as any,
+				'my-secret-123',
+			);
+			expect(mismatch.valid).toBe(false);
+
+			const missingHeader = verifyParseurWebhookSignature(
+				{
+					headers: {},
+					body: {},
+				} as any,
+				'my-secret-123',
+			);
+			expect(missingHeader.valid).toBe(false);
+		});
 	});
 });
