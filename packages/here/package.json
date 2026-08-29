@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/here",
   "version": "0.1.0",
-  "description": "Here plugin for Corsair",
+  "description": "HERE Technologies plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
