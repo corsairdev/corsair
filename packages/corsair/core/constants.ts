@@ -13,6 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'dropboxsign',
 	'ably',
 	'abstract',
 	'abuseipdb',
@@ -338,6 +339,7 @@ export const ProviderDisplayNames = {
 	doppler: 'Doppler',
 	dreamstudio: 'DreamStudio',
 	dropbox: 'Dropbox',
+	dropboxsign: 'Dropbox Sign',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
