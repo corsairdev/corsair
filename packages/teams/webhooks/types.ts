@@ -196,9 +196,18 @@ export function verifyTeamsClientState(
 	if (!expectedClientState) {
 		return { valid: false, error: 'clientState is required' };
 	}
+
+	const notifications = payload?.value;
+	if (!Array.isArray(notifications) || notifications.length === 0) {
+		return { valid: false, error: 'Invalid payload: missing value array' };
+	}
+
 	const expected = Buffer.from(expectedClientState);
-	const allMatch = payload.value.every((n) => {
-		const actual = Buffer.from(n.clientState ?? '');
+	const allMatch = notifications.every((n) => {
+		if (!n || typeof n !== 'object') return false;
+		const clientState = (n as TeamsNotification).clientState;
+		if (typeof clientState !== 'string') return false;
+		const actual = Buffer.from(clientState);
 		return (
 			actual.length === expected.length && timingSafeEqual(actual, expected)
 		);

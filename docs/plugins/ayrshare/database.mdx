@@ -1,0 +1,72 @@
+---
+title: Database
+description: "Ayrshare local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Ayrshare plugin syncs data locally. Use `corsair.ayrshare.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Auto Schedules
+
+Path: `ayrshare.db.autoSchedules.search`
+
+```ts
+const rows = await corsair.ayrshare.db.autoSchedules.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastScheduleDate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Posts
+
+Path: `ayrshare.db.posts.search`
+
+```ts
+const rows = await corsair.ayrshare.db.posts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `post` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `profileTitle` | `string` | equals, contains, startsWith, endsWith, in |
+| `refId` | `string` | equals, contains, startsWith, endsWith, in |
+| `requiresApproval` | `boolean` | equals |
+| `approved` | `boolean` | equals |
+| `approvedBy` | `string` | equals, contains, startsWith, endsWith, in |
+| `approvedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `rejectedBy` | `string` | equals, contains, startsWith, endsWith, in |
+| `rejectedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `shortenLinks` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

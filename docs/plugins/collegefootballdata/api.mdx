@@ -1,0 +1,2887 @@
+---
+title: API
+description: "API reference for CollegeFootballData: every `collegefootballdata.api.*` operation with input and output types."
+---
+
+Every `collegefootballdata.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getUserInfo
+
+`account.getUserInfo`
+
+Get the authenticated user's subscription tier and remaining API calls
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.account.getUserInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `patronLevel` | `number` | No | — |
+| `tierName` | `string` | No | — |
+| `monthlyLimit` | `number` | No | — |
+| `remainingCalls` | `number` | No | — |
+| `usedCalls` | `number` | No | — |
+| `resetAt` | `string` | No | — |
+| `sharedPool` | `boolean` | No | — |
+| `products` | `string[]` | No | — |
+| `features` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="features full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Betting
+
+### getLines
+
+`betting.getLines`
+
+Get betting lines and totals by game and provider
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.betting.getLines({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gameId` | `number` | No | — |
+| `year` | `number` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+| `week` | `number` | No | — |
+| `team` | `string` | No | — |
+| `home` | `string` | No | — |
+| `away` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `classification` | `fbs \| fcs \| ii \| iii` | No | — |
+| `provider` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  season?: number | null,
+  seasonType?: string | null,
+  week?: number | null,
+  startDate?: string | null,
+  homeTeamId?: number | null,
+  homeTeam?: string | null,
+  homeConference?: string | null,
+  homeClassification?: string | null,
+  homeScore?: number | null,
+  awayTeamId?: number | null,
+  awayTeam?: string | null,
+  awayConference?: string | null,
+  awayClassification?: string | null,
+  awayScore?: number | null,
+  lines?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Coaches
+
+### list
+
+`coaches.list`
+
+Get coaching records and history
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.coaches.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `team` | `string` | No | — |
+| `year` | `number` | No | — |
+| `minYear` | `number` | No | — |
+| `maxYear` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  firstName?: string | null,
+  lastName?: string | null,
+  hireDate?: string | null,
+  seasons?: {
+    teamId?: number | null,
+    school?: string | null,
+    conference?: string | null,
+    year?: number | null,
+    games?: number | null,
+    wins?: number | null,
+    losses?: number | null,
+    ties?: number | null,
+    winPercentage?: number | null,
+    preseasonRank?: number | null,
+    postseasonRank?: number | null,
+    srs?: number | null,
+    spOverall?: number | null,
+    spOffense?: number | null,
+    spDefense?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Conferences
+
+### list
+
+`conferences.list`
+
+List all conferences across every NCAA division
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.conferences.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  shortName?: string | null,
+  abbreviation?: string | null,
+  classification?: string | null,
+  memberCount?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listDivisions
+
+`conferences.listDivisions`
+
+List conference divisions with active years and metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.conferences.listDivisions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `year` | `number` | No | — |
+| `minYear` | `number` | No | — |
+| `maxYear` | `number` | No | — |
+| `classification` | `fbs \| fcs \| ii \| iii` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  teamId?: number | null,
+  team?: string | null,
+  conferenceId?: number | null,
+  conference?: string | null,
+  conferenceAbbreviation?: string | null,
+  classification?: string | null,
+  conferenceDivision?: string | null,
+  startYear?: number | null,
+  endYear?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listMemberships
+
+`conferences.listMemberships`
+
+Get current/historical conference memberships for teams
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.conferences.listMemberships({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `year` | `number` | No | — |
+| `minYear` | `number` | No | — |
+| `maxYear` | `number` | No | — |
+| `classification` | `fbs \| fcs \| ii \| iii` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  teamId?: number | null,
+  team?: string | null,
+  conferenceId?: number | null,
+  conference?: string | null,
+  conferenceAbbreviation?: string | null,
+  classification?: string | null,
+  conferenceDivision?: string | null,
+  startYear?: number | null,
+  endYear?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Draft
+
+### listPicks
+
+`draft.listPicks`
+
+List NFL draft picks
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.draft.listPicks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `team` | `string` | No | — |
+| `school` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `position` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  collegeAthleteId?: string | null,
+  nflAthleteId?: string | null,
+  collegeId?: number | null,
+  collegeTeam?: string | null,
+  collegeConference?: string | null,
+  nflTeamId?: number | null,
+  nflTeam?: string | null,
+  year?: number | null,
+  overall?: number | null,
+  round?: number | null,
+  pick?: number | null,
+  name?: string | null,
+  position?: string | null,
+  height?: number | null,
+  weight?: number | null,
+  preDraftRanking?: number | null,
+  preDraftPositionRanking?: number | null,
+  preDraftGrade?: number | null,
+  hometownInfo?: {
+    city?: string | null,
+    state?: string | null,
+    country?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listPositions
+
+`draft.listPositions`
+
+Get the standardized list of NFL draft positions
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.draft.listPositions({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  abbreviation?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listTeams
+
+`draft.listTeams`
+
+List NFL teams used in draft endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.draft.listTeams({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  location?: string | null,
+  nickname?: string | null,
+  displayName?: string | null,
+  logo?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Drives
+
+### list
+
+`drives.list`
+
+Get drive-level data for games
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.drives.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | Yes | — |
+| `week` | `number` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+| `team` | `string` | No | — |
+| `offense` | `string` | No | — |
+| `defense` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `offenseConference` | `string` | No | — |
+| `defenseConference` | `string` | No | — |
+| `classification` | `fbs \| fcs \| ii \| iii` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  gameId?: number | null,
+  offense?: string | null,
+  offenseConference?: string | null,
+  defense?: string | null,
+  defenseConference?: string | null,
+  driveNumber?: number | null,
+  scoring?: boolean | null,
+  startPeriod?: number | null,
+  startYardline?: number | null,
+  startYardsToGoal?: number | null,
+  startTime?: {
+  } | null,
+  endPeriod?: number | null,
+  endYardline?: number | null,
+  endYardsToGoal?: number | null,
+  endTime?: {
+  } | null,
+  elapsed?: {
+  } | null,
+  plays?: number | null,
+  yards?: number | null,
+  driveResult?: string | null,
+  isHomeOffense?: boolean | null,
+  startOffenseScore?: number | null,
+  startDefenseScore?: number | null,
+  endOffenseScore?: number | null,
+  endDefenseScore?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Games
+
+### getAdvancedBoxScore
+
+`games.getAdvancedBoxScore`
+
+Get advanced analytics for a single game
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.games.getAdvancedBoxScore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gameInfo` | `object` | No | — |
+| `teams` | `object` | No | — |
+| `players` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="gameInfo full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="teams full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="players full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGamesAndResults
+
+`games.getGamesAndResults`
+
+Get game schedules and results, filtered by season/week/team
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.games.getGamesAndResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `week` | `number` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+| `classification` | `fbs \| fcs \| ii \| iii` | No | — |
+| `team` | `string` | No | — |
+| `home` | `string` | No | — |
+| `away` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `id` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  season?: number | null,
+  week?: number | null,
+  seasonType?: string | null,
+  startDate?: string | null,
+  startTimeTBD?: boolean | null,
+  completed?: boolean | null,
+  neutralSite?: boolean | null,
+  conferenceGame?: boolean | null,
+  attendance?: number | null,
+  venueId?: number | null,
+  venue?: string | null,
+  homeId?: number | null,
+  homeTeam?: string | null,
+  homeClassification?: string | null,
+  homeConference?: string | null,
+  homePoints?: number | null,
+  homeLineScores?: number[] | null,
+  homePostgameWinProbability?: number | null,
+  homePregameElo?: number | null,
+  homePostgameElo?: number | null,
+  awayId?: number | null,
+  awayTeam?: string | null,
+  awayClassification?: string | null,
+  awayConference?: string | null,
+  awayPoints?: number | null,
+  awayLineScores?: number[] | null,
+  awayPostgameWinProbability?: number | null,
+  awayPregameElo?: number | null,
+  awayPostgameElo?: number | null,
+  excitementIndex?: number | null,
+  highlights?: string | null,
+  notes?: string | null,
+  playoff?: {
+    competition?: string | null,
+    format?: string | null,
+    round?: string | null,
+    roundName?: string | null,
+    bracketSlot?: string | null,
+    homeSeed?: number | null,
+    awaySeed?: number | null,
+    bowlName?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMedia
+
+`games.getMedia`
+
+Get broadcast/media information for games
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.games.getMedia({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | Yes | — |
+| `week` | `number` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `classification` | `fbs \| fcs \| ii \| iii` | No | — |
+| `mediaType` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  season?: number | null,
+  week?: number | null,
+  seasonType?: string | null,
+  startTime?: string | null,
+  isStartTimeTBD?: boolean | null,
+  homeTeam?: string | null,
+  homeConference?: string | null,
+  awayTeam?: string | null,
+  awayConference?: string | null,
+  mediaType?: string | null,
+  outlet?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPlayerStats
+
+`games.getPlayerStats`
+
+Get player-level stats for games
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.games.getPlayerStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `week` | `number` | No | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `classification` | `fbs \| fcs \| ii \| iii` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+| `category` | `string` | No | — |
+| `id` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  teams?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTeamStats
+
+`games.getTeamStats`
+
+Get team-level box score stats for games
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.games.getTeamStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `week` | `number` | No | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `classification` | `fbs \| fcs \| ii \| iii` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+| `id` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  teams?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Metrics
+
+### getFieldGoalExpectedPoints
+
+`metrics.getFieldGoalExpectedPoints`
+
+Get field goal expected-points model data by distance
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.metrics.getFieldGoalExpectedPoints({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  yardsToGoal?: number | null,
+  distance?: number | null,
+  expectedPoints?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPregameWinProbabilities
+
+`metrics.getPregameWinProbabilities`
+
+Get pregame win probabilities for games
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.metrics.getPregameWinProbabilities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `week` | `number` | No | — |
+| `team` | `string` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  season?: number | null,
+  week?: number | null,
+  seasonType?: string | null,
+  gameId?: number | null,
+  homeTeam?: string | null,
+  awayTeam?: string | null,
+  spread?: number | null,
+  homeWinProbability?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getWinProbability
+
+`metrics.getWinProbability`
+
+Get play-by-play win probabilities for a game
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.metrics.getWinProbability({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gameId` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  gameId?: number | null,
+  homeId?: number | null,
+  home?: string | null,
+  awayId?: number | null,
+  away?: string | null,
+  playId?: string | null,
+  playText?: string | null,
+  homeScore?: number | null,
+  awayScore?: number | null,
+  down?: number | null,
+  distance?: number | null,
+  homeWinProbability?: number | null,
+  spread?: number | null,
+  yardLine?: number | null,
+  homeBall?: boolean | null,
+  playNumber?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Players
+
+### getReturningProduction
+
+`players.getReturningProduction`
+
+Get returning production splits by team
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.players.getReturningProduction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  season?: number | null,
+  team?: string | null,
+  conference?: string | null,
+  totalPPA?: number | null,
+  totalPassingPPA?: number | null,
+  totalReceivingPPA?: number | null,
+  totalRushingPPA?: number | null,
+  percentPPA?: number | null,
+  percentPassingPPA?: number | null,
+  percentReceivingPPA?: number | null,
+  percentRushingPPA?: number | null,
+  usage?: number | null,
+  passingUsage?: number | null,
+  receivingUsage?: number | null,
+  rushingUsage?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUsage
+
+`players.getUsage`
+
+Get player usage rates for a season
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.players.getUsage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | Yes | — |
+| `conference` | `string` | No | — |
+| `position` | `string` | No | — |
+| `team` | `string` | No | — |
+| `playerId` | `string` | No | — |
+| `excludeGarbageTime` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  season?: number | null,
+  id?: string | null,
+  name?: string | null,
+  position?: string | null,
+  team?: string | null,
+  conference?: string | null,
+  usage?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listTransferPortal
+
+`players.listTransferPortal`
+
+Get transfer portal entries for a season
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.players.listTransferPortal({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  season?: number | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  position?: string | null,
+  origin?: string | null,
+  destination?: string | null,
+  transferDate?: string | null,
+  rating?: number | null,
+  stars?: number | null,
+  eligibility?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### search
+
+`players.search`
+
+Search for players by name
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.players.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchTerm` | `string` | Yes | — |
+| `position` | `string` | No | — |
+| `team` | `string` | No | — |
+| `year` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  team?: string | null,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  weight?: number | null,
+  height?: number | null,
+  jersey?: number | null,
+  position?: string | null,
+  hometown?: string | null,
+  teamColor?: string | null,
+  teamColorSecondary?: string | null,
+  activeStartYear?: number | null,
+  activeEndYear?: number | null,
+  teamStints?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Plays
+
+### list
+
+`plays.list`
+
+Get play-by-play data for games
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.plays.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | Yes | — |
+| `week` | `number` | Yes | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+| `team` | `string` | No | — |
+| `offense` | `string` | No | — |
+| `defense` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `offenseConference` | `string` | No | — |
+| `defenseConference` | `string` | No | — |
+| `playType` | `string` | No | — |
+| `classification` | `fbs \| fcs \| ii \| iii` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  gameId?: number | null,
+  driveId?: string | null,
+  id?: string | null,
+  driveNumber?: number | null,
+  playNumber?: number | null,
+  offense?: string | null,
+  offenseConference?: string | null,
+  offenseScore?: number | null,
+  defense?: string | null,
+  defenseConference?: string | null,
+  defenseScore?: number | null,
+  home?: string | null,
+  away?: string | null,
+  period?: number | null,
+  clock?: {
+  } | null,
+  offenseTimeouts?: number | null,
+  defenseTimeouts?: number | null,
+  yardline?: number | null,
+  yardsToGoal?: number | null,
+  down?: number | null,
+  distance?: number | null,
+  yardsGained?: number | null,
+  scoring?: boolean | null,
+  playType?: string | null,
+  playText?: string | null,
+  ppa?: number | null,
+  wallclock?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listStats
+
+`plays.listStats`
+
+Get player-level statistics tied to individual plays
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.plays.listStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `week` | `number` | No | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+| `gameId` | `number` | No | — |
+| `statTypeId` | `number` | No | — |
+| `athleteId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  gameId?: number | null,
+  season?: number | null,
+  week?: number | null,
+  team?: string | null,
+  conference?: string | null,
+  opponent?: string | null,
+  teamScore?: number | null,
+  opponentScore?: number | null,
+  driveId?: string | null,
+  playId?: string | null,
+  period?: number | null,
+  clock?: {
+  } | null,
+  yardsToGoal?: number | null,
+  down?: number | null,
+  distance?: number | null,
+  athleteId?: string | null,
+  athleteName?: string | null,
+  statType?: string | null,
+  stat?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listStatTypes
+
+`plays.listStatTypes`
+
+List play-level stat type definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.plays.listStatTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  text?: string | null,
+  abbreviation?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listTypes
+
+`plays.listTypes`
+
+List available play types
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.plays.listTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  text?: string | null,
+  abbreviation?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Ppa
+
+### getByPlayerGame
+
+`ppa.getByPlayerGame`
+
+Get player PPA by game
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.ppa.getByPlayerGame({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | Yes | — |
+| `week` | `number` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+| `team` | `string` | No | — |
+| `position` | `string` | No | — |
+| `playerId` | `string` | No | — |
+| `threshold` | `number` | No | — |
+| `excludeGarbageTime` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  season?: number | null,
+  week?: number | null,
+  seasonType?: string | null,
+  id?: string | null,
+  name?: string | null,
+  position?: string | null,
+  team?: string | null,
+  opponent?: string | null,
+  averagePPA?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getByPlayerSeason
+
+`ppa.getByPlayerSeason`
+
+Get player PPA aggregated by season
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.ppa.getByPlayerSeason({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `conference` | `string` | No | — |
+| `team` | `string` | No | — |
+| `position` | `string` | No | — |
+| `playerId` | `string` | No | — |
+| `threshold` | `number` | No | — |
+| `excludeGarbageTime` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  season?: number | null,
+  id?: string | null,
+  name?: string | null,
+  position?: string | null,
+  team?: string | null,
+  conference?: string | null,
+  averagePPA?: {
+  } | null,
+  totalPPA?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getByTeamGame
+
+`ppa.getByTeamGame`
+
+Get team PPA by game
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.ppa.getByTeamGame({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | Yes | — |
+| `week` | `number` | No | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+| `excludeGarbageTime` | `boolean` | No | — |
+| `classification` | `fbs \| fcs \| ii \| iii` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  gameId?: number | null,
+  season?: number | null,
+  week?: number | null,
+  seasonType?: string | null,
+  team?: string | null,
+  conference?: string | null,
+  opponent?: string | null,
+  offense?: {
+    overall?: number | null,
+    passing?: number | null,
+    rushing?: number | null,
+    firstDown?: number | null,
+    secondDown?: number | null,
+    thirdDown?: number | null
+  } | null,
+  defense?: {
+    overall?: number | null,
+    passing?: number | null,
+    rushing?: number | null,
+    firstDown?: number | null,
+    secondDown?: number | null,
+    thirdDown?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getByTeamSeason
+
+`ppa.getByTeamSeason`
+
+Get team PPA (Predicted Points Added) by season
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.ppa.getByTeamSeason({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `excludeGarbageTime` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  season?: number | null,
+  conference?: string | null,
+  team?: string | null,
+  offense?: {
+    overall?: number | null,
+    passing?: number | null,
+    rushing?: number | null,
+    firstDown?: number | null,
+    secondDown?: number | null,
+    thirdDown?: number | null
+  } | null,
+  defense?: {
+    overall?: number | null,
+    passing?: number | null,
+    rushing?: number | null,
+    firstDown?: number | null,
+    secondDown?: number | null,
+    thirdDown?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPredictedPoints
+
+`ppa.getPredictedPoints`
+
+Get expected points for a down/distance across field positions
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.ppa.getPredictedPoints({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `down` | `number` | Yes | — |
+| `distance` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  yardLine?: number | null,
+  predictedPoints?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Rankings
+
+### list
+
+`rankings.list`
+
+Get poll rankings by season
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.rankings.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | Yes | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+| `week` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  season?: number | null,
+  seasonType?: string | null,
+  week?: number | null,
+  polls?: {
+    poll?: string | null,
+    isFinal?: boolean | null,
+    ranks?: {
+      rank?: number | null,
+      teamId?: number | null,
+      school?: string | null,
+      conference?: string | null,
+      firstPlaceVotes?: number | null,
+      points?: number | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Ratings
+
+### getConferenceSP
+
+`ratings.getConferenceSP`
+
+Get SP+ ratings aggregated by conference
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.ratings.getConferenceSP({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `conference` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  year?: number | null,
+  conference?: string | null,
+  rating?: number | null,
+  secondOrderWins?: number | null,
+  sos?: number | null,
+  offense?: {
+    ranking?: number | null,
+    rating?: number | null,
+    success?: number | null,
+    explosiveness?: number | null,
+    rushing?: number | null,
+    passing?: number | null,
+    standardDowns?: number | null,
+    passingDowns?: number | null,
+    runRate?: number | null,
+    pace?: number | null
+  } | null,
+  defense?: {
+    ranking?: number | null,
+    rating?: number | null,
+    success?: number | null,
+    explosiveness?: number | null,
+    rushing?: number | null,
+    passing?: number | null,
+    standardDowns?: number | null,
+    passingDowns?: number | null,
+    runRate?: number | null,
+    pace?: number | null
+  } | null,
+  specialTeams?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getElo
+
+`ratings.getElo`
+
+Get Elo ratings by season or team
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.ratings.getElo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  year?: number | null,
+  team?: string | null,
+  conference?: string | null,
+  elo?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFPI
+
+`ratings.getFPI`
+
+Get ESPN FPI (Football Power Index) ratings
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.ratings.getFPI({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  year?: number | null,
+  team?: string | null,
+  conference?: string | null,
+  fpi?: number | null,
+  resumeRanks?: {
+  } | null,
+  efficiencies?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSP
+
+`ratings.getSP`
+
+Get SP+ team ratings
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.ratings.getSP({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `team` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  year?: number | null,
+  team?: string | null,
+  conference?: string | null,
+  rating?: number | null,
+  ranking?: number | null,
+  secondOrderWins?: number | null,
+  sos?: number | null,
+  offense?: {
+    ranking?: number | null,
+    rating?: number | null,
+    success?: number | null,
+    explosiveness?: number | null,
+    rushing?: number | null,
+    passing?: number | null,
+    standardDowns?: number | null,
+    passingDowns?: number | null,
+    runRate?: number | null,
+    pace?: number | null
+  } | null,
+  defense?: {
+    ranking?: number | null,
+    rating?: number | null,
+    success?: number | null,
+    explosiveness?: number | null,
+    rushing?: number | null,
+    passing?: number | null,
+    standardDowns?: number | null,
+    passingDowns?: number | null,
+    runRate?: number | null,
+    pace?: number | null
+  } | null,
+  specialTeams?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSRS
+
+`ratings.getSRS`
+
+Get SRS (Simple Rating System) ratings
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.ratings.getSRS({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  year?: number | null,
+  team?: string | null,
+  conference?: string | null,
+  division?: string | null,
+  ranking?: number | null,
+  rating?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Recruiting
+
+### getGroupRatings
+
+`recruiting.getGroupRatings`
+
+Get recruiting data grouped by position
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.recruiting.getGroupRatings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `recruitType` | `string` | No | — |
+| `startYear` | `number` | No | — |
+| `endYear` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  team?: string | null,
+  conference?: string | null,
+  positionGroup?: string | null,
+  averageRating?: number | null,
+  totalRating?: number | null,
+  commits?: number | null,
+  averageStars?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTeamRankings
+
+`recruiting.getTeamRankings`
+
+Get team recruiting class rankings
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.recruiting.getTeamRankings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `team` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  year?: number | null,
+  team?: string | null,
+  rank?: number | null,
+  points?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTeamTalent
+
+`recruiting.getTeamTalent`
+
+Get composite team talent rankings for a season
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.recruiting.getTeamTalent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  year?: number | null,
+  team?: string | null,
+  talent?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listRecruits
+
+`recruiting.listRecruits`
+
+Get recruit rankings
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.recruiting.listRecruits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `team` | `string` | No | — |
+| `classification` | `string` | No | — |
+| `position` | `string` | No | — |
+| `state` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  athleteId?: string | null,
+  recruitType?: string | null,
+  year?: number | null,
+  ranking?: number | null,
+  name?: string | null,
+  school?: string | null,
+  committedTo?: string | null,
+  position?: string | null,
+  height?: number | null,
+  weight?: number | null,
+  stars?: number | null,
+  rating?: number | null,
+  city?: string | null,
+  stateProvince?: string | null,
+  country?: string | null,
+  hometownInfo?: {
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    countyFips?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Season Types
+
+### list
+
+`seasonTypes.list`
+
+Get the valid season-type vocabulary
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.seasonTypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+
+
+
+**Output:** `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason[]`
+
+
+---
+
+## Stats
+
+### getAdvancedGameStats
+
+`stats.getAdvancedGameStats`
+
+Get advanced team metrics at the game level
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.stats.getAdvancedGameStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `week` | `number` | No | — |
+| `team` | `string` | No | — |
+| `opponent` | `string` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+| `excludeGarbageTime` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  gameId?: number | null,
+  season?: number | null,
+  seasonType?: string | null,
+  week?: number | null,
+  team?: string | null,
+  opponent?: string | null,
+  offense?: {
+  } | null,
+  defense?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAdvancedSeasonStats
+
+`stats.getAdvancedSeasonStats`
+
+Get advanced season-level team statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.stats.getAdvancedSeasonStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `team` | `string` | No | — |
+| `excludeGarbageTime` | `boolean` | No | — |
+| `startWeek` | `number` | No | — |
+| `endWeek` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  gameId?: number | null,
+  season?: number | null,
+  seasonType?: string | null,
+  week?: number | null,
+  team?: string | null,
+  opponent?: string | null,
+  offense?: {
+  } | null,
+  defense?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getGameHavocStats
+
+`stats.getGameHavocStats`
+
+Get havoc statistics aggregated by game
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.stats.getGameHavocStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `week` | `number` | No | — |
+| `team` | `string` | No | — |
+| `opponent` | `string` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  gameId?: number | null,
+  season?: number | null,
+  seasonType?: string | null,
+  week?: number | null,
+  team?: string | null,
+  conference?: string | null,
+  opponent?: string | null,
+  opponentConference?: string | null,
+  offense?: {
+  } | null,
+  defense?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPlayerSeasonStats
+
+`stats.getPlayerSeasonStats`
+
+Get aggregated season statistics for players
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.stats.getPlayerSeasonStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | Yes | — |
+| `conference` | `string` | No | — |
+| `team` | `string` | No | — |
+| `category` | `string` | No | — |
+| `seasonType` | `regular \| postseason \| both \| allstar \| spring_regular \| spring_postseason` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  season?: number | null,
+  playerId?: string | null,
+  player?: string | null,
+  position?: string | null,
+  team?: string | null,
+  conference?: string | null,
+  category?: string | null,
+  statType?: string | null,
+  stat?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTeamSeasonStats
+
+`stats.getTeamSeasonStats`
+
+Get basic season stats aggregated by team
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.stats.getTeamSeasonStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+| `startWeek` | `number` | No | — |
+| `endWeek` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  season?: number | null,
+  team?: string | null,
+  conference?: string | null,
+  statName?: string | null,
+  statValue?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listCategories
+
+`stats.listCategories`
+
+List valid team statistical category names
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.stats.listCategories({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string[]`
+
+
+---
+
+## Teams
+
+### getATSRecords
+
+`teams.getATSRecords`
+
+Get against-the-spread (ATS) summary by team
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.teams.getATSRecords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  year?: number | null,
+  teamId?: number | null,
+  team?: string | null,
+  conference?: string | null,
+  games?: number | null,
+  atsWins?: number | null,
+  atsLosses?: number | null,
+  atsPushes?: number | null,
+  avgCoverMargin?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMatchup
+
+`teams.getMatchup`
+
+Get head-to-head matchup history between two teams
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.teams.getMatchup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team1` | `string` | Yes | — |
+| `team2` | `string` | Yes | — |
+| `minYear` | `number` | No | — |
+| `maxYear` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team1` | `string` | No | — |
+| `team2` | `string` | No | — |
+| `team1Wins` | `number` | No | — |
+| `team2Wins` | `number` | No | — |
+| `ties` | `number` | No | — |
+| `games` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="games full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecords
+
+`teams.getRecords`
+
+Get team win-loss records for a season
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.teams.getRecords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | Yes | — |
+| `team` | `string` | No | — |
+| `conference` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  year?: number | null,
+  teamId?: number | null,
+  team?: string | null,
+  classification?: string | null,
+  conference?: string | null,
+  division?: string | null,
+  expectedWins?: number | null,
+  total?: {
+    games?: number | null,
+    wins?: number | null,
+    losses?: number | null,
+    ties?: number | null
+  } | null,
+  conferenceGames?: {
+    games?: number | null,
+    wins?: number | null,
+    losses?: number | null,
+    ties?: number | null
+  } | null,
+  homeGames?: {
+    games?: number | null,
+    wins?: number | null,
+    losses?: number | null,
+    ties?: number | null
+  } | null,
+  awayGames?: {
+    games?: number | null,
+    wins?: number | null,
+    losses?: number | null,
+    ties?: number | null
+  } | null,
+  neutralSiteGames?: {
+    games?: number | null,
+    wins?: number | null,
+    losses?: number | null,
+    ties?: number | null
+  } | null,
+  regularSeason?: {
+    games?: number | null,
+    wins?: number | null,
+    losses?: number | null,
+    ties?: number | null
+  } | null,
+  postseason?: {
+    games?: number | null,
+    wins?: number | null,
+    losses?: number | null,
+    ties?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRoster
+
+`teams.getRoster`
+
+Get a team's roster for a season
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.teams.getRoster({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `string` | No | — |
+| `year` | `number` | No | — |
+| `classification` | `fbs \| fcs` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  team?: string | null,
+  weight?: number | null,
+  height?: number | null,
+  jersey?: number | null,
+  year?: number | null,
+  position?: string | null,
+  homeCity?: string | null,
+  homeState?: string | null,
+  homeCountry?: string | null,
+  homeLatitude?: number | null,
+  homeLongitude?: number | null,
+  homeCountyFIPS?: string | null,
+  recruitIds?: (
+    string | number
+  )[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`teams.list`
+
+List teams, optionally filtered by conference/season
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conference` | `string` | No | — |
+| `year` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  school: string,
+  mascot?: string | null,
+  abbreviation?: string | null,
+  alternateNames?: string[] | null,
+  conference?: string | null,
+  division?: string | null,
+  classification?: string | null,
+  color?: string | null,
+  alternateColor?: string | null,
+  logos?: string[] | null,
+  twitter?: string | null,
+  location?: {
+    id?: number | null,
+    name?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    countryCode?: string | null,
+    timezone?: string | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    elevation?: string | null,
+    capacity?: number | null,
+    constructionYear?: number | null,
+    grass?: boolean | null,
+    dome?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listFBS
+
+`teams.listFBS`
+
+List FBS teams for a season
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.teams.listFBS({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  school: string,
+  mascot?: string | null,
+  abbreviation?: string | null,
+  alternateNames?: string[] | null,
+  conference?: string | null,
+  division?: string | null,
+  classification?: string | null,
+  color?: string | null,
+  alternateColor?: string | null,
+  logos?: string[] | null,
+  twitter?: string | null,
+  location?: {
+    id?: number | null,
+    name?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    countryCode?: string | null,
+    timezone?: string | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    elevation?: string | null,
+    capacity?: number | null,
+    constructionYear?: number | null,
+    grass?: boolean | null,
+    dome?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listFCS
+
+`teams.listFCS`
+
+List FCS teams for a season/conference
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.teams.listFCS({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conference` | `string` | No | — |
+| `year` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  school: string,
+  mascot?: string | null,
+  abbreviation?: string | null,
+  alternateNames?: string[] | null,
+  conference?: string | null,
+  division?: string | null,
+  classification?: string | null,
+  color?: string | null,
+  alternateColor?: string | null,
+  logos?: string[] | null,
+  twitter?: string | null,
+  location?: {
+    id?: number | null,
+    name?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    countryCode?: string | null,
+    timezone?: string | null,
+    latitude?: number | null,
+    longitude?: number | null,
+    elevation?: string | null,
+    capacity?: number | null,
+    constructionYear?: number | null,
+    grass?: boolean | null,
+    dome?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Venues
+
+### list
+
+`venues.list`
+
+List venues with metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.collegefootballdata.api.venues.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  countryCode?: string | null,
+  timezone?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  elevation?: string | null,
+  capacity?: number | null,
+  constructionYear?: number | null,
+  grass?: boolean | null,
+  dome?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
