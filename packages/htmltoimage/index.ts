@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 
 import { HtmlToImage } from './endpoints';
 
@@ -123,9 +124,7 @@ const htmlToImageEndpointMeta = {
 >;
 
 export const htmlToImageAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseHtmlToImagePlugin<T extends HtmlToImagePluginOptions> =
@@ -159,15 +158,21 @@ export function htmltoimage<const T extends HtmlToImagePluginOptions>(
 		schema: HtmlToImageSchema,
 		options,
 		hooks: options.hooks,
+		webhookHooks: undefined,
 		endpoints: htmlToImageEndpointsNested,
 		webhooks: htmlToImageWebhooksNested,
 		endpointMeta: htmlToImageEndpointMeta,
 		endpointSchemas: htmlToImageEndpointSchemas,
 		webhookSchemas: htmlToImageWebhookSchemas,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		pluginWebhookMatcher: undefined,
+		errorHandlers: (() => {
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: HtmlToImageKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
@@ -175,10 +180,13 @@ export function htmltoimage<const T extends HtmlToImagePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('htmltoimage', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('htmltoimage', 'api_key');
 		},
 	} satisfies InternalHtmlToImagePlugin;
 }
