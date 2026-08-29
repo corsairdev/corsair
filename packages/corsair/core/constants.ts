@@ -68,6 +68,7 @@ export const BaseProviders = [
 	'baselinker',
 	'basin',
 	'beeminder',
+	'benchmarkemail',
 	'bettercontact',
 	'betterstack',
 	'bigdatacloud',
@@ -287,6 +288,7 @@ export const ProviderDisplayNames = {
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
 	beeminder: 'Beeminder',
+	benchmarkemail: 'BenchmarkEmail',
 	bettercontact: 'BetterContact',
 	betterstack: 'Better Stack',
 	bigdatacloud: 'BigDataCloud',
@@ -513,6 +515,7 @@ export type AllProviders =
 	| 'baselinker'
 	| 'basin'
 	| 'beeminder'
+	| 'benchmarkemail'
 	| 'bettercontact'
 	| 'betterstack'
 	| 'bigdatacloud'
