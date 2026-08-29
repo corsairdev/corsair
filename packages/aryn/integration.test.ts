@@ -119,6 +119,16 @@ describe('Aryn endpoints (mocked)', () => {
 			doc_id: 'doc_1',
 		});
 
+		// Inclusion flags must travel as GET query parameters, not a request
+		// body (which the transport layer discards on GET requests).
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			query: {
+				include_elements: true,
+				include_binary: false,
+				include_original_elements: false,
+			},
+		});
 		const validated = ArynEndpointOutputSchemas.documentGet.parse(result);
 		expect(validated.id).toBe('doc_1');
 		expect(validated.elements?.[0]?.type).toBe('Table');

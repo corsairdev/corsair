@@ -9,7 +9,9 @@ export const documentGet: ArynEndpoints['documentGet'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			body: {
+			// Inclusion flags are GET query parameters per the Aryn API; a GET
+			// body would be silently discarded by the transport layer.
+			query: {
 				include_elements: input.include_elements ?? true,
 				include_binary: input.include_binary ?? false,
 				include_original_elements: input.include_original_elements ?? false,
