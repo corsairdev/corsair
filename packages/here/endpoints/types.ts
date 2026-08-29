@@ -176,8 +176,16 @@ export const GetMatrixProfileResponseSchema = z
 
 export const DecodeRouteHandleInputSchema = z.object({
 	routeHandle: z.string(),
+	transportMode: z.enum([
+		'car',
+		'truck',
+		'pedestrian',
+		'bicycle',
+		'scooter',
+		'taxi',
+		'bus',
+	]),
 	return: z.string().optional(),
-	transportMode: z.string().optional(),
 });
 export const DecodeRouteHandleResponseSchema = RoutesResponse;
 
@@ -198,7 +206,7 @@ export const FindWaypointSequenceResponseSchema = z
 	})
 	.loose();
 
-const WeatherLocationInput = {
+const WeatherLocationFields = {
 	q: z.string().optional().describe('City name, e.g. Berlin, Germany.'),
 	location: z.string().optional().describe('lat,lng.'),
 	zipCode: z.string().optional(),
@@ -206,29 +214,46 @@ const WeatherLocationInput = {
 	lang: z.string().optional(),
 };
 
-export const GetWeatherObservationInputSchema = z.object({
-	...WeatherLocationInput,
-	oneObservation: z.boolean().optional(),
-});
+function hasWeatherLocation(value: {
+	q?: string;
+	location?: string;
+	zipCode?: string;
+}) {
+	return Boolean(value.q || value.location || value.zipCode);
+}
+
+export const GetWeatherObservationInputSchema = z
+	.object({
+		...WeatherLocationFields,
+		oneObservation: z.boolean().optional(),
+	})
+	.refine(hasWeatherLocation, { message: 'Provide q, location, or zipCode' });
 export const GetWeatherObservationResponseSchema = WeatherReport;
 
-export const GetWeatherForecastDailyInputSchema = z.object({
-	...WeatherLocationInput,
-	product: z
-		.enum(['forecast7days', 'forecast7daysSimple'])
-		.optional()
-		.describe('Defaults to forecast7daysSimple.'),
-});
+export const GetWeatherForecastDailyInputSchema = z
+	.object({
+		...WeatherLocationFields,
+		product: z
+			.enum(['forecast7days', 'forecast7daysSimple'])
+			.optional()
+			.describe('Defaults to forecast7daysSimple.'),
+	})
+	.refine(hasWeatherLocation, { message: 'Provide q, location, or zipCode' });
 export const GetWeatherForecastDailyResponseSchema = WeatherReport;
 
-export const GetWeatherForecastHourlyInputSchema =
-	z.object(WeatherLocationInput);
+export const GetWeatherForecastHourlyInputSchema = z
+	.object(WeatherLocationFields)
+	.refine(hasWeatherLocation, { message: 'Provide q, location, or zipCode' });
 export const GetWeatherForecastHourlyResponseSchema = WeatherReport;
 
-export const GetAstronomyForecastInputSchema = z.object(WeatherLocationInput);
+export const GetAstronomyForecastInputSchema = z
+	.object(WeatherLocationFields)
+	.refine(hasWeatherLocation, { message: 'Provide q, location, or zipCode' });
 export const GetAstronomyForecastResponseSchema = WeatherReport;
 
-export const GetWeatherAlertsInputSchema = z.object(WeatherLocationInput);
+export const GetWeatherAlertsInputSchema = z
+	.object(WeatherLocationFields)
+	.refine(hasWeatherLocation, { message: 'Provide q, location, or zipCode' });
 export const GetWeatherAlertsResponseSchema = WeatherReport;
 
 export const GetTrafficFlowInputSchema = z.object({
@@ -277,11 +302,15 @@ export const GetStationsResponseSchema = z
 	})
 	.loose();
 
-export const GetDeparturesInputSchema = z.object({
-	ids: z.string().optional().describe('Comma-separated station ids.'),
-	in: z.string().optional().describe('lat,lng;r=meters when ids is omitted.'),
-	maxPerBoard: z.number().int().positive().optional(),
-});
+export const GetDeparturesInputSchema = z
+	.object({
+		ids: z.string().optional().describe('Comma-separated station ids.'),
+		in: z.string().optional().describe('lat,lng;r=meters when ids is omitted.'),
+		maxPerBoard: z.number().int().positive().optional(),
+	})
+	.refine((value) => Boolean(value.ids) !== Boolean(value.in), {
+		message: 'Provide exactly one of ids or in',
+	});
 export const GetDeparturesResponseSchema = z
 	.object({
 		boards: z.array(z.record(z.string(), z.unknown())).optional(),

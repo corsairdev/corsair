@@ -174,14 +174,17 @@ export const decodeRouteHandle: HereEndpoints['decodeRouteHandle'] = (
 		DecodeRouteHandleResponseSchema,
 		input,
 		(validated, apiKey) =>
-			makeHereRequest(HERE_HOSTS.router, '/v8/routes', apiKey, {
-				method: 'POST',
-				query: {
-					routeHandle: validated.routeHandle,
-					return: validated.return,
-					transportMode: validated.transportMode,
+			makeHereRequest(
+				HERE_HOSTS.router,
+				`/v8/routes/${encodeURIComponent(validated.routeHandle)}`,
+				apiKey,
+				{
+					query: {
+						return: validated.return,
+						transportMode: validated.transportMode,
+					},
 				},
-			}),
+			),
 	);
 
 export const findWaypointSequence: HereEndpoints['findWaypointSequence'] = (
@@ -195,10 +198,10 @@ export const findWaypointSequence: HereEndpoints['findWaypointSequence'] = (
 		FindWaypointSequenceResponseSchema,
 		input,
 		(validated, apiKey) =>
-			makeHereRequest(HERE_HOSTS.wse, '/2/findsequence.json', apiKey, {
+			makeHereRequest(HERE_HOSTS.wps, '/v8/findsequence2', apiKey, {
 				query: {
 					start: validated.start,
-					destination: validated.destination,
+					end: validated.destination,
 					destination1: validated.destination1,
 					destination2: validated.destination2,
 					destination3: validated.destination3,

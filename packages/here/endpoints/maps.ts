@@ -8,12 +8,26 @@ import {
 	GetMapImageResponseSchema,
 } from './types';
 
+const WEB_MERCATOR_MAX_LAT = 85.05112878;
+
 export function webMercatorTile(lat: number, lng: number, zoom: number) {
 	const n = 2 ** zoom;
-	const x = Math.floor(((lng + 180) / 360) * n);
-	const latRad = (lat * Math.PI) / 180;
-	const y = Math.floor(
-		((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n,
+	const x = ((Math.floor(((lng + 180) / 360) * n) % n) + n) % n;
+	const clampedLat = Math.min(
+		WEB_MERCATOR_MAX_LAT,
+		Math.max(-WEB_MERCATOR_MAX_LAT, lat),
+	);
+	const latRad = (clampedLat * Math.PI) / 180;
+	const y = Math.min(
+		n - 1,
+		Math.max(
+			0,
+			Math.floor(
+				((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) /
+					2) *
+					n,
+			),
+		),
 	);
 	return { x, y, z: zoom };
 }

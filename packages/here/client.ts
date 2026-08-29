@@ -27,7 +27,7 @@ export const HERE_HOSTS = {
 	weather: 'https://weather.hereapi.com',
 	traffic: 'https://data.traffic.hereapi.com',
 	transit: 'https://transit.hereapi.com',
-	wse: 'https://wse.hereapi.com',
+	wps: 'https://wps.hereapi.com',
 	image: 'https://image.maps.hereapi.com',
 } as const;
 

@@ -154,14 +154,35 @@ describe('HERE routing', () => {
 		await getMatrixResult(ctx, { matrixId: 'm1' });
 		await listMatrixProfiles(ctx, {});
 		await getMatrixProfile(ctx, { profileId: 'carFast' });
-		await decodeRouteHandle(ctx, { routeHandle: 'h1' });
+		await decodeRouteHandle(ctx, {
+			routeHandle: 'h1',
+			transportMode: 'car',
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			HERE_HOSTS.router,
+			'/v8/routes/h1',
+			'test-key',
+			{
+				query: expect.objectContaining({ transportMode: 'car' }),
+			},
+		);
 		mockedRequest.mockResolvedValue({ results: [] });
 		await findWaypointSequence(ctx, {
 			start: '52.53,13.38',
 			destination: '52.52,13.36',
 			destination1: '52.525,13.37',
 		});
-		expect(mockedRequest).toHaveBeenCalled();
+		expect(mockedRequest).toHaveBeenCalledWith(
+			HERE_HOSTS.wps,
+			'/v8/findsequence2',
+			'test-key',
+			expect.objectContaining({
+				query: expect.objectContaining({
+					start: '52.53,13.38',
+					end: '52.52,13.36',
+				}),
+			}),
+		);
 	});
 });
 
@@ -219,6 +240,8 @@ describe('HERE weather traffic transit maps', () => {
 		const image = await getMapImage(ctx, { lat: 52.52, lng: 13.4 });
 		expect(image.imageBase64).toBe('abc');
 		expect(webMercatorTile(0, 0, 1)).toEqual({ x: 1, y: 1, z: 1 });
+		expect(webMercatorTile(0, 180, 1).x).toBe(0);
+		expect(webMercatorTile(90, 0, 1).y).toBe(0);
 		await expect(
 			coordinatesToTileIndices(ctx, { lat: 0, lng: 0, zoom: 1 }),
 		).resolves.toEqual({ x: 1, y: 1, z: 1 });

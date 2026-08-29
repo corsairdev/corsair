@@ -72,7 +72,7 @@ export type HereRoute = z.infer<typeof HereRoute>;
  */
 export const HereWeatherPlace = z
 	.object({
-		id: z.number().optional(),
+		id: z.string().optional(),
 		countryCode: z.string().optional(),
 		timezone: z.number().optional(),
 	})
