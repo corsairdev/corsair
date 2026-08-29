@@ -412,7 +412,7 @@ export const ProviderDisplayNames = {
 	clickhouse: 'Clickhouse',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
-	cloudcart: 'Cloudcart',
+	cloudcart: 'CloudCart',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
