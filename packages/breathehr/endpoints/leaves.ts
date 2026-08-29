@@ -9,7 +9,7 @@ import type {
 
 export const Leaves = {
   list: async (ctx: BreatheHrContext, input: LeavesListInput): Promise<LeavesListResponse> => {
-    const apiKey = await ctx.keyBuilder(ctx, 'endpoint');
+    const apiKey = ctx.key;
     const query: Record<string, any> = {};
     if (input.start_date) query.start_date = input.start_date;
     if (input.end_date) query.end_date = input.end_date;
@@ -20,7 +20,7 @@ export const Leaves = {
   },
 
   get: async (ctx: BreatheHrContext, input: LeavesGetInput): Promise<LeavesGetResponse> => {
-    const apiKey = await ctx.keyBuilder(ctx, 'endpoint');
+    const apiKey = ctx.key;
     return await makeBreatheHrRequest<LeavesGetResponse>(`/leaves/${input.id}`, apiKey);
   },
 };

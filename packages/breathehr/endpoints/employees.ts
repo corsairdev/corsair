@@ -11,7 +11,7 @@ import type {
 
 export const Employees = {
   list: async (ctx: BreatheHrContext, input: EmployeesListInput): Promise<EmployeesListResponse> => {
-    const apiKey = await ctx.keyBuilder(ctx, 'endpoint');
+    const apiKey = ctx.key;
     const query: Record<string, any> = {};
     if (input.page) query.page = input.page;
     if (input.per_page) query.per_page = input.per_page;
@@ -21,12 +21,12 @@ export const Employees = {
   },
 
   get: async (ctx: BreatheHrContext, input: EmployeesGetInput): Promise<EmployeesGetResponse> => {
-    const apiKey = await ctx.keyBuilder(ctx, 'endpoint');
+    const apiKey = ctx.key;
     return await makeBreatheHrRequest<EmployeesGetResponse>(`/employees/${input.id}`, apiKey);
   },
 
   create: async (ctx: BreatheHrContext, input: EmployeesCreateInput): Promise<EmployeesCreateResponse> => {
-    const apiKey = await ctx.keyBuilder(ctx, 'endpoint');
+    const apiKey = ctx.key;
     return await makeBreatheHrRequest<EmployeesCreateResponse>('/employees', apiKey, {
       method: 'POST',
       body: { employee: input },

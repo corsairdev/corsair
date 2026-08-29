@@ -1,30 +1,58 @@
-import type { CorsairErrorHandler } from 'corsair/core';
+import type { CorsairErrorHandler, ErrorContext, RetryStrategy } from 'corsair/core';
 import { BreatheHRApiError } from './client';
 
 export const errorHandlers: CorsairErrorHandler = {
-  matches: (error: unknown): error is BreatheHRApiError => {
-    return error instanceof BreatheHRApiError;
-  },
-  handle: (error: BreatheHRApiError) => {
-    switch (error.status) {
-      case 400:
-        return { message: 'Bad Request: The request was malformed or missing parameters.', retryable: false };
-      case 401:
-        return { message: 'Unauthorized: Invalid or missing Breathe HR API Key.', retryable: false };
-      case 403:
-        return { message: 'Forbidden: You do not have permission for this resource.', retryable: false };
-      case 404:
-        return { message: 'Not Found: Resource does not exist.', retryable: false };
-      case 422:
-        return { message: 'Unprocessable Entity: Validation failed.', retryable: false };
-      case 429:
-        return { message: 'Rate Limit Exceeded: Please back off.', retryable: true };
-      case 500:
-      case 502:
-      case 503:
-        return { message: 'Breathe HR Server Error.', retryable: true };
-      default:
-        return { message: error.message || 'Unexpected Breathe HR Error', retryable: false };
-    }
+  'breathehr-api': {
+    match: (error: unknown): error is BreatheHRApiError => {
+      return error instanceof BreatheHRApiError;
+    },
+    handler: async (error: BreatheHRApiError, ctx: ErrorContext): Promise<RetryStrategy> => {
+      switch (error.status) {
+        case 400:
+          return {
+            shouldRetry: false,
+            message: 'Bad Request: The request was malformed or missing parameters.',
+          };
+        case 401:
+          return {
+            shouldRetry: false,
+            message: 'Unauthorized: Invalid or missing Breathe HR API Key.',
+          };
+        case 403:
+          return {
+            shouldRetry: false,
+            message: 'Forbidden: You do not have permission for this resource.',
+          };
+        case 404:
+          return {
+            shouldRetry: false,
+            message: 'Not Found: Resource does not exist.',
+          };
+        case 422:
+          return {
+            shouldRetry: false,
+            message: 'Unprocessable Entity: Validation failed.',
+          };
+        case 429:
+          return {
+            shouldRetry: true,
+            message: 'Rate Limit Exceeded: Please back off.',
+            delayMs: 5000,
+          };
+        case 500:
+        case 502:
+        case 503:
+          return {
+            shouldRetry: true,
+            message: 'Breathe HR Server Error.',
+            delayMs: 3000,
+          };
+        default:
+          return {
+            shouldRetry: false,
+            message: error.message || 'Unexpected Breathe HR Error',
+          };
+      }
+    },
   },
 };

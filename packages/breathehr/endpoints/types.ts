@@ -36,19 +36,19 @@ export const EmployeesGetInputSchema = z.object({
 });
 
 export const EmployeesGetResponseSchema = z.object({
-  employee: EmployeeSchema,
+  employees: z.array(EmployeeSchema),
 });
 
 export const EmployeesCreateInputSchema = z.object({
   first_name: z.string().min(1),
   last_name: z.string().min(1),
-  email: z.string().email().optional(),
+  email: z.string().email(),
   job_title: z.string().optional(),
   start_date: z.string().optional(),
 });
 
 export const EmployeesCreateResponseSchema = z.object({
-  employee: EmployeeSchema,
+  employees: z.array(EmployeeSchema),
 });
 
 export const LeavesListInputSchema = z.object({
@@ -67,7 +67,7 @@ export const LeavesGetInputSchema = z.object({
 });
 
 export const LeavesGetResponseSchema = z.object({
-  leave: LeaveSchema,
+  leaves: z.array(LeaveSchema),
 });
 
 export const BreatheHrEndpointInputSchemas = {
