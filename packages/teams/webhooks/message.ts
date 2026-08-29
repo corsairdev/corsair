@@ -26,6 +26,14 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 		}
 
 		const { value: notifications } = request.payload;
+		if (!notifications[0]) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: 'Invalid payload: missing notification',
+			};
+		}
+
 		let corsairEntityId = '';
 
 		const accessToken = await ctx.keys.get_access_token();
@@ -37,7 +45,7 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 					if (!messageId) continue;
 
 					// resource format: teams('teamId')/channels('channelId')/messages('messageId')
-					const parts = resource.split('/');
+					const parts = (resource ?? '').split('/');
 					const teamId = extractODataId(parts[0] ?? '');
 					const channelId = extractODataId(parts[1] ?? '');
 

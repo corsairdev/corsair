@@ -12,9 +12,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
-import { getValidAccessToken } from './client';
 import {
 	Projects,
 	Sections,
@@ -1037,68 +1036,10 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('asana', 'oauth_2');
-				}
-
-				const creds = await ctx.keys.get_integration_credentials();
-				if (!creds.client_id || !creds.client_secret) {
-					throw new Error(
-						'[auth-missing:asana:client_credentials]: Asana client credentials are missing',
-					);
-				}
-
-				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
-				try {
-					result = await getValidAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId: creds.client_id,
-						clientSecret: creds.client_secret,
-					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:asana] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-
-				if (result.refreshed) {
-					try {
-						await Promise.all([
-							ctx.keys.set_access_token(result.accessToken),
-							ctx.keys.set_expires_at(String(result.expiresAt)),
-						]);
-					} catch (error) {
-						throw new Error(
-							`[corsair:asana] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
-					}
-				}
-
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidAccessToken({
-						accessToken: null,
-						expiresAt: null,
-						refreshToken,
-						clientId: creds.client_id!,
-						clientSecret: creds.client_secret!,
-						forceRefresh: true,
-					});
-					await Promise.all([
-						ctx.keys.set_access_token(freshResult.accessToken),
-						ctx.keys.set_expires_at(String(freshResult.expiresAt)),
-					]);
-					return freshResult.accessToken;
-				};
-
-				return result.accessToken;
+				return getOAuthAccessToken(ctx, {
+					plugin: 'asana',
+					tokenUrl: 'https://app.asana.com/-/oauth_token',
+				});
 			}
 
 			if (ctx.authType === 'managed') {

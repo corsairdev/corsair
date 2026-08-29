@@ -1,0 +1,1532 @@
+---
+title: API
+description: "API reference for Google Cloud Vision: every `googlecloudvision.api.*` operation with input and output types."
+---
+
+Every `googlecloudvision.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Files
+
+### annotate
+
+`files.annotate`
+
+Annotate Files
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.files.annotate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  inputConfig: {
+    gcsSource?: {
+      uri: string
+    },
+    content?: string,
+    mimeType: string
+  },
+  features: {
+    type: string,
+    maxResults?: number,
+    model?: string
+  }[],
+  imageContext?: {
+  },
+  pages?: number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### asyncBatchAnnotate
+
+`files.asyncBatchAnnotate`
+
+Annotate Files Async
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.files.asyncBatchAnnotate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  inputConfig: {
+    gcsSource: {
+      uri: string
+    },
+    mimeType: string
+  },
+  features: {
+    type: string,
+    maxResults?: number,
+    model?: string
+  }[],
+  imageContext?: {
+  },
+  outputConfig: {
+    gcsDestination: {
+      uri: string
+    },
+    batchSize?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+| `done` | `boolean` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  code: number,
+  message: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### annotate
+
+`images.annotate`
+
+Annotate Images
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.images.annotate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  image: {
+    content?: string,
+    source?: {
+      gcsImageUri?: string,
+      imageUri?: string
+    }
+  },
+  features: {
+    type: string,
+    maxResults?: number,
+    model?: string
+  }[],
+  imageContext?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### asyncBatchAnnotate
+
+`images.asyncBatchAnnotate`
+
+Annotate Images Async
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.images.asyncBatchAnnotate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+| `outputConfig` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  image: {
+    source: {
+      gcsImageUri: string
+    }
+  },
+  features: {
+    type: string,
+    maxResults?: number,
+    model?: string
+  }[],
+  imageContext?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="outputConfig full type">
+
+```ts
+{
+  gcsDestination: {
+    uri: string
+  },
+  batchSize?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+| `done` | `boolean` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  code: number,
+  message: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locationAnnotate
+
+`images.locationAnnotate`
+
+Annotate Location Images
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.images.locationAnnotate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `requests` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  image: {
+    content?: string,
+    source?: {
+      gcsImageUri?: string,
+      imageUri?: string
+    }
+  },
+  features: {
+    type: string,
+    maxResults?: number,
+    model?: string
+  }[],
+  imageContext?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responses` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Locations
+
+### list
+
+`locations.list`
+
+List Locations
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.locations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `filter` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  name: string,
+  locationId: string,
+  displayName?: string,
+  labels?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Operations
+
+### cancel
+
+`operations.cancel`
+
+Cancel Operation
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.operations.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`operations.delete`
+
+Delete Operation
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.operations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`operations.get`
+
+Get Operation
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.operations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+| `done` | `boolean` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  code: number,
+  message: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`operations.list`
+
+List Operations
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.operations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `filter` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operations` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="operations full type">
+
+```ts
+{
+  name: string,
+  metadata?: {
+  },
+  done?: boolean,
+  error?: {
+    code: number,
+    message: string
+  },
+  response?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Create Product
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.products.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `productId` | `string` | No | — |
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  name?: string,
+  displayName: string,
+  description?: string,
+  productCategory: string,
+  productLabels?: {
+    key: string,
+    value: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `displayName` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `productCategory` | `string` | Yes | — |
+| `productLabels` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="productLabels full type">
+
+```ts
+{
+  key: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+Delete Product
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.products.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`products.get`
+
+Get Product
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.products.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `displayName` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `productCategory` | `string` | Yes | — |
+| `productLabels` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="productLabels full type">
+
+```ts
+{
+  key: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+List Products
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.products.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  name?: string,
+  displayName: string,
+  description?: string,
+  productCategory: string,
+  productLabels?: {
+    key: string,
+    value: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### purge
+
+`products.purge`
+
+Purge Products
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googlecloudvision.api.products.purge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `productSetPurgeConfig` | `object` | No | — |
+| `deleteOrphanProducts` | `boolean` | No | — |
+| `force` | `true` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="productSetPurgeConfig full type">
+
+```ts
+{
+  productSetId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+| `done` | `boolean` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  code: number,
+  message: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Update Product
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.products.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `product` | `object` | Yes | — |
+| `updateMask` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  name?: string,
+  displayName: string,
+  description?: string,
+  productCategory: string,
+  productLabels?: {
+    key: string,
+    value: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `displayName` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `productCategory` | `string` | Yes | — |
+| `productLabels` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="productLabels full type">
+
+```ts
+{
+  key: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Product Sets
+
+### addProduct
+
+`productSets.addProduct`
+
+Add Product to Set
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.productSets.addProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `product` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### create
+
+`productSets.create`
+
+Create Product Set
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.productSets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `productSetId` | `string` | No | — |
+| `productSet` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="productSet full type">
+
+```ts
+{
+  name?: string,
+  displayName: string,
+  indexTime?: string,
+  indexError?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `displayName` | `string` | Yes | — |
+| `indexTime` | `string` | No | — |
+| `indexError` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="indexError full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`productSets.delete`
+
+Delete Product Set
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.productSets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`productSets.get`
+
+Get Product Set
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.productSets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `displayName` | `string` | Yes | — |
+| `indexTime` | `string` | No | — |
+| `indexError` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="indexError full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### import
+
+`productSets.import`
+
+Import Product Sets
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.productSets.import({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `inputConfig` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="inputConfig full type">
+
+```ts
+{
+  gcsSource: {
+    csvFileUri: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+| `done` | `boolean` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  code: number,
+  message: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`productSets.list`
+
+List Product Sets
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.productSets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productSets` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="productSets full type">
+
+```ts
+{
+  name?: string,
+  displayName: string,
+  indexTime?: string,
+  indexError?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProducts
+
+`productSets.listProducts`
+
+List Products in Set
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.productSets.listProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeProduct
+
+`productSets.removeProduct`
+
+Remove Product from Set
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.productSets.removeProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `product` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`productSets.update`
+
+Update Product Set
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.productSets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `productSet` | `object` | Yes | — |
+| `updateMask` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="productSet full type">
+
+```ts
+{
+  name?: string,
+  displayName: string,
+  indexTime?: string,
+  indexError?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `displayName` | `string` | Yes | — |
+| `indexTime` | `string` | No | — |
+| `indexError` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="indexError full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reference Images
+
+### create
+
+`referenceImages.create`
+
+Create Reference Image
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.referenceImages.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `referenceImageId` | `string` | No | — |
+| `referenceImage` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="referenceImage full type">
+
+```ts
+{
+  name?: string,
+  uri: string,
+  boundingPolys?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `uri` | `string` | Yes | — |
+| `boundingPolys` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="boundingPolys full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`referenceImages.delete`
+
+Delete Reference Image
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecloudvision.api.referenceImages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`referenceImages.get`
+
+Get Reference Image
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.referenceImages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `uri` | `string` | Yes | — |
+| `boundingPolys` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="boundingPolys full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`referenceImages.list`
+
+List Reference Images
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecloudvision.api.referenceImages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `referenceImages` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="referenceImages full type">
+
+```ts
+{
+  name?: string,
+  uri: string,
+  boundingPolys?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

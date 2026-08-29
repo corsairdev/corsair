@@ -1,0 +1,121 @@
+---
+title: Overview
+description: "TickTick plugin for Corsair"
+---
+
+Use **TickTick** through Corsair: one client, typed API calls.
+
+**What you get:**
+
+- 13 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/ticktick
+```
+```bash yarn
+yarn add corsair @corsair-dev/ticktick
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/ticktick
+```
+```bash bun
+bun add corsair @corsair-dev/ticktick
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { ticktick } from '@corsair-dev/ticktick';
+
+export const corsair = createCorsair({
+	plugins: [
+		ticktick(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your TickTick OAuth app.
+
+```ts
+ticktick()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'ticktick',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`oauth.generateAuthUrl`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.oauth.generateAuthUrl({});
+```
+
+
+**`projects.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.projects.create({});
+```
+
+
+See the full list on the [API](/plugins/ticktick/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/ticktick/api">
+    Every `ticktick.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
