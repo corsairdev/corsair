@@ -1,0 +1,14 @@
+displayName: Zoho Inventory
+description: Zoho Inventory plugin for Corsair — manage inventory items, organizations, contacts, and users
+overviewNote: |
+  Zoho Inventory operates region-specific datacenters. Pass `region` to the plugin factory
+  (`'us'` default, plus `'eu'`, `'in'`, `'au'`, `'jp'`, `'ca'`, `'cn'`, `'sa'`) so the correct
+  `accounts.zoho.*` and `zohoapis.*` hosts are used:
+
+  ```ts
+  zohoinventory({ region: 'eu' })
+  ```
+
+  Every resource endpoint (items, contacts, users) is scoped to an `organization_id`.
+  Use `organizations.list` to discover organizations or rely on automated tenant linking
+  via `tenant_external_id`.
