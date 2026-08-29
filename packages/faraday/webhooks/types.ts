@@ -105,6 +105,16 @@ export function faradayWebhookMessageId(
 	return firstHeader(headers, ['svix-id', 'webhook-id']);
 }
 
+function signingBody(
+	request: WebhookRequest<FaradayWebhookPayload>,
+): string | undefined {
+	if (typeof request.rawBody === 'string' && request.rawBody.length > 0) {
+		return request.rawBody;
+	}
+	const body = (request as { body?: unknown }).body;
+	return typeof body === 'string' && body.length > 0 ? body : undefined;
+}
+
 function secretBytes(secret: string): Buffer {
 	const raw = secret.startsWith('whsec_') ? secret.slice(6) : secret;
 	const decoded = Buffer.from(raw, 'base64');
@@ -143,7 +153,8 @@ export function verifyFaradayWebhookSignature(
 			error: 'Missing Standard Webhooks signature headers',
 		};
 	}
-	if (!request.rawBody) {
+	const rawBody = signingBody(request);
+	if (!rawBody) {
 		return { valid: false, error: 'Missing raw request body' };
 	}
 
@@ -163,7 +174,7 @@ export function verifyFaradayWebhookSignature(
 		};
 	}
 
-	const signedContent = `${msgId}.${timestamp}.${request.rawBody}`;
+	const signedContent = `${msgId}.${timestamp}.${rawBody}`;
 	const expected = createHmac('sha256', secretBytes(secret))
 		.update(signedContent)
 		.digest('base64');

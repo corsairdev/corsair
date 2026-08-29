@@ -331,6 +331,64 @@ describe('Faraday webhook signature', () => {
 		).toEqual({ linkType: 'account_id', externalId: 'acct-1' });
 	});
 
+	it('matches tenant when the raw body is a JSON string', () => {
+		expect(
+			matchFaradayTenantWebhook({
+				body: JSON.stringify({
+					type: 'resource.ready_with_update',
+					data: { account_id: 'acct-2' },
+				}),
+			} as never),
+		).toEqual({ linkType: 'account_id', externalId: 'acct-2' });
+	});
+
+	it('HMACs the exact raw body, not a reconstructed payload', () => {
+		resetFaradayWebhookReplayCache();
+		const secret = 'whsec_dGVzdA==';
+		const now = String(Math.floor(Date.now() / 1000));
+		const rawBody =
+			'{"type":"resource.ready_with_update","data":{"account_id":"a"}}';
+		const reconstructed = JSON.stringify(JSON.parse(rawBody), null, 2);
+		const sign = (body: string) =>
+			`v1,${createHmac('sha256', Buffer.from('dGVzdA==', 'base64'))
+				.update(`msg_raw.${now}.${body}`)
+				.digest('base64')}`;
+		const payload = {
+			timestamp: now,
+			type: 'resource.ready_with_update' as const,
+			data: { account_id: 'a', resource_id: 'b', resource_type: 'cohorts' },
+		};
+		expect(
+			verifyFaradayWebhookSignature(
+				{
+					headers: {
+						'svix-id': 'msg_raw',
+						'svix-timestamp': now,
+						'svix-signature': sign(rawBody),
+					},
+					rawBody,
+					payload,
+				} as never,
+				secret,
+			).valid,
+		).toBe(true);
+		resetFaradayWebhookReplayCache();
+		expect(
+			verifyFaradayWebhookSignature(
+				{
+					headers: {
+						'svix-id': 'msg_raw',
+						'svix-timestamp': now,
+						'svix-signature': sign(rawBody),
+					},
+					rawBody: reconstructed,
+					payload,
+				} as never,
+				secret,
+			).valid,
+		).toBe(false);
+	});
+
 	it('rejects stale timestamps and replayed message ids', () => {
 		resetFaradayWebhookReplayCache();
 		const secret = 'whsec_dGVzdA==';
