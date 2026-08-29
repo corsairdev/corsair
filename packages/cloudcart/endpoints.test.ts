@@ -163,6 +163,12 @@ describe('cloudcart request client', () => {
 		expect(() => buildCloudcartStoreUrl('')).toThrow(CloudcartAPIError);
 	});
 
+	it('keeps an already versioned /v1 store url', () => {
+		expect(buildCloudcartStoreUrl('https://api.cloudcart.com/v1')).toBe(
+			'https://api.cloudcart.com/v1',
+		);
+	});
+
 	it('rethrows ApiError', async () => {
 		const err = httpError(401, 'Unauthorized');
 		mockRequest.mockRejectedValue(err);
@@ -217,6 +223,7 @@ describe('cloudcart endpoints', () => {
 		await endpoints().orders.listOrders(mockCtx, {
 			'page[number]': 1,
 			'page[size]': 20,
+			id: '99',
 		});
 
 		expect(mockRequest).toHaveBeenCalledWith(
@@ -227,7 +234,40 @@ describe('cloudcart endpoints', () => {
 				query: expect.objectContaining({
 					'page[number]': 1,
 					'page[size]': 20,
+					id: '99',
 				}),
+			}),
+			expect.anything(),
+		);
+	});
+
+	it('creates variant options with parent ids in the path', async () => {
+		await endpoints().variants.createVariantOption(mockCtx, {
+			product_id: 'p1',
+			variant_id: 'v1',
+			data: { name: 'Blue' },
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'POST',
+				url: 'variants/v1/options',
+				body: { name: 'Blue' },
+			}),
+			expect.anything(),
+		);
+
+		mockRequest.mockClear();
+		await endpoints().variants.createVariantOptions(mockCtx, {
+			parameter_id: 'param1',
+			data: { name: 'Medium' },
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'POST',
+				url: 'variant-parameters/param1/options',
+				body: { name: 'Medium' },
 			}),
 			expect.anything(),
 		);
@@ -314,5 +354,28 @@ describe('cloudcart error classification', () => {
 			'RATE_LIMIT_ERROR',
 		);
 		expect(classify(httpError(500, 'Server Error'))).toBe('SERVER_ERROR');
+	});
+
+	it('does not retry mutating requests after a 5xx', async () => {
+		const postError = new ApiError(
+			{ method: 'POST', url: 'https://shop.example.com/api/v1/customers' },
+			{
+				url: 'https://shop.example.com/api/v1/customers',
+				ok: false,
+				status: 500,
+				statusText: 'Error',
+				body: { error: 'Server Error' },
+			},
+			'Server Error',
+		);
+		await expect(
+			errorHandlers.SERVER_ERROR.handler(postError),
+		).resolves.toEqual({ maxRetries: 0 });
+		await expect(
+			errorHandlers.SERVER_ERROR.handler(httpError(500, 'Server Error')),
+		).resolves.toEqual({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff',
+		});
 	});
 });

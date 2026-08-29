@@ -61,10 +61,17 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('internal server') || msg.includes('unavailable');
 		},
-		handler: async () => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) => {
+			const method =
+				error instanceof ApiError ? error.request.method : undefined;
+			if (method === 'GET') {
+				return {
+					maxRetries: 3,
+					retryStrategy: 'exponential_backoff' as const,
+				};
+			}
+			return { maxRetries: 0 };
+		},
 	},
 	DEFAULT: {
 		match: () => true,

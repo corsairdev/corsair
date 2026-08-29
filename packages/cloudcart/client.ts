@@ -87,7 +87,7 @@ export function buildCloudcartStoreUrl(storeUrl: string): string {
 	if (path === '' || path === '/') {
 		return `${parsed.origin}/api/v1`;
 	}
-	if (path.includes('/api')) {
+	if (path === '/v1' || path.endsWith('/v1') || path.includes('/api')) {
 		return `${parsed.origin}${path}`;
 	}
 	return `${parsed.origin}${path}/api/v1`;
