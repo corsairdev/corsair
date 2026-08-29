@@ -1,38 +1,26 @@
 import type {
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import type { AuthTypes } from 'corsair/core';
 import type { MailcheckEndpointInputs, MailcheckEndpointOutputs } from './endpoints/types';
 import { MailcheckEndpointInputSchemas, MailcheckEndpointOutputSchemas } from './endpoints/types';
-import type {
-	MailcheckWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 import { Mailcheck } from './endpoints';
 import { MailcheckSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
 import { errorHandlers } from './error-handlers';
-import { matchMailcheckTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveMailcheckOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export type MailcheckPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalMailcheckPlugin['hooks'];
 	webhookHooks?: InternalMailcheckPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -61,29 +49,12 @@ export type MailcheckEndpoints = {
 	validateDomain: MailcheckEndpoint<'validateDomain'>;
 };
 
-type MailcheckWebhook
-	K extends keyof MailcheckWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<MailcheckContext, TEvent, MailcheckWebhookOutputs[K]>;
-
-export type MailcheckWebhooks = {
-	example: MailcheckWebhook<'example', ExampleEvent>;
-};
-
-export type MailcheckBoundWebhooks = BindWebhooks<MailcheckWebhooks>;
-
 const mailcheckEndpointsNested = {
 	email: {
 		verify: Mailcheck.verifyEmail,
 	},
 	domain: {
 		validate: Mailcheck.validateDomain,
-	},
-} as const;
-
-const mailcheckWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
 	},
 } as const;
 
@@ -97,14 +68,6 @@ export const mailcheckEndpointSchemas = {
 		output: MailcheckEndpointOutputSchemas.validateDomain,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof mailcheckEndpointsNested>;
-
-const mailcheckWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof mailcheckWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -132,7 +95,7 @@ export type BaseMailcheckPlugin<T extends MailcheckPluginOptions> = CorsairPlugi
 	'mailcheck',
 	typeof MailcheckSchema,
 	typeof mailcheckEndpointsNested,
-	typeof mailcheckWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
@@ -157,30 +120,14 @@ export function mailcheck<const T extends MailcheckPluginOptions>(
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: mailcheckEndpointsNested,
-		webhooks: mailcheckWebhooksNested,
 		endpointMeta: mailcheckEndpointMeta,
 		endpointSchemas: mailcheckEndpointSchemas,
-		webhookSchemas: mailcheckWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-mailcheck-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchMailcheckTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveMailcheckOAuthWebhookTenantLink,
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: MailcheckKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -199,11 +146,6 @@ export function mailcheck<const T extends MailcheckPluginOptions>(
 		},
 	} satisfies InternalMailcheckPlugin;
 }
-
-export type {
-	ExampleEvent,
-	MailcheckWebhookOutputs,
-} from './webhooks/types';
 
 export type {
 	MailcheckEndpointInputs,
