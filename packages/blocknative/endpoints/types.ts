@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { BLOCKNATIVE_ETH_NETWORKS } from '../client';
 import {
 	BlocknativeBaseFeeEstimates,
 	BlocknativeBlockPrices,
@@ -17,7 +18,23 @@ const TxHash = z
 
 const HexChainId = z
 	.string()
-	.regex(/^0x[0-9a-fA-F]+$/, "Hex-encoded chain ID, e.g. '0x1'");
+	.regex(/^0x[0-9a-fA-F]+$/, "Hex-encoded chain ID, e.g. '0x1'")
+	.refine((id) => Number.parseInt(id, 16) in BLOCKNATIVE_ETH_NETWORKS, {
+		message: 'Unsupported Blocknative chainId',
+	});
+
+const WsProtocolMessageSchema = z
+	.object({
+		timeStamp: z.string(),
+		version: z.string(),
+		blockchain: z.object({
+			system: z.string(),
+			network: z.string(),
+		}),
+		categoryCode: z.string(),
+		eventCode: z.string(),
+	})
+	.loose();
 
 export const GetGasPricesInputSchema = z.object({
 	chainid: z.number().int().positive().optional(),
@@ -78,8 +95,8 @@ export const ConfigureFiltersInputSchema = z.object({
 export type ConfigureFiltersInput = z.infer<typeof ConfigureFiltersInputSchema>;
 export const ConfigureFiltersOutputSchema = z.object({
 	websocketUrl: z.string(),
-	initialize: z.record(z.string(), z.unknown()),
-	config: z.record(z.string(), z.unknown()),
+	initialize: WsProtocolMessageSchema,
+	config: WsProtocolMessageSchema,
 });
 export type ConfigureFiltersOutput = z.infer<
 	typeof ConfigureFiltersOutputSchema
@@ -95,8 +112,8 @@ export type SubscribeTransactionHashInput = z.infer<
 >;
 export const SubscribeTransactionHashOutputSchema = z.object({
 	websocketUrl: z.string(),
-	initialize: z.record(z.string(), z.unknown()),
-	subscribe: z.record(z.string(), z.unknown()),
+	initialize: WsProtocolMessageSchema,
+	subscribe: WsProtocolMessageSchema,
 });
 export type SubscribeTransactionHashOutput = z.infer<
 	typeof SubscribeTransactionHashOutputSchema
@@ -112,8 +129,8 @@ export type UnsubscribeTransactionHashInput = z.infer<
 >;
 export const UnsubscribeTransactionHashOutputSchema = z.object({
 	websocketUrl: z.string(),
-	initialize: z.record(z.string(), z.unknown()),
-	unsubscribe: z.record(z.string(), z.unknown()),
+	initialize: WsProtocolMessageSchema,
+	unsubscribe: WsProtocolMessageSchema,
 });
 export type UnsubscribeTransactionHashOutput = z.infer<
 	typeof UnsubscribeTransactionHashOutputSchema
@@ -131,8 +148,8 @@ export type SubscribeMultichainInput = z.infer<
 >;
 export const SubscribeMultichainOutputSchema = z.object({
 	websocketUrl: z.string(),
-	initialize: z.record(z.string(), z.unknown()),
-	subscribe: z.record(z.string(), z.unknown()),
+	initialize: WsProtocolMessageSchema,
+	subscribe: WsProtocolMessageSchema,
 });
 export type SubscribeMultichainOutput = z.infer<
 	typeof SubscribeMultichainOutputSchema

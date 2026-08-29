@@ -66,7 +66,11 @@ function errorMessage(body: unknown, fallback: string): string {
 }
 
 export function ethNetworkName(chainId: number): string {
-	return BLOCKNATIVE_ETH_NETWORKS[chainId] ?? 'main';
+	const network = BLOCKNATIVE_ETH_NETWORKS[chainId];
+	if (!network) {
+		throw new BlocknativeAPIError(`Unsupported chainId: ${chainId}`);
+	}
+	return network;
 }
 
 export function parseHexChainId(chainId: string): number {
@@ -74,17 +78,19 @@ export function parseHexChainId(chainId: string): number {
 	if (!Number.isFinite(parsed) || parsed <= 0) {
 		throw new BlocknativeAPIError(`Unsupported chainId: ${chainId}`);
 	}
+	if (!(parsed in BLOCKNATIVE_ETH_NETWORKS)) {
+		throw new BlocknativeAPIError(`Unsupported chainId: ${chainId}`);
+	}
 	return parsed;
 }
 
+/** Official initialize payload minus dappId — caller injects their API key. */
 export function initializeMessage(
-	apiKey: string,
 	system = 'ethereum',
 	network = 'main',
 ): Record<string, unknown> {
 	return {
 		timeStamp: new Date().toISOString(),
-		dappId: apiKey,
 		version: '1.0.0',
 		blockchain: { system, network },
 		categoryCode: 'initialize',
@@ -95,7 +101,9 @@ export function initializeMessage(
 export async function makeBlocknativeRequest<T>(
 	endpoint: string,
 	apiKey: string,
-	options: BlocknativeRequestOptions = {},
+	options: BlocknativeRequestOptions & {
+		schema: { parse: (data: unknown) => T };
+	},
 ): Promise<T> {
 	const { method = 'GET', query } = options;
 	const url = new URL(`${BLOCKNATIVE_API_BASE}${endpoint}`);
@@ -154,5 +162,16 @@ export async function makeBlocknativeRequest<T>(
 		);
 	}
 
-	return parsed as T;
+	try {
+		return options.schema.parse(parsed);
+	} catch (error) {
+		throw new BlocknativeAPIError(
+			error instanceof Error
+				? error.message
+				: 'Blocknative response failed validation',
+			undefined,
+			res.status,
+			parsed,
+		);
+	}
 }

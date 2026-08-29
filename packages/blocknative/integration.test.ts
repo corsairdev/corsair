@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { BLOCKNATIVE_API_BASE, makeBlocknativeRequest } from './client';
 import {
 	BlocknativeBaseFeeEstimates,
@@ -9,14 +10,14 @@ import {
 
 const LIVE_KEY = process.env.BLOCKNATIVE_API_KEY ?? '';
 
-async function probe(path: string): Promise<unknown> {
-	return makeBlocknativeRequest(path, LIVE_KEY);
+async function probe(path: string, schema: z.ZodType<unknown>) {
+	return makeBlocknativeRequest(path, LIVE_KEY, { schema });
 }
 
 describe('Blocknative live Gas Platform', () => {
 	it('reaches official host or records sunset/network failure', async () => {
 		try {
-			await probe('/chains');
+			await probe('/chains', z.array(BlocknativeChain));
 		} catch (error) {
 			expect(error).toBeInstanceOf(Error);
 			return;
@@ -24,61 +25,76 @@ describe('Blocknative live Gas Platform', () => {
 	});
 
 	it('parses official GET /chains when the host responds', async () => {
-		let body: unknown;
+		let rows: BlocknativeChain[] = [];
 		try {
-			body = await probe('/chains');
+			rows = await makeBlocknativeRequest('/chains', LIVE_KEY, {
+				schema: z.array(BlocknativeChain),
+			});
 		} catch {
 			return;
 		}
-		const rows = Array.isArray(body) ? body : [];
 		expect(rows.length).toBeGreaterThan(0);
-		expect(BlocknativeChain.parse(rows[0]).chainId).toEqual(expect.any(Number));
+		expect(rows[0]?.chainId).toEqual(expect.any(Number));
 		expect(BLOCKNATIVE_API_BASE).toBe('https://api.blocknative.com');
 	});
 
 	it('parses official GET /gasprices/blockprices when the host responds', async () => {
-		let body: unknown;
+		let parsed: BlocknativeBlockPrices;
 		try {
-			body = await makeBlocknativeRequest('/gasprices/blockprices', LIVE_KEY, {
-				query: { chainid: 1, confidenceLevels: [99, 50] },
-			});
+			parsed = await makeBlocknativeRequest(
+				'/gasprices/blockprices',
+				LIVE_KEY,
+				{
+					schema: BlocknativeBlockPrices,
+					query: { chainid: 1, confidenceLevels: [99, 50] },
+				},
+			);
 		} catch {
 			return;
 		}
-		const parsed = BlocknativeBlockPrices.parse(body);
 		expect(parsed.blockPrices?.[0]?.estimatedPrices?.length).toBeGreaterThan(0);
 	});
 
 	it('parses official GET /gasprices/basefee-estimates when the host responds', async () => {
-		let body: unknown;
+		let parsed: BlocknativeBaseFeeEstimates;
 		try {
-			body = await probe('/gasprices/basefee-estimates');
+			parsed = await makeBlocknativeRequest(
+				'/gasprices/basefee-estimates',
+				LIVE_KEY,
+				{ schema: BlocknativeBaseFeeEstimates },
+			);
 		} catch {
 			return;
 		}
-		expect(BlocknativeBaseFeeEstimates.parse(body).system).toBeTruthy();
+		expect(parsed.system).toBeTruthy();
 	});
 
 	it('parses official GET /gasprices/distribution when the host responds', async () => {
-		let body: unknown;
+		let parsed: BlocknativeGasDistribution;
 		try {
-			body = await makeBlocknativeRequest('/gasprices/distribution', LIVE_KEY, {
-				query: { chainid: 1 },
+			parsed = await makeBlocknativeRequest(
+				'/gasprices/distribution',
+				LIVE_KEY,
+				{
+					schema: BlocknativeGasDistribution,
+					query: { chainid: 1 },
+				},
+			);
+		} catch {
+			return;
+		}
+		expect(parsed.unit).toBeTruthy();
+	});
+
+	it('parses official GET /oracles when the host responds', async () => {
+		let rows: BlocknativeOracle[] = [];
+		try {
+			rows = await makeBlocknativeRequest('/oracles', LIVE_KEY, {
+				schema: z.array(BlocknativeOracle),
 			});
 		} catch {
 			return;
 		}
-		expect(BlocknativeGasDistribution.parse(body).unit).toBeTruthy();
-	});
-
-	it('parses official GET /oracles when the host responds', async () => {
-		let body: unknown;
-		try {
-			body = await probe('/oracles');
-		} catch {
-			return;
-		}
-		const rows = Array.isArray(body) ? body : [];
-		if (rows[0]) expect(BlocknativeOracle.parse(rows[0]).arch).toBeTruthy();
+		if (rows[0]) expect(rows[0].arch).toBeTruthy();
 	});
 });

@@ -1,4 +1,5 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import {
 	BLOCKNATIVE_API_BASE,
 	BLOCKNATIVE_WS_URL,
@@ -197,6 +198,8 @@ describe('Blocknative plugin', () => {
 			}),
 		);
 		expect(result.websocketUrl).toBe(BLOCKNATIVE_WS_URL);
+		expect(JSON.stringify(result)).not.toContain('test-api-key');
+		expect(result.initialize).not.toHaveProperty('dappId');
 		expect(result.initialize.eventCode).toBe('checkDappId');
 		expect(result.config.categoryCode).toBe('configs');
 		expect(result.config.eventCode).toBe('put');
@@ -255,6 +258,15 @@ describe('Blocknative plugin', () => {
 			}),
 		);
 		expect(tx.subscribe.eventCode).toBe('txSent');
+		expect(JSON.stringify(account)).not.toContain('test-api-key');
+
+		expect(() =>
+			BlocknativeEndpointInputSchemas.subscribeMultichain.parse({
+				id: TX,
+				type: 'transaction',
+				chainId: '0x38',
+			}),
+		).toThrow(/Unsupported Blocknative chainId/);
 
 		const stop = await unsubscribeMultichain(
 			ctx,
@@ -278,8 +290,13 @@ describe('Blocknative plugin', () => {
 			),
 		);
 		await expect(
-			makeBlocknativeRequest('/chains', 'bad'),
+			makeBlocknativeRequest('/chains', 'bad', { schema: z.unknown() }),
 		).rejects.toMatchObject({ name: 'BlocknativeAPIError', status: 401 });
+
+		mockFetch.mockResolvedValueOnce(jsonResponse('not-json-object'));
+		await expect(
+			getGasPrices(ctx, BlocknativeEndpointInputSchemas.getGasPrices.parse({})),
+		).rejects.toBeInstanceOf(BlocknativeAPIError);
 
 		const authErr = new BlocknativeAPIError(
 			'Authorization header must contain a valid apikey',

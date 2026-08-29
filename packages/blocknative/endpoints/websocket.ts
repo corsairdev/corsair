@@ -6,16 +6,21 @@ import {
 	initializeMessage,
 	parseHexChainId,
 } from '../client';
+import {
+	ConfigureFiltersOutputSchema,
+	SubscribeMultichainOutputSchema,
+	SubscribeTransactionHashOutputSchema,
+	UnsubscribeMultichainOutputSchema,
+	UnsubscribeTransactionHashOutputSchema,
+} from './types';
 
 function envelope(
-	apiKey: string,
 	system: string,
 	network: string,
 	body: Record<string, unknown>,
 ): Record<string, unknown> {
 	return {
 		timeStamp: new Date().toISOString(),
-		dappId: apiKey,
 		version: '1.0.0',
 		blockchain: { system, network },
 		...body,
@@ -32,15 +37,15 @@ export const configureFilters: BlocknativeEndpoints['configureFilters'] =
 		if (input.watchAddress !== undefined)
 			config.watchAddress = input.watchAddress;
 
-		const response = {
+		const response = ConfigureFiltersOutputSchema.parse({
 			websocketUrl: BLOCKNATIVE_WS_URL,
-			initialize: initializeMessage(ctx.key, system, network),
-			config: envelope(ctx.key, system, network, {
+			initialize: initializeMessage(system, network),
+			config: envelope(system, network, {
 				categoryCode: 'configs',
 				eventCode: 'put',
 				config,
 			}),
-		};
+		});
 		await logEventFromContext(
 			ctx,
 			'blocknative.mempool.configureFilters',
@@ -69,15 +74,15 @@ export const subscribeTransactionHash: BlocknativeEndpoints['subscribeTransactio
 						status: 'sent',
 					};
 
-		const response = {
+		const response = SubscribeTransactionHashOutputSchema.parse({
 			websocketUrl: BLOCKNATIVE_WS_URL,
-			initialize: initializeMessage(ctx.key, system, network),
-			subscribe: envelope(ctx.key, system, network, {
+			initialize: initializeMessage(system, network),
+			subscribe: envelope(system, network, {
 				categoryCode: 'activeTransaction',
 				eventCode: 'txSent',
 				transaction,
 			}),
-		};
+		});
 		await logEventFromContext(
 			ctx,
 			'blocknative.mempool.subscribeTransactionHash',
@@ -96,15 +101,15 @@ export const unsubscribeTransactionHash: BlocknativeEndpoints['unsubscribeTransa
 				? { hash: input.hash, id: input.hash, status: 'unsubscribed' }
 				: { txid: input.hash, id: input.hash, status: 'unsubscribed' };
 
-		const response = {
+		const response = UnsubscribeTransactionHashOutputSchema.parse({
 			websocketUrl: BLOCKNATIVE_WS_URL,
-			initialize: initializeMessage(ctx.key, system, network),
-			unsubscribe: envelope(ctx.key, system, network, {
+			initialize: initializeMessage(system, network),
+			unsubscribe: envelope(system, network, {
 				categoryCode: 'activeTransaction',
 				eventCode: 'unwatch',
 				transaction,
 			}),
-		};
+		});
 		await logEventFromContext(
 			ctx,
 			'blocknative.mempool.unsubscribeTransactionHash',
@@ -120,7 +125,7 @@ export const subscribeMultichain: BlocknativeEndpoints['subscribeMultichain'] =
 		const network = ethNetworkName(chainId);
 		const subscribe =
 			input.type === 'account'
-				? envelope(ctx.key, 'ethereum', network, {
+				? envelope('ethereum', network, {
 						categoryCode: 'configs',
 						eventCode: 'put',
 						config: {
@@ -130,7 +135,7 @@ export const subscribeMultichain: BlocknativeEndpoints['subscribeMultichain'] =
 							watchAddress: true,
 						},
 					})
-				: envelope(ctx.key, 'ethereum', network, {
+				: envelope('ethereum', network, {
 						categoryCode: 'activeTransaction',
 						eventCode: 'txSent',
 						transaction: {
@@ -141,11 +146,11 @@ export const subscribeMultichain: BlocknativeEndpoints['subscribeMultichain'] =
 						},
 					});
 
-		const response = {
+		const response = SubscribeMultichainOutputSchema.parse({
 			websocketUrl: BLOCKNATIVE_WS_URL,
-			initialize: initializeMessage(ctx.key, 'ethereum', network),
+			initialize: initializeMessage('ethereum', network),
 			subscribe,
-		};
+		});
 		await logEventFromContext(
 			ctx,
 			'blocknative.multichain.subscribe',
@@ -157,11 +162,12 @@ export const subscribeMultichain: BlocknativeEndpoints['subscribeMultichain'] =
 
 export const unsubscribeMultichain: BlocknativeEndpoints['unsubscribeMultichain'] =
 	async (ctx, input) => {
-		const response = {
+		if (input.chainId) parseHexChainId(input.chainId);
+		const response = UnsubscribeMultichainOutputSchema.parse({
 			id: input.id,
 			...(input.chainId ? { chainId: input.chainId } : {}),
 			sdkCall: 'unsubscribe' as const,
-		};
+		});
 		await logEventFromContext(
 			ctx,
 			'blocknative.multichain.unsubscribe',
