@@ -272,7 +272,7 @@ export const ProviderDisplayNames = {
 	bigdatacloud: 'BigDataCloud',
 	bigmailer: 'BigMailer',
 	bigml: 'BigML',
-	bigpictureio: 'Bigpictureio',
+	bigpictureio: 'BigPicture.io',
 	bitbucket: 'Bitbucket',
 	bitwarden: 'Bitwarden',
 	blazemeter: 'BlazeMeter',

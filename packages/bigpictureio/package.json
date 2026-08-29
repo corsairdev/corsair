@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/bigpictureio",
   "version": "0.1.0",
-  "description": "Bigpictureio plugin for Corsair",
+  "description": "BigPicture.io plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

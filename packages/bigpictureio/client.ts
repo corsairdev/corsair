@@ -1,5 +1,10 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class BigpictureioAPIError extends Error {
 	constructor(
@@ -11,8 +16,17 @@ export class BigpictureioAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
 const BIGPICTUREIO_API_BASE = 'https://company.bigpicture.io';
+
+const BIGPICTUREIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: false,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
 
 export async function makeBigpictureioRequest<T>(
 	endpoint: string,
@@ -23,6 +37,10 @@ export async function makeBigpictureioRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
+	if (!apiKey) {
+		throw new AuthMissingError('bigpictureio', 'api_key');
+	}
+
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
@@ -30,7 +48,6 @@ export async function makeBigpictureioRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: apiKey,
@@ -46,11 +63,19 @@ export async function makeBigpictureioRequest<T>(
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query: method === 'GET' ? query : undefined,
+		errors: {
+			202: 'Company lookup is still processing',
+		},
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: BIGPICTUREIO_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
+		if (error instanceof ApiError || error instanceof AuthMissingError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new BigpictureioAPIError(error.message);
 		}

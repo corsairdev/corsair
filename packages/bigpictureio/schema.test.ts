@@ -1,20 +1,20 @@
+import { bigpictureio } from './index';
 import { BigpictureioSchema } from './schema';
 
-describe('Bigpictureio schema', () => {
+describe('Bigpictureio schema and plugin', () => {
 	it('declares a semver version', () => {
 		expect(BigpictureioSchema.version).toBeDefined();
 		expect(BigpictureioSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof BigpictureioSchema.entities).toBe('object');
-		expect(BigpictureioSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(BigpictureioSchema.entities))).toBe(true);
-		for (const entity of Object.values(BigpictureioSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares an empty entities map', () => {
+		expect(BigpictureioSchema.entities).toEqual({});
+	});
+
+	it('instantiates with an api key and company.find', () => {
+		const plugin = bigpictureio({ key: 'test_api_key' });
+		expect(plugin.id).toBe('bigpictureio');
+		expect(typeof plugin.endpoints?.company.find).toBe('function');
+		expect(plugin.webhooks).toEqual({});
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
