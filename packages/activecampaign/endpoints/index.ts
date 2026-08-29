@@ -1,0 +1,21 @@
+import * as AccountsEndpoints from './accounts';
+import * as ContactsEndpoints from './contacts';
+import * as ContentEndpoints from './content';
+import * as DealsEndpoints from './deals';
+import * as FieldsEndpoints from './fields';
+import * as ImportsEndpoints from './imports';
+import * as ListsEndpoints from './lists';
+import * as PlatformEndpoints from './platform';
+import * as SegmentsV2Endpoints from './segments-v2';
+import * as TagsEndpoints from './tags';
+
+export const Accounts = AccountsEndpoints;
+export const Contacts = ContactsEndpoints;
+export const Content = ContentEndpoints;
+export const Deals = DealsEndpoints;
+export const Lists = ListsEndpoints;
+export const Platform = PlatformEndpoints;
+export const SegmentsV2 = SegmentsV2Endpoints;
+export const Tags = TagsEndpoints;
+export const Fields = FieldsEndpoints;
+export const Imports = ImportsEndpoints;

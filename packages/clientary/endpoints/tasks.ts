@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import { getClientaryCredentials, makeClientaryRequest } from '../client';
 import type { ClientaryEndpoints } from '../index';
+import { cacheRecord, cacheRecords, evictEntity } from './persist';
 import type { ClientaryTask } from './types';
 import {
 	ClientaryDeleteResponseSchema,
@@ -20,19 +21,16 @@ export const list: ClientaryEndpoints['tasksList'] = async (ctx, input) => {
 
 	const response = await makeClientaryRequest<
 		z.infer<typeof ClientaryEndpointOutputSchemas.tasksList>
-	>('tasks', apiKey, domain);
+	>('tasks', apiKey, domain, {
+		query: {
+			page: input.page,
+			page_size: input.page_size,
+		},
+	});
 
 	const parsed = ClientaryEndpointOutputSchemas.tasksList.parse(response);
 
-	if (ctx.db.tasks) {
-		try {
-			for (const task of parsed.tasks) {
-				await ctx.db.tasks.upsertByEntityId(String(task.id), { ...task });
-			}
-		} catch (error) {
-			console.warn('Failed to save tasks to database:', error);
-		}
-	}
+	await cacheRecords(ctx.db.tasks, parsed.tasks, 'task');
 
 	await logEventFromContext(
 		ctx,
@@ -57,20 +55,17 @@ export const listForProject: ClientaryEndpoints['tasksListForProject'] = async (
 
 	const response = await makeClientaryRequest<
 		z.infer<typeof ClientaryEndpointOutputSchemas.tasksListForProject>
-	>(`projects/${input.project_id}/tasks`, apiKey, domain);
+	>(`projects/${input.project_id}/tasks`, apiKey, domain, {
+		query: {
+			page: input.page,
+			page_size: input.page_size,
+		},
+	});
 
 	const parsed =
 		ClientaryEndpointOutputSchemas.tasksListForProject.parse(response);
 
-	if (ctx.db.tasks) {
-		try {
-			for (const task of parsed.tasks) {
-				await ctx.db.tasks.upsertByEntityId(String(task.id), { ...task });
-			}
-		} catch (error) {
-			console.warn('Failed to save tasks to database:', error);
-		}
-	}
+	await cacheRecords(ctx.db.tasks, parsed.tasks, 'task');
 
 	await logEventFromContext(
 		ctx,
@@ -98,13 +93,7 @@ export const get: ClientaryEndpoints['tasksGet'] = async (ctx, input) => {
 
 	const parsed = ClientaryTaskSchema.parse(response);
 
-	if (ctx.db.tasks) {
-		try {
-			await ctx.db.tasks.upsertByEntityId(String(parsed.id), { ...parsed });
-		} catch (error) {
-			console.warn('Failed to save task to database:', error);
-		}
-	}
+	await cacheRecord(ctx.db.tasks, parsed, 'task');
 
 	await logEventFromContext(
 		ctx,
@@ -118,14 +107,14 @@ export const get: ClientaryEndpoints['tasksGet'] = async (ctx, input) => {
 /**
  * Create a new task. `title` is required.
  *
- * API: POST /api/v2/tasks
+ * API: POST /api/v2/task
  * Docs: https://www.clientary.com/api/tasks
  */
 export const create: ClientaryEndpoints['tasksCreate'] = async (ctx, input) => {
 	const { apiKey, domain } = await getClientaryCredentials(ctx);
 
 	const response = await makeClientaryRequest<ClientaryTask>(
-		'tasks',
+		'task',
 		apiKey,
 		domain,
 		{ method: 'POST', body: { task: { ...input } } },
@@ -133,18 +122,12 @@ export const create: ClientaryEndpoints['tasksCreate'] = async (ctx, input) => {
 
 	const parsed = ClientaryTaskSchema.parse(response);
 
-	if (ctx.db.tasks) {
-		try {
-			await ctx.db.tasks.upsertByEntityId(String(parsed.id), { ...parsed });
-		} catch (error) {
-			console.warn('Failed to save task to database:', error);
-		}
-	}
+	await cacheRecord(ctx.db.tasks, parsed, 'task');
 
 	await logEventFromContext(
 		ctx,
 		'clientary.tasks.create',
-		{ ...input },
+		{ id: parsed.id },
 		'completed',
 	);
 	return parsed;
@@ -169,13 +152,7 @@ export const update: ClientaryEndpoints['tasksUpdate'] = async (ctx, input) => {
 
 	const parsed = ClientaryTaskSchema.parse(response);
 
-	if (ctx.db.tasks) {
-		try {
-			await ctx.db.tasks.upsertByEntityId(String(parsed.id), { ...parsed });
-		} catch (error) {
-			console.warn('Failed to save task to database:', error);
-		}
-	}
+	await cacheRecord(ctx.db.tasks, parsed, 'task');
 
 	await logEventFromContext(ctx, 'clientary.tasks.update', { id }, 'completed');
 	return parsed;
@@ -195,6 +172,8 @@ export const remove: ClientaryEndpoints['tasksDelete'] = async (ctx, input) => {
 	await makeClientaryRequest<unknown>(`tasks/${input.id}`, apiKey, domain, {
 		method: 'DELETE',
 	});
+
+	await evictEntity(ctx.db.tasks, input.id, 'task');
 
 	const result = ClientaryDeleteResponseSchema.parse({
 		success: true,

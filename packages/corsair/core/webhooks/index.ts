@@ -31,6 +31,12 @@ export type WebhookRequest<TPayload = unknown> = {
 	rawBody?: string;
 	/** Query string parameters when available. */
 	query?: Record<string, string | string[] | undefined>;
+	/**
+	 * Set by processWebhook when the Hub already verified the provider
+	 * signature (delivery arrived under a valid x-corsair-signature). When
+	 * true, per-plugin webhook signature verification is skipped.
+	 */
+	hubVerified?: boolean;
 };
 
 /**

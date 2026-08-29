@@ -73,7 +73,16 @@ export async function tryGetStoredValue(
  * Every Clientary account has its own subdomain:
  * `https://{yourdomain}.clientary.com/api/v2`.
  */
+const CLIENTARY_SUBDOMAIN = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i;
+
+function assertClientarySubdomain(domain: string): void {
+	if (!CLIENTARY_SUBDOMAIN.test(domain)) {
+		throw new Error('Clientary subdomain is invalid');
+	}
+}
+
 export function getClientaryBaseUrl(domain: string): string {
+	assertClientarySubdomain(domain);
 	return `https://${domain}.clientary.com/api/v2`;
 }
 
@@ -120,6 +129,8 @@ export async function getClientaryCredentials(
 			'Clientary subdomain is not configured. Provide it via the `domain` plugin option or store the account subdomain.',
 		);
 	}
+
+	assertClientarySubdomain(domain);
 
 	return { apiKey: ctx.key, domain };
 }

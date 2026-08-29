@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import { getClientaryCredentials, makeClientaryRequest } from '../client';
 import type { ClientaryEndpoints } from '../index';
+import { cacheRecord, cacheRecords, evictEntity } from './persist';
 import type { ClientaryContact } from './types';
 import {
 	ClientaryContactSchema,
@@ -29,17 +30,7 @@ export const list: ClientaryEndpoints['contactsList'] = async (ctx, input) => {
 
 	const parsed = ClientaryEndpointOutputSchemas.contactsList.parse(response);
 
-	if (ctx.db.contacts) {
-		try {
-			for (const contact of parsed.contacts) {
-				await ctx.db.contacts.upsertByEntityId(String(contact.id), {
-					...contact,
-				});
-			}
-		} catch (error) {
-			console.warn('Failed to save contacts to database:', error);
-		}
-	}
+	await cacheRecords(ctx.db.contacts, parsed.contacts, 'contact');
 
 	await logEventFromContext(
 		ctx,
@@ -62,22 +53,17 @@ export const listForClient: ClientaryEndpoints['contactsListForClient'] =
 
 		const response = await makeClientaryRequest<
 			z.infer<typeof ClientaryEndpointOutputSchemas.contactsListForClient>
-		>(`clients/${input.client_id}/contacts`, apiKey, domain);
+		>(`clients/${input.client_id}/contacts`, apiKey, domain, {
+			query: {
+				page: input.page,
+				page_size: input.page_size,
+			},
+		});
 
 		const parsed =
 			ClientaryEndpointOutputSchemas.contactsListForClient.parse(response);
 
-		if (ctx.db.contacts) {
-			try {
-				for (const contact of parsed.contacts) {
-					await ctx.db.contacts.upsertByEntityId(String(contact.id), {
-						...contact,
-					});
-				}
-			} catch (error) {
-				console.warn('Failed to save contacts to database:', error);
-			}
-		}
+		await cacheRecords(ctx.db.contacts, parsed.contacts, 'contact');
 
 		await logEventFromContext(
 			ctx,
@@ -105,13 +91,7 @@ export const get: ClientaryEndpoints['contactsGet'] = async (ctx, input) => {
 
 	const parsed = ClientaryContactSchema.parse(response);
 
-	if (ctx.db.contacts) {
-		try {
-			await ctx.db.contacts.upsertByEntityId(String(parsed.id), { ...parsed });
-		} catch (error) {
-			console.warn('Failed to save contact to database:', error);
-		}
-	}
+	await cacheRecord(ctx.db.contacts, parsed, 'contact');
 
 	await logEventFromContext(
 		ctx,
@@ -125,7 +105,7 @@ export const get: ClientaryEndpoints['contactsGet'] = async (ctx, input) => {
 /**
  * Create a new contact. `client_id` and `name` are required.
  *
- * API: POST /api/v2/contacts
+ * API: POST /api/v2/clients/:client_id/contacts
  * Docs: https://www.clientary.com/api/contacts
  */
 export const create: ClientaryEndpoints['contactsCreate'] = async (
@@ -133,28 +113,23 @@ export const create: ClientaryEndpoints['contactsCreate'] = async (
 	input,
 ) => {
 	const { apiKey, domain } = await getClientaryCredentials(ctx);
+	const { client_id, ...fields } = input;
 
 	const response = await makeClientaryRequest<ClientaryContact>(
-		'contacts',
+		`clients/${client_id}/contacts`,
 		apiKey,
 		domain,
-		{ method: 'POST', body: { contact: { ...input } } },
+		{ method: 'POST', body: { client_user: { ...fields } } },
 	);
 
 	const parsed = ClientaryContactSchema.parse(response);
 
-	if (ctx.db.contacts) {
-		try {
-			await ctx.db.contacts.upsertByEntityId(String(parsed.id), { ...parsed });
-		} catch (error) {
-			console.warn('Failed to save contact to database:', error);
-		}
-	}
+	await cacheRecord(ctx.db.contacts, parsed, 'contact');
 
 	await logEventFromContext(
 		ctx,
 		'clientary.contacts.create',
-		{ ...input },
+		{ id: parsed.id, client_id: parsed.client_id },
 		'completed',
 	);
 	return parsed;
@@ -182,13 +157,7 @@ export const update: ClientaryEndpoints['contactsUpdate'] = async (
 
 	const parsed = ClientaryContactSchema.parse(response);
 
-	if (ctx.db.contacts) {
-		try {
-			await ctx.db.contacts.upsertByEntityId(String(parsed.id), { ...parsed });
-		} catch (error) {
-			console.warn('Failed to save contact to database:', error);
-		}
-	}
+	await cacheRecord(ctx.db.contacts, parsed, 'contact');
 
 	await logEventFromContext(
 		ctx,
@@ -216,6 +185,8 @@ export const remove: ClientaryEndpoints['contactsDelete'] = async (
 	await makeClientaryRequest<unknown>(`contacts/${input.id}`, apiKey, domain, {
 		method: 'DELETE',
 	});
+
+	await evictEntity(ctx.db.contacts, input.id, 'contact');
 
 	const result = ClientaryDeleteResponseSchema.parse({
 		success: true,

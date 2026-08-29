@@ -8,6 +8,19 @@ const Id = z.number().int().positive();
 const OptionalId = Id.nullable().optional();
 const NullableString = z.string().nullable().optional();
 const FlexNumber = z.union([z.number(), z.string()]);
+const Page = z
+	.number()
+	.int()
+	.min(1)
+	.optional()
+	.describe('Page number (starts at 1)');
+const PageSize = z
+	.number()
+	.int()
+	.min(1)
+	.max(100)
+	.optional()
+	.describe('Results per page (max 100)');
 const DeleteSuccess = z.object({
 	success: z.literal(true),
 	id: z.number().int().positive(),
@@ -150,6 +163,8 @@ export const ContactsListResponseSchema = z
 
 export const ContactsListForClientInputSchema = z.object({
 	client_id: Id.describe('Client ID to scope contacts by'),
+	page: Page,
+	page_size: PageSize,
 });
 
 export const ClientaryContactInputSchema = z.object({
@@ -240,9 +255,13 @@ export const EstimatesListResponseSchema = z
 
 export const EstimatesListForClientInputSchema = z.object({
 	client_id: Id.describe('Client ID to scope estimates by'),
+	page: Page,
+	page_size: PageSize,
 });
 export const EstimatesListForProjectInputSchema = z.object({
 	project_id: Id.describe('Project ID to scope estimates by'),
+	page: Page,
+	page_size: PageSize,
 });
 
 export const EstimateItemAttributesSchema = z.object({
@@ -352,9 +371,13 @@ export const ExpensesListResponseSchema = z
 
 export const ExpensesListForClientInputSchema = z.object({
 	client_id: Id.describe('Client ID to scope expenses by'),
+	page: Page,
+	page_size: PageSize,
 });
 export const ExpensesListForProjectInputSchema = z.object({
 	project_id: Id.describe('Project ID to scope expenses by'),
+	page: Page,
+	page_size: PageSize,
 });
 
 export const ClientaryExpenseInputSchema = z.object({
@@ -402,6 +425,8 @@ export const ClientaryHourSchema = z
 
 export const HoursListForProjectInputSchema = z.object({
 	project_id: Id.describe('Project ID to scope hours by'),
+	page: Page,
+	page_size: PageSize,
 	filter: z
 		.union([z.literal('billed'), z.literal('unbilled')])
 		.optional()
@@ -528,12 +553,18 @@ export const InvoicesListResponseSchema = z
 
 export const InvoicesListForClientInputSchema = z.object({
 	client_id: Id.describe('Client ID to scope invoices by'),
+	page: Page,
+	page_size: PageSize,
 });
 export const InvoicesListForProjectInputSchema = z.object({
 	project_id: Id.describe('Project ID to scope invoices by'),
+	page: Page,
+	page_size: PageSize,
 });
 export const InvoicesListForRecurringInputSchema = z.object({
 	recurring_id: Id.describe('Recurring schedule ID to scope invoices by'),
+	page: Page,
+	page_size: PageSize,
 });
 
 export const InvoiceItemAttributesSchema = z.object({
@@ -741,6 +772,8 @@ export const ClientaryPaymentProfileSchema = z
 
 export const PaymentProfilesListForClientInputSchema = z.object({
 	client_id: Id.describe('Client ID to scope payment profiles by'),
+	page: Page,
+	page_size: PageSize,
 });
 
 export const PaymentProfilesListResponseSchema = z
@@ -834,6 +867,8 @@ export const ProjectsListResponseSchema = z
 
 export const ProjectsListForClientInputSchema = z.object({
 	client_id: Id.describe('Client ID to scope projects by'),
+	page: Page,
+	page_size: PageSize,
 });
 
 export const ClientaryProjectInputSchema = z.object({
@@ -1034,7 +1069,7 @@ export type ClientaryStaff = z.infer<typeof ClientaryStaffSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TASKS — GET /tasks, GET /projects/:project_id/tasks,
-// GET/PUT/DELETE /tasks/:id, POST /tasks
+// GET/PUT/DELETE /tasks/:id, POST /task
 // Docs: https://www.clientary.com/api/tasks
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -1055,7 +1090,10 @@ export const ClientaryTaskSchema = z
 	})
 	.loose();
 
-export const TasksListInputSchema = z.object({});
+export const TasksListInputSchema = z.object({
+	page: Page,
+	page_size: PageSize,
+});
 
 export const TasksListResponseSchema = z
 	.object({
@@ -1068,6 +1106,8 @@ export const TasksListResponseSchema = z
 
 export const TasksListForProjectInputSchema = z.object({
 	project_id: Id.describe('Project ID to scope tasks by'),
+	page: Page,
+	page_size: PageSize,
 });
 
 export const ClientaryTaskInputSchema = z.object({

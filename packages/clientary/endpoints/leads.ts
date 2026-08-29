@@ -86,7 +86,7 @@ export const create: ClientaryEndpoints['leadsCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'clientary.leads.create',
-		{ ...input },
+		{ id: parsed.id },
 		'completed',
 	);
 	return parsed;

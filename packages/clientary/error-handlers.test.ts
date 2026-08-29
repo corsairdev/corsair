@@ -1,7 +1,17 @@
+import type { ErrorContext } from 'corsair/core';
 import type { ApiRequestOptions, ApiResult } from 'corsair/http';
 import { ApiError } from 'corsair/http';
 import { ClientaryAPIError } from './client';
 import { errorHandlers } from './error-handlers';
+
+function makeContext(operation: string): ErrorContext {
+	return {
+		pluginId: 'clientary',
+		operation,
+		input: {},
+		originalError: new Error(operation),
+	};
+}
 
 function makeClientaryError(
 	status: number | undefined,
@@ -32,7 +42,10 @@ describe('Clientary error handlers', () => {
 			retryAfter: 5000,
 		});
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
-		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+			error,
+			makeContext('clients.list'),
+		);
 		expect(result.maxRetries).toBe(3);
 		expect(result.retryStrategy).toBe('exponential_backoff');
 		expect(result.headersRetryAfterMs).toBe(5000);
@@ -81,9 +94,40 @@ describe('Clientary error handlers', () => {
 	it('retries 5xx server errors up to 2 times', async () => {
 		const error = makeClientaryError(500, 'Internal Server Error');
 		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
-		const result = await errorHandlers.SERVER_ERROR.handler(error);
+		const result = await errorHandlers.SERVER_ERROR.handler(
+			error,
+			makeContext('clients.list'),
+		);
 		expect(result.maxRetries).toBe(2);
 		expect(result.retryStrategy).toBe('exponential_backoff');
+	});
+
+	it.each([
+		'invoices.create',
+		'invoices.send',
+		'payments.create',
+		'clients.delete',
+	])('does not retry 429 on %s', async (operation) => {
+		const error = makeClientaryError(429, 'Rate limit exceeded');
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+			error,
+			makeContext(operation),
+		);
+		expect(result.maxRetries).toBe(0);
+	});
+
+	it.each([
+		'invoices.create',
+		'invoices.send',
+		'payments.create',
+		'clients.delete',
+	])('does not retry 5xx on %s', async (operation) => {
+		const error = makeClientaryError(500, 'Internal Server Error');
+		const result = await errorHandlers.SERVER_ERROR.handler(
+			error,
+			makeContext(operation),
+		);
+		expect(result.maxRetries).toBe(0);
 	});
 
 	it('treats any other error as a default no-retry failure', async () => {
@@ -100,5 +144,22 @@ describe('Clientary error handlers', () => {
 			return h.match(error);
 		});
 		expect(matches.map(([name]) => name)).toEqual(['AUTH_ERROR']);
+	});
+
+	it('does not classify a 500 as NOT_FOUND just because the body mentions not found', () => {
+		const error = makeClientaryError(500, 'internal: widget not found');
+		expect(errorHandlers.NOT_FOUND_ERROR.match(error)).toBe(false);
+		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
+	});
+
+	it('does not classify a 500 as VALIDATION just because the body mentions unprocessable', () => {
+		const error = makeClientaryError(500, 'unprocessable downstream');
+		expect(errorHandlers.VALIDATION_ERROR.match(error)).toBe(false);
+		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
+	});
+
+	it('still matches not found by message when no status is present', () => {
+		const error = makeClientaryError(undefined, 'record not found');
+		expect(errorHandlers.NOT_FOUND_ERROR.match(error)).toBe(true);
 	});
 });

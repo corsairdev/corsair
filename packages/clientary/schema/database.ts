@@ -44,6 +44,7 @@ const ClientaryProjectEntitySchema = z
 		currency_code: z.string().nullable().optional(),
 		start_date: z.string().nullable().optional(),
 		end_date: z.string().nullable().optional(),
+		client_id: ClientaryIdSchema.nullable().optional(),
 	})
 	.loose();
 

@@ -1,0 +1,78 @@
+import type { WebflowOperation } from '../endpoints/operation-types';
+
+export const assetsOperations = [
+	{
+		key: 'listAssets',
+		group: 'assets',
+		name: 'listAssets',
+		method: 'GET',
+		path: '/sites/{site_id}/assets',
+		pathParams: ['site_id'],
+		riskLevel: 'read',
+		description: 'List all assets uploaded to a site with pagination',
+	},
+	{
+		key: 'uploadAsset',
+		group: 'assets',
+		name: 'uploadAsset',
+		method: 'POST',
+		path: '/sites/{site_id}/assets',
+		pathParams: ['site_id'],
+		riskLevel: 'write',
+		description:
+			'Register an asset upload and receive a pre-signed S3 upload URL. The file itself is uploaded to S3 in a second step',
+	},
+	{
+		key: 'getAsset',
+		group: 'assets',
+		name: 'getAsset',
+		method: 'GET',
+		path: '/assets/{asset_id}',
+		pathParams: ['asset_id'],
+		riskLevel: 'read',
+		description:
+			'Get details about a specific asset including content type, size, and hosted URLs',
+	},
+	{
+		key: 'deleteAsset',
+		group: 'assets',
+		name: 'deleteAsset',
+		method: 'DELETE',
+		path: '/assets/{asset_id}',
+		pathParams: ['asset_id'],
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete an asset from a site',
+	},
+	{
+		key: 'listAssetFolders',
+		group: 'assets',
+		name: 'listAssetFolders',
+		method: 'GET',
+		path: '/sites/{site_id}/asset_folders',
+		pathParams: ['site_id'],
+		riskLevel: 'read',
+		description: 'List all asset folders within a site',
+	},
+	{
+		key: 'createAssetFolder',
+		group: 'assets',
+		name: 'createAssetFolder',
+		method: 'POST',
+		path: '/sites/{site_id}/asset_folders',
+		pathParams: ['site_id'],
+		riskLevel: 'write',
+		description: 'Create a new asset folder within a site',
+	},
+	{
+		key: 'getAssetFolder',
+		group: 'assets',
+		name: 'getAssetFolder',
+		method: 'GET',
+		path: '/asset_folders/{asset_folder_id}',
+		pathParams: ['asset_folder_id'],
+		riskLevel: 'read',
+		description:
+			'Get details about a specific asset folder including its assets and parent folder',
+	},
+] as const satisfies readonly WebflowOperation[];

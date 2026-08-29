@@ -27,6 +27,13 @@ describe('getClientaryBaseUrl', () => {
 			'https://my-account.clientary.com/api/v2',
 		);
 	});
+
+	it.each(['evil.com/foo', '169.254.169.254', 'acme?x', 'acme#frag', '-acme'])(
+		'rejects %s as a subdomain',
+		(domain) => {
+			expect(() => getClientaryBaseUrl(domain)).toThrow(/invalid/);
+		},
+	);
 });
 
 describe('tryGetStoredValue', () => {
@@ -101,6 +108,15 @@ describe('getClientaryCredentials', () => {
 				keys: { get_domain: () => Promise.resolve(null) },
 			}),
 		).rejects.toThrow(/subdomain is not configured/);
+	});
+
+	it('rejects a stored domain that is not a single DNS label', async () => {
+		await expect(
+			getClientaryCredentials({
+				key: 'token-123',
+				keys: { get_domain: () => Promise.resolve('evil.com/foo') },
+			}),
+		).rejects.toThrow(/invalid/);
 	});
 
 	it('treats a missing DEK as "no stored domain"', async () => {

@@ -25,7 +25,9 @@ describe('Bitwarden API Type Tests', () => {
 				'/public/organizations',
 				TEST_TOKEN,
 			);
-			BitwardenEndpointOutputSchemas.organizationsList.parse(response);
+			expect(
+				BitwardenEndpointOutputSchemas.organizationsList.parse(response),
+			).toEqual(response);
 		});
 
 		it('organizationsGet returns correct type', async () => {
@@ -34,7 +36,9 @@ describe('Bitwarden API Type Tests', () => {
 					`/public/organizations/${TEST_ORGANIZATION_ID}`,
 					TEST_TOKEN,
 				);
-				BitwardenEndpointOutputSchemas.organizationsGet.parse(response);
+				expect(
+					BitwardenEndpointOutputSchemas.organizationsGet.parse(response),
+				).toEqual(response);
 			} else {
 				const listResponse =
 					await makeBitwardenRequest<OrganizationsListResponse>(
@@ -50,7 +54,9 @@ describe('Bitwarden API Type Tests', () => {
 					`/public/organizations/${orgId}`,
 					TEST_TOKEN,
 				);
-				BitwardenEndpointOutputSchemas.organizationsGet.parse(response);
+				expect(
+					BitwardenEndpointOutputSchemas.organizationsGet.parse(response),
+				).toEqual(response);
 			}
 		});
 	});
@@ -62,7 +68,9 @@ describe('Bitwarden API Type Tests', () => {
 					'/public/collections',
 					TEST_TOKEN,
 				);
-				BitwardenEndpointOutputSchemas.collectionsList.parse(response);
+				expect(
+					BitwardenEndpointOutputSchemas.collectionsList.parse(response),
+				).toEqual(response);
 			} catch (e) {
 				console.warn(
 					'collectionsList failed, this might require a specific org context',
@@ -86,7 +94,9 @@ describe('Bitwarden API Type Tests', () => {
 					`/public/collections/${colId}`,
 					TEST_TOKEN,
 				);
-				BitwardenEndpointOutputSchemas.collectionsGet.parse(response);
+				expect(
+					BitwardenEndpointOutputSchemas.collectionsGet.parse(response),
+				).toEqual(response);
 			} catch (e) {
 				console.warn('collectionsGet failed', e);
 			}
@@ -100,7 +110,9 @@ describe('Bitwarden API Type Tests', () => {
 					'/public/members',
 					TEST_TOKEN,
 				);
-				BitwardenEndpointOutputSchemas.membersList.parse(response);
+				expect(
+					BitwardenEndpointOutputSchemas.membersList.parse(response),
+				).toEqual(response);
 			} catch (e) {
 				console.warn('membersList failed', e);
 			}
@@ -120,7 +132,9 @@ describe('Bitwarden API Type Tests', () => {
 					`/public/members/${memId}`,
 					TEST_TOKEN,
 				);
-				BitwardenEndpointOutputSchemas.membersGet.parse(response);
+				expect(
+					BitwardenEndpointOutputSchemas.membersGet.parse(response),
+				).toEqual(response);
 			} catch (e) {
 				console.warn('membersGet failed', e);
 			}

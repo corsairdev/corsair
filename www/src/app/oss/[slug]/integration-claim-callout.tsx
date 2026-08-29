@@ -14,7 +14,6 @@ export function IntegrationClaimCallout({
 	points,
 	session,
 	canClaimAnother = true,
-	wipIntegrationName,
 	claimBlockReason,
 }: {
 	integrationId: string;
@@ -23,7 +22,6 @@ export function IntegrationClaimCallout({
 	points: number;
 	session: boolean;
 	canClaimAnother?: boolean;
-	wipIntegrationName?: string | null;
 	claimBlockReason?: ClaimBlockReason | null;
 }) {
 	return (
@@ -54,7 +52,6 @@ export function IntegrationClaimCallout({
 								integrationSlug={integrationSlug}
 								size="lg"
 								disabled={!canClaimAnother}
-								wipIntegrationName={wipIntegrationName}
 								claimBlockReason={claimBlockReason}
 							/>
 						) : (

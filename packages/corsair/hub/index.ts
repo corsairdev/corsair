@@ -24,6 +24,17 @@
  */
 export { formatProviderDisplayName } from '../core/constants';
 export {
+	type AgentMessageRole,
+	type AgentReply,
+	type ChatMessage,
+	type ChatSummary,
+	type CreateChatResult,
+	createChat,
+	listChatMessages,
+	listChats,
+	postChatMessage,
+} from './chats';
+export {
 	buildClientBridgeBrowserDeliveryUrl,
 	type ClientBridgeDeliverySpec,
 	type ClientBridgeTransportResult,
@@ -174,17 +185,6 @@ export {
 	encryptSyncManifest,
 	parseSyncDeliveryBody,
 } from './sync-payload';
-export {
-	type AgentMessageRole,
-	type AgentReply,
-	type CreateThreadResult,
-	createThread,
-	listThreadMessages,
-	listThreads,
-	postThreadMessage,
-	type ThreadMessage,
-	type ThreadSummary,
-} from './threads';
 export type {
 	CreateConnectSessionRequestBody,
 	CreatePermissionSessionRequestBody,

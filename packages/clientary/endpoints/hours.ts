@@ -24,7 +24,11 @@ export const listForProject: ClientaryEndpoints['hoursListForProject'] = async (
 	const response = await makeClientaryRequest<
 		z.infer<typeof ClientaryEndpointOutputSchemas.hoursListForProject>
 	>(`projects/${input.project_id}/hours`, apiKey, domain, {
-		query: { filter: input.filter },
+		query: {
+			page: input.page,
+			page_size: input.page_size,
+			filter: input.filter,
+		},
 	});
 
 	const parsed =

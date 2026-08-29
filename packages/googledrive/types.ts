@@ -251,6 +251,18 @@ export type SharedDriveList = {
 	drives?: SharedDrive[];
 };
 
+export type StorageQuota = {
+	limit?: string;
+	usage: string;
+	usageInDrive: string;
+	usageInDriveTrash: string;
+};
+
+export type About = {
+	kind?: string;
+	storageQuota?: StorageQuota;
+};
+
 export type CreateFileRequest = {
 	name?: string;
 	mimeType?: string;

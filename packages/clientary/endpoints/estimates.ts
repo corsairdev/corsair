@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import { getClientaryCredentials, makeClientaryRequest } from '../client';
 import type { ClientaryEndpoints } from '../index';
+import { cacheRecord, cacheRecords, evictEntity } from './persist';
 import type { ClientaryEstimate } from './types';
 import {
 	ClientaryDeleteResponseSchema,
@@ -27,6 +28,8 @@ export const list: ClientaryEndpoints['estimatesList'] = async (ctx, input) => {
 
 	const parsed = ClientaryEndpointOutputSchemas.estimatesList.parse(response);
 
+	await cacheRecords(ctx.db.estimates, parsed.estimates, 'estimate');
+
 	await logEventFromContext(
 		ctx,
 		'clientary.estimates.list',
@@ -48,10 +51,17 @@ export const listForClient: ClientaryEndpoints['estimatesListForClient'] =
 
 		const response = await makeClientaryRequest<
 			z.infer<typeof ClientaryEndpointOutputSchemas.estimatesListForClient>
-		>(`clients/${input.client_id}/estimates`, apiKey, domain);
+		>(`clients/${input.client_id}/estimates`, apiKey, domain, {
+			query: {
+				page: input.page,
+				page_size: input.page_size,
+			},
+		});
 
 		const parsed =
 			ClientaryEndpointOutputSchemas.estimatesListForClient.parse(response);
+
+		await cacheRecords(ctx.db.estimates, parsed.estimates, 'estimate');
 
 		await logEventFromContext(
 			ctx,
@@ -74,10 +84,17 @@ export const listForProject: ClientaryEndpoints['estimatesListForProject'] =
 
 		const response = await makeClientaryRequest<
 			z.infer<typeof ClientaryEndpointOutputSchemas.estimatesListForProject>
-		>(`projects/${input.project_id}/estimates`, apiKey, domain);
+		>(`projects/${input.project_id}/estimates`, apiKey, domain, {
+			query: {
+				page: input.page,
+				page_size: input.page_size,
+			},
+		});
 
 		const parsed =
 			ClientaryEndpointOutputSchemas.estimatesListForProject.parse(response);
+
+		await cacheRecords(ctx.db.estimates, parsed.estimates, 'estimate');
 
 		await logEventFromContext(
 			ctx,
@@ -104,6 +121,8 @@ export const get: ClientaryEndpoints['estimatesGet'] = async (ctx, input) => {
 	);
 
 	const parsed = ClientaryEstimateSchema.parse(response);
+
+	await cacheRecord(ctx.db.estimates, parsed, 'estimate');
 
 	await logEventFromContext(
 		ctx,
@@ -135,10 +154,12 @@ export const create: ClientaryEndpoints['estimatesCreate'] = async (
 
 	const parsed = ClientaryEstimateSchema.parse(response);
 
+	await cacheRecord(ctx.db.estimates, parsed, 'estimate');
+
 	await logEventFromContext(
 		ctx,
 		'clientary.estimates.create',
-		{ ...input },
+		{ id: parsed.id },
 		'completed',
 	);
 	return parsed;
@@ -167,6 +188,8 @@ export const update: ClientaryEndpoints['estimatesUpdate'] = async (
 
 	const parsed = ClientaryEstimateSchema.parse(response);
 
+	await cacheRecord(ctx.db.estimates, parsed, 'estimate');
+
 	await logEventFromContext(
 		ctx,
 		'clientary.estimates.update',
@@ -193,6 +216,8 @@ export const remove: ClientaryEndpoints['estimatesDelete'] = async (
 	await makeClientaryRequest<unknown>(`estimates/${input.id}`, apiKey, domain, {
 		method: 'DELETE',
 	});
+
+	await evictEntity(ctx.db.estimates, input.id, 'estimate');
 
 	const result = ClientaryDeleteResponseSchema.parse({
 		success: true,

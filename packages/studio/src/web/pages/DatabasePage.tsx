@@ -134,6 +134,7 @@ export function DatabasePage() {
 					</label>
 					<select
 						value={selectedTenant ?? ''}
+						aria-label="Tenant"
 						onChange={(e) => setSelectedTenant(e.target.value)}
 						className="h-8 min-w-[220px] px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] focus:outline-none focus:border-[var(--color-accent-dim)]"
 					>
@@ -150,6 +151,7 @@ export function DatabasePage() {
 					</div>
 					<div className="ml-auto w-[260px]">
 						<Input
+							aria-label="Search records"
 							placeholder="Search all payload fields…"
 							value={search}
 							onChange={(e) => setSearch(e.target.value)}
@@ -158,6 +160,7 @@ export function DatabasePage() {
 					<div className="flex items-center gap-2">
 						<select
 							value={sortField}
+							aria-label="Sort field"
 							onChange={(e) =>
 								setSortField(e.target.value as 'created_at' | 'updated_at')
 							}
@@ -168,6 +171,7 @@ export function DatabasePage() {
 						</select>
 						<button
 							type="button"
+							aria-label={`Sort direction: ${sortDirection}`}
 							onClick={() =>
 								setSortDirection((current) =>
 									current === 'asc' ? 'desc' : 'asc',

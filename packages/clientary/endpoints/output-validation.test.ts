@@ -152,6 +152,34 @@ describe('input validation rejects malformed agent inputs', () => {
 		).toThrow();
 	});
 
+	it('accepts page and page_size on scoped list inputs', () => {
+		expect(() =>
+			ClientaryEndpointInputSchemas.contactsListForClient.parse({
+				client_id: 3,
+				page: 2,
+				page_size: 10,
+			}),
+		).not.toThrow();
+		expect(() =>
+			ClientaryEndpointInputSchemas.tasksList.parse({
+				page: 1,
+				page_size: 25,
+			}),
+		).not.toThrow();
+	});
+
+	it('clamps page_size on scoped lists to a max of 100', () => {
+		expect(() =>
+			ClientaryEndpointInputSchemas.contactsListForClient.parse({
+				client_id: 3,
+				page_size: 500,
+			}),
+		).toThrow();
+		expect(() =>
+			ClientaryEndpointInputSchemas.tasksList.parse({ page_size: 500 }),
+		).toThrow();
+	});
+
 	it('requires positive integer ids for get operations', () => {
 		expect(() =>
 			ClientaryEndpointInputSchemas.clientsGet.parse({ id: 0 }),
