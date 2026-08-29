@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Clusters, Spaces } from './endpoints';
 import type {
 	BonsaiEndpointInputs,
@@ -105,7 +106,7 @@ const bonsaiEndpointMeta = {
 
 export const bonsaiAuthConfig = {
 	api_key: {
-		account: ['api_key', 'api_secret'] as const,
+		account: ['api_secret'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -137,15 +138,21 @@ export function bonsai<const T extends BonsaiPluginOptions>(
 		schema: BonsaiSchema,
 		options: options,
 		hooks: options.hooks,
+		webhookHooks: undefined,
 		endpoints: bonsaiEndpointsNested,
 		webhooks: {} as const,
 		endpointMeta: bonsaiEndpointMeta,
 		endpointSchemas: bonsaiEndpointSchemas,
 		webhookSchemas: {} as const,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		pluginWebhookMatcher: undefined,
+		errorHandlers: (() => {
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: BonsaiKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.apiKey && options.apiSecret) {
 				return JSON.stringify({
@@ -158,14 +165,12 @@ export function bonsai<const T extends BonsaiPluginOptions>(
 				const apiKey = await ctx.keys.get_api_key();
 				const apiSecret = await ctx.keys.get_api_secret();
 				if (!apiKey || !apiSecret) {
-					throw new Error(
-						'[auth-missing:bonsai] Bonsai API key and secret are required',
-					);
+					throw new AuthMissingError('bonsai', 'api_key');
 				}
 				return JSON.stringify({ apiKey, apiSecret });
 			}
 
-			throw new Error('[auth-missing:bonsai] Bonsai credentials are missing');
+			throw new AuthMissingError('bonsai', 'api_key');
 		},
 	} satisfies InternalBonsaiPlugin;
 }
