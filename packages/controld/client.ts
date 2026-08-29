@@ -51,6 +51,14 @@ export async function makeControlDRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		// Preserve framework ApiError metadata (status codes, retry-after headers, etc.)
+		// so Corsair can handle rate limits (429) and other HTTP errors correctly.
+		if (
+			error instanceof Error &&
+			('status' in error || error.name === 'ApiError')
+		) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new ControlDAPIError(error.message);
 		}
