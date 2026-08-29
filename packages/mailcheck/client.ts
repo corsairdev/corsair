@@ -84,11 +84,28 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 // to finish" (google.rpc code 9, FAILED_PRECONDITION).
 const BUSY_MESSAGE = 'wait for the running operation';
 
-function isOperationBusy(error: unknown): boolean {
+// ApiError.body preserves the parsed JSON object for JSON responses, so the
+// busy message can live in a nested error.message (google.rpc style) rather
+// than in raw response text. Serialize structured bodies so the match keeps
+// working; string bodies pass through unchanged.
+function serializeErrorBody(body: unknown): string {
+	if (typeof body === 'string') return body;
+	if (body === null || body === undefined) return '';
+	try {
+		return JSON.stringify(body);
+	} catch {
+		return String(body);
+	}
+}
+
+/**
+ * Detects the per-account single-operation 400 response. Exported for tests.
+ */
+export function isOperationBusy(error: unknown): boolean {
 	if (!(error instanceof ApiError) || error.status !== 400) return false;
 	// ApiError.message may be the plain 'Bad Request' status text while the
 	// response body carries the real google.rpc error message.
-	const haystack = `${error.message} ${String(error.body ?? '')}`;
+	const haystack = `${error.message} ${serializeErrorBody(error.body)}`;
 	return haystack.toLowerCase().includes(BUSY_MESSAGE);
 }
 

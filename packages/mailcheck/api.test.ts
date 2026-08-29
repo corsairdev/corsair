@@ -197,6 +197,34 @@ describe('Mailcheck endpoint contract (offline)', () => {
 			});
 			expect(result.success).toBe(false);
 		});
+
+		it('validateDomain rejects an email address', () => {
+			const result = MailcheckEndpointInputSchemas.validateDomain.safeParse({
+				domain: 'user@example.com',
+			});
+			expect(result.success).toBe(false);
+		});
+
+		it('validateDomain rejects a URL', () => {
+			const result = MailcheckEndpointInputSchemas.validateDomain.safeParse({
+				domain: 'https://example.com',
+			});
+			expect(result.success).toBe(false);
+		});
+
+		it('validateDomain rejects a value containing a path', () => {
+			const result = MailcheckEndpointInputSchemas.validateDomain.safeParse({
+				domain: 'example.com/docs',
+			});
+			expect(result.success).toBe(false);
+		});
+
+		it('validateDomain accepts a multi-label subdomain', () => {
+			const result = MailcheckEndpointInputSchemas.validateDomain.safeParse({
+				domain: 'mail.example.co.uk',
+			});
+			expect(result.success).toBe(true);
+		});
 	});
 
 	describe('output schemas', () => {

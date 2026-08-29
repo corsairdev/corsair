@@ -39,8 +39,20 @@ const VerificationResultSchema = z.looseObject({
 const VerifyEmailResponseSchema = VerificationResultSchema;
 export type VerifyEmailResponse = z.infer<typeof VerifyEmailResponseSchema>;
 
+// RFC 1123 hostname: dot-separated labels of alphanumerics and hyphens (no
+// leading/trailing hyphen), ending in an alphabetic TLD. This rejects email
+// addresses, URLs, and path-bearing values — validateDomain submits
+// admin@{domain}, so any '@', ':', or '/' would trigger a bogus remote check.
+const DOMAIN_PATTERN =
+	/^(?=.{4,253}$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*\.[a-z]{2,63}$/i;
+
 const ValidateDomainInputSchema = z.object({
-	domain: z.string(),
+	domain: z
+		.string()
+		.regex(
+			DOMAIN_PATTERN,
+			'Must be a domain name like example.com (emails, URLs, and paths are rejected)',
+		),
 });
 export type ValidateDomainInput = z.infer<typeof ValidateDomainInputSchema>;
 
