@@ -1,23 +1,21 @@
-import {
-	getValidConfluenceAccessToken,
-	normalizeConfluenceCloudUrl,
-	resolveConfluenceCloudResource,
-} from './client';
+import { getOAuthAccessToken } from 'corsair/core';
+import { resolveConfluenceCloudResource } from './client';
 import { confluence } from './index';
 
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	getOAuthAccessToken: jest.fn(),
+}));
+
 jest.mock('./client', () => ({
-	getValidConfluenceAccessToken: jest.fn(),
-	normalizeConfluenceCloudUrl: jest.fn((value: string) => {
-		let end = value.length;
-		while (end > 0 && value.charCodeAt(end - 1) === 47) end -= 1;
-		return value.slice(0, end);
-	}),
+	...jest.requireActual('./client'),
 	resolveConfluenceCloudResource: jest.fn(),
 }));
 
-const mockGetValidAccessToken = jest.mocked(getValidConfluenceAccessToken);
-const mockNormalizeCloudUrl = jest.mocked(normalizeConfluenceCloudUrl);
-const mockResolveCloudResource = jest.mocked(resolveConfluenceCloudResource);
+const mockGetOAuthAccessToken = jest.mocked(getOAuthAccessToken);
+const mockResolveConfluenceCloudResource = jest.mocked(
+	resolveConfluenceCloudResource,
+);
 
 function endpointKeyBuilder(plugin: ReturnType<typeof confluence>) {
 	return plugin.keyBuilder as (
@@ -85,41 +83,19 @@ describe('Confluence authentication', () => {
 		await expect(keyBuilder(ctx, 'endpoint')).rejects.toThrow('email');
 	});
 
-	it('refreshes OAuth credentials, selects the configured site, and persists both', async () => {
-		const plugin = confluence({
-			authType: 'oauth_2',
-			cloudUrl: 'https://b.atlassian.net',
-		});
+	it('acquires the OAuth token via the shared switchboard', async () => {
+		const plugin = confluence({ authType: 'oauth_2' });
 		const keyBuilder = endpointKeyBuilder(plugin);
-		mockGetValidAccessToken.mockResolvedValue({
-			accessToken: 'new-access-token',
-			refreshToken: 'new-refresh-token',
-			expiresAt: 12345,
-			refreshed: true,
-		});
-		mockResolveCloudResource.mockResolvedValue({
-			id: 'site-b',
-			url: 'https://b.atlassian.net',
-			name: 'Site B',
-			scopes: ['read:confluence-content.summary'],
-		});
+		mockGetOAuthAccessToken.mockResolvedValue('switchboard-access-token');
 
+		// cloud site already resolved → no re-resolution
 		const keys = {
-			get_access_token: jest.fn().mockResolvedValue('old-access-token'),
-			get_expires_at: jest.fn().mockResolvedValue('1'),
-			get_refresh_token: jest.fn().mockResolvedValue('old-refresh-token'),
-			get_cloud_url: jest.fn().mockResolvedValue(null),
-			get_cloud_id: jest.fn().mockResolvedValue(null),
-			get_integration_credentials: jest.fn().mockResolvedValue({
-				client_id: 'client-id',
-				client_secret: 'client-secret',
-			}),
-			set_access_token: jest.fn().mockResolvedValue(undefined),
-			set_expires_at: jest.fn().mockResolvedValue(undefined),
-			set_refresh_token: jest.fn().mockResolvedValue(undefined),
-			set_cloud_url: jest.fn().mockResolvedValue(undefined),
-			set_cloud_id: jest.fn().mockResolvedValue(undefined),
+			get_cloud_id: jest.fn().mockResolvedValue('cloud-123'),
+			get_cloud_url: jest.fn().mockResolvedValue('https://acme.atlassian.net'),
+			set_cloud_id: jest.fn(),
+			set_cloud_url: jest.fn(),
 		};
+		const hub = { baseUrl: 'https://hub.example' };
 
 		await expect(
 			keyBuilder(
@@ -127,60 +103,62 @@ describe('Confluence authentication', () => {
 					authType: 'oauth_2',
 					options: plugin.options,
 					keys,
+					hub,
+					tenantId: 't1',
 				},
 				'endpoint',
 			),
-		).resolves.toBe('new-access-token');
+		).resolves.toBe('switchboard-access-token');
 
-		expect(mockResolveCloudResource).toHaveBeenCalledWith(
-			'new-access-token',
-			'https://b.atlassian.net',
+		expect(mockGetOAuthAccessToken).toHaveBeenCalledWith(
+			expect.objectContaining({ keys, hub, tenantId: 't1' }),
+			{
+				plugin: 'confluence',
+				tokenUrl: 'https://auth.atlassian.com/oauth/token',
+				bodyFormat: 'json',
+			},
 		);
-		expect(keys.set_access_token).toHaveBeenCalledWith('new-access-token');
-		expect(keys.set_refresh_token).toHaveBeenCalledWith('new-refresh-token');
-		expect(keys.set_cloud_id).toHaveBeenCalledWith('site-b');
-		expect(keys.set_cloud_url).toHaveBeenCalledWith('https://b.atlassian.net');
+		expect(mockResolveConfluenceCloudResource).not.toHaveBeenCalled();
+		expect(keys.set_cloud_id).not.toHaveBeenCalled();
 	});
 
-	it('uses safe URL normalization when comparing a stored OAuth site', async () => {
-		const plugin = confluence({
-			authType: 'oauth_2',
-			cloudUrl: 'https://b.atlassian.net/',
-		});
+	it('resolves and persists the cloud site on first oauth use', async () => {
+		const plugin = confluence({ authType: 'oauth_2' });
 		const keyBuilder = endpointKeyBuilder(plugin);
-		mockGetValidAccessToken.mockResolvedValue({
-			accessToken: 'access-token',
-			refreshToken: 'refresh-token',
-			expiresAt: 12_345,
-			refreshed: false,
+		mockGetOAuthAccessToken.mockResolvedValue('switchboard-access-token');
+		mockResolveConfluenceCloudResource.mockResolvedValue({
+			id: 'cloud-xyz',
+			url: 'https://acme.atlassian.net',
+			name: 'Acme',
+			scopes: [],
 		});
+
+		const keys = {
+			get_cloud_id: jest.fn().mockResolvedValue(null),
+			get_cloud_url: jest.fn().mockResolvedValue(null),
+			set_cloud_id: jest.fn(),
+			set_cloud_url: jest.fn(),
+		};
 
 		await keyBuilder(
 			{
 				authType: 'oauth_2',
 				options: plugin.options,
-				keys: {
-					get_access_token: jest.fn().mockResolvedValue('access-token'),
-					get_expires_at: jest.fn().mockResolvedValue('9999999999'),
-					get_refresh_token: jest.fn().mockResolvedValue('refresh-token'),
-					get_cloud_url: jest.fn().mockResolvedValue('https://b.atlassian.net'),
-					get_cloud_id: jest.fn().mockResolvedValue('site-b'),
-					get_integration_credentials: jest.fn().mockResolvedValue({
-						client_id: 'client-id',
-						client_secret: 'client-secret',
-					}),
-				},
+				keys,
+				hub: {},
+				tenantId: 't1',
 			},
 			'endpoint',
 		);
 
-		expect(mockNormalizeCloudUrl).toHaveBeenCalledWith(
-			'https://b.atlassian.net/',
+		expect(mockResolveConfluenceCloudResource).toHaveBeenCalledWith(
+			'switchboard-access-token',
+			null,
 		);
-		expect(mockNormalizeCloudUrl).toHaveBeenCalledWith(
-			'https://b.atlassian.net',
+		expect(keys.set_cloud_id).toHaveBeenCalledWith('cloud-xyz');
+		expect(keys.set_cloud_url).toHaveBeenCalledWith(
+			'https://acme.atlassian.net',
 		);
-		expect(mockResolveCloudResource).not.toHaveBeenCalled();
 	});
 
 	it('does not expose placeholder webhooks', () => {

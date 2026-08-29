@@ -92,12 +92,34 @@ export function buildManagementNamespace(
 	};
 }
 
-export type { ExpressHandler, HonoHandler } from './adapters';
+export type {
+	ExpressHandler,
+	FastifyHandler,
+	HonoHandler,
+	NodeHandler,
+	NodeLikeRequest,
+	NodeLikeResponse,
+} from './adapters';
 export {
+	registerCorsairRawBodyParser,
+	toAstroHandler,
 	toExpressHandler,
+	toFastifyHandler,
 	toHonoHandler,
 	toNextJsHandler,
+	toNodeHandler,
+	toNuxtHandler,
+	toRemixHandler,
+	toSvelteKitHandler,
+	toTanStackHandler,
+	toWebHandler,
 } from './adapters';
+export {
+	DEFAULT_BODY_STALL_TIMEOUT_MS,
+	DEFAULT_MAX_BODY_BYTES,
+	resolveBodyStallTimeoutMs,
+	resolveMaxBodyBytes,
+} from './body-limit';
 export type { ManagementHandlerOptions } from './handler';
 export { managementHandler } from './handler';
 export type {
