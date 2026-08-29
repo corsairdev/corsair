@@ -6,10 +6,17 @@ describe('Pinecone schema', () => {
 		expect(PineconeSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares no local entities for the remote service integration', () => {
-		expect(PineconeSchema.entities).toEqual({});
+	it('declares official 2026-04 control and data entities', () => {
+		expect(Object.keys(PineconeSchema.entities).sort()).toEqual([
+			'assistantFiles',
+			'assistants',
+			'backups',
+			'collections',
+			'indexes',
+			'models',
+			'namespaces',
+			'restoreJobs',
+			'vectors',
+		]);
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

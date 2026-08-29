@@ -105,14 +105,14 @@ const cases = [
 		method: 'GET',
 		path: '/indexes/docs-index/backups?include_deleted=true&limit=10',
 		input: { indexName: 'docs-index', includeDeleted: true, limit: 10 },
-		response: { backups: [] },
+		response: { data: [], pagination: null },
 	},
 	{
 		name: 'backups.listForProject',
 		method: 'GET',
 		path: '/backups?limit=10',
 		input: { limit: 10 },
-		response: { backups: [] },
+		response: { data: [], pagination: null },
 	},
 	{
 		name: 'backups.describe',
@@ -141,7 +141,7 @@ const cases = [
 		method: 'GET',
 		path: '/restore-jobs?limit=10',
 		input: { limit: 10 },
-		response: { restore_jobs: [] },
+		response: { data: [], pagination: null },
 	},
 	{
 		name: 'restoreJobs.describe',
@@ -175,12 +175,12 @@ const cases = [
 		input: {
 			model: 'bge-reranker-v2-m3',
 			query: 'vector databases',
-			documents: ['Pinecone stores vectors'],
+			documents: [{ text: 'Pinecone stores vectors' }],
 		},
 		expectedBody: {
 			model: 'bge-reranker-v2-m3',
 			query: 'vector databases',
-			documents: ['Pinecone stores vectors'],
+			documents: [{ text: 'Pinecone stores vectors' }],
 		},
 		response: { model: 'bge-reranker-v2-m3', data: [] },
 	},
@@ -282,7 +282,7 @@ const cases = [
 		path: '/describe_index_stats',
 		input: { host: 'docs-index.svc.pinecone.io' },
 		expectedBody: {},
-		response: { totalRecordCount: 10 },
+		response: { totalVectorCount: 10 },
 	},
 	{
 		name: 'namespaces.list',
@@ -635,6 +635,51 @@ describe('shared endpoint execution', () => {
 			);
 			expect(storedValues?.payload).toEqual({});
 			expect(storedValues?.event_type).toBe('pinecone.listIndexes');
+		} finally {
+			harness.restore();
+		}
+	});
+
+	it('rejects query vectors that omit both id and vector', async () => {
+		const harness = installFetchHarness();
+
+		try {
+			await expect(
+				endpoint('vectors', 'query')(
+					{
+						key: 'pcsk_test',
+						$getAccountId: async () => 'account_test',
+						database: undefined,
+					} as PineconeContext,
+					{ host: 'docs-index.svc.pinecone.io', topK: 3 },
+				),
+			).rejects.toThrow();
+			expect(harness.requests).toHaveLength(0);
+		} finally {
+			harness.restore();
+		}
+	});
+
+	it('rejects sparse vectors with mismatched array lengths', async () => {
+		const harness = installFetchHarness();
+
+		try {
+			await expect(
+				endpoint('vectors', 'query')(
+					{
+						key: 'pcsk_test',
+						$getAccountId: async () => 'account_test',
+						database: undefined,
+					} as PineconeContext,
+					{
+						host: 'docs-index.svc.pinecone.io',
+						topK: 3,
+						vector: [0.1],
+						sparseVector: { indices: [1, 2], values: [0.1] },
+					},
+				),
+			).rejects.toThrow();
+			expect(harness.requests).toHaveLength(0);
 		} finally {
 			harness.restore();
 		}

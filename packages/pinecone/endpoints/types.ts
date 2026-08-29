@@ -38,7 +38,7 @@ const IndexModelSchema = z
 			.loose()
 			.optional(),
 		spec: z.object({}).loose().optional(),
-		tags: z.record(z.string(), z.string()).optional(),
+		tags: z.record(z.string(), z.string()).nullable().optional(),
 	})
 	.loose();
 
@@ -53,8 +53,10 @@ const BackupModelSchema = z
 		region: z.string().optional(),
 		dimension: z.number().int().positive().optional(),
 		metric: z.string().optional(),
-		vector_count: z.number().int().nonnegative().optional(),
+		record_count: z.number().int().nonnegative().optional(),
 		namespace_count: z.number().int().nonnegative().optional(),
+		size_bytes: z.number().int().nonnegative().optional(),
+		source_index_deleted_at: z.string().optional(),
 		created_at: z.string().optional(),
 	})
 	.loose();
@@ -64,6 +66,7 @@ const RestoreJobSchema = z
 		restore_job_id: NonEmptyString,
 		backup_id: z.string().optional(),
 		target_index_name: z.string().optional(),
+		target_index_id: z.string().optional(),
 		status: z.string().optional(),
 		created_at: z.string().optional(),
 		completed_at: z.string().nullable().optional(),
@@ -171,7 +174,7 @@ const RerankInputSchema = z
 	.object({
 		model: NonEmptyString,
 		query: NonEmptyString,
-		documents: z.array(z.union([z.string(), z.object({}).loose()])).min(1),
+		documents: z.array(z.object({ text: z.string() }).loose()).min(1),
 		top_n: z.number().int().positive().optional(),
 		return_documents: z.boolean().optional(),
 		parameters: z.object({}).loose().optional(),
@@ -196,10 +199,14 @@ const RerankResponseSchema = z
 
 const IndexHostSchema = z.object({ host: NonEmptyString });
 const MetadataSchema = z.record(z.string(), z.unknown());
-const SparseValuesSchema = z.object({
-	indices: z.array(z.number().int().nonnegative()),
-	values: z.array(z.number()),
-});
+const SparseValuesSchema = z
+	.object({
+		indices: z.array(z.number().int().nonnegative()),
+		values: z.array(z.number()),
+	})
+	.refine((sparse) => sparse.indices.length === sparse.values.length, {
+		message: 'sparse indices and values must be the same length',
+	});
 const VectorSchema = z
 	.object({
 		id: NonEmptyString,
@@ -216,12 +223,14 @@ const UpsertVectorsInputSchema = IndexHostSchema.extend({
 const QueryVectorsInputSchema = IndexHostSchema.extend({
 	namespace: z.string().optional(),
 	topK: z.number().int().positive(),
-	vector: z.array(z.number()).optional(),
+	vector: z.array(z.number()).min(1).optional(),
 	id: NonEmptyString.optional(),
 	sparseVector: SparseValuesSchema.optional(),
 	filter: MetadataSchema.optional(),
 	includeValues: z.boolean().optional(),
 	includeMetadata: z.boolean().optional(),
+}).refine((input) => Boolean(input.id) !== Boolean(input.vector), {
+	message: 'Provide exactly one of id or vector',
 });
 const FetchVectorsInputSchema = IndexHostSchema.extend({
 	ids: z.array(NonEmptyString).min(1),
@@ -273,7 +282,11 @@ const ImportIdInputSchema = IndexHostSchema.extend({
 const StartImportInputSchema = IndexHostSchema.extend({
 	uri: NonEmptyString,
 	integrationId: z.string().optional(),
-	errorMode: z.enum(['CONTINUE', 'ABORT']).optional(),
+	errorMode: z
+		.object({
+			onError: z.enum(['abort', 'continue']),
+		})
+		.optional(),
 });
 const RecordSchema = z.object({ _id: NonEmptyString }).loose();
 const UpsertRecordsInputSchema = NamespaceNameInputSchema.extend({
@@ -303,9 +316,11 @@ const ImportModelSchema = z
 		id: NonEmptyString,
 		uri: z.string().optional(),
 		status: z.string().optional(),
-		percent_complete: z.number().min(0).max(100).optional(),
-		created_at: z.string().optional(),
-		finished_at: z.string().nullable().optional(),
+		percentComplete: z.number().min(0).max(100).optional(),
+		createdAt: z.string().optional(),
+		finishedAt: z.string().nullable().optional(),
+		recordsImported: z.number().int().nonnegative().optional(),
+		error: z.string().optional(),
 	})
 	.loose();
 const QueryResponseSchema = z
@@ -504,17 +519,30 @@ export const PineconeEndpointOutputSchemas = {
 	createBackup: BackupModelSchema,
 	listIndexBackups: z
 		.object({
-			backups: z.array(BackupModelSchema),
-			pagination: z.object({}).loose().optional(),
+			data: z.array(BackupModelSchema),
+			pagination: z.object({}).loose().nullable().optional(),
 		})
 		.loose(),
 	listCollections: z
-		.object({ collections: z.array(z.object({}).loose()) })
+		.object({
+			collections: z.array(
+				z
+					.object({
+						name: NonEmptyString,
+						status: z.string().optional(),
+						environment: z.string().optional(),
+						size: z.number().int().optional(),
+						vector_count: z.number().int().optional(),
+						dimension: z.number().int().positive().optional(),
+					})
+					.loose(),
+			),
+		})
 		.loose(),
 	listProjectBackups: z
 		.object({
-			backups: z.array(BackupModelSchema),
-			pagination: z.object({}).loose().optional(),
+			data: z.array(BackupModelSchema),
+			pagination: z.object({}).loose().nullable().optional(),
 		})
 		.loose(),
 	describeBackup: BackupModelSchema,
@@ -524,8 +552,8 @@ export const PineconeEndpointOutputSchemas = {
 		.loose(),
 	listRestoreJobs: z
 		.object({
-			restore_jobs: z.array(RestoreJobSchema),
-			pagination: z.object({}).loose().optional(),
+			data: z.array(RestoreJobSchema),
+			pagination: z.object({}).loose().nullable().optional(),
 		})
 		.loose(),
 	describeRestoreJob: RestoreJobSchema,
@@ -555,7 +583,7 @@ export const PineconeEndpointOutputSchemas = {
 		.object({
 			dimension: z.number().int().positive().optional(),
 			indexFullness: z.number().optional(),
-			totalRecordCount: z.number().int().nonnegative().optional(),
+			totalVectorCount: z.number().int().nonnegative().optional(),
 			namespaces: z.record(z.string(), z.object({}).loose()).optional(),
 		})
 		.loose(),
