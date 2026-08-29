@@ -90,6 +90,7 @@ export const BaseProviders = [
 	'bugsnag',
 	'cal',
 	'calendly',
+	'campaigncleaner',
 	'canva',
 	'canvas',
 	'chatbotkit',
@@ -309,6 +310,7 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
+	campaigncleaner: 'CampaignCleaner',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
 	chatbotkit: 'ChatBotKit',
@@ -535,6 +537,7 @@ export type AllProviders =
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
+	| 'campaigncleaner'
 	| 'canva'
 	| 'canvas'
 	| 'chatbotkit'
