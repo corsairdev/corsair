@@ -1,3 +1,4 @@
+
 {
   "compilerOptions": {
     "strict": true,
@@ -11,20 +12,33 @@
     "exactOptionalPropertyTypes": false,
     "incremental": true,
     "noErrorTruncation": true,
+
     "composite": true,
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
+
     "types": ["node", "bun"],
-    // Put the .d.ts files output and cache file (tsbuildinfo) in a directory
-    // that will be ignored by other tools.
+
+    // Keep TypeScript build output and cache files isolated
+    // inside node_modules so other tools can ignore them.
     "outDir": "${configDir}/node_modules/.cache/ts/out",
     "tsBuildInfoFile": "${configDir}/node_modules/.cache/ts/tsbuildinfo",
-    // A custom condition that can be set to the "exports" filed in package.json
-    // and it should directs to the source .ts files. This enables the
-    // jump-to-definition feature in IDEs to function properly.
-    "customConditions": ["dev-source"]
+
+    // Enables IDEs to resolve development source files through
+    // the "dev-source" package.json export condition.
+    "customConditions": ["dev-source"],
+
+    // Prevents filename casing inconsistencies across operating systems.
+    "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["**/dist/**", "**/node_modules/**"],
-  "include": ["./types.d.ts"]
+
+  "exclude": [
+    "**/dist/**",
+    "**/node_modules/**"
+  ],
+
+  "include": [
+    "./types.d.ts"
+  ]
 }
