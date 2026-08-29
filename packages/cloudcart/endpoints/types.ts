@@ -10,6 +10,8 @@ const BaseEntityInputSchema = z
 		customer_id: IdParamSchema.optional(),
 		property_id: IdParamSchema.optional(),
 		discount_id: IdParamSchema.optional(),
+		variant_id: IdParamSchema.optional(),
+		parameter_id: IdParamSchema.optional(),
 		'page[number]': z.coerce.number().int().positive().optional(),
 		'page[size]': z.coerce.number().int().positive().max(250).optional(),
 		sort: z.string().optional(),
@@ -33,6 +35,13 @@ const CustomerIdRequiredInputSchema = BaseEntityInputSchema.extend({
 const IdAndDiscountIdInputSchema = BaseEntityInputSchema.extend({
 	id: RequiredIdSchema,
 	discount_id: RequiredIdSchema,
+});
+const VariantOptionCreateInputSchema = BaseEntityInputSchema.extend({
+	variant_id: RequiredIdSchema,
+	product_id: RequiredIdSchema,
+});
+const ParameterIdRequiredInputSchema = BaseEntityInputSchema.extend({
+	parameter_id: RequiredIdSchema,
 });
 
 const GenericResponseSchema = z.union([
@@ -82,8 +91,8 @@ export const GetVariantInputSchema = IdRequiredInputSchema;
 export const ListVariantsInputSchema = BaseEntityInputSchema;
 export const UpdateVariantInputSchema = IdRequiredInputSchema;
 export const DeleteVariantInputSchema = IdRequiredInputSchema;
-export const CreateVariantOptionInputSchema = IdRequiredInputSchema;
-export const CreateVariantOptionsInputSchema = IdRequiredInputSchema;
+export const CreateVariantOptionInputSchema = VariantOptionCreateInputSchema;
+export const CreateVariantOptionsInputSchema = ParameterIdRequiredInputSchema;
 export const GetVariantOptionInputSchema = IdRequiredInputSchema;
 export const ListVariantOptionsInputSchema = BaseEntityInputSchema;
 export const UpdateVariantOptionInputSchema = IdRequiredInputSchema;
