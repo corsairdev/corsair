@@ -45,7 +45,13 @@ const cases: Case[] = [
 	['products', 'createProduct', DATA, 'POST', 'products'],
 	['products', 'getProduct', ID, 'GET', 'products/1'],
 	['products', 'getProductWithRelations', ID, 'GET', 'products/1/relations'],
-	['products', 'listProducts', {}, 'GET', 'products'],
+	[
+		'products',
+		'listProducts',
+		{ 'page[number]': 1, 'page[size]': 20 },
+		'GET',
+		'products',
+	],
 	['products', 'updateProduct', ID_DATA, 'PATCH', 'products/1'],
 	['products', 'deleteProduct', ID, 'DELETE', 'products/1'],
 	[
@@ -435,12 +441,29 @@ describe('cloudcart endpoint map', () => {
 			>;
 			const handler = ops[name];
 			if (!handler) throw new Error(`missing ${group}.${name}`);
-			await handler(mockCtx, input);
-			expect(mockRequest).toHaveBeenCalledWith(
-				expect.anything(),
-				expect.objectContaining({ method, url }),
-				expect.anything(),
-			);
+			const output = await handler(mockCtx, input);
+			expect(output).toEqual({ data: { id: '1' } });
+			const requestOptions = mockRequest.mock.calls[0]?.[1] as {
+				method: string;
+				url: string;
+				body?: unknown;
+				query?: unknown;
+			};
+			expect(requestOptions.method).toBe(method);
+			expect(requestOptions.url).toBe(url);
+			if (method === 'GET') {
+				expect(requestOptions.query).toEqual(expect.any(Object));
+				const pageNumber = input['page[number]'];
+				if (pageNumber !== undefined) {
+					expect(requestOptions.query).toEqual(
+						expect.objectContaining({ 'page[number]': pageNumber }),
+					);
+				}
+			} else if (method === 'DELETE') {
+				expect(requestOptions.body).toBeUndefined();
+			} else if (input.data) {
+				expect(requestOptions.body).toEqual(input.data);
+			}
 		},
 	);
 });
