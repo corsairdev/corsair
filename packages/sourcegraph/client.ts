@@ -35,7 +35,21 @@ export type SourcegraphGraphqlEnvelope<T> = {
 
 export function resolveInstanceUrl(instanceUrl?: string): string {
 	const raw = (instanceUrl ?? SOURCEGRAPH_DEFAULT_INSTANCE).trim();
-	return raw.replace(/\/+$/, '').replace(/\/\.api\/graphql$/i, '');
+	const normalized = raw.replace(/\/+$/, '').replace(/\/\.api\/graphql$/i, '');
+	let parsed: URL;
+	try {
+		parsed = new URL(normalized);
+	} catch {
+		throw new SourcegraphAPIError(
+			'Sourcegraph instance URL must be a valid HTTPS origin',
+		);
+	}
+	if (parsed.protocol !== 'https:') {
+		throw new SourcegraphAPIError('Sourcegraph instance URL must use HTTPS');
+	}
+	const path =
+		parsed.pathname === '/' ? '' : parsed.pathname.replace(/\/+$/, '');
+	return `${parsed.origin}${path}`;
 }
 
 function errorMessage(error: ApiError): string {

@@ -118,6 +118,21 @@ describe('client', () => {
 		);
 	});
 
+	it('rejects non-HTTPS instance URLs before any request', async () => {
+		expect(() => resolveInstanceUrl('http://sg.example.com')).toThrow(
+			SourcegraphAPIError,
+		);
+		await expect(
+			sourcegraphGraphql(
+				'sgp_x',
+				'query { currentUser { username } }',
+				undefined,
+				'http://sg.example.com',
+			),
+		).rejects.toThrow(SourcegraphAPIError);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('unwraps GraphQL data and surfaces GraphQL errors', () => {
 		expect(unwrapGraphqlData({ data: { ok: true } })).toEqual({ ok: true });
 		expect(() =>
