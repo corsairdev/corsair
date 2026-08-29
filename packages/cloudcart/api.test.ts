@@ -1,5 +1,4 @@
-﻿import { createHmac } from 'node:crypto';
-import { CloudcartAPIError, makeCloudcartRequest } from './client';
+﻿import { CloudcartAPIError, makeCloudcartRequest } from './client';
 import { CloudcartEndpointInputSchemas } from './endpoints/types';
 import { verifyCloudcartWebhookSignature } from './webhooks/types';
 
@@ -34,30 +33,24 @@ describe('Cloudcart API Client & Endpoint Schemas', () => {
 		);
 	});
 
-	it('validates webhook signature verification', () => {
-		const secret = 'super_secret_webhook_key';
+	it('validates webhook API key header', () => {
+		const secret = 'cc_test_key';
 		const payload = { type: 'order.created', data: { id: 12345 } };
-		const payloadString = JSON.stringify(payload);
-		const signature = createHmac('sha256', secret)
-			.update(payloadString)
-			.digest('hex');
 
 		const validResult = verifyCloudcartWebhookSignature(
 			{
-				headers: { 'x-cloudcart-signature': signature },
-				body: payloadString,
+				headers: { 'x-cloudcart-apikey': secret },
 				payload,
-			} as any,
+			} as never,
 			secret,
 		);
 		expect(validResult.valid).toBe(true);
 
 		const invalidResult = verifyCloudcartWebhookSignature(
 			{
-				headers: { 'x-cloudcart-signature': 'invalid_sig' },
-				body: payloadString,
+				headers: { 'x-cloudcart-apikey': 'wrong_key' },
 				payload,
-			} as any,
+			} as never,
 			secret,
 		);
 		expect(invalidResult.valid).toBe(false);
