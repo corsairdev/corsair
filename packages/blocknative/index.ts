@@ -1,21 +1,19 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { Gas, Mempool, Multichain } from './endpoints';
 import type {
 	BlocknativeEndpointInputs,
 	BlocknativeEndpointOutputs,
@@ -26,18 +24,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BlocknativeSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveBlocknativeOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchBlocknativeTenantWebhook } from './webhooks/tenant-matcher';
-import type { BlocknativeWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type BlocknativePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalBlocknativePlugin['hooks'];
-	webhookHooks?: InternalBlocknativePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof blocknativeEndpointsNested>;
 };
@@ -62,57 +53,135 @@ type BlocknativeEndpoint<K extends keyof BlocknativeEndpointOutputs> =
 	>;
 
 export type BlocknativeEndpoints = {
-	exampleGet: BlocknativeEndpoint<'exampleGet'>;
+	getGasPrices: BlocknativeEndpoint<'getGasPrices'>;
+	getBaseFeeEstimates: BlocknativeEndpoint<'getBaseFeeEstimates'>;
+	getGasDistribution: BlocknativeEndpoint<'getGasDistribution'>;
+	getGasOracles: BlocknativeEndpoint<'getGasOracles'>;
+	getSupportedChains: BlocknativeEndpoint<'getSupportedChains'>;
+	configureFilters: BlocknativeEndpoint<'configureFilters'>;
+	subscribeTransactionHash: BlocknativeEndpoint<'subscribeTransactionHash'>;
+	unsubscribeTransactionHash: BlocknativeEndpoint<'unsubscribeTransactionHash'>;
+	subscribeMultichain: BlocknativeEndpoint<'subscribeMultichain'>;
+	unsubscribeMultichain: BlocknativeEndpoint<'unsubscribeMultichain'>;
 };
-
-type BlocknativeWebhook<
-	K extends keyof BlocknativeWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<BlocknativeContext, TEvent, BlocknativeWebhookOutputs[K]>;
-
-export type BlocknativeWebhooks = {
-	example: BlocknativeWebhook<'example', ExampleEvent>;
-};
-
-export type BlocknativeBoundWebhooks = BindWebhooks<BlocknativeWebhooks>;
 
 const blocknativeEndpointsNested = {
-	example: {
-		get: Example.get,
+	gas: {
+		getPrices: Gas.getPrices,
+		getBaseFeeEstimates: Gas.getBaseFeeEstimates,
+		getDistribution: Gas.getDistribution,
+		getOracles: Gas.getOracles,
+		getSupportedChains: Gas.getSupportedChains,
+	},
+	mempool: {
+		configureFilters: Mempool.configureFilters,
+		subscribeTransactionHash: Mempool.subscribeTransactionHash,
+		unsubscribeTransactionHash: Mempool.unsubscribeTransactionHash,
+	},
+	multichain: {
+		subscribe: Multichain.subscribe,
+		unsubscribe: Multichain.unsubscribe,
 	},
 } as const;
 
-const blocknativeWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const blocknativeWebhooksNested = {} as const;
 
 export const blocknativeEndpointSchemas = {
-	'example.get': {
-		input: BlocknativeEndpointInputSchemas.exampleGet,
-		output: BlocknativeEndpointOutputSchemas.exampleGet,
+	'gas.getPrices': {
+		input: BlocknativeEndpointInputSchemas.getGasPrices,
+		output: BlocknativeEndpointOutputSchemas.getGasPrices,
+	},
+	'gas.getBaseFeeEstimates': {
+		input: BlocknativeEndpointInputSchemas.getBaseFeeEstimates,
+		output: BlocknativeEndpointOutputSchemas.getBaseFeeEstimates,
+	},
+	'gas.getDistribution': {
+		input: BlocknativeEndpointInputSchemas.getGasDistribution,
+		output: BlocknativeEndpointOutputSchemas.getGasDistribution,
+	},
+	'gas.getOracles': {
+		input: BlocknativeEndpointInputSchemas.getGasOracles,
+		output: BlocknativeEndpointOutputSchemas.getGasOracles,
+	},
+	'gas.getSupportedChains': {
+		input: BlocknativeEndpointInputSchemas.getSupportedChains,
+		output: BlocknativeEndpointOutputSchemas.getSupportedChains,
+	},
+	'mempool.configureFilters': {
+		input: BlocknativeEndpointInputSchemas.configureFilters,
+		output: BlocknativeEndpointOutputSchemas.configureFilters,
+	},
+	'mempool.subscribeTransactionHash': {
+		input: BlocknativeEndpointInputSchemas.subscribeTransactionHash,
+		output: BlocknativeEndpointOutputSchemas.subscribeTransactionHash,
+	},
+	'mempool.unsubscribeTransactionHash': {
+		input: BlocknativeEndpointInputSchemas.unsubscribeTransactionHash,
+		output: BlocknativeEndpointOutputSchemas.unsubscribeTransactionHash,
+	},
+	'multichain.subscribe': {
+		input: BlocknativeEndpointInputSchemas.subscribeMultichain,
+		output: BlocknativeEndpointOutputSchemas.subscribeMultichain,
+	},
+	'multichain.unsubscribe': {
+		input: BlocknativeEndpointInputSchemas.unsubscribeMultichain,
+		output: BlocknativeEndpointOutputSchemas.unsubscribeMultichain,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof blocknativeEndpointsNested
 >;
 
-const blocknativeWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof blocknativeWebhooksNested
->;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const blocknativeEndpointMeta = {
-	'example.get': {
+	'gas.getPrices': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description:
+			'Fetch gas price estimates for specific inclusion probabilities (next block or ~10 seconds)',
+	},
+	'gas.getBaseFeeEstimates': {
+		riskLevel: 'read',
+		description:
+			'Get real-time base fee, blob base fee, and priority fee predictions for the next 5 Ethereum blocks',
+	},
+	'gas.getDistribution': {
+		riskLevel: 'read',
+		description:
+			'Retrieve the current mempool gas price distribution breakdown',
+	},
+	'gas.getOracles': {
+		riskLevel: 'read',
+		description: 'Retrieve metadata on supported gas oracles per chain',
+	},
+	'gas.getSupportedChains': {
+		riskLevel: 'read',
+		description:
+			'Retrieve supported chains metadata for Blocknative gas services',
+	},
+	'mempool.configureFilters': {
+		riskLevel: 'write',
+		description:
+			'Prepare WebSocket initialize + configs/put messages for mempool filters and ABI decoding',
+	},
+	'mempool.subscribeTransactionHash': {
+		riskLevel: 'write',
+		description:
+			'Prepare a WebSocket subscription message for Ethereum transaction state changes',
+	},
+	'mempool.unsubscribeTransactionHash': {
+		riskLevel: 'write',
+		description:
+			'Prepare a WebSocket unsubscription message for an Ethereum transaction hash',
+	},
+	'multichain.subscribe': {
+		riskLevel: 'write',
+		description:
+			'Generate WebSocket connection details to subscribe to a transaction or account across chains',
+	},
+	'multichain.unsubscribe': {
+		riskLevel: 'write',
+		description:
+			'Return the Multichain SDK unsubscribe payload for an address or transaction hash',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof blocknativeEndpointsNested
@@ -120,10 +189,7 @@ const blocknativeEndpointMeta = {
 
 export const blocknativeAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -157,59 +223,61 @@ export function blocknative<const T extends BlocknativePluginOptions>(
 		schema: BlocknativeSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: blocknativeEndpointsNested,
 		webhooks: blocknativeWebhooksNested,
 		endpointMeta: blocknativeEndpointMeta,
 		endpointSchemas: blocknativeEndpointSchemas,
-		webhookSchemas: blocknativeWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-blocknative-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchBlocknativeTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveBlocknativeOAuthWebhookTenantLink,
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: BlocknativeKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('blocknative', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('blocknative', 'api_key');
 		},
 	} satisfies InternalBlocknativePlugin;
 }
 
+export {
+	BLOCKNATIVE_API_BASE,
+	BLOCKNATIVE_WS_URL,
+	BlocknativeAPIError,
+	BlocknativeRateLimitError,
+	makeBlocknativeRequest,
+} from './client';
 export type {
 	BlocknativeEndpointInputs,
 	BlocknativeEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	ConfigureFiltersInput,
+	ConfigureFiltersOutput,
+	GetBaseFeeEstimatesInput,
+	GetBaseFeeEstimatesOutput,
+	GetGasDistributionInput,
+	GetGasDistributionOutput,
+	GetGasOraclesInput,
+	GetGasOraclesOutput,
+	GetGasPricesInput,
+	GetGasPricesOutput,
+	GetSupportedChainsInput,
+	GetSupportedChainsOutput,
+	SubscribeMultichainInput,
+	SubscribeMultichainOutput,
+	SubscribeTransactionHashInput,
+	SubscribeTransactionHashOutput,
+	UnsubscribeMultichainInput,
+	UnsubscribeMultichainOutput,
+	UnsubscribeTransactionHashInput,
+	UnsubscribeTransactionHashOutput,
 } from './endpoints/types';
-export type {
-	BlocknativeWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
