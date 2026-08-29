@@ -95,7 +95,7 @@ const UploadInput = z.object({
 });
 
 const WebhookCreateInput = z.object({
-	url: z.string(),
+	url: z.url(),
 	enabled_events: z.array(
 		z.enum(['resource.errored', 'resource.ready_with_update']),
 	),
@@ -104,7 +104,7 @@ const WebhookCreateInput = z.object({
 const WebhookUpdateInput = z
 	.object({
 		webhook_endpoint_id: z.string(),
-		url: z.string().optional(),
+		url: z.url().optional(),
 		status: z.enum(['enabled', 'disabled']).optional(),
 		enabled_events: z
 			.array(z.enum(['resource.errored', 'resource.ready_with_update']))

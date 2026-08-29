@@ -24,7 +24,10 @@ export type FaradayOp = {
 	docs: string;
 };
 
-/** Official Faraday REST ops. Paths from https://faraday.ai/docs/reference */
+/**
+ * Official Faraday REST ops. https://faraday.ai/docs/reference
+ * Faraday has no inbound triggers. webhookEndpoints is CRUD for destination URLs only.
+ */
 export const FARADAY_OPS = [
 	{
 		group: 'accounts',
@@ -328,7 +331,9 @@ export const FARADAY_OPS = [
 		description: 'Get Faraday scope targets',
 		docs: 'https://faraday.ai/docs/reference',
 	},
-	...resourceOps('targets', 'target_id', 'target'),
+	...resourceOps('targets', 'target_id', 'target', undefined, {
+		unarchive: false,
+	}),
 	{
 		group: 'targets',
 		name: 'getAnalysis',
@@ -383,6 +388,7 @@ export const FARADAY_OPS = [
 	...resourceOps('connections', 'connection_id', 'connection', undefined, {
 		create: false,
 		unarchive: false,
+		get: false,
 	}),
 	{
 		group: 'connections',
@@ -511,7 +517,7 @@ function resourceOps<G extends string, Id extends string>(
 	idParam: Id,
 	label: string,
 	pathSeg?: string,
-	flags?: { create?: boolean; unarchive?: boolean },
+	flags?: { create?: boolean; unarchive?: boolean; get?: boolean },
 ) {
 	const seg = pathSeg ?? group;
 	const docs = 'https://faraday.ai/docs/reference';
@@ -545,6 +551,21 @@ function resourceOps<G extends string, Id extends string>(
 					}),
 				]
 			: [];
+	const get =
+		flags?.get !== false
+			? [
+					resourceOp({
+						group,
+						name: 'get',
+						method: 'GET',
+						path: `${seg}/{${idParam}}`,
+						risk: 'read',
+						input: 'id',
+						description: `Retrieve a Faraday ${label}`,
+						docs,
+					}),
+				]
+			: [];
 	return [
 		resourceOp({
 			group,
@@ -556,16 +577,7 @@ function resourceOps<G extends string, Id extends string>(
 			description: `List Faraday ${label}s`,
 			docs,
 		}),
-		resourceOp({
-			group,
-			name: 'get',
-			method: 'GET',
-			path: `${seg}/{${idParam}}`,
-			risk: 'read',
-			input: 'id',
-			description: `Retrieve a Faraday ${label}`,
-			docs,
-		}),
+		...get,
 		...create,
 		resourceOp({
 			group,
