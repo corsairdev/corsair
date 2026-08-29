@@ -12,6 +12,7 @@ import { errorHandlers } from './error-handlers';
 import type { CloudcartContext, CloudcartKeyBuilderContext } from './index';
 import { cloudcart } from './index';
 import { CloudcartSchema } from './schema';
+import { CloudcartWebhooks } from './webhooks';
 import {
 	matchCloudcartWebhook,
 	verifyCloudcartWebhookSignature,
@@ -454,6 +455,30 @@ describe('cloudcart webhooks', () => {
 				'cc_test_key',
 			).valid,
 		).toBe(false);
+	});
+
+	it('accepts hubVerified deliveries without a local secret', async () => {
+		const payload = { type: 'order.created' as const, data: { id: 1 } };
+		expect(
+			verifyCloudcartWebhookSignature(
+				{
+					headers: {},
+					payload,
+					hubVerified: true,
+				} as never,
+				undefined,
+			).valid,
+		).toBe(true);
+
+		const result = await CloudcartWebhooks.orderCreated.handler(
+			{ ...mockCtx, key: undefined } as unknown as CloudcartContext,
+			{
+				headers: {},
+				payload,
+				hubVerified: true,
+			} as never,
+		);
+		expect(result).toEqual({ success: true, data: payload });
 	});
 });
 

@@ -118,8 +118,12 @@ export function matchCloudcartWebhook(request: RawWebhookRequest): boolean {
 
 export function verifyCloudcartWebhookSignature(
 	request: WebhookRequest<CloudcartWebhookPayload>,
-	secret: string,
+	secret?: string,
 ): { valid: boolean; error?: string } {
+	if (request.hubVerified === true) {
+		return { valid: true };
+	}
+
 	if (!secret) {
 		return { valid: false, error: 'Missing webhook secret' };
 	}
