@@ -88,6 +88,7 @@ export const BaseProviders = [
 	'brandfetch',
 	'browseai',
 	'bugsnag',
+	'buildkite',
 	'cal',
 	'calendly',
 	'canva',
@@ -307,6 +308,7 @@ export const ProviderDisplayNames = {
 	brandfetch: 'Brandfetch',
 	browseai: 'Browse AI',
 	bugsnag: 'BugSnag',
+	buildkite: 'Buildkite',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
@@ -533,6 +535,7 @@ export type AllProviders =
 	| 'brandfetch'
 	| 'browseai'
 	| 'bugsnag'
+	| 'buildkite'
 	| 'cal'
 	| 'calendly'
 	| 'canva'
