@@ -1,13 +1,18 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class HtmlToImageAPIError extends Error {
+	readonly status?: number;
+	readonly retryAfter?: number;
+
 	constructor(
 		message: string,
-		public readonly code?: string,
+		options: { status?: number; retryAfter?: number } = {},
 	) {
 		super(message);
 		this.name = 'HtmlToImageAPIError';
+		this.status = options.status;
+		this.retryAfter = options.retryAfter;
 	}
 }
 
@@ -44,12 +49,18 @@ export async function makeHtmlToImageRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
+		if (error instanceof HtmlToImageAPIError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new HtmlToImageAPIError(error.message);
 		}
