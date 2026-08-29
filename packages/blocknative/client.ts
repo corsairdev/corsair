@@ -101,14 +101,13 @@ export function applyDappId<T extends Record<string, unknown>>(
 	return { ...message, [BLOCKNATIVE_DAPP_ID_FIELD]: apiKey };
 }
 
-/** Official initialize payload. `dappId` is a placeholder — use applyDappId before send. */
+/** Official initialize payload. Omit dappId — call applyDappId before send. */
 export function initializeMessage(
 	system = 'ethereum',
 	network = 'main',
 ): Record<string, unknown> {
 	return {
 		timeStamp: new Date().toISOString(),
-		dappId: BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
 		version: '1.0.0',
 		blockchain: { system, network },
 		categoryCode: 'initialize',

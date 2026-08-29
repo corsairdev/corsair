@@ -7,7 +7,6 @@ import {
 	BLOCKNATIVE_WS_URL,
 	BlocknativeAPIError,
 	BlocknativeRateLimitError,
-	initializeMessage,
 	makeBlocknativeRequest,
 	parseHexChainId,
 } from './client';
@@ -202,11 +201,12 @@ describe('Blocknative plugin', () => {
 			}),
 		);
 		expect(result.websocketUrl).toBe(BLOCKNATIVE_WS_URL);
-		expect(result.initialize.dappId).toBe('test-api-key');
-		expect(result.config.dappId).toBe('test-api-key');
+		expect(JSON.stringify(result)).not.toContain('test-api-key');
+		expect(result.initialize).not.toHaveProperty('dappId');
+		expect(result.config).not.toHaveProperty('dappId');
 		expect(result.auth.dappIdField).toBe('dappId');
 		expect(result.auth.dappIdPlaceholder).toBe(BLOCKNATIVE_DAPP_ID_PLACEHOLDER);
-		expect(applyDappId(initializeMessage(), 'injected-key').dappId).toBe(
+		expect(applyDappId(result.initialize, 'injected-key').dappId).toBe(
 			'injected-key',
 		);
 		expect(result.initialize.eventCode).toBe('checkDappId');
@@ -267,8 +267,9 @@ describe('Blocknative plugin', () => {
 			}),
 		);
 		expect(tx.subscribe.eventCode).toBe('txSent');
-		expect(account.initialize.dappId).toBe('test-api-key');
-		expect(tx.subscribe.dappId).toBe('test-api-key');
+		expect(JSON.stringify(account)).not.toContain('test-api-key');
+		expect(account.initialize).not.toHaveProperty('dappId');
+		expect(tx.subscribe).not.toHaveProperty('dappId');
 
 		expect(() => parseHexChainId('0x1garbage')).toThrow(/Unsupported chainId/);
 		await expect(

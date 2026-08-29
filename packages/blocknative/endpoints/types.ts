@@ -38,7 +38,6 @@ const HexChainId = z
 const WsProtocolMessageSchema = z
 	.object({
 		timeStamp: z.string(),
-		dappId: z.string().min(1),
 		version: z.string(),
 		blockchain: z.object({
 			system: z.string(),
@@ -47,13 +46,16 @@ const WsProtocolMessageSchema = z
 		categoryCode: z.string(),
 		eventCode: z.string(),
 	})
-	.loose();
+	.loose()
+	.refine((msg) => !('dappId' in msg), {
+		message: 'dappId must not be returned; call applyDappId before send',
+	});
 
 const WsAuthSchema = z.object({
 	dappIdField: z.literal(BLOCKNATIVE_DAPP_ID_FIELD),
 	dappIdPlaceholder: z.literal(BLOCKNATIVE_DAPP_ID_PLACEHOLDER),
 	inject: z.literal(
-		'Replace dappId with your Blocknative API key, or call applyDappId(message, apiKey), before sending on the WebSocket',
+		'Call applyDappId(message, apiKey) before sending. This plugin never returns dappId.',
 	),
 });
 
@@ -61,7 +63,7 @@ const WS_AUTH = {
 	dappIdField: BLOCKNATIVE_DAPP_ID_FIELD,
 	dappIdPlaceholder: BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
 	inject:
-		'Replace dappId with your Blocknative API key, or call applyDappId(message, apiKey), before sending on the WebSocket',
+		'Call applyDappId(message, apiKey) before sending. This plugin never returns dappId.',
 } as const;
 
 export { WS_AUTH };
