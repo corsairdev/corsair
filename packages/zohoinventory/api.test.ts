@@ -1,6 +1,7 @@
 import {
 	isUnauthorizedError,
 	makeAuthenticatedZohoInventoryRequest,
+	stripTrailingSlashes,
 	ZohoInventoryAPIError,
 	zohoInventoryApiBase,
 	zohoInventoryOAuthAuthUrl,
@@ -58,6 +59,32 @@ describe('zohoinventory plugin initialization', () => {
 	});
 });
 
+describe('stripTrailingSlashes utility', () => {
+	it('preserves domain without trailing slashes', () => {
+		expect(stripTrailingSlashes('https://www.zohoapis.com')).toBe(
+			'https://www.zohoapis.com',
+		);
+	});
+
+	it('strips a single trailing slash', () => {
+		expect(stripTrailingSlashes('https://www.zohoapis.com/')).toBe(
+			'https://www.zohoapis.com',
+		);
+	});
+
+	it('strips multiple trailing slashes', () => {
+		expect(stripTrailingSlashes('https://www.zohoapis.com///')).toBe(
+			'https://www.zohoapis.com',
+		);
+	});
+
+	it('handles empty strings and only slashes', () => {
+		expect(stripTrailingSlashes('')).toBe('');
+		expect(stripTrailingSlashes('/')).toBe('');
+		expect(stripTrailingSlashes('////')).toBe('');
+	});
+});
+
 describe('zoho regional datacenter mapping', () => {
 	it('maps each region to the correct API base URL', () => {
 		expect(zohoInventoryApiBase('us')).toBe(
@@ -86,10 +113,37 @@ describe('zoho regional datacenter mapping', () => {
 		);
 	});
 
-	it('supports custom apiDomain override', () => {
+	it('supports custom apiDomain override without trailing slashes', () => {
 		expect(
 			zohoInventoryApiBase(undefined, 'https://inventory.custom.zoho.com'),
 		).toBe('https://inventory.custom.zoho.com/inventory/v1');
+	});
+
+	it('supports custom apiDomain override with one trailing slash', () => {
+		expect(
+			zohoInventoryApiBase(undefined, 'https://inventory.custom.zoho.com/'),
+		).toBe('https://inventory.custom.zoho.com/inventory/v1');
+	});
+
+	it('supports custom apiDomain override with multiple trailing slashes', () => {
+		expect(
+			zohoInventoryApiBase(undefined, 'https://inventory.custom.zoho.com///'),
+		).toBe('https://inventory.custom.zoho.com/inventory/v1');
+	});
+
+	it('handles custom apiDomain with whitespace and edge-cases', () => {
+		expect(
+			zohoInventoryApiBase(
+				undefined,
+				'  https://inventory.custom.zoho.com///  ',
+			),
+		).toBe('https://inventory.custom.zoho.com/inventory/v1');
+		expect(zohoInventoryApiBase('eu', '')).toBe(
+			'https://www.zohoapis.eu/inventory/v1',
+		);
+		expect(zohoInventoryApiBase('in', '   ')).toBe(
+			'https://www.zohoapis.in/inventory/v1',
+		);
 	});
 
 	it('maps OAuth auth and token URLs per region', () => {

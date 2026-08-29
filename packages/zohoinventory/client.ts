@@ -43,12 +43,25 @@ function regionTld(region?: ZohoInventoryRegion): string {
 	return REGION_TLD[region ?? 'us'] ?? REGION_TLD.us;
 }
 
+/**
+ * Strips all trailing slashes from a URL string without regular expressions
+ * to prevent polynomial backtracking (ReDoS) warnings on untrusted input.
+ */
+export function stripTrailingSlashes(str: string): string {
+	let end = str.length;
+	while (end > 0 && str.charCodeAt(end - 1) === 47 /* '/' */) {
+		end--;
+	}
+	return str.slice(0, end);
+}
+
 export function zohoInventoryApiBase(
 	region?: ZohoInventoryRegion,
 	apiDomain?: string,
 ): string {
-	if (apiDomain) {
-		const cleanDomain = apiDomain.replace(/\/+$/, '');
+	const trimmedDomain = apiDomain?.trim();
+	if (trimmedDomain) {
+		const cleanDomain = stripTrailingSlashes(trimmedDomain);
 		return `${cleanDomain}/inventory/v1`;
 	}
 	return `https://www.zohoapis.${regionTld(region)}/inventory/v1`;
