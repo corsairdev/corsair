@@ -26,7 +26,7 @@
     // and it should direct to the source .ts files.
     "customConditions": ["dev-source"],
 
-    // Allow JavaScript files in the projec
+    // Allow JavaScript files in the project
     "allowJs": true
   },
 
