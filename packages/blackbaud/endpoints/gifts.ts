@@ -3,15 +3,21 @@ import type { BlackbaudEndpoints } from '..';
 import { makeBlackbaudRequest } from '../client';
 import type { BlackbaudEndpointOutputs } from './types';
 
-export const get: BlackbaudEndpoints['exampleGet'] = async (ctx, input) => {
+export const getGiftById: BlackbaudEndpoints['getGiftById'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeBlackbaudRequest<
-		BlackbaudEndpointOutputs['exampleGet']
-	>(`example/${input.id}`, ctx.key, { method: 'GET' });
+		BlackbaudEndpointOutputs['getGiftById']
+	>(`gift/v1/gifts/${input.gift_id}`, ctx.key, {
+		method: 'GET',
+		subscriptionKey: ctx.options.subscriptionKey,
+	});
 
 	await logEventFromContext(
 		ctx,
-		'blackbaud.example.get',
-		{ ...input },
+		'blackbaud.gifts.get',
+		{ gift_id: input.gift_id },
 		'completed',
 	);
 	return response;

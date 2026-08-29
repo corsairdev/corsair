@@ -11,30 +11,37 @@ export class BlackbaudAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
-const BLACKBAUD_API_BASE = 'https://api.example.com';
+// Update to official Blackbaud SKY API URL
+const BLACKBAUD_API_BASE = 'https://api.sky.blackbaud.com';
 
 export async function makeBlackbaudRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		body?: any;
 		query?: Record<string, string | number | boolean | undefined>;
+		subscriptionKey?: string;
+		headers?: Record<string, string>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, subscriptionKey, headers } = options;
+
+	const isAbsolute = endpoint.startsWith('http');
 
 	const config: OpenAPIConfig = {
-		BASE: BLACKBAUD_API_BASE,
+		BASE: isAbsolute ? '' : BLACKBAUD_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+			...(subscriptionKey
+				? { 'Bb-Api-Subscription-Key': subscriptionKey }
+				: {}),
+			...headers,
 		},
 	};
 

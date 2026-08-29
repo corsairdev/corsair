@@ -13,9 +13,9 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { Batch, Gifts, Membership, OneRoster, Payments } from './endpoints';
 import type {
 	BlackbaudEndpointInputs,
 	BlackbaudEndpointOutputs,
@@ -26,18 +26,12 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BlackbaudSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveBlackbaudOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchBlackbaudTenantWebhook } from './webhooks/tenant-matcher';
-import type { BlackbaudWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type BlackbaudPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
+	subscriptionKey?: string;
 	hooks?: InternalBlackbaudPlugin['hooks'];
-	webhookHooks?: InternalBlackbaudPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof blackbaudEndpointsNested>;
 };
@@ -62,66 +56,89 @@ type BlackbaudEndpoint<K extends keyof BlackbaudEndpointOutputs> =
 	>;
 
 export type BlackbaudEndpoints = {
-	exampleGet: BlackbaudEndpoint<'exampleGet'>;
+	addGiftsToBatch: BlackbaudEndpoint<'addGiftsToBatch'>;
+	getGiftById: BlackbaudEndpoint<'getGiftById'>;
+	getMembershipDetails: BlackbaudEndpoint<'getMembershipDetails'>;
+	getPaymentTransaction: BlackbaudEndpoint<'getPaymentTransaction'>;
+	oneRosterOAuth2BaseApi: BlackbaudEndpoint<'oneRosterOAuth2BaseApi'>;
 };
-
-type BlackbaudWebhook<
-	K extends keyof BlackbaudWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<BlackbaudContext, TEvent, BlackbaudWebhookOutputs[K]>;
-
-export type BlackbaudWebhooks = {
-	example: BlackbaudWebhook<'example', ExampleEvent>;
-};
-
-export type BlackbaudBoundWebhooks = BindWebhooks<BlackbaudWebhooks>;
 
 const blackbaudEndpointsNested = {
-	example: {
-		get: Example.get,
+	batch: {
+		addGiftsToBatch: Batch.addGiftsToBatch,
 	},
-} as const;
-
-const blackbaudWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	gifts: {
+		getGiftById: Gifts.getGiftById,
+	},
+	membership: {
+		getMembershipDetails: Membership.getMembershipDetails,
+	},
+	payments: {
+		getPaymentTransaction: Payments.getPaymentTransaction,
+	},
+	oneRoster: {
+		oneRosterOAuth2BaseApi: OneRoster.oneRosterOAuth2BaseApi,
 	},
 } as const;
 
 export const blackbaudEndpointSchemas = {
-	'example.get': {
-		input: BlackbaudEndpointInputSchemas.exampleGet,
-		output: BlackbaudEndpointOutputSchemas.exampleGet,
+	'batch.addGiftsToBatch': {
+		input: BlackbaudEndpointInputSchemas.addGiftsToBatch,
+		output: BlackbaudEndpointOutputSchemas.addGiftsToBatch,
+	},
+	'gifts.getGiftById': {
+		input: BlackbaudEndpointInputSchemas.getGiftById,
+		output: BlackbaudEndpointOutputSchemas.getGiftById,
+	},
+	'membership.getMembershipDetails': {
+		input: BlackbaudEndpointInputSchemas.getMembershipDetails,
+		output: BlackbaudEndpointOutputSchemas.getMembershipDetails,
+	},
+	'payments.getPaymentTransaction': {
+		input: BlackbaudEndpointInputSchemas.getPaymentTransaction,
+		output: BlackbaudEndpointOutputSchemas.getPaymentTransaction,
+	},
+	'oneRoster.oneRosterOAuth2BaseApi': {
+		input: BlackbaudEndpointInputSchemas.oneRosterOAuth2BaseApi,
+		output: BlackbaudEndpointOutputSchemas.oneRosterOAuth2BaseApi,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof blackbaudEndpointsNested
 >;
 
-const blackbaudWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof blackbaudWebhooksNested
->;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: AuthTypes = 'oauth_2' as const;
 
 const blackbaudEndpointMeta = {
-	'example.get': {
+	'batch.addGiftsToBatch': {
+		riskLevel: 'write',
+		description:
+			"Add one or more gifts (donations) to an existing gift batch in Blackbaud Raiser's Edge NXT.",
+	},
+	'gifts.getGiftById': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description:
+			"Retrieves comprehensive gift details from Blackbaud Raiser's Edge NXT by gift ID.",
+	},
+	'membership.getMembershipDetails': {
+		riskLevel: 'read',
+		description:
+			"Retrieves comprehensive membership details from Blackbaud Raiser's Edge NXT by member junction ID.",
+	},
+	'payments.getPaymentTransaction': {
+		riskLevel: 'read',
+		description:
+			'Retrieves payment transaction details from Blackbaud SKY Payments API.',
+	},
+	'oneRoster.oneRosterOAuth2BaseApi': {
+		riskLevel: 'read',
+		description:
+			'Tool to interact with Blackbaud OneRoster OAuth2 base endpoints.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof blackbaudEndpointsNested
 >;
 
 export const blackbaudAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
 	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
@@ -132,9 +149,10 @@ export type BaseBlackbaudPlugin<T extends BlackbaudPluginOptions> =
 		'blackbaud',
 		typeof BlackbaudSchema,
 		typeof blackbaudEndpointsNested,
-		typeof blackbaudWebhooksNested,
+		{},
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof blackbaudAuthConfig
 	>;
 
 export type InternalBlackbaudPlugin =
@@ -154,48 +172,36 @@ export function blackbaud<const T extends BlackbaudPluginOptions>(
 	return {
 		id: 'blackbaud',
 		authConfig: blackbaudAuthConfig,
+		oauthConfig: {
+			providerName: 'Blackbaud',
+			authUrl: 'https://app.blackbaud.com/oauth/authorize',
+			tokenUrl: 'https://oauth2.sky.blackbaud.com/token',
+			scopes: [],
+		},
 		schema: BlackbaudSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: blackbaudEndpointsNested,
-		webhooks: blackbaudWebhooksNested,
+		webhooks: {},
 		endpointMeta: blackbaudEndpointMeta,
 		endpointSchemas: blackbaudEndpointSchemas,
-		webhookSchemas: blackbaudWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-blackbaud-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchBlackbaudTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveBlackbaudOAuthWebhookTenantLink,
+		webhookSchemas: {},
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: BlackbaudKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('blackbaud', 'oauth_2');
+				}
+				return res;
 			}
 
 			return '';
@@ -204,12 +210,16 @@ export function blackbaud<const T extends BlackbaudPluginOptions>(
 }
 
 export type {
+	AddGiftsToBatchInput,
+	AddGiftsToBatchResponse,
 	BlackbaudEndpointInputs,
 	BlackbaudEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	GetGiftByIdInput,
+	GetGiftByIdResponse,
+	GetMembershipDetailsInput,
+	GetMembershipDetailsResponse,
+	GetPaymentTransactionInput,
+	GetPaymentTransactionResponse,
+	OneRosterOAuth2BaseApiInput,
+	OneRosterOAuth2BaseApiResponse,
 } from './endpoints/types';
-export type {
-	BlackbaudWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
