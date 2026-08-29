@@ -14,12 +14,7 @@ export const create: SynthflowAiEndpoints['actionsCreate'] = async (
 		body: input,
 	});
 
-	await logEventFromContext(
-		ctx,
-		'synthflowai.actions.create',
-		{ name: input.name, type: input.type },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'synthflowai.actions.create', {}, 'completed');
 
 	return response;
 };
@@ -109,11 +104,17 @@ export const attach: SynthflowAiEndpoints['actionsAttach'] = async (
 	ctx,
 	input,
 ) => {
+	const { action_ids, actions, items, model_id, ...rest } = input;
+	const body = {
+		...rest,
+		model_id,
+		...(items ? { items } : { actions: actions ?? action_ids }),
+	};
 	const response = await makeSynthflowAiRequest<
 		SynthflowAiEndpointOutputs['actionsAttach']
 	>(`actions/attach`, ctx.key, {
 		method: 'POST',
-		body: input,
+		body,
 	});
 
 	await logEventFromContext(
@@ -130,11 +131,16 @@ export const detach: SynthflowAiEndpoints['actionsDetach'] = async (
 	ctx,
 	input,
 ) => {
+	const { action_ids, actions, model_id, ...rest } = input;
 	const response = await makeSynthflowAiRequest<
 		SynthflowAiEndpointOutputs['actionsDetach']
 	>(`actions/detach`, ctx.key, {
 		method: 'POST',
-		body: input,
+		body: {
+			...rest,
+			model_id,
+			actions: actions ?? action_ids,
+		},
 	});
 
 	await logEventFromContext(

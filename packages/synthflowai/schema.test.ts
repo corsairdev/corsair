@@ -2,19 +2,22 @@ import { SynthflowAiSchema } from './schema';
 
 describe('SynthflowAi schema', () => {
 	it('declares a semver version', () => {
-		expect(SynthflowAiSchema.version).toBeDefined();
 		expect(SynthflowAiSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
 	it('declares an entities map', () => {
 		expect(typeof SynthflowAiSchema.entities).toBe('object');
 		expect(SynthflowAiSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(SynthflowAiSchema.entities))).toBe(true);
-		for (const entity of Object.values(SynthflowAiSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		expect(Array.isArray(SynthflowAiSchema.entities)).toBe(false);
+		expect(Object.keys(SynthflowAiSchema.entities).sort()).toEqual([
+			'actions',
+			'assistants',
+			'calls',
+			'contacts',
+			'knowledgeBases',
+			'memoryStores',
+			'phoneBooks',
+			'voices',
+		]);
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

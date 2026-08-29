@@ -13,6 +13,17 @@ export class SynthflowAiAPIError extends Error {
 	}
 }
 
+export class SynthflowAiRateLimitError extends SynthflowAiAPIError {
+	constructor(
+		message = 'Too Many Requests',
+		public readonly retryAfterMs?: number,
+		body?: unknown,
+	) {
+		super(message, 429, 429, body);
+		this.name = 'SynthflowAiRateLimitError';
+	}
+}
+
 const SYNTHFLOW_AI_API_BASE = 'https://api.synthflow.ai/v2';
 
 export type SynthflowAiRequestOptions = {
@@ -20,6 +31,28 @@ export type SynthflowAiRequestOptions = {
 	body?: Record<string, unknown> | unknown;
 	query?: Record<string, string | number | boolean | undefined>;
 };
+
+function errorMessage(error: ApiError): string {
+	const bodyObj =
+		typeof error.body === 'object' && error.body !== null
+			? (error.body as Record<string, unknown>)
+			: undefined;
+	const detailObj =
+		bodyObj && typeof bodyObj.detail === 'object' && bodyObj.detail !== null
+			? (bodyObj.detail as Record<string, unknown>)
+			: undefined;
+	return (
+		(detailObj && 'description' in detailObj
+			? String(detailObj.description)
+			: undefined) ||
+		(bodyObj && typeof bodyObj.detail === 'string'
+			? bodyObj.detail
+			: undefined) ||
+		(bodyObj && 'message' in bodyObj ? String(bodyObj.message) : undefined) ||
+		(bodyObj && 'error' in bodyObj ? String(bodyObj.error) : undefined) ||
+		error.message
+	);
+}
 
 export async function makeSynthflowAiRequest<T>(
 	endpoint: string,
@@ -55,29 +88,16 @@ export async function makeSynthflowAiRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error: unknown) {
 		if (error instanceof ApiError) {
-			const bodyObj =
-				typeof error.body === 'object' && error.body !== null
-					? (error.body as Record<string, unknown>)
-					: undefined;
-			const detailObj =
-				bodyObj && typeof bodyObj.detail === 'object' && bodyObj.detail !== null
-					? (bodyObj.detail as Record<string, unknown>)
-					: undefined;
-			const msg =
-				(detailObj && 'description' in detailObj
-					? String(detailObj.description)
-					: undefined) ||
-				(bodyObj && typeof bodyObj.detail === 'string'
-					? bodyObj.detail
-					: undefined) ||
-				(bodyObj && 'message' in bodyObj
-					? String(bodyObj.message)
-					: undefined) ||
-				(bodyObj && 'error' in bodyObj ? String(bodyObj.error) : undefined) ||
-				error.message;
+			if (error.status === 429) {
+				throw new SynthflowAiRateLimitError(
+					errorMessage(error),
+					error.retryAfter,
+					error.body,
+				);
+			}
 			throw new SynthflowAiAPIError(
-				msg,
-				(bodyObj?.code as string | number | undefined) ?? error.status,
+				errorMessage(error),
+				error.status,
 				error.status,
 				error.body,
 			);

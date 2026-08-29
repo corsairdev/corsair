@@ -78,7 +78,7 @@ export const update: SynthflowAiEndpoints['memoryStoresUpdate'] = async (
 	const response = await makeSynthflowAiRequest<
 		SynthflowAiEndpointOutputs['memoryStoresUpdate']
 	>(`memory_stores/${memory_store_id}`, ctx.key, {
-		method: 'PUT',
+		method: 'PATCH',
 		body,
 	});
 

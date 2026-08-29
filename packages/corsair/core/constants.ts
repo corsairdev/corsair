@@ -381,7 +381,7 @@ export const ProviderDisplayNames = {
 	strava: 'Strava',
 	stripe: 'Stripe',
 	supabase: 'Supabase',
-	synthflowai: 'SynthflowAi',
+	synthflowai: 'Synthflow AI',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	tavilymcp: 'Tavily MCP',

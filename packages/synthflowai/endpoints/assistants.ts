@@ -49,20 +49,28 @@ export const list: SynthflowAiEndpoints['assistantsList'] = async (
 	return response;
 };
 
+function assistantId(input: {
+	model_id?: string;
+	assistant_id?: string;
+}): string {
+	return input.model_id || input.assistant_id || '';
+}
+
 export const get: SynthflowAiEndpoints['assistantsGet'] = async (
 	ctx,
 	input,
 ) => {
+	const model_id = assistantId(input);
 	const response = await makeSynthflowAiRequest<
 		SynthflowAiEndpointOutputs['assistantsGet']
-	>(`assistants/${input.assistant_id}`, ctx.key, {
+	>(`assistants/${model_id}`, ctx.key, {
 		method: 'GET',
 	});
 
 	await logEventFromContext(
 		ctx,
 		'synthflowai.assistants.get',
-		{ assistant_id: input.assistant_id },
+		{ model_id },
 		'completed',
 	);
 
@@ -73,10 +81,11 @@ export const update: SynthflowAiEndpoints['assistantsUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const { assistant_id, ...body } = input;
+	const { assistant_id, model_id: inputModelId, ...body } = input;
+	const model_id = assistantId({ model_id: inputModelId, assistant_id });
 	const response = await makeSynthflowAiRequest<
 		SynthflowAiEndpointOutputs['assistantsUpdate']
-	>(`assistants/${assistant_id}`, ctx.key, {
+	>(`assistants/${model_id}`, ctx.key, {
 		method: 'PUT',
 		body,
 	});
@@ -84,7 +93,7 @@ export const update: SynthflowAiEndpoints['assistantsUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'synthflowai.assistants.update',
-		{ assistant_id },
+		{ model_id },
 		'completed',
 	);
 
@@ -95,16 +104,17 @@ export const deleteAssistant: SynthflowAiEndpoints['assistantsDelete'] = async (
 	ctx,
 	input,
 ) => {
+	const model_id = assistantId(input);
 	const response = await makeSynthflowAiRequest<
 		SynthflowAiEndpointOutputs['assistantsDelete']
-	>(`assistants/${input.assistant_id}`, ctx.key, {
+	>(`assistants/${model_id}`, ctx.key, {
 		method: 'DELETE',
 	});
 
 	await logEventFromContext(
 		ctx,
 		'synthflowai.assistants.delete',
-		{ assistant_id: input.assistant_id },
+		{ model_id },
 		'completed',
 	);
 

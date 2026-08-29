@@ -9,7 +9,7 @@ export const create: SynthflowAiEndpoints['phoneBooksCreate'] = async (
 ) => {
 	const response = await makeSynthflowAiRequest<
 		SynthflowAiEndpointOutputs['phoneBooksCreate']
-	>('phone_books', ctx.key, {
+	>('phonebooks', ctx.key, {
 		method: 'POST',
 		body: input,
 	});
@@ -34,7 +34,7 @@ export const list: SynthflowAiEndpoints['phoneBooksList'] = async (
 
 	const response = await makeSynthflowAiRequest<
 		SynthflowAiEndpointOutputs['phoneBooksList']
-	>('phone_books', ctx.key, {
+	>('phonebooks', ctx.key, {
 		method: 'GET',
 		query,
 	});
@@ -55,7 +55,7 @@ export const deletePhoneBook: SynthflowAiEndpoints['phoneBooksDelete'] = async (
 ) => {
 	const response = await makeSynthflowAiRequest<
 		SynthflowAiEndpointOutputs['phoneBooksDelete']
-	>(`phone_books/${input.phone_book_id}`, ctx.key, {
+	>(`phonebooks/${input.phone_book_id}`, ctx.key, {
 		method: 'DELETE',
 	});
 

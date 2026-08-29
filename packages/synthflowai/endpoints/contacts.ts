@@ -75,7 +75,7 @@ export const update: SynthflowAiEndpoints['contactsUpdate'] = async (
 	const response = await makeSynthflowAiRequest<
 		SynthflowAiEndpointOutputs['contactsUpdate']
 	>(`contacts/${contact_id}`, ctx.key, {
-		method: 'PUT',
+		method: 'PATCH',
 		body,
 	});
 

@@ -33,13 +33,18 @@ export const AssistantsListInputSchema = z
 
 export const AssistantsGetInputSchema = z
 	.object({
-		assistant_id: z.string(),
+		model_id: z.string().optional(),
+		assistant_id: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough()
+	.refine((v) => Boolean(v.model_id || v.assistant_id), {
+		message: 'model_id is required',
+	});
 
 export const AssistantsUpdateInputSchema = z
 	.object({
-		assistant_id: z.string(),
+		model_id: z.string().optional(),
+		assistant_id: z.string().optional(),
 		name: z.string().optional(),
 		type: z.enum(['outbound', 'inbound', 'widget']).optional(),
 		description: z.string().optional(),
@@ -48,13 +53,20 @@ export const AssistantsUpdateInputSchema = z
 		is_recording: z.boolean().optional(),
 		agent: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.passthrough()
+	.refine((v) => Boolean(v.model_id || v.assistant_id), {
+		message: 'model_id is required',
+	});
 
 export const AssistantsDeleteInputSchema = z
 	.object({
-		assistant_id: z.string(),
+		model_id: z.string().optional(),
+		assistant_id: z.string().optional(),
 	})
-	.passthrough();
+	.passthrough()
+	.refine((v) => Boolean(v.model_id || v.assistant_id), {
+		message: 'model_id is required',
+	});
 
 export const CallsCreateInputSchema = z
 	.object({
@@ -105,6 +117,7 @@ export const ContactsCreateInputSchema = z
 		name: z.string(),
 		phone_number: z.string(),
 		email: z.string().optional(),
+		company: z.string().optional(),
 		contact_metadata: z.record(z.string(), z.unknown()).optional(),
 	})
 	.passthrough();
@@ -141,8 +154,8 @@ export const ContactsDeleteInputSchema = z
 
 export const KnowledgeBasesCreateInputSchema = z
 	.object({
-		name: z.string(),
-		description: z.string().optional(),
+		name: z.string().optional(),
+		rag_use_condition: z.string().optional(),
 	})
 	.passthrough();
 
@@ -156,7 +169,7 @@ export const KnowledgeBasesUpdateInputSchema = z
 	.object({
 		knowledge_base_id: z.string(),
 		name: z.string().optional(),
-		description: z.string().optional(),
+		rag_use_condition: z.string().optional(),
 	})
 	.passthrough();
 
@@ -232,7 +245,6 @@ export const MemoryStoresDetachFromAgentInputSchema = z
 export const PhoneBooksCreateInputSchema = z
 	.object({
 		name: z.string(),
-		description: z.string().optional(),
 	})
 	.passthrough();
 
@@ -249,12 +261,20 @@ export const PhoneBooksDeleteInputSchema = z
 	})
 	.passthrough();
 
+const ActionTypeBodySchema = z.record(z.string(), z.unknown());
+
 export const ActionsCreateInputSchema = z
 	.object({
-		name: z.string(),
-		type: z.string(),
-		description: z.string().optional(),
-		config: z.record(z.string(), z.unknown()).optional(),
+		REAL_TIME_BOOKING: ActionTypeBodySchema.optional(),
+		CALCOM: ActionTypeBodySchema.optional(),
+		GHL: ActionTypeBodySchema.optional(),
+		INFORMATION_EXTRACTOR: ActionTypeBodySchema.optional(),
+		LIVE_TRANSFER: ActionTypeBodySchema.optional(),
+		SEND_SMS: ActionTypeBodySchema.optional(),
+		INCALL_SMS: ActionTypeBodySchema.optional(),
+		INCALL_WHATSAPP: ActionTypeBodySchema.optional(),
+		CUSTOM_ACTION: ActionTypeBodySchema.optional(),
+		CUSTOM_EVAL: ActionTypeBodySchema.optional(),
 	})
 	.passthrough();
 
@@ -274,9 +294,16 @@ export const ActionsGetInputSchema = z
 export const ActionsUpdateInputSchema = z
 	.object({
 		action_id: z.string(),
-		name: z.string().optional(),
-		description: z.string().optional(),
-		config: z.record(z.string(), z.unknown()).optional(),
+		REAL_TIME_BOOKING: ActionTypeBodySchema.optional(),
+		CALCOM: ActionTypeBodySchema.optional(),
+		GHL: ActionTypeBodySchema.optional(),
+		INFORMATION_EXTRACTOR: ActionTypeBodySchema.optional(),
+		LIVE_TRANSFER: ActionTypeBodySchema.optional(),
+		SEND_SMS: ActionTypeBodySchema.optional(),
+		INCALL_SMS: ActionTypeBodySchema.optional(),
+		INCALL_WHATSAPP: ActionTypeBodySchema.optional(),
+		CUSTOM_ACTION: ActionTypeBodySchema.optional(),
+		CUSTOM_EVAL: ActionTypeBodySchema.optional(),
 	})
 	.passthrough();
 
@@ -289,23 +316,29 @@ export const ActionsDeleteInputSchema = z
 export const ActionsAttachInputSchema = z
 	.object({
 		model_id: z.string(),
-		action_ids: z.array(z.string()),
+		actions: z.array(z.string()).optional(),
+		action_ids: z.array(z.string()).optional(),
+		items: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();
 
 export const ActionsDetachInputSchema = z
 	.object({
 		model_id: z.string(),
-		action_ids: z.array(z.string()),
+		actions: z.array(z.string()).optional(),
+		action_ids: z.array(z.string()).optional(),
 	})
 	.passthrough();
 
 export const VoicesListInputSchema = z
 	.object({
+		workspace: z.string(),
 		limit: z.number().optional(),
 		offset: z.number().optional(),
+		search: z.string().optional(),
+		provider: z.enum(['elevenlabs', 'deepgram', 'synthflow']).optional(),
 	})
-	.optional();
+	.passthrough();
 
 export const SynthflowAiEndpointInputSchemas = {
 	assistantsCreate: AssistantsCreateInputSchema,
@@ -422,7 +455,7 @@ export const CallsCreateResponseSchema = z
 			})
 			.passthrough()
 			.optional(),
-		eta: z.string().optional(),
+		eta: z.number().int().optional(),
 	})
 	.passthrough();
 
@@ -475,7 +508,8 @@ export const KnowledgeBasesCreateResponseSchema = z
 		status: z.string().optional(),
 		response: z
 			.object({
-				id: z.string().optional(),
+				body: z.string().optional(),
+				knowledge_base_id: z.string().optional(),
 			})
 			.passthrough()
 			.optional(),

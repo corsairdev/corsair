@@ -17,7 +17,7 @@ export const create: SynthflowAiEndpoints['knowledgeBasesCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'synthflowai.knowledgeBases.create',
-		{ name: input.name },
+		{ name: input.name, rag_use_condition: input.rag_use_condition },
 		'completed',
 	);
 
