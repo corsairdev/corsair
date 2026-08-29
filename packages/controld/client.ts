@@ -11,7 +11,6 @@ export class ControlDAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
 const CONTROLD_API_BASE = 'https://api.controld.com';
 
 export async function makeControlDRequest<T>(
