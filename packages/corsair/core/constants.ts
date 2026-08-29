@@ -172,6 +172,7 @@ export const BaseProviders = [
 	'nextdns',
 	'notion',
 	'ocrspace',
+	'ocrwebservice',
 	'ollama',
 	'onedrive',
 	'onepassword',
@@ -401,6 +402,7 @@ export const ProviderDisplayNames = {
 	nextdns: 'NextDNS',
 	notion: 'Notion',
 	ocrspace: 'OCR.space',
+	ocrwebservice: 'OcrWebService',
 	ollama: 'Ollama',
 	onedrive: 'OneDrive',
 	onepassword: '1Password',
@@ -636,6 +638,7 @@ export type AllProviders =
 	| 'nextdns'
 	| 'notion'
 	| 'ocrspace'
+	| 'ocrwebservice'
 	| 'ollama'
 	| 'onedrive'
 	| 'onepassword'
