@@ -187,6 +187,7 @@ export const BaseProviders = [
 	'sharepoint',
 	'slack',
 	'spotify',
+	'stormglass',
 	'strava',
 	'streamtime',
 	'stripe',
@@ -406,6 +407,7 @@ export const ProviderDisplayNames = {
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
 	spotify: 'Spotify',
+	stormglass: 'Stormglass',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
 	stripe: 'Stripe',
@@ -632,6 +634,7 @@ export type AllProviders =
 	| 'sharepoint'
 	| 'slack'
 	| 'spotify'
+	| 'stormglass'
 	| 'strava'
 	| 'streamtime'
 	| 'stripe'
