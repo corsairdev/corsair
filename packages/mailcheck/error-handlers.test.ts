@@ -5,7 +5,7 @@ import { errorHandlers } from './error-handlers';
 
 const mockRequestOptions: ApiRequestOptions = {
 	method: 'POST',
-	url: '/v1/emails:check',
+	url: '/v1/singleEmail:check',
 };
 
 function makeApiError(
@@ -17,7 +17,7 @@ function makeApiError(
 	return new ApiError(
 		mockRequestOptions,
 		{
-			url: '/v1/emails:checkSingle',
+			url: '/v1/singleEmail:check',
 			ok: false,
 			status,
 			statusText,
@@ -105,5 +105,10 @@ describe('Mailcheck error handlers', () => {
 	it('satisfies CorsairErrorHandler contract', () => {
 		const _handler: CorsairErrorHandler = errorHandlers;
 		expect(_handler).toBeDefined();
+	});
+
+	it('keeps DEFAULT last', () => {
+		const keys = Object.keys(errorHandlers);
+		expect(keys[keys.length - 1]).toBe('DEFAULT');
 	});
 });
