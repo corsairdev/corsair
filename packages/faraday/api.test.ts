@@ -171,6 +171,10 @@ describe('official Faraday REST request mapping', () => {
 			if (op.input === 'accountCreate' || op.input === 'create') {
 				expect(options?.body).toMatchObject({ name: input.name });
 			}
+			if (op.input === 'patch') {
+				expect(options?.body).toEqual({ name: input.name });
+				expect(options?.body).not.toHaveProperty('account_id');
+			}
 		},
 	);
 
@@ -197,6 +201,29 @@ describe('official Faraday REST request mapping', () => {
 			url: 'accounts/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
 			body: undefined,
 		});
+	});
+
+	it('maps accounts.update PATCH without account_id in the body', async () => {
+		const update = FaradayHandlers['accounts.update'];
+		if (!update) throw new Error('missing accounts.update');
+		await update(ctx, {
+			account_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+			name: 'Acme Renamed',
+			branding: { suppress_from_reports: true },
+		} as never);
+		expect(mockRequest.mock.calls[0]?.[1]).toEqual(
+			expect.objectContaining({
+				method: 'PATCH',
+				url: 'accounts/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+				body: {
+					name: 'Acme Renamed',
+					branding: { suppress_from_reports: true },
+				},
+			}),
+		);
+		expect(mockRequest.mock.calls[0]?.[1]?.body).not.toHaveProperty(
+			'account_id',
+		);
 	});
 
 	it('maps accounts.create to POST /accounts with name', async () => {
