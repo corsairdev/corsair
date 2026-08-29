@@ -113,7 +113,11 @@ const faradayEndpointMeta = Object.fromEntries(
 		opKey(op),
 		{ riskLevel: op.risk, description: op.description },
 	]),
-) as unknown as RequiredPluginEndpointMeta<typeof faradayEndpointsNested>;
+) as RequiredPluginEndpointMeta<typeof faradayEndpointsNested>;
+
+void (faradayEndpointMeta satisfies RequiredPluginEndpointMeta<
+	typeof faradayEndpointsNested
+>);
 
 export const faradayAuthConfig = {
 	api_key: {

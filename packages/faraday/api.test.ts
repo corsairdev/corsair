@@ -1,3 +1,4 @@
+import { createHmac } from 'node:crypto';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
@@ -11,7 +12,9 @@ import { errorHandlers } from './error-handlers';
 import { faraday } from './index';
 import { FaradaySchema } from './schema';
 import {
+	FARADAY_WEBHOOK_TOLERANCE_SECONDS,
 	matchFaradayTenantWebhook,
+	resetFaradayWebhookReplayCache,
 	verifyFaradayWebhookSignature,
 } from './webhooks';
 
@@ -164,20 +167,71 @@ describe('Faraday plugin', () => {
 	});
 });
 
+function expectedUrl(path: string, input: Record<string, unknown>): string {
+	return path.replace(/\{(\w+)\}/g, (_, key: string) =>
+		encodeURIComponent(String(input[key] ?? input.id ?? '')),
+	);
+}
+
 describe('official Faraday REST request mapping', () => {
 	it.each(FARADAY_OPS.map((op) => [opKey(op), op]))(
 		'%s calls %s %s',
 		async (_key, op) => {
-			const input = sampleInput(op);
+			const input = sampleInput(op) as Record<string, unknown>;
 			const handler = FaradayHandlers[opKey(op)];
 			if (!handler) throw new Error(`missing handler ${opKey(op)}`);
 			await handler(ctx, input as never);
 			expect(mockRequest).toHaveBeenCalled();
 			const options = mockRequest.mock.calls[0]?.[1];
 			expect(options?.method).toBe(op.method);
-			expect(String(options?.url)).toContain(op.path.split('{')[0]);
+			expect(options?.url).toBe(expectedUrl(op.path, input));
+			if (op.input === 'ids') {
+				expect(options?.query).toEqual({ ids: input.ids });
+			}
+			if (op.method === 'GET' || op.method === 'DELETE' || op.input === 'id') {
+				expect(options?.body).toBeUndefined();
+			}
+			if (op.input === 'accountCreate' || op.input === 'create') {
+				expect(options?.body).toMatchObject({ name: input.name });
+			}
 		},
 	);
+
+	it('maps accounts.list ids as a repeated query and GET /accounts', async () => {
+		const list = FaradayHandlers['accounts.list'];
+		if (!list) throw new Error('missing accounts.list');
+		const ids = ['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'];
+		await list(ctx, { ids } as never);
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: 'accounts',
+			query: { ids },
+		});
+	});
+
+	it('maps accounts.get to GET /accounts/{account_id}', async () => {
+		const get = FaradayHandlers['accounts.get'];
+		if (!get) throw new Error('missing accounts.get');
+		await get(ctx, {
+			account_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+		} as never);
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: 'accounts/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+			body: undefined,
+		});
+	});
+
+	it('maps accounts.create to POST /accounts with name', async () => {
+		const create = FaradayHandlers['accounts.create'];
+		if (!create) throw new Error('missing accounts.create');
+		await create(ctx, { name: 'Acme Wind Turbines' } as never);
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'POST',
+			url: 'accounts',
+			body: { name: 'Acme Wind Turbines' },
+		});
+	});
 
 	it('rejects more than 100 list ids', async () => {
 		const ids = Array.from({ length: 101 }, (_, i) => String(i));
@@ -272,6 +326,67 @@ describe('Faraday webhook signature', () => {
 				},
 			} as never),
 		).toEqual({ linkType: 'account_id', externalId: 'acct-1' });
+	});
+
+	it('rejects stale timestamps and replayed message ids', () => {
+		resetFaradayWebhookReplayCache();
+		const secret = 'whsec_dGVzdA==';
+		const rawBody = '{"type":"resource.ready_with_update"}';
+		const now = Math.floor(Date.now() / 1000);
+		const sign = (msgId: string, timestamp: string) =>
+			`v1,${createHmac('sha256', Buffer.from('dGVzdA==', 'base64'))
+				.update(`${msgId}.${timestamp}.${rawBody}`)
+				.digest('base64')}`;
+
+		const stale = String(now - FARADAY_WEBHOOK_TOLERANCE_SECONDS - 1);
+		expect(
+			verifyFaradayWebhookSignature(
+				{
+					headers: {
+						'svix-id': 'msg_stale',
+						'svix-timestamp': stale,
+						'svix-signature': sign('msg_stale', stale),
+					},
+					rawBody,
+					payload: {
+						timestamp: stale,
+						type: 'resource.ready_with_update',
+						data: {
+							account_id: 'a',
+							resource_id: 'b',
+							resource_type: 'cohorts',
+						},
+					},
+				} as never,
+				secret,
+				now,
+			).valid,
+		).toBe(false);
+
+		const fresh = String(now);
+		const freshReq = {
+			headers: {
+				'svix-id': 'msg_once',
+				'svix-timestamp': fresh,
+				'svix-signature': sign('msg_once', fresh),
+			},
+			rawBody,
+			payload: {
+				timestamp: fresh,
+				type: 'resource.ready_with_update',
+				data: {
+					account_id: 'a',
+					resource_id: 'b',
+					resource_type: 'cohorts',
+				},
+			},
+		} as never;
+		expect(verifyFaradayWebhookSignature(freshReq, secret, now).valid).toBe(
+			true,
+		);
+		expect(verifyFaradayWebhookSignature(freshReq, secret, now).error).toMatch(
+			/Replay/,
+		);
 	});
 });
 

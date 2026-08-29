@@ -71,6 +71,26 @@ function firstHeader(
 	return undefined;
 }
 
+/** Standard Webhooks default tolerance. https://github.com/standard-webhooks/standard-webhooks */
+export const FARADAY_WEBHOOK_TOLERANCE_SECONDS = 300;
+
+// ponytail: in-memory replay cache; persist if Faraday retries across processes
+const seenMessageIds = new Map<string, number>();
+
+export function resetFaradayWebhookReplayCache(): void {
+	seenMessageIds.clear();
+}
+
+function rememberMessageId(msgId: string, expiresAt: number): boolean {
+	const now = Math.floor(Date.now() / 1000);
+	for (const [id, exp] of seenMessageIds) {
+		if (exp < now) seenMessageIds.delete(id);
+	}
+	if (seenMessageIds.has(msgId)) return false;
+	seenMessageIds.set(msgId, expiresAt);
+	return true;
+}
+
 function secretBytes(secret: string): Buffer {
 	const raw = secret.startsWith('whsec_') ? secret.slice(6) : secret;
 	const decoded = Buffer.from(raw, 'base64');
@@ -84,6 +104,7 @@ function secretBytes(secret: string): Buffer {
 export function verifyFaradayWebhookSignature(
 	request: WebhookRequest<FaradayWebhookPayload>,
 	secret: string,
+	nowSeconds = Math.floor(Date.now() / 1000),
 ): { valid: boolean; error?: string } {
 	if (request.hubVerified) {
 		return { valid: true };
@@ -112,6 +133,19 @@ export function verifyFaradayWebhookSignature(
 		return { valid: false, error: 'Missing raw request body' };
 	}
 
+	const timestampSeconds = Number.parseInt(timestamp, 10);
+	if (!Number.isFinite(timestampSeconds)) {
+		return { valid: false, error: 'Invalid webhook timestamp' };
+	}
+	if (
+		Math.abs(nowSeconds - timestampSeconds) > FARADAY_WEBHOOK_TOLERANCE_SECONDS
+	) {
+		return {
+			valid: false,
+			error: 'Webhook timestamp is too old (possible replay attack)',
+		};
+	}
+
 	const signedContent = `${msgId}.${timestamp}.${request.rawBody}`;
 	const expected = createHmac('sha256', secretBytes(secret))
 		.update(signedContent)
@@ -126,8 +160,18 @@ export function verifyFaradayWebhookSignature(
 		const wanted = Buffer.from(expected);
 		return actual.length === wanted.length && timingSafeEqual(actual, wanted);
 	});
+	if (!ok) {
+		return { valid: false, error: 'Invalid webhook signature' };
+	}
 
-	return ok
-		? { valid: true }
-		: { valid: false, error: 'Invalid webhook signature' };
+	if (
+		!rememberMessageId(
+			msgId,
+			timestampSeconds + FARADAY_WEBHOOK_TOLERANCE_SECONDS,
+		)
+	) {
+		return { valid: false, error: 'Replay: webhook message id already used' };
+	}
+
+	return { valid: true };
 }
