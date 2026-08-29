@@ -230,15 +230,80 @@ describe('DynaPictures Client', () => {
 		expect(options.url).toBe('/workspaces');
 	});
 
-	it('wraps ApiError into DynapicturesAPIError preserving status', async () => {
+	it('wraps ApiError into DynapicturesAPIError preserving status and retry metadata', async () => {
 		const MockApiError = ApiError as any;
 		requestMock.mockRejectedValueOnce(
-			new MockApiError(404, 'Workspace not found'),
+			new MockApiError(429, 'Too Many Requests', 'Too Many Requests', {
+				error: 'rate_limited',
+			}, 15_000),
 		);
 
 		await expect(
-			makeDynapicturesRequest('/workspaces/unknown', 'key'),
-		).rejects.toThrow(DynapicturesAPIError);
+			makeDynapicturesRequest('/workspaces', 'key', { method: 'GET' }),
+		).rejects.toMatchObject({
+			name: 'DynapicturesAPIError',
+			status: 429,
+			retryAfter: 15_000,
+			statusText: 'Too Many Requests',
+		});
+	});
+
+	it('keeps auth failures distinct from rate-limits after wrapping', async () => {
+		const MockApiError = ApiError as any;
+		requestMock.mockRejectedValueOnce(
+			new MockApiError(401, 'Unauthorized', 'Unauthorized'),
+		);
+
+		await expect(
+			makeDynapicturesRequest('/workspaces', 'key', { method: 'GET' }),
+		).rejects.toMatchObject({
+			name: 'DynapicturesAPIError',
+			status: 401,
+			retryAfter: undefined,
+		});
+	});
+});
+
+describe('DynaPictures error handlers', () => {
+	it('recognizes wrapped 429 errors and forwards retry metadata', async () => {
+		const MockApiError = ApiError as any;
+		const cause = new MockApiError(
+			429,
+			'Too Many Requests',
+			'Too Many Requests',
+			undefined,
+			12_500,
+		);
+		const wrapped = new DynapicturesAPIError(cause.message, cause.status, {
+			cause,
+		});
+
+		const { errorHandlers } = await import('./error-handlers');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(wrapped)).toBe(true);
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler(wrapped)).resolves.toEqual({
+			maxRetries: 5,
+			headersRetryAfterMs: 12_500,
+		});
+	});
+
+	it('keeps authentication errors separate from rate-limit errors', async () => {
+		const MockApiError = ApiError as any;
+		const cause = new MockApiError(401, 'Unauthorized', 'Unauthorized');
+		const wrapped = new DynapicturesAPIError(cause.message, cause.status, {
+			cause,
+		});
+
+		const { errorHandlers } = await import('./error-handlers');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(wrapped)).toBe(false);
+		expect(errorHandlers.AUTH_ERROR.match(wrapped)).toBe(true);
+	});
+});
+
+describe('DynaPictures tenant routing', () => {
+	it('does not register unsupported OAuth tenant resolution callbacks', () => {
+		const plugin = dynapictures({ key: 'test-key' });
+		expect(plugin.oauthWebhookTenantLinkResolver).toBeUndefined();
+		expect(plugin.pluginTenantWebhookMatcher).toBeUndefined();
 	});
 });
 

@@ -1,11 +1,15 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
+/** Wraps a DynaPictures API failure while surfacing the transport status and retry information. */
 export class DynapicturesAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
+	public readonly rateLimitReset?: number;
+	public readonly rateLimitRemaining?: number;
+	public readonly rateLimitLimit?: number;
 
 	constructor(
 		message: string,
@@ -20,12 +24,16 @@ export class DynapicturesAPIError extends Error {
 			this.statusText = options.cause.statusText;
 			this.body = options.cause.body;
 			this.retryAfter = options.cause.retryAfter;
+			this.rateLimitReset = options.cause.rateLimitReset;
+			this.rateLimitRemaining = options.cause.rateLimitRemaining;
+			this.rateLimitLimit = options.cause.rateLimitLimit;
 		}
 	}
 }
 
 export const DYNAPICTURES_API_BASE = 'https://api.dynapictures.com';
 
+/** Performs a request against the canonical DynaPictures API host using bearer-token auth. */
 export async function makeDynapicturesRequest<T>(
 	endpoint: string,
 	apiKey: string,

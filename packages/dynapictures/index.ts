@@ -33,8 +33,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { DynapicturesSchema } from './schema';
-import { resolveDynapicturesOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchDynapicturesTenantWebhook } from './webhooks/tenant-matcher';
 
 // ── Tool Operation Definitions ───────────────────────────────────────────────
 
@@ -309,8 +307,8 @@ export function dynapictures<const T extends DynapicturesPluginOptions>(
 		endpointSchemas: dynapicturesEndpointSchemas,
 		webhookSchemas: dynapicturesWebhookSchemas,
 		pluginWebhookMatcher: undefined,
-		pluginTenantWebhookMatcher: matchDynapicturesTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveDynapicturesOAuthWebhookTenantLink,
+		pluginTenantWebhookMatcher: undefined,
+		oauthWebhookTenantLinkResolver: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
