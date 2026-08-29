@@ -83,6 +83,19 @@ export function buildCloudcartStoreUrl(storeUrl: string): string {
 		);
 	}
 
+	const host = parsed.hostname.toLowerCase();
+	if (
+		host !== 'cloudcart.com' &&
+		!host.endsWith('.cloudcart.com') &&
+		host !== 'cloudcart.net' &&
+		!host.endsWith('.cloudcart.net')
+	) {
+		throw new CloudcartAPIError(
+			'Store URL must be a CloudCart host',
+			'INVALID_STORE_URL',
+		);
+	}
+
 	const path = parsed.pathname.replace(/\/+$/, '');
 	if (path === '' || path === '/') {
 		return `${parsed.origin}/api/v1`;

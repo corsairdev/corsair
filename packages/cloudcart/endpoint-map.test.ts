@@ -18,7 +18,7 @@ jest.mock('corsair/http', () => {
 });
 
 const mockRequest = request as jest.Mock;
-const STORE = 'https://shop.example.com';
+const STORE = 'https://shop.cloudcart.com';
 const PACKED = packCloudcartKey('cc_test_key', STORE);
 const mockCtx = {
 	key: PACKED,

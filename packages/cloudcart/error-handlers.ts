@@ -43,17 +43,7 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return {
-				maxRetries: 5,
-				retryStrategy: 'exponential_backoff' as const,
-				headersRetryAfterMs: retryAfterMs,
-			};
-		},
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	SERVER_ERROR: {
 		match: (error: Error) => {

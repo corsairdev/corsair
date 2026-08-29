@@ -1,4 +1,4 @@
-import { timingSafeEqual } from 'node:crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -93,13 +93,6 @@ function headerString(
 	return undefined;
 }
 
-function timingSafeStringEqual(left: string, right: string): boolean {
-	const leftBuf = Buffer.from(left);
-	const rightBuf = Buffer.from(right);
-	if (leftBuf.length !== rightBuf.length) return false;
-	return timingSafeEqual(leftBuf, rightBuf);
-}
-
 export function createCloudcartMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body);
@@ -131,17 +124,38 @@ export function verifyCloudcartWebhookSignature(
 		return { valid: false, error: 'Missing webhook secret' };
 	}
 
-	const headers = request.headers as Record<string, unknown>;
-	const presented =
-		headerString(headers, 'x-cloudcart-apikey') ??
-		headerString(headers, 'x-cloudcart-api-key');
-
-	if (!presented) {
-		return { valid: false, error: 'Missing CloudCart API key header' };
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
 	}
 
-	if (!timingSafeStringEqual(presented, secret)) {
-		return { valid: false, error: 'Invalid CloudCart API key' };
+	const headers = request.headers as Record<string, unknown>;
+	const presented =
+		headerString(headers, 'x-cloudcart-signature') ??
+		headerString(headers, 'x-hub-signature-256') ??
+		headerString(headers, 'x-cloudcart-hmac-sha256');
+
+	if (!presented) {
+		return { valid: false, error: 'Missing CloudCart HMAC signature' };
+	}
+
+	const receivedHex = presented.startsWith('sha256=')
+		? presented.slice(7)
+		: presented;
+	const expectedHex = createHmac('sha256', secret)
+		.update(rawBody)
+		.digest('hex');
+	const received = Buffer.from(receivedHex, 'hex');
+	const expected = Buffer.from(expectedHex, 'hex');
+	if (
+		received.length === 0 ||
+		received.length !== expected.length ||
+		!timingSafeEqual(received, expected)
+	) {
+		return { valid: false, error: 'Invalid CloudCart HMAC signature' };
 	}
 
 	return { valid: true };
