@@ -1,6 +1,4 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, type ApiRequestOptions, type OpenAPIConfig, request } from 'corsair/http';
 
 export class MailcheckAPIError extends Error {
 	constructor(
@@ -12,7 +10,6 @@ export class MailcheckAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
 const MAILCHECK_API_BASE = 'https://api.mailcheck.ing/v1';
 
 export async function makeMailcheckRequest<T>(
@@ -34,8 +31,6 @@ export async function makeMailcheckRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			
-			'Authorization': apiKey,
 		},
 	};
 
@@ -53,6 +48,9 @@ export async function makeMailcheckRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		// ApiError carries status and retryAfter that error-handlers.ts
+		// needs for rate-limit and auth matching. Re-throw as-is.
+		if (error instanceof ApiError) throw error;
 		if (error instanceof Error) {
 			throw new MailcheckAPIError(error.message);
 		}
