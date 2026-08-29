@@ -194,6 +194,7 @@ export const ProviderDisplayNames = {
 	gmail: 'Gmail',
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
+
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
 	googlemaps: 'Google Maps',
@@ -258,7 +259,7 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-} as const satisfies Record<(typeof BaseProviders)[number], string>;
+} as const;
 
 export function formatProviderDisplayName(plugin: string): string {
 	const knownName =
