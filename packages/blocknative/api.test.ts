@@ -3,10 +3,10 @@ import { z } from 'zod';
 import {
 	applyDappId,
 	BLOCKNATIVE_API_BASE,
-	BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
 	BLOCKNATIVE_WS_URL,
 	BlocknativeAPIError,
 	BlocknativeRateLimitError,
+	initializeMessage,
 	makeBlocknativeRequest,
 	parseHexChainId,
 } from './client';
@@ -205,21 +205,18 @@ describe('Blocknative plugin', () => {
 				filters: [{ 'contractCall.methodName': 'transfer' }],
 			}),
 		);
-		expect(result.websocketUrl).toBe(BLOCKNATIVE_WS_URL);
+		expect(result).toEqual({
+			websocketUrl: BLOCKNATIVE_WS_URL,
+			system: 'ethereum',
+			network: 'main',
+			scope: ADDR,
+			watchAddress: true,
+			filters: [{ 'contractCall.methodName': 'transfer' }],
+		});
 		expect(JSON.stringify(result)).not.toContain('test-api-key');
-		expect(result.initialize).not.toHaveProperty('dappId');
-		expect(result.config).not.toHaveProperty('dappId');
-		expect(result.auth.dappIdField).toBe('dappId');
-		expect(result.auth.dappIdPlaceholder).toBe(BLOCKNATIVE_DAPP_ID_PLACEHOLDER);
-		expect(applyDappId(result.initialize, 'injected-key').dappId).toBe(
+		expect(applyDappId(initializeMessage(), 'injected-key').dappId).toBe(
 			'injected-key',
 		);
-		expect(result.initialize.eventCode).toBe('checkDappId');
-		expect(result.config.categoryCode).toBe('configs');
-		expect(result.config.eventCode).toBe('put');
-		expect(
-			(result.config.config as { scope: string; watchAddress: boolean }).scope,
-		).toBe(ADDR);
 	});
 
 	it('builds official activeTransaction subscribe/unwatch messages', async () => {
@@ -229,9 +226,13 @@ describe('Blocknative plugin', () => {
 				hash: TX,
 			}),
 		);
-		expect(sub.subscribe.categoryCode).toBe('activeTransaction');
-		expect(sub.subscribe.eventCode).toBe('txSent');
-		expect((sub.subscribe.transaction as { hash: string }).hash).toBe(TX);
+		expect(sub).toEqual({
+			websocketUrl: BLOCKNATIVE_WS_URL,
+			system: 'ethereum',
+			network: 'main',
+			hash: TX,
+			action: 'subscribe',
+		});
 
 		const unsub = await unsubscribeTransactionHash(
 			ctx,
@@ -239,10 +240,8 @@ describe('Blocknative plugin', () => {
 				hash: TX,
 			}),
 		);
-		expect(unsub.unsubscribe.eventCode).toBe('unwatch');
-		expect((unsub.unsubscribe.transaction as { status: string }).status).toBe(
-			'unsubscribed',
-		);
+		expect(unsub.action).toBe('unsubscribe');
+		expect(unsub.hash).toBe(TX);
 	});
 
 	it('builds official multichain account + transaction subscribe payloads', async () => {
@@ -254,14 +253,14 @@ describe('Blocknative plugin', () => {
 				chainId: '0x1',
 			}),
 		);
-		expect(account.initialize.blockchain).toEqual({
+		expect(account).toEqual({
+			websocketUrl: BLOCKNATIVE_WS_URL,
 			system: 'ethereum',
 			network: 'main',
+			id: ADDR,
+			type: 'account',
+			chainId: '0x1',
 		});
-		expect(account.subscribe.categoryCode).toBe('configs');
-		expect(
-			(account.subscribe.config as { watchAddress: boolean }).watchAddress,
-		).toBe(true);
 
 		const tx = await subscribeMultichain(
 			ctx,
@@ -271,10 +270,9 @@ describe('Blocknative plugin', () => {
 				chainId: '0x1',
 			}),
 		);
-		expect(tx.subscribe.eventCode).toBe('txSent');
+		expect(tx.type).toBe('transaction');
 		expect(JSON.stringify(account)).not.toContain('test-api-key');
-		expect(account.initialize).not.toHaveProperty('dappId');
-		expect(tx.subscribe).not.toHaveProperty('dappId');
+		expect(account).not.toHaveProperty('dappId');
 
 		expect(() => parseHexChainId('0x1garbage')).toThrow(/Unsupported chainId/);
 		await expect(

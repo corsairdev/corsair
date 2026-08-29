@@ -1,9 +1,5 @@
 import { z } from 'zod';
-import {
-	BLOCKNATIVE_DAPP_ID_FIELD,
-	BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
-	parseHexChainId,
-} from '../client';
+import { parseHexChainId } from '../client';
 import {
 	BlocknativeBaseFeeEstimates,
 	BlocknativeBlockPrices,
@@ -35,38 +31,11 @@ const HexChainId = z
 		{ message: 'Unsupported Blocknative chainId' },
 	);
 
-const WsProtocolMessageSchema = z
-	.object({
-		timeStamp: z.string(),
-		version: z.string(),
-		blockchain: z.object({
-			system: z.string(),
-			network: z.string(),
-		}),
-		categoryCode: z.string(),
-		eventCode: z.string(),
-	})
-	.loose()
-	.refine((msg) => !('dappId' in msg), {
-		message: 'dappId must not be returned; call applyDappId before send',
-	});
-
-const WsAuthSchema = z.object({
-	dappIdField: z.literal(BLOCKNATIVE_DAPP_ID_FIELD),
-	dappIdPlaceholder: z.literal(BLOCKNATIVE_DAPP_ID_PLACEHOLDER),
-	inject: z.literal(
-		'Call applyDappId(message, apiKey) before sending. This plugin never returns dappId.',
-	),
+const WsConnectionSchema = z.object({
+	websocketUrl: z.string(),
+	system: z.string().min(1),
+	network: z.string().min(1),
 });
-
-const WS_AUTH = {
-	dappIdField: BLOCKNATIVE_DAPP_ID_FIELD,
-	dappIdPlaceholder: BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
-	inject:
-		'Call applyDappId(message, apiKey) before sending. This plugin never returns dappId.',
-} as const;
-
-export { WS_AUTH };
 
 export const GetGasPricesInputSchema = z.object({
 	chainid: z.number().int().positive().optional(),
@@ -125,11 +94,11 @@ export const ConfigureFiltersInputSchema = z.object({
 	network: z.string().optional(),
 });
 export type ConfigureFiltersInput = z.infer<typeof ConfigureFiltersInputSchema>;
-export const ConfigureFiltersOutputSchema = z.object({
-	websocketUrl: z.string(),
-	auth: WsAuthSchema,
-	initialize: WsProtocolMessageSchema,
-	config: WsProtocolMessageSchema,
+export const ConfigureFiltersOutputSchema = WsConnectionSchema.extend({
+	scope: z.string().min(1),
+	filters: z.array(z.unknown()).optional(),
+	abi: z.array(z.unknown()).optional(),
+	watchAddress: z.boolean().optional(),
 });
 export type ConfigureFiltersOutput = z.infer<
 	typeof ConfigureFiltersOutputSchema
@@ -143,11 +112,9 @@ export const SubscribeTransactionHashInputSchema = z.object({
 export type SubscribeTransactionHashInput = z.infer<
 	typeof SubscribeTransactionHashInputSchema
 >;
-export const SubscribeTransactionHashOutputSchema = z.object({
-	websocketUrl: z.string(),
-	auth: WsAuthSchema,
-	initialize: WsProtocolMessageSchema,
-	subscribe: WsProtocolMessageSchema,
+export const SubscribeTransactionHashOutputSchema = WsConnectionSchema.extend({
+	hash: TxHash,
+	action: z.literal('subscribe'),
 });
 export type SubscribeTransactionHashOutput = z.infer<
 	typeof SubscribeTransactionHashOutputSchema
@@ -161,12 +128,12 @@ export const UnsubscribeTransactionHashInputSchema = z.object({
 export type UnsubscribeTransactionHashInput = z.infer<
 	typeof UnsubscribeTransactionHashInputSchema
 >;
-export const UnsubscribeTransactionHashOutputSchema = z.object({
-	websocketUrl: z.string(),
-	auth: WsAuthSchema,
-	initialize: WsProtocolMessageSchema,
-	unsubscribe: WsProtocolMessageSchema,
-});
+export const UnsubscribeTransactionHashOutputSchema = WsConnectionSchema.extend(
+	{
+		hash: TxHash,
+		action: z.literal('unsubscribe'),
+	},
+);
 export type UnsubscribeTransactionHashOutput = z.infer<
 	typeof UnsubscribeTransactionHashOutputSchema
 >;
@@ -181,11 +148,10 @@ export const SubscribeMultichainInputSchema = z.object({
 export type SubscribeMultichainInput = z.infer<
 	typeof SubscribeMultichainInputSchema
 >;
-export const SubscribeMultichainOutputSchema = z.object({
-	websocketUrl: z.string(),
-	auth: WsAuthSchema,
-	initialize: WsProtocolMessageSchema,
-	subscribe: WsProtocolMessageSchema,
+export const SubscribeMultichainOutputSchema = WsConnectionSchema.extend({
+	id: HexId,
+	type: z.enum(['transaction', 'account']),
+	chainId: HexChainId,
 });
 export type SubscribeMultichainOutput = z.infer<
 	typeof SubscribeMultichainOutputSchema
