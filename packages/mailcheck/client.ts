@@ -10,7 +10,7 @@ export class MailcheckAPIError extends Error {
 	}
 }
 
-const MAILCHECK_API_BASE = 'https://api.mailcheck.ing/v1';
+const MAILCHECK_API_BASE = 'https://api.mailcheck.co';
 
 export async function makeMailcheckRequest<T>(
 	endpoint: string,

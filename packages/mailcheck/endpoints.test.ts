@@ -19,62 +19,25 @@ const mockCtx = {
 describe('Mailcheck endpoints', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
-		mockRequest.mockResolvedValue({ email: 'test@example.com', status: 'valid' });
+		mockRequest.mockResolvedValue({ email: 'test@example.com', trustRate: 95, mxExists: true, smtpExists: true, isNotDisposable: true, isNotSmtpCatchAll: true });
 	});
 
 	describe('verifyEmail', () => {
 		it('calls makeMailcheckRequest with correct args', async () => {
-			const input = { email: 'test@example.com', verify: true, check_breach: false };
+			const input = { email: 'test@example.com' };
 			await Mailcheck.verifyEmail(mockCtx, input);
 
-			expect(mockRequest).toHaveBeenCalledWith('verify', 'test-api-key', {
+			expect(mockRequest).toHaveBeenCalledWith('/v1/emails:checkSingle', 'test-api-key', {
 				method: 'POST',
-				body: {
-					email: 'test@example.com',
-					verify: true,
-					check_breach: false,
-				},
-			});
-		});
-
-		it('uses defaults for optional params', async () => {
-			const input = { email: 'user@domain.com' };
-			await Mailcheck.verifyEmail(mockCtx, input);
-
-			expect(mockRequest).toHaveBeenCalledWith('verify', 'test-api-key', {
-				method: 'POST',
-				body: {
-					email: 'user@domain.com',
-					verify: true,
-					check_breach: false,
-				},
+				body: { email: 'test@example.com' },
 			});
 		});
 
 		it('returns the response from the API', async () => {
-			const response = { email: 'test@example.com', status: 'valid', mx_status: 'ok', smtp_status: 'ok' };
+			const response = { email: 'test@example.com', trustRate: 95, mxExists: true, smtpExists: true, isNotDisposable: true, isNotSmtpCatchAll: true };
 			mockRequest.mockResolvedValueOnce(response);
 
 			const result = await Mailcheck.verifyEmail(mockCtx, { email: 'test@example.com' });
-			expect(result).toEqual(response);
-		});
-	});
-
-	describe('validateDomain', () => {
-		it('calls makeMailcheckRequest with correct args', async () => {
-			const input = { domain: 'example.com' };
-			await Mailcheck.validateDomain(mockCtx, input);
-
-			expect(mockRequest).toHaveBeenCalledWith('domain/example.com', 'test-api-key', {
-				method: 'GET',
-			});
-		});
-
-		it('returns the response from the API', async () => {
-			const response = { domain: 'example.com', is_disposable: false, mx_records: true };
-			mockRequest.mockResolvedValueOnce(response);
-
-			const result = await Mailcheck.validateDomain(mockCtx, { domain: 'example.com' });
 			expect(result).toEqual(response);
 		});
 
@@ -85,8 +48,28 @@ describe('Mailcheck endpoints', () => {
 			mockRequest.mockRejectedValueOnce(apiError);
 
 			await expect(
-				Mailcheck.validateDomain(mockCtx, { domain: 'example.com' }),
+				Mailcheck.verifyEmail(mockCtx, { email: 'test@example.com' }),
 			).rejects.toThrow(ApiError);
+		});
+	});
+
+	describe('validateDomain', () => {
+		it('calls makeMailcheckRequest with admin@domain email', async () => {
+			const input = { domain: 'example.com' };
+			await Mailcheck.validateDomain(mockCtx, input);
+
+			expect(mockRequest).toHaveBeenCalledWith('/v1/emails:checkSingle', 'test-api-key', {
+				method: 'POST',
+				body: { email: 'admin@example.com' },
+			});
+		});
+
+		it('returns domain-relevant fields from API', async () => {
+			const response = { email: 'admin@example.com', trustRate: 80, mxExists: true, smtpExists: false, isNotDisposable: true, isNotSmtpCatchAll: false };
+			mockRequest.mockResolvedValueOnce(response);
+
+			const result = await Mailcheck.validateDomain(mockCtx, { domain: 'example.com' });
+			expect(result).toEqual(response);
 		});
 	});
 });

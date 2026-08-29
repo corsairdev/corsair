@@ -5,14 +5,12 @@ import { makeMailcheckRequest } from '../client';
 
 export const verifyEmail: MailcheckEndpoints['verifyEmail'] = async (ctx, input) => {
 	const response = await makeMailcheckRequest<MailcheckEndpointOutputs['verifyEmail']>(
-		'verify',
+		'/v1/emails:checkSingle',
 		ctx.key,
 		{
 			method: 'POST',
 			body: {
 				email: input.email,
-				verify: input.verify ?? true,
-				check_breach: input.check_breach ?? false,
 			},
 		},
 	);
