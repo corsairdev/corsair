@@ -192,11 +192,6 @@ export async function processWebhook(
 		plugin?: string;
 		/** Hub already verified the provider signature; skip app-side re-verify. */
 		hubVerified?: boolean;
-		/**
-		 * Exact request bytes the provider signed. Use this when `body` is
-		 * already parsed — never reconstruct via JSON.stringify.
-		 */
-		rawBody?: string;
 	},
 ): Promise<WebhookFilterResult> {
 	const normalizedHeaders = normalizeHeaders(headers);
@@ -257,12 +252,10 @@ export async function processWebhook(
 
 		const action = matched.path.join('.');
 
-		const rawBody =
-			options?.rawBody ?? (typeof body === 'string' ? body : undefined);
 		const webhookRequest = {
 			payload: parsedBody,
 			headers: normalizedHeaders,
-			...(rawBody !== undefined ? { rawBody } : {}),
+			rawBody: typeof body === 'string' ? body : JSON.stringify(body),
 			...(query ? { query } : {}),
 			...(options?.hubVerified ? { hubVerified: true } : {}),
 		};
