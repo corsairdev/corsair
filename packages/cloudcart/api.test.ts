@@ -1,4 +1,5 @@
-﻿import { CloudcartAPIError, makeCloudcartRequest } from './client';
+﻿import { createHmac } from 'node:crypto';
+import { CloudcartAPIError, makeCloudcartRequest } from './client';
 import { CloudcartEndpointInputSchemas } from './endpoints/types';
 import { verifyCloudcartWebhookSignature } from './webhooks/types';
 
@@ -33,14 +34,19 @@ describe('Cloudcart API Client & Endpoint Schemas', () => {
 		);
 	});
 
-	it('validates webhook API key header', () => {
+	it('validates webhook hmac over the raw body', () => {
 		const secret = 'cc_test_key';
 		const payload = { type: 'order.created', data: { id: 12345 } };
+		const rawBody = JSON.stringify(payload);
+		const signature = createHmac('sha256', secret)
+			.update(rawBody)
+			.digest('hex');
 
 		const validResult = verifyCloudcartWebhookSignature(
 			{
-				headers: { 'x-cloudcart-apikey': secret },
+				headers: { 'x-cloudcart-signature': signature },
 				payload,
+				rawBody,
 			} as never,
 			secret,
 		);
@@ -48,8 +54,9 @@ describe('Cloudcart API Client & Endpoint Schemas', () => {
 
 		const invalidResult = verifyCloudcartWebhookSignature(
 			{
-				headers: { 'x-cloudcart-apikey': 'wrong_key' },
+				headers: { 'x-cloudcart-signature': 'aa'.repeat(32) },
 				payload,
+				rawBody,
 			} as never,
 			secret,
 		);

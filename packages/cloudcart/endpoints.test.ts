@@ -1,3 +1,4 @@
+import { createHmac } from 'node:crypto';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
@@ -32,7 +33,7 @@ jest.mock('corsair/http', () => {
 const mockRequest = request as jest.Mock;
 const mockLog = jest.mocked(logEventFromContext);
 
-const STORE = 'https://shop.example.com';
+const STORE = 'https://shop.cloudcart.com';
 const PACKED = packCloudcartKey('cc_test_key', STORE);
 
 const mockCtx = {
@@ -63,9 +64,9 @@ function classify(error: Error): string {
 
 function httpError(status: number, message: string): ApiError {
 	return new ApiError(
-		{ method: 'GET', url: 'https://shop.example.com/api/v1/products' },
+		{ method: 'GET', url: 'https://shop.cloudcart.com/api/v1/products' },
 		{
-			url: 'https://shop.example.com/api/v1/products',
+			url: 'https://shop.cloudcart.com/api/v1/products',
 			ok: false,
 			status,
 			statusText: 'Error',
@@ -143,7 +144,7 @@ describe('cloudcart request client', () => {
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
-				BASE: 'https://shop.example.com/api/v1',
+				BASE: 'https://shop.cloudcart.com/api/v1',
 				HEADERS: expect.objectContaining({
 					'X-CloudCart-ApiKey': 'cc_test_key',
 				}),
@@ -157,10 +158,19 @@ describe('cloudcart request client', () => {
 	});
 
 	it('rejects a missing or http store url', () => {
-		expect(() => buildCloudcartStoreUrl('http://shop.example.com')).toThrow(
+		expect(() => buildCloudcartStoreUrl('http://shop.cloudcart.com')).toThrow(
 			CloudcartAPIError,
 		);
 		expect(() => buildCloudcartStoreUrl('')).toThrow(CloudcartAPIError);
+	});
+
+	it('rejects a store url that is not a CloudCart host', () => {
+		expect(() => buildCloudcartStoreUrl('https://evil.example.com')).toThrow(
+			CloudcartAPIError,
+		);
+		expect(() =>
+			buildCloudcartStoreUrl('https://shop.cloudcart.com.attacker.com'),
+		).toThrow(CloudcartAPIError);
 	});
 
 	it('keeps an already versioned /v1 store url', () => {
@@ -310,12 +320,14 @@ describe('cloudcart webhooks', () => {
 		).toBe(true);
 	});
 
-	it('rejects missing secret or missing api key header', () => {
+	it('rejects missing secret, raw body, or hmac header', () => {
+		const rawBody = '{"type":"order.created","data":{"id":1}}';
 		expect(
 			verifyCloudcartWebhookSignature(
 				{
-					headers: { 'x-cloudcart-apikey': 'cc_test_key' },
+					headers: { 'x-cloudcart-signature': 'deadbeef' },
 					payload: { type: 'order.created', data: { id: 1 } },
+					rawBody,
 				} as never,
 				'',
 			).valid,
@@ -323,24 +335,49 @@ describe('cloudcart webhooks', () => {
 		expect(
 			verifyCloudcartWebhookSignature(
 				{
-					headers: {},
+					headers: { 'x-cloudcart-signature': 'deadbeef' },
 					payload: { type: 'order.created', data: { id: 1 } },
+				} as never,
+				'cc_test_key',
+			).valid,
+		).toBe(false);
+		expect(
+			verifyCloudcartWebhookSignature(
+				{
+					headers: { 'x-cloudcart-apikey': 'cc_test_key' },
+					payload: { type: 'order.created', data: { id: 1 } },
+					rawBody,
 				} as never,
 				'cc_test_key',
 			).valid,
 		).toBe(false);
 	});
 
-	it('accepts a matching X-CloudCart-ApiKey header', () => {
+	it('accepts an hmac over the raw body', () => {
+		const rawBody = '{"type":"order.created","data":{"id":1}}';
+		const signature = createHmac('sha256', 'cc_test_key')
+			.update(rawBody)
+			.digest('hex');
 		expect(
 			verifyCloudcartWebhookSignature(
 				{
-					headers: { 'x-cloudcart-apikey': 'cc_test_key' },
+					headers: { 'x-cloudcart-signature': signature },
 					payload: { type: 'order.created', data: { id: 1 } },
+					rawBody,
 				} as never,
 				'cc_test_key',
 			).valid,
 		).toBe(true);
+		expect(
+			verifyCloudcartWebhookSignature(
+				{
+					headers: { 'x-cloudcart-signature': 'aa'.repeat(32) },
+					payload: { type: 'order.created', data: { id: 1 } },
+					rawBody,
+				} as never,
+				'cc_test_key',
+			).valid,
+		).toBe(false);
 	});
 });
 
@@ -358,9 +395,9 @@ describe('cloudcart error classification', () => {
 
 	it('does not retry mutating requests after a 5xx', async () => {
 		const postError = new ApiError(
-			{ method: 'POST', url: 'https://shop.example.com/api/v1/customers' },
+			{ method: 'POST', url: 'https://shop.cloudcart.com/api/v1/customers' },
 			{
-				url: 'https://shop.example.com/api/v1/customers',
+				url: 'https://shop.cloudcart.com/api/v1/customers',
 				ok: false,
 				status: 500,
 				statusText: 'Error',
@@ -376,6 +413,12 @@ describe('cloudcart error classification', () => {
 		).resolves.toEqual({
 			maxRetries: 3,
 			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('does not stack endpoint retries on top of client 429 retries', async () => {
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
 		});
 	});
 });

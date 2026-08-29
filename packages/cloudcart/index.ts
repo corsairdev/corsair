@@ -16,7 +16,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { packCloudcartKey } from './client';
+import { buildCloudcartStoreUrl, packCloudcartKey } from './client';
 import {
 	Blogs,
 	Cart,
@@ -1545,6 +1545,7 @@ export function cloudcart<const T extends CloudcartPluginOptions>(
 			if (!storeUrl) {
 				throw new AuthMissingError('cloudcart', 'store_url');
 			}
+			buildCloudcartStoreUrl(storeUrl);
 
 			return packCloudcartKey(apiKey, storeUrl);
 		},
