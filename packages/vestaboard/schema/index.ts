@@ -1,16 +1,15 @@
-import {
-	VestaboardMessageEntity,
-	VestaboardSubscriptionEntity,
-	VestaboardViewerEntity,
-} from './database';
+import { VestaboardMessage, VestaboardSubscription } from './database';
 
 export const VestaboardSchema = {
 	version: '1.0.0',
 	entities: {
-		messages: VestaboardMessageEntity,
-		subscriptions: VestaboardSubscriptionEntity,
-		viewer: VestaboardViewerEntity,
+		subscriptions: VestaboardSubscription,
+		messages: VestaboardMessage,
 	},
 } as const;
 
-export * from './database';
+export {
+	VestaboardCharacters,
+	VestaboardMessage,
+	VestaboardSubscription,
+} from './database';

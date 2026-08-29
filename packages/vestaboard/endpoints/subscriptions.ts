@@ -1,80 +1,54 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeVestaboardRequest, VESTABOARD_PLATFORM_API_BASE } from '../client';
-import type { VestaboardEndpoints } from '../index';
-import type { VestaboardEndpointOutputs } from './types';
+import type { VestaboardEndpoints } from '..';
+import { makeVestaboardRequest } from '../client';
+import { VestaboardSubscription } from '../schema';
+import {
+	SubscriptionsListOutputSchema,
+	SubscriptionsPostMessageOutputSchema,
+} from './types';
 
-export const list: VestaboardEndpoints['subscriptionsList'] = async (ctx, _input) => {
-	const result = await makeVestaboardRequest<VestaboardEndpointOutputs['subscriptionsList']>(
-		'subscriptions',
-		ctx.key,
-		{
-			method: 'GET',
-			baseUrl: VESTABOARD_PLATFORM_API_BASE,
-			apiSecret: ctx.options.apiSecret,
-		},
+function parseSubscriptionList(raw: unknown) {
+	const rows = Array.isArray(raw)
+		? raw
+		: raw && typeof raw === 'object' && 'subscriptions' in raw
+			? (raw as { subscriptions: unknown }).subscriptions
+			: raw;
+	return SubscriptionsListOutputSchema.parse({
+		subscriptions: VestaboardSubscription.array().parse(rows),
+	});
+}
+
+export const list: VestaboardEndpoints['subscriptionsList'] = async (ctx) => {
+	const response = parseSubscriptionList(
+		await makeVestaboardRequest('/subscriptions', ctx.key),
 	);
-
-	if (result.subscriptions && ctx.db?.subscriptions) {
-		for (const sub of result.subscriptions) {
-			if (sub._id) {
-				try {
-					await ctx.db.subscriptions.upsertByEntityId(sub._id, {
-						...sub,
-					});
-				} catch (error) {
-					console.warn(`Failed to save subscription ${sub._id} to database:`, error);
-				}
-			}
-		}
-	}
-
-	await logEventFromContext(ctx, 'vestaboard.subscriptions.list', {}, 'completed');
-	return result;
-};
-
-export const get: VestaboardEndpoints['subscriptionsGet'] = async (ctx, input) => {
-	const result = await makeVestaboardRequest<VestaboardEndpointOutputs['subscriptionsGet']>(
-		`subscriptions/${input.subscriptionId}/message`,
-		ctx.key,
-		{
-			method: 'GET',
-			baseUrl: VESTABOARD_PLATFORM_API_BASE,
-			apiSecret: ctx.options.apiSecret,
-		},
-	);
-
 	await logEventFromContext(
 		ctx,
-		'vestaboard.subscriptions.get',
-		{ subscriptionId: input.subscriptionId },
+		'vestaboard.subscriptions.list',
+		{},
 		'completed',
 	);
-	return result;
+	return response;
 };
 
-export const postMessage: VestaboardEndpoints['subscriptionsPostMessage'] = async (ctx, input) => {
-	const payload = input.characters
-		? input.characters
-		: input.text
-			? { text: input.text }
-			: { text: '' };
-
-	const result = await makeVestaboardRequest<VestaboardEndpointOutputs['subscriptionsPostMessage']>(
-		`subscriptions/${input.subscriptionId}/message`,
-		ctx.key,
-		{
-			method: 'POST',
-			baseUrl: VESTABOARD_PLATFORM_API_BASE,
-			apiSecret: ctx.options.apiSecret,
-			body: payload,
-		},
-	);
-
-	await logEventFromContext(
-		ctx,
-		'vestaboard.subscriptions.postMessage',
-		{ subscriptionId: input.subscriptionId, text: input.text },
-		'completed',
-	);
-	return result;
-};
+export const postMessage: VestaboardEndpoints['subscriptionsPostMessage'] =
+	async (ctx, input) => {
+		const body =
+			input.characters !== undefined
+				? { characters: input.characters }
+				: { text: input.text };
+		const response = SubscriptionsPostMessageOutputSchema.parse(
+			await makeVestaboardRequest(
+				`/subscriptions/${encodeURIComponent(input.subscriptionId)}/message`,
+				ctx.key,
+				{ method: 'POST', body },
+			),
+		);
+		await logEventFromContext(
+			ctx,
+			'vestaboard.subscriptions.postMessage',
+			{ subscriptionId: input.subscriptionId },
+			'completed',
+		);
+		return response;
+	};

@@ -1,3 +1,8 @@
-export * as Message from './message';
-export * as Subscriptions from './subscriptions';
-export * as Viewer from './viewer';
+import { list, postMessage } from './subscriptions';
+
+export const Subscriptions = {
+	list,
+	postMessage,
+};
+
+export * from './types';

@@ -1,79 +1,42 @@
 import { z } from 'zod';
 
 /**
- * Vestaboard grid dimensions: 6 rows x 22 columns of character codes.
+ * Vestaboard character grid: 6 rows × 22 columns.
+ * Official: https://docs.vestaboard.com/docs/characterCodes
+ * Codes 0–71 (0 blank … 71 filled).
  */
-export const VestaboardCharactersSchema = z.array(z.array(z.number().int().min(0).max(70)));
+export const VestaboardCharacters = z
+	.array(z.array(z.number().int().min(0).max(71)).length(22))
+	.length(6);
+
+export type VestaboardCharacters = z.infer<typeof VestaboardCharacters>;
 
 /**
- * Message Entity Schema
+ * Subscription API list item.
+ * Official: GET https://subscriptions.vestaboard.com/subscriptions
+ * https://docs.vestaboard.com/docs/subscription-api/endpoints
  */
-export const VestaboardMessageEntity = z
+export const VestaboardSubscription = z
 	.object({
-		id: z.string().optional(),
-		text: z.string().optional(),
-		layout: z.string().optional(),
-		characters: VestaboardCharactersSchema.optional(),
-		created: z.number().optional(),
-		updated_at: z.number().optional(),
+		id: z.string(),
+		boardId: z.string(),
 	})
 	.loose();
 
-export type VestaboardMessageEntity = z.infer<typeof VestaboardMessageEntity>;
+export type VestaboardSubscription = z.infer<typeof VestaboardSubscription>;
 
 /**
- * Subscription Entity Schema
+ * Subscription API send-message response.
+ * Official: POST /subscriptions/{id}/message
+ * https://docs.vestaboard.com/docs/subscription-api/endpoints
  */
-export const VestaboardSubscriptionEntity = z
+export const VestaboardMessage = z
 	.object({
-		_id: z.string(),
-		_created: z.number().optional(),
-		_user: z
-			.object({
-				_id: z.string(),
-				username: z.string().optional(),
-			})
-			.loose()
-			.optional(),
-		installation: z
-			.object({
-				_id: z.string(),
-				installable: z
-					.object({
-						_id: z.string().optional(),
-						name: z.string().optional(),
-					})
-					.loose()
-					.optional(),
-			})
-			.loose()
-			.optional(),
+		id: z.string(),
+		text: z.string(),
+		created: z.string(),
+		muted: z.boolean(),
 	})
 	.loose();
 
-export type VestaboardSubscriptionEntity = z.infer<typeof VestaboardSubscriptionEntity>;
-
-/**
- * Viewer Entity Schema
- */
-export const VestaboardViewerEntity = z
-	.object({
-		_id: z.string(),
-		type: z.string().optional(),
-		installation: z
-			.object({
-				_id: z.string().optional(),
-				installable: z
-					.object({
-						_id: z.string().optional(),
-						name: z.string().optional(),
-					})
-					.loose()
-					.optional(),
-			})
-			.loose()
-			.optional(),
-	})
-	.loose();
-
-export type VestaboardViewerEntity = z.infer<typeof VestaboardViewerEntity>;
+export type VestaboardMessage = z.infer<typeof VestaboardMessage>;

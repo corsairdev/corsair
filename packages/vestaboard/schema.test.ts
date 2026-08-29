@@ -1,63 +1,54 @@
 import {
-	VestaboardCharactersSchema,
-	VestaboardMessageEntity,
-	VestaboardSubscriptionEntity,
-	VestaboardViewerEntity,
-} from './schema/database';
-import { VestaboardSchema } from './schema';
+	VestaboardCharacters,
+	VestaboardMessage,
+	VestaboardSchema,
+	VestaboardSubscription,
+} from './schema';
 
-describe('Vestaboard Schema Tests', () => {
-	it('validates VestaboardSchema version and entities', () => {
-		expect(VestaboardSchema.version).toBe('1.0.0');
-		expect(VestaboardSchema.entities.messages).toBeDefined();
-		expect(VestaboardSchema.entities.subscriptions).toBeDefined();
-		expect(VestaboardSchema.entities.viewer).toBeDefined();
+const blankRow = Array.from({ length: 22 }, () => 0);
+
+describe('Vestaboard schema', () => {
+	it('declares a semver version', () => {
+		expect(VestaboardSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('validates 6x22 characters matrix schema', () => {
-		const validMatrix = Array.from({ length: 6 }, () => Array(22).fill(0));
-		const result = VestaboardCharactersSchema.safeParse(validMatrix);
-		expect(result.success).toBe(true);
+	it('declares official Subscription API entities', () => {
+		expect(VestaboardSchema.entities.subscriptions).toBe(
+			VestaboardSubscription,
+		);
+		expect(VestaboardSchema.entities.messages).toBe(VestaboardMessage);
 	});
 
-	it('rejects invalid character codes out of range', () => {
-		const invalidMatrix = [[-1, 100]];
-		const result = VestaboardCharactersSchema.safeParse(invalidMatrix);
-		expect(result.success).toBe(false);
+	it('parses official list-subscription items', () => {
+		expect(
+			VestaboardSubscription.parse({
+				id: 'e599aa61-8e3d-4f90-a5f1-826983a3d67a',
+				boardId: '46c06290-7961-49e0-a6fd-7874bb40a0de',
+			}).boardId,
+		).toBe('46c06290-7961-49e0-a6fd-7874bb40a0de');
 	});
 
-	it('validates VestaboardMessageEntity', () => {
-		const validMessage = {
-			id: 'msg-123',
-			text: 'Hello World',
-			created: 1700000000,
-		};
-		const parsed = VestaboardMessageEntity.parse(validMessage);
-		expect(parsed.id).toBe('msg-123');
-		expect(parsed.text).toBe('Hello World');
+	it('parses official send-message responses', () => {
+		expect(
+			VestaboardMessage.parse({
+				id: '1125e36d-4e3a-40fb-a87b-1aa90f0997a1',
+				text: 'Test',
+				created: '1577839720478',
+				muted: false,
+			}).created,
+		).toBe('1577839720478');
 	});
 
-	it('validates VestaboardSubscriptionEntity', () => {
-		const validSub = {
-			_id: 'sub-456',
-			_created: 1700000000,
-			_user: { _id: 'usr-1', username: 'pragyan' },
-			installation: {
-				_id: 'inst-1',
-				installable: { _id: 'inst-app-1', name: 'Corsair' },
-			},
-		};
-		const parsed = VestaboardSubscriptionEntity.parse(validSub);
-		expect(parsed._id).toBe('sub-456');
-		expect(parsed._user?._id).toBe('usr-1');
-	});
-
-	it('validates VestaboardViewerEntity', () => {
-		const validViewer = {
-			_id: 'viewer-789',
-			type: 'installation',
-		};
-		const parsed = VestaboardViewerEntity.parse(validViewer);
-		expect(parsed._id).toBe('viewer-789');
+	it('requires a 6x22 grid of codes 0-71', () => {
+		expect(
+			VestaboardCharacters.parse(Array.from({ length: 6 }, () => [...blankRow]))
+				.length,
+		).toBe(6);
+		expect(() => VestaboardCharacters.parse([[0]])).toThrow();
+		expect(() =>
+			VestaboardCharacters.parse(
+				Array.from({ length: 6 }, () => Array.from({ length: 22 }, () => 72)),
+			),
+		).toThrow();
 	});
 });
