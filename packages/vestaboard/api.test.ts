@@ -2,7 +2,6 @@ import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import {
 	makeVestaboardRequest,
 	packVestaboardCredentials,
-	VestaboardAPIError,
 	VestaboardRateLimitError,
 } from './client';
 import { list, postMessage } from './endpoints/subscriptions';
