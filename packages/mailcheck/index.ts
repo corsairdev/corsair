@@ -98,7 +98,9 @@ const mailcheckEndpointMeta = {
 
 export const mailcheckAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
+		// Mailcheck is api_key-only with no tenant concept, so no extra
+		// account-level fields beyond the base api_key/webhook_signature.
+		account: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
