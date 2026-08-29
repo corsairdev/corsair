@@ -27,28 +27,57 @@ export function parseArynRetryAfterMs(response: Response): number | undefined {
 	return seconds * 1000;
 }
 
+/**
+ * Maximum attempts for the raw-fetch binary path when Aryn responds with
+ * HTTP 429. The JSON path relies on `corsair/http`'s built-in rate-limit
+ * retry loop (3 retries, honors Retry-After); this constant keeps the
+ * binary path's retry budget aligned so neither path stacks retries on
+ * top of the other (see the note in error-handlers.ts).
+ */
+const BINARY_MAX_RETRIES = 3;
+const BINARY_INITIAL_RETRY_DELAY_MS = 1000;
+
+/**
+ * Perform a raw binary fetch with built-in 429 handling: retry up to
+ * `BINARY_MAX_RETRIES` times, waiting the server-provided Retry-After
+ * duration when present, otherwise falling back to exponential backoff.
+ * The retry lives inside this function (rather than in the plugin-level
+ * error handler) so the raw-fetch path does not multiply with the
+ * JSON path's transport-level retries.
+ */
 export async function makeArynBinaryRequest(
 	endpoint: string,
 	apiKey: string,
 	baseUrl = ARYN_API_BASE,
 ): Promise<ArrayBuffer> {
 	const url = `${baseUrl}${endpoint}`;
-	const res = await fetch(url, {
-		method: 'GET',
-		headers: {
-			Authorization: `Bearer ${apiKey}`,
-		},
-	});
-	if (!res.ok) {
-		const bodyText = await res.text();
-		throw new ArynAPIError(
-			`Request failed with status ${res.status}: ${res.statusText}; body: "${bodyText}"`,
-			undefined,
-			res.status,
-			parseArynRetryAfterMs(res),
-		);
+	let attempt = 0;
+	while (true) {
+		const res = await fetch(url, {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${apiKey}`,
+			},
+		});
+		if (res.status === 429 && attempt < BINARY_MAX_RETRIES) {
+			const retryAfterMs = parseArynRetryAfterMs(res);
+			const delayMs =
+				retryAfterMs ?? BINARY_INITIAL_RETRY_DELAY_MS * 2 ** attempt;
+			await new Promise((resolve) => setTimeout(resolve, delayMs));
+			attempt += 1;
+			continue;
+		}
+		if (!res.ok) {
+			const bodyText = await res.text();
+			throw new ArynAPIError(
+				`Request failed with status ${res.status}: ${res.statusText}; body: "${bodyText}"`,
+				undefined,
+				res.status,
+				parseArynRetryAfterMs(res),
+			);
+		}
+		return res.arrayBuffer();
 	}
-	return res.arrayBuffer();
 }
 
 export async function makeArynRequest<T>(

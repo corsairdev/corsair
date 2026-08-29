@@ -80,12 +80,12 @@ describe('Aryn error handlers', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 	});
 
-	it('retries rate limit errors with the Retry-After value', async () => {
-		const decision = await errorHandlers.RATE_LIMIT_ERROR.handler(
-			new ArynAPIError('Request failed with status 429', undefined, 429, 1200),
-		);
-		expect(decision.maxRetries).toBeGreaterThan(0);
-		expect(decision.headersRetryAfterMs).toBe(1200);
+	it('does not retry rate limit errors at the binding layer (inner loops handle it)', async () => {
+		const decision = await errorHandlers.RATE_LIMIT_ERROR.handler();
+		// corsair/http retries 429 internally (honoring Retry-After) and the
+		// binary path retries inside makeArynBinaryRequest; retrying again
+		// here would multiply the loops (up to 24 provider requests).
+		expect(decision.maxRetries).toBe(0);
 	});
 
 	it('does not retry auth errors', async () => {
@@ -122,14 +122,20 @@ describe('Aryn error handlers', () => {
 		expect(arynError.retryAfter).toBe(2000);
 	});
 
-	it('binary request exposes status and Retry-After on failure', async () => {
-		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+	it('binary request retries 429 inside the transport and gives up after the retry budget', async () => {
+		const rateLimited = () =>
 			new Response('rate limited', {
 				status: 429,
 				statusText: 'Too Many Requests',
-				headers: { 'Retry-After': '30' },
-			}),
-		);
+				// Retry-After: 0 keeps the retry delay instant in tests.
+				headers: { 'Retry-After': '0' },
+			});
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(rateLimited())
+			.mockResolvedValueOnce(rateLimited())
+			.mockResolvedValueOnce(rateLimited())
+			.mockResolvedValueOnce(rateLimited());
 
 		const error = await makeArynBinaryRequest('/test/binary', 'k').catch(
 			(e: unknown) => e,
@@ -137,7 +143,27 @@ describe('Aryn error handlers', () => {
 		expect(error).toBeInstanceOf(ArynAPIError);
 		const arynError = error as ArynAPIError;
 		expect(arynError.status).toBe(429);
-		expect(arynError.retryAfter).toBe(30_000);
+		// 1 initial attempt + 3 in-transport retries — no binding-level
+		// retry stacks on top of this.
+		expect(fetchMock).toHaveBeenCalledTimes(4);
+		fetchMock.mockRestore();
+	});
+
+	it('binary request recovers when a 429 is followed by a success', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(
+				new Response('rate limited', {
+					status: 429,
+					statusText: 'Too Many Requests',
+					headers: { 'Retry-After': '0' },
+				}),
+			)
+			.mockResolvedValueOnce(new Response('ok'));
+
+		const buffer = await makeArynBinaryRequest('/test/binary', 'k');
+		expect(new Uint8Array(buffer)).toEqual(new TextEncoder().encode('ok'));
+		expect(fetchMock).toHaveBeenCalledTimes(2);
 		fetchMock.mockRestore();
 	});
 

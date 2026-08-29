@@ -8,13 +8,21 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ArynAPIError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		/**
+		 * `maxRetries: 0` is deliberate and prevents retry amplification:
+		 *
+		 * - JSON endpoints go through `corsair/http`'s `request()`, which
+		 *   already retries HTTP 429 internally up to 3 times and honors the
+		 *   server's Retry-After header (async-core/rate-limit.ts).
+		 * - Binary downloads retry 429 inside `makeArynBinaryRequest`
+		 *   (also honoring Retry-After).
+		 *
+		 * Retrying again at the plugin-binding layer would multiply these
+		 * loops (e.g. 4 transport attempts x 6 operation attempts = up to 24
+		 * provider requests for a single operation), so the binding-level
+		 * handler surfaces the error as soon as both inner budgets are spent.
+		 */
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
