@@ -131,6 +131,52 @@ describe('cloudcart keyBuilder', () => {
 			)(ctx, 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
+
+	it('uses webhookSecret and not the api key for webhook hmac', async () => {
+		const instance = cloudcart({
+			key: 'cc_test_key',
+			webhookSecret: 'whsec',
+		});
+		await expect(
+			(
+				instance.keyBuilder as (ctx: unknown, source: string) => Promise<string>
+			)({ authType: 'api_key' }, 'webhook'),
+		).resolves.toBe('whsec');
+	});
+
+	it('throws when webhook secret is missing even if an api key exists', async () => {
+		const instance = cloudcart({ key: 'cc_test_key' });
+		const ctx = {
+			authType: 'api_key',
+			keys: {
+				get_webhook_signature: async () => null,
+				get_api_key: async () => 'cc_test_key',
+			},
+		} as unknown as CloudcartKeyBuilderContext;
+
+		await expect(
+			(
+				instance.keyBuilder as (ctx: unknown, source: string) => Promise<string>
+			)(ctx, 'webhook'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('uses the stored webhook signature when webhookSecret is unset', async () => {
+		const instance = cloudcart({ key: 'cc_test_key' });
+		const ctx = {
+			authType: 'api_key',
+			keys: {
+				get_webhook_signature: async () => 'stored_whsec',
+				get_api_key: async () => 'cc_test_key',
+			},
+		} as unknown as CloudcartKeyBuilderContext;
+
+		await expect(
+			(
+				instance.keyBuilder as (ctx: unknown, source: string) => Promise<string>
+			)(ctx, 'webhook'),
+		).resolves.toBe('stored_whsec');
+	});
 });
 
 describe('cloudcart request client', () => {
@@ -183,6 +229,36 @@ describe('cloudcart request client', () => {
 		const err = httpError(401, 'Unauthorized');
 		mockRequest.mockRejectedValue(err);
 		await expect(makeCloudcartRequest('products', PACKED)).rejects.toBe(err);
+	});
+
+	it('retries GET requests on 429 and does not replay mutations', async () => {
+		await makeCloudcartRequest('products', PACKED, { method: 'GET' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.anything(),
+			expect.objectContaining({
+				rateLimitConfig: expect.objectContaining({
+					enabled: true,
+					maxRetries: 5,
+				}),
+			}),
+		);
+
+		mockRequest.mockClear();
+		for (const method of ['POST', 'PUT', 'PATCH', 'DELETE'] as const) {
+			await makeCloudcartRequest('products', PACKED, { method });
+			expect(mockRequest).toHaveBeenCalledWith(
+				expect.anything(),
+				expect.objectContaining({ method }),
+				expect.objectContaining({
+					rateLimitConfig: expect.objectContaining({
+						enabled: false,
+						maxRetries: 0,
+					}),
+				}),
+			);
+			mockRequest.mockClear();
+		}
 	});
 });
 

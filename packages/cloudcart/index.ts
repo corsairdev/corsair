@@ -1520,14 +1520,9 @@ export function cloudcart<const T extends CloudcartPluginOptions>(
 		keyBuilder: async (ctx: CloudcartKeyBuilderContext, source) => {
 			if (source === 'webhook') {
 				const secret =
-					options.webhookSecret ??
-					options.key ??
-					(await ctx.keys?.get_webhook_signature?.()) ??
-					(ctx.authType === 'api_key'
-						? await ctx.keys?.get_api_key?.()
-						: undefined);
+					options.webhookSecret ?? (await ctx.keys?.get_webhook_signature?.());
 				if (!secret) {
-					throw new AuthMissingError('cloudcart', 'api_key');
+					throw new AuthMissingError('cloudcart', 'webhook_signature');
 				}
 				return secret;
 			}
