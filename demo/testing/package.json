@@ -19,7 +19,6 @@
     "start": "next start",
     "test:hub": "tsx src/scripts/test-hub.ts",
     "test:manual": "tsx src/scripts/test-script.ts",
-    "test": "pnpm run test:manual",
     "rebuild:sqlite": "pnpm rebuild better-sqlite3",
     "inngest:dev": "npx inngest-cli@latest dev",
     "agent": "tsx src/scripts/agent.ts"
@@ -49,7 +48,6 @@
     "@corsair-dev/vapi": "workspace:*",
     "@corsair-dev/xquik": "workspace:*",
     "@corsair-dev/instagram": "workspace:*",
-    "@corsair-dev/aryn": "workspace:*",
     "@tanstack/react-query": "^5.62.14",
     "@trpc/client": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
