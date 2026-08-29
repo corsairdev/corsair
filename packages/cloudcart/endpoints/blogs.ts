@@ -1,310 +1,197 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeCloudcartRequest } from '../client';
 import type { CloudcartEndpoints } from '../index';
-import type { CloudcartEndpointOutputs } from './types';
+import { pathId, runCloudcart } from './run';
+import {
+	CloudcartEndpointOutputSchemas,
+	CreateBlogCategoryInputSchema,
+	CreateBlogPostInputSchema,
+	CreateBlogTagInputSchema,
+	DeleteBlogCategoryInputSchema,
+	DeleteBlogPostInputSchema,
+	DeleteBlogTagInputSchema,
+	GetBlogAuthorInputSchema,
+	GetBlogCategoryInputSchema,
+	GetBlogPostInputSchema,
+	GetBlogTagInputSchema,
+	ListBlogCategoriesInputSchema,
+	ListBlogPostsInputSchema,
+	ListBlogTagsInputSchema,
+	UpdateBlogCategoryInputSchema,
+	UpdateBlogPostInputSchema,
+	UpdateBlogTagInputSchema,
+} from './types';
 
-export const createBlogPost: CloudcartEndpoints['createBlogPost'] = async (
+export const createBlogPost: CloudcartEndpoints['createBlogPost'] = (
 	ctx,
 	input,
-) => {
-	const { data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['createBlogPost']
-	>('blog-posts', ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.createBlogPost',
+		inputSchema: CreateBlogPostInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.createBlogPost,
 		method: 'POST',
-		body: data || rest,
+		path: 'blog-posts',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.blogs.createBlogPost',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const getBlogPost: CloudcartEndpoints['getBlogPost'] = async (
+export const getBlogPost: CloudcartEndpoints['getBlogPost'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.getBlogPost',
+		inputSchema: GetBlogPostInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.getBlogPost,
+		path: (parsed) => `blog-posts/${pathId(parsed.id)}`,
+	});
+
+export const listBlogPosts: CloudcartEndpoints['listBlogPosts'] = (
 	ctx,
 	input,
-) => {
-	const { id, ...query } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['getBlogPost']
-	>(`blog-posts/${encodeURIComponent(String(id))}`, ctx.key, {
-		method: 'GET',
-		query,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.listBlogPosts',
+		inputSchema: ListBlogPostsInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listBlogPosts,
+		path: 'blog-posts',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.blogs.getBlogPost',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const listBlogPosts: CloudcartEndpoints['listBlogPosts'] = async (
+export const updateBlogPost: CloudcartEndpoints['updateBlogPost'] = (
 	ctx,
 	input,
-) => {
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['listBlogPosts']
-	>('blog-posts', ctx.key, {
-		method: 'GET',
-		query: input as Record<string, any>,
-	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.blogs.listBlogPosts',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
-
-export const updateBlogPost: CloudcartEndpoints['updateBlogPost'] = async (
-	ctx,
-	input,
-) => {
-	const { id, data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['updateBlogPost']
-	>(`blog-posts/${encodeURIComponent(String(id))}`, ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.updateBlogPost',
+		inputSchema: UpdateBlogPostInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.updateBlogPost,
 		method: 'PATCH',
-		body: data || rest,
+		path: (parsed) => `blog-posts/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.blogs.updateBlogPost',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const deleteBlogPost: CloudcartEndpoints['deleteBlogPost'] = async (
+export const deleteBlogPost: CloudcartEndpoints['deleteBlogPost'] = (
 	ctx,
 	input,
-) => {
-	const { id } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['deleteBlogPost']
-	>(`blog-posts/${encodeURIComponent(String(id))}`, ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.deleteBlogPost',
+		inputSchema: DeleteBlogPostInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.deleteBlogPost,
 		method: 'DELETE',
+		path: (parsed) => `blog-posts/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.blogs.deleteBlogPost',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const createBlogCategory: CloudcartEndpoints['createBlogCategory'] =
-	async (ctx, input) => {
-		const { data, ...rest } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['createBlogCategory']
-		>('blog-categories', ctx.key, {
-			method: 'POST',
-			body: data || rest,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.blogs.createBlogCategory',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
-
-export const getBlogCategory: CloudcartEndpoints['getBlogCategory'] = async (
+export const createBlogCategory: CloudcartEndpoints['createBlogCategory'] = (
 	ctx,
 	input,
-) => {
-	const { id, ...query } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['getBlogCategory']
-	>(`blog-categories/${encodeURIComponent(String(id))}`, ctx.key, {
-		method: 'GET',
-		query,
-	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.blogs.getBlogCategory',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
-
-export const listBlogCategories: CloudcartEndpoints['listBlogCategories'] =
-	async (ctx, input) => {
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['listBlogCategories']
-		>('blog-categories', ctx.key, {
-			method: 'GET',
-			query: input as Record<string, any>,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.blogs.listBlogCategories',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
-
-export const updateBlogCategory: CloudcartEndpoints['updateBlogCategory'] =
-	async (ctx, input) => {
-		const { id, data, ...rest } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['updateBlogCategory']
-		>(`blog-categories/${encodeURIComponent(String(id))}`, ctx.key, {
-			method: 'PATCH',
-			body: data || rest,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.blogs.updateBlogCategory',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
-
-export const deleteBlogCategory: CloudcartEndpoints['deleteBlogCategory'] =
-	async (ctx, input) => {
-		const { id } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['deleteBlogCategory']
-		>(`blog-categories/${encodeURIComponent(String(id))}`, ctx.key, {
-			method: 'DELETE',
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.blogs.deleteBlogCategory',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
-
-export const createBlogTag: CloudcartEndpoints['createBlogTag'] = async (
-	ctx,
-	input,
-) => {
-	const { data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['createBlogTag']
-	>('blog-tags', ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.createBlogCategory',
+		inputSchema: CreateBlogCategoryInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.createBlogCategory,
 		method: 'POST',
-		body: data || rest,
+		path: 'blog-categories',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.blogs.createBlogTag',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const getBlogTag: CloudcartEndpoints['getBlogTag'] = async (
+export const getBlogCategory: CloudcartEndpoints['getBlogCategory'] = (
 	ctx,
 	input,
-) => {
-	const { id, ...query } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['getBlogTag']
-	>(`blog-tags/${encodeURIComponent(String(id))}`, ctx.key, {
-		method: 'GET',
-		query,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.getBlogCategory',
+		inputSchema: GetBlogCategoryInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.getBlogCategory,
+		path: (parsed) => `blog-categories/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.blogs.getBlogTag',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const listBlogTags: CloudcartEndpoints['listBlogTags'] = async (
+export const listBlogCategories: CloudcartEndpoints['listBlogCategories'] = (
 	ctx,
 	input,
-) => {
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['listBlogTags']
-	>('blog-tags', ctx.key, {
-		method: 'GET',
-		query: input as Record<string, any>,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.listBlogCategories',
+		inputSchema: ListBlogCategoriesInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listBlogCategories,
+		path: 'blog-categories',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.blogs.listBlogTags',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const updateBlogTag: CloudcartEndpoints['updateBlogTag'] = async (
+export const updateBlogCategory: CloudcartEndpoints['updateBlogCategory'] = (
 	ctx,
 	input,
-) => {
-	const { id, data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['updateBlogTag']
-	>(`blog-tags/${encodeURIComponent(String(id))}`, ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.updateBlogCategory',
+		inputSchema: UpdateBlogCategoryInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.updateBlogCategory,
 		method: 'PATCH',
-		body: data || rest,
+		path: (parsed) => `blog-categories/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.blogs.updateBlogTag',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const deleteBlogTag: CloudcartEndpoints['deleteBlogTag'] = async (
+export const deleteBlogCategory: CloudcartEndpoints['deleteBlogCategory'] = (
 	ctx,
 	input,
-) => {
-	const { id } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['deleteBlogTag']
-	>(`blog-tags/${encodeURIComponent(String(id))}`, ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.deleteBlogCategory',
+		inputSchema: DeleteBlogCategoryInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.deleteBlogCategory,
 		method: 'DELETE',
+		path: (parsed) => `blog-categories/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.blogs.deleteBlogTag',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const getBlogAuthor: CloudcartEndpoints['getBlogAuthor'] = async (
+export const createBlogTag: CloudcartEndpoints['createBlogTag'] = (
 	ctx,
 	input,
-) => {
-	const { id, ...query } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['getBlogAuthor']
-	>(`blog-authors/${encodeURIComponent(String(id))}`, ctx.key, {
-		method: 'GET',
-		query,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.createBlogTag',
+		inputSchema: CreateBlogTagInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.createBlogTag,
+		method: 'POST',
+		path: 'blog-tags',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.blogs.getBlogAuthor',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
+
+export const getBlogTag: CloudcartEndpoints['getBlogTag'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.getBlogTag',
+		inputSchema: GetBlogTagInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.getBlogTag,
+		path: (parsed) => `blog-tags/${pathId(parsed.id)}`,
+	});
+
+export const listBlogTags: CloudcartEndpoints['listBlogTags'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.listBlogTags',
+		inputSchema: ListBlogTagsInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listBlogTags,
+		path: 'blog-tags',
+	});
+
+export const updateBlogTag: CloudcartEndpoints['updateBlogTag'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.updateBlogTag',
+		inputSchema: UpdateBlogTagInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.updateBlogTag,
+		method: 'PATCH',
+		path: (parsed) => `blog-tags/${pathId(parsed.id)}`,
+	});
+
+export const deleteBlogTag: CloudcartEndpoints['deleteBlogTag'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.deleteBlogTag',
+		inputSchema: DeleteBlogTagInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.deleteBlogTag,
+		method: 'DELETE',
+		path: (parsed) => `blog-tags/${pathId(parsed.id)}`,
+	});
+
+export const getBlogAuthor: CloudcartEndpoints['getBlogAuthor'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.blogs.getBlogAuthor',
+		inputSchema: GetBlogAuthorInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.getBlogAuthor,
+		path: (parsed) => `blog-authors/${pathId(parsed.id)}`,
+	});

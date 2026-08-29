@@ -1,284 +1,165 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeCloudcartRequest } from '../client';
 import type { CloudcartEndpoints } from '../index';
-import type { CloudcartEndpointOutputs } from './types';
+import { pathId, runCloudcart } from './run';
+import {
+	CloudcartEndpointOutputSchemas,
+	CreateImageInputSchema,
+	CreateLinkedProductsInputSchema,
+	CreateProductInputSchema,
+	DeleteImageInputSchema,
+	DeleteLinkedProductsInputSchema,
+	DeleteProductInputSchema,
+	GetImageInputSchema,
+	GetProductInputSchema,
+	GetProductsLinkedProductInputSchema,
+	GetProductsLinkedProductsInputSchema,
+	GetProductWithRelationsInputSchema,
+	ListImagesInputSchema,
+	ListProductsInputSchema,
+	UpdateLinkedProductInputSchema,
+	UpdateProductInputSchema,
+} from './types';
 
-export const createProduct: CloudcartEndpoints['createProduct'] = async (
+export const createProduct: CloudcartEndpoints['createProduct'] = (
 	ctx,
 	input,
-) => {
-	const { data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['createProduct']
-	>('products', ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.products.createProduct',
+		inputSchema: CreateProductInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.createProduct,
 		method: 'POST',
-		body: data || rest,
+		path: 'products',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.products.createProduct',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const getProduct: CloudcartEndpoints['getProduct'] = async (
-	ctx,
-	input,
-) => {
-	const { id, ...query } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['getProduct']
-	>(`products/${encodeURIComponent(String(id))}`, ctx.key, {
-		method: 'GET',
-		query,
+export const getProduct: CloudcartEndpoints['getProduct'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.products.getProduct',
+		inputSchema: GetProductInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.getProduct,
+		path: (parsed) => `products/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.products.getProduct',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
 export const getProductWithRelations: CloudcartEndpoints['getProductWithRelations'] =
-	async (ctx, input) => {
-		const { id, ...query } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['getProductWithRelations']
-		>(`products/${encodeURIComponent(String(id))}/relations`, ctx.key, {
-			method: 'GET',
-			query,
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.products.getProductWithRelations',
+			inputSchema: GetProductWithRelationsInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.getProductWithRelations,
+			path: (parsed) => `products/${pathId(parsed.id)}/relations`,
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.products.getProductWithRelations',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
-export const listProducts: CloudcartEndpoints['listProducts'] = async (
-	ctx,
-	input,
-) => {
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['listProducts']
-	>('products', ctx.key, {
-		method: 'GET',
-		query: input as Record<string, any>,
+export const listProducts: CloudcartEndpoints['listProducts'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.products.listProducts',
+		inputSchema: ListProductsInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listProducts,
+		path: 'products',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.products.listProducts',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const updateProduct: CloudcartEndpoints['updateProduct'] = async (
+export const updateProduct: CloudcartEndpoints['updateProduct'] = (
 	ctx,
 	input,
-) => {
-	const { id, data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['updateProduct']
-	>(`products/${encodeURIComponent(String(id))}`, ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.products.updateProduct',
+		inputSchema: UpdateProductInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.updateProduct,
 		method: 'PATCH',
-		body: data || rest,
+		path: (parsed) => `products/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.products.updateProduct',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const deleteProduct: CloudcartEndpoints['deleteProduct'] = async (
+export const deleteProduct: CloudcartEndpoints['deleteProduct'] = (
 	ctx,
 	input,
-) => {
-	const { id } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['deleteProduct']
-	>(`products/${encodeURIComponent(String(id))}`, ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.products.deleteProduct',
+		inputSchema: DeleteProductInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.deleteProduct,
 		method: 'DELETE',
+		path: (parsed) => `products/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.products.deleteProduct',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
 export const createLinkedProducts: CloudcartEndpoints['createLinkedProducts'] =
-	async (ctx, input) => {
-		const { id, data, ...rest } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['createLinkedProducts']
-		>(`products/${encodeURIComponent(String(id))}/linked-products`, ctx.key, {
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.products.createLinkedProducts',
+			inputSchema: CreateLinkedProductsInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.createLinkedProducts,
 			method: 'POST',
-			body: data || rest,
+			path: (parsed) => `products/${pathId(parsed.id)}/linked-products`,
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.products.createLinkedProducts',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
 export const getProductsLinkedProduct: CloudcartEndpoints['getProductsLinkedProduct'] =
-	async (ctx, input) => {
-		const { id, ...query } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['getProductsLinkedProduct']
-		>(`products/${encodeURIComponent(String(id))}/linked-product`, ctx.key, {
-			method: 'GET',
-			query,
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.products.getProductsLinkedProduct',
+			inputSchema: GetProductsLinkedProductInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.getProductsLinkedProduct,
+			path: (parsed) => `products/${pathId(parsed.id)}/linked-product`,
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.products.getProductsLinkedProduct',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
 export const getProductsLinkedProducts: CloudcartEndpoints['getProductsLinkedProducts'] =
-	async (ctx, input) => {
-		const { id, ...query } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['getProductsLinkedProducts']
-		>(`products/${encodeURIComponent(String(id))}/linked-products`, ctx.key, {
-			method: 'GET',
-			query,
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.products.getProductsLinkedProducts',
+			inputSchema: GetProductsLinkedProductsInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.getProductsLinkedProducts,
+			path: (parsed) => `products/${pathId(parsed.id)}/linked-products`,
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.products.getProductsLinkedProducts',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
-export const updateLinkedProduct: CloudcartEndpoints['updateLinkedProduct'] =
-	async (ctx, input) => {
-		const { id, data, ...rest } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['updateLinkedProduct']
-		>(`products/${encodeURIComponent(String(id))}/linked-products`, ctx.key, {
-			method: 'PUT',
-			body: data || rest,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.products.updateLinkedProduct',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
+export const updateLinkedProduct: CloudcartEndpoints['updateLinkedProduct'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.products.updateLinkedProduct',
+		inputSchema: UpdateLinkedProductInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.updateLinkedProduct,
+		method: 'PUT',
+		path: (parsed) => `products/${pathId(parsed.id)}/linked-products`,
+	});
 
 export const deleteLinkedProducts: CloudcartEndpoints['deleteLinkedProducts'] =
-	async (ctx, input) => {
-		const { id } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['deleteLinkedProducts']
-		>(`products/${encodeURIComponent(String(id))}/linked-products`, ctx.key, {
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.products.deleteLinkedProducts',
+			inputSchema: DeleteLinkedProductsInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.deleteLinkedProducts,
 			method: 'DELETE',
+			path: (parsed) => `products/${pathId(parsed.id)}/linked-products`,
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.products.deleteLinkedProducts',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
-export const createImage: CloudcartEndpoints['createImage'] = async (
-	ctx,
-	input,
-) => {
-	const { data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['createImage']
-	>('images', ctx.key, {
+export const createImage: CloudcartEndpoints['createImage'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.products.createImage',
+		inputSchema: CreateImageInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.createImage,
 		method: 'POST',
-		body: data || rest,
+		path: 'images',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.products.createImage',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const getImage: CloudcartEndpoints['getImage'] = async (ctx, input) => {
-	const { id, ...query } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['getImage']
-	>(`images/${encodeURIComponent(String(id))}`, ctx.key, {
-		method: 'GET',
-		query,
+export const getImage: CloudcartEndpoints['getImage'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.products.getImage',
+		inputSchema: GetImageInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.getImage,
+		path: (parsed) => `images/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.products.getImage',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const listImages: CloudcartEndpoints['listImages'] = async (
-	ctx,
-	input,
-) => {
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['listImages']
-	>('images', ctx.key, {
-		method: 'GET',
-		query: input as Record<string, any>,
+export const listImages: CloudcartEndpoints['listImages'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.products.listImages',
+		inputSchema: ListImagesInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listImages,
+		path: 'images',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.products.listImages',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const deleteImage: CloudcartEndpoints['deleteImage'] = async (
-	ctx,
-	input,
-) => {
-	const { id } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['deleteImage']
-	>(`images/${encodeURIComponent(String(id))}`, ctx.key, {
+export const deleteImage: CloudcartEndpoints['deleteImage'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.products.deleteImage',
+		inputSchema: DeleteImageInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.deleteImage,
 		method: 'DELETE',
+		path: (parsed) => `images/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.products.deleteImage',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};

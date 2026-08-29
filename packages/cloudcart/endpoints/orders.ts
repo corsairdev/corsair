@@ -1,220 +1,134 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeCloudcartRequest } from '../client';
 import type { CloudcartEndpoints } from '../index';
-import type { CloudcartEndpointOutputs } from './types';
+import { pathId, runCloudcart } from './run';
+import {
+	CloudcartEndpointOutputSchemas,
+	CreateOrderInputSchema,
+	DeleteOrderInputSchema,
+	ListOrderBillingAddressesInputSchema,
+	ListOrderPaymentsInputSchema,
+	ListOrderPaymentV2InputSchema,
+	ListOrderProductsInputSchema,
+	ListOrderProductsOptionsInputSchema,
+	ListOrderShippingAddressesInputSchema,
+	ListOrderShippingInputSchema,
+	ListOrderStatusInputSchema,
+	ListOrdersInputSchema,
+	UpdateOrderInputSchema,
+} from './types';
 
-export const createOrder: CloudcartEndpoints['createOrder'] = async (
-	ctx,
-	input,
-) => {
-	const { data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['createOrder']
-	>('orders', ctx.key, {
+export const createOrder: CloudcartEndpoints['createOrder'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.orders.createOrder',
+		inputSchema: CreateOrderInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.createOrder,
 		method: 'POST',
-		body: data || rest,
+		path: 'orders',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.orders.createOrder',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const listOrders: CloudcartEndpoints['listOrders'] = async (
-	ctx,
-	input,
-) => {
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['listOrders']
-	>('orders', ctx.key, {
-		method: 'GET',
-		query: input as Record<string, any>,
+export const listOrders: CloudcartEndpoints['listOrders'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.orders.listOrders',
+		inputSchema: ListOrdersInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listOrders,
+		path: 'orders',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.orders.listOrders',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const updateOrder: CloudcartEndpoints['updateOrder'] = async (
-	ctx,
-	input,
-) => {
-	const { id, data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['updateOrder']
-	>(`orders/${encodeURIComponent(String(id))}`, ctx.key, {
+export const updateOrder: CloudcartEndpoints['updateOrder'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.orders.updateOrder',
+		inputSchema: UpdateOrderInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.updateOrder,
 		method: 'PATCH',
-		body: data || rest,
+		path: (parsed) => `orders/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.orders.updateOrder',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const deleteOrder: CloudcartEndpoints['deleteOrder'] = async (
-	ctx,
-	input,
-) => {
-	const { id } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['deleteOrder']
-	>(`orders/${encodeURIComponent(String(id))}`, ctx.key, {
+export const deleteOrder: CloudcartEndpoints['deleteOrder'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.orders.deleteOrder',
+		inputSchema: DeleteOrderInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.deleteOrder,
 		method: 'DELETE',
+		path: (parsed) => `orders/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.orders.deleteOrder',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
 export const listOrderBillingAddresses: CloudcartEndpoints['listOrderBillingAddresses'] =
-	async (ctx, input) => {
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['listOrderBillingAddresses']
-		>('order-billing-addresses', ctx.key, {
-			method: 'GET',
-			query: input as Record<string, any>,
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.orders.listOrderBillingAddresses',
+			inputSchema: ListOrderBillingAddressesInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.listOrderBillingAddresses,
+			path: 'order-billing-addresses',
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.orders.listOrderBillingAddresses',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
 export const listOrderShippingAddresses: CloudcartEndpoints['listOrderShippingAddresses'] =
-	async (ctx, input) => {
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['listOrderShippingAddresses']
-		>('order-shipping-addresses', ctx.key, {
-			method: 'GET',
-			query: input as Record<string, any>,
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.orders.listOrderShippingAddresses',
+			inputSchema: ListOrderShippingAddressesInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.listOrderShippingAddresses,
+			path: 'order-shipping-addresses',
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.orders.listOrderShippingAddresses',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
-export const listOrderProducts: CloudcartEndpoints['listOrderProducts'] =
-	async (ctx, input) => {
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['listOrderProducts']
-		>('order-products', ctx.key, {
-			method: 'GET',
-			query: input as Record<string, any>,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.orders.listOrderProducts',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
-
-export const listOrderProductsOptions: CloudcartEndpoints['listOrderProductsOptions'] =
-	async (ctx, input) => {
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['listOrderProductsOptions']
-		>('order-products-options', ctx.key, {
-			method: 'GET',
-			query: input as Record<string, any>,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.orders.listOrderProductsOptions',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
-
-export const listOrderPayments: CloudcartEndpoints['listOrderPayments'] =
-	async (ctx, input) => {
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['listOrderPayments']
-		>('order-payments', ctx.key, {
-			method: 'GET',
-			query: input as Record<string, any>,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.orders.listOrderPayments',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
-
-export const listOrderPaymentV2: CloudcartEndpoints['listOrderPaymentV2'] =
-	async (ctx, input) => {
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['listOrderPaymentV2']
-		>('order-payments/v2', ctx.key, {
-			method: 'GET',
-			query: input as Record<string, any>,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.orders.listOrderPaymentV2',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
-
-export const listOrderShipping: CloudcartEndpoints['listOrderShipping'] =
-	async (ctx, input) => {
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['listOrderShipping']
-		>('order-shippings', ctx.key, {
-			method: 'GET',
-			query: input as Record<string, any>,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.orders.listOrderShipping',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
-
-export const listOrderStatus: CloudcartEndpoints['listOrderStatus'] = async (
+export const listOrderProducts: CloudcartEndpoints['listOrderProducts'] = (
 	ctx,
 	input,
-) => {
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['listOrderStatus']
-	>('order-statuses', ctx.key, {
-		method: 'GET',
-		query: input as Record<string, any>,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.orders.listOrderProducts',
+		inputSchema: ListOrderProductsInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listOrderProducts,
+		path: 'order-products',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.orders.listOrderStatus',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
+
+export const listOrderProductsOptions: CloudcartEndpoints['listOrderProductsOptions'] =
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.orders.listOrderProductsOptions',
+			inputSchema: ListOrderProductsOptionsInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.listOrderProductsOptions,
+			path: 'order-products-options',
+		});
+
+export const listOrderPayments: CloudcartEndpoints['listOrderPayments'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.orders.listOrderPayments',
+		inputSchema: ListOrderPaymentsInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listOrderPayments,
+		path: 'order-payments',
+	});
+
+export const listOrderPaymentV2: CloudcartEndpoints['listOrderPaymentV2'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.orders.listOrderPaymentV2',
+		inputSchema: ListOrderPaymentV2InputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listOrderPaymentV2,
+		path: 'order-payments/v2',
+	});
+
+export const listOrderShipping: CloudcartEndpoints['listOrderShipping'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.orders.listOrderShipping',
+		inputSchema: ListOrderShippingInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listOrderShipping,
+		path: 'order-shippings',
+	});
+
+export const listOrderStatus: CloudcartEndpoints['listOrderStatus'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.orders.listOrderStatus',
+		inputSchema: ListOrderStatusInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listOrderStatus,
+		path: 'order-statuses',
+	});

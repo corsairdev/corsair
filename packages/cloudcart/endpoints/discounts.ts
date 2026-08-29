@@ -1,170 +1,116 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeCloudcartRequest } from '../client';
 import type { CloudcartEndpoints } from '../index';
-import type { CloudcartEndpointOutputs } from './types';
+import { pathId, runCloudcart } from './run';
+import {
+	CloudcartEndpointOutputSchemas,
+	CreateDiscountCodeInputSchema,
+	CreateDiscountInputSchema,
+	CreateProductToDiscountInputSchema,
+	DeleteDiscountCodeInputSchema,
+	DeleteDiscountInputSchema,
+	DeleteProductToDiscountInputSchema,
+	GenerateDiscountCodesInputSchema,
+	ListDiscountCodesInputSchema,
+	UpdateDiscountCodeInputSchema,
+} from './types';
 
-export const createDiscount: CloudcartEndpoints['createDiscount'] = async (
+export const createDiscount: CloudcartEndpoints['createDiscount'] = (
 	ctx,
 	input,
-) => {
-	const { data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['createDiscount']
-	>('discounts', ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.discounts.createDiscount',
+		inputSchema: CreateDiscountInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.createDiscount,
 		method: 'POST',
-		body: data || rest,
+		path: 'discounts',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.discounts.createDiscount',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const deleteDiscount: CloudcartEndpoints['deleteDiscount'] = async (
+export const deleteDiscount: CloudcartEndpoints['deleteDiscount'] = (
 	ctx,
 	input,
-) => {
-	const { id } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['deleteDiscount']
-	>(`discounts/${encodeURIComponent(String(id))}`, ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.discounts.deleteDiscount',
+		inputSchema: DeleteDiscountInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.deleteDiscount,
 		method: 'DELETE',
+		path: (parsed) => `discounts/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.discounts.deleteDiscount',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const createDiscountCode: CloudcartEndpoints['createDiscountCode'] =
-	async (ctx, input) => {
-		const { data, ...rest } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['createDiscountCode']
-		>('discount-codes', ctx.key, {
-			method: 'POST',
-			body: data || rest,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.discounts.createDiscountCode',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
+export const createDiscountCode: CloudcartEndpoints['createDiscountCode'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.discounts.createDiscountCode',
+		inputSchema: CreateDiscountCodeInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.createDiscountCode,
+		method: 'POST',
+		path: 'discount-codes',
+	});
 
-export const listDiscountCodes: CloudcartEndpoints['listDiscountCodes'] =
-	async (ctx, input) => {
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['listDiscountCodes']
-		>('discount-codes', ctx.key, {
-			method: 'GET',
-			query: input as Record<string, any>,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.discounts.listDiscountCodes',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
+export const listDiscountCodes: CloudcartEndpoints['listDiscountCodes'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.discounts.listDiscountCodes',
+		inputSchema: ListDiscountCodesInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listDiscountCodes,
+		path: 'discount-codes',
+	});
 
-export const updateDiscountCode: CloudcartEndpoints['updateDiscountCode'] =
-	async (ctx, input) => {
-		const { id, data, ...rest } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['updateDiscountCode']
-		>(`discount-codes/${encodeURIComponent(String(id))}`, ctx.key, {
-			method: 'PATCH',
-			body: data || rest,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.discounts.updateDiscountCode',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
+export const updateDiscountCode: CloudcartEndpoints['updateDiscountCode'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.discounts.updateDiscountCode',
+		inputSchema: UpdateDiscountCodeInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.updateDiscountCode,
+		method: 'PATCH',
+		path: (parsed) => `discount-codes/${pathId(parsed.id)}`,
+	});
 
-export const deleteDiscountCode: CloudcartEndpoints['deleteDiscountCode'] =
-	async (ctx, input) => {
-		const { id } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['deleteDiscountCode']
-		>(`discount-codes/${encodeURIComponent(String(id))}`, ctx.key, {
-			method: 'DELETE',
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.discounts.deleteDiscountCode',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
+export const deleteDiscountCode: CloudcartEndpoints['deleteDiscountCode'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.discounts.deleteDiscountCode',
+		inputSchema: DeleteDiscountCodeInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.deleteDiscountCode,
+		method: 'DELETE',
+		path: (parsed) => `discount-codes/${pathId(parsed.id)}`,
+	});
 
 export const generateDiscountCodes: CloudcartEndpoints['generateDiscountCodes'] =
-	async (ctx, input) => {
-		const { data, ...rest } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['generateDiscountCodes']
-		>('discount-codes/generate', ctx.key, {
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.discounts.generateDiscountCodes',
+			inputSchema: GenerateDiscountCodesInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.generateDiscountCodes,
 			method: 'POST',
-			body: data || rest,
+			path: 'discount-codes/generate',
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.discounts.generateDiscountCodes',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
 export const createProductToDiscount: CloudcartEndpoints['createProductToDiscount'] =
-	async (ctx, input) => {
-		const { id, data, ...rest } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['createProductToDiscount']
-		>(`products/${encodeURIComponent(String(id))}/discounts`, ctx.key, {
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.discounts.createProductToDiscount',
+			inputSchema: CreateProductToDiscountInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.createProductToDiscount,
 			method: 'POST',
-			body: data || rest,
+			path: (parsed) => `products/${pathId(parsed.id)}/discounts`,
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.discounts.createProductToDiscount',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
 export const deleteProductToDiscount: CloudcartEndpoints['deleteProductToDiscount'] =
-	async (ctx, input) => {
-		const { id, discount_id } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['deleteProductToDiscount']
-		>(
-			`products/${encodeURIComponent(String(id))}/discounts/${encodeURIComponent(String(discount_id))}`,
-			ctx.key,
-			{
-				method: 'DELETE',
-			},
-		);
-		await logEventFromContext(
-			ctx,
-			'cloudcart.discounts.deleteProductToDiscount',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.discounts.deleteProductToDiscount',
+			inputSchema: DeleteProductToDiscountInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.deleteProductToDiscount,
+			method: 'DELETE',
+			path: (parsed) =>
+				`products/${pathId(parsed.id)}/discounts/${pathId(parsed.discount_id)}`,
+		});

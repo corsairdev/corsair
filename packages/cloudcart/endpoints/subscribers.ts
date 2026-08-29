@@ -1,280 +1,184 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeCloudcartRequest } from '../client';
 import type { CloudcartEndpoints } from '../index';
-import type { CloudcartEndpointOutputs } from './types';
+import { pathId, runCloudcart } from './run';
+import {
+	CloudcartEndpointOutputSchemas,
+	CreateSubscriberChannelInputSchema,
+	CreateSubscriberInputSchema,
+	CreateSubscriberTagInputSchema,
+	DeleteSubscriberInputSchema,
+	DeleteSubscribersChannelInputSchema,
+	DeleteSubscriberTagInputSchema,
+	GetSubscriberInputSchema,
+	GetSubscribersChannelInputSchema,
+	GetSubscriberTagInputSchema,
+	ListSubscribersChannelsInputSchema,
+	ListSubscribersInputSchema,
+	ListSubscribersTagsInputSchema,
+	UpdateSubscriberInputSchema,
+	UpdateSubscribersChannelInputSchema,
+	UpdateSubscriberTagInputSchema,
+} from './types';
 
-export const createSubscriber: CloudcartEndpoints['createSubscriber'] = async (
+export const createSubscriber: CloudcartEndpoints['createSubscriber'] = (
 	ctx,
 	input,
-) => {
-	const { data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['createSubscriber']
-	>('subscribers', ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.subscribers.createSubscriber',
+		inputSchema: CreateSubscriberInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.createSubscriber,
 		method: 'POST',
-		body: data || rest,
+		path: 'subscribers',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.subscribers.createSubscriber',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const getSubscriber: CloudcartEndpoints['getSubscriber'] = async (
+export const getSubscriber: CloudcartEndpoints['getSubscriber'] = (
 	ctx,
 	input,
-) => {
-	const { id, ...query } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['getSubscriber']
-	>(`subscribers/${encodeURIComponent(String(id))}`, ctx.key, {
-		method: 'GET',
-		query,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.subscribers.getSubscriber',
+		inputSchema: GetSubscriberInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.getSubscriber,
+		path: (parsed) => `subscribers/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.subscribers.getSubscriber',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const listSubscribers: CloudcartEndpoints['listSubscribers'] = async (
+export const listSubscribers: CloudcartEndpoints['listSubscribers'] = (
 	ctx,
 	input,
-) => {
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['listSubscribers']
-	>('subscribers', ctx.key, {
-		method: 'GET',
-		query: input as Record<string, any>,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.subscribers.listSubscribers',
+		inputSchema: ListSubscribersInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listSubscribers,
+		path: 'subscribers',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.subscribers.listSubscribers',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const updateSubscriber: CloudcartEndpoints['updateSubscriber'] = async (
+export const updateSubscriber: CloudcartEndpoints['updateSubscriber'] = (
 	ctx,
 	input,
-) => {
-	const { id, data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['updateSubscriber']
-	>(`subscribers/${encodeURIComponent(String(id))}`, ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.subscribers.updateSubscriber',
+		inputSchema: UpdateSubscriberInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.updateSubscriber,
 		method: 'PATCH',
-		body: data || rest,
+		path: (parsed) => `subscribers/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.subscribers.updateSubscriber',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const deleteSubscriber: CloudcartEndpoints['deleteSubscriber'] = async (
+export const deleteSubscriber: CloudcartEndpoints['deleteSubscriber'] = (
 	ctx,
 	input,
-) => {
-	const { id } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['deleteSubscriber']
-	>(`subscribers/${encodeURIComponent(String(id))}`, ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.subscribers.deleteSubscriber',
+		inputSchema: DeleteSubscriberInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.deleteSubscriber,
 		method: 'DELETE',
+		path: (parsed) => `subscribers/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.subscribers.deleteSubscriber',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
 export const createSubscriberChannel: CloudcartEndpoints['createSubscriberChannel'] =
-	async (ctx, input) => {
-		const { data, ...rest } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['createSubscriberChannel']
-		>('subscriber-channels', ctx.key, {
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.subscribers.createSubscriberChannel',
+			inputSchema: CreateSubscriberChannelInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.createSubscriberChannel,
 			method: 'POST',
-			body: data || rest,
+			path: 'subscriber-channels',
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.subscribers.createSubscriberChannel',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
 export const getSubscribersChannel: CloudcartEndpoints['getSubscribersChannel'] =
-	async (ctx, input) => {
-		const { id, ...query } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['getSubscribersChannel']
-		>(`subscriber-channels/${encodeURIComponent(String(id))}`, ctx.key, {
-			method: 'GET',
-			query,
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.subscribers.getSubscribersChannel',
+			inputSchema: GetSubscribersChannelInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.getSubscribersChannel,
+			path: (parsed) => `subscriber-channels/${pathId(parsed.id)}`,
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.subscribers.getSubscribersChannel',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
 export const listSubscribersChannels: CloudcartEndpoints['listSubscribersChannels'] =
-	async (ctx, input) => {
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['listSubscribersChannels']
-		>('subscriber-channels', ctx.key, {
-			method: 'GET',
-			query: input as Record<string, any>,
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.subscribers.listSubscribersChannels',
+			inputSchema: ListSubscribersChannelsInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.listSubscribersChannels,
+			path: 'subscriber-channels',
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.subscribers.listSubscribersChannels',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
 export const updateSubscribersChannel: CloudcartEndpoints['updateSubscribersChannel'] =
-	async (ctx, input) => {
-		const { id, data, ...rest } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['updateSubscribersChannel']
-		>(`subscriber-channels/${encodeURIComponent(String(id))}`, ctx.key, {
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.subscribers.updateSubscribersChannel',
+			inputSchema: UpdateSubscribersChannelInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.updateSubscribersChannel,
 			method: 'PATCH',
-			body: data || rest,
+			path: (parsed) => `subscriber-channels/${pathId(parsed.id)}`,
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.subscribers.updateSubscribersChannel',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
 export const deleteSubscribersChannel: CloudcartEndpoints['deleteSubscribersChannel'] =
-	async (ctx, input) => {
-		const { id } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['deleteSubscribersChannel']
-		>(`subscriber-channels/${encodeURIComponent(String(id))}`, ctx.key, {
+	(ctx, input) =>
+		runCloudcart(ctx, input, {
+			event: 'cloudcart.subscribers.deleteSubscribersChannel',
+			inputSchema: DeleteSubscribersChannelInputSchema,
+			outputSchema: CloudcartEndpointOutputSchemas.deleteSubscribersChannel,
 			method: 'DELETE',
+			path: (parsed) => `subscriber-channels/${pathId(parsed.id)}`,
 		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.subscribers.deleteSubscribersChannel',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
 
-export const createSubscriberTag: CloudcartEndpoints['createSubscriberTag'] =
-	async (ctx, input) => {
-		const { data, ...rest } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['createSubscriberTag']
-		>('subscriber-tags', ctx.key, {
-			method: 'POST',
-			body: data || rest,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.subscribers.createSubscriberTag',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
-
-export const getSubscriberTag: CloudcartEndpoints['getSubscriberTag'] = async (
+export const createSubscriberTag: CloudcartEndpoints['createSubscriberTag'] = (
 	ctx,
 	input,
-) => {
-	const { id, ...query } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['getSubscriberTag']
-	>(`subscriber-tags/${encodeURIComponent(String(id))}`, ctx.key, {
-		method: 'GET',
-		query,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.subscribers.createSubscriberTag',
+		inputSchema: CreateSubscriberTagInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.createSubscriberTag,
+		method: 'POST',
+		path: 'subscriber-tags',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.subscribers.getSubscriberTag',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const listSubscribersTags: CloudcartEndpoints['listSubscribersTags'] =
-	async (ctx, input) => {
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['listSubscribersTags']
-		>('subscriber-tags', ctx.key, {
-			method: 'GET',
-			query: input as Record<string, any>,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.subscribers.listSubscribersTags',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
+export const getSubscriberTag: CloudcartEndpoints['getSubscriberTag'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.subscribers.getSubscriberTag',
+		inputSchema: GetSubscriberTagInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.getSubscriberTag,
+		path: (parsed) => `subscriber-tags/${pathId(parsed.id)}`,
+	});
 
-export const updateSubscriberTag: CloudcartEndpoints['updateSubscriberTag'] =
-	async (ctx, input) => {
-		const { id, data, ...rest } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['updateSubscriberTag']
-		>(`subscriber-tags/${encodeURIComponent(String(id))}`, ctx.key, {
-			method: 'PATCH',
-			body: data || rest,
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.subscribers.updateSubscriberTag',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
+export const listSubscribersTags: CloudcartEndpoints['listSubscribersTags'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.subscribers.listSubscribersTags',
+		inputSchema: ListSubscribersTagsInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.listSubscribersTags,
+		path: 'subscriber-tags',
+	});
 
-export const deleteSubscriberTag: CloudcartEndpoints['deleteSubscriberTag'] =
-	async (ctx, input) => {
-		const { id } = (input as Record<string, any>) || {};
-		const result = await makeCloudcartRequest<
-			CloudcartEndpointOutputs['deleteSubscriberTag']
-		>(`subscriber-tags/${encodeURIComponent(String(id))}`, ctx.key, {
-			method: 'DELETE',
-		});
-		await logEventFromContext(
-			ctx,
-			'cloudcart.subscribers.deleteSubscriberTag',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
+export const updateSubscriberTag: CloudcartEndpoints['updateSubscriberTag'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.subscribers.updateSubscriberTag',
+		inputSchema: UpdateSubscriberTagInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.updateSubscriberTag,
+		method: 'PATCH',
+		path: (parsed) => `subscriber-tags/${pathId(parsed.id)}`,
+	});
+
+export const deleteSubscriberTag: CloudcartEndpoints['deleteSubscriberTag'] = (
+	ctx,
+	input,
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.subscribers.deleteSubscriberTag',
+		inputSchema: DeleteSubscriberTagInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.deleteSubscriberTag,
+		method: 'DELETE',
+		path: (parsed) => `subscriber-tags/${pathId(parsed.id)}`,
+	});
