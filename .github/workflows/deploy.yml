@@ -32,7 +32,7 @@ jobs:
         run: pnpm install --frozen-lockfile --filter . --filter "./packages/**"
 
       - name: Restore turbo cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: .turbo
           key: turbo-${{ runner.os }}-${{ github.sha }}
