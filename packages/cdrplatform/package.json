@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "tsc --build --force && tsup",
+    "build": "node --input-type=module -e \"import { rmSync } from 'node:fs'; rmSync('dist', { recursive: true, force: true })\" && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },
