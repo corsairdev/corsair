@@ -67,6 +67,7 @@ export const BaseProviders = [
 	'basecamp',
 	'baselinker',
 	'basin',
+	'beaconchain',
 	'beeminder',
 	'bettercontact',
 	'betterstack',
@@ -288,6 +289,7 @@ export const ProviderDisplayNames = {
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
+	beaconchain: 'Beaconchain',
 	beeminder: 'Beeminder',
 	bettercontact: 'BetterContact',
 	betterstack: 'Better Stack',
@@ -516,6 +518,7 @@ export type AllProviders =
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
+	| 'beaconchain'
 	| 'beeminder'
 	| 'bettercontact'
 	| 'betterstack'
