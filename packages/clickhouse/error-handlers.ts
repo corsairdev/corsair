@@ -16,7 +16,12 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
-		handler: async (error: Error, _ctx: ErrorContext) => {
+		handler: async (error: Error, ctx: ErrorContext) => {
+			// query.execute accepts arbitrary SQL. A 429 after ClickHouse
+			// accepted an INSERT/ALTER/DROP must not replay the statement.
+			if (ctx.operation === 'query.execute') {
+				return { maxRetries: 0 };
+			}
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;

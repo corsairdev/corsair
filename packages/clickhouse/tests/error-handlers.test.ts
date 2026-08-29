@@ -37,6 +37,15 @@ describe('clickhouse errorHandlers', () => {
 			expect(result.maxRetries).toBe(5);
 			expect(result.headersRetryAfterMs).toBeUndefined();
 		});
+
+		it('does not retry query.execute so a 429 cannot replay mutations', async () => {
+			const err = new ClickhouseAPIError('Too Many Requests', 429);
+			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(err, {
+				...stubContext,
+				operation: 'query.execute',
+			});
+			expect(result.maxRetries).toBe(0);
+		});
 	});
 
 	describe('AUTH_ERROR', () => {
