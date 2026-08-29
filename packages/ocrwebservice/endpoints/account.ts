@@ -18,10 +18,9 @@ import {
 export const getCredentials: OcrWebServiceEndpoints['getAccountCredentials'] =
 	async (ctx, input) => {
 		GetAccountCredentialsInputSchema.parse(input);
-		const { username, licenseCode } = parseCredentials(ctx.key);
+		const { username } = parseCredentials(ctx.key);
 		const response = GetAccountCredentialsResponseSchema.parse({
 			user_name: username,
-			license_code: licenseCode,
 		});
 		await logEventFromContext(
 			ctx,

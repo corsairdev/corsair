@@ -3,6 +3,31 @@ import { makeOcrWebServicePostRequest, OcrWebServiceAPIError } from '../client';
 import type { OcrWebServiceEndpoints } from '../index';
 import { RecognizeInputSchema, RecognizeResponseSchema } from './types';
 
+const OCR_OUTPUT_HOSTS = new Set([
+	'www.ocrwebservice.com',
+	'ocrwebservice.com',
+]);
+
+function requireHttpsOutputUrl(url: string): string {
+	let parsed: URL;
+	try {
+		parsed = new URL(url);
+	} catch {
+		throw new OcrWebServiceAPIError('OCR output URL is invalid');
+	}
+
+	if (parsed.protocol === 'https:') {
+		return parsed.toString();
+	}
+
+	if (parsed.protocol === 'http:' && OCR_OUTPUT_HOSTS.has(parsed.hostname)) {
+		parsed.protocol = 'https:';
+		return parsed.toString();
+	}
+
+	throw new OcrWebServiceAPIError('OCR output URL must be HTTPS');
+}
+
 export const recognize: OcrWebServiceEndpoints['recognize'] = async (
 	ctx,
 	input,
@@ -46,6 +71,10 @@ export const recognize: OcrWebServiceEndpoints['recognize'] = async (
 		throw new OcrWebServiceAPIError(
 			`OCR Web Service failed: ${response.ErrorMessage}`,
 		);
+	}
+
+	if (response.OutputFileUrl) {
+		response.OutputFileUrl = requireHttpsOutputUrl(response.OutputFileUrl);
 	}
 
 	await logEventFromContext(

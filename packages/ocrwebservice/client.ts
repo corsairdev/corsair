@@ -76,18 +76,18 @@ function buildConfig(
 	};
 }
 
-async function normalizeBody(
+function normalizeBody(
 	body: unknown,
 	mediaType?: string,
-): Promise<{ body?: unknown; mediaType?: string }> {
-	if (!(body instanceof Blob)) {
-		return { body, mediaType };
+): { body?: unknown; mediaType?: string } {
+	if (body instanceof Blob) {
+		return {
+			body,
+			mediaType: mediaType ?? (body.type || 'application/octet-stream'),
+		};
 	}
 
-	return {
-		body: Buffer.from(await body.arrayBuffer()).toString('binary'),
-		mediaType: mediaType ?? body.type ?? 'application/octet-stream',
-	};
+	return { body, mediaType };
 }
 
 export async function makeOcrWebServiceRequest<T>(
@@ -108,10 +108,7 @@ export async function makeOcrWebServiceRequest<T>(
 		basicAuth = true,
 		accept = 'application/json',
 	} = options;
-	const { body, mediaType } = await normalizeBody(
-		options.body,
-		options.mediaType,
-	);
+	const { body, mediaType } = normalizeBody(options.body, options.mediaType);
 
 	const requestOptions: ApiRequestOptions = {
 		method,

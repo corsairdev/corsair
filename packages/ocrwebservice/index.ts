@@ -102,8 +102,7 @@ export const ocrWebServiceEndpointSchemas = {
 const ocrWebServiceEndpointMeta = {
 	'account.getCredentials': {
 		riskLevel: 'read',
-		description:
-			'Extract OCR Web Service username and license code from stored credentials',
+		description: 'Extract the OCR Web Service username from stored credentials',
 	},
 	'account.getInformation': {
 		riskLevel: 'read',

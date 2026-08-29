@@ -22,7 +22,6 @@ describeLive('OCR Web Service live API', () => {
 	it('extracts credentials then reads account quota', async () => {
 		const creds = await getCredentials(ctx(), {});
 		expect(creds.user_name.length).toBeGreaterThan(0);
-		expect(creds.license_code.length).toBeGreaterThan(0);
 
 		const account = await getInformation(ctx(), {});
 		expect(account.AvailablePages).toEqual(expect.any(Number));

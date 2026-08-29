@@ -57,7 +57,6 @@ describe('OCR Web Service account endpoints', () => {
 	it('returns credentials from connection metadata', async () => {
 		await expect(getCredentials(ctx, {})).resolves.toEqual({
 			user_name: 'test-user',
-			license_code: 'test-license',
 		});
 		expect(mockedGet).not.toHaveBeenCalled();
 	});
@@ -104,6 +103,16 @@ describe('OCR Web Service account endpoints', () => {
 		);
 		expect(result).toEqual({ data: 'line-one' });
 	});
+
+	it('rejects impossible log dates', async () => {
+		await expect(
+			log(ctx, {
+				from_date: '2026-02-31',
+				to_date: '2026-08-27',
+			}),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
 });
 
 describe('OCR Web Service recognize endpoint', () => {
@@ -141,6 +150,47 @@ describe('OCR Web Service recognize endpoint', () => {
 			}),
 		);
 		expect(result).toEqual(providerResponse);
+	});
+
+	it('upgrades http output URLs on ocrwebservice.com to https', async () => {
+		const file = new Blob(['test document'], { type: 'text/plain' });
+		mockedPost.mockResolvedValue({
+			ErrorMessage: null,
+			OCRText: [['Hello from OCR']],
+			OutputFileUrl:
+				'http://www.ocrwebservice.com/uploads/_restservice/out.doc',
+			AvailablePages: 1,
+			ProcessedPages: 1,
+		});
+
+		const result = await recognize(ctx, {
+			file,
+			language: 'english',
+			gettext: true,
+		});
+
+		expect(result.OutputFileUrl).toBe(
+			'https://www.ocrwebservice.com/uploads/_restservice/out.doc',
+		);
+	});
+
+	it('rejects insecure output URLs on unknown hosts', async () => {
+		const file = new Blob(['test document'], { type: 'text/plain' });
+		mockedPost.mockResolvedValue({
+			ErrorMessage: null,
+			OCRText: [['Hello from OCR']],
+			OutputFileUrl: 'http://evil.example/steal.doc',
+			AvailablePages: 1,
+			ProcessedPages: 1,
+		});
+
+		await expect(
+			recognize(ctx, {
+				file,
+				language: 'english',
+				gettext: true,
+			}),
+		).rejects.toThrow('OCR output URL must be HTTPS');
 	});
 
 	it('throws when the provider returns an OCR error', async () => {
