@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
+import { timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -53,6 +53,12 @@ export type CloudcartWebhookOutputs = {
 	'customer.created': CustomerCreatedEvent;
 };
 
+const CLOUDCART_EVENT_TYPES = new Set([
+	'order.created',
+	'product.created',
+	'customer.created',
+]);
+
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
@@ -71,6 +77,29 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
+function headerString(
+	headers: Record<string, unknown>,
+	name: string,
+): string | undefined {
+	const value = headers[name];
+	if (typeof value === 'string' && value.length > 0) return value;
+	if (
+		Array.isArray(value) &&
+		typeof value[0] === 'string' &&
+		value[0].length > 0
+	) {
+		return value[0];
+	}
+	return undefined;
+}
+
+function timingSafeStringEqual(left: string, right: string): boolean {
+	const leftBuf = Buffer.from(left);
+	const rightBuf = Buffer.from(right);
+	if (leftBuf.length !== rightBuf.length) return false;
+	return timingSafeEqual(leftBuf, rightBuf);
+}
+
 export function createCloudcartMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body);
@@ -78,47 +107,42 @@ export function createCloudcartMatch(eventType: string): CorsairWebhookMatcher {
 	};
 }
 
+export function matchCloudcartWebhook(request: RawWebhookRequest): boolean {
+	const headers = request.headers as Record<string, unknown>;
+	if (
+		headerString(headers, 'x-cloudcart-apikey') ||
+		headerString(headers, 'x-cloudcart-api-key')
+	) {
+		return true;
+	}
+	const parsed = parseBody(request.body);
+	return (
+		parsed !== null &&
+		typeof parsed.type === 'string' &&
+		CLOUDCART_EVENT_TYPES.has(parsed.type)
+	);
+}
+
 export function verifyCloudcartWebhookSignature(
 	request: WebhookRequest<CloudcartWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
-		return { valid: true };
+		return { valid: false, error: 'Missing webhook secret' };
 	}
 
-	const headers = request.headers;
-	const signature =
-		headers['x-cloudcart-signature'] ||
-		headers['x-signature'] ||
-		headers['x-cloudcart-hmac-sha256'];
+	const headers = request.headers as Record<string, unknown>;
+	const presented =
+		headerString(headers, 'x-cloudcart-apikey') ??
+		headerString(headers, 'x-cloudcart-api-key');
 
-	if (!signature || typeof signature !== 'string') {
-		return { valid: false, error: 'Missing webhook signature header' };
+	if (!presented) {
+		return { valid: false, error: 'Missing CloudCart API key header' };
 	}
 
-	try {
-		const payloadString =
-			typeof (request as any).body === 'string'
-				? (request as any).body
-				: JSON.stringify(request.payload ?? (request as any).body);
-
-		const expectedSignature = createHmac('sha256', secret)
-			.update(payloadString)
-			.digest('hex');
-
-		const sigBuf = Buffer.from(signature.toLowerCase(), 'utf8');
-		const expBuf = Buffer.from(expectedSignature.toLowerCase(), 'utf8');
-
-		if (sigBuf.length !== expBuf.length || !timingSafeEqual(sigBuf, expBuf)) {
-			return { valid: false, error: 'Invalid webhook signature' };
-		}
-
-		return { valid: true };
-	} catch (err) {
-		return {
-			valid: false,
-			error:
-				err instanceof Error ? err.message : 'Signature verification failed',
-		};
+	if (!timingSafeStringEqual(presented, secret)) {
+		return { valid: false, error: 'Invalid CloudCart API key' };
 	}
+
+	return { valid: true };
 }
