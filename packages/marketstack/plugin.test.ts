@@ -69,6 +69,42 @@ describe('marketstack plugin registration', () => {
 		expect(keys).toContain('CUSTOM');
 	});
 
+	it('keeps DEFAULT last even when the caller supplies their own DEFAULT', () => {
+		const plugin = marketstack({
+			errorHandlers: {
+				// Declared before CUSTOM on purpose: a naive `{ ...specificDefaults,
+				// ...options.errorHandlers, DEFAULT: ... }` merge would leave DEFAULT
+				// sitting at this earlier position, since reassigning an existing key
+				// does not move it — so a resolver that takes the first matching key
+				// would pick this DEFAULT before ever reaching CUSTOM.
+				DEFAULT: {
+					match: () => true,
+					handler: async () => ({ maxRetries: 0 }),
+				},
+				CUSTOM: {
+					match: () => true,
+					handler: async () => ({ maxRetries: 0 }),
+				},
+			},
+		});
+		const keys = Object.keys(plugin.errorHandlers ?? {});
+		expect(keys.at(-1)).toBe('DEFAULT');
+
+		// Mirrors corsair/core's handleCorsairError resolver: the first key whose
+		// handler matches wins.
+		const errorHandlers = plugin.errorHandlers ?? {};
+		const context = {
+			pluginId: 'marketstack',
+			operation: 'eod.get',
+			input: {},
+			originalError: new Error('anything'),
+		};
+		const firstMatchName = Object.keys(errorHandlers).find((name) =>
+			errorHandlers[name]?.match(new Error('anything'), context),
+		);
+		expect(firstMatchName).toBe('CUSTOM');
+	});
+
 	it('registers all ten read operations', () => {
 		const plugin = marketstack();
 		const endpoints = plugin.endpoints as unknown as Record<

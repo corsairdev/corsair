@@ -28,11 +28,18 @@ export class MarketstackAPIError extends Error {
 	}
 }
 
-// HTTPS only — marketstack's access_key is sent as a query parameter on
-// every request, so this must never be requested over plain HTTP. marketstack's
-// free plan only supports HTTP and rejects HTTPS (error code
-// https_access_restricted), so this plugin requires a paid marketstack plan.
-export const MARKETSTACK_API_BASE = 'https://api.marketstack.com/v1';
+// HTTPS only — marketstack's access_key is sent as a query parameter on every
+// request, so this must never be requested over plain HTTP. HTTPS is available
+// on every marketstack plan, including free.
+//
+// v2, not v1 — v1 is deprecated; newly issued access keys target v2, and v2
+// changes the wire shape of a few endpoints (ticker listing moves to
+// /tickerslist and keys results by `ticker` instead of `symbol`, ticker-scoped
+// EOD nests bars under `data.eod`, and single-exchange lookups wrap the
+// exchange in a `data` envelope). Those endpoints remap the v2 response back
+// onto this plugin's stable output shape — see endpoints/tickers.ts and
+// endpoints/exchanges.ts.
+export const MARKETSTACK_API_BASE = 'https://api.marketstack.com/v2';
 
 const NO_DEK_ERROR_PATTERN = /no dek found/i;
 

@@ -44,13 +44,13 @@ describe('exchanges.get', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
-	it('builds the exchange path from the MIC', async () => {
-		mockRequest.mockResolvedValue({ mic: 'XNAS', name: 'NASDAQ' });
+	it('builds the exchange path from the MIC and unwraps the v2 `data` envelope', async () => {
+		mockRequest.mockResolvedValue({ data: { mic: 'XNAS', name: 'NASDAQ' } });
 
 		const result = await getExchange(makeCtx(), { mic: 'XNAS' });
 
 		expect(mockRequest).toHaveBeenCalledWith('exchanges/XNAS', 'test-key');
-		expect(result.mic).toBe('XNAS');
+		expect(result).toEqual({ mic: 'XNAS', name: 'NASDAQ' });
 	});
 });
 

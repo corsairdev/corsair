@@ -65,17 +65,29 @@ describe('tickers.get', () => {
 });
 
 describe('tickers.list', () => {
-	it('forwards search and pagination params', async () => {
+	it('calls /tickerslist and forwards search and pagination params', async () => {
 		mockRequest.mockResolvedValue({
 			pagination: { limit: 10, offset: 0, count: 1, total: 1 },
-			data: [{ symbol: 'AAPL', name: 'Apple Inc' }],
+			data: [{ ticker: 'AAPL', name: 'Apple Inc' }],
 		});
 
 		await listTickers(makeCtx(), { search: 'Apple', limit: 10, offset: 0 });
 
-		expect(mockRequest).toHaveBeenCalledWith('tickers', 'test-key', {
+		expect(mockRequest).toHaveBeenCalledWith('tickerslist', 'test-key', {
 			query: { search: 'Apple', exchange: undefined, limit: 10, offset: 0 },
 		});
+	});
+
+	it('remaps the v2 `ticker` field onto `symbol`', async () => {
+		mockRequest.mockResolvedValue({
+			pagination: { limit: 10, offset: 0, count: 1, total: 1 },
+			data: [{ ticker: 'AAPL', name: 'Apple Inc' }],
+		});
+
+		const result = await listTickers(makeCtx(), {});
+
+		expect(result.data[0]).toEqual({ symbol: 'AAPL', name: 'Apple Inc' });
+		expect(result.data[0]).not.toHaveProperty('ticker');
 	});
 });
 
@@ -89,7 +101,7 @@ describe('tickers.getEod', () => {
 	it('builds the ticker-scoped eod path', async () => {
 		mockRequest.mockResolvedValue({
 			pagination: { limit: 100, offset: 0, count: 0, total: 0 },
-			data: [],
+			data: { symbol: 'AAPL', eod: [] },
 		});
 
 		await getTickerEod(makeCtx(), { symbol: 'AAPL', sort: 'DESC' });
@@ -103,6 +115,26 @@ describe('tickers.getEod', () => {
 				offset: undefined,
 			},
 		});
+	});
+
+	it('flattens the v2 `data.eod` nesting onto `data`', async () => {
+		const bar = {
+			open: 1,
+			high: 2,
+			low: 0.5,
+			close: 1.5,
+			volume: 100,
+			symbol: 'AAPL',
+			date: '2026-05-28T00:00:00+0000',
+		};
+		mockRequest.mockResolvedValue({
+			pagination: { limit: 100, offset: 0, count: 1, total: 1 },
+			data: { symbol: 'AAPL', name: 'Apple Inc', eod: [bar] },
+		});
+
+		const result = await getTickerEod(makeCtx(), { symbol: 'AAPL' });
+
+		expect(result.data).toEqual([bar]);
 	});
 });
 

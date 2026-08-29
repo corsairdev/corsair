@@ -233,6 +233,8 @@ export function marketstack<const T extends MarketstackPluginOptions>(
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
 	const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+	const { DEFAULT: customDefaultHandler, ...specificCustomHandlers } =
+		options.errorHandlers ?? {};
 	return {
 		id: 'marketstack',
 		authConfig: marketstackAuthConfig,
@@ -247,8 +249,8 @@ export function marketstack<const T extends MarketstackPluginOptions>(
 		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...specificDefaults,
-			...(options.errorHandlers || {}),
-			DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			...specificCustomHandlers,
+			DEFAULT: customDefaultHandler || defaultHandler,
 		},
 		keyBuilder: async (ctx: MarketstackKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {

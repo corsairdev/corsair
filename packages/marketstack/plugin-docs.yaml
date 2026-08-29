@@ -1,7 +1,6 @@
 displayName: Marketstack
 overviewNote: |
-  This plugin only ever calls Marketstack over HTTPS
-  (`https://api.marketstack.com/v1`), since every request carries your
-  `access_key` as a query parameter. Marketstack's free plan only supports
-  plain HTTP and rejects HTTPS (API error `https_access_restricted`), so
-  this plugin requires a paid Marketstack plan.
+  This plugin calls Marketstack's v2 API over HTTPS
+  (`https://api.marketstack.com/v2`), since every request carries your
+  `access_key` as a query parameter. HTTPS is available on every Marketstack
+  plan, including free — no paid plan is required.

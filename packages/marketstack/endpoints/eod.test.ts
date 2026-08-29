@@ -102,4 +102,11 @@ describe('eod.get', () => {
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
+
+	it('rejects an impossible calendar date before calling the API', async () => {
+		await expect(
+			getEod(makeCtx(), { symbols: ['AAPL'], dateFrom: '2026-02-30' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 });

@@ -1,8 +1,6 @@
 import { z } from 'zod';
 
-const DateStringSchema = z
-	.string()
-	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected a date in YYYY-MM-DD format');
+const DateStringSchema = z.iso.date();
 
 const LimitSchema = z
 	.number()
@@ -162,6 +160,16 @@ export const GetTickerEodResponseSchema = z.object({
 
 export type GetTickerEodResponse = z.infer<typeof GetTickerEodResponseSchema>;
 
+// v2 nests a ticker's EOD bars under `data.eod` instead of returning them as
+// `data` directly; this is the wire shape, remapped onto
+// GetTickerEodResponseSchema by the endpoint.
+export const GetTickerEodWireResponseSchema = z.object({
+	pagination: PaginationSchema,
+	data: z.object({
+		eod: z.array(EodBarSchema),
+	}),
+});
+
 // GET /tickers/{symbol}/eod/latest
 export const GetTickerEodLatestInputSchema = z.object({
 	symbol: z.string().min(1).describe('Ticker symbol, e.g. "AAPL"'),
@@ -208,6 +216,23 @@ export const ListTickersResponseSchema = z.object({
 
 export type ListTickersResponse = z.infer<typeof ListTickersResponseSchema>;
 
+// v2's /tickerslist keys each result by `ticker` instead of `symbol`; this is
+// the wire shape, remapped onto ListTickersResponseSchema by the endpoint so
+// results stay consistent with the rest of the plugin's `symbol` fields.
+export const ListTickersWireResponseSchema = z.object({
+	pagination: PaginationSchema,
+	data: z.array(
+		z.object({
+			name: z.string().optional(),
+			ticker: z.string(),
+			has_intraday: z.boolean().optional(),
+			has_eod: z.boolean().optional(),
+			country: z.string().nullable().optional(),
+			stock_exchange: StockExchangeRefSchema.optional(),
+		}),
+	),
+});
+
 // GET /exchanges/{mic}
 export const GetExchangeInputSchema = z.object({
 	mic: z
@@ -221,6 +246,13 @@ export type GetExchangeInput = z.infer<typeof GetExchangeInputSchema>;
 export const GetExchangeResponseSchema = ExchangeSchema;
 
 export type GetExchangeResponse = z.infer<typeof GetExchangeResponseSchema>;
+
+// v2 wraps a single exchange lookup in a `data` envelope instead of returning
+// it directly; this is the wire shape, unwrapped onto
+// GetExchangeResponseSchema by the endpoint.
+export const GetExchangeWireResponseSchema = z.object({
+	data: ExchangeSchema,
+});
 
 // GET /exchanges
 export const ListExchangesInputSchema = z.object({

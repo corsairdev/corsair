@@ -1,10 +1,10 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { makeMarketstackRequest } from '../client';
 import type { MarketstackEndpoints } from '../index';
-import type { GetExchangeResponse, ListExchangesResponse } from './types';
+import type { ListExchangesResponse } from './types';
 import {
 	GetExchangeInputSchema,
-	GetExchangeResponseSchema,
+	GetExchangeWireResponseSchema,
 	ListExchangesInputSchema,
 	ListExchangesResponseSchema,
 } from './types';
@@ -19,12 +19,12 @@ export const getExchange: MarketstackEndpoints['getExchange'] = async (
 
 	const { mic } = GetExchangeInputSchema.parse(input);
 
-	const rawResponse = await makeMarketstackRequest<GetExchangeResponse>(
+	const rawResponse = await makeMarketstackRequest<unknown>(
 		`exchanges/${encodeURIComponent(mic)}`,
 		ctx.key,
 	);
 
-	const response = GetExchangeResponseSchema.parse(rawResponse);
+	const response = GetExchangeWireResponseSchema.parse(rawResponse).data;
 
 	await logEventFromContext(
 		ctx,

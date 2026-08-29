@@ -3,19 +3,17 @@ import { makeMarketstackRequest } from '../client';
 import type { MarketstackEndpoints } from '../index';
 import type {
 	GetTickerEodLatestResponse,
-	GetTickerEodResponse,
 	GetTickerInfoResponse,
-	ListTickersResponse,
 } from './types';
 import {
 	GetTickerEodInputSchema,
 	GetTickerEodLatestInputSchema,
 	GetTickerEodLatestResponseSchema,
-	GetTickerEodResponseSchema,
+	GetTickerEodWireResponseSchema,
 	GetTickerInfoInputSchema,
 	GetTickerInfoResponseSchema,
 	ListTickersInputSchema,
-	ListTickersResponseSchema,
+	ListTickersWireResponseSchema,
 } from './types';
 
 export const getTickerInfo: MarketstackEndpoints['getTickerInfo'] = async (
@@ -56,15 +54,22 @@ export const listTickers: MarketstackEndpoints['listTickers'] = async (
 	const { search, exchange, limit, offset } =
 		ListTickersInputSchema.parse(input);
 
-	const rawResponse = await makeMarketstackRequest<ListTickersResponse>(
-		'tickers',
+	const rawResponse = await makeMarketstackRequest<unknown>(
+		'tickerslist',
 		ctx.key,
 		{
 			query: { search, exchange, limit, offset },
 		},
 	);
 
-	const response = ListTickersResponseSchema.parse(rawResponse);
+	const wireResponse = ListTickersWireResponseSchema.parse(rawResponse);
+	const response = {
+		pagination: wireResponse.pagination,
+		data: wireResponse.data.map(({ ticker, ...rest }) => ({
+			...rest,
+			symbol: ticker,
+		})),
+	};
 
 	await logEventFromContext(
 		ctx,
@@ -87,7 +92,7 @@ export const getTickerEod: MarketstackEndpoints['getTickerEod'] = async (
 	const { symbol, sort, dateFrom, dateTo, limit, offset } =
 		GetTickerEodInputSchema.parse(input);
 
-	const rawResponse = await makeMarketstackRequest<GetTickerEodResponse>(
+	const rawResponse = await makeMarketstackRequest<unknown>(
 		`tickers/${encodeURIComponent(symbol)}/eod`,
 		ctx.key,
 		{
@@ -101,7 +106,11 @@ export const getTickerEod: MarketstackEndpoints['getTickerEod'] = async (
 		},
 	);
 
-	const response = GetTickerEodResponseSchema.parse(rawResponse);
+	const wireResponse = GetTickerEodWireResponseSchema.parse(rawResponse);
+	const response = {
+		pagination: wireResponse.pagination,
+		data: wireResponse.data.eod,
+	};
 
 	await logEventFromContext(
 		ctx,
