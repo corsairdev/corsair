@@ -122,6 +122,7 @@ export const BaseProviders = [
 	'figma',
 	'firecrawl',
 	'fireflies',
+	'flexisign',
 	'formbricks',
 	'gemini',
 	'github',
@@ -341,6 +342,7 @@ export const ProviderDisplayNames = {
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
+	flexisign: 'Flexisign',
 	formbricks: 'Formbricks',
 	gemini: 'Gemini',
 	github: 'GitHub',
@@ -561,12 +563,14 @@ export type AllProviders =
 	| 'doppler'
 	| 'dreamstudio'
 	| 'dropbox'
+	| 'dummy'
 	| 'epicgames'
 	| 'exa'
 	| 'facebook'
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
+	| 'flexisign'
 	| 'formbricks'
 	| 'gemini'
 	| 'github'
