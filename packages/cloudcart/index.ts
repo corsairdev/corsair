@@ -15,6 +15,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { packCloudcartKey } from './client';
 import {
 	Blogs,
 	Cart,
@@ -40,7 +42,6 @@ import {
 import { errorHandlers } from './error-handlers';
 import { CloudcartSchema } from './schema';
 import { CloudcartWebhooks } from './webhooks';
-import { resolveCloudcartOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchCloudcartTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	CloudcartWebhookOutputs,
@@ -50,6 +51,7 @@ import type {
 } from './webhooks/types';
 import {
 	CustomerCreatedEventSchema,
+	matchCloudcartWebhook,
 	OrderCreatedEventSchema,
 	ProductCreatedEventSchema,
 } from './webhooks/types';
@@ -57,6 +59,7 @@ import {
 export type CloudcartPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	storeUrl?: string;
 	webhookSecret?: string;
 	hooks?: InternalCloudcartPlugin['hooks'];
 	webhookHooks?: InternalCloudcartPlugin['webhookHooks'];
@@ -64,13 +67,23 @@ export type CloudcartPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof cloudcartEndpointsNested>;
 };
 
+export const cloudcartAuthConfig = {
+	api_key: {
+		account: ['store_url'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type CloudcartContext = CorsairPluginContext<
 	typeof CloudcartSchema,
-	CloudcartPluginOptions
+	CloudcartPluginOptions,
+	undefined,
+	typeof cloudcartAuthConfig
 >;
 
-export type CloudcartKeyBuilderContext =
-	KeyBuilderContext<CloudcartPluginOptions>;
+export type CloudcartKeyBuilderContext = KeyBuilderContext<
+	CloudcartPluginOptions,
+	typeof cloudcartAuthConfig
+>;
 
 export type CloudcartBoundEndpoints = BindEndpoints<
 	typeof cloudcartEndpointsNested
@@ -1459,12 +1472,6 @@ const cloudcartEndpointMeta = {
 	typeof cloudcartEndpointsNested
 >;
 
-export const cloudcartAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
-
 export type BaseCloudcartPlugin<T extends CloudcartPluginOptions> =
 	CorsairPlugin<
 		'cloudcart',
@@ -1472,7 +1479,8 @@ export type BaseCloudcartPlugin<T extends CloudcartPluginOptions> =
 		typeof cloudcartEndpointsNested,
 		typeof cloudcartWebhooksNested,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof cloudcartAuthConfig
 	>;
 
 export type InternalCloudcartPlugin =
@@ -1489,6 +1497,7 @@ export function cloudcart<const T extends CloudcartPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
 	return {
 		id: 'cloudcart',
 		authConfig: cloudcartAuthConfig,
@@ -1501,36 +1510,43 @@ export function cloudcart<const T extends CloudcartPluginOptions>(
 		endpointMeta: cloudcartEndpointMeta,
 		endpointSchemas: cloudcartEndpointSchemas,
 		webhookSchemas: cloudcartWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-cloudcart-signature' in headers || 'x-signature' in headers;
-		},
+		pluginWebhookMatcher: matchCloudcartWebhook,
 		pluginTenantWebhookMatcher: matchCloudcartTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveCloudcartOAuthWebhookTenantLink,
 		errorHandlers: {
-			...errorHandlers,
+			...specificDefaults,
 			...options.errorHandlers,
+			DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
 		},
 		keyBuilder: async (ctx: CloudcartKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
 			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				const secret =
+					options.webhookSecret ??
+					options.key ??
+					(await ctx.keys?.get_webhook_signature?.()) ??
+					(ctx.authType === 'api_key'
+						? await ctx.keys?.get_api_key?.()
+						: undefined);
+				if (!secret) {
+					throw new AuthMissingError('cloudcart', 'api_key');
+				}
+				return secret;
 			}
 
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			const apiKey =
+				options.key ??
+				(ctx.authType === 'api_key'
+					? await ctx.keys?.get_api_key?.()
+					: undefined);
+			if (!apiKey) {
+				throw new AuthMissingError('cloudcart', 'api_key');
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+			const storeUrl = options.storeUrl ?? (await ctx.keys?.get_store_url?.());
+			if (!storeUrl) {
+				throw new AuthMissingError('cloudcart', 'store_url');
 			}
 
-			return '';
+			return packCloudcartKey(apiKey, storeUrl);
 		},
 	} satisfies InternalCloudcartPlugin;
 }

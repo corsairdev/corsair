@@ -304,7 +304,7 @@ export const ProviderDisplayNames = {
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
-	cloudcart: 'Cloudcart',
+	cloudcart: 'CloudCart',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
