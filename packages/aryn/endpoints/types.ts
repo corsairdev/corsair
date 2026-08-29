@@ -153,7 +153,18 @@ export const ASYNC_LIST_PATH_FILTER = '^/v1/storage/docsets/{docset_id}/docs$';
 
 export const AsyncTasksListInputSchema = z
 	.object({
-		path_filter: z.string().optional(),
+		/**
+		 * The Aryn API (GET /v1/async/list) only accepts the constant
+		 * `^/v1/storage/docsets/{docset_id}/docs$` for path_filter (OpenAPI enum).
+		 * Callers may omit it; if provided, it must match the supported value.
+		 */
+		path_filter: z
+			.string()
+			.regex(
+				/^\^\/v1\/storage\/docsets\/\{docset_id\}\/docs\$$/,
+				'path_filter must be ^/v1/storage/docsets/{docset_id}/docs$ (the only value supported by the Aryn API)',
+			)
+			.optional(),
 	})
 	.loose();
 export type AsyncTasksListInput = z.infer<typeof AsyncTasksListInputSchema>;

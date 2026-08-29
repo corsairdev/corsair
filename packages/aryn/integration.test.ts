@@ -1,5 +1,6 @@
 import { Aryn } from './endpoints';
 import {
+	ArynEndpointInputSchemas,
 	ArynEndpointOutputSchemas,
 	DocumentGetBinaryResponseSchema,
 	DocumentPartitionResponseSchema,
@@ -242,5 +243,27 @@ describe('Aryn remaining endpoints (mocked)', () => {
 		});
 		const validated = ArynEndpointOutputSchemas.asyncTasksList.parse(result);
 		expect(validated.tasks['aryn:t-1']?.task_status).toBe('done');
+	});
+
+	describe('path_filter input validation', () => {
+		it('accepts the only value supported by the Aryn API', () => {
+			const parsed = ArynEndpointInputSchemas.asyncTasksList.parse({
+				path_filter: '^/v1/storage/docsets/{docset_id}/docs$',
+			});
+			expect(parsed.path_filter).toBe('^/v1/storage/docsets/{docset_id}/docs$');
+		});
+
+		it('accepts an omitted path_filter', () => {
+			const parsed = ArynEndpointInputSchemas.asyncTasksList.parse({});
+			expect(parsed.path_filter).toBeUndefined();
+		});
+
+		it('rejects values the Aryn API does not support', () => {
+			expect(() =>
+				ArynEndpointInputSchemas.asyncTasksList.parse({
+					path_filter: '/some/other/filter',
+				}),
+			).toThrow();
+		});
 	});
 });
