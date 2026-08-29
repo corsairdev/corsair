@@ -2,6 +2,41 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
 export const errorHandlers = {
+	AUTH_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 401) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	PERMISSION_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 403) return true;
+			return error.message.toLowerCase().includes('forbidden');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 404) return true;
+			return error.message.toLowerCase().includes('not found');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	VALIDATION_ERROR: {
+		match: (error: Error) => {
+			if (
+				error instanceof ApiError &&
+				(error.status === 400 || error.status === 422)
+			) {
+				return true;
+			}
+			const msg = error.message.toLowerCase();
+			return msg.includes('unprocessable') || msg.includes('validation');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
@@ -13,16 +48,23 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			return {
+				maxRetries: 5,
+				retryStrategy: 'exponential_backoff' as const,
+				headersRetryAfterMs: retryAfterMs,
+			};
 		},
 	},
-	AUTH_ERROR: {
+	SERVER_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (error instanceof ApiError && error.status >= 500) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return msg.includes('internal server') || msg.includes('unavailable');
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async () => ({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
 	},
 	DEFAULT: {
 		match: () => true,

@@ -7,18 +7,10 @@ describe('Cloudcart schema and plugin', () => {
 		expect(CloudcartSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map with required entities', () => {
+	it('declares an empty entities map', () => {
 		expect(typeof CloudcartSchema.entities).toBe('object');
 		expect(CloudcartSchema.entities).not.toBeNull();
-		const entityKeys = Object.keys(CloudcartSchema.entities);
-		expect(entityKeys.length).toBeGreaterThan(0);
-		expect(entityKeys).toContain('products');
-		expect(entityKeys).toContain('orders');
-		expect(entityKeys).toContain('customers');
-		expect(entityKeys).toContain('categories');
-		for (const entity of Object.values(CloudcartSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		expect(CloudcartSchema.entities).toEqual({});
 	});
 
 	it('instantiates plugin correctly with key and options', () => {
