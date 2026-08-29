@@ -32,4 +32,4 @@
 
   "exclude": ["**/dist/**", "**/node_modules/**"],
   "include": ["./types.d.ts"]
-}s
+}
