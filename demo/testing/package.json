@@ -60,8 +60,7 @@
     "next": "^14.2.24",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zod": "^3.24.1",
-    "@corsair-dev/flexisign": "workspace:*"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@corsair-dev/cli": "workspace:*",
