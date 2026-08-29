@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { ArynEndpoints } from '..';
 import { makeArynRequest } from '../client';
 import type { ArynEndpointOutputs } from './types';
+import { ASYNC_LIST_PATH_FILTER } from './types';
 
 export const asyncTasksList: ArynEndpoints['asyncTasksList'] = async (
 	ctx,
@@ -12,6 +13,9 @@ export const asyncTasksList: ArynEndpoints['asyncTasksList'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			query: {
+				path_filter: input.path_filter ?? ASYNC_LIST_PATH_FILTER,
+			},
 		},
 	);
 

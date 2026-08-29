@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ArynEndpoints } from '..';
-import { makeArynRequest } from '../client';
+import { makeArynBinaryRequest, makeArynRequest } from '../client';
 import type { ArynEndpointOutputs } from './types';
 
 export const documentGet: ArynEndpoints['documentGet'] = async (ctx, input) => {
@@ -30,16 +30,16 @@ export const documentGetBinary: ArynEndpoints['documentGetBinary'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeArynRequest<
-		ArynEndpointOutputs['documentGetBinary']
-	>(
+	const buffer = await makeArynBinaryRequest(
 		`/v1/storage/docsets/${input.docset_id}/docs/${input.doc_id}/binary`,
 		ctx.key,
-		{
-			method: 'GET',
-			responseType: 'binary',
-		},
 	);
+	const contentBase64 = Buffer.from(buffer).toString('base64');
+	const response: ArynEndpointOutputs['documentGetBinary'] = {
+		docset_id: input.docset_id,
+		doc_id: input.doc_id,
+		contentBase64,
+	};
 
 	await logEventFromContext(
 		ctx,

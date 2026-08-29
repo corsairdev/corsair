@@ -1,6 +1,32 @@
 import { z } from 'zod';
 import { ArynDocSet } from '../schema/database';
 
+export const ArynElementSchema = z
+	.object({
+		type: z.string().optional(),
+		bbox: z.array(z.number()).optional(),
+		properties: z
+			.object({
+				score: z.number().optional(),
+				page_number: z.number().optional(),
+			})
+			.loose()
+			.nullable()
+			.optional(),
+		text_representation: z.string().nullable().optional(),
+		binary_representation: z.unknown().optional(),
+	})
+	.loose();
+export type ArynElement = z.infer<typeof ArynElementSchema>;
+
+export const ArynAsyncTaskSchema = z
+	.object({
+		action: z.string(),
+		task_status: z.enum(['done', 'abort', 'cancel', 'run', 'queue']),
+	})
+	.loose();
+export type ArynAsyncTask = z.infer<typeof ArynAsyncTaskSchema>;
+
 export const DocsetCreateInputSchema = z
 	.object({
 		name: z.string(),
@@ -51,11 +77,10 @@ export type DocumentGetInput = z.infer<typeof DocumentGetInputSchema>;
 
 export const DocumentGetResponseSchema = z
 	.object({
-		doc_id: z.string(),
-		elements: z.record(z.string(), z.any()).optional(),
-		properties: z.record(z.string(), z.any()).optional(),
-		binary_data: z.any().optional(),
-		original_elements: z.array(z.any()).optional(),
+		id: z.string(),
+		elements: z.array(ArynElementSchema).optional(),
+		properties: z.record(z.string(), z.unknown()).optional(),
+		binary_data: z.string().nullable().optional(),
 	})
 	.loose();
 
@@ -72,8 +97,16 @@ export type DocumentGetBinaryInput = z.infer<
 	typeof DocumentGetBinaryInputSchema
 >;
 
-export const DocumentGetBinaryResponseSchema = z.any();
-export type DocumentGetBinaryResponse = any;
+export const DocumentGetBinaryResponseSchema = z
+	.object({
+		docset_id: z.string(),
+		doc_id: z.string(),
+		contentBase64: z.string(),
+	})
+	.loose();
+export type DocumentGetBinaryResponse = z.infer<
+	typeof DocumentGetBinaryResponseSchema
+>;
 
 export const QueryGeneratePlanInputSchema = z
 	.object({
@@ -88,10 +121,22 @@ export type QueryGeneratePlanInput = z.infer<
 	typeof QueryGeneratePlanInputSchema
 >;
 
+export const ArynQueryPlanNodeSchema = z
+	.object({
+		node_id: z.number(),
+		node_type: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		inputs: z.array(z.number()).optional(),
+	})
+	.loose();
+
 export const QueryGeneratePlanResponseSchema = z
 	.object({
-		logical_plan: z.any().optional(),
-		physical_plan: z.any().optional(),
+		query: z.string(),
+		nodes: z.record(z.string(), ArynQueryPlanNodeSchema),
+		result_node: z.number(),
+		llm_prompt: z.unknown().nullable().optional(),
+		llm_plan: z.string().nullable().optional(),
 	})
 	.loose();
 
@@ -99,10 +144,23 @@ export type QueryGeneratePlanResponse = z.infer<
 	typeof QueryGeneratePlanResponseSchema
 >;
 
-export const AsyncTasksListInputSchema = z.object({}).loose();
+// Note: Aryn's Platform API has no pagination on these list endpoints —
+// `GET /v1/async/list` returns all tasks in a single `tasks` map and the
+// storage docsets/docs list endpoints have no cursor/limit parameters in the
+// official OpenAPI spec (verified against docs.aryn.ai/api-reference).
+// If Aryn adds pagination later, extend the input schemas here.
+export const ASYNC_LIST_PATH_FILTER = '^/v1/storage/docsets/{docset_id}/docs$';
+
+export const AsyncTasksListInputSchema = z
+	.object({
+		path_filter: z.string().optional(),
+	})
+	.loose();
 export type AsyncTasksListInput = z.infer<typeof AsyncTasksListInputSchema>;
 
-export const AsyncTasksListResponseSchema = z.record(z.string(), z.any());
+export const AsyncTasksListResponseSchema = z.object({
+	tasks: z.record(z.string(), ArynAsyncTaskSchema),
+});
 export type AsyncTasksListResponse = z.infer<
 	typeof AsyncTasksListResponseSchema
 >;
@@ -144,8 +202,18 @@ export type DocumentPartitionInput = z.infer<
 	typeof DocumentPartitionInputSchema
 >;
 
-export const DocumentPartitionResponseSchema = z.any();
-export type DocumentPartitionResponse = any;
+export const DocumentPartitionResponseSchema = z
+	.object({
+		status: z.array(z.string()),
+		status_code: z.number().optional(),
+		error: z.string().nullable().optional(),
+		elements: z.array(ArynElementSchema).nullable().optional(),
+		markdown: z.string().nullable().optional(),
+	})
+	.loose();
+export type DocumentPartitionResponse = z.infer<
+	typeof DocumentPartitionResponseSchema
+>;
 
 export const DocumentSubmitAsyncAddInputSchema = z
 	.object({
