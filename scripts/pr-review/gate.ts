@@ -54,11 +54,12 @@ export function pluginOf(file: string): string | null {
 export function detectPlugin(changedFiles: string[]): string | null {
 	return changedFiles.map(pluginOf).find((p) => p !== null) ?? null;
 }
-
 function section(body: string, heading: string): string {
 	const escaped = heading.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
-	const re = new RegExp(`##\\s*${escaped}[^\\n]*\\n([\\s\\S]*?)(?=\\n##\\s|$)`);
-	return body.match(re)?.[1] ?? '';
+	// Normalize line endings first
+	const normalized = body.replace(/\r\n/g, '\n');
+	const re = new RegExp(`##\\s*${escaped}[^\\n]*\\n([\\s\\S]*?)(?=\n##\\s|$)`);
+	return normalized.match(re)?.[1] ?? '';
 }
 
 function stripComments(s: string): string {

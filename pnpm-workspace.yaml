@@ -5,6 +5,18 @@ packages:
   - www
   - hub
 
+allowBuilds:
+  '@prisma/client': set this to true or false
+  '@prisma/engines': set this to true or false
+  better-sqlite3: set this to true or false
+  core-js: set this to true or false
+  esbuild: set this to true or false
+  msw: set this to true or false
+  prisma: set this to true or false
+  protobufjs: set this to true or false
+  sharp: set this to true or false
+  sqlite3: set this to true or false
+
 catalog:
   typescript: ^5.9.3
   zod: ^4.4.3
