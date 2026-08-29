@@ -1,9 +1,15 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-	entry: ['index.ts'],
+	clean: false,
+	dts: false,
 	format: ['esm'],
-	dts: true,
-	clean: true,
-	sourcemap: true,
+	target: 'esnext',
+	platform: 'node',
+	bundle: true,
+	splitting: true,
+	minify: true,
+	outDir: 'dist',
+	external: ['corsair', 'zod'],
+	entry: ['index.ts'],
 });
