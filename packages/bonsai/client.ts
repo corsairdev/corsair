@@ -38,7 +38,6 @@ export async function makeBonsaiRequest<T>(
 	const { method = 'GET', body, query } = options;
 	let credentials: { apiKey: string; apiSecret: string };
 
-	// Parse JSON credentials string
 	try {
 		const parsed = JSON.parse(credentialsString);
 		if (
@@ -47,7 +46,6 @@ export async function makeBonsaiRequest<T>(
 			typeof parsed.apiKey === 'string' &&
 			typeof parsed.apiSecret === 'string'
 		) {
-			// Validate that both credentials are non-empty
 			if (!parsed.apiKey || !parsed.apiSecret) {
 				throw new Error('API key and secret must not be empty');
 			}
@@ -56,7 +54,6 @@ export async function makeBonsaiRequest<T>(
 			throw new Error('Invalid credentials format');
 		}
 	} catch (error) {
-		// If parsing fails or validation fails, reject incomplete credentials
 		if (
 			error instanceof Error &&
 			error.message === 'API key and secret must not be empty'
