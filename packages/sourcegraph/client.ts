@@ -47,7 +47,7 @@ export function resolveInstanceUrl(instanceUrl?: string): string {
 		throw new SourcegraphAPIError('Sourcegraph instance URL must use HTTPS');
 	}
 	const path = parsed.pathname
-		.replace(/\/\.api\/graphql\/?$/i, '')
+		.replace(/\/\.api\/graphql(?:\/+)?$/i, '')
 		.replace(/\/+$/, '');
 	return path === '' || path === '/'
 		? parsed.origin
