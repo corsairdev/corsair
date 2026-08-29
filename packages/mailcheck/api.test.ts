@@ -8,7 +8,8 @@ import {
 
 // Live tests hit the real Mailcheck API and only run when MAILCHECK_API_KEY
 // is set. Never hardcode a key here (.github/PLUGIN_PR_RULES.md R6) —
-// export it in your shell and run `pnpm test:live`.
+// export it in your shell and run `pnpm test`. Without a key the suite
+// skips itself, so the same command safely runs only the unit tests.
 const API_KEY = process.env.MAILCHECK_API_KEY;
 const describeLive = API_KEY ? describe : describe.skip;
 

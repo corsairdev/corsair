@@ -8,9 +8,10 @@ module.exports = {
 		'**/plugins/**/*.test.ts',
 		'**/setup/**/*.test.ts',
 	],
-	// api.test.ts hits the real Mailcheck API and needs a key; `pnpm test:live`
-	// runs it explicitly. CI ignores the same filename.
-	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
+	// api.test.ts hits the real Mailcheck API only when MAILCHECK_API_KEY is
+	// set; without a key it self-skips, so `pnpm test` always runs it and
+	// executes live tests only when credentials are available.
+	testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',
