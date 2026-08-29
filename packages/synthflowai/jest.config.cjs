@@ -8,6 +8,7 @@ module.exports = {
 		'**/plugins/**/*.test.ts',
 		'**/setup/**/*.test.ts',
 	],
+	testPathIgnorePatterns: ['/node_modules/', 'integration\\.test\\.ts'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',

@@ -333,8 +333,8 @@ export const ActionsDetachInputSchema = z
 export const VoicesListInputSchema = z
 	.object({
 		workspace: z.string(),
-		limit: z.number().optional(),
-		offset: z.number().optional(),
+		limit: z.number().int().optional(),
+		offset: z.number().int().optional(),
 		search: z.string().optional(),
 		provider: z.enum(['elevenlabs', 'deepgram', 'synthflow']).optional(),
 	})

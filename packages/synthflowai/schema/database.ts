@@ -58,6 +58,7 @@ export type SynthflowAiContact = z.infer<typeof SynthflowAiContact>;
  */
 export const SynthflowAiKnowledgeBase = z
 	.object({
+		id: z.string().optional(),
 		knowledge_base_id: z.string().optional(),
 		name: z.string().optional(),
 		rag_use_condition: z.string().optional(),

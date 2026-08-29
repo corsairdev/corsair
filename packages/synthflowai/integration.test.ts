@@ -3,7 +3,7 @@ import { makeSynthflowAiRequest, SynthflowAiAPIError } from './client';
 const LIVE_KEY = process.env.SYNTHFLOW_API_KEY;
 const describeIfKey = LIVE_KEY ? describe : describe.skip;
 
-describe('Synthflow AI live Platform API v2', () => {
+describeIfKey('Synthflow AI live Platform API v2', () => {
 	it('rejects an invalid API key on GET /assistants/', async () => {
 		const err = await makeSynthflowAiRequest(
 			'assistants/',

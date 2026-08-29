@@ -102,282 +102,344 @@ describe('SynthflowAi plugin', () => {
 });
 
 describe('official Platform API v2 request mapping', () => {
+	const agent = {
+		prompt: 'p',
+		greeting_message: 'hi',
+		llm: 'gpt-4.1',
+		language: 'en-US',
+		voice_id: 'v1',
+	};
+
 	it.each([
 		[
 			'assistants.create',
+			'POST',
+			'assistants',
 			() =>
 				Assistants.create(ctx, {
 					type: 'outbound',
 					name: 'Sales',
-					agent: {
-						prompt: 'p',
-						greeting_message: 'hi',
-						llm: 'gpt-4.1',
-						language: 'en-US',
-						voice_id: 'v1',
-					},
+					agent,
 				}),
-			'POST',
-			'assistants',
+			{ body: { type: 'outbound', name: 'Sales', agent } },
 		],
 		[
 			'assistants.list',
-			() => Assistants.list(ctx, { limit: 10, offset: 0 }),
 			'GET',
 			'assistants/',
+			() => Assistants.list(ctx, { limit: 10, offset: 0 }),
+			{ query: { limit: 10, offset: 0 } },
 		],
 		[
 			'assistants.get',
-			() => Assistants.get(ctx, { model_id: 'a1' }),
 			'GET',
 			'assistants/a1',
+			() => Assistants.get(ctx, { model_id: 'a1' }),
+			{},
 		],
 		[
 			'assistants.update',
-			() => Assistants.update(ctx, { assistant_id: 'a1', name: 'N' }),
 			'PUT',
 			'assistants/a1',
+			() => Assistants.update(ctx, { assistant_id: 'a1', name: 'N' }),
+			{ body: { name: 'N' } },
 		],
 		[
 			'assistants.delete',
-			() => Assistants.deleteAssistant(ctx, { model_id: 'a1' }),
 			'DELETE',
 			'assistants/a1',
+			() => Assistants.deleteAssistant(ctx, { model_id: 'a1' }),
+			{},
 		],
 		[
 			'calls.create',
+			'POST',
+			'calls',
 			() =>
 				Calls.create(ctx, {
 					model_id: 'a1',
 					phone: '+15555550100',
 					name: 'Pat',
 				}),
-			'POST',
-			'calls',
+			{
+				body: { model_id: 'a1', phone: '+15555550100', name: 'Pat' },
+			},
 		],
 		[
 			'calls.list',
-			() => Calls.list(ctx, { model_id: 'a1', limit: 20 }),
 			'GET',
 			'calls',
+			() => Calls.list(ctx, { model_id: 'a1', limit: 20 }),
+			{ query: { model_id: 'a1', limit: 20 } },
 		],
-		['calls.get', () => Calls.get(ctx, { call_id: 'c1' }), 'GET', 'calls/c1'],
+		[
+			'calls.get',
+			'GET',
+			'calls/c1',
+			() => Calls.get(ctx, { call_id: 'c1' }),
+			{},
+		],
 		[
 			'contacts.create',
+			'POST',
+			'contacts',
 			() =>
 				Contacts.create(ctx, {
 					name: 'Pat',
 					phone_number: '+15555550100',
 				}),
-			'POST',
-			'contacts',
+			{ body: { name: 'Pat', phone_number: '+15555550100' } },
 		],
 		[
 			'contacts.list',
-			() => Contacts.list(ctx, { search: '+1555' }),
 			'GET',
 			'contacts',
+			() => Contacts.list(ctx, { search: '+1555' }),
+			{ query: { search: '+1555' } },
 		],
 		[
 			'contacts.get',
-			() => Contacts.get(ctx, { contact_id: 'ct1' }),
 			'GET',
 			'contacts/ct1',
+			() => Contacts.get(ctx, { contact_id: 'ct1' }),
+			{},
 		],
 		[
 			'contacts.update',
-			() => Contacts.update(ctx, { contact_id: 'ct1', name: 'Pat' }),
 			'PATCH',
 			'contacts/ct1',
+			() => Contacts.update(ctx, { contact_id: 'ct1', name: 'Pat' }),
+			{ body: { name: 'Pat' } },
 		],
 		[
 			'contacts.delete',
-			() => Contacts.deleteContact(ctx, { contact_id: 'ct1' }),
 			'DELETE',
 			'contacts/ct1',
+			() => Contacts.deleteContact(ctx, { contact_id: 'ct1' }),
+			{},
 		],
 		[
 			'knowledgeBases.create',
+			'POST',
+			'knowledge_base',
 			() =>
 				KnowledgeBases.create(ctx, {
 					name: 'Docs',
 					rag_use_condition: 'product questions',
 				}),
-			'POST',
-			'knowledge_base',
+			{ body: { name: 'Docs', rag_use_condition: 'product questions' } },
 		],
 		[
 			'knowledgeBases.get',
-			() => KnowledgeBases.get(ctx, { knowledge_base_id: 'kb1' }),
 			'GET',
 			'knowledge_base/kb1',
+			() => KnowledgeBases.get(ctx, { knowledge_base_id: 'kb1' }),
+			{},
 		],
 		[
 			'knowledgeBases.update',
+			'PUT',
+			'knowledge_base/kb1',
 			() =>
 				KnowledgeBases.update(ctx, {
 					knowledge_base_id: 'kb1',
 					name: 'Docs',
 				}),
-			'PUT',
-			'knowledge_base/kb1',
+			{ body: { name: 'Docs' } },
 		],
 		[
 			'knowledgeBases.delete',
+			'DELETE',
+			'knowledge_base/kb1',
 			() =>
 				KnowledgeBases.deleteKnowledgeBase(ctx, {
 					knowledge_base_id: 'kb1',
 				}),
-			'DELETE',
-			'knowledge_base/kb1',
+			{},
 		],
 		[
 			'knowledgeBases.attach',
+			'POST',
+			'knowledge_base/kb1/attach',
 			() =>
 				KnowledgeBases.attach(ctx, {
 					knowledge_base_id: 'kb1',
 					model_id: 'a1',
 				}),
-			'POST',
-			'knowledge_base/kb1/attach',
+			{ query: { model_id: 'a1' } },
 		],
 		[
 			'knowledgeBases.detach',
+			'POST',
+			'knowledge_base/kb1/detach',
 			() =>
 				KnowledgeBases.detach(ctx, {
 					knowledge_base_id: 'kb1',
 					model_id: 'a1',
 				}),
-			'POST',
-			'knowledge_base/kb1/detach',
+			{ query: { model_id: 'a1' } },
 		],
 		[
 			'memoryStores.create',
-			() => MemoryStores.create(ctx, { title: 'Store' }),
 			'POST',
 			'memory_stores',
+			() => MemoryStores.create(ctx, { title: 'Store' }),
+			{ body: { title: 'Store' } },
 		],
 		[
 			'memoryStores.get',
-			() => MemoryStores.get(ctx, { memory_store_id: 'ms1' }),
 			'GET',
 			'memory_stores/ms1',
+			() => MemoryStores.get(ctx, { memory_store_id: 'ms1' }),
+			{},
 		],
 		[
 			'memoryStores.list',
-			() => MemoryStores.list(ctx, { title: 'Store' }),
 			'GET',
 			'memory_stores',
+			() => MemoryStores.list(ctx, { title: 'Store' }),
+			{ query: { title: 'Store' } },
 		],
 		[
 			'memoryStores.update',
+			'PATCH',
+			'memory_stores/ms1',
 			() =>
 				MemoryStores.update(ctx, {
 					memory_store_id: 'ms1',
 					title: 'Updated',
 				}),
-			'PATCH',
-			'memory_stores/ms1',
+			{ body: { title: 'Updated' } },
 		],
 		[
 			'memoryStores.delete',
-			() => MemoryStores.deleteMemoryStore(ctx, { memory_store_id: 'ms1' }),
 			'DELETE',
 			'memory_stores/ms1',
+			() => MemoryStores.deleteMemoryStore(ctx, { memory_store_id: 'ms1' }),
+			{},
 		],
 		[
 			'memoryStores.attachToAgent',
+			'POST',
+			'memory_stores/ms1/attach',
 			() =>
 				MemoryStores.attachToAgent(ctx, {
 					memory_store_id: 'ms1',
 					model_id: 'a1',
 				}),
-			'POST',
-			'memory_stores/ms1/attach',
+			{ query: { model_id: 'a1' } },
 		],
 		[
 			'memoryStores.detachFromAgent',
+			'POST',
+			'memory_stores/ms1/detach',
 			() =>
 				MemoryStores.detachFromAgent(ctx, {
 					memory_store_id: 'ms1',
 					model_id: 'a1',
 				}),
-			'POST',
-			'memory_stores/ms1/detach',
+			{ query: { model_id: 'a1' } },
 		],
 		[
 			'phoneBooks.create',
-			() => PhoneBooks.create(ctx, { name: 'Sales' }),
 			'POST',
 			'phonebooks',
+			() => PhoneBooks.create(ctx, { name: 'Sales' }),
+			{ body: { name: 'Sales' } },
 		],
 		[
 			'phoneBooks.list',
-			() => PhoneBooks.list(ctx, undefined),
 			'GET',
 			'phonebooks',
+			() => PhoneBooks.list(ctx, undefined),
+			{ query: {} },
 		],
 		[
 			'phoneBooks.delete',
-			() => PhoneBooks.deletePhoneBook(ctx, { phone_book_id: 'pb1' }),
 			'DELETE',
 			'phonebooks/pb1',
+			() => PhoneBooks.deletePhoneBook(ctx, { phone_book_id: 'pb1' }),
+			{},
 		],
 		[
 			'actions.create',
+			'POST',
+			'actions',
 			() =>
 				Actions.create(ctx, {
 					SEND_SMS: { content: 'hi', instructions: 'send after booking' },
 				}),
-			'POST',
-			'actions',
+			{
+				body: {
+					SEND_SMS: { content: 'hi', instructions: 'send after booking' },
+				},
+			},
 		],
-		['actions.list', () => Actions.list(ctx, { limit: 20 }), 'GET', 'actions'],
+		[
+			'actions.list',
+			'GET',
+			'actions',
+			() => Actions.list(ctx, { limit: 20 }),
+			{ query: { limit: 20 } },
+		],
 		[
 			'actions.get',
-			() => Actions.get(ctx, { action_id: 'ac1' }),
 			'GET',
 			'actions/ac1',
+			() => Actions.get(ctx, { action_id: 'ac1' }),
+			{},
 		],
 		[
 			'actions.update',
+			'PUT',
+			'actions/ac1',
 			() =>
 				Actions.update(ctx, {
 					action_id: 'ac1',
 					SEND_SMS: { content: 'hi', instructions: 'send' },
 				}),
-			'PUT',
-			'actions/ac1',
+			{ body: { SEND_SMS: { content: 'hi', instructions: 'send' } } },
 		],
 		[
 			'actions.delete',
-			() => Actions.deleteAction(ctx, { action_id: 'ac1' }),
 			'DELETE',
 			'actions/ac1',
+			() => Actions.deleteAction(ctx, { action_id: 'ac1' }),
+			{},
 		],
 		[
 			'actions.attach',
-			() => Actions.attach(ctx, { model_id: 'a1', actions: ['ac1'] }),
 			'POST',
 			'actions/attach',
+			() => Actions.attach(ctx, { model_id: 'a1', actions: ['ac1'] }),
+			{ body: { model_id: 'a1', actions: ['ac1'] } },
 		],
 		[
 			'actions.detach',
-			() => Actions.detach(ctx, { model_id: 'a1', action_ids: ['ac1'] }),
 			'POST',
 			'actions/detach',
+			() => Actions.detach(ctx, { model_id: 'a1', action_ids: ['ac1'] }),
+			{ body: { model_id: 'a1', actions: ['ac1'] } },
 		],
 		[
 			'voices.list',
-			() => Voices.list(ctx, { workspace: 'ws1', provider: 'elevenlabs' }),
 			'GET',
 			'voices',
+			() => Voices.list(ctx, { workspace: 'ws1', provider: 'elevenlabs' }),
+			{ query: { workspace: 'ws1', provider: 'elevenlabs' } },
 		],
-	] as const)('%s %s %s', async (_name, call, method, path) => {
-		await call();
+	])('%s %s %s', async (_name, method, path, call, extra) => {
+		await (call as () => Promise<unknown>)();
 		const options = lastCall();
 		expect(options?.method).toBe(method);
 		expect(options?.url).toBe(path);
+		const mapped = extra as { query?: unknown; body?: unknown };
+		if (mapped.query !== undefined) {
+			expect(options?.query).toEqual(mapped.query);
+		}
+		if (mapped.body !== undefined) {
+			expect(options?.body).toEqual(mapped.body);
+		}
 	});
 
 	it('maps action_ids alias to official actions body', async () => {
