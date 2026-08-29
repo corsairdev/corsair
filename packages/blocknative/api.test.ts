@@ -1,14 +1,10 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
 import {
-	applyDappId,
 	BLOCKNATIVE_API_BASE,
-	BLOCKNATIVE_WS_URL,
 	BlocknativeAPIError,
 	BlocknativeRateLimitError,
-	initializeMessage,
 	makeBlocknativeRequest,
-	parseHexChainId,
 } from './client';
 import {
 	getBaseFeeEstimates,
@@ -21,13 +17,6 @@ import {
 	BlocknativeEndpointInputSchemas,
 	BlocknativeEndpointOutputSchemas,
 } from './endpoints/types';
-import {
-	configureFilters,
-	subscribeMultichain,
-	subscribeTransactionHash,
-	unsubscribeMultichain,
-	unsubscribeTransactionHash,
-} from './endpoints/websocket';
 import { errorHandlers } from './error-handlers';
 import { blocknative } from './index';
 
@@ -60,9 +49,6 @@ const ctx = {
 	$getAccountId: async () => 'test-account',
 } as never;
 
-const TX = '0xbb1af436fd539a6282c6f45ed900abb5ac95ec435367f61fa8815a61bd2a7211';
-const ADDR = '0x32ee303b76B27A1cd1013DE2eA4513aceB937c72';
-
 function jsonResponse(body: unknown, init?: ResponseInit): Response {
 	return new Response(JSON.stringify(body), {
 		status: 200,
@@ -91,11 +77,11 @@ function lastRequest(): { url: string; auth: string | null } {
 }
 
 describe('Blocknative plugin', () => {
-	it('creates plugin instance with 10 endpoints and api_key auth', () => {
+	it('creates plugin instance with 5 gas endpoints and api_key auth', () => {
 		const plugin = blocknative({ key: 'test-api-key' });
 		expect(plugin.id).toBe('blocknative');
 		expect(plugin.authConfig?.api_key?.account).toEqual(['one']);
-		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(10);
+		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(5);
 		expect(plugin.webhooks).toEqual({});
 	});
 
@@ -194,115 +180,6 @@ describe('Blocknative plugin', () => {
 		const chains = await getSupportedChains(ctx, {});
 		expect(lastRequest().url).toBe(`${BLOCKNATIVE_API_BASE}/chains`);
 		expect(chains.chains[0]?.label).toBe('Ethereum');
-	});
-
-	it('builds official configs/put filter message', async () => {
-		const result = await configureFilters(
-			ctx,
-			BlocknativeEndpointInputSchemas.configureFilters.parse({
-				scope: ADDR,
-				watchAddress: true,
-				filters: [{ 'contractCall.methodName': 'transfer' }],
-			}),
-		);
-		expect(result).toEqual({
-			websocketUrl: BLOCKNATIVE_WS_URL,
-			system: 'ethereum',
-			network: 'main',
-			scope: ADDR,
-			watchAddress: true,
-			filters: [{ 'contractCall.methodName': 'transfer' }],
-		});
-		expect(JSON.stringify(result)).not.toContain('test-api-key');
-		expect(applyDappId(initializeMessage(), 'injected-key').dappId).toBe(
-			'injected-key',
-		);
-	});
-
-	it('builds official activeTransaction subscribe/unwatch messages', async () => {
-		const sub = await subscribeTransactionHash(
-			ctx,
-			BlocknativeEndpointInputSchemas.subscribeTransactionHash.parse({
-				hash: TX,
-			}),
-		);
-		expect(sub).toEqual({
-			websocketUrl: BLOCKNATIVE_WS_URL,
-			system: 'ethereum',
-			network: 'main',
-			hash: TX,
-			action: 'subscribe',
-		});
-
-		const unsub = await unsubscribeTransactionHash(
-			ctx,
-			BlocknativeEndpointInputSchemas.unsubscribeTransactionHash.parse({
-				hash: TX,
-			}),
-		);
-		expect(unsub.action).toBe('unsubscribe');
-		expect(unsub.hash).toBe(TX);
-	});
-
-	it('builds official multichain account + transaction subscribe payloads', async () => {
-		const account = await subscribeMultichain(
-			ctx,
-			BlocknativeEndpointInputSchemas.subscribeMultichain.parse({
-				id: ADDR,
-				type: 'account',
-				chainId: '0x1',
-			}),
-		);
-		expect(account).toEqual({
-			websocketUrl: BLOCKNATIVE_WS_URL,
-			system: 'ethereum',
-			network: 'main',
-			id: ADDR,
-			type: 'account',
-			chainId: '0x1',
-		});
-
-		const tx = await subscribeMultichain(
-			ctx,
-			BlocknativeEndpointInputSchemas.subscribeMultichain.parse({
-				id: TX,
-				type: 'transaction',
-				chainId: '0x1',
-			}),
-		);
-		expect(tx.type).toBe('transaction');
-		expect(JSON.stringify(account)).not.toContain('test-api-key');
-		expect(account).not.toHaveProperty('dappId');
-
-		expect(() => parseHexChainId('0x1garbage')).toThrow(/Unsupported chainId/);
-		await expect(
-			subscribeMultichain(ctx, {
-				id: TX,
-				type: 'transaction',
-				chainId: '0x1garbage',
-			} as never),
-		).rejects.toThrow(/Unsupported chainId/);
-
-		expect(() =>
-			BlocknativeEndpointInputSchemas.subscribeMultichain.parse({
-				id: TX,
-				type: 'transaction',
-				chainId: '0x38',
-			}),
-		).toThrow(/Unsupported Blocknative chainId/);
-
-		const stop = await unsubscribeMultichain(
-			ctx,
-			BlocknativeEndpointInputSchemas.unsubscribeMultichain.parse({
-				id: TX,
-				chainId: '0x1',
-			}),
-		);
-		expect(stop).toEqual({
-			id: TX,
-			chainId: '0x1',
-			sdkCall: 'unsubscribe',
-		});
 	});
 
 	it('maps 401 and 429 through plugin error handlers', async () => {

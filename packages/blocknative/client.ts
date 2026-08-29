@@ -24,25 +24,6 @@ export class BlocknativeRateLimitError extends BlocknativeAPIError {
 /** Official Gas Platform: https://docs.blocknative.com/gas-prediction */
 export const BLOCKNATIVE_API_BASE = 'https://api.blocknative.com';
 
-/** Official Notify websocket: https://github.com/blocknative/sdk */
-export const BLOCKNATIVE_WS_URL = 'wss://api.blocknative.com/v0';
-
-/** Official message field for the API key. Never filled with the resolved secret. */
-export const BLOCKNATIVE_DAPP_ID_FIELD = 'dappId' as const;
-export const BLOCKNATIVE_DAPP_ID_PLACEHOLDER = '<BLOCKNATIVE_API_KEY>' as const;
-
-/**
- * Official network names from bnc-sdk `src/defaults.ts`.
- * https://github.com/blocknative/sdk/blob/master/src/defaults.ts
- */
-export const BLOCKNATIVE_ETH_NETWORKS: Record<number, string> = {
-	1: 'main',
-	11155111: 'sepolia',
-	100: 'xdai',
-	137: 'matic-main',
-	80002: 'matic-amoy',
-};
-
 const REQUEST_TIMEOUT_MS = 20_000;
 
 export type BlocknativeRequestOptions = {
@@ -67,52 +48,6 @@ function errorMessage(body: unknown, fallback: string): string {
 		if (typeof rec.error === 'string') return rec.error;
 	}
 	return fallback;
-}
-
-export function ethNetworkName(chainId: number): string {
-	const network = BLOCKNATIVE_ETH_NETWORKS[chainId];
-	if (!network) {
-		throw new BlocknativeAPIError(`Unsupported chainId: ${chainId}`);
-	}
-	return network;
-}
-
-export function parseHexChainId(chainId: string): number {
-	if (!/^0x[0-9a-fA-F]+$/.test(chainId)) {
-		throw new BlocknativeAPIError(`Unsupported chainId: ${chainId}`);
-	}
-	const parsed = Number.parseInt(chainId, 16);
-	if (!Number.isFinite(parsed) || parsed <= 0) {
-		throw new BlocknativeAPIError(`Unsupported chainId: ${chainId}`);
-	}
-	if (!(parsed in BLOCKNATIVE_ETH_NETWORKS)) {
-		throw new BlocknativeAPIError(`Unsupported chainId: ${chainId}`);
-	}
-	return parsed;
-}
-
-export function applyDappId<T extends Record<string, unknown>>(
-	message: T,
-	apiKey: string,
-): T {
-	if (!apiKey) {
-		throw new BlocknativeAPIError('Blocknative API key is required for dappId');
-	}
-	return { ...message, [BLOCKNATIVE_DAPP_ID_FIELD]: apiKey };
-}
-
-/** Official initialize payload. Omit dappId — call applyDappId before send. */
-export function initializeMessage(
-	system = 'ethereum',
-	network = 'main',
-): Record<string, unknown> {
-	return {
-		timeStamp: new Date().toISOString(),
-		version: '1.0.0',
-		blockchain: { system, network },
-		categoryCode: 'initialize',
-		eventCode: 'checkDappId',
-	};
 }
 
 export async function makeBlocknativeRequest<T>(

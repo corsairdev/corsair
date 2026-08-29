@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { parseHexChainId } from '../client';
 import {
 	BlocknativeBaseFeeEstimates,
 	BlocknativeBlockPrices,
@@ -7,35 +6,6 @@ import {
 	BlocknativeGasDistribution,
 	BlocknativeOracle,
 } from '../schema';
-
-const HexId = z
-	.string()
-	.regex(/^0x[0-9a-fA-F]+$/, 'Must be a 0x-prefixed hex string');
-
-const TxHash = z
-	.string()
-	.regex(/^0x[0-9a-fA-F]{64}$/, 'Must be a 0x + 64 hex transaction hash');
-
-const HexChainId = z
-	.string()
-	.regex(/^0x[0-9a-fA-F]+$/, "Hex-encoded chain ID, e.g. '0x1'")
-	.refine(
-		(id) => {
-			try {
-				parseHexChainId(id);
-				return true;
-			} catch {
-				return false;
-			}
-		},
-		{ message: 'Unsupported Blocknative chainId' },
-	);
-
-const WsConnectionSchema = z.object({
-	websocketUrl: z.string(),
-	system: z.string().min(1),
-	network: z.string().min(1),
-});
 
 export const GetGasPricesInputSchema = z.object({
 	chainid: z.number().int().positive().optional(),
@@ -85,105 +55,12 @@ export type GetSupportedChainsOutput = z.infer<
 	typeof GetSupportedChainsOutputSchema
 >;
 
-export const ConfigureFiltersInputSchema = z.object({
-	scope: z.string().min(1),
-	filters: z.array(z.unknown()).optional(),
-	abi: z.array(z.unknown()).optional(),
-	watchAddress: z.boolean().optional(),
-	system: z.string().optional(),
-	network: z.string().optional(),
-});
-export type ConfigureFiltersInput = z.infer<typeof ConfigureFiltersInputSchema>;
-export const ConfigureFiltersOutputSchema = WsConnectionSchema.extend({
-	scope: z.string().min(1),
-	filters: z.array(z.unknown()).optional(),
-	abi: z.array(z.unknown()).optional(),
-	watchAddress: z.boolean().optional(),
-});
-export type ConfigureFiltersOutput = z.infer<
-	typeof ConfigureFiltersOutputSchema
->;
-
-export const SubscribeTransactionHashInputSchema = z.object({
-	hash: TxHash,
-	system: z.string().optional(),
-	network: z.string().optional(),
-});
-export type SubscribeTransactionHashInput = z.infer<
-	typeof SubscribeTransactionHashInputSchema
->;
-export const SubscribeTransactionHashOutputSchema = WsConnectionSchema.extend({
-	hash: TxHash,
-	action: z.literal('subscribe'),
-});
-export type SubscribeTransactionHashOutput = z.infer<
-	typeof SubscribeTransactionHashOutputSchema
->;
-
-export const UnsubscribeTransactionHashInputSchema = z.object({
-	hash: TxHash,
-	system: z.string().optional(),
-	network: z.string().optional(),
-});
-export type UnsubscribeTransactionHashInput = z.infer<
-	typeof UnsubscribeTransactionHashInputSchema
->;
-export const UnsubscribeTransactionHashOutputSchema = WsConnectionSchema.extend(
-	{
-		hash: TxHash,
-		action: z.literal('unsubscribe'),
-	},
-);
-export type UnsubscribeTransactionHashOutput = z.infer<
-	typeof UnsubscribeTransactionHashOutputSchema
->;
-
-export const SubscribeMultichainInputSchema = z.object({
-	id: HexId,
-	type: z.enum(['transaction', 'account']),
-	chainId: HexChainId,
-	filters: z.array(z.unknown()).optional(),
-	abi: z.array(z.unknown()).optional(),
-});
-export type SubscribeMultichainInput = z.infer<
-	typeof SubscribeMultichainInputSchema
->;
-export const SubscribeMultichainOutputSchema = WsConnectionSchema.extend({
-	id: HexId,
-	type: z.enum(['transaction', 'account']),
-	chainId: HexChainId,
-});
-export type SubscribeMultichainOutput = z.infer<
-	typeof SubscribeMultichainOutputSchema
->;
-
-export const UnsubscribeMultichainInputSchema = z.object({
-	id: HexId,
-	chainId: HexChainId.optional(),
-});
-export type UnsubscribeMultichainInput = z.infer<
-	typeof UnsubscribeMultichainInputSchema
->;
-export const UnsubscribeMultichainOutputSchema = z.object({
-	id: z.string(),
-	chainId: z.string().optional(),
-	sdkCall: z.literal('unsubscribe'),
-});
-export type UnsubscribeMultichainOutput = z.infer<
-	typeof UnsubscribeMultichainOutputSchema
->;
-
 export type BlocknativeEndpointInputs = {
 	getGasPrices: GetGasPricesInput;
 	getBaseFeeEstimates: GetBaseFeeEstimatesInput;
 	getGasDistribution: GetGasDistributionInput;
 	getGasOracles: GetGasOraclesInput;
 	getSupportedChains: GetSupportedChainsInput;
-	configureFilters: ConfigureFiltersInput;
-	subscribeTransactionHash: SubscribeTransactionHashInput;
-	unsubscribeTransactionHash: UnsubscribeTransactionHashInput;
-	subscribeMultichain: SubscribeMultichainInput;
-	unsubscribeMultichain: UnsubscribeMultichainInput;
 };
 
 export type BlocknativeEndpointOutputs = {
@@ -192,11 +69,6 @@ export type BlocknativeEndpointOutputs = {
 	getGasDistribution: GetGasDistributionOutput;
 	getGasOracles: GetGasOraclesOutput;
 	getSupportedChains: GetSupportedChainsOutput;
-	configureFilters: ConfigureFiltersOutput;
-	subscribeTransactionHash: SubscribeTransactionHashOutput;
-	unsubscribeTransactionHash: UnsubscribeTransactionHashOutput;
-	subscribeMultichain: SubscribeMultichainOutput;
-	unsubscribeMultichain: UnsubscribeMultichainOutput;
 };
 
 export const BlocknativeEndpointInputSchemas = {
@@ -205,11 +77,6 @@ export const BlocknativeEndpointInputSchemas = {
 	getGasDistribution: GetGasDistributionInputSchema,
 	getGasOracles: GetGasOraclesInputSchema,
 	getSupportedChains: GetSupportedChainsInputSchema,
-	configureFilters: ConfigureFiltersInputSchema,
-	subscribeTransactionHash: SubscribeTransactionHashInputSchema,
-	unsubscribeTransactionHash: UnsubscribeTransactionHashInputSchema,
-	subscribeMultichain: SubscribeMultichainInputSchema,
-	unsubscribeMultichain: UnsubscribeMultichainInputSchema,
 } as const;
 
 export const BlocknativeEndpointOutputSchemas = {
@@ -218,9 +85,4 @@ export const BlocknativeEndpointOutputSchemas = {
 	getGasDistribution: GetGasDistributionOutputSchema,
 	getGasOracles: GetGasOraclesOutputSchema,
 	getSupportedChains: GetSupportedChainsOutputSchema,
-	configureFilters: ConfigureFiltersOutputSchema,
-	subscribeTransactionHash: SubscribeTransactionHashOutputSchema,
-	unsubscribeTransactionHash: UnsubscribeTransactionHashOutputSchema,
-	subscribeMultichain: SubscribeMultichainOutputSchema,
-	unsubscribeMultichain: UnsubscribeMultichainOutputSchema,
 } as const;
