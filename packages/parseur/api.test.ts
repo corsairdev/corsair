@@ -327,6 +327,31 @@ describe('Document Endpoints (9 Operations)', () => {
 		}
 	});
 
+	it('12b. uploadDocument: supports plain text non-base64 data URLs', async () => {
+		const originalFetch = global.fetch;
+		global.fetch = jest.fn().mockResolvedValueOnce({
+			ok: true,
+			status: 201,
+			json: async () => ({
+				message: 'OK',
+				attachments: [{ name: 'test.txt', DocumentID: '503' }],
+			}),
+		});
+
+		try {
+			const result = await Document.uploadDocument(testContext(), {
+				id: 101,
+				file: 'data:text/plain,hello%20world',
+				file_name: 'test.txt',
+			});
+
+			expect(global.fetch).toHaveBeenCalled();
+			expect(result.message).toBe('OK');
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+
 	it('13. createEmailDocument: calls POST /email', async () => {
 		mockRequest.mockResolvedValueOnce({
 			id: 503,
@@ -651,6 +676,25 @@ describe('Webhook Matchers & Handlers', () => {
 		);
 
 		expect(result.success).toBe(true);
+	});
+
+	it('handles processFailed event and logs with failed status', async () => {
+		const webhookCtx = testContext();
+		const result = await DocumentWebhooks.processFailed.handler(webhookCtx, {
+			headers: { 'x-webhook-secret': 'test-api-key' },
+			payload: {
+				event: 'process.failed',
+				error: 'Parsing error occurred',
+			},
+		} as any);
+
+		expect(result.success).toBe(true);
+		expect(mockLog).toHaveBeenCalledWith(
+			webhookCtx,
+			'parseur.webhook.processFailed',
+			expect.objectContaining({ event: 'process.failed' }),
+			'failed',
+		);
 	});
 
 	describe('verifyParseurWebhookSignature', () => {

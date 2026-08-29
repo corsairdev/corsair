@@ -79,7 +79,7 @@ export const processFailed: ParseurWebhooks['processFailed'] = {
 			ctx,
 			'parseur.webhook.processFailed',
 			{ event: event.event, error: event.error },
-			'completed',
+			'failed',
 		);
 
 		return { success: true, data: event };

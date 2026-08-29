@@ -95,10 +95,13 @@ export async function uploadParseurMultipart<T>(
 	if (typeof file === 'string') {
 		if (file.startsWith('data:')) {
 			const commaIndex = file.indexOf(',');
-			const base64Data = commaIndex !== -1 ? file.slice(commaIndex + 1) : file;
-			const mime =
-				file.slice(5, commaIndex).split(';')[0] || 'application/octet-stream';
-			const buffer = Buffer.from(base64Data, 'base64');
+			const metadata = commaIndex !== -1 ? file.slice(5, commaIndex) : '';
+			const data = commaIndex !== -1 ? file.slice(commaIndex + 1) : file;
+			const isBase64 = metadata.includes(';base64');
+			const mime = metadata.split(';')[0] || 'application/octet-stream';
+			const buffer = isBase64
+				? Buffer.from(data, 'base64')
+				: Buffer.from(decodeURIComponent(data), 'utf8');
 			formData.append('file', new Blob([buffer], { type: mime }), fileName);
 		} else {
 			formData.append(
