@@ -3,7 +3,6 @@ import { makeBonsaiRequest } from './client';
 import { Clusters } from './endpoints/clusters';
 import { Spaces } from './endpoints/spaces';
 
-// Mock the corsair/http request function
 jest.mock('corsair/http', () => ({
 	request: jest.fn(),
 	ApiError: class extends Error {
@@ -31,10 +30,14 @@ jest.mock('corsair/http', () => ({
 	},
 }));
 
-// Mock logEventFromContext
-jest.mock('corsair/core', () => ({
-	logEventFromContext: jest.fn(),
-}));
+jest.mock('corsair/core', () => {
+	const actual =
+		jest.requireActual<typeof import('corsair/core')>('corsair/core');
+	return {
+		...actual,
+		logEventFromContext: jest.fn(),
+	};
+});
 
 import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
@@ -89,7 +92,7 @@ describe('Bonsai Endpoints - Behavioral Tests', () => {
 
 			const mockCtx = {
 				key: JSON.stringify({ apiKey: 'test-key', apiSecret: 'test-secret' }),
-			} as any;
+			} as never;
 
 			const result = await Clusters.get(mockCtx, { slug: 'test-cluster' });
 
@@ -153,7 +156,7 @@ describe('Bonsai Endpoints - Behavioral Tests', () => {
 
 			const mockCtx = {
 				key: JSON.stringify({ apiKey: 'key', apiSecret: 'secret' }),
-			} as any;
+			} as never;
 
 			const result = await Clusters.get(mockCtx, { slug: 'my-cluster' });
 
@@ -163,6 +166,26 @@ describe('Bonsai Endpoints - Behavioral Tests', () => {
 			expect(result.cluster.space.region).toBe('aws-eu-west-1');
 			expect(result.cluster.state).toBe('PROVISIONING');
 			expect(result.cluster.stats.docs).toBe(100);
+		});
+
+		it('rejects an empty cluster slug before calling the API', async () => {
+			const mockCtx = {
+				key: JSON.stringify({ apiKey: 'key', apiSecret: 'secret' }),
+			} as never;
+
+			await expect(Clusters.get(mockCtx, { slug: '' })).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
+		});
+
+		it('rejects a cluster payload that fails the output schema', async () => {
+			mockRequest.mockResolvedValue({ cluster: { slug: 'incomplete' } });
+			const mockCtx = {
+				key: JSON.stringify({ apiKey: 'key', apiSecret: 'secret' }),
+			} as never;
+
+			await expect(
+				Clusters.get(mockCtx, { slug: 'incomplete' }),
+			).rejects.toThrow();
 		});
 
 		it('should handle API errors with preserved status and retry metadata', async () => {
@@ -187,12 +210,11 @@ describe('Bonsai Endpoints - Behavioral Tests', () => {
 
 			const mockCtx = {
 				key: JSON.stringify({ apiKey: 'key', apiSecret: 'secret' }),
-			} as any;
+			} as never;
 
 			const error = await Clusters.get(mockCtx, { slug: 'test-cluster' }).catch(
 				(e) => e,
 			);
-			// Verify the error is a BonsaiAPIError
 			expect(error.name).toBe('BonsaiAPIError');
 			expect(error.status).toBe(429);
 			expect(error.statusText).toBe('Too Many Requests');
@@ -228,7 +250,7 @@ describe('Bonsai Endpoints - Behavioral Tests', () => {
 
 			const mockCtx = {
 				key: JSON.stringify({ apiKey: 'test-key', apiSecret: 'test-secret' }),
-			} as any;
+			} as never;
 
 			const result = await Spaces.list(mockCtx, {});
 
@@ -270,7 +292,7 @@ describe('Bonsai Endpoints - Behavioral Tests', () => {
 
 			const mockCtx = {
 				key: JSON.stringify({ apiKey: 'key', apiSecret: 'secret' }),
-			} as any;
+			} as never;
 
 			const result = await Spaces.list(mockCtx, {});
 
@@ -289,7 +311,7 @@ describe('Bonsai Endpoints - Behavioral Tests', () => {
 
 			const mockCtx = {
 				key: JSON.stringify({ apiKey: 'key', apiSecret: 'secret' }),
-			} as any;
+			} as never;
 
 			const result = await Spaces.list(mockCtx, {});
 
@@ -312,7 +334,7 @@ describe('Bonsai Endpoints - Behavioral Tests', () => {
 
 			const mockCtx = {
 				key: JSON.stringify({ apiKey: 'test-key', apiSecret: 'test-secret' }),
-			} as any;
+			} as never;
 
 			const result = await Spaces.get(mockCtx, { path: 'my-space' });
 
@@ -337,6 +359,40 @@ describe('Bonsai Endpoints - Behavioral Tests', () => {
 			);
 		});
 
+		it('keeps slashes in a documented space path', async () => {
+			const mockResponse = {
+				path: 'omc/bonsai/us-east-1/common',
+				private_network: false,
+				cloud: {
+					provider: 'aws',
+					region: 'aws-us-east-1',
+				},
+			};
+			mockRequest.mockResolvedValue(mockResponse);
+			const mockCtx = {
+				key: JSON.stringify({ apiKey: 'key', apiSecret: 'secret' }),
+			} as never;
+
+			await Spaces.get(mockCtx, { path: 'omc/bonsai/us-east-1/common' });
+
+			expect(mockRequest).toHaveBeenCalledWith(
+				expect.anything(),
+				expect.objectContaining({
+					method: 'GET',
+					url: '/spaces/omc/bonsai/us-east-1/common',
+				}),
+			);
+		});
+
+		it('rejects an empty space path before calling the API', async () => {
+			const mockCtx = {
+				key: JSON.stringify({ apiKey: 'key', apiSecret: 'secret' }),
+			} as never;
+
+			await expect(Spaces.get(mockCtx, { path: '' })).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
+		});
+
 		it('should map response to correct schema', async () => {
 			const mockResponse = {
 				path: 'omc/bonsai/eu-west-1/common',
@@ -350,7 +406,7 @@ describe('Bonsai Endpoints - Behavioral Tests', () => {
 
 			const mockCtx = {
 				key: JSON.stringify({ apiKey: 'key', apiSecret: 'secret' }),
-			} as any;
+			} as never;
 
 			const result = await Spaces.get(mockCtx, { path: 'production' });
 
@@ -373,7 +429,7 @@ describe('Bonsai Endpoints - Behavioral Tests', () => {
 
 			const mockCtx = {
 				key: JSON.stringify({ apiKey: 'key', apiSecret: 'secret' }),
-			} as any;
+			} as never;
 
 			const result = await Spaces.get(mockCtx, { path: 'test-space' });
 
@@ -404,12 +460,11 @@ describe('Bonsai Endpoints - Behavioral Tests', () => {
 
 			const mockCtx = {
 				key: JSON.stringify({ apiKey: 'key', apiSecret: 'secret' }),
-			} as any;
+			} as never;
 
 			const error = await Spaces.get(mockCtx, { path: 'non-existent' }).catch(
 				(e) => e,
 			);
-			// Verify the error is a BonsaiAPIError
 			expect(error.name).toBe('BonsaiAPIError');
 			expect(error.status).toBe(404);
 			expect(error.statusText).toBe('Not Found');

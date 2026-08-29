@@ -3,11 +3,6 @@ import type { BonsaiAPIError } from './client';
 import { makeBonsaiRequest } from './client';
 import { errorHandlers } from './error-handlers';
 
-// Mirror the real corsair/http surface so `instanceof` checks inside
-// error-handlers.ts and client.ts resolve against the same mocked class.
-// The `request`/`body` fields are typed `unknown` (not `any`) because the
-// handlers only ever read `url`, `status`, `statusText` and `retryAfter`; we
-// stay strict (unknown) rather than copying the real ApiError's `any`.
 jest.mock('corsair/http', () => ({
 	request: jest.fn(),
 	ApiError: class extends Error {
@@ -41,11 +36,8 @@ jest.mock('corsair/http', () => ({
 }));
 
 import type { ApiRequestOptions } from 'corsair/http';
-// eslint-disable-next-line import/first
 import { ApiError, request } from 'corsair/http';
 
-// `jest.mocked()` returns the same reference with the jest mock types applied,
-// so no type assertion is needed to type the mocked `request`.
 const mockRequest = jest.mocked(request);
 
 const VALID_CREDENTIALS = JSON.stringify({
@@ -70,9 +62,6 @@ async function catchWrappedError(): Promise<Error> {
 	try {
 		await makeBonsaiRequest('/test', VALID_CREDENTIALS, { method: 'GET' });
 	} catch (error) {
-		// Narrowing instead of an assertion: makeBonsaiRequest only ever throws
-		// Error instances (BonsaiAPIError extends Error), so `instanceof` is both
-		// type-safe and runtime-safe here.
 		if (error instanceof Error) return error;
 	}
 	throw new Error('expected makeBonsaiRequest to reject');
@@ -85,10 +74,6 @@ describe('Bonsai Error Handlers', () => {
 
 	describe('rate-limit matching through the real client path', () => {
 		it('matches a 429 that the client wrapped in BonsaiAPIError', async () => {
-			// Regression test: the transport throws ApiError('Too Many Requests'),
-			// the client rewraps it as BonsaiAPIError, and the handler must still
-			// classify it as a rate limit. Neither the message nor the error type
-			// alone would match without the dual-check.
 			const transportError = new ApiError(
 				requestOptions(),
 				apiResponse(429, 'Too Many Requests'),
@@ -114,14 +99,11 @@ describe('Bonsai Error Handlers', () => {
 			const caught = await catchWrappedError();
 			const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(caught);
 			expect(strategy.maxRetries).toBe(5);
+			expect(strategy.retryStrategy).toBe('exponential_backoff');
 			expect(strategy.headersRetryAfterMs).toBe(30);
 		});
 
 		it('matches a wrapped 429 even when the message has no rate-limit keywords', async () => {
-			// Exact review scenario: an exhausted 429 whose message carries neither
-			// '429' nor 'rate_limited' (nor any other keyword). Classification must
-			// come from the preserved status metadata, never the message text, and
-			// the provider's retryAfter must reach the retry strategy.
 			const transportError = new ApiError(
 				requestOptions(),
 				apiResponse(429, 'Slow Down'),
@@ -137,6 +119,7 @@ describe('Bonsai Error Handlers', () => {
 
 			const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(caught);
 			expect(strategy.maxRetries).toBe(5);
+			expect(strategy.retryStrategy).toBe('exponential_backoff');
 			expect(strategy.headersRetryAfterMs).toBe(45);
 		});
 
@@ -177,6 +160,35 @@ describe('Bonsai Error Handlers', () => {
 		});
 	});
 
+	describe('server and forbidden statuses', () => {
+		it('classifies a wrapped 500 as SERVER_ERROR', async () => {
+			const transportError = new ApiError(
+				requestOptions(),
+				apiResponse(500, 'Internal Server Error'),
+				'boom',
+			);
+			mockRequest.mockRejectedValue(transportError);
+
+			const caught = await catchWrappedError();
+			expect(errorHandlers.SERVER_ERROR.match(caught)).toBe(true);
+			const strategy = await errorHandlers.SERVER_ERROR.handler();
+			expect(strategy.maxRetries).toBe(3);
+			expect(strategy.retryStrategy).toBe('exponential_backoff');
+		});
+
+		it('classifies a wrapped 403 as AUTH_ERROR', async () => {
+			const transportError = new ApiError(
+				requestOptions(),
+				apiResponse(403, 'Forbidden'),
+				'Forbidden',
+			);
+			mockRequest.mockRejectedValue(transportError);
+
+			const caught = await catchWrappedError();
+			expect(errorHandlers.AUTH_ERROR.match(caught)).toBe(true);
+		});
+	});
+
 	describe('non-matching statuses fall through', () => {
 		it('does not classify a 404 as rate limit or auth error', async () => {
 			const transportError = new ApiError(
@@ -189,6 +201,7 @@ describe('Bonsai Error Handlers', () => {
 			const caught = await catchWrappedError();
 			expect(errorHandlers.RATE_LIMIT_ERROR.match(caught)).toBe(false);
 			expect(errorHandlers.AUTH_ERROR.match(caught)).toBe(false);
+			expect(errorHandlers.SERVER_ERROR.match(caught)).toBe(false);
 			expect(errorHandlers.DEFAULT.match()).toBe(true);
 		});
 	});
