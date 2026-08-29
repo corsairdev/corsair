@@ -19,7 +19,7 @@ import { MailcheckSchema } from './schema';
 import { errorHandlers } from './error-handlers';
 
 export type MailcheckPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	hooks?: InternalMailcheckPlugin['hooks'];
 	webhookHooks?: InternalMailcheckPlugin['webhookHooks'];
@@ -86,9 +86,6 @@ export const mailcheckAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseMailcheckPlugin<T extends MailcheckPluginOptions> = CorsairPlugin
@@ -134,11 +131,6 @@ export function mailcheck<const T extends MailcheckPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
 				return res ?? '';
 			}
 
