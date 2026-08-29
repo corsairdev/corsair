@@ -144,6 +144,7 @@ export const BaseProviders = [
 	'hackernews',
 	'harvest',
 	'hashnode',
+	'here',
 	'heygen',
 	'htmltoimage',
 	'hubspot',
@@ -367,6 +368,7 @@ export const ProviderDisplayNames = {
 	hackernews: 'Hacker News',
 	harvest: 'Harvest',
 	hashnode: 'Hashnode',
+	here: 'HERE',
 	heygen: 'HeyGen',
 	htmltoimage: 'HtmlToImage',
 	hubspot: 'HubSpot',
@@ -596,6 +598,7 @@ export type AllProviders =
 	| 'hackernews'
 	| 'harvest'
 	| 'hashnode'
+	| 'here'
 	| 'heygen'
 	| 'htmltoimage'
 	| 'hubspot'
