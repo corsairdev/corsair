@@ -156,6 +156,7 @@ export const BaseProviders = [
 	'mailboxlayer',
 	'mailchimp',
 	'mailtrap',
+	'marketstack',
 	'merriamwebsterdict',
 	'monday',
 	'neon',
@@ -371,6 +372,7 @@ export const ProviderDisplayNames = {
 	mailboxlayer: 'MailboxLayer',
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
+	marketstack: 'Marketstack',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	monday: 'Monday',
 	neon: 'Neon',
@@ -593,6 +595,7 @@ export type AllProviders =
 	| 'mailboxlayer'
 	| 'mailchimp'
 	| 'mailtrap'
+	| 'marketstack'
 	| 'merriamwebsterdict'
 	| 'monday'
 	| 'neon'
