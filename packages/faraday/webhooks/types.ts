@@ -81,14 +81,28 @@ export function resetFaradayWebhookReplayCache(): void {
 	seenMessageIds.clear();
 }
 
-function rememberMessageId(msgId: string, expiresAt: number): boolean {
-	const now = Math.floor(Date.now() / 1000);
+function pruneReplayCache(now: number): void {
 	for (const [id, exp] of seenMessageIds) {
 		if (exp < now) seenMessageIds.delete(id);
 	}
+}
+
+function reserveMessageId(msgId: string, expiresAt: number): boolean {
+	const now = Math.floor(Date.now() / 1000);
+	pruneReplayCache(now);
 	if (seenMessageIds.has(msgId)) return false;
 	seenMessageIds.set(msgId, expiresAt);
 	return true;
+}
+
+export function releaseFaradayWebhookMessageId(msgId: string): void {
+	seenMessageIds.delete(msgId);
+}
+
+export function faradayWebhookMessageId(
+	headers: Record<string, string | string[] | undefined>,
+): string | undefined {
+	return firstHeader(headers, ['svix-id', 'webhook-id']);
 }
 
 function secretBytes(secret: string): Buffer {
@@ -133,6 +147,9 @@ export function verifyFaradayWebhookSignature(
 		return { valid: false, error: 'Missing raw request body' };
 	}
 
+	if (!/^[0-9]+$/.test(timestamp)) {
+		return { valid: false, error: 'Invalid webhook timestamp' };
+	}
 	const timestampSeconds = Number.parseInt(timestamp, 10);
 	if (!Number.isFinite(timestampSeconds)) {
 		return { valid: false, error: 'Invalid webhook timestamp' };
@@ -165,7 +182,7 @@ export function verifyFaradayWebhookSignature(
 	}
 
 	if (
-		!rememberMessageId(
+		!reserveMessageId(
 			msgId,
 			timestampSeconds + FARADAY_WEBHOOK_TOLERANCE_SECONDS,
 		)

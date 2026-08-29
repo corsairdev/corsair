@@ -119,7 +119,7 @@ function makeHandler(op: FaradayOp) {
 
 export const FaradayHandlers = Object.fromEntries(
 	FARADAY_OPS.map((op) => [opKey(op), makeHandler(op)]),
-) as FaradayEndpoints;
+) as unknown as FaradayEndpoints;
 
 export function nestFaradayEndpoints() {
 	const nested: Record<string, Record<string, unknown>> = {};

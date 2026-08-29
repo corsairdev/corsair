@@ -486,16 +486,67 @@ export const FARADAY_OPS = [
 	},
 ] as const satisfies readonly FaradayOp[];
 
-function resourceOps(
-	group: string,
-	idParam: string,
+function resourceOp<
+	G extends string,
+	N extends string,
+	M extends FaradayHttpMethod,
+	P extends string,
+	I extends FaradayInputKind,
+	R extends FaradayRisk,
+>(op: {
+	group: G;
+	name: N;
+	method: M;
+	path: P;
+	risk: R;
+	input: I;
+	description: string;
+	docs: string;
+}) {
+	return op;
+}
+
+function resourceOps<G extends string, Id extends string>(
+	group: G,
+	idParam: Id,
 	label: string,
 	pathSeg?: string,
 	flags?: { create?: boolean; unarchive?: boolean },
-): FaradayOp[] {
+) {
 	const seg = pathSeg ?? group;
-	const ops: FaradayOp[] = [
-		{
+	const docs = 'https://faraday.ai/docs/reference';
+	const create =
+		flags?.create !== false
+			? [
+					resourceOp({
+						group,
+						name: 'create',
+						method: 'POST',
+						path: seg,
+						risk: 'write',
+						input: 'create',
+						description: `Create a Faraday ${label}`,
+						docs,
+					}),
+				]
+			: [];
+	const unarchive =
+		flags?.unarchive !== false
+			? [
+					resourceOp({
+						group,
+						name: 'unarchive',
+						method: 'POST',
+						path: `${seg}/{${idParam}}/unarchive`,
+						risk: 'write',
+						input: 'cascade',
+						description: `Unarchive a Faraday ${label}`,
+						docs,
+					}),
+				]
+			: [];
+	return [
+		resourceOp({
 			group,
 			name: 'list',
 			method: 'GET',
@@ -503,9 +554,9 @@ function resourceOps(
 			risk: 'read',
 			input: 'ids',
 			description: `List Faraday ${label}s`,
-			docs: 'https://faraday.ai/docs/reference',
-		},
-		{
+			docs,
+		}),
+		resourceOp({
 			group,
 			name: 'get',
 			method: 'GET',
@@ -513,9 +564,10 @@ function resourceOps(
 			risk: 'read',
 			input: 'id',
 			description: `Retrieve a Faraday ${label}`,
-			docs: 'https://faraday.ai/docs/reference',
-		},
-		{
+			docs,
+		}),
+		...create,
+		resourceOp({
 			group,
 			name: 'update',
 			method: 'PATCH',
@@ -523,9 +575,9 @@ function resourceOps(
 			risk: 'write',
 			input: 'patch',
 			description: `Update a Faraday ${label} (JSON Merge Patch)`,
-			docs: 'https://faraday.ai/docs/reference',
-		},
-		{
+			docs,
+		}),
+		resourceOp({
 			group,
 			name: 'delete',
 			method: 'DELETE',
@@ -533,9 +585,9 @@ function resourceOps(
 			risk: 'destructive',
 			input: 'id',
 			description: `Delete a Faraday ${label}`,
-			docs: 'https://faraday.ai/docs/reference',
-		},
-		{
+			docs,
+		}),
+		resourceOp({
 			group,
 			name: 'archive',
 			method: 'POST',
@@ -543,9 +595,9 @@ function resourceOps(
 			risk: 'write',
 			input: 'cascade',
 			description: `Archive a Faraday ${label}`,
-			docs: 'https://faraday.ai/docs/reference',
-		},
-		{
+			docs,
+		}),
+		resourceOp({
 			group,
 			name: 'forceUpdate',
 			method: 'POST',
@@ -553,38 +605,21 @@ function resourceOps(
 			risk: 'write',
 			input: 'id',
 			description: `Force update a Faraday ${label}`,
-			docs: 'https://faraday.ai/docs/reference',
-		},
+			docs,
+		}),
+		...unarchive,
 	];
-	if (flags?.create !== false) {
-		ops.splice(2, 0, {
-			group,
-			name: 'create',
-			method: 'POST',
-			path: seg,
-			risk: 'write',
-			input: 'create',
-			description: `Create a Faraday ${label}`,
-			docs: 'https://faraday.ai/docs/reference',
-		});
-	}
-	if (flags?.unarchive !== false) {
-		ops.push({
-			group,
-			name: 'unarchive',
-			method: 'POST',
-			path: `${seg}/{${idParam}}/unarchive`,
-			risk: 'write',
-			input: 'cascade',
-			description: `Unarchive a Faraday ${label}`,
-			docs: 'https://faraday.ai/docs/reference',
-		});
-	}
-	return ops;
 }
 
-export type FaradayOpKey =
-	`${(typeof FARADAY_OPS)[number]['group']}.${(typeof FARADAY_OPS)[number]['name']}`;
+export type FaradayOpKey = (typeof FARADAY_OPS)[number] extends infer O
+	? O extends { group: infer G; name: infer N }
+		? G extends string
+			? N extends string
+				? `${G}.${N}`
+				: never
+			: never
+		: never
+	: never;
 
 export function opKey(op: FaradayOp): FaradayOpKey {
 	return `${op.group}.${op.name}` as FaradayOpKey;

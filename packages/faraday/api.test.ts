@@ -7,7 +7,10 @@ import {
 	makeFaradayRequest,
 } from './client';
 import { FARADAY_OPS, FaradayHandlers, opKey } from './endpoints';
-import { FaradayEndpointInputSchemas } from './endpoints/types';
+import {
+	FaradayEndpointInputSchemas,
+	FaradayEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { faraday } from './index';
 import { FaradaySchema } from './schema';
@@ -339,25 +342,35 @@ describe('Faraday webhook signature', () => {
 				.digest('base64')}`;
 
 		const stale = String(now - FARADAY_WEBHOOK_TOLERANCE_SECONDS - 1);
+		const future = String(now + FARADAY_WEBHOOK_TOLERANCE_SECONDS + 1);
+		const signedOutOfWindow = (msgId: string, ts: string) =>
+			({
+				headers: {
+					'svix-id': msgId,
+					'svix-timestamp': ts,
+					'svix-signature': sign(msgId, ts),
+				},
+				rawBody,
+				payload: {
+					timestamp: ts,
+					type: 'resource.ready_with_update',
+					data: {
+						account_id: 'a',
+						resource_id: 'b',
+						resource_type: 'cohorts',
+					},
+				},
+			}) as never;
 		expect(
 			verifyFaradayWebhookSignature(
-				{
-					headers: {
-						'svix-id': 'msg_stale',
-						'svix-timestamp': stale,
-						'svix-signature': sign('msg_stale', stale),
-					},
-					rawBody,
-					payload: {
-						timestamp: stale,
-						type: 'resource.ready_with_update',
-						data: {
-							account_id: 'a',
-							resource_id: 'b',
-							resource_type: 'cohorts',
-						},
-					},
-				} as never,
+				signedOutOfWindow('msg_stale', stale),
+				secret,
+				now,
+			).valid,
+		).toBe(false);
+		expect(
+			verifyFaradayWebhookSignature(
+				signedOutOfWindow('msg_future', future),
 				secret,
 				now,
 			).valid,
@@ -388,12 +401,66 @@ describe('Faraday webhook signature', () => {
 			/Replay/,
 		);
 	});
+
+	it('releases a reserved message id when event recording fails', async () => {
+		resetFaradayWebhookReplayCache();
+		const { resourceReady } = await import('./webhooks/resource-ready');
+		const secret = 'whsec_dGVzdA==';
+		const rawBody = '{"type":"resource.ready_with_update"}';
+		const now = String(Math.floor(Date.now() / 1000));
+		const msgId = 'msg_retry';
+		const signature = `v1,${createHmac(
+			'sha256',
+			Buffer.from('dGVzdA==', 'base64'),
+		)
+			.update(`${msgId}.${now}.${rawBody}`)
+			.digest('base64')}`;
+		const request = {
+			headers: {
+				'svix-id': msgId,
+				'svix-timestamp': now,
+				'svix-signature': signature,
+			},
+			rawBody,
+			payload: {
+				timestamp: now,
+				type: 'resource.ready_with_update',
+				data: {
+					account_id: 'a',
+					resource_id: 'b',
+					resource_type: 'cohorts',
+				},
+			},
+		};
+		jest.mocked(logEventFromContext).mockResolvedValueOnce(null);
+		const failed = await resourceReady.handler(
+			{ key: secret } as never,
+			request as never,
+		);
+		expect(failed.success).toBe(false);
+		expect(verifyFaradayWebhookSignature(request as never, secret).valid).toBe(
+			true,
+		);
+	});
 });
 
 describe('endpoint schemas', () => {
 	it('declares input and output schemas for every op', () => {
 		for (const op of FARADAY_OPS) {
 			expect(FaradayEndpointInputSchemas[opKey(op)]).toBeDefined();
+			expect(FaradayEndpointOutputSchemas[opKey(op)]).toBeDefined();
 		}
+	});
+
+	it('rejects patch inputs without a resource id', () => {
+		expect(
+			FaradayEndpointInputSchemas['accounts.update'].safeParse({}).success,
+		).toBe(false);
+		expect(
+			FaradayEndpointInputSchemas['accounts.update'].safeParse({
+				account_id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+				name: 'Acme',
+			}).success,
+		).toBe(true);
 	});
 });

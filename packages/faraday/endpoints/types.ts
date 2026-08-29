@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { FaradayAccount, FaradayGraphEdge } from '../schema/database';
-import type { FaradayInputKind, FaradayOp } from './catalog';
+import type { FaradayInputKind, FaradayOp, FaradayOpKey } from './catalog';
 import { FARADAY_OPS, opKey } from './catalog';
 
 const FaradayResource = z
@@ -80,23 +80,7 @@ const AccountCreateInput = z
 	})
 	.passthrough();
 
-const PatchInput = z
-	.object({
-		account_id: z.string().optional(),
-		cohort_id: z.string().optional(),
-		dataset_id: z.string().optional(),
-		stream_id: z.string().optional(),
-		outcome_id: z.string().optional(),
-		persona_set_id: z.string().optional(),
-		place_id: z.string().optional(),
-		scope_id: z.string().optional(),
-		target_id: z.string().optional(),
-		trait_id: z.string().optional(),
-		connection_id: z.string().optional(),
-		webhook_endpoint_id: z.string().optional(),
-		id: z.string().optional(),
-	})
-	.passthrough();
+const PatchInput = IdInput;
 
 const CascadeInput = IdInput.and(
 	z.object({
@@ -202,11 +186,11 @@ function outputSchema(op: FaradayOp) {
 
 export const FaradayEndpointInputSchemas = Object.fromEntries(
 	FARADAY_OPS.map((op) => [opKey(op), inputSchema(op.input)]),
-) as Record<ReturnType<typeof opKey>, z.ZodType>;
+) as { [K in FaradayOpKey]: ReturnType<typeof inputSchema> };
 
 export const FaradayEndpointOutputSchemas = Object.fromEntries(
 	FARADAY_OPS.map((op) => [opKey(op), outputSchema(op)]),
-) as Record<ReturnType<typeof opKey>, z.ZodType>;
+) as { [K in FaradayOpKey]: ReturnType<typeof outputSchema> };
 
 export type FaradayEndpointInputs = {
 	[K in keyof typeof FaradayEndpointInputSchemas]: z.infer<

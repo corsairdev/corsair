@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FaradayWebhooks } from '..';
-import { createFaradayMatch, verifyFaradayWebhookSignature } from './types';
+import {
+	createFaradayMatch,
+	faradayWebhookMessageId,
+	releaseFaradayWebhookMessageId,
+	verifyFaradayWebhookSignature,
+} from './types';
 
 export const resourceReady: FaradayWebhooks['resourceReady'] = {
 	match: createFaradayMatch('resource.ready_with_update'),
@@ -22,6 +27,8 @@ export const resourceReady: FaradayWebhooks['resourceReady'] = {
 			'completed',
 		);
 		if (!eventId) {
+			const msgId = faradayWebhookMessageId(request.headers);
+			if (msgId) releaseFaradayWebhookMessageId(msgId);
 			return {
 				success: false,
 				statusCode: 500,
