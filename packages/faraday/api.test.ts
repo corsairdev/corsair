@@ -17,7 +17,6 @@ import { FaradaySchema } from './schema';
 import {
 	FARADAY_WEBHOOK_TOLERANCE_SECONDS,
 	matchFaradayTenantWebhook,
-	resetFaradayWebhookReplayCache,
 	verifyFaradayWebhookSignature,
 } from './webhooks';
 
@@ -343,7 +342,6 @@ describe('Faraday webhook signature', () => {
 	});
 
 	it('HMACs the exact raw body, not a reconstructed payload', () => {
-		resetFaradayWebhookReplayCache();
 		const secret = 'whsec_dGVzdA==';
 		const now = String(Math.floor(Date.now() / 1000));
 		const rawBody =
@@ -372,7 +370,6 @@ describe('Faraday webhook signature', () => {
 				secret,
 			).valid,
 		).toBe(true);
-		resetFaradayWebhookReplayCache();
 		expect(
 			verifyFaradayWebhookSignature(
 				{
@@ -389,8 +386,7 @@ describe('Faraday webhook signature', () => {
 		).toBe(false);
 	});
 
-	it('rejects stale timestamps and replayed message ids', () => {
-		resetFaradayWebhookReplayCache();
+	it('rejects stale timestamps', () => {
 		const secret = 'whsec_dGVzdA==';
 		const rawBody = '{"type":"resource.ready_with_update"}';
 		const now = Math.floor(Date.now() / 1000);
@@ -433,17 +429,29 @@ describe('Faraday webhook signature', () => {
 				now,
 			).valid,
 		).toBe(false);
+	});
 
-		const fresh = String(now);
-		const freshReq = {
+	it('rejects a svix-id already stored on corsair_events', async () => {
+		const { resourceReady } = await import('./webhooks/resource-ready');
+		const secret = 'whsec_dGVzdA==';
+		const rawBody = '{"type":"resource.ready_with_update"}';
+		const now = String(Math.floor(Date.now() / 1000));
+		const msgId = 'msg_once';
+		const signature = `v1,${createHmac(
+			'sha256',
+			Buffer.from('dGVzdA==', 'base64'),
+		)
+			.update(`${msgId}.${now}.${rawBody}`)
+			.digest('base64')}`;
+		const request = {
 			headers: {
-				'svix-id': 'msg_once',
-				'svix-timestamp': fresh,
-				'svix-signature': sign('msg_once', fresh),
+				'svix-id': msgId,
+				'svix-timestamp': now,
+				'svix-signature': signature,
 			},
 			rawBody,
 			payload: {
-				timestamp: fresh,
+				timestamp: now,
 				type: 'resource.ready_with_update',
 				data: {
 					account_id: 'a',
@@ -451,17 +459,41 @@ describe('Faraday webhook signature', () => {
 					resource_type: 'cohorts',
 				},
 			},
-		} as never;
-		expect(verifyFaradayWebhookSignature(freshReq, secret, now).valid).toBe(
-			true,
+		};
+		const seen = new Set<string>([msgId]);
+		const ctx = {
+			key: secret,
+			$getAccountId: async () => 'acct',
+			database: {
+				db: {
+					selectFrom: () => ({
+						select: () => ({
+							where: (_c: string, _op: string, id: string) => ({
+								executeTakeFirst: async () =>
+									seen.has(id) ? { id } : undefined,
+							}),
+						}),
+					}),
+					insertInto: () => ({
+						values: (row: { id: string }) => ({
+							execute: async () => {
+								if (seen.has(row.id)) throw new Error('unique');
+								seen.add(row.id);
+							},
+						}),
+					}),
+				},
+			},
+		};
+		const replayed = await resourceReady.handler(
+			ctx as never,
+			request as never,
 		);
-		expect(verifyFaradayWebhookSignature(freshReq, secret, now).error).toMatch(
-			/Replay/,
-		);
+		expect(replayed.success).toBe(false);
+		expect(replayed.statusCode).toBe(409);
 	});
 
-	it('releases a reserved message id when event recording fails', async () => {
-		resetFaradayWebhookReplayCache();
+	it('retries after a failed event insert', async () => {
 		const { resourceReady } = await import('./webhooks/resource-ready');
 		const secret = 'whsec_dGVzdA==';
 		const rawBody = '{"type":"resource.ready_with_update"}';
@@ -496,9 +528,12 @@ describe('Faraday webhook signature', () => {
 			request as never,
 		);
 		expect(failed.success).toBe(false);
-		expect(verifyFaradayWebhookSignature(request as never, secret).valid).toBe(
-			true,
+		jest.mocked(logEventFromContext).mockResolvedValueOnce('evt-2');
+		const retried = await resourceReady.handler(
+			{ key: secret } as never,
+			request as never,
 		);
+		expect(retried.success).toBe(true);
 	});
 });
 

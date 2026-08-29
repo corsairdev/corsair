@@ -67,4 +67,40 @@ describe('processWebhook plugin hint (hub-verified deliveries)', () => {
 		// exists because hub deliveries must not depend on this
 		expect(result.plugin).toBe('sharepoint');
 	});
+
+	it('passes the exact string body as rawBody and never reconstructs JSON', async () => {
+		const seen: Array<{ rawBody?: string }> = [];
+		const corsair = {
+			teams: {
+				webhooks: {
+					chats: {
+						message: {
+							match: () => true,
+							handler: async (request: { rawBody?: string }) => {
+								seen.push({ rawBody: request.rawBody });
+								return {};
+							},
+						},
+					},
+				},
+				pluginWebhookMatcher: () => true,
+			},
+		} as never;
+		const compact = '{"value":[{"subscriptionId":"sub-1"}]}';
+		await processWebhook(corsair, headers, compact, undefined, {
+			plugin: 'teams',
+		});
+		expect(seen[0]?.rawBody).toBe(compact);
+		seen.length = 0;
+		await processWebhook(corsair, headers, JSON.parse(compact), undefined, {
+			plugin: 'teams',
+		});
+		expect(seen[0]?.rawBody).toBeUndefined();
+		seen.length = 0;
+		await processWebhook(corsair, headers, JSON.parse(compact), undefined, {
+			plugin: 'teams',
+			rawBody: compact,
+		});
+		expect(seen[0]?.rawBody).toBe(compact);
+	});
 });

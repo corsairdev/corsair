@@ -74,31 +74,6 @@ function firstHeader(
 /** Standard Webhooks default tolerance. https://github.com/standard-webhooks/standard-webhooks */
 export const FARADAY_WEBHOOK_TOLERANCE_SECONDS = 300;
 
-// ponytail: in-memory replay cache; persist if Faraday retries across processes
-const seenMessageIds = new Map<string, number>();
-
-export function resetFaradayWebhookReplayCache(): void {
-	seenMessageIds.clear();
-}
-
-function pruneReplayCache(now: number): void {
-	for (const [id, exp] of seenMessageIds) {
-		if (exp < now) seenMessageIds.delete(id);
-	}
-}
-
-function reserveMessageId(msgId: string, expiresAt: number): boolean {
-	const now = Math.floor(Date.now() / 1000);
-	pruneReplayCache(now);
-	if (seenMessageIds.has(msgId)) return false;
-	seenMessageIds.set(msgId, expiresAt);
-	return true;
-}
-
-export function releaseFaradayWebhookMessageId(msgId: string): void {
-	seenMessageIds.delete(msgId);
-}
-
 export function faradayWebhookMessageId(
 	headers: Record<string, string | string[] | undefined>,
 ): string | undefined {
@@ -190,15 +165,6 @@ export function verifyFaradayWebhookSignature(
 	});
 	if (!ok) {
 		return { valid: false, error: 'Invalid webhook signature' };
-	}
-
-	if (
-		!reserveMessageId(
-			msgId,
-			timestampSeconds + FARADAY_WEBHOOK_TOLERANCE_SECONDS,
-		)
-	) {
-		return { valid: false, error: 'Replay: webhook message id already used' };
 	}
 
 	return { valid: true };
