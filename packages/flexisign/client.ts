@@ -11,8 +11,7 @@ export class FlexisignAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
-const FLEXISIGN_API_BASE = 'https://api.example.com';
+const FLEXISIGN_API_BASE = 'https://api.flexisign.io';
 
 export async function makeFlexisignRequest<T>(
 	endpoint: string,
@@ -30,11 +29,10 @@ export async function makeFlexisignRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			'api-key': apiKey,
 		},
 	};
 

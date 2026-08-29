@@ -1,21 +1,18 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FlexisignEndpoints } from '..';
 import { makeFlexisignRequest } from '../client';
+import type { FlexisignEndpoints } from '../index';
 import type { FlexisignEndpointOutputs } from './types';
 
 export const listTemplates: FlexisignEndpoints['ListTemplates'] = async (
 	ctx,
-	input,
 ) => {
 	const response = await makeFlexisignRequest<
 		FlexisignEndpointOutputs['ListTemplates']
-	>(`example/${input.id}`, ctx.key, { method: 'GET' });
+	>('/v1/templates/all', ctx.key, {
+		method: 'GET',
+	});
 
-	await logEventFromContext(
-		ctx,
-		'flexisign.list.templates',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'flexisign.list.templates', {}, 'completed');
+
 	return response;
 };
