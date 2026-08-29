@@ -1,9 +1,9 @@
-import { BreatheHrEmployee, BreatheHrLeave } from './database';
+import { EmployeeSchema, LeaveSchema } from '../endpoints/types';
 
 export const BreatheHrSchema = {
 	version: '1.0.0',
 	entities: {
-		employees: BreatheHrEmployee,
-		leaves: BreatheHrLeave,
+		employees: EmployeeSchema,
+		leaves: LeaveSchema,
 	},
 } as const;

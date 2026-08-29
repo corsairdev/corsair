@@ -5,6 +5,10 @@ export class BreatheHRApiError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
 	public readonly body?: unknown;
+	public readonly retryAfter?: number;
+	public readonly rateLimitReset?: number;
+	public readonly rateLimitRemaining?: number;
+	public readonly rateLimitLimit?: number;
 
 	constructor(
 		message: string,
@@ -18,6 +22,10 @@ export class BreatheHRApiError extends Error {
 			this.status = options.cause.status;
 			this.statusText = options.cause.statusText;
 			this.body = options.cause.body;
+			this.retryAfter = options.cause.retryAfter;
+			this.rateLimitReset = options.cause.rateLimitReset;
+			this.rateLimitRemaining = options.cause.rateLimitRemaining;
+			this.rateLimitLimit = options.cause.rateLimitLimit;
 		}
 	}
 }
