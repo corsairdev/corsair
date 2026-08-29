@@ -40,11 +40,12 @@ const VerifyEmailResponseSchema = VerificationResultSchema;
 export type VerifyEmailResponse = z.infer<typeof VerifyEmailResponseSchema>;
 
 // RFC 1123 hostname: dot-separated labels of alphanumerics and hyphens (no
-// leading/trailing hyphen), ending in an alphabetic TLD. This rejects email
-// addresses, URLs, and path-bearing values — validateDomain submits
+// leading/trailing hyphen). The final label is either an alphabetic TLD or
+// an IDNA Punycode A-label (xn--...) such as .xn--p1ai (.рф). This rejects
+// email addresses, URLs, and path-bearing values — validateDomain submits
 // admin@{domain}, so any '@', ':', or '/' would trigger a bogus remote check.
 const DOMAIN_PATTERN =
-	/^(?=.{4,253}$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*\.[a-z]{2,63}$/i;
+	/^(?=.{4,253}$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*\.(?:[a-z]{2,63}|xn--[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)$/i;
 
 const ValidateDomainInputSchema = z.object({
 	domain: z

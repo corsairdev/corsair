@@ -225,6 +225,20 @@ describe('Mailcheck endpoint contract (offline)', () => {
 			});
 			expect(result.success).toBe(true);
 		});
+
+		it('validateDomain accepts an IDNA A-label TLD', () => {
+			const result = MailcheckEndpointInputSchemas.validateDomain.safeParse({
+				domain: 'example.xn--p1ai',
+			});
+			expect(result.success).toBe(true);
+		});
+
+		it('validateDomain rejects a malformed punycode label', () => {
+			const result = MailcheckEndpointInputSchemas.validateDomain.safeParse({
+				domain: 'example.xn--bad-',
+			});
+			expect(result.success).toBe(false);
+		});
 	});
 
 	describe('output schemas', () => {
