@@ -141,15 +141,29 @@ describe('Aryn endpoints (mocked)', () => {
 			query: {
 				include_elements: true,
 				include_binary: false,
+				include_original_elements: false,
 			},
 		});
-		expect(mockRequest.mock.calls[0]?.[1]?.query).not.toHaveProperty(
-			'include_original_elements',
-		);
 		const validated = ArynEndpointOutputSchemas.documentGet.parse(result);
 		expect(validated.id).toBe('doc_1');
 		expect(validated.elements?.[0]?.type).toBe('Table');
 		expect(validated.elements?.[0]?.properties?.page_number).toBe(1);
+	});
+
+	it('forwards include_original_elements on documentGet', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 'doc_1' });
+
+		await Aryn.documentGet(mockCtx, {
+			docset_id: 'ds_123',
+			doc_id: 'doc_1',
+			include_original_elements: true,
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]?.query).toMatchObject({
+			include_elements: true,
+			include_binary: false,
+			include_original_elements: true,
+		});
 	});
 });
 

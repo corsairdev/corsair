@@ -69,6 +69,7 @@ export const DocumentGetInputSchema = z
 		doc_id: z.string(),
 		include_elements: z.boolean().optional(),
 		include_binary: z.boolean().optional(),
+		include_original_elements: z.boolean().optional(),
 	})
 	.loose();
 

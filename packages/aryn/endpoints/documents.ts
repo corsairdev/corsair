@@ -13,6 +13,7 @@ export const documentGet: ArynEndpoints['documentGet'] = async (ctx, input) => {
 			query: {
 				include_elements: parsed.include_elements ?? true,
 				include_binary: parsed.include_binary ?? false,
+				include_original_elements: parsed.include_original_elements ?? false,
 			},
 		},
 	);
