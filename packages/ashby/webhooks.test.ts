@@ -84,6 +84,17 @@ describe('Ashby Webhooks Subsystem', () => {
 			expect(verifyAshbyWebhookSignature(reqWithHeader, '').valid).toBe(false);
 		});
 
+		it('verifies HMAC against a Buffer body without re-serializing JSON', () => {
+			const req = {
+				headers: {
+					'ashby-signature': validSignatureHeader,
+				},
+				body: Buffer.from(rawPayload),
+			} as any;
+
+			expect(verifyAshbyWebhookSignature(req, secret).valid).toBe(true);
+		});
+
 		it('rejects a parsed body when no raw string body is present', () => {
 			const req = {
 				headers: {

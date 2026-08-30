@@ -205,6 +205,13 @@ export function createAshbyMatch(action: string): CorsairWebhookMatcher {
 
 export const createAshbyEventMatch = createAshbyMatch;
 
+function asRawWebhookBytes(value: unknown): string | undefined {
+	if (typeof value === 'string') return value;
+	if (Buffer.isBuffer(value)) return value.toString('utf8');
+	if (value instanceof Uint8Array) return Buffer.from(value).toString('utf8');
+	return undefined;
+}
+
 /**
  * Verifies the Ashby webhook signature from the `Ashby-Signature` header.
  * Ashby generates an HMAC-SHA256 signature in the format `sha256=<hex_digest>`.
@@ -235,12 +242,9 @@ export function verifyAshbyWebhookSignature(
 		return { valid: false, error: 'Missing Ashby-Signature header' };
 	}
 
-	let rawBody: string | undefined;
-	if ('rawBody' in request && typeof request.rawBody === 'string') {
-		rawBody = request.rawBody;
-	} else if ('body' in request && typeof request.body === 'string') {
-		rawBody = request.body;
-	}
+	const rawBody =
+		asRawWebhookBytes('rawBody' in request ? request.rawBody : undefined) ??
+		asRawWebhookBytes('body' in request ? request.body : undefined);
 
 	if (rawBody === undefined) {
 		return {
