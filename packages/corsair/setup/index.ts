@@ -12,20 +12,20 @@ import {
 	ZodString,
 	ZodType,
 } from 'zod';
-import type {
-	AuthTypes,
-	BaseKeyManager,
-	CorsairInternalConfig,
-	CorsairPlugin,
-	CorsairSingleTenantClient,
-	CorsairTenantWrapper,
-} from '../core';
+import type { AuthTypes, BaseKeyManager, CorsairInternalConfig } from '../core';
 import {
 	BASE_AUTH_FIELDS,
 	createAccountKeyManager,
 	createCorsair,
 	createIntegrationKeyManager,
 } from '../core';
+// Direct source-module imports (not the ./core barrel) to avoid a circular
+// chunk dependency between setup and core/index.
+import type {
+	CorsairSingleTenantClient,
+	CorsairTenantWrapper,
+} from '../core/client';
+import type { CorsairPlugin } from '../core/plugins';
 import {
 	getCallableProperty,
 	isMultiTenantInstance,
@@ -33,6 +33,7 @@ import {
 	tryGetCorsairInternal,
 } from '../core/utils';
 import { getPluginAuthType } from '../core/utils/plugin-auth';
+import { CorsairConnectRequestsSchema } from '../db';
 import type {
 	CorsairDatabase,
 	CorsairKyselyDatabase,
@@ -315,6 +316,7 @@ function isBackfillYaml(value: unknown): value is BackfillYaml {
 
 const REQUIRED_TABLES = {
 	...TABLE_SCHEMAS,
+	corsair_connect_requests: CorsairConnectRequestsSchema,
 };
 
 function describeZodSchema(schema: ZodTypeAny): unknown {

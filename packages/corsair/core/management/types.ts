@@ -37,6 +37,13 @@ export type PluginConnectionState =
 
 export type ConnectionStatus = Record<string, PluginConnectionState>;
 
+/** A live connect-request — the client reads this on-demand to drive the dialog. */
+export type ConnectRequest = {
+	plugin: string;
+	connectUrl: string;
+	requestedAt: string;
+};
+
 export type ManagementOk = { ok: true };
 
 export type PermissionRecord = CorsairPermission & {
