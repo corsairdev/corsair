@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Company } from './endpoints';
+import { Company, Ip } from './endpoints';
 import type {
 	BigpictureioEndpointInputs,
 	BigpictureioEndpointOutputs,
@@ -54,11 +54,17 @@ type BigpictureioEndpoint<K extends keyof BigpictureioEndpointOutputs> =
 
 export type BigpictureioEndpoints = {
 	companyFind: BigpictureioEndpoint<'companyFind'>;
+	companyStream: BigpictureioEndpoint<'companyStream'>;
+	ipFind: BigpictureioEndpoint<'ipFind'>;
 };
 
 const bigpictureioEndpointsNested = {
 	company: {
 		find: Company.find,
+		stream: Company.stream,
+	},
+	ip: {
+		find: Ip.find,
 	},
 } as const;
 
@@ -68,6 +74,14 @@ export const bigpictureioEndpointSchemas = {
 	'company.find': {
 		input: BigpictureioEndpointInputSchemas.companyFind,
 		output: BigpictureioEndpointOutputSchemas.companyFind,
+	},
+	'company.stream': {
+		input: BigpictureioEndpointInputSchemas.companyStream,
+		output: BigpictureioEndpointOutputSchemas.companyStream,
+	},
+	'ip.find': {
+		input: BigpictureioEndpointInputSchemas.ipFind,
+		output: BigpictureioEndpointOutputSchemas.ipFind,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof bigpictureioEndpointsNested
@@ -80,12 +94,20 @@ const bigpictureioEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Find detailed company information by domain',
 	},
+	'company.stream': {
+		riskLevel: 'read',
+		description: 'Hold the company lookup open until BigPicture finishes',
+	},
+	'ip.find': {
+		riskLevel: 'read',
+		description: 'Find the company associated with an IP address',
+	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof bigpictureioEndpointsNested
 >;
 
 export const bigpictureioAuthConfig = {
-	api_key: {},
+	api_key: { account: [] as const },
 } as const satisfies PluginAuthConfig;
 
 export type BaseBigpictureioPlugin<T extends BigpictureioPluginOptions> =
@@ -117,7 +139,7 @@ export function bigpictureio<const T extends BigpictureioPluginOptions>(
 		id: 'bigpictureio',
 		authConfig: bigpictureioAuthConfig,
 		schema: BigpictureioSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
 		webhookHooks: undefined,
 		endpoints: bigpictureioEndpointsNested,
@@ -153,4 +175,8 @@ export type {
 	BigpictureioEndpointOutputs,
 	CompanyFindInput,
 	CompanyFindResponse,
+	CompanyStreamInput,
+	CompanyStreamResponse,
+	IpFindInput,
+	IpFindResponse,
 } from './endpoints/types';
