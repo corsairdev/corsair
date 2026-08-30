@@ -39,9 +39,13 @@ jest.mock('corsair/http', () => ({
 	},
 }));
 
-jest.mock('corsair/core', () => ({
-	logEventFromContext: jest.fn(),
-}));
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual('corsair/core') as Record<string, unknown>;
+	return {
+		...actual,
+		logEventFromContext: jest.fn(),
+	};
+});
 
 import { request } from 'corsair/http';
 
@@ -100,6 +104,17 @@ describe('Aryn endpoints (mocked)', () => {
 		expect(ArynEndpointOutputSchemas.docsetDelete.parse(result)).toBeDefined();
 	});
 
+	it('encodes reserved characters in path ids', async () => {
+		mockRequest.mockResolvedValueOnce(docSetFixture);
+
+		await Aryn.docsetGet(mockCtx, { docset_id: 'ds/a b' });
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: `/v1/storage/docsets/${encodeURIComponent('ds/a b')}`,
+		});
+	});
+
 	it('documentGet validates parsed elements against the schema', async () => {
 		mockRequest.mockResolvedValueOnce({
 			id: 'doc_1',
@@ -126,9 +141,11 @@ describe('Aryn endpoints (mocked)', () => {
 			query: {
 				include_elements: true,
 				include_binary: false,
-				include_original_elements: false,
 			},
 		});
+		expect(mockRequest.mock.calls[0]?.[1]?.query).not.toHaveProperty(
+			'include_original_elements',
+		);
 		const validated = ArynEndpointOutputSchemas.documentGet.parse(result);
 		expect(validated.id).toBe('doc_1');
 		expect(validated.elements?.[0]?.type).toBe('Table');
@@ -191,6 +208,26 @@ describe('Aryn remaining endpoints (mocked)', () => {
 		expect(validated.status).toEqual(['OK']);
 		expect(validated.status_code).toBe(200);
 		expect(validated.elements?.[0]?.text_representation).toBe('hello');
+	});
+
+	it('rejects partition and async add without a file or file_url', async () => {
+		expect(() =>
+			ArynEndpointInputSchemas.documentPartition.parse({}),
+		).toThrow();
+		expect(() =>
+			ArynEndpointInputSchemas.documentSubmitAsyncAdd.parse({
+				docset_id: 'ds_123',
+			}),
+		).toThrow();
+		await expect(Aryn.documentPartition(mockCtx, {})).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('throws when the API omits required output fields', async () => {
+		mockRequest.mockResolvedValueOnce({});
+		await expect(
+			Aryn.docsetCreate(mockCtx, { name: 'test-docset' }),
+		).rejects.toThrow();
 	});
 
 	it('documentSubmitAsyncAdd returns a task id and validates output', async () => {
