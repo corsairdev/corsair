@@ -1,20 +1,32 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { BeamerEndpoints } from '..';
 import { makeBeamerRequest } from '../client';
-import type { BeamerEndpointOutputs } from './types';
+import { PostsGetInputSchema, PostsGetResponseSchema } from './types';
 
-/** Retrieves paginated posts from the authenticated Beamer account. */
 export const get: BeamerEndpoints['postsGet'] = async (ctx, input) => {
-	const response = await makeBeamerRequest<BeamerEndpointOutputs['postsGet']>(
-		'/posts',
-		ctx.key,
-		{
-			method: 'GET',
-			query: input,
+	if (!ctx.key?.trim()) {
+		throw new AuthMissingError('beamer', 'api_key');
+	}
+
+	const parsedInput = PostsGetInputSchema.parse(input);
+	const response = await makeBeamerRequest<unknown>('/posts', ctx.key, {
+		method: 'GET',
+		query: {
+			page: parsedInput.page,
+			maxResults: parsedInput.maxResults,
+			saveViews: false,
+			ignoreRequestDetails: true,
 		},
+	});
+
+	const parsed = PostsGetResponseSchema.parse(response);
+
+	await logEventFromContext(
+		ctx,
+		'beamer.posts.get',
+		{ ...parsedInput },
+		'completed',
 	);
 
-	await logEventFromContext(ctx, 'beamer.posts.get', { ...input }, 'completed');
-
-	return response;
+	return parsed;
 };
