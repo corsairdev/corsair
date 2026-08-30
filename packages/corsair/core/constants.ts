@@ -13,7 +13,6 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'dropboxsign',
 	'ably',
 	'abstract',
 	'abuseipdb',
@@ -121,6 +120,7 @@ export const BaseProviders = [
 	'doppler',
 	'dreamstudio',
 	'dropbox',
+	'dropboxsign',
 	'epicgames',
 	'exa',
 	'facebook',
@@ -188,6 +188,7 @@ export const BaseProviders = [
 	'posthog',
 	'razorpay',
 	'reddit',
+	'removebg',
 	'resend',
 	'retailed',
 	'salesforce',
@@ -418,6 +419,7 @@ export const ProviderDisplayNames = {
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
+	removebg: 'remove.bg',
 	resend: 'Resend',
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
@@ -654,6 +656,7 @@ export type AllProviders =
 	| 'posthog'
 	| 'razorpay'
 	| 'reddit'
+	| 'removebg'
 	| 'resend'
 	| 'retailed'
 	| 'salesforce'
