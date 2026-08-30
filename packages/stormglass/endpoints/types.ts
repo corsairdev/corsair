@@ -111,8 +111,8 @@ const PointCoordinatesSchema = z.object({
 	lng: z.number().min(-180).max(180).describe('Longitude of the point'),
 });
 
-/** ISO-8601 timestamp with an explicit UTC offset, as Stormglass expects. */
-const StormglassTimestamp = z.iso.datetime({ offset: true });
+/** ISO-8601 timestamp in UTC (`Z` suffix), as Stormglass expects. */
+const StormglassTimestamp = z.iso.datetime();
 
 /** Per-source value map, e.g. `{ sg: 1.23, noaa: 1.19 }`. */
 const StormglassSourceValuesSchema = z.record(z.string(), z.number());
