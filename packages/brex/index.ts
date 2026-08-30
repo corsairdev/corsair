@@ -76,7 +76,9 @@ const brexEndpointMeta = Object.fromEntries(
 			{ riskLevel: route.risk, description: route.description },
 		];
 	}),
-) as unknown as RequiredPluginEndpointMeta<typeof brexEndpointsNested>;
+) as unknown as RequiredPluginEndpointMeta<
+	typeof brexEndpointsNested
+> satisfies RequiredPluginEndpointMeta<typeof brexEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
