@@ -1,0 +1,151 @@
+---
+title: Database
+description: "TextRazor local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The TextRazor plugin syncs data locally. Use `corsair.textrazor.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Accounts
+
+Path: `textrazor.db.accounts.search`
+
+```ts
+const rows = await corsair.textrazor.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `plan` | `string` | equals, contains, startsWith, endsWith, in |
+| `concurrentRequestLimit` | `number` | equals, gt, gte, lt, lte, in |
+| `concurrentRequestsUsed` | `number` | equals, gt, gte, lt, lte, in |
+| `planDailyRequestsIncluded` | `number` | equals, gt, gte, lt, lte, in |
+| `requestsUsedToday` | `number` | equals, gt, gte, lt, lte, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Categories
+
+Path: `textrazor.db.categories.search`
+
+```ts
+const rows = await corsair.textrazor.db.categories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `categoryId` | `string` | equals, contains, startsWith, endsWith, in |
+| `label` | `string` | equals, contains, startsWith, endsWith, in |
+| `query` | `string` | equals, contains, startsWith, endsWith, in |
+| `classifierId` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Dictionaries
+
+Path: `textrazor.db.dictionaries.search`
+
+```ts
+const rows = await corsair.textrazor.db.dictionaries.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `matchType` | `string` | equals, contains, startsWith, endsWith, in |
+| `caseInsensitive` | `boolean` | equals |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Dictionary Entries
+
+Path: `textrazor.db.dictionaryEntries.search`
+
+```ts
+const rows = await corsair.textrazor.db.dictionaryEntries.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `dictionaryId` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Entities
+
+Path: `textrazor.db.entities.search`
+
+```ts
+const rows = await corsair.textrazor.db.entities.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `entityId` | `string` | equals, contains, startsWith, endsWith, in |
+| `matchedText` | `string` | equals, contains, startsWith, endsWith, in |
+| `confidenceScore` | `number` | equals, gt, gte, lt, lte, in |
+| `relevanceScore` | `number` | equals, gt, gte, lt, lte, in |
+| `wikiLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `wikidataId` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
