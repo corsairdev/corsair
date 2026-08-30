@@ -88,7 +88,7 @@
     "ind": "tsx index.ts"
   },
   "dependencies": {
-    "kysely": "^0.28.5",
+    "kysely": "^0.28.17",
     "kysely-postgres-js": "^3.0.0",
     "uuid": "^13.0.0",
     "zod": "^4.1.13"
