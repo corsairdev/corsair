@@ -91,6 +91,7 @@ export const BaseProviders = [
 	'boxhero',
 	'brandfetch',
 	'browseai',
+	'browserless',
 	'bugsnag',
 	'cal',
 	'calendly',
@@ -321,6 +322,7 @@ export const ProviderDisplayNames = {
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
 	browseai: 'Browse AI',
+	browserless: 'Browserless',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
@@ -559,6 +561,7 @@ export type AllProviders =
 	| 'boxhero'
 	| 'brandfetch'
 	| 'browseai'
+	| 'browserless'
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
