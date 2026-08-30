@@ -16,14 +16,20 @@ export async function resolveBrexOAuthWebhookTenantLink(
 	const accessToken = tokens.access_token;
 	if (!accessToken) return null;
 
-	const response = await fetch(`${BREX_API_BASE}/v2/company`, {
-		headers: {
-			Accept: 'application/json',
-			Authorization: `Bearer ${accessToken}`,
-		},
-	});
-	if (!response.ok) return null;
-	const payload = asRecord(await response.json());
+	let payload: Record<string, unknown> | null = null;
+	try {
+		const response = await fetch(`${BREX_API_BASE}/v2/company`, {
+			headers: {
+				Accept: 'application/json',
+				Authorization: `Bearer ${accessToken}`,
+			},
+			signal: AbortSignal.timeout(10_000),
+		});
+		if (!response.ok) return null;
+		payload = asRecord(await response.json());
+	} catch {
+		return null;
+	}
 	const companyId = toExternalId(payload?.id);
 	return companyId ? { linkType: 'company_id', externalId: companyId } : null;
 }

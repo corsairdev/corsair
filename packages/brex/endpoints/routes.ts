@@ -18,6 +18,7 @@ export type BrexRoute = {
 	description: string;
 	docs: string;
 	filter?: BrexFilter;
+	idempotency?: boolean;
 };
 
 const qPage = ['cursor', 'limit'] as const;
@@ -238,6 +239,7 @@ export const BREX_ROUTES = {
 		risk: 'write',
 		description: 'Create a card and assign it to a user',
 		docs: 'https://developer.brex.com/openapi/team_api/cards/createcard',
+		idempotency: true,
 	},
 	cardsGet: {
 		group: 'cards',

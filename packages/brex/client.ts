@@ -32,6 +32,7 @@ export type BrexRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
+	headers?: Record<string, string>;
 };
 
 function retryAfterMs(res: Response): number | undefined {
@@ -71,13 +72,14 @@ export async function makeBrexRequest<T>(
 	apiKey: string,
 	options: BrexRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, headers } = options;
 	const res = await fetch(buildUrl(endpoint, query), {
 		method,
 		headers: {
 			Accept: 'application/json',
 			Authorization: `Bearer ${apiKey}`,
 			...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+			...headers,
 		},
 		body: body !== undefined ? JSON.stringify(body) : undefined,
 	});

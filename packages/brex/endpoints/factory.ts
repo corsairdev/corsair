@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { makeBrexRequest } from '../client';
 import type { BrexContext } from '../index';
@@ -80,6 +81,7 @@ export function requestBody(
 		'description',
 		'posted_at_start',
 		'posted_at_end',
+		'idempotency_key',
 	]);
 	const body = Object.fromEntries(
 		Object.entries(input).filter(
@@ -174,10 +176,12 @@ async function pageCardTransactions(
 				return { items, next_cursor: null };
 			}
 		}
-		if (!response.next_cursor) break;
+		if (!response.next_cursor) {
+			return { items, next_cursor: null };
+		}
 		cursor = response.next_cursor;
 	}
-	return { items, next_cursor: null };
+	return { items, next_cursor: cursor ?? null };
 }
 
 async function executeFilter(
@@ -240,10 +244,18 @@ export async function executeBrexOperation(
 				? cardStatusPath(String(input.id), input.action)
 				: resolvePath(route.path, input);
 
+		const idempotencyKey = route.idempotency
+			? typeof input.idempotency_key === 'string' && input.idempotency_key
+				? input.idempotency_key
+				: randomUUID()
+			: undefined;
 		const response = await makeBrexRequest<unknown>(path, ctx.key, {
 			method: route.method,
 			body: requestBody(route, input),
 			query: buildQuery(route, input),
+			headers: idempotencyKey
+				? { 'Idempotency-Key': idempotencyKey }
+				: undefined,
 		});
 		return BrexEndpointOutputSchemas[key].parse(
 			response === undefined || response === '' ? {} : response,

@@ -53,6 +53,7 @@ function inputSchema(route: BrexRoute) {
 		keys.add('description');
 	}
 	if (route.op === 'setLimit') keys.add('monthly_limit');
+	if (route.idempotency) keys.add('idempotency_key');
 	keys.add('body');
 	keys.add('query');
 	const shape: Record<string, z.ZodTypeAny> = {};

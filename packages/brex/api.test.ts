@@ -20,8 +20,10 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { brex } from './index';
+import { resolveBrexOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchBrexTenantWebhook } from './webhooks/tenant-matcher';
 import { verifyBrexWebhookSignature } from './webhooks/types';
+import { userUpdated } from './webhooks/users';
 
 jest.mock('corsair/core', () => {
 	class AuthMissingError extends Error {
@@ -44,6 +46,12 @@ jest.mock('corsair/core', () => {
 				| undefined,
 		toExternalId: (value: unknown) =>
 			typeof value === 'string' && value ? value : undefined,
+		readBodyRecord: (request: { body?: unknown }) =>
+			request.body !== null &&
+			typeof request.body === 'object' &&
+			!Array.isArray(request.body)
+				? request.body
+				: null,
 	};
 });
 
@@ -89,6 +97,7 @@ function lastCall() {
 		path: url.pathname,
 		method: init?.method ?? 'GET',
 		auth: new Headers(init?.headers).get('Authorization'),
+		idempotency: new Headers(init?.headers).get('Idempotency-Key'),
 	};
 }
 
@@ -129,6 +138,16 @@ describe('Brex plugin', () => {
 			BREX_ROUTE_KEYS.length,
 		);
 		expect(plugin.pluginWebhookMatcher?.({ headers: {} } as never)).toBe(false);
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				headers: {
+					'webhook-id': 'msg_1',
+					'webhook-timestamp': '1',
+					'webhook-signature': 'v1,sig',
+				},
+			} as never),
+		).toBe(true);
+		expect(userUpdated.match).toBeDefined();
 	});
 
 	it('throws AuthMissingError when no user token is stored', async () => {
@@ -246,6 +265,30 @@ describe('Brex plugin', () => {
 		expect(handled.headersRetryAfterMs).toBe(2000);
 	});
 
+	it('sends a stable Idempotency-Key for cards.create', async () => {
+		await createBrexEndpoint('cardsCreate')(ctx, {
+			owner: { type: 'USER', user_id: 'u1' },
+			card_name: 'Ops',
+			card_type: 'VIRTUAL',
+			limit_type: 'CARD',
+			idempotency_key: 'card-create-1',
+		});
+		expect(lastCall().idempotency).toBe('card-create-1');
+	});
+
+	it('keeps the continuation cursor after the transaction scan cap', async () => {
+		for (let page = 0; page < 50; page += 1) {
+			mockFetch.mockResolvedValueOnce(
+				jsonResponse({ items: [], next_cursor: `c${page + 1}` }),
+			);
+		}
+		const result = (await createBrexEndpoint('transactionsByAmountRange')(ctx, {
+			min_amount: 10,
+			max_amount: 20,
+		})) as { next_cursor: string | null };
+		expect(result.next_cursor).toBe('c50');
+	});
+
 	it('wraps HTTP 401 as BrexAPIError', async () => {
 		mockFetch.mockResolvedValue(
 			jsonResponse(
@@ -263,10 +306,52 @@ describe('Brex webhooks', () => {
 	it('matches company_id from official payloads', () => {
 		expect(
 			matchBrexTenantWebhook({
-				company_id: 'cuacc_123',
-				event_type: 'USER_UPDATED',
+				headers: {},
+				body: {
+					company_id: 'cuacc_123',
+					event_type: 'USER_UPDATED',
+				},
 			}),
 		).toEqual({ linkType: 'company_id', externalId: 'cuacc_123' });
+	});
+
+	it('verifies USER_UPDATED before handling', async () => {
+		const rejected = await userUpdated.handler(
+			{ key: 'whsec', db: {} } as never,
+			{ headers: {}, rawBody: '{}', payload: { event_type: 'USER_UPDATED' } },
+		);
+		expect(rejected.success).toBe(false);
+
+		const id = 'msg_1';
+		const timestamp = String(Math.floor(Date.now() / 1000));
+		const rawBody =
+			'{"event_type":"USER_UPDATED","company_id":"cuacc_123","data":{"id":"u1"}}';
+		const digest = createHmac('sha256', 'whsec')
+			.update(`${id}.${timestamp}.${rawBody}`)
+			.digest('base64');
+		const accepted = await userUpdated.handler(
+			{ key: 'whsec', db: {} } as never,
+			{
+				headers: {
+					'webhook-id': id,
+					'webhook-timestamp': timestamp,
+					'webhook-signature': `v1,${digest}`,
+				},
+				rawBody,
+				payload: JSON.parse(rawBody),
+			},
+		);
+		expect(accepted.success).toBe(true);
+		expect(accepted.data).toMatchObject({ event_type: 'USER_UPDATED' });
+	});
+
+	it('returns null when OAuth company lookup fails', async () => {
+		mockFetch.mockRejectedValueOnce(new Error('network'));
+		await expect(
+			resolveBrexOAuthWebhookTenantLink({
+				access_token: 'token',
+			} as never),
+		).resolves.toBeNull();
 	});
 
 	it('rejects unsigned webhook payloads', () => {

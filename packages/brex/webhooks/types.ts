@@ -1,5 +1,46 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
-import type { WebhookRequest } from 'corsair/core';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
+import { z } from 'zod';
+
+/** Official webhook envelope. https://developer.brex.com/guides/webhooks */
+export const BrexWebhookEventSchema = z
+	.object({
+		event_type: z.string(),
+		event_id: z.string().optional(),
+		company_id: z.string().optional(),
+		data: z.unknown().optional(),
+	})
+	.loose();
+export type BrexWebhookEvent = z.infer<typeof BrexWebhookEventSchema>;
+
+export type BrexWebhookOutputs = {
+	userUpdated: BrexWebhookEvent;
+};
+
+export function createBrexEventMatch(eventType: string): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const body =
+			typeof request.body === 'string'
+				? (JSON.parse(request.body) as Record<string, unknown>)
+				: (request.body as Record<string, unknown> | undefined);
+		return body?.event_type === eventType;
+	};
+}
+
+export function hasBrexWebhookHeaders(
+	headers: Record<string, string | string[] | undefined>,
+): boolean {
+	const names = new Set(Object.keys(headers).map((key) => key.toLowerCase()));
+	return (
+		names.has('webhook-id') &&
+		names.has('webhook-timestamp') &&
+		names.has('webhook-signature')
+	);
+}
 
 const SIGNATURE_TOLERANCE_SEC = 300;
 

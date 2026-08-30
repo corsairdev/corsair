@@ -1,15 +1,18 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
+	BindWebhooks,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
+	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { BREX_OAUTH_AUTHORIZE_URL, BREX_OAUTH_TOKEN_URL } from './client';
@@ -22,10 +25,20 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BrexSchema } from './schema';
+import { UserWebhooks } from './webhooks';
 import { resolveBrexOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchBrexTenantWebhook } from './webhooks/tenant-matcher';
+import type { BrexWebhookEvent, BrexWebhookOutputs } from './webhooks/types';
+import {
+	BrexWebhookEventSchema,
+	hasBrexWebhookHeaders,
+} from './webhooks/types';
 
-const brexWebhooksNested = {} as const;
+const brexWebhooksNested = {
+	users: {
+		userUpdated: UserWebhooks.userUpdated,
+	},
+} as const;
 
 export type BrexPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -54,6 +67,26 @@ export type BrexContext = CorsairPluginContext<
 export type BrexKeyBuilderContext = KeyBuilderContext<BrexPluginOptions>;
 
 export type BrexBoundEndpoints = BindEndpoints<typeof brexEndpointsNested>;
+
+type BrexWebhook<K extends keyof BrexWebhookOutputs> = CorsairWebhook<
+	BrexContext,
+	BrexWebhookEvent,
+	BrexWebhookOutputs[K]
+>;
+
+export type BrexWebhooks = {
+	userUpdated: BrexWebhook<'userUpdated'>;
+};
+
+export type BrexBoundWebhooks = BindWebhooks<typeof brexWebhooksNested>;
+
+const brexWebhookSchemas = {
+	'users.userUpdated': {
+		description: 'A Brex user was created or updated',
+		payload: BrexWebhookEventSchema,
+		response: BrexWebhookEventSchema,
+	},
+} as const satisfies RequiredPluginWebhookSchemas<typeof brexWebhooksNested>;
 
 export const brexEndpointSchemas = Object.fromEntries(
 	(Object.keys(BREX_ROUTES) as BrexRouteKey[]).map((key) => {
@@ -133,7 +166,8 @@ export function brex<const T extends BrexPluginOptions>(
 		webhooks: brexWebhooksNested,
 		endpointMeta: brexEndpointMeta,
 		endpointSchemas: brexEndpointSchemas,
-		pluginWebhookMatcher: () => false,
+		webhookSchemas: brexWebhookSchemas,
+		pluginWebhookMatcher: (request) => hasBrexWebhookHeaders(request.headers),
 		pluginTenantWebhookMatcher: matchBrexTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveBrexOAuthWebhookTenantLink,
 		errorHandlers: {
