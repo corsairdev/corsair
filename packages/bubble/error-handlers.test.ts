@@ -3,15 +3,18 @@ import { BubbleAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 describe('errorHandlers', () => {
-	it('retries a 429, honouring a retry-after carried on the error', async () => {
+	it('classifies a 429 without adding a second retry loop on top of the transport', async () => {
 		const error = new BubbleAPIError('rate limited', 429);
 		// Give the error a retry-after as the transport would via ApiError.
 		(error as { retryAfter?: number }).retryAfter = 2000;
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 
+		// The transport (`client.ts`'s BUBBLE_RATE_LIMIT_CONFIG) already
+		// bounds 429 handling and honours retry-after, so the interceptor
+		// must NOT re-run the endpoint: one retry policy only.
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
-		expect(result.maxRetries).toBeGreaterThan(0);
+		expect(result.maxRetries).toBe(0);
 		expect(result.headersRetryAfterMs).toBe(2000);
 	});
 

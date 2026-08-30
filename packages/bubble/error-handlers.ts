@@ -13,8 +13,17 @@ export const errorHandlers = {
 			if (error instanceof BubbleAPIError) return error.status === 429;
 			return error.message.toLowerCase().includes('429');
 		},
+		/**
+		 * No re-execution here: `request()` in `corsair/http` already bounds
+		 * 429 handling (see `client.ts`'s `BUBBLE_RATE_LIMIT_CONFIG` - up to 4
+		 * attempts honouring `retry-after`). Retrying the whole endpoint from
+		 * the interceptor on top of that would nest two retry loops (up to
+		 * ~4x6 provider requests per caller attempt). One policy: this is a
+		 * classification-only match. The `retry-after` value is still exposed
+		 * for instrumentation.
+		 */
 		handler: async (error: Error) => ({
-			maxRetries: 5,
+			maxRetries: 0,
 			headersRetryAfterMs:
 				error instanceof BubbleAPIError ? error.retryAfter : undefined,
 		}),
