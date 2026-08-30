@@ -26,4 +26,4 @@ exampleWebhook:
   path: driveChanged
   note: "Fires when a file or folder is created, updated, or deleted."
   after: |
-    console.log('Drive change:', result.data?.changeType, result.data?.fileId);
+    console.log('Drive change:', result.data?.changeType, result.data?.fileId ?? result.data?.folderId);

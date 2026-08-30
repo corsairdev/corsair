@@ -133,7 +133,7 @@ googledrive({
     webhookHooks: {
         driveChanged: {
             after: async (ctx, result) => {
-                console.log('Drive change:', result.data?.changeType, result.data?.fileId);
+                console.log('Drive change:', result.data?.changeType, result.data?.fileId ?? result.data?.folderId);
             }
         },
     },
