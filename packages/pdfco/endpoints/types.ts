@@ -7,7 +7,7 @@ const PdfcoStandardResponseSchema = z.object({
 	error: z.boolean().default(false),
 	message: z.string().optional(),
 	status: z.number().optional(),
-	body: z.any().optional(),
+	body: z.unknown().optional(),
 });
 
 // File Upload
@@ -28,7 +28,7 @@ export type PdfToJsonResponse = z.infer<typeof PdfcoStandardResponseSchema>;
 
 // PDF Merge
 const PdfMergeInputSchema = z.object({
-	url: z.string().describe("Comma-separated list of PDF URLs to merge"),
+	url: z.string().refine((val: string) => val.split(',').every((u: string) => z.string().url().safeParse(u.trim()).success), { message: "Must be a comma-separated list of valid URLs" }).describe("Comma-separated list of PDF URLs to merge"),
 	name: z.string().optional().describe("Result file name"),
 });
 export type PdfMergeInput = z.infer<typeof PdfMergeInputSchema>;

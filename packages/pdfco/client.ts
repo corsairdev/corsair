@@ -1,6 +1,6 @@
 import type { ApiRequestOptions } from 'corsair/http';
 import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { request, ApiError } from 'corsair/http';
 
 export class PdfcoAPIError extends Error {
 	constructor(
@@ -51,6 +51,9 @@ export async function makePdfcoRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new PdfcoAPIError(error.message);
 		}

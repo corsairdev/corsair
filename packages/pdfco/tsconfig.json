@@ -26,5 +26,9 @@
     "dist",
     "node_modules"
   ],
-  "references": []
+  "references": [
+    {
+      "path": "../corsair"
+    }
+  ]
 }

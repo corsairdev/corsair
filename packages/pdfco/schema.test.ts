@@ -16,6 +16,9 @@ describe('Pdfco schema', () => {
 		expect(typeof PdfcoSchema.entities).toBe('object');
 		expect(PdfcoSchema.entities).not.toBeNull();
 		expect(Array.isArray(Object.keys(PdfcoSchema.entities))).toBe(true);
+		Object.values(PdfcoSchema.entities).forEach((entity: any) => {
+			expect(entity).toBeDefined();
+		});
 	});
 });
 
@@ -38,6 +41,7 @@ describe('Endpoints', () => {
 
 	it('validates pdfMerge inputs', () => {
 		expect(() => PdfcoEndpointInputSchemas.pdfMerge.parse({ url: 123 })).toThrow();
+		expect(() => PdfcoEndpointInputSchemas.pdfMerge.parse({ url: 'not-a-url' })).toThrow();
 		expect(PdfcoEndpointInputSchemas.pdfMerge.parse({ url: 'https://example.com/1.pdf,https://example.com/2.pdf' })).toBeDefined();
 	});
 

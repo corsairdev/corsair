@@ -86,7 +86,7 @@ export const pdfcoEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const pdfcoEndpointMeta = {
-	fileUpload: { riskLevel: 'read', description: 'Upload file or URL' },
+	fileUpload: { riskLevel: 'write', description: 'Upload file or URL' },
 	pdfToJson: { riskLevel: 'read', description: 'Convert PDF to JSON' },
 	pdfMerge: { riskLevel: 'write', description: 'Merge PDFs' },
 	pdfSplit: { riskLevel: 'write', description: 'Split PDFs' },
@@ -131,12 +131,12 @@ export function pdfco<const T extends PdfcoPluginOptions>(
 		webhooks: {},
 		endpointMeta: pdfcoEndpointMeta,
 		endpointSchemas: pdfcoEndpointSchemas,
-		webhookSchemas: {} as any,
+		webhookSchemas: {},
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		keyBuilder: async (ctx: PdfcoKeyBuilderContext, source) => {
+		keyBuilder: async (ctx: PdfcoKeyBuilderContext, source: 'endpoint' | 'webhook') => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}

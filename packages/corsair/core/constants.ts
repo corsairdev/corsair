@@ -379,7 +379,7 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
-	pdfco: 'Pdfco',
+	pdfco: 'PDF.co',
 	pdfmonkey: 'PDFMonkey',
 	perplexityai: 'Perplexity AI',
 	posthog: 'PostHog',
