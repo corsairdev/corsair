@@ -1,13 +1,26 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import { makeBigpictureioRequest } from './client';
-import { BigpictureioEndpointInputSchemas } from './endpoints/types';
+import {
+	BigpictureioEndpointInputSchemas,
+	BigpictureioEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import type {
 	BigpictureioContext,
 	BigpictureioKeyBuilderContext,
 } from './index';
 import { bigpictureio } from './index';
+
+type PluginEndpoints = {
+	company: {
+		find: (ctx: BigpictureioContext, input: unknown) => Promise<unknown>;
+		stream: (ctx: BigpictureioContext, input: unknown) => Promise<unknown>;
+	};
+	ip: {
+		find: (ctx: BigpictureioContext, input: unknown) => Promise<unknown>;
+	};
+};
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -38,6 +51,10 @@ function plugin() {
 	return bigpictureio({ key: 'bp_test_key' });
 }
 
+function endpoints(): PluginEndpoints {
+	return plugin().endpoints as unknown as PluginEndpoints;
+}
+
 function classify(error: Error): string {
 	const name = (
 		Object.keys(errorHandlers) as Array<keyof typeof errorHandlers>
@@ -63,11 +80,13 @@ describe('bigpictureio plugin shape', () => {
 	it('registers api key auth and no leftover oauth or example webhook', () => {
 		const instance = plugin();
 		expect(instance.id).toBe('bigpictureio');
-		expect(instance.authConfig).toEqual({ api_key: {} });
+		expect(instance.authConfig).toEqual({ api_key: { account: [] } });
 		expect(instance.webhooks).toEqual({});
 		expect(instance.pluginWebhookMatcher).toBeUndefined();
 		expect(instance.oauthWebhookTenantLinkResolver).toBeUndefined();
 		expect(instance.endpoints?.company.find).toEqual(expect.any(Function));
+		expect(endpoints().company.stream).toEqual(expect.any(Function));
+		expect(endpoints().ip.find).toEqual(expect.any(Function));
 	});
 });
 
@@ -133,6 +152,78 @@ describe('bigpictureio request client', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('rejects a whitespace api key', async () => {
+		await expect(
+			makeBigpictureioRequest('/v1/companies/find', '   '),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('does not treat 202 as an error when the caller will wait on a webhook', async () => {
+		await makeBigpictureioRequest('/v1/companies/find', 'bp_test_key', {
+			method: 'GET',
+			query: {
+				domain: 'walmart.com',
+				webhookUrl: 'https://hooks.example.com/bp',
+			},
+			acceptPending: true,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				errors: expect.not.objectContaining({ 202: expect.any(String) }),
+			}),
+			expect.anything(),
+		);
+	});
+
+	it('uses the IP host for IP lookups', async () => {
+		await makeBigpictureioRequest('/v2/companies/ip', 'bp_test_key', {
+			method: 'GET',
+			query: { ip: '204.4.143.118' },
+			base: 'https://ip.bigpicture.io',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://ip.bigpicture.io',
+				HEADERS: expect.objectContaining({
+					Authorization: 'bp_test_key',
+				}),
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/v2/companies/ip',
+				query: { ip: '204.4.143.118' },
+			}),
+			expect.anything(),
+		);
+	});
+
+	it('holds the stream request open for 200 seconds', async () => {
+		await makeBigpictureioRequest('/v1/companies/find/stream', 'bp_test_key', {
+			method: 'GET',
+			query: { domain: 'walmart.com' },
+			timeoutMs: 210_000,
+			acceptPending: true,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://company.bigpicture.io',
+				TIMEOUT: 210_000,
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/v1/companies/find/stream',
+				query: { domain: 'walmart.com' },
+				errors: expect.not.objectContaining({ 202: expect.any(String) }),
+			}),
+			expect.anything(),
+		);
+	});
+
 	it('rethrows ApiError', async () => {
 		const err = httpError(401, 'Unauthorized');
 		mockRequest.mockRejectedValue(err);
@@ -184,6 +275,122 @@ describe('bigpictureio company.find', () => {
 			plugin().endpoints?.company.find(mockCtx, { domain: 'walmart.com' }),
 		).rejects.toBeInstanceOf(ApiError);
 	});
+
+	it('forwards webhookUrl and webhookId on company find', async () => {
+		await endpoints().company.find(mockCtx, {
+			domain: 'walmart.com',
+			webhookUrl: 'https://hooks.example.com/bp',
+			webhookId: 'job-22',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/v1/companies/find',
+				query: {
+					domain: 'walmart.com',
+					webhookUrl: 'https://hooks.example.com/bp',
+					webhookId: 'job-22',
+				},
+			}),
+			expect.anything(),
+		);
+	});
+
+	it('returns pending when a webhook was supplied and the body is empty', async () => {
+		mockRequest.mockResolvedValue({});
+		await expect(
+			endpoints().company.find(mockCtx, {
+				domain: 'walmart.com',
+				webhookUrl: 'https://hooks.example.com/bp',
+				webhookId: 'job-22',
+			}),
+		).resolves.toEqual({
+			pending: true,
+			webhookUrl: 'https://hooks.example.com/bp',
+			webhookId: 'job-22',
+		});
+	});
+});
+
+describe('bigpictureio company.stream', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+		mockLog.mockReset();
+		mockRequest.mockResolvedValue({
+			name: 'Walmart',
+			domain: 'walmart.com',
+		});
+	});
+
+	it('GETs the stream path and waits for a company', async () => {
+		const result = await endpoints().company.stream(mockCtx, {
+			domain: ' walmart.com ',
+		});
+
+		expect(result).toEqual({ name: 'Walmart', domain: 'walmart.com' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				TIMEOUT: 210_000,
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/v1/companies/find/stream',
+				query: { domain: 'walmart.com' },
+			}),
+			expect.anything(),
+		);
+	});
+
+	it('rejects an empty domain before calling the stream API', async () => {
+		await expect(
+			endpoints().company.stream(mockCtx, { domain: '  ' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+});
+
+describe('bigpictureio ip.find', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+		mockLog.mockReset();
+		mockRequest.mockResolvedValue({
+			ip: '204.4.143.118',
+			type: 'business',
+			company: { name: 'Goldman Sachs Group', domain: 'goldmansachs.com' },
+		});
+	});
+
+	it('GETs the IP host with the parsed address', async () => {
+		const result = await endpoints().ip.find(mockCtx, {
+			ip: ' 204.4.143.118 ',
+		});
+
+		expect(result).toEqual({
+			ip: '204.4.143.118',
+			type: 'business',
+			company: { name: 'Goldman Sachs Group', domain: 'goldmansachs.com' },
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://ip.bigpicture.io',
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/v2/companies/ip',
+				query: { ip: '204.4.143.118' },
+			}),
+			expect.anything(),
+		);
+	});
+
+	it('rejects an invalid IP before calling the API', async () => {
+		await expect(
+			endpoints().ip.find(mockCtx, { ip: 'not-an-ip' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 });
 
 describe('bigpictureio schemas', () => {
@@ -196,6 +403,37 @@ describe('bigpictureio schemas', () => {
 				domain: ' uber.com ',
 			}).domain,
 		).toBe('uber.com');
+	});
+
+	it('rejects a company body with no identity', () => {
+		expect(() =>
+			BigpictureioEndpointOutputSchemas.companyFind.parse({}),
+		).toThrow();
+	});
+
+	it('rejects webhookId without webhookUrl', () => {
+		expect(() =>
+			BigpictureioEndpointInputSchemas.companyFind.parse({
+				domain: 'uber.com',
+				webhookId: 'job-22',
+			}),
+		).toThrow();
+	});
+
+	it('requires a real IP on ip.find', () => {
+		expect(() =>
+			BigpictureioEndpointInputSchemas.ipFind.parse({ ip: 'nope' }),
+		).toThrow();
+		expect(
+			BigpictureioEndpointInputSchemas.ipFind.parse({
+				ip: ' 204.4.143.118 ',
+			}).ip,
+		).toBe('204.4.143.118');
+		expect(
+			BigpictureioEndpointInputSchemas.ipFind.parse({
+				ip: '2001:db8::1',
+			}).ip,
+		).toBe('2001:db8::1');
 	});
 });
 
@@ -210,6 +448,7 @@ describe('bigpictureio error classification', () => {
 		);
 		expect(classify(httpError(500, 'Server Error'))).toBe('SERVER_ERROR');
 		expect(classify(httpError(202, 'Accepted'))).toBe('LOOKUP_PENDING');
+		expect(classify(httpError(402, 'Over quota'))).toBe('QUOTA_ERROR');
 	});
 
 	it('keeps DEFAULT last after option merge', () => {

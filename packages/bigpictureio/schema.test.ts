@@ -15,6 +15,8 @@ describe('Bigpictureio schema and plugin', () => {
 		const plugin = bigpictureio({ key: 'test_api_key' });
 		expect(plugin.id).toBe('bigpictureio');
 		expect(typeof plugin.endpoints?.company.find).toBe('function');
+		expect(typeof plugin.endpoints?.company.stream).toBe('function');
+		expect(typeof plugin.endpoints?.ip.find).toBe('function');
 		expect(plugin.webhooks).toEqual({});
 	});
 });
