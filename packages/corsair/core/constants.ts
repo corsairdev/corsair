@@ -13,7 +13,6 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'dropboxsign',
 	'ably',
 	'abstract',
 	'abuseipdb',
@@ -94,6 +93,7 @@ export const BaseProviders = [
 	'bugsnag',
 	'cal',
 	'calendly',
+	'campayn',
 	'canva',
 	'canvas',
 	'chatbotkit',
@@ -121,6 +121,7 @@ export const BaseProviders = [
 	'doppler',
 	'dreamstudio',
 	'dropbox',
+	'dropboxsign',
 	'epicgames',
 	'exa',
 	'facebook',
@@ -323,6 +324,7 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
+	campayn: 'Campayn',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
 	chatbotkit: 'ChatBotKit',
@@ -560,6 +562,7 @@ export type AllProviders =
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
+	| 'campayn'
 	| 'canva'
 	| 'canvas'
 	| 'chatbotkit'
