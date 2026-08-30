@@ -1,0 +1,432 @@
+---
+title: Webhooks
+description: "CrowTerminal incoming webhooks: event paths, payloads, and response data."
+---
+
+The CrowTerminal plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/crowterminal/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `data`
+  - `ingested` (`data.ingested`)
+- `posting`
+  - `completed` (`posting.completed`)
+  - `failed` (`posting.failed`)
+- `skill`
+  - `updated` (`skill.updated`)
+  - `versionCreated` (`skill.versionCreated`)
+- `validation`
+  - `blocked` (`validation.blocked`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Data
+
+### Ingested
+
+`data.ingested`
+
+Agent data was ingested
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `data.ingested` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+| `agentId` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: data.ingested,
+  timestamp: string,
+  webhookId: string,
+  agentId: string,
+  data: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+crowterminal({
+    webhookHooks: {
+        data: {
+            ingested: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Posting
+
+### Completed
+
+`posting.completed`
+
+Content posting completed successfully
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `posting.completed` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+| `agentId` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: posting.completed,
+  timestamp: string,
+  webhookId: string,
+  agentId: string,
+  data: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+crowterminal({
+    webhookHooks: {
+        posting: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Failed
+
+`posting.failed`
+
+Content posting failed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `posting.failed` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+| `agentId` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: posting.failed,
+  timestamp: string,
+  webhookId: string,
+  agentId: string,
+  data: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+crowterminal({
+    webhookHooks: {
+        posting: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Skill
+
+### Updated
+
+`skill.updated`
+
+A client skill was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `skill.updated` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+| `agentId` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: skill.updated,
+  timestamp: string,
+  webhookId: string,
+  agentId: string,
+  data: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+crowterminal({
+    webhookHooks: {
+        skill: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Version Created
+
+`skill.versionCreated`
+
+A new skill version was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `skill.version_created` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+| `agentId` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: skill.version_created,
+  timestamp: string,
+  webhookId: string,
+  agentId: string,
+  data: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+crowterminal({
+    webhookHooks: {
+        skill: {
+            versionCreated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Validation
+
+### Blocked
+
+`validation.blocked`
+
+A proposed memory change was blocked
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `validation.blocked` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+| `agentId` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: validation.blocked,
+  timestamp: string,
+  webhookId: string,
+  agentId: string,
+  data: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+crowterminal({
+    webhookHooks: {
+        validation: {
+            blocked: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

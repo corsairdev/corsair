@@ -1,0 +1,531 @@
+---
+title: Webhooks
+description: "Canvas incoming webhooks: event paths, payloads, and response data."
+---
+
+The Canvas plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/canvas/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `triggers`
+  - `assignmentGraded` (`triggers.assignmentGraded`)
+  - `newAssignmentSubmission` (`triggers.newAssignmentSubmission`)
+  - `newCourseCreated` (`triggers.newCourseCreated`)
+  - `newDiscussionMessage` (`triggers.newDiscussionMessage`)
+  - `newDiscussionTopic` (`triggers.newDiscussionTopic`)
+  - `newFileUploaded` (`triggers.newFileUploaded`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Triggers
+
+### Assignment Graded
+
+`triggers.assignmentGraded`
+
+Canvas Live Event when an assignment grade changes
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `data` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type?: string,
+  created_at?: string,
+  data?: {
+  },
+  metadata?: {
+  },
+  body?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+canvas({
+    webhookHooks: {
+        triggers: {
+            assignmentGraded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### New Assignment Submission
+
+`triggers.newAssignmentSubmission`
+
+Canvas Live Event when a new assignment submission is created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `data` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type?: string,
+  created_at?: string,
+  data?: {
+  },
+  metadata?: {
+  },
+  body?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+canvas({
+    webhookHooks: {
+        triggers: {
+            newAssignmentSubmission: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### New Course Created
+
+`triggers.newCourseCreated`
+
+Canvas Live Event when a course is created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `data` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type?: string,
+  created_at?: string,
+  data?: {
+  },
+  metadata?: {
+  },
+  body?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+canvas({
+    webhookHooks: {
+        triggers: {
+            newCourseCreated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### New Discussion Message
+
+`triggers.newDiscussionMessage`
+
+Canvas Live Event when a discussion entry is created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `data` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type?: string,
+  created_at?: string,
+  data?: {
+  },
+  metadata?: {
+  },
+  body?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+canvas({
+    webhookHooks: {
+        triggers: {
+            newDiscussionMessage: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### New Discussion Topic
+
+`triggers.newDiscussionTopic`
+
+Canvas Live Event when a discussion topic is created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `data` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type?: string,
+  created_at?: string,
+  data?: {
+  },
+  metadata?: {
+  },
+  body?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+canvas({
+    webhookHooks: {
+        triggers: {
+            newDiscussionTopic: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### New File Uploaded
+
+`triggers.newFileUploaded`
+
+Canvas Live Event when a file attachment is created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `data` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type?: string,
+  created_at?: string,
+  data?: {
+  },
+  metadata?: {
+  },
+  body?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+canvas({
+    webhookHooks: {
+        triggers: {
+            newFileUploaded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
