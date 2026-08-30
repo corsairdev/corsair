@@ -1,12 +1,33 @@
 import { z } from 'zod';
 
-const CompanyFindInputSchema = z.object({
-	domain: z.string().trim().min(1),
-});
+const CompanyFindInputSchema = z
+	.object({
+		domain: z.string().trim().min(1),
+		webhookUrl: z.string().trim().url().optional(),
+		webhookId: z.string().trim().min(1).optional(),
+	})
+	.refine(
+		(value) => value.webhookId === undefined || value.webhookUrl !== undefined,
+	);
 
 export type CompanyFindInput = z.infer<typeof CompanyFindInputSchema>;
 
-const CompanyFindResponseSchema = z
+const CompanyStreamInputSchema = z.object({
+	domain: z.string().trim().min(1),
+});
+
+export type CompanyStreamInput = z.infer<typeof CompanyStreamInputSchema>;
+
+const IpFindInputSchema = z.object({
+	ip: z
+		.string()
+		.trim()
+		.pipe(z.union([z.ipv4(), z.ipv6()])),
+});
+
+export type IpFindInput = z.infer<typeof IpFindInputSchema>;
+
+const CompanyFieldsSchema = z
 	.object({
 		id: z.string().optional(),
 		name: z.string().optional(),
@@ -102,20 +123,92 @@ const CompanyFindResponseSchema = z
 	})
 	.passthrough();
 
+export function hasCompanyIdentity(value: unknown): boolean {
+	if (!value || typeof value !== 'object') {
+		return false;
+	}
+	const { id, name, domain } = value as Record<string, unknown>;
+	return [id, name, domain].some(
+		(field) => typeof field === 'string' && field.trim().length > 0,
+	);
+}
+
+const CompanyProfileSchema = CompanyFieldsSchema.refine(hasCompanyIdentity);
+
+const CompanyPendingSchema = z.object({
+	pending: z.literal(true),
+	webhookUrl: z.string().url(),
+	webhookId: z.string().optional(),
+});
+
+const CompanyFindResponseSchema = z.union([
+	CompanyProfileSchema,
+	CompanyPendingSchema,
+]);
+
 export type CompanyFindResponse = z.infer<typeof CompanyFindResponseSchema>;
+export type CompanyStreamResponse = z.infer<typeof CompanyProfileSchema>;
+
+const IpFindResponseSchema = z
+	.object({
+		ip: z.string().min(1),
+		type: z.string().optional(),
+		fuzzy: z.boolean().optional(),
+		confidence: z.number().optional(),
+		geo: z
+			.object({
+				city: z.string().optional(),
+				state: z.string().optional(),
+				stateCode: z.string().optional(),
+				country: z.string().optional(),
+				countryCode: z.string().optional(),
+				continent: z.string().optional(),
+				continentCode: z.string().optional(),
+				isEU: z.boolean().optional(),
+			})
+			.passthrough()
+			.optional(),
+		company: CompanyFieldsSchema.optional(),
+		whois: z
+			.object({
+				domain: z.string().optional(),
+				name: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+		asn: z
+			.object({
+				asn: z.string().optional(),
+				name: z.string().optional(),
+				route: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
+
+export type IpFindResponse = z.infer<typeof IpFindResponseSchema>;
 
 export type BigpictureioEndpointInputs = {
 	companyFind: CompanyFindInput;
+	companyStream: CompanyStreamInput;
+	ipFind: IpFindInput;
 };
 
 export type BigpictureioEndpointOutputs = {
 	companyFind: CompanyFindResponse;
+	companyStream: CompanyStreamResponse;
+	ipFind: IpFindResponse;
 };
 
 export const BigpictureioEndpointInputSchemas = {
 	companyFind: CompanyFindInputSchema,
+	companyStream: CompanyStreamInputSchema,
+	ipFind: IpFindInputSchema,
 } as const;
 
 export const BigpictureioEndpointOutputSchemas = {
 	companyFind: CompanyFindResponseSchema,
+	companyStream: CompanyProfileSchema,
+	ipFind: IpFindResponseSchema,
 } as const;
