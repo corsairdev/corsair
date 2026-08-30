@@ -1,6 +1,5 @@
 import { createHmac } from 'node:crypto';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { ApiError, request } from 'corsair/http';
 import {
 	BREX_API_BASE,
 	BrexAPIError,
@@ -48,31 +47,49 @@ jest.mock('corsair/core', () => {
 	};
 });
 
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual('corsair/http');
-	return {
-		...actual,
-		request: jest.fn(),
-	};
+const mockFetch = jest.fn();
+
+beforeAll(() => {
+	globalThis.fetch = mockFetch as typeof fetch;
 });
 
-const mockRequest = request as jest.MockedFunction<typeof request>;
-
 beforeEach(() => {
-	mockRequest.mockReset();
+	mockFetch.mockReset();
 	jest.mocked(logEventFromContext).mockReset();
-	mockRequest.mockResolvedValue({ id: 'ok' } as never);
+	mockFetch.mockResolvedValue(
+		new Response(JSON.stringify({ id: 'ok' }), {
+			status: 200,
+			headers: { 'Content-Type': 'application/json' },
+		}),
+	);
 });
 
 const ctx = { key: 'test-token', $getAccountId: async () => 'acct' } as never;
 
+function jsonResponse(body: unknown, init?: ResponseInit): Response {
+	return new Response(JSON.stringify(body), {
+		status: 200,
+		...init,
+		headers: {
+			'Content-Type': 'application/json',
+			...(init?.headers as Record<string, string> | undefined),
+		},
+	});
+}
+
 function lastCall() {
-	expect(mockRequest).toHaveBeenCalled();
-	const [config, options] = mockRequest.mock.calls[0] as unknown as [
-		{ BASE?: string; HEADERS?: Record<string, string> },
-		{ method?: string; url?: string; query?: unknown; body?: unknown },
+	expect(mockFetch).toHaveBeenCalled();
+	const [input, init] = mockFetch.mock.calls[0] as [
+		string,
+		RequestInit | undefined,
 	];
-	return { options, config };
+	const url = new URL(input);
+	return {
+		url: `${url.origin}${url.pathname}`,
+		path: url.pathname,
+		method: init?.method ?? 'GET',
+		auth: new Headers(init?.headers).get('Authorization'),
+	};
 }
 
 function sampleInput(key: BrexRouteKey): Record<string, unknown> {
@@ -145,51 +162,57 @@ describe('Brex plugin', () => {
 				sampleInput(key),
 			) as BrexEndpointInput;
 			if (route.filter === 'transactionId') {
-				mockRequest.mockResolvedValue({
-					items: [{ id: 'id-1', amount: { amount: 1200 } }],
-					next_cursor: null,
-				} as never);
+				mockFetch.mockResolvedValue(
+					jsonResponse({
+						items: [{ id: 'id-1', amount: { amount: 1200 } }],
+						next_cursor: null,
+					}),
+				);
 			} else if (route.filter === 'transactionAmount') {
-				mockRequest.mockResolvedValue({
-					items: [
-						{
-							id: 't1',
-							amount: { amount: 2500 },
-							posted_at_date: '2026-01-02',
-						},
-						{
-							id: 't2',
-							amount: { amount: 90000 },
-							posted_at_date: '2026-01-02',
-						},
-					],
-					next_cursor: null,
-				} as never);
+				mockFetch.mockResolvedValue(
+					jsonResponse({
+						items: [
+							{
+								id: 't1',
+								amount: { amount: 2500 },
+								posted_at_date: '2026-01-02',
+							},
+							{
+								id: 't2',
+								amount: { amount: 90000 },
+								posted_at_date: '2026-01-02',
+							},
+						],
+						next_cursor: null,
+					}),
+				);
 			} else if (route.filter === 'transactionDescription') {
-				mockRequest.mockResolvedValue({
-					items: [
-						{
-							id: 't1',
-							merchant: { raw_descriptor: 'UBER TRIP' },
-							posted_at_date: '2026-01-02',
-						},
-					],
-					next_cursor: null,
-				} as never);
+				mockFetch.mockResolvedValue(
+					jsonResponse({
+						items: [
+							{
+								id: 't1',
+								merchant: { raw_descriptor: 'UBER TRIP' },
+								posted_at_date: '2026-01-02',
+							},
+						],
+						next_cursor: null,
+					}),
+				);
 			}
 
 			const result = await createBrexEndpoint(key)(ctx, input);
 			BrexEndpointOutputSchemas[key].parse(result);
 
-			const { options, config } = lastCall();
-			expect(config.BASE).toBe(BREX_API_BASE);
-			expect(config.HEADERS?.Authorization).toBe('Bearer test-token');
+			const req = lastCall();
+			expect(req.url.startsWith(BREX_API_BASE)).toBe(true);
+			expect(req.auth).toBe('Bearer test-token');
 			if (route.filter === 'cardStatus') {
-				expect(options.url).toBe(cardStatusPath('id-1', 'lock'));
+				expect(req.path).toBe(cardStatusPath('id-1', 'lock'));
 			} else {
-				expect(options.url).toBe(resolvePath(route.path, input));
+				expect(req.path).toBe(resolvePath(route.path, input));
 			}
-			expect(options.method).toBe(route.method);
+			expect(req.method).toBe(route.method);
 		},
 	);
 
@@ -200,18 +223,14 @@ describe('Brex plugin', () => {
 	});
 
 	it('wraps HTTP 429 as BrexRateLimitError with retry metadata', async () => {
-		mockRequest.mockRejectedValue(
-			new ApiError(
-				{ method: 'GET', url: '/v2/company' },
+		mockFetch.mockResolvedValue(
+			jsonResponse(
+				{ message: 'slow down' },
 				{
-					url: 'https://api.brex.com/v2/company',
-					ok: false,
 					status: 429,
 					statusText: 'Too Many Requests',
-					body: { message: 'slow down' },
+					headers: { 'Retry-After': '2' },
 				},
-				'Too Many Requests',
-				{ retryAfter: 2000 },
 			),
 		);
 
@@ -228,17 +247,10 @@ describe('Brex plugin', () => {
 	});
 
 	it('wraps HTTP 401 as BrexAPIError', async () => {
-		mockRequest.mockRejectedValue(
-			new ApiError(
-				{ method: 'GET', url: '/v2/company' },
-				{
-					url: 'https://api.brex.com/v2/company',
-					ok: false,
-					status: 401,
-					statusText: 'Unauthorized',
-					body: { message: 'invalid token' },
-				},
-				'Unauthorized',
+		mockFetch.mockResolvedValue(
+			jsonResponse(
+				{ message: 'invalid token' },
+				{ status: 401, statusText: 'Unauthorized' },
 			),
 		);
 		await expect(makeBrexRequest('/v2/company', 'bad')).rejects.toBeInstanceOf(

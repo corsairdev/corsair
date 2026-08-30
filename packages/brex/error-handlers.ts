@@ -1,5 +1,4 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ApiError } from 'corsair/http';
 import { BrexAPIError, BrexRateLimitError } from './client';
 
 export const errorHandlers = {
@@ -7,7 +6,6 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof BrexRateLimitError) return true;
 			if (error instanceof BrexAPIError && error.status === 429) return true;
-			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('too many requests') ||
@@ -17,18 +15,13 @@ export const errorHandlers = {
 		},
 		handler: async (error: Error) => {
 			const retryAfterMs =
-				error instanceof BrexRateLimitError
-					? error.retryAfterMs
-					: error instanceof ApiError
-						? error.retryAfter
-						: undefined;
+				error instanceof BrexRateLimitError ? error.retryAfterMs : undefined;
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof BrexAPIError && error.status === 401) return true;
-			if (error instanceof ApiError && error.status === 401) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('unauthorized') ||

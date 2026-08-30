@@ -1,6 +1,3 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
 export class BrexAPIError extends Error {
 	constructor(
 		message: string,
@@ -37,16 +34,36 @@ export type BrexRequestOptions = {
 	query?: Record<string, string | number | boolean | undefined>;
 };
 
-function errorMessage(error: ApiError): string {
-	const body =
-		typeof error.body === 'object' && error.body !== null
-			? (error.body as Record<string, unknown>)
-			: undefined;
-	return (
-		(body && typeof body.message === 'string' ? body.message : undefined) ||
-		(body && typeof body.error === 'string' ? body.error : undefined) ||
-		error.message
-	);
+function retryAfterMs(res: Response): number | undefined {
+	const raw = res.headers.get('Retry-After');
+	if (!raw) return undefined;
+	const seconds = Number(raw);
+	if (Number.isFinite(seconds)) return seconds * 1000;
+	const at = Date.parse(raw);
+	return Number.isFinite(at) ? Math.max(0, at - Date.now()) : undefined;
+}
+
+function bodyMessage(body: unknown, fallback: string): string {
+	if (typeof body === 'object' && body !== null) {
+		const record = body as Record<string, unknown>;
+		if (typeof record.message === 'string') return record.message;
+		if (typeof record.error === 'string') return record.error;
+	}
+	return fallback;
+}
+
+function buildUrl(
+	endpoint: string,
+	query?: Record<string, string | number | boolean | undefined>,
+): string {
+	const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+	const url = new URL(`${BREX_API_BASE}${path}`);
+	if (query) {
+		for (const [key, value] of Object.entries(query)) {
+			if (value !== undefined) url.searchParams.set(key, String(value));
+		}
+	}
+	return url.toString();
 }
 
 export async function makeBrexRequest<T>(
@@ -55,50 +72,42 @@ export async function makeBrexRequest<T>(
 	options: BrexRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
-	const hasBody = body !== undefined;
-
-	const config: OpenAPIConfig = {
-		BASE: BREX_API_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		HEADERS: {
+	const res = await fetch(buildUrl(endpoint, query), {
+		method,
+		headers: {
 			Accept: 'application/json',
 			Authorization: `Bearer ${apiKey}`,
-			...(hasBody ? { 'Content-Type': 'application/json' } : {}),
+			...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
 		},
-	};
+		body: body !== undefined ? JSON.stringify(body) : undefined,
+	});
 
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body: hasBody ? body : undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query,
-	};
+	if (res.status === 204) return {} as T;
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error: unknown) {
-		if (error instanceof ApiError) {
-			if (error.status === 429) {
-				throw new BrexRateLimitError(
-					errorMessage(error),
-					error.retryAfter,
-					error.body,
-				);
-			}
-			throw new BrexAPIError(
-				errorMessage(error),
-				error.status,
-				error.status,
-				error.body,
-			);
+	let parsed: unknown;
+	const text = await res.text();
+	if (text) {
+		try {
+			parsed = JSON.parse(text);
+		} catch {
+			parsed = text;
 		}
-		if (error instanceof Error) {
-			throw new BrexAPIError(error.message);
-		}
-		throw new BrexAPIError('Unknown error');
 	}
+
+	if (res.status === 429) {
+		throw new BrexRateLimitError(
+			bodyMessage(parsed, res.statusText || 'Too Many Requests'),
+			retryAfterMs(res),
+			parsed,
+		);
+	}
+	if (!res.ok) {
+		throw new BrexAPIError(
+			bodyMessage(parsed, res.statusText || `Brex request failed`),
+			res.status,
+			res.status,
+			parsed,
+		);
+	}
+	return (parsed ?? {}) as T;
 }

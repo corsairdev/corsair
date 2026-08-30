@@ -86,45 +86,17 @@ const getQueryString = (params: Record<string, any>): string => {
 	return '';
 };
 
-function interpolatePathParams(
-	path: string,
-	encoder: (value: string) => string,
-	params?: Record<string, unknown>,
-): string {
-	let out = '';
-	let i = 0;
-	while (i < path.length) {
-		const open = path.indexOf('{', i);
-		if (open === -1) {
-			out += path.slice(i);
-			break;
-		}
-		const close = path.indexOf('}', open + 1);
-		if (close === -1) {
-			out += path.slice(i);
-			break;
-		}
-		out += path.slice(i, open);
-		const group = path.slice(open + 1, close);
-		if (params && Object.prototype.hasOwnProperty.call(params, group)) {
-			out += encoder(String(params[group]));
-		} else {
-			out += path.slice(open, close + 1);
-		}
-		i = close + 1;
-	}
-	return out;
-}
-
 const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 	const encoder = config.ENCODE_PATH || encodeURI;
 
-	// Linear scan — `{.*?}` is polynomial on `{a{a{a...` and trips CodeQL.
-	const path = interpolatePathParams(
-		options.url.replace('{api-version}', config.VERSION),
-		encoder,
-		options.path,
-	);
+	let path = options.url
+		.replace('{api-version}', config.VERSION)
+		.replace(/{(.*?)}/g, (substring: string, group: string) => {
+			if (options.path?.hasOwnProperty(group)) {
+				return encoder(String(options.path[group]));
+			}
+			return substring;
+		});
 
 	const baseUrl = config.BASE.endsWith('/')
 		? config.BASE.slice(0, -1)
