@@ -130,6 +130,11 @@ export const remove: AshbyWebhooks['offer.delete'] = {
 				await ctx.db.offers.deleteById(event.data.offerId);
 			} catch (error) {
 				console.warn('Failed to delete offer from database:', error);
+				return {
+					success: false,
+					statusCode: 500,
+					error: 'Failed to delete offer from cache',
+				};
 			}
 		}
 

@@ -235,17 +235,18 @@ export function verifyAshbyWebhookSignature(
 		return { valid: false, error: 'Missing Ashby-Signature header' };
 	}
 
-	let rawBody = '';
+	let rawBody: string | undefined;
 	if ('rawBody' in request && typeof request.rawBody === 'string') {
 		rawBody = request.rawBody;
-	} else if ('body' in request) {
-		if (typeof request.body === 'string') {
-			rawBody = request.body;
-		} else if (request.body !== undefined && request.body !== null) {
-			rawBody = JSON.stringify(request.body);
-		}
-	} else if ('payload' in request && request.payload !== undefined) {
-		rawBody = JSON.stringify(request.payload);
+	} else if ('body' in request && typeof request.body === 'string') {
+		rawBody = request.body;
+	}
+
+	if (rawBody === undefined) {
+		return {
+			valid: false,
+			error: 'Raw webhook body unavailable for signature verification',
+		};
 	}
 
 	const computedHmac = createHmac('sha256', secret)

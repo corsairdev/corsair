@@ -5,6 +5,7 @@ import {
 	CandidateWebhooks,
 	createAshbyMatch,
 	matchAshbyTenantWebhook,
+	OfferWebhooks,
 	verifyAshbyWebhookSignature,
 } from './webhooks';
 
@@ -81,6 +82,21 @@ describe('Ashby Webhooks Subsystem', () => {
 				body: rawPayload,
 			} as any;
 			expect(verifyAshbyWebhookSignature(reqWithHeader, '').valid).toBe(false);
+		});
+
+		it('rejects a parsed body when no raw string body is present', () => {
+			const req = {
+				headers: {
+					'ashby-signature': validSignatureHeader,
+				},
+				body: payloadObj,
+			} as any;
+
+			const result = verifyAshbyWebhookSignature(req, secret);
+			expect(result.valid).toBe(false);
+			expect(result.error).toBe(
+				'Raw webhook body unavailable for signature verification',
+			);
 		});
 
 		it('rejects malformed signature length', () => {
@@ -203,6 +219,27 @@ describe('Ashby Webhooks Subsystem', () => {
 				payload: submitPayload as any,
 			} as any);
 			expect(submitRes.success).toBe(true);
+		});
+
+		it('returns 500 when offer delete cache write fails', async () => {
+			const deletePayload = {
+				webhookActionId: 'wh_4',
+				action: 'offerDelete',
+				data: { offerId: 'off_123', applicationId: 'app_123' },
+			};
+			const deleteRaw = JSON.stringify(deletePayload);
+			const deleteSig = `sha256=${createHmac('sha256', secret).update(deleteRaw).digest('hex')}`;
+			ctx.db.offers.deleteById.mockRejectedValueOnce(new Error('db down'));
+
+			const res = await OfferWebhooks.delete.handler(ctx, {
+				headers: { 'ashby-signature': deleteSig },
+				body: deleteRaw,
+				rawBody: deleteRaw,
+				payload: deletePayload as any,
+			} as any);
+
+			expect(res.success).toBe(false);
+			expect(res.statusCode).toBe(500);
 		});
 	});
 
