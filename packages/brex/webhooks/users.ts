@@ -7,13 +7,15 @@ export const userUpdated: BrexWebhooks['userUpdated'] = {
 	match: createBrexEventMatch('USER_UPDATED'),
 
 	handler: async (ctx, request) => {
-		const verification = verifyBrexWebhookSignature(request, ctx.key);
-		if (!verification.valid) {
-			return {
-				success: false,
-				statusCode: 401,
-				error: verification.error || 'Signature verification failed',
-			};
+		if (!request.hubVerified) {
+			const verification = verifyBrexWebhookSignature(request, ctx.key);
+			if (!verification.valid) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: verification.error || 'Signature verification failed',
+				};
+			}
 		}
 
 		const event = request.payload;
