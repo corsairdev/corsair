@@ -1,0 +1,124 @@
+---
+title: API
+description: "API reference for AccredibleCertificates: every `accrediblecertificates.api.*` operation with input and output types."
+---
+
+Every `accrediblecertificates.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Credentials
+
+### get
+
+`credentials.get`
+
+Get an credential resource by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.accrediblecertificates.api.credentials.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="credential full type">
+
+```ts
+{
+  id: string | number,
+  name?: string | null,
+  description?: string | null,
+  approve?: boolean | null,
+  grade?: any | null,
+  complete?: boolean | null,
+  issued_on?: string | null,
+  expired_on?: string | null,
+  course_link?: string | null,
+  custom_attributes?: {
+  } | null,
+  group_name?: string | null,
+  group_id?: string | number | null,
+  url?: string | null,
+  encoded_id?: string | null,
+  private?: boolean | null,
+  seo_image?: string | null,
+  certificate?: {
+    image?: {
+      preview?: string | null
+    } | null
+  } | null,
+  badge?: {
+    image?: {
+      preview?: string | null
+    } | null
+  } | null,
+  evidence_items?: {
+    id?: string | number | null,
+    description?: string | null,
+    preview_image_url?: string | null,
+    link_url?: string | null,
+    type?: string | null,
+    string_object?: any | null,
+    supplemental?: boolean | null,
+    position?: number | null
+  }[] | null,
+  references?: {
+    id?: string | number | null,
+    description?: string | null,
+    relationship?: string | null,
+    supplemental?: boolean | null,
+    approve?: boolean | null,
+    referee?: {
+      name?: string | null,
+      email?: string | null,
+      avatar?: string | null
+    } | null
+  }[] | null,
+  recipient?: {
+    id?: string | number | null,
+    name?: string | null,
+    email?: string | null,
+    phone_number?: string | null,
+    meta_data?: any | null
+  } | null,
+  issuer?: {
+    id?: string | number | null,
+    name?: string | null,
+    description?: string | null,
+    url?: string | null
+  } | null,
+  meta_data?: any | null,
+  skills?: {
+    id?: string | number | null,
+    name?: string | null,
+    identifier?: string | null,
+    description?: string | null,
+    url?: string | null,
+    breadcrumbs?: any | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
