@@ -351,11 +351,8 @@ export const ProviderDisplayNames = {
 	doppler: 'Doppler',
 	dreamstudio: 'DreamStudio',
 	dropbox: 'Dropbox',
-<<<<<<< HEAD
 	dropboxsign: 'Dropbox Sign',
-=======
 	dynapictures: 'Dynapictures',
->>>>>>> 2de49288 (feat: add Dynapictures plugin)
 	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
