@@ -13,7 +13,6 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'dropboxsign',
 	'ably',
 	'abstract',
 	'abuseipdb',
@@ -91,6 +90,7 @@ export const BaseProviders = [
 	'boxhero',
 	'brandfetch',
 	'browseai',
+	'bubble',
 	'bugsnag',
 	'cal',
 	'calendly',
@@ -121,6 +121,7 @@ export const BaseProviders = [
 	'doppler',
 	'dreamstudio',
 	'dropbox',
+	'dropboxsign',
 	'epicgames',
 	'exa',
 	'facebook',
@@ -320,6 +321,7 @@ export const ProviderDisplayNames = {
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
 	browseai: 'Browse AI',
+	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
@@ -557,6 +559,7 @@ export type AllProviders =
 	| 'boxhero'
 	| 'brandfetch'
 	| 'browseai'
+	| 'bubble'
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
