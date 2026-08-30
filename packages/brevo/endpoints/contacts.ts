@@ -1,38 +1,48 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeBrevoRequest } from '../client';
 import type { BrevoEndpoints } from '../index';
-import type { BrevoEndpointOutputs } from './types';
+import type { Contact } from './types';
+import { BrevoEndpointInputSchemas, BrevoEndpointOutputSchemas } from './types';
+
+function isNumericIdentifier(identifier: string | number): boolean {
+	return typeof identifier === 'number' || /^\d+$/.test(identifier);
+}
+
+function contactCacheFields(contact: Contact) {
+	return {
+		id: contact.id,
+		email: contact.email ?? undefined,
+		emailBlacklisted: contact.emailBlacklisted,
+		smsBlacklisted: contact.smsBlacklisted,
+		createdAt: contact.createdAt,
+		modifiedAt: contact.modifiedAt,
+		attributes: contact.attributes,
+	};
+}
 
 export const list: BrevoEndpoints['contactsList'] = async (ctx, input) => {
+	const parsed = BrevoEndpointInputSchemas.contactsList.parse(input);
 	const query: Record<string, string | number | undefined> = {};
-	if (input?.limit !== undefined) query.limit = input.limit;
-	if (input?.offset !== undefined) query.offset = input.offset;
-	if (input?.modifiedSince) query.modifiedSince = input.modifiedSince;
-	if (input?.sort) query.sort = input.sort;
-	if (input?.segmentId !== undefined) query.segmentId = input.segmentId;
-	if (input?.listId !== undefined) query.listId = input.listId;
+	if (parsed?.limit !== undefined) query.limit = parsed.limit;
+	if (parsed?.offset !== undefined) query.offset = parsed.offset;
+	if (parsed?.modifiedSince) query.modifiedSince = parsed.modifiedSince;
+	if (parsed?.sort) query.sort = parsed.sort;
+	if (parsed?.segmentId !== undefined) query.segmentId = parsed.segmentId;
+	if (parsed?.listId !== undefined) query.listId = parsed.listId;
 
-	const response = await makeBrevoRequest<BrevoEndpointOutputs['contactsList']>(
-		'contacts',
-		ctx.key,
-		{
-			method: 'GET',
-			query,
-		},
-	);
+	const raw = await makeBrevoRequest<unknown>('contacts', ctx.key, {
+		method: 'GET',
+		query,
+	});
+	const response = BrevoEndpointOutputSchemas.contactsList.parse(raw);
 
 	if (response.contacts && ctx.db?.contacts) {
 		try {
 			for (const contact of response.contacts) {
-				await ctx.db?.contacts.upsertByEntityId(String(contact.id), {
-					id: contact.id,
-					email: contact.email,
-					emailBlacklisted: contact.emailBlacklisted,
-					smsBlacklisted: contact.smsBlacklisted,
-					createdAt: contact.createdAt,
-					modifiedAt: contact.modifiedAt,
-					attributes: contact.attributes,
-				});
+				await ctx.db.contacts.upsertByEntityId(
+					String(contact.id),
+					contactCacheFields(contact),
+				);
 			}
 		} catch (error) {
 			console.warn('Failed to save contacts to database:', error);
@@ -50,13 +60,14 @@ export const list: BrevoEndpoints['contactsList'] = async (ctx, input) => {
 };
 
 export const get: BrevoEndpoints['contactsGet'] = async (ctx, input) => {
+	const parsed = BrevoEndpointInputSchemas.contactsGet.parse(input);
 	const query: Record<string, string | undefined> = {};
-	if (input.attributes && input.attributes.length > 0) {
-		query.attributes = input.attributes.join(',');
+	if (parsed.attributes && parsed.attributes.length > 0) {
+		query.attributes = parsed.attributes.join(',');
 	}
 
-	const encodedIdentifier = encodeURIComponent(String(input.identifier));
-	const response = await makeBrevoRequest<BrevoEndpointOutputs['contactsGet']>(
+	const encodedIdentifier = encodeURIComponent(String(parsed.identifier));
+	const raw = await makeBrevoRequest<unknown>(
 		`contacts/${encodedIdentifier}`,
 		ctx.key,
 		{
@@ -64,18 +75,14 @@ export const get: BrevoEndpoints['contactsGet'] = async (ctx, input) => {
 			query,
 		},
 	);
+	const response = BrevoEndpointOutputSchemas.contactsGet.parse(raw);
 
 	if (response.id && ctx.db?.contacts) {
 		try {
-			await ctx.db?.contacts.upsertByEntityId(String(response.id), {
-				id: response.id,
-				email: response.email,
-				emailBlacklisted: response.emailBlacklisted,
-				smsBlacklisted: response.smsBlacklisted,
-				createdAt: response.createdAt,
-				modifiedAt: response.modifiedAt,
-				attributes: response.attributes,
-			});
+			await ctx.db.contacts.upsertByEntityId(
+				String(response.id),
+				contactCacheFields(response),
+			);
 		} catch (error) {
 			console.warn('Failed to save contact to database:', error);
 		}
@@ -92,35 +99,35 @@ export const get: BrevoEndpoints['contactsGet'] = async (ctx, input) => {
 };
 
 export const create: BrevoEndpoints['contactsCreate'] = async (ctx, input) => {
+	const parsed = BrevoEndpointInputSchemas.contactsCreate.parse(input);
 	const body: Record<string, unknown> = {
-		email: input.email,
+		email: parsed.email,
 	};
-	if (input.attributes) body.attributes = input.attributes;
-	if (input.emailBlacklisted !== undefined)
-		body.emailBlacklisted = input.emailBlacklisted;
-	if (input.smsBlacklisted !== undefined)
-		body.smsBlacklisted = input.smsBlacklisted;
-	if (input.listIds) body.listIds = input.listIds;
-	if (input.updateEnabled !== undefined)
-		body.updateEnabled = input.updateEnabled;
-	if (input.smtpBlacklistSender)
-		body.smtpBlacklistSender = input.smtpBlacklistSender;
+	if (parsed.attributes) body.attributes = parsed.attributes;
+	if (parsed.emailBlacklisted !== undefined)
+		body.emailBlacklisted = parsed.emailBlacklisted;
+	if (parsed.smsBlacklisted !== undefined)
+		body.smsBlacklisted = parsed.smsBlacklisted;
+	if (parsed.listIds) body.listIds = parsed.listIds;
+	if (parsed.updateEnabled !== undefined)
+		body.updateEnabled = parsed.updateEnabled;
+	if (parsed.smtpBlacklistSender)
+		body.smtpBlacklistSender = parsed.smtpBlacklistSender;
 
-	const response = await makeBrevoRequest<
-		BrevoEndpointOutputs['contactsCreate']
-	>('contacts', ctx.key, {
+	const raw = await makeBrevoRequest<unknown>('contacts', ctx.key, {
 		method: 'POST',
 		body,
 	});
+	const response = BrevoEndpointOutputSchemas.contactsCreate.parse(raw);
 
 	if (response.id && ctx.db?.contacts) {
 		try {
-			await ctx.db?.contacts.upsertByEntityId(String(response.id), {
+			await ctx.db.contacts.upsertByEntityId(String(response.id), {
 				id: response.id,
-				email: input.email,
-				emailBlacklisted: input.emailBlacklisted,
-				smsBlacklisted: input.smsBlacklisted,
-				attributes: input.attributes,
+				email: parsed.email,
+				emailBlacklisted: parsed.emailBlacklisted,
+				smsBlacklisted: parsed.smsBlacklisted,
+				attributes: parsed.attributes,
 			});
 		} catch (error) {
 			console.warn('Failed to save contact to database:', error);
@@ -130,7 +137,7 @@ export const create: BrevoEndpoints['contactsCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'brevo.contacts.create',
-		{ id: response.id, email: input.email },
+		{ id: response.id, email: parsed.email },
 		'completed',
 	);
 
@@ -138,7 +145,8 @@ export const create: BrevoEndpoints['contactsCreate'] = async (ctx, input) => {
 };
 
 export const update: BrevoEndpoints['contactsUpdate'] = async (ctx, input) => {
-	const { identifier, ...fields } = input;
+	const parsed = BrevoEndpointInputSchemas.contactsUpdate.parse(input);
+	const { identifier, ...fields } = parsed;
 	const body: Record<string, unknown> = {};
 	if (fields.attributes) body.attributes = fields.attributes;
 	if (fields.emailBlacklisted !== undefined)
@@ -151,10 +159,27 @@ export const update: BrevoEndpoints['contactsUpdate'] = async (ctx, input) => {
 		body.smtpBlacklistSender = fields.smtpBlacklistSender;
 
 	const encodedIdentifier = encodeURIComponent(String(identifier));
-	await makeBrevoRequest<void>(`contacts/${encodedIdentifier}`, ctx.key, {
+	await makeBrevoRequest<unknown>(`contacts/${encodedIdentifier}`, ctx.key, {
 		method: 'PUT',
 		body,
 	});
+
+	const refreshed = BrevoEndpointOutputSchemas.contactsGet.parse(
+		await makeBrevoRequest<unknown>(`contacts/${encodedIdentifier}`, ctx.key, {
+			method: 'GET',
+		}),
+	);
+
+	if (ctx.db?.contacts) {
+		try {
+			await ctx.db.contacts.upsertByEntityId(
+				String(refreshed.id),
+				contactCacheFields(refreshed),
+			);
+		} catch (error) {
+			console.warn('Failed to save contact to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -163,21 +188,37 @@ export const update: BrevoEndpoints['contactsUpdate'] = async (ctx, input) => {
 		'completed',
 	);
 
-	return { success: true };
+	return BrevoEndpointOutputSchemas.contactsUpdate.parse({ success: true });
 };
 
 export const deleteContact: BrevoEndpoints['contactsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const encodedIdentifier = encodeURIComponent(String(input.identifier));
-	await makeBrevoRequest<void>(`contacts/${encodedIdentifier}`, ctx.key, {
+	const parsed = BrevoEndpointInputSchemas.contactsDelete.parse(input);
+	const encodedIdentifier = encodeURIComponent(String(parsed.identifier));
+
+	let cachedId: string;
+	if (isNumericIdentifier(parsed.identifier)) {
+		cachedId = String(parsed.identifier);
+	} else {
+		const existing = BrevoEndpointOutputSchemas.contactsGet.parse(
+			await makeBrevoRequest<unknown>(
+				`contacts/${encodedIdentifier}`,
+				ctx.key,
+				{ method: 'GET' },
+			),
+		);
+		cachedId = String(existing.id);
+	}
+
+	await makeBrevoRequest<unknown>(`contacts/${encodedIdentifier}`, ctx.key, {
 		method: 'DELETE',
 	});
 
 	if (ctx.db?.contacts) {
 		try {
-			await ctx.db?.contacts.deleteByEntityId(String(input.identifier));
+			await ctx.db.contacts.deleteByEntityId(cachedId);
 		} catch (error) {
 			console.warn('Failed to delete contact from database:', error);
 		}
@@ -186,9 +227,9 @@ export const deleteContact: BrevoEndpoints['contactsDelete'] = async (
 	await logEventFromContext(
 		ctx,
 		'brevo.contacts.delete',
-		{ identifier: String(input.identifier) },
+		{ identifier: String(parsed.identifier) },
 		'completed',
 	);
 
-	return { success: true };
+	return BrevoEndpointOutputSchemas.contactsDelete.parse({ success: true });
 };

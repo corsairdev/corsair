@@ -1,16 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeBrevoRequest } from '../client';
 import type { BrevoEndpoints } from '../index';
-import type { BrevoEndpointOutputs } from './types';
+import { BrevoEndpointInputSchemas, BrevoEndpointOutputSchemas } from './types';
 
-export const get: BrevoEndpoints['accountGet'] = async (ctx, _input) => {
-	const response = await makeBrevoRequest<BrevoEndpointOutputs['accountGet']>(
-		'account',
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
+export const get: BrevoEndpoints['accountGet'] = async (ctx, input) => {
+	BrevoEndpointInputSchemas.accountGet.parse(input);
+
+	const raw = await makeBrevoRequest<unknown>('account', ctx.key, {
+		method: 'GET',
+	});
+	const response = BrevoEndpointOutputSchemas.accountGet.parse(raw);
 
 	await logEventFromContext(
 		ctx,
