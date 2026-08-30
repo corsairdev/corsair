@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import type {
 	ApiRequestOptions,
 	OpenAPIConfig,
@@ -7,16 +8,11 @@ import { ApiError, request } from 'corsair/http';
 
 export const ASHBY_API_BASE = 'https://api.ashbyhq.com';
 
-/**
- * Ashby API rate limiting configuration.
- * When encountering 429 Too Many Requests, Corsair will retry with exponential backoff,
- * respecting the Retry-After header if present.
- */
 export const ASHBY_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
 	headerNames: {
 		retryAfter: 'Retry-After',
 	},
@@ -27,15 +23,13 @@ export type AshbyErrorItem = {
 	message?: string;
 };
 
-/**
- * Custom error class representing an error returned by the Ashby API or transport layer.
- */
 export class AshbyAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly status?: number,
 		public readonly code?: string,
 		public readonly errors?: AshbyErrorItem[],
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'AshbyAPIError';
@@ -47,24 +41,27 @@ export type AshbyRequestOptions = {
 	headers?: Record<string, string>;
 };
 
-/**
- * Encodes the Ashby API key into an HTTP Basic Authorization header.
- * Ashby expects the API key as the username with an empty password.
- */
 export function buildAshbyBasicAuthHeader(apiKey: string): string {
 	const encoded = Buffer.from(`${apiKey}:`).toString('base64');
 	return `Basic ${encoded}`;
 }
 
-/**
- * Makes an RPC-style HTTP POST request to the Ashby API.
- * All Ashby API endpoints use the POST method with JSON bodies.
- */
+function statusFromAshbyCode(code?: string): number {
+	if (code === 'resource_not_found') return 404;
+	if (code === 'missing_endpoint_permission') return 403;
+	if (code === 'rate_limit_exceeded') return 429;
+	return 400;
+}
+
 export async function makeAshbyRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: AshbyRequestOptions = {},
 ): Promise<T> {
+	if (!apiKey.trim()) {
+		throw new AuthMissingError('ashby', 'api_key');
+	}
+
 	const normalizedEndpoint = endpoint.startsWith('/')
 		? endpoint
 		: `/${endpoint}`;
@@ -95,7 +92,6 @@ export async function makeAshbyRequest<T>(
 			rateLimitConfig: ASHBY_RATE_LIMIT_CONFIG,
 		});
 
-		// Check if response contains Ashby failure envelope { success: false, errors: [...], error: "..." }
 		if (
 			response &&
 			typeof response === 'object' &&
@@ -111,7 +107,12 @@ export async function makeAshbyRequest<T>(
 			const message =
 				firstError?.message || failed.error || 'Ashby API request failed';
 			const code = firstError?.code;
-			throw new AshbyAPIError(message, 400, code, failed.errors);
+			throw new AshbyAPIError(
+				message,
+				statusFromAshbyCode(code),
+				code,
+				failed.errors,
+			);
 		}
 
 		return response;
@@ -143,7 +144,13 @@ export async function makeAshbyRequest<T>(
 				}
 			}
 
-			throw new AshbyAPIError(message, status, parsedCode, parsedErrors);
+			throw new AshbyAPIError(
+				message,
+				status,
+				parsedCode,
+				parsedErrors,
+				error.retryAfter,
+			);
 		}
 
 		if (error instanceof Error) {

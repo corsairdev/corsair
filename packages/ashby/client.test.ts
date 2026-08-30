@@ -1,5 +1,7 @@
+import { AuthMissingError } from 'corsair/core';
 import {
 	ASHBY_API_BASE,
+	ASHBY_RATE_LIMIT_CONFIG,
 	AshbyAPIError,
 	buildAshbyBasicAuthHeader,
 	makeAshbyRequest,
@@ -121,6 +123,41 @@ describe('Ashby Client', () => {
 			expect(captured?.method).toBe('POST');
 		});
 
+		it('rejects empty or whitespace API keys before calling the transport', async () => {
+			attempts = 0;
+			await expect(
+				makeAshbyRequest('candidate.info', ''),
+			).rejects.toBeInstanceOf(AuthMissingError);
+			await expect(
+				makeAshbyRequest('candidate.info', '   '),
+			).rejects.toBeInstanceOf(AuthMissingError);
+			expect(attempts).toBe(0);
+		});
+
+		it('maps success:false resource_not_found to status 404', async () => {
+			mockFetch({
+				body: {
+					success: false,
+					errors: [
+						{
+							code: 'resource_not_found',
+							message: 'Candidate not found',
+						},
+					],
+				},
+			});
+
+			await expect(
+				makeAshbyRequest('candidate.info', 'test-key', {
+					body: { candidateId: 'missing' },
+				}),
+			).rejects.toMatchObject({
+				name: 'AshbyAPIError',
+				status: 404,
+				code: 'resource_not_found',
+			});
+		});
+
 		it('throws AshbyAPIError when response has success: false envelope', async () => {
 			mockFetch({
 				body: {
@@ -138,24 +175,38 @@ describe('Ashby Client', () => {
 				makeAshbyRequest('candidate.create', 'test-key', {
 					body: { name: 'Test' },
 				}),
-			).rejects.toThrow(AshbyAPIError);
+			).rejects.toMatchObject({
+				name: 'AshbyAPIError',
+				status: 403,
+				code: 'missing_endpoint_permission',
+			});
 		});
 
-		it('retries upon 429 Too Many Requests and respects Retry-After', async () => {
+		it('does not retry 429 at the transport layer', async () => {
 			mockFetchSequence([
 				{ status: 429, body: {}, headers: { 'Retry-After': '1' } },
 				{ status: 200, body: { success: true, results: { id: '1' } } },
 			]);
 
-			const result = await makeAshbyRequest<{
-				success: boolean;
-				results: { id: string };
-			}>('candidate.info', 'test-key', {
-				body: { candidateId: '1' },
-			});
+			await expect(
+				makeAshbyRequest('candidate.info', 'test-key', {
+					body: { candidateId: '1' },
+				}),
+			).rejects.toBeInstanceOf(AshbyAPIError);
+			expect(attempts).toBe(1);
+			expect(ASHBY_RATE_LIMIT_CONFIG.enabled).toBe(true);
+			expect(ASHBY_RATE_LIMIT_CONFIG.maxRetries).toBe(0);
+		});
 
-			expect(attempts).toBe(2);
-			expect(result.results.id).toBe('1');
+		it('stores retryAfter on AshbyAPIError', () => {
+			const err = new AshbyAPIError(
+				'Too many requests',
+				429,
+				'rate_limit_exceeded',
+				undefined,
+				4000,
+			);
+			expect(err.retryAfter).toBe(4000);
 		});
 
 		it('parses HTTP 403 ApiError into AshbyAPIError with status and code', async () => {
@@ -172,17 +223,15 @@ describe('Ashby Client', () => {
 				},
 			});
 
-			try {
-				await makeAshbyRequest('candidate.anonymize', 'test-key', {
+			await expect(
+				makeAshbyRequest('candidate.anonymize', 'test-key', {
 					body: { candidateId: '123' },
-				});
-				fail('Expected makeAshbyRequest to throw');
-			} catch (error) {
-				expect(error).toBeInstanceOf(AshbyAPIError);
-				const ashbyErr = error as AshbyAPIError;
-				expect(ashbyErr.status).toBe(403);
-				expect(ashbyErr.code).toBe('missing_endpoint_permission');
-			}
+				}),
+			).rejects.toMatchObject({
+				name: 'AshbyAPIError',
+				status: 403,
+				code: 'missing_endpoint_permission',
+			});
 		});
 	});
 });
