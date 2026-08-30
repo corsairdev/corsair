@@ -126,6 +126,7 @@ export const BaseProviders = [
 	'facebook',
 	'faraday',
 	'figma',
+	'filloutforms',
 	'firecrawl',
 	'fireflies',
 	'formbricks',
@@ -356,6 +357,7 @@ export const ProviderDisplayNames = {
 	facebook: 'Facebook',
 	faraday: 'Faraday',
 	figma: 'Figma',
+	filloutforms: 'FilloutForms',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	formbricks: 'Formbricks',
@@ -592,6 +594,7 @@ export type AllProviders =
 	| 'facebook'
 	| 'faraday'
 	| 'figma'
+	| 'filloutforms'
 	| 'firecrawl'
 	| 'fireflies'
 	| 'formbricks'
