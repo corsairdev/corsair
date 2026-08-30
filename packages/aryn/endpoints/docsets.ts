@@ -1,65 +1,73 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ArynEndpoints } from '..';
 import { makeArynRequest } from '../client';
-import type { ArynEndpointOutputs } from './types';
+import { ArynEndpointInputSchemas, ArynEndpointOutputSchemas } from './types';
 
 export const docsetCreate: ArynEndpoints['docsetCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeArynRequest<ArynEndpointOutputs['docsetCreate']>(
+	const parsed = ArynEndpointInputSchemas.docsetCreate.parse(input);
+	const response = await makeArynRequest<unknown>(
 		'/v1/storage/docsets',
 		ctx.key,
 		{
 			method: 'POST',
 			body: {
-				name: input.name,
-				schema: input.schema,
-				properties: input.properties,
-				prompts: input.prompts,
+				name: parsed.name,
+				schema: parsed.schema,
+				properties: parsed.properties,
+				prompts: parsed.prompts,
 			},
 		},
 	);
-
+	const output = ArynEndpointOutputSchemas.docsetCreate.parse(response ?? {});
 	await logEventFromContext(
 		ctx,
 		'aryn.docset.create',
-		{ ...input },
+		{ name: parsed.name },
 		'completed',
 	);
-	return response;
+	return output;
 };
 
 export const docsetGet: ArynEndpoints['docsetGet'] = async (ctx, input) => {
-	const response = await makeArynRequest<ArynEndpointOutputs['docsetGet']>(
-		`/v1/storage/docsets/${input.docset_id}`,
+	const parsed = ArynEndpointInputSchemas.docsetGet.parse(input);
+	const response = await makeArynRequest<unknown>(
+		`/v1/storage/docsets/${encodeURIComponent(parsed.docset_id)}`,
 		ctx.key,
 		{
 			method: 'GET',
 		},
 	);
-
-	await logEventFromContext(ctx, 'aryn.docset.get', { ...input }, 'completed');
-	return response;
+	const output = ArynEndpointOutputSchemas.docsetGet.parse(response ?? {});
+	await logEventFromContext(
+		ctx,
+		'aryn.docset.get',
+		{ docset_id: parsed.docset_id },
+		'completed',
+	);
+	return output;
 };
 
 export const docsetDelete: ArynEndpoints['docsetDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeArynRequest<ArynEndpointOutputs['docsetDelete']>(
-		`/v1/storage/docsets/${input.docset_id}`,
+	const parsed = ArynEndpointInputSchemas.docsetDelete.parse(input);
+	const response = await makeArynRequest<unknown>(
+		`/v1/storage/docsets/${encodeURIComponent(parsed.docset_id)}`,
 		ctx.key,
 		{
 			method: 'DELETE',
 		},
 	);
-
+	const output = ArynEndpointOutputSchemas.docsetDelete.parse(response ?? {});
 	await logEventFromContext(
 		ctx,
 		'aryn.docset.delete',
-		{ ...input },
+		{ docset_id: parsed.docset_id },
 		'completed',
 	);
-	return response;
+	return output;
 };
