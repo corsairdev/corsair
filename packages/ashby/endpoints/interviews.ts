@@ -1,12 +1,13 @@
+import { AshbyAPIError } from '../client';
 import type { AshbyEndpoints } from '../index';
 import { ashbyCall } from './shared';
 import type {
 	InterviewInfoResponse,
 	InterviewListResponse,
-	InterviewScheduleInfoResponse,
 	InterviewScheduleListResponse,
 	InterviewStageListResponse,
 } from './types';
+import { InterviewScheduleInfoResponseSchema } from './types';
 
 export const info: AshbyEndpoints['interview.info'] = async (ctx, input) => {
 	return await ashbyCall<InterviewInfoResponse>(ctx, 'interview.info', {
@@ -27,13 +28,34 @@ export const scheduleInfo: AshbyEndpoints['interview.scheduleInfo'] = async (
 	ctx,
 	input,
 ) => {
-	return await ashbyCall<InterviewScheduleInfoResponse>(
-		ctx,
-		'interviewSchedule.info',
-		{
-			interviewScheduleId: input.interviewScheduleId,
-		},
-	);
+	let cursor: string | undefined;
+	for (;;) {
+		const page = await ashbyCall<InterviewScheduleListResponse>(
+			ctx,
+			'interviewSchedule.list',
+			{
+				limit: 100,
+				...(cursor ? { cursor } : {}),
+			},
+		);
+		const found = page.results.find(
+			(schedule) => schedule.id === input.interviewScheduleId,
+		);
+		if (found) {
+			return InterviewScheduleInfoResponseSchema.parse({
+				success: true,
+				results: found,
+			});
+		}
+		if (!page.moreDataAvailable || !page.nextCursor) {
+			throw new AshbyAPIError(
+				'Interview schedule not found',
+				404,
+				'resource_not_found',
+			);
+		}
+		cursor = page.nextCursor;
+	}
 };
 
 export const scheduleList: AshbyEndpoints['interview.scheduleList'] = async (

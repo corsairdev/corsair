@@ -1,4 +1,5 @@
 import { ApiError } from 'corsair/http';
+import { AshbyAPIError } from './client';
 import {
 	ApiKey,
 	Application,
@@ -15,6 +16,7 @@ import {
 } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import type { AshbyContext } from './index';
+import { ashby } from './index';
 
 type Captured = {
 	url: string;
@@ -53,12 +55,29 @@ function makeCtx(key = 'test-api-key'): AshbyContext {
 			get_webhook_signature: async () => 'test-webhook-secret',
 		},
 		$getAccountId: async () => 'test_account',
-		db: {} as any,
+		db: {
+			candidates: { upsertByEntityId: jest.fn() },
+			applications: { upsertByEntityId: jest.fn() },
+			jobs: { upsertByEntityId: jest.fn() },
+			jobPostings: { upsertByEntityId: jest.fn() },
+			offers: { upsertByEntityId: jest.fn() },
+			departments: { upsertByEntityId: jest.fn() },
+			locations: { upsertByEntityId: jest.fn() },
+			users: { upsertByEntityId: jest.fn() },
+		},
 	} as unknown as AshbyContext;
 }
 
 describe('Ashby Endpoints', () => {
 	const ctx = makeCtx();
+
+	it('marks anonymize and webhook.delete as irreversible', () => {
+		const plugin = ashby({ key: 'test-api-key' });
+		expect(plugin.endpointMeta?.['candidate.anonymize']?.irreversible).toBe(
+			true,
+		);
+		expect(plugin.endpointMeta?.['webhook.delete']?.irreversible).toBe(true);
+	});
 
 	describe('Candidate Endpoints', () => {
 		it('calls candidate.info', async () => {
@@ -72,6 +91,10 @@ describe('Ashby Endpoints', () => {
 				candidateId: 'cand_1',
 			});
 			expect(res.results.id).toBe('cand_1');
+			expect(ctx.db.candidates.upsertByEntityId).toHaveBeenCalledWith(
+				'cand_1',
+				expect.objectContaining({ id: 'cand_1', name: 'John' }),
+			);
 		});
 
 		it('calls candidate.list with pagination', async () => {
@@ -317,10 +340,26 @@ describe('Ashby Endpoints', () => {
 
 			mockFetchResponse({
 				success: true,
-				results: { id: 'sched_1', applicationId: 'app_1' },
+				results: [{ id: 'sched_1', applicationId: 'app_1' }],
 			});
-			await Interview.scheduleInfo(ctx, { interviewScheduleId: 'sched_1' });
-			expect(captured?.url).toContain('/interviewSchedule.info');
+			const schedule = await Interview.scheduleInfo(ctx, {
+				interviewScheduleId: 'sched_1',
+			});
+			expect(captured?.url).toContain('/interviewSchedule.list');
+			expect(schedule.results.id).toBe('sched_1');
+
+			mockFetchResponse({
+				success: true,
+				results: [{ id: 'sched_other', applicationId: 'app_1' }],
+				moreDataAvailable: false,
+			});
+			await expect(
+				Interview.scheduleInfo(ctx, { interviewScheduleId: 'sched_missing' }),
+			).rejects.toMatchObject({
+				name: 'AshbyAPIError',
+				status: 404,
+				code: 'resource_not_found',
+			});
 
 			mockFetchResponse({
 				success: true,
@@ -556,7 +595,7 @@ describe('Ashby Endpoints', () => {
 	});
 
 	describe('Error Handlers', () => {
-		it('handles RATE_LIMIT_ERROR with maxRetries 0 and forwards headersRetryAfterMs', async () => {
+		it('handles RATE_LIMIT_ERROR with Corsair retries and headersRetryAfterMs', async () => {
 			const apiErr = new ApiError(
 				{ method: 'POST', url: 'https://api.ashbyhq.com/candidate.info' },
 				{
@@ -573,11 +612,72 @@ describe('Ashby Endpoints', () => {
 			const match = errorHandlers.RATE_LIMIT_ERROR.match(apiErr);
 			expect(match).toBe(true);
 
-			const res = await errorHandlers.RATE_LIMIT_ERROR.handler(apiErr);
+			const res = await errorHandlers.RATE_LIMIT_ERROR.handler(apiErr, {
+				pluginId: 'ashby',
+				operation: 'candidate.info',
+				input: {},
+				originalError: apiErr,
+			});
 			expect(res).toEqual({
-				maxRetries: 0,
+				maxRetries: 3,
+				retryStrategy: 'exponential_backoff',
 				headersRetryAfterMs: 2500,
 			});
+			expect(res).not.toHaveProperty('backoffMs');
+		});
+
+		it('does not retry rate limits on writes', async () => {
+			const apiErr = new ApiError(
+				{ method: 'POST', url: 'https://api.ashbyhq.com/candidate.create' },
+				{
+					url: 'https://api.ashbyhq.com/candidate.create',
+					ok: false,
+					status: 429,
+					statusText: 'Too Many Requests',
+					body: undefined,
+				},
+				'Rate limit exceeded',
+				{ retryAfter: 2500 },
+			);
+			const res = await errorHandlers.RATE_LIMIT_ERROR.handler(apiErr, {
+				pluginId: 'ashby',
+				operation: 'candidate.create',
+				input: {},
+				originalError: apiErr,
+			});
+			expect(res.maxRetries).toBe(0);
+		});
+
+		it('reads retryAfter from AshbyAPIError on RATE_LIMIT_ERROR', async () => {
+			const err = new AshbyAPIError(
+				'Too many requests',
+				429,
+				'rate_limit_exceeded',
+				undefined,
+				4000,
+			);
+			const res = await errorHandlers.RATE_LIMIT_ERROR.handler(err, {
+				pluginId: 'ashby',
+				operation: 'candidate.info',
+				input: {},
+				originalError: err,
+			});
+			expect(res).toEqual({
+				maxRetries: 3,
+				retryStrategy: 'exponential_backoff',
+				headersRetryAfterMs: 4000,
+			});
+		});
+
+		it('uses retryStrategy for SERVER_ERROR', async () => {
+			const err = new Error('Internal server error');
+			const res = await errorHandlers.SERVER_ERROR.handler();
+			expect(errorHandlers.SERVER_ERROR.match(err)).toBe(true);
+			expect(res).toEqual({
+				maxRetries: 2,
+				retryStrategy: 'exponential_backoff',
+			});
+			expect(res).not.toHaveProperty('backoffMs');
 		});
 
 		it('handles DEFAULT error without logging context.input', async () => {

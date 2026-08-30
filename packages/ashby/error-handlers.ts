@@ -2,6 +2,20 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { AshbyAPIError } from './client';
 
+function getRetryAfterMs(error: Error): number | undefined {
+	if (error instanceof ApiError || error instanceof AshbyAPIError) {
+		return error.retryAfter;
+	}
+	return undefined;
+}
+
+function isReadOperation(operation: string | undefined): boolean {
+	if (!operation) return false;
+	return /\.(info|list|search|listNotes|scheduleList|stageList|scheduleInfo)$/.test(
+		operation,
+	);
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error) => {
@@ -18,12 +32,17 @@ export const errorHandlers = {
 				(error instanceof AshbyAPIError && error.code === 'rate_limit_exceeded')
 			);
 		},
-		handler: async (error) => {
-			const headersRetryAfterMs =
-				error instanceof ApiError ? error.retryAfter : undefined;
-
+		handler: async (error, context) => {
+			const headersRetryAfterMs = getRetryAfterMs(error);
+			if (!isReadOperation(context?.operation)) {
+				return {
+					maxRetries: 0,
+					headersRetryAfterMs,
+				};
+			}
 			return {
-				maxRetries: 0,
+				maxRetries: 3,
+				retryStrategy: 'exponential_backoff' as const,
 				headersRetryAfterMs,
 			};
 		},
@@ -136,7 +155,7 @@ export const errorHandlers = {
 		handler: async () => {
 			return {
 				maxRetries: 2,
-				backoffMs: 1000,
+				retryStrategy: 'exponential_backoff' as const,
 			};
 		},
 	},
