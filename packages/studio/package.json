@@ -29,7 +29,7 @@
     "ai": "^4.0.0",
     "better-sqlite3": "^12.0.0",
     "corsair": "workspace:*",
-    "kysely": "^0.28.9",
+    "kysely": "^0.28.17",
     "typescript": "^5.9.3",
     "zod": "^4.1.13"
   },
