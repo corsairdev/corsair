@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-const PostsGetInputSchema = z.object({
+export const PostsGetInputSchema = z.object({
 	page: z.coerce.number().int().positive().optional(),
-	limit: z.coerce.number().int().positive().max(100).optional(),
+	maxResults: z.coerce.number().int().positive().max(10).optional(),
 });
 
 export type PostsGetInput = z.infer<typeof PostsGetInputSchema>;
@@ -13,44 +13,50 @@ const BeamerBooleanSchema = z.union([
 	z.literal('false').transform(() => false),
 ]);
 
-const BeamerTranslationSchema = z.object({
-	title: z.string(),
-	content: z.string(),
-	contentHtml: z.string(),
-	language: z.string(),
-	category: z.string(),
-	linkUrl: z.string(),
-	linkText: z.string(),
-	images: z.array(z.string()),
-});
+const BeamerLinkSchema = z.union([z.string(), z.array(z.string())]);
 
-const BeamerPostSchema = z.object({
-	id: z.coerce.number().int(),
-	date: z.string(),
-	dueDate: z.string(),
-	published: BeamerBooleanSchema,
-	pinned: BeamerBooleanSchema,
-	showInWidget: BeamerBooleanSchema,
-	showInStandalone: BeamerBooleanSchema,
-	category: z.string(),
-	boostedAnnouncement: z.string(),
-	translations: z.array(BeamerTranslationSchema),
-	filter: z.string(),
-	filterUrl: z.string(),
-	autoOpen: BeamerBooleanSchema,
-	editionDate: z.string(),
-	feedbackEnabled: BeamerBooleanSchema,
-	reactionsEnabled: BeamerBooleanSchema,
-	views: z.coerce.number().int(),
-	uniqueViews: z.coerce.number().int(),
-	clicks: z.coerce.number().int(),
-	feedbacks: z.coerce.number().int(),
-	positiveReactions: z.coerce.number().int(),
-	neutralReactions: z.coerce.number().int(),
-	negativeReactions: z.coerce.number().int(),
-});
+const BeamerTranslationSchema = z
+	.object({
+		title: z.string().optional(),
+		content: z.string().optional(),
+		contentHtml: z.string().optional(),
+		language: z.string().optional(),
+		category: z.string().optional(),
+		linkUrl: BeamerLinkSchema.optional(),
+		linkText: BeamerLinkSchema.optional(),
+		images: z.array(z.string()).optional(),
+	})
+	.loose();
 
-const PostsGetResponseSchema = z.array(BeamerPostSchema);
+const BeamerPostSchema = z
+	.object({
+		id: z.coerce.number().int(),
+		date: z.string().optional(),
+		dueDate: z.string().optional(),
+		published: BeamerBooleanSchema.optional(),
+		pinned: BeamerBooleanSchema.optional(),
+		showInWidget: BeamerBooleanSchema.optional(),
+		showInStandalone: BeamerBooleanSchema.optional(),
+		category: z.string().optional(),
+		boostedAnnouncement: z.string().optional(),
+		translations: z.array(BeamerTranslationSchema).optional(),
+		filter: z.string().optional(),
+		filterUrl: z.string().optional(),
+		autoOpen: BeamerBooleanSchema.optional(),
+		editionDate: z.string().optional(),
+		feedbackEnabled: BeamerBooleanSchema.optional(),
+		reactionsEnabled: BeamerBooleanSchema.optional(),
+		views: z.coerce.number().int().optional(),
+		uniqueViews: z.coerce.number().int().optional(),
+		clicks: z.coerce.number().int().optional(),
+		feedbacks: z.coerce.number().int().optional(),
+		positiveReactions: z.coerce.number().int().optional(),
+		neutralReactions: z.coerce.number().int().optional(),
+		negativeReactions: z.coerce.number().int().optional(),
+	})
+	.loose();
+
+export const PostsGetResponseSchema = z.array(BeamerPostSchema);
 
 export type PostsGetResponse = z.infer<typeof PostsGetResponseSchema>;
 
