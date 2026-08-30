@@ -1,6 +1,6 @@
 ---
 title: Database
-description: Five tables, always-fresh integration data, tenant-scoped by default.
+description: Six tables, always-fresh integration data, tenant-scoped by default.
 ---
 
 import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
@@ -145,6 +145,13 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     expires_at TEXT NOT NULL,
     error TEXT
 );
+
+CREATE TABLE IF NOT EXISTS corsair_connect_requests (
+    tenant_id TEXT PRIMARY KEY,
+    plugin TEXT NOT NULL,
+    connect_url TEXT NOT NULL,
+    requested_at TEXT NOT NULL
+);
 ```
 
 </Accordion>
@@ -232,6 +239,13 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     expires_at TEXT NOT NULL,
     error TEXT
 );
+
+CREATE TABLE IF NOT EXISTS corsair_connect_requests (
+    tenant_id TEXT PRIMARY KEY,
+    plugin TEXT NOT NULL,
+    connect_url TEXT NOT NULL,
+    requested_at TEXT NOT NULL
+);
 ```
 
 </Accordion>
@@ -317,6 +331,13 @@ export const corsairPermissions = pgTable('corsair_permissions', {
     status: text('status').notNull().default('pending'),
     expiresAt: text('expires_at').notNull(),
     error: text('error'),
+});
+
+export const corsairConnectRequests = pgTable('corsair_connect_requests', {
+    tenantId: text('tenant_id').primaryKey(),
+    plugin: text('plugin').notNull(),
+    connectUrl: text('connect_url').notNull(),
+    requestedAt: text('requested_at').notNull(),
 });
 ```
 
@@ -405,6 +426,15 @@ model CorsairPermission {
 
   @@map("corsair_permissions")
 }
+
+model CorsairConnectRequest {
+  tenantId    String @id @map("tenant_id")
+  plugin      String
+  connectUrl  String @map("connect_url")
+  requestedAt String @map("requested_at")
+
+  @@map("corsair_connect_requests")
+}
 ```
 
 </Accordion>
@@ -449,7 +479,7 @@ Use `*.api.*` to write or force a fresh read. Use `*.db.*` for lists, search, an
 
 ## Core tables
 
-Five tables for every integration. Slack, GitHub, Linear, and the rest all share the same schema.
+Six tables. The first five are shared by every integration — Slack, GitHub, Linear, and the rest use the same schema. `corsair_connect_requests` records a tenant's pending connect prompt.
 
 | Table | Purpose |
 |-------|---------|
@@ -458,6 +488,7 @@ Five tables for every integration. Slack, GitHub, Linear, and the rest all share
 | `corsair_entities` | Synced resources like messages, channels, issues, repos (`entity_id`, `entity_type`, `data`) |
 | `corsair_events` | Audit log of API calls and webhooks |
 | `corsair_permissions` | Approval queue for gated [permissions](/concepts/permissions) (`token`, `tenant_id`, `endpoint`, `args`, `status`) |
+| `corsair_connect_requests` | A tenant's pending connect prompt, written when a call needs auth and read by the client to open the connect dialog (`tenant_id`, `plugin`, `connect_url`) |
 
 ```sql
 -- corsair_entities example (a Slack message)
@@ -569,7 +600,7 @@ export const corsair = createCorsair({
 </Tab>
 <Tab title="Drizzle / Prisma">
 
-Define the five Corsair tables in your ORM schema (see migration tabs above), run your normal migrations, and pass the **underlying connection** to Corsair, not the ORM client:
+Define the six Corsair tables in your ORM schema (see migration tabs above), run your normal migrations, and pass the **underlying connection** to Corsair, not the ORM client:
 
 ```ts
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
