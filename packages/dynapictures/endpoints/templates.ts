@@ -1,24 +1,28 @@
 import { logEventFromContext } from 'corsair/core';
-import type { DynapicturesEndpoints } from '..';
 import { makeDynapicturesRequest } from '../client';
+import type { DynapicturesEndpoints } from '../index';
 import type { DynapicturesEndpointOutputs } from './types';
 
-export const updateWorkspace: DynapicturesEndpoints['updateWorkspace'] = async (
+export const listTemplates: DynapicturesEndpoints['listTemplates'] = async (
 	ctx,
 	input,
 ) => {
 	const response = await makeDynapicturesRequest<
-		DynapicturesEndpointOutputs['updateWorkspace']
-	>(`workspaces/${encodeURIComponent(input.id)}`, ctx.key, {
-		method: 'PUT',
-		body: { name: input.name },
+		DynapicturesEndpointOutputs['listTemplates']
+	>('templates', ctx.key, {
+		method: 'GET',
+		query: {
+			limit: input.limit,
+			offset: input.offset,
+		},
 	});
 
 	await logEventFromContext(
 		ctx,
-		'dynapictures.workspace.update',
+		'dynapictures.templates.list',
 		{ ...input },
 		'completed',
 	);
+
 	return response;
 };

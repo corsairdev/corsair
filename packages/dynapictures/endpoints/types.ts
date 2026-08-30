@@ -1,146 +1,136 @@
 import { z } from 'zod';
 
-const CreateWorkspaceInputSchema = z.object({
-	name: z.string().min(1),
+export const DynapicturesParamSchema = z
+	.object({
+		name: z.string().min(1),
+		text: z.string().optional(),
+		imageUrl: z.string().optional(),
+		color: z.string().optional(),
+		backgroundColor: z.string().optional(),
+	})
+	.passthrough();
+
+export type DynapicturesParam = z.infer<typeof DynapicturesParamSchema>;
+
+// Generate Design / Image
+const GenerateDesignInputSchema = z.object({
+	designId: z.string().min(1),
+	params: z.array(DynapicturesParamSchema).optional(),
+	format: z.enum(['png', 'jpeg', 'webp', 'pdf']).optional(),
+	metadata: z.union([z.string(), z.record(z.string(), z.unknown())]).optional(),
 });
+export type GenerateDesignInput = z.infer<typeof GenerateDesignInputSchema>;
 
-export type CreateWorkspaceInput = z.infer<typeof CreateWorkspaceInputSchema>;
-
-const CreateWorkspaceResponseSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-});
-
-export type CreateWorkspaceResponse = z.infer<
-	typeof CreateWorkspaceResponseSchema
+const GenerateDesignResponseSchema = z
+	.object({
+		id: z.string(),
+		templateId: z.string().optional(),
+		imageUrl: z.string().optional(),
+		thumbnailUrl: z.string().optional(),
+		width: z.number().optional(),
+		height: z.number().optional(),
+	})
+	.passthrough();
+export type GenerateDesignResponse = z.infer<
+	typeof GenerateDesignResponseSchema
 >;
 
-const DeleteWorkspaceInputSchema = z.object({
+// Get Design
+const GetDesignInputSchema = z.object({
 	id: z.string().min(1),
 });
+export type GetDesignInput = z.infer<typeof GetDesignInputSchema>;
 
-export type DeleteWorkspaceInput = z.infer<typeof DeleteWorkspaceInputSchema>;
+const GetDesignResponseSchema = z
+	.object({
+		id: z.string(),
+		templateId: z.string().optional(),
+		imageUrl: z.string().optional(),
+		thumbnailUrl: z.string().optional(),
+		width: z.number().optional(),
+		height: z.number().optional(),
+	})
+	.passthrough();
+export type GetDesignResponse = z.infer<typeof GetDesignResponseSchema>;
 
-const DeleteWorkspaceResponseSchema = z.object({
+// List Designs
+const ListDesignsInputSchema = z.object({
+	limit: z.number().int().min(1).max(100).optional(),
+	offset: z.number().int().min(0).optional(),
+});
+export type ListDesignsInput = z.infer<typeof ListDesignsInputSchema>;
+
+const ListDesignsResponseSchema = z.array(
+	z
+		.object({
+			id: z.string(),
+			templateId: z.string().optional(),
+			imageUrl: z.string().optional(),
+			thumbnailUrl: z.string().optional(),
+		})
+		.passthrough(),
+);
+export type ListDesignsResponse = z.infer<typeof ListDesignsResponseSchema>;
+
+// Delete Design
+const DeleteDesignInputSchema = z.object({
+	id: z.string().min(1),
+});
+export type DeleteDesignInput = z.infer<typeof DeleteDesignInputSchema>;
+
+const DeleteDesignResponseSchema = z.object({
 	success: z.boolean(),
 });
+export type DeleteDesignResponse = z.infer<typeof DeleteDesignResponseSchema>;
 
-export type DeleteWorkspaceResponse = z.infer<
-	typeof DeleteWorkspaceResponseSchema
->;
-
-const ListTemplatesInputSchema = z.object({});
-
+// List Templates
+const ListTemplatesInputSchema = z.object({
+	limit: z.number().int().min(1).max(100).optional(),
+	offset: z.number().int().min(0).optional(),
+});
 export type ListTemplatesInput = z.infer<typeof ListTemplatesInputSchema>;
 
 const ListTemplatesResponseSchema = z.array(
-	z.object({
-		id: z.string(),
-		name: z.string(),
-	}),
+	z
+		.object({
+			id: z.string(),
+			name: z.string(),
+			width: z.number().optional(),
+			height: z.number().optional(),
+			thumbnailUrl: z.string().optional(),
+		})
+		.passthrough(),
 );
-
 export type ListTemplatesResponse = z.infer<typeof ListTemplatesResponseSchema>;
 
-const ListWorkspacesInputSchema = z.object({});
-
-export type ListWorkspacesInput = z.infer<typeof ListWorkspacesInputSchema>;
-
-const ListWorkspacesResponseSchema = z.array(
-	z.object({
-		id: z.string(),
-		name: z.string(),
-	}),
-);
-
-export type ListWorkspacesResponse = z.infer<
-	typeof ListWorkspacesResponseSchema
->;
-
-const UnsubscribeWebhookInputSchema = z.object({
-	id: z.string().min(1),
-});
-
-export type UnsubscribeWebhookInput = z.infer<
-	typeof UnsubscribeWebhookInputSchema
->;
-
-const UnsubscribeWebhookResponseSchema = z.object({
-	success: z.boolean(),
-});
-
-export type UnsubscribeWebhookResponse = z.infer<
-	typeof UnsubscribeWebhookResponseSchema
->;
-
-const UpdateWorkspaceInputSchema = z.object({
-	id: z.string().min(1),
-	name: z.string().min(1),
-});
-
-export type UpdateWorkspaceInput = z.infer<typeof UpdateWorkspaceInputSchema>;
-
-const UpdateWorkspaceResponseSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-});
-
-export type UpdateWorkspaceResponse = z.infer<
-	typeof UpdateWorkspaceResponseSchema
->;
-
-const UploadMediaAssetInputSchema = z.object({
-	workspaceId: z.string().min(1),
-	imageUrl: z.string().url(),
-});
-
-export type UploadMediaAssetInput = z.infer<typeof UploadMediaAssetInputSchema>;
-
-const UploadMediaAssetResponseSchema = z.object({
-	id: z.string(),
-	url: z.string().url(),
-});
-
-export type UploadMediaAssetResponse = z.infer<
-	typeof UploadMediaAssetResponseSchema
->;
-
 export type DynapicturesEndpointInputs = {
-	createWorkspace: CreateWorkspaceInput;
-	deleteWorkspace: DeleteWorkspaceInput;
+	generateDesign: GenerateDesignInput;
+	getDesign: GetDesignInput;
+	listDesigns: ListDesignsInput;
+	deleteDesign: DeleteDesignInput;
 	listTemplates: ListTemplatesInput;
-	listWorkspaces: ListWorkspacesInput;
-	unsubscribeWebhook: UnsubscribeWebhookInput;
-	updateWorkspace: UpdateWorkspaceInput;
-	uploadMediaAsset: UploadMediaAssetInput;
 };
 
 export type DynapicturesEndpointOutputs = {
-	createWorkspace: CreateWorkspaceResponse;
-	deleteWorkspace: DeleteWorkspaceResponse;
+	generateDesign: GenerateDesignResponse;
+	getDesign: GetDesignResponse;
+	listDesigns: ListDesignsResponse;
+	deleteDesign: DeleteDesignResponse;
 	listTemplates: ListTemplatesResponse;
-	listWorkspaces: ListWorkspacesResponse;
-	unsubscribeWebhook: UnsubscribeWebhookResponse;
-	updateWorkspace: UpdateWorkspaceResponse;
-	uploadMediaAsset: UploadMediaAssetResponse;
 };
 
 export const DynapicturesEndpointInputSchemas = {
-	createWorkspace: CreateWorkspaceInputSchema,
-	deleteWorkspace: DeleteWorkspaceInputSchema,
+	generateDesign: GenerateDesignInputSchema,
+	getDesign: GetDesignInputSchema,
+	listDesigns: ListDesignsInputSchema,
+	deleteDesign: DeleteDesignInputSchema,
 	listTemplates: ListTemplatesInputSchema,
-	listWorkspaces: ListWorkspacesInputSchema,
-	unsubscribeWebhook: UnsubscribeWebhookInputSchema,
-	updateWorkspace: UpdateWorkspaceInputSchema,
-	uploadMediaAsset: UploadMediaAssetInputSchema,
 } as const;
 
 export const DynapicturesEndpointOutputSchemas = {
-	createWorkspace: CreateWorkspaceResponseSchema,
-	deleteWorkspace: DeleteWorkspaceResponseSchema,
+	generateDesign: GenerateDesignResponseSchema,
+	getDesign: GetDesignResponseSchema,
+	listDesigns: ListDesignsResponseSchema,
+	deleteDesign: DeleteDesignResponseSchema,
 	listTemplates: ListTemplatesResponseSchema,
-	listWorkspaces: ListWorkspacesResponseSchema,
-	unsubscribeWebhook: UnsubscribeWebhookResponseSchema,
-	updateWorkspace: UpdateWorkspaceResponseSchema,
-	uploadMediaAsset: UploadMediaAssetResponseSchema,
 } as const;
