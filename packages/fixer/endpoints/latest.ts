@@ -7,12 +7,19 @@ import { FixerEndpointInputSchemas, FixerEndpointOutputSchemas } from './types';
 async function cacheSnapshot(
 	ctx: Parameters<FixerEndpoints['ratesLatest']>[0],
 	result: ExchangeRatesResponse,
+	symbols?: string[],
 ): Promise<void> {
 	if (!ctx.db?.rates) {
 		return;
 	}
+	// A filtered request only returns a subset of `rates`, so it must not
+	// collide with (or overwrite) the full base:date snapshot's cache entry.
+	const symbolsKey = joinSymbols(symbols);
+	const entityId = symbolsKey
+		? `${result.base}:${result.date}:${symbolsKey}`
+		: `${result.base}:${result.date}`;
 	try {
-		await ctx.db.rates.upsertByEntityId(`${result.base}:${result.date}`, {
+		await ctx.db.rates.upsertByEntityId(entityId, {
 			base: result.base,
 			date: result.date,
 			timestamp: result.timestamp,
@@ -20,10 +27,7 @@ async function cacheSnapshot(
 			captured_at: new Date(),
 		});
 	} catch (error) {
-		console.warn(
-			`[fixer] Failed to cache rates snapshot ${result.base}:${result.date}:`,
-			error,
-		);
+		console.warn(`[fixer] Failed to cache rates snapshot ${entityId}:`, error);
 	}
 }
 
@@ -36,7 +40,7 @@ export const latest: FixerEndpoints['ratesLatest'] = async (ctx, rawInput) => {
 	});
 	const result = FixerEndpointOutputSchemas.ratesLatest.parse(raw);
 
-	await cacheSnapshot(ctx, result);
+	await cacheSnapshot(ctx, result, input.symbols);
 
 	await logEventFromContext(
 		ctx,

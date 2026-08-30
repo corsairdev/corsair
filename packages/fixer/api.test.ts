@@ -66,7 +66,7 @@ describe('Rates.latest (mocked Fixer responses)', () => {
 			rates: { USD: 1.0025, GBP: 0.8631 },
 		});
 		expect(ctx.db.rates.upsertByEntityId).toHaveBeenCalledWith(
-			'EUR:2022-09-21',
+			'EUR:2022-09-21:USD,GBP',
 			expect.objectContaining({
 				base: 'EUR',
 				date: '2022-09-21',
@@ -139,6 +139,14 @@ describe('Rates.historical (mocked Fixer responses)', () => {
 		const ctx = createTestContext();
 		await expect(
 			historical(ctx as never, { date: '02-22-2018' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects an impossible calendar date before calling the API', async () => {
+		const ctx = createTestContext();
+		await expect(
+			historical(ctx as never, { date: '2023-02-29' }),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});

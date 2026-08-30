@@ -1,9 +1,18 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { FixerAPIError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error, _context) => {
+			// fixerGet always wraps transport and business errors in a
+			// FixerAPIError, so this must check the wrapper, not the raw ApiError.
+			if (
+				error instanceof FixerAPIError &&
+				(error.status === 429 || error.apiType === 'usage_limit_reached')
+			) {
+				return true;
+			}
 			if (error instanceof ApiError && error.status === 429) {
 				return true;
 			}
@@ -11,12 +20,15 @@ export const errorHandlers = {
 			return (
 				errorMessage.includes('rate limit') ||
 				errorMessage.includes('too_many_requests') ||
+				errorMessage.includes('usage_limit_reached') ||
 				errorMessage.includes('429')
 			);
 		},
 		handler: async (error, _context) => {
 			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
+			if (error instanceof FixerAPIError && error.retryAfter !== undefined) {
+				retryAfterMs = error.retryAfter;
+			} else if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
 			return {
