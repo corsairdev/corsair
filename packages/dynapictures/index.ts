@@ -15,7 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { DynapicturesEndpoints } from './endpoints';
 import type {
 	DynapicturesEndpointInputs,
 	DynapicturesEndpointOutputs,

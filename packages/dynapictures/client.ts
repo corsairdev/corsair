@@ -11,8 +11,7 @@ export class DynapicturesAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
-const DYNAPICTURES_API_BASE = 'https://api.example.com';
+const DYNAPICTURES_API_BASE = 'https://api.dynapictures.com';
 
 export async function makeDynapicturesRequest<T>(
 	endpoint: string,
@@ -33,8 +32,7 @@ export async function makeDynapicturesRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 
@@ -46,7 +44,7 @@ export async function makeDynapicturesRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {
