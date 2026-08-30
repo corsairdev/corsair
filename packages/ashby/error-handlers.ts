@@ -152,7 +152,12 @@ export const errorHandlers = {
 				errorMessage.includes('gateway timeout')
 			);
 		},
-		handler: async () => {
+		handler: async (_error, context) => {
+			if (!isReadOperation(context?.operation)) {
+				return {
+					maxRetries: 0,
+				};
+			}
 			return {
 				maxRetries: 2,
 				retryStrategy: 'exponential_backoff' as const,

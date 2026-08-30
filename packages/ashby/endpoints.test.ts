@@ -14,6 +14,7 @@ import {
 	User,
 	Webhook,
 } from './endpoints';
+import { SCHEDULE_INFO_MAX_PAGES } from './endpoints/interviews';
 import { errorHandlers } from './error-handlers';
 import type { AshbyContext } from './index';
 import { ashby } from './index';
@@ -95,6 +96,29 @@ describe('Ashby Endpoints', () => {
 				'cand_1',
 				expect.objectContaining({ id: 'cand_1', name: 'John' }),
 			);
+		});
+
+		it('keeps persisting remaining list rows after one upsert fails', async () => {
+			const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+			(ctx.db.candidates.upsertByEntityId as jest.Mock).mockClear();
+			(ctx.db.candidates.upsertByEntityId as jest.Mock)
+				.mockRejectedValueOnce(new Error('row 1'))
+				.mockResolvedValueOnce(undefined);
+			mockFetchResponse({
+				success: true,
+				results: [
+					{ id: 'cand_a', name: 'A' },
+					{ id: 'cand_b', name: 'B' },
+				],
+			});
+			await Candidate.list(ctx, { limit: 10 });
+			expect(ctx.db.candidates.upsertByEntityId).toHaveBeenCalledTimes(2);
+			expect(ctx.db.candidates.upsertByEntityId).toHaveBeenNthCalledWith(
+				2,
+				'cand_b',
+				expect.objectContaining({ id: 'cand_b', name: 'B' }),
+			);
+			warn.mockRestore();
 		});
 
 		it('calls candidate.list with pagination', async () => {
@@ -360,6 +384,33 @@ describe('Ashby Endpoints', () => {
 				status: 404,
 				code: 'resource_not_found',
 			});
+
+			let listPages = 0;
+			global.fetch = (async () => {
+				listPages += 1;
+				return {
+					ok: true,
+					status: 200,
+					statusText: 'OK',
+					url: 'https://api.ashbyhq.com/interviewSchedule.list',
+					headers: new Headers({ 'Content-Type': 'application/json' }),
+					json: async () => ({
+						success: true,
+						results: [{ id: 'sched_other', applicationId: 'app_1' }],
+						moreDataAvailable: true,
+						nextCursor: `c_${listPages}`,
+					}),
+					text: async () => '',
+				};
+			}) as unknown as typeof global.fetch;
+			await expect(
+				Interview.scheduleInfo(ctx, { interviewScheduleId: 'sched_missing' }),
+			).rejects.toMatchObject({
+				name: 'AshbyAPIError',
+				status: 504,
+				code: 'page_budget_exceeded',
+			});
+			expect(listPages).toBe(SCHEDULE_INFO_MAX_PAGES);
 
 			mockFetchResponse({
 				success: true,
@@ -671,13 +722,29 @@ describe('Ashby Endpoints', () => {
 
 		it('uses retryStrategy for SERVER_ERROR', async () => {
 			const err = new Error('Internal server error');
-			const res = await errorHandlers.SERVER_ERROR.handler();
+			const res = await errorHandlers.SERVER_ERROR.handler(err, {
+				pluginId: 'ashby',
+				operation: 'candidate.info',
+				input: {},
+				originalError: err,
+			});
 			expect(errorHandlers.SERVER_ERROR.match(err)).toBe(true);
 			expect(res).toEqual({
 				maxRetries: 2,
 				retryStrategy: 'exponential_backoff',
 			});
 			expect(res).not.toHaveProperty('backoffMs');
+		});
+
+		it('does not retry SERVER_ERROR on writes', async () => {
+			const err = new Error('Internal server error');
+			const res = await errorHandlers.SERVER_ERROR.handler(err, {
+				pluginId: 'ashby',
+				operation: 'candidate.create',
+				input: {},
+				originalError: err,
+			});
+			expect(res.maxRetries).toBe(0);
 		});
 
 		it('handles DEFAULT error without logging context.input', async () => {

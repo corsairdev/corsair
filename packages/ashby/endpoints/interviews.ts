@@ -9,6 +9,8 @@ import type {
 } from './types';
 import { InterviewScheduleInfoResponseSchema } from './types';
 
+export const SCHEDULE_INFO_MAX_PAGES = 20;
+
 export const info: AshbyEndpoints['interview.info'] = async (ctx, input) => {
 	return await ashbyCall<InterviewInfoResponse>(ctx, 'interview.info', {
 		interviewId: input.interviewId,
@@ -29,7 +31,7 @@ export const scheduleInfo: AshbyEndpoints['interview.scheduleInfo'] = async (
 	input,
 ) => {
 	let cursor: string | undefined;
-	for (;;) {
+	for (let pageCount = 0; pageCount < SCHEDULE_INFO_MAX_PAGES; pageCount++) {
 		const page = await ashbyCall<InterviewScheduleListResponse>(
 			ctx,
 			'interviewSchedule.list',
@@ -56,6 +58,11 @@ export const scheduleInfo: AshbyEndpoints['interview.scheduleInfo'] = async (
 		}
 		cursor = page.nextCursor;
 	}
+	throw new AshbyAPIError(
+		'Interview schedule lookup exceeded page budget',
+		504,
+		'page_budget_exceeded',
+	);
 };
 
 export const scheduleList: AshbyEndpoints['interview.scheduleList'] = async (

@@ -204,15 +204,15 @@ async function persistParsedOutput(
 	const store = storeFor(ctx, schemaKey);
 	if (!store?.upsertByEntityId) return;
 
-	try {
-		for (const row of collectResults(parsed)) {
-			const entity = toEntity(schemaKey, row);
-			const entityId = entity ? requireString(entity.id) : undefined;
-			if (!entity || !entityId) continue;
+	for (const row of collectResults(parsed)) {
+		const entity = toEntity(schemaKey, row);
+		const entityId = entity ? requireString(entity.id) : undefined;
+		if (!entity || !entityId) continue;
+		try {
 			await store.upsertByEntityId(entityId, entity as never);
+		} catch (error) {
+			console.warn('Failed to persist Ashby entity:', error);
 		}
-	} catch (error) {
-		console.warn('Failed to persist Ashby entity:', error);
 	}
 }
 
