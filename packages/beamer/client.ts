@@ -1,6 +1,20 @@
 import { AuthMissingError } from 'corsair/core';
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+
+const NO_RETRY: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'retry-after',
+	},
+};
 
 export class BeamerAPIError extends Error {
 	constructor(
@@ -55,7 +69,9 @@ export async function makeBeamerRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: NO_RETRY,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw error;
