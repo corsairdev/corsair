@@ -24,6 +24,8 @@ export class BrowserlessRateLimitError extends BrowserlessAPIError {
 
 export const BROWSERLESS_API_BASE = 'https://production-sfo.browserless.io';
 const REQUEST_TIMEOUT_MS = 90_000;
+/** Official `timeout` is the whole request; keep a short window for the response body. */
+const TRANSFER_GRACE_MS = 10_000;
 const NO_DEK_ERROR_PATTERN = /no dek found/i;
 
 export async function tryGetStoredKey(
@@ -46,6 +48,12 @@ export type BrowserlessLaunchQuery = {
 	proxy?: string;
 	blockAds?: boolean;
 };
+
+/** Official `?timeout=` is milliseconds for the whole request. */
+export function requestAbortMs(query?: BrowserlessLaunchQuery): number {
+	if (query?.timeout === undefined) return REQUEST_TIMEOUT_MS;
+	return query.timeout + TRANSFER_GRACE_MS;
+}
 
 function retryAfterMs(res: Response): number | undefined {
 	const raw = res.headers.get('Retry-After');
@@ -118,7 +126,7 @@ async function send(
 			method: 'POST',
 			headers,
 			body,
-			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+			signal: AbortSignal.timeout(requestAbortMs(options.query)),
 		});
 	} catch (error) {
 		if (error instanceof Error && error.name === 'TimeoutError') {

@@ -46,6 +46,21 @@ describe('Browserless schema', () => {
 		expect(parsed.data[0]?.results[0]?.text).toContain('Headless');
 	});
 
+	it('parses official cookie fields including optional sameSite and url', () => {
+		expect(
+			BrowserlessCookie.parse({
+				name: 'session_id',
+				value: 'XYZ123',
+				domain: 'turo.com',
+				path: '/',
+				secure: true,
+				httpOnly: true,
+				sameSite: 'Lax',
+				url: 'https://turo.com/',
+			}).sameSite,
+		).toBe('Lax');
+	});
+
 	it('parses official /unblock response shape', () => {
 		const parsed = BrowserlessUnblockResult.parse({
 			content: '<!DOCTYPE html><html></html>',

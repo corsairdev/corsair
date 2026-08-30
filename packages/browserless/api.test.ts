@@ -2,6 +2,7 @@ import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import {
 	BrowserlessRateLimitError,
 	browserlessUrl,
+	requestAbortMs,
 	requestBrowserlessJson,
 } from './client';
 import {
@@ -99,6 +100,11 @@ describe('Browserless plugin & client tests', () => {
 		expect(browserlessUrl('/content', 'tok-test', { stealth: true })).toBe(
 			'https://production-sfo.browserless.io/content?token=tok-test&stealth=true',
 		);
+	});
+
+	it('aborts after official timeout plus transfer grace', () => {
+		expect(requestAbortMs()).toBe(90_000);
+		expect(requestAbortMs({ timeout: 180_000 })).toBe(190_000);
 	});
 
 	it('POSTs /content and returns text/html', async () => {

@@ -12,6 +12,8 @@ export const BrowserlessCookie = z.object({
 	secure: z.boolean().optional(),
 	httpOnly: z.boolean().optional(),
 	expires: z.number().optional(),
+	sameSite: z.enum(['Strict', 'Lax', 'None']).optional(),
+	url: z.string().optional(),
 });
 
 export type BrowserlessCookie = z.infer<typeof BrowserlessCookie>;
