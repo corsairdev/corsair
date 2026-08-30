@@ -13,6 +13,17 @@ export class BetterProposalsAPIError extends Error {
 	}
 }
 
+export class BetterProposalsRateLimitError extends BetterProposalsAPIError {
+	constructor(
+		message = 'Too Many Requests',
+		public readonly retryAfterMs?: number,
+		body?: unknown,
+	) {
+		super(message, '429', 429, body);
+		this.name = 'BetterProposalsRateLimitError';
+	}
+}
+
 const BETTERPROPOSALS_API_BASE = 'https://api.betterproposals.io';
 
 /**
@@ -118,6 +129,14 @@ export async function makeBetterProposalsRequest<T>(
 				typeof error.body === 'object' && error.body && 'message' in error.body
 					? String((error.body as { message: unknown }).message)
 					: error.message;
+
+			if (error.status === 429) {
+				throw new BetterProposalsRateLimitError(
+					msg || error.message,
+					error.retryAfter,
+					error.body,
+				);
+			}
 
 			throw new BetterProposalsAPIError(
 				msg || error.message,

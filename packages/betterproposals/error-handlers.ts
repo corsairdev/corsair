@@ -1,10 +1,14 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { BetterProposalsAPIError } from './client';
+import {
+	BetterProposalsAPIError,
+	BetterProposalsRateLimitError,
+} from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
+			if (error instanceof BetterProposalsRateLimitError) return true;
 			if (error instanceof ApiError && error.status === 429) return true;
 			if (error instanceof BetterProposalsAPIError && error.status === 429)
 				return true;
@@ -16,10 +20,12 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
+			const retryAfterMs =
+				error instanceof BetterProposalsRateLimitError
+					? error.retryAfterMs
+					: error instanceof ApiError
+						? error.retryAfter
+						: undefined;
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
 		},
 	},
@@ -51,7 +57,8 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('trial expired') ||
-				msg.includes('current plan not supported') ||
+				msg.includes('trial has expired') ||
+				msg.includes('current plan') ||
 				msg.includes('unsupported plan')
 			);
 		},

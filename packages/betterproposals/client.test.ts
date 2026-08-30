@@ -1,5 +1,9 @@
 import { ApiError, request } from 'corsair/http';
-import { BetterProposalsAPIError, makeBetterProposalsRequest } from './client';
+import {
+	BetterProposalsAPIError,
+	BetterProposalsRateLimitError,
+	makeBetterProposalsRequest,
+} from './client';
 import { errorHandlers } from './error-handlers';
 
 jest.mock('corsair/http', () => {
@@ -102,15 +106,42 @@ describe('Better Proposals client and error handlers', () => {
 		).rejects.toThrow('Invalid token');
 	});
 
-	it('errorHandlers matches rate limit error', async () => {
-		const err = new BetterProposalsAPIError(
-			'Rate limit exceeded',
-			undefined,
-			429,
+	it('preserves Retry-After on HTTP 429', async () => {
+		const apiError = new ApiError(
+			{
+				method: 'GET',
+				url: 'https://api.betterproposals.io/proposal',
+			},
+			{
+				status: 429,
+				statusText: 'Too Many Requests',
+				url: 'https://api.betterproposals.io/proposal',
+				ok: false,
+				body: { message: 'Too Many Requests' },
+			},
+			'Too Many Requests',
+			{ retryAfter: 4000 },
 		);
+		mockRequest.mockRejectedValueOnce(apiError);
+
+		const err = await makeBetterProposalsRequest('proposal', 'tok').catch(
+			(error: unknown) => error,
+		);
+		expect(err).toBeInstanceOf(BetterProposalsRateLimitError);
+		expect((err as BetterProposalsRateLimitError).retryAfterMs).toBe(4000);
+
+		const res = await errorHandlers.RATE_LIMIT_ERROR.handler(
+			err as BetterProposalsRateLimitError,
+		);
+		expect(res.headersRetryAfterMs).toBe(4000);
+	});
+
+	it('errorHandlers matches rate limit error', async () => {
+		const err = new BetterProposalsRateLimitError('Rate limit exceeded', 2000);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
 		const res = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
 		expect(res.maxRetries).toBe(5);
+		expect(res.headersRetryAfterMs).toBe(2000);
 	});
 
 	it('errorHandlers matches auth error', async () => {

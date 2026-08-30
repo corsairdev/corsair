@@ -6,11 +6,18 @@ describe('BetterProposals schema', () => {
 		expect(BetterProposalsSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof BetterProposalsSchema.entities).toBe('object');
-		expect(BetterProposalsSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(BetterProposalsSchema.entities))).toBe(
-			true,
-		);
+	it('declares official API entities', () => {
+		expect(Object.keys(BetterProposalsSchema.entities)).toEqual([
+			'proposals',
+			'templates',
+			'documentTypes',
+			'quotes',
+			'companies',
+			'covers',
+			'currencies',
+			'settings',
+			'brands',
+			'mergeTags',
+		]);
 	});
 });

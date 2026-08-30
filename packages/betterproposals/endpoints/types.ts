@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { BetterProposalsCover } from '../schema';
 
 // ============================================================================
 // Common & Entity Schemas
@@ -218,6 +219,7 @@ export const CompanySchema = z
 		AccountID: z.union([z.string(), z.number()]).optional().nullable(),
 		DemoCompany: z.union([z.string(), z.number()]).optional().nullable(),
 		CompanyName: z.string(),
+		CompanyCRMID: z.string().optional().nullable(),
 		DateCreated: z.string().optional().nullable(),
 		CreatedBy: z.union([z.string(), z.number()]).optional().nullable(),
 		DateEdited: z.string().optional().nullable(),
@@ -248,6 +250,14 @@ export const SettingsSchema = z
 		TaxLabel: z.string().optional().nullable(),
 		TaxAmount: z.string().optional().nullable(),
 		TimeZone: z.string().optional().nullable(),
+		CustomerJourneysActive: z
+			.union([z.string(), z.number()])
+			.optional()
+			.nullable(),
+		CustomerJourneysDefault: z
+			.union([z.string(), z.number()])
+			.optional()
+			.nullable(),
 		EditedBy: z.union([z.string(), z.number()]).optional().nullable(),
 		DateEdited: z.string().optional().nullable(),
 	})
@@ -389,7 +399,7 @@ export const ProposalsCreateCoverInputSchema = z.object({
 export const ProposalsCreateCoverResponseSchema = z
 	.object({
 		status: z.string(),
-		data: z.record(z.string(), z.unknown()).optional(),
+		data: BetterProposalsCover.optional(),
 	})
 	.passthrough();
 
@@ -409,7 +419,8 @@ export const TemplatesGetInputSchema = z.object({
 export const TemplatesGetResponseSchema = z
 	.object({
 		status: z.string(),
-		data: TemplateSchema,
+		// Official missing-id responses return data: [] instead of an object.
+		data: TemplateSchema.or(z.array(z.unknown())),
 	})
 	.passthrough();
 
@@ -450,7 +461,8 @@ export const QuotesGetInputSchema = z.object({
 export const QuotesGetResponseSchema = z
 	.object({
 		status: z.string(),
-		data: QuoteSchema,
+		// Official missing-id responses return data: [] instead of an object.
+		data: QuoteSchema.or(z.array(z.unknown())),
 	})
 	.passthrough();
 

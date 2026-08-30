@@ -280,7 +280,7 @@ export const ProviderDisplayNames = {
 	basin: 'Basin',
 	beeminder: 'Beeminder',
 	bettercontact: 'BetterContact',
-	betterproposals: 'BetterProposals',
+	betterproposals: 'Better Proposals',
 	betterstack: 'Better Stack',
 	bigdatacloud: 'BigDataCloud',
 	bigmailer: 'BigMailer',
