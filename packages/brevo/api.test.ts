@@ -60,6 +60,10 @@ describe('Brevo Plugin & Client Tests', () => {
 			const plugin = brevo({ key: 'test-api-key' });
 			expect(plugin.id).toBe('brevo');
 			expect(plugin.options?.key).toBe('test-api-key');
+			expect(plugin.authConfig).toEqual({ api_key: { account: [] } });
+			expect(plugin.endpointMeta?.['emailCampaigns.sendNow']?.riskLevel).toBe(
+				'destructive',
+			);
 			expect(plugin.endpoints?.account.get).toBeDefined();
 			expect(plugin.endpoints?.contacts.list).toBeDefined();
 			expect(plugin.endpoints?.emailCampaigns.list).toBeDefined();
@@ -260,7 +264,13 @@ describe('Brevo Plugin & Client Tests', () => {
 
 		it('contacts.update sends PUT request', async () => {
 			const ctx = createMockContext();
-			mockMakeBrevoRequest.mockResolvedValueOnce(undefined);
+			mockMakeBrevoRequest
+				.mockResolvedValueOnce(undefined)
+				.mockResolvedValueOnce({
+					id: 101,
+					email: 'newuser@example.com',
+					attributes: { FIRSTNAME: 'Updated' },
+				});
 
 			const result = await Contacts.update(ctx, {
 				identifier: 101,
@@ -273,6 +283,14 @@ describe('Brevo Plugin & Client Tests', () => {
 				expect.objectContaining({
 					method: 'PUT',
 					body: { attributes: { FIRSTNAME: 'Updated' } },
+				}),
+			);
+			expect(mockDbContacts.upsertByEntityId).toHaveBeenCalledWith(
+				'101',
+				expect.objectContaining({
+					id: 101,
+					email: 'newuser@example.com',
+					attributes: { FIRSTNAME: 'Updated' },
 				}),
 			);
 		});
@@ -291,6 +309,42 @@ describe('Brevo Plugin & Client Tests', () => {
 				expect.objectContaining({ method: 'DELETE' }),
 			);
 			expect(mockDbContacts.deleteByEntityId).toHaveBeenCalledWith('101');
+		});
+
+		it('contacts.delete by email removes the numeric cached id', async () => {
+			const ctx = createMockContext();
+			mockMakeBrevoRequest
+				.mockResolvedValueOnce({
+					id: 42,
+					email: 'alice@example.com',
+				})
+				.mockResolvedValueOnce(undefined);
+
+			await Contacts.deleteContact(ctx, {
+				identifier: 'alice@example.com',
+			});
+
+			expect(mockMakeBrevoRequest).toHaveBeenNthCalledWith(
+				1,
+				'contacts/alice%40example.com',
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
+			expect(mockMakeBrevoRequest).toHaveBeenNthCalledWith(
+				2,
+				'contacts/alice%40example.com',
+				'test-api-key',
+				expect.objectContaining({ method: 'DELETE' }),
+			);
+			expect(mockDbContacts.deleteByEntityId).toHaveBeenCalledWith('42');
+		});
+
+		it('contacts.create rejects an invalid email before calling the API', async () => {
+			const ctx = createMockContext();
+			await expect(
+				Contacts.create(ctx, { email: 'not-an-email' } as never),
+			).rejects.toThrow();
+			expect(mockMakeBrevoRequest).not.toHaveBeenCalled();
 		});
 	});
 
@@ -443,6 +497,17 @@ describe('Brevo Plugin & Client Tests', () => {
 			);
 		});
 
+		it('emailCampaigns.sendTest rejects invalid emails before calling the API', async () => {
+			const ctx = createMockContext();
+			await expect(
+				EmailCampaigns.sendTest(ctx, {
+					campaignId: 99,
+					emailTo: ['not-an-email'],
+				}),
+			).rejects.toThrow();
+			expect(mockMakeBrevoRequest).not.toHaveBeenCalled();
+		});
+
 		it('emailCampaigns.sendTest sends a test email', async () => {
 			const ctx = createMockContext();
 			mockMakeBrevoRequest.mockResolvedValueOnce(undefined);
@@ -467,13 +532,23 @@ describe('Brevo Plugin & Client Tests', () => {
 		it('RATE_LIMIT_ERROR matches 429 status and returns backoff', async () => {
 			const err = new BrevoAPIError('Too many requests', '429', {
 				status: 429,
-				retryAfter: 5,
+				retryAfter: 5000,
 			});
 			expect(errorHandlers.RATE_LIMIT_ERROR.match(err as any)).toBe(true);
 
 			const res = await errorHandlers.RATE_LIMIT_ERROR.handler(err as any);
 			expect(res.maxRetries).toBe(3);
-			expect(res.backoffMs).toBe(5000);
+			expect(res.headersRetryAfterMs).toBe(5000);
+			expect(res).not.toHaveProperty('backoffMs');
+		});
+
+		it('QUOTA_ERROR matches 402 and does not retry', async () => {
+			const err = new BrevoAPIError('Payment required', '402', {
+				status: 402,
+			});
+			expect(errorHandlers.QUOTA_ERROR.match(err as any)).toBe(true);
+			const res = await errorHandlers.QUOTA_ERROR.handler();
+			expect(res.maxRetries).toBe(0);
 		});
 
 		it('AUTH_ERROR matches 401 status and sets maxRetries 0', async () => {
@@ -517,7 +592,8 @@ describe('Brevo Plugin & Client Tests', () => {
 
 			const res = await errorHandlers.SERVER_ERROR.handler();
 			expect(res.maxRetries).toBe(2);
-			expect(res.backoffMs).toBe(1000);
+			expect(res.retryStrategy).toBe('exponential_backoff');
+			expect(res).not.toHaveProperty('backoffMs');
 		});
 	});
 });
