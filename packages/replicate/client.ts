@@ -1,6 +1,6 @@
 import type { ApiRequestOptions } from 'corsair/http';
 import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class ReplicateAPIError extends Error {
 	constructor(
@@ -50,11 +50,13 @@ export async function makeReplicateRequest<T>(
 
 	try {
 		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new ReplicateAPIError(error.message);
-		}
-
-		throw new ReplicateAPIError('Unknown Replicate API error');
-	}
+    } catch (error) {
+            if (error instanceof ApiError) {
+                    throw error;
+            }
+			if (error instanceof Error) {
+                    throw new ReplicateAPIError(error.message);
+            }
+			throw new ReplicateAPIError('Unknown Replicate API error');
+       }
 }
