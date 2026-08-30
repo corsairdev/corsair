@@ -1,4 +1,9 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 type BrevoAPIErrorOptions = {
@@ -39,6 +44,16 @@ export class BrevoAPIError extends Error {
 
 const BREVO_API_BASE = 'https://api.brevo.com/v3';
 
+export const BREVO_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
+
 export async function makeBrevoRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -48,6 +63,10 @@ export async function makeBrevoRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
+	if (!apiKey.trim()) {
+		throw new AuthMissingError('brevo', 'api_key');
+	}
+
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
@@ -74,7 +93,9 @@ export async function makeBrevoRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: BREVO_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const errorBody = error.body;
