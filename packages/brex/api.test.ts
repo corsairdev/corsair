@@ -361,6 +361,30 @@ describe('Brex webhooks', () => {
 		).toBe(false);
 	});
 
+	it('skips provider HMAC when Hub already verified the delivery', async () => {
+		expect(
+			verifyBrexWebhookSignature(
+				{ headers: {}, rawBody: '{}', hubVerified: true },
+				undefined,
+			),
+		).toEqual({ valid: true });
+
+		const accepted = await userUpdated.handler(
+			{ key: undefined, db: {} } as never,
+			{
+				headers: {},
+				rawBody: '{}',
+				hubVerified: true,
+				payload: {
+					event_type: 'USER_UPDATED',
+					company_id: 'cuacc_123',
+					data: { id: 'u1' },
+				},
+			},
+		);
+		expect(accepted.success).toBe(true);
+	});
+
 	it('accepts a valid official HMAC signature', () => {
 		const id = 'msg_1';
 		const timestamp = String(Math.floor(Date.now() / 1000));

@@ -73,9 +73,10 @@ function digest(secret: string, content: string): Buffer {
  * https://developer.brex.com/guides/webhooks
  */
 export function verifyBrexWebhookSignature(
-	request: Pick<WebhookRequest<unknown>, 'headers' | 'rawBody'>,
-	secret: string,
+	request: Pick<WebhookRequest<unknown>, 'headers' | 'rawBody' | 'hubVerified'>,
+	secret?: string,
 ): { valid: boolean; error?: string } {
+	if (request.hubVerified === true) return { valid: true };
 	if (!secret) return { valid: false, error: 'missing webhook secret' };
 
 	const id = headerValue(request.headers, 'webhook-id');
