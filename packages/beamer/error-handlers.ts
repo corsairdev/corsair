@@ -13,7 +13,7 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
@@ -23,6 +23,30 @@ export const errorHandlers = {
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},
 		handler: async () => ({ maxRetries: 0 }),
+	},
+	PERMISSION_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 403) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('forbidden') || msg.includes('not allowed');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	SERVER_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status !== undefined) {
+				return error.status >= 500;
+			}
+			const msg = error.message.toLowerCase();
+			return (
+				msg.includes('internal server error') ||
+				msg.includes('service unavailable')
+			);
+		},
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
 	},
 	DEFAULT: {
 		match: () => true,
