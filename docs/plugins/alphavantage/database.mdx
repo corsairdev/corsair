@@ -1,0 +1,123 @@
+---
+title: Database
+description: "Alpha Vantage local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Alpha Vantage plugin syncs data locally. Use `corsair.alphavantage.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Companies
+
+Path: `alphavantage.db.companies.search`
+
+```ts
+const rows = await corsair.alphavantage.db.companies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `AssetType` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+| `CIK` | `string` | equals, contains, startsWith, endsWith, in |
+| `Exchange` | `string` | equals, contains, startsWith, endsWith, in |
+| `Currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `Country` | `string` | equals, contains, startsWith, endsWith, in |
+| `Sector` | `string` | equals, contains, startsWith, endsWith, in |
+| `Industry` | `string` | equals, contains, startsWith, endsWith, in |
+| `Address` | `string` | equals, contains, startsWith, endsWith, in |
+| `OfficialSite` | `string` | equals, contains, startsWith, endsWith, in |
+| `FiscalYearEnd` | `string` | equals, contains, startsWith, endsWith, in |
+| `LatestQuarter` | `string` | equals, contains, startsWith, endsWith, in |
+| `MarketCapitalization` | `string` | equals, contains, startsWith, endsWith, in |
+| `EBITDA` | `string` | equals, contains, startsWith, endsWith, in |
+| `PERatio` | `string` | equals, contains, startsWith, endsWith, in |
+| `PEGRatio` | `string` | equals, contains, startsWith, endsWith, in |
+| `BookValue` | `string` | equals, contains, startsWith, endsWith, in |
+| `DividendPerShare` | `string` | equals, contains, startsWith, endsWith, in |
+| `DividendYield` | `string` | equals, contains, startsWith, endsWith, in |
+| `EPS` | `string` | equals, contains, startsWith, endsWith, in |
+| `RevenuePerShareTTM` | `string` | equals, contains, startsWith, endsWith, in |
+| `ProfitMargin` | `string` | equals, contains, startsWith, endsWith, in |
+| `OperatingMarginTTM` | `string` | equals, contains, startsWith, endsWith, in |
+| `ReturnOnAssetsTTM` | `string` | equals, contains, startsWith, endsWith, in |
+| `ReturnOnEquityTTM` | `string` | equals, contains, startsWith, endsWith, in |
+| `RevenueTTM` | `string` | equals, contains, startsWith, endsWith, in |
+| `GrossProfitTTM` | `string` | equals, contains, startsWith, endsWith, in |
+| `DilutedEPSTTM` | `string` | equals, contains, startsWith, endsWith, in |
+| `QuarterlyEarningsGrowthYOY` | `string` | equals, contains, startsWith, endsWith, in |
+| `QuarterlyRevenueGrowthYOY` | `string` | equals, contains, startsWith, endsWith, in |
+| `AnalystTargetPrice` | `string` | equals, contains, startsWith, endsWith, in |
+| `AnalystRatingStrongBuy` | `string` | equals, contains, startsWith, endsWith, in |
+| `AnalystRatingBuy` | `string` | equals, contains, startsWith, endsWith, in |
+| `AnalystRatingHold` | `string` | equals, contains, startsWith, endsWith, in |
+| `AnalystRatingSell` | `string` | equals, contains, startsWith, endsWith, in |
+| `AnalystRatingStrongSell` | `string` | equals, contains, startsWith, endsWith, in |
+| `TrailingPE` | `string` | equals, contains, startsWith, endsWith, in |
+| `ForwardPE` | `string` | equals, contains, startsWith, endsWith, in |
+| `PriceToSalesRatioTTM` | `string` | equals, contains, startsWith, endsWith, in |
+| `PriceToBookRatio` | `string` | equals, contains, startsWith, endsWith, in |
+| `EVToRevenue` | `string` | equals, contains, startsWith, endsWith, in |
+| `EVToEBITDA` | `string` | equals, contains, startsWith, endsWith, in |
+| `Beta` | `string` | equals, contains, startsWith, endsWith, in |
+| `52WeekHigh` | `string` | equals, contains, startsWith, endsWith, in |
+| `52WeekLow` | `string` | equals, contains, startsWith, endsWith, in |
+| `50DayMovingAverage` | `string` | equals, contains, startsWith, endsWith, in |
+| `200DayMovingAverage` | `string` | equals, contains, startsWith, endsWith, in |
+| `SharesOutstanding` | `string` | equals, contains, startsWith, endsWith, in |
+| `SharesFloat` | `string` | equals, contains, startsWith, endsWith, in |
+| `PercentInsiders` | `string` | equals, contains, startsWith, endsWith, in |
+| `PercentInstitutions` | `string` | equals, contains, startsWith, endsWith, in |
+| `DividendDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `ExDividendDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Symbols
+
+Path: `alphavantage.db.symbols.search`
+
+```ts
+const rows = await corsair.alphavantage.db.symbols.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange` | `string` | equals, contains, startsWith, endsWith, in |
+| `assetType` | `string` | equals, contains, startsWith, endsWith, in |
+| `ipoDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `delistingDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `region` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `marketOpen` | `string` | equals, contains, startsWith, endsWith, in |
+| `marketClose` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
