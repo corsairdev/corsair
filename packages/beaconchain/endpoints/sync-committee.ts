@@ -1,26 +1,33 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainV2Request } from '../client';
+import {
+	makeBeaconchainV2Request,
+	requireBeaconchainKey,
+	v2Body,
+} from '../client';
 import type { BeaconchainEndpoints } from '../index';
-import type { BeaconchainBaseResponse } from './types';
+import {
+	BeaconchainV2ResponseSchema,
+	GetSyncCommitteeInputSchema,
+} from './types';
 
 export const getSyncCommittee: BeaconchainEndpoints['getSyncCommittee'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+		const parsed = GetSyncCommitteeInputSchema.parse(input);
+		const res = await makeBeaconchainV2Request(
 			'ethereum/sync-committee',
-			ctx.key,
+			requireBeaconchainKey(ctx.key),
 			{
 				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					...(input.period !== undefined ? { period: input.period } : {}),
-				},
+				body: v2Body(parsed, {
+					...(parsed.period !== undefined ? { period: parsed.period } : {}),
+				}),
 			},
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.syncCommittee.get',
-			{ period: input.period },
+			{ period: parsed.period },
 			'completed',
 		);
-		return res;
+		return BeaconchainV2ResponseSchema.parse(res);
 	};

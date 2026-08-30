@@ -27,6 +27,14 @@ export const channelCreated: TeamsWebhooks['channelCreated'] = {
 		}
 
 		const notifications = request.payload.value;
+		if (!notifications[0]) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: 'Invalid payload: missing notification',
+			};
+		}
+
 		let corsairEntityId = '';
 
 		const accessToken = await ctx.keys.get_access_token();
@@ -39,7 +47,7 @@ export const channelCreated: TeamsWebhooks['channelCreated'] = {
 
 					// resource format: teams('teamId')/channels('channelId')
 					const teamId = extractODataId(
-						notification.resource.split('/')[0] ?? '',
+						notification.resource?.split('/')[0] ?? '',
 					);
 
 					if (notification.changeType === 'deleted') {

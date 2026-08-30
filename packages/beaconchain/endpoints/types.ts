@@ -1,277 +1,327 @@
 import { z } from 'zod';
 
-export const BeaconchainBaseResponseSchema = z.object({
+export const BeaconchainV1ResponseSchema = z.object({
 	status: z.string(),
 	data: z.unknown(),
 });
-export type BeaconchainBaseResponse = z.infer<
-	typeof BeaconchainBaseResponseSchema
+export type BeaconchainV1Response = z.infer<typeof BeaconchainV1ResponseSchema>;
+
+export const BeaconchainV2ResponseSchema = z
+	.object({
+		data: z.unknown(),
+	})
+	.passthrough();
+export type BeaconchainV2Response = z.infer<typeof BeaconchainV2ResponseSchema>;
+
+export const BeaconchainHealthResponseSchema = z.object({
+	data: z.unknown(),
+});
+export type BeaconchainHealthResponse = z.infer<
+	typeof BeaconchainHealthResponseSchema
 >;
 
-// 1. BEACONCHAIN_GET_CHART
+const chain = z.enum(['mainnet', 'hoodi']).optional();
+const cursor = z.string().optional();
+const pageSize = z.number().int().positive().max(10).optional();
+const evaluationWindow = z
+	.enum(['24h', '7d', '30d', '90d', 'all_time'])
+	.optional();
+
 export const GetChartInputSchema = z.object({
 	chartName: z.string().min(1, 'Chart name is required'),
+	chain,
 });
 export type GetChartInput = z.infer<typeof GetChartInputSchema>;
 
-// 2. BEACONCHAIN_GET_EXECUTION_ADDRESS_ERC20_TOKENS
 export const GetExecutionAddressErc20TokensInputSchema = z.object({
 	address: z.string().min(1, 'Address is required'),
+	chain,
 });
 export type GetExecutionAddressErc20TokensInput = z.infer<
 	typeof GetExecutionAddressErc20TokensInputSchema
 >;
 
-// 3. BEACONCHAIN_GET_ETH_STORE_DAILY
 export const GetEthStoreDailyInputSchema = z.object({
-	day: z.number().optional(),
-	limit: z.number().optional(),
-	page: z.number().optional(),
+	chain,
+	cursor,
+	page_size: pageSize,
+	evaluation_window: evaluationWindow,
 });
 export type GetEthStoreDailyInput = z.infer<typeof GetEthStoreDailyInputSchema>;
 
-// 4. BEACONCHAIN_GET_ETH1_DEPOSITS_BY_TX_HASH
 export const GetEth1DepositsByTxHashInputSchema = z.object({
 	txHash: z.string().min(1, 'Transaction hash is required'),
+	chain,
 });
 export type GetEth1DepositsByTxHashInput = z.infer<
 	typeof GetEth1DepositsByTxHashInputSchema
 >;
 
-// 5. BEACONCHAIN_GET_EPOCH
 export const GetEpochInputSchema = z.object({
 	epochId: z.union([z.number(), z.string()]),
+	chain,
 });
 export type GetEpochInput = z.infer<typeof GetEpochInputSchema>;
 
-// 6. BEACONCHAIN_GET_EXECUTION_BLOCK
 export const GetExecutionBlockInputSchema = z.object({
 	blockId: z.union([z.number(), z.string()]),
+	chain,
+	cursor,
+	page_size: pageSize,
 });
 export type GetExecutionBlockInput = z.infer<
 	typeof GetExecutionBlockInputSchema
 >;
 
-// 7. BEACONCHAIN_GET_EXECUTION_PRODUCED_BLOCKS
 export const GetExecutionProducedBlocksInputSchema = z.object({
 	address: z.string().min(1, 'Address is required'),
+	chain,
 });
 export type GetExecutionProducedBlocksInput = z.infer<
 	typeof GetExecutionProducedBlocksInputSchema
 >;
 
-// 8. BEACONCHAIN_GET_NODE_HEALTH
-export const GetNodeHealthInputSchema = z.object({});
+export const GetNodeHealthInputSchema = z.object({
+	chain,
+});
 export type GetNodeHealthInput = z.infer<typeof GetNodeHealthInputSchema>;
 
-// 9. BEACONCHAIN_GET_LATEST_STATE
-export const GetLatestStateInputSchema = z.object({});
+export const GetLatestStateInputSchema = z.object({
+	chain,
+});
 export type GetLatestStateInput = z.infer<typeof GetLatestStateInputSchema>;
 
-// 10. BEACONCHAIN_GET_NETWORK_PERFORMANCE
-export const GetNetworkPerformanceInputSchema = z.object({});
+export const GetNetworkPerformanceInputSchema = z.object({
+	chain,
+	evaluation_window: evaluationWindow,
+});
 export type GetNetworkPerformanceInput = z.infer<
 	typeof GetNetworkPerformanceInputSchema
 >;
 
-// 11. BEACONCHAIN_GET_ROCKETPOOL_VALIDATOR
 export const GetRocketpoolValidatorInputSchema = z.object({
 	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
+	chain,
 });
 export type GetRocketpoolValidatorInput = z.infer<
 	typeof GetRocketpoolValidatorInputSchema
 >;
 
-// 12. BEACONCHAIN_GET_SLOT
 export const GetSlotInputSchema = z.object({
 	slotId: z.union([z.number(), z.string()]),
+	chain,
+	cursor,
+	page_size: pageSize,
 });
 export type GetSlotInput = z.infer<typeof GetSlotInputSchema>;
 
-// 13. BEACONCHAIN_GET_SLOT_ATTESTATIONS
 export const GetSlotAttestationsInputSchema = z.object({
 	slotId: z.union([z.number(), z.string()]),
+	chain,
 });
 export type GetSlotAttestationsInput = z.infer<
 	typeof GetSlotAttestationsInputSchema
 >;
 
-// 14. BEACONCHAIN_GET_SLOT_ATTESTER_SLASHINGS
 export const GetSlotAttesterSlashingsInputSchema = z.object({
 	slotId: z.union([z.number(), z.string()]),
+	chain,
 });
 export type GetSlotAttesterSlashingsInput = z.infer<
 	typeof GetSlotAttesterSlashingsInputSchema
 >;
 
-// 15. BEACONCHAIN_GET_SLOT_PROPOSER_SLASHINGS
 export const GetSlotProposerSlashingsInputSchema = z.object({
 	slotId: z.union([z.number(), z.string()]),
+	chain,
 });
 export type GetSlotProposerSlashingsInput = z.infer<
 	typeof GetSlotProposerSlashingsInputSchema
 >;
 
-// 16. BEACONCHAIN_GET_SLOT_VOLUNTARY_EXITS
 export const GetSlotVoluntaryExitsInputSchema = z.object({
 	slotId: z.union([z.number(), z.string()]),
+	chain,
 });
 export type GetSlotVoluntaryExitsInput = z.infer<
 	typeof GetSlotVoluntaryExitsInputSchema
 >;
 
-// 17. BEACONCHAIN_GET_SYNC_COMMITTEE
 export const GetSyncCommitteeInputSchema = z.object({
 	period: z.number().optional(),
+	chain,
+	cursor,
+	page_size: pageSize,
 });
 export type GetSyncCommitteeInput = z.infer<typeof GetSyncCommitteeInputSchema>;
 
-// 18. BEACONCHAIN_GET_VALIDATOR
 export const GetValidatorInputSchema = z.object({
 	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
+	chain,
+	cursor,
+	page_size: pageSize,
 });
 export type GetValidatorInput = z.infer<typeof GetValidatorInputSchema>;
 
-// 19. BEACONCHAIN_GET_VALIDATOR_ATTESTATION_EFFICIENCY
 export const GetValidatorAttestationEfficiencyInputSchema = z.object({
 	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
+	chain,
+	evaluation_window: evaluationWindow,
 });
 export type GetValidatorAttestationEfficiencyInput = z.infer<
 	typeof GetValidatorAttestationEfficiencyInputSchema
 >;
 
-// 20. BEACONCHAIN_GET_VALIDATOR_ATTESTATIONS
 export const GetValidatorAttestationsInputSchema = z.object({
 	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
-	page: z.number().optional(),
+	chain,
+	cursor,
+	page_size: pageSize,
 });
 export type GetValidatorAttestationsInput = z.infer<
 	typeof GetValidatorAttestationsInputSchema
 >;
 
-// 21. BEACONCHAIN_GET_VALIDATOR_BLS_CHANGES
 export const GetValidatorBlsChangesInputSchema = z.object({
-	page: z.number().optional(),
+	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
+	chain,
 });
 export type GetValidatorBlsChangesInput = z.infer<
 	typeof GetValidatorBlsChangesInputSchema
 >;
 
-// 22. BEACONCHAIN_GET_VALIDATOR_BALANCE_HISTORY
 export const GetValidatorBalanceHistoryInputSchema = z.object({
 	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
+	chain,
+	cursor,
+	page_size: pageSize,
 });
 export type GetValidatorBalanceHistoryInput = z.infer<
 	typeof GetValidatorBalanceHistoryInputSchema
 >;
 
-// 23. BEACONCHAIN_GET_VALIDATOR_CONSENSUS_REWARDS
 export const GetValidatorConsensusRewardsInputSchema = z.object({
 	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
+	chain,
+	evaluation_window: evaluationWindow,
 });
 export type GetValidatorConsensusRewardsInput = z.infer<
 	typeof GetValidatorConsensusRewardsInputSchema
 >;
 
-// 24. BEACONCHAIN_GET_VALIDATOR_DAILY_STATS
 export const GetValidatorDailyStatsInputSchema = z.object({
 	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
+	chain,
 });
 export type GetValidatorDailyStatsInput = z.infer<
 	typeof GetValidatorDailyStatsInputSchema
 >;
 
-// 25. BEACONCHAIN_GET_VALIDATOR_DEPOSITS
 export const GetValidatorDepositsInputSchema = z.object({
 	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
+	chain,
 });
 export type GetValidatorDepositsInput = z.infer<
 	typeof GetValidatorDepositsInputSchema
 >;
 
-// 26. BEACONCHAIN_GET_VALIDATOR_EXECUTION_REWARDS
 export const GetValidatorExecutionRewardsInputSchema = z.object({
 	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
+	chain,
+	evaluation_window: evaluationWindow,
 });
 export type GetValidatorExecutionRewardsInput = z.infer<
 	typeof GetValidatorExecutionRewardsInputSchema
 >;
 
-// 27. BEACONCHAIN_GET_VALIDATOR_INCOME_HISTORY
 export const GetValidatorIncomeHistoryInputSchema = z.object({
 	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
+	chain,
+	cursor,
+	page_size: pageSize,
 });
 export type GetValidatorIncomeHistoryInput = z.infer<
 	typeof GetValidatorIncomeHistoryInputSchema
 >;
 
-// 28. BEACONCHAIN_GET_VALIDATOR_LEADERBOARD
-export const GetValidatorLeaderboardInputSchema = z.object({});
+export const GetValidatorLeaderboardInputSchema = z.object({
+	chain,
+});
 export type GetValidatorLeaderboardInput = z.infer<
 	typeof GetValidatorLeaderboardInputSchema
 >;
 
-// 29. BEACONCHAIN_GET_VALIDATOR_PROPOSALS
 export const GetValidatorProposalsInputSchema = z.object({
 	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
+	chain,
+	cursor,
+	page_size: pageSize,
 });
 export type GetValidatorProposalsInput = z.infer<
 	typeof GetValidatorProposalsInputSchema
 >;
 
-// 30. BEACONCHAIN_GET_QUEUES
-export const GetQueuesInputSchema = z.object({});
+export const GetQueuesInputSchema = z.object({
+	chain,
+});
 export type GetQueuesInput = z.infer<typeof GetQueuesInputSchema>;
 
-// 31. BEACONCHAIN_GET_VALIDATOR_WITHDRAWALS
 export const GetValidatorWithdrawalsInputSchema = z.object({
 	indexOrPubkey: z.string().min(1, 'Validator index or public key is required'),
+	chain,
 });
 export type GetValidatorWithdrawalsInput = z.infer<
 	typeof GetValidatorWithdrawalsInputSchema
 >;
 
-// 32. BEACONCHAIN_GET_VALIDATORS_PROPOSAL_LUCK
 export const GetValidatorsProposalLuckInputSchema = z.object({
 	validators: z.array(z.string()).optional(),
+	chain,
 });
 export type GetValidatorsProposalLuckInput = z.infer<
 	typeof GetValidatorsProposalLuckInputSchema
 >;
 
-// 33. BEACONCHAIN_GET_VALIDATORS_QUEUE
-export const GetValidatorsQueueInputSchema = z.object({});
+export const GetValidatorsQueueInputSchema = z.object({
+	chain,
+});
 export type GetValidatorsQueueInput = z.infer<
 	typeof GetValidatorsQueueInputSchema
 >;
 
-// 34. BEACONCHAIN_GET_VALIDATORS_BY_DEPOSIT_ADDRESS
 export const GetValidatorsByDepositAddressInputSchema = z.object({
 	address: z.string().min(1, 'Deposit address is required'),
+	chain,
+	cursor,
+	page_size: pageSize,
 });
 export type GetValidatorsByDepositAddressInput = z.infer<
 	typeof GetValidatorsByDepositAddressInputSchema
 >;
 
-// 35. BEACONCHAIN_GET_VALIDATORS_BY_WITHDRAWAL_CREDENTIALS
 export const GetValidatorsByWithdrawalCredentialsInputSchema = z.object({
 	credentials: z.string().min(1, 'Withdrawal credentials are required'),
+	chain,
+	cursor,
+	page_size: pageSize,
 });
 export type GetValidatorsByWithdrawalCredentialsInput = z.infer<
 	typeof GetValidatorsByWithdrawalCredentialsInputSchema
 >;
 
-// 36. BEACONCHAIN_POST_VALIDATORS
 export const PostValidatorsInputSchema = z.object({
 	indicesOrPubkeys: z
 		.array(z.string())
 		.min(1, 'At least one validator index or pubkey is required'),
+	chain,
+	cursor,
+	page_size: pageSize,
 });
 export type PostValidatorsInput = z.infer<typeof PostValidatorsInputSchema>;
 
-// 37. BEACONCHAIN_RESOLVE_ENS
 export const ResolveEnsInputSchema = z.object({
 	name: z.string().min(1, 'ENS name is required'),
+	chain,
 });
 export type ResolveEnsInput = z.infer<typeof ResolveEnsInputSchema>;
 
@@ -318,43 +368,43 @@ export const BeaconchainEndpointInputSchemas = {
 };
 
 export const BeaconchainEndpointOutputSchemas = {
-	getChart: BeaconchainBaseResponseSchema,
-	getExecutionAddressErc20Tokens: BeaconchainBaseResponseSchema,
-	getEthStoreDaily: BeaconchainBaseResponseSchema,
-	getEth1DepositsByTxHash: BeaconchainBaseResponseSchema,
-	getEpoch: BeaconchainBaseResponseSchema,
-	getExecutionBlock: BeaconchainBaseResponseSchema,
-	getExecutionProducedBlocks: BeaconchainBaseResponseSchema,
-	getNodeHealth: BeaconchainBaseResponseSchema,
-	getLatestState: BeaconchainBaseResponseSchema,
-	getNetworkPerformance: BeaconchainBaseResponseSchema,
-	getRocketpoolValidator: BeaconchainBaseResponseSchema,
-	getSlot: BeaconchainBaseResponseSchema,
-	getSlotAttestations: BeaconchainBaseResponseSchema,
-	getSlotAttesterSlashings: BeaconchainBaseResponseSchema,
-	getSlotProposerSlashings: BeaconchainBaseResponseSchema,
-	getSlotVoluntaryExits: BeaconchainBaseResponseSchema,
-	getSyncCommittee: BeaconchainBaseResponseSchema,
-	getValidator: BeaconchainBaseResponseSchema,
-	getValidatorAttestationEfficiency: BeaconchainBaseResponseSchema,
-	getValidatorAttestations: BeaconchainBaseResponseSchema,
-	getValidatorBlsChanges: BeaconchainBaseResponseSchema,
-	getValidatorBalanceHistory: BeaconchainBaseResponseSchema,
-	getValidatorConsensusRewards: BeaconchainBaseResponseSchema,
-	getValidatorDailyStats: BeaconchainBaseResponseSchema,
-	getValidatorDeposits: BeaconchainBaseResponseSchema,
-	getValidatorExecutionRewards: BeaconchainBaseResponseSchema,
-	getValidatorIncomeHistory: BeaconchainBaseResponseSchema,
-	getValidatorLeaderboard: BeaconchainBaseResponseSchema,
-	getValidatorProposals: BeaconchainBaseResponseSchema,
-	getQueues: BeaconchainBaseResponseSchema,
-	getValidatorWithdrawals: BeaconchainBaseResponseSchema,
-	getValidatorsProposalLuck: BeaconchainBaseResponseSchema,
-	getValidatorsQueue: BeaconchainBaseResponseSchema,
-	getValidatorsByDepositAddress: BeaconchainBaseResponseSchema,
-	getValidatorsByWithdrawalCredentials: BeaconchainBaseResponseSchema,
-	postValidators: BeaconchainBaseResponseSchema,
-	resolveEns: BeaconchainBaseResponseSchema,
+	getChart: BeaconchainV1ResponseSchema,
+	getExecutionAddressErc20Tokens: BeaconchainV1ResponseSchema,
+	getEthStoreDaily: BeaconchainV2ResponseSchema,
+	getEth1DepositsByTxHash: BeaconchainV1ResponseSchema,
+	getEpoch: BeaconchainV1ResponseSchema,
+	getExecutionBlock: BeaconchainV2ResponseSchema,
+	getExecutionProducedBlocks: BeaconchainV1ResponseSchema,
+	getNodeHealth: BeaconchainHealthResponseSchema,
+	getLatestState: BeaconchainV2ResponseSchema,
+	getNetworkPerformance: BeaconchainV2ResponseSchema,
+	getRocketpoolValidator: BeaconchainV1ResponseSchema,
+	getSlot: BeaconchainV2ResponseSchema,
+	getSlotAttestations: BeaconchainV1ResponseSchema,
+	getSlotAttesterSlashings: BeaconchainV1ResponseSchema,
+	getSlotProposerSlashings: BeaconchainV1ResponseSchema,
+	getSlotVoluntaryExits: BeaconchainV1ResponseSchema,
+	getSyncCommittee: BeaconchainV2ResponseSchema,
+	getValidator: BeaconchainV2ResponseSchema,
+	getValidatorAttestationEfficiency: BeaconchainV2ResponseSchema,
+	getValidatorAttestations: BeaconchainV2ResponseSchema,
+	getValidatorBlsChanges: BeaconchainV1ResponseSchema,
+	getValidatorBalanceHistory: BeaconchainV2ResponseSchema,
+	getValidatorConsensusRewards: BeaconchainV2ResponseSchema,
+	getValidatorDailyStats: BeaconchainV1ResponseSchema,
+	getValidatorDeposits: BeaconchainV1ResponseSchema,
+	getValidatorExecutionRewards: BeaconchainV2ResponseSchema,
+	getValidatorIncomeHistory: BeaconchainV2ResponseSchema,
+	getValidatorLeaderboard: BeaconchainV1ResponseSchema,
+	getValidatorProposals: BeaconchainV2ResponseSchema,
+	getQueues: BeaconchainV2ResponseSchema,
+	getValidatorWithdrawals: BeaconchainV1ResponseSchema,
+	getValidatorsProposalLuck: BeaconchainV1ResponseSchema,
+	getValidatorsQueue: BeaconchainV1ResponseSchema,
+	getValidatorsByDepositAddress: BeaconchainV2ResponseSchema,
+	getValidatorsByWithdrawalCredentials: BeaconchainV2ResponseSchema,
+	postValidators: BeaconchainV2ResponseSchema,
+	resolveEns: BeaconchainV1ResponseSchema,
 };
 
 export type BeaconchainEndpointInputs = {
@@ -398,41 +448,41 @@ export type BeaconchainEndpointInputs = {
 };
 
 export type BeaconchainEndpointOutputs = {
-	getChart: BeaconchainBaseResponse;
-	getExecutionAddressErc20Tokens: BeaconchainBaseResponse;
-	getEthStoreDaily: BeaconchainBaseResponse;
-	getEth1DepositsByTxHash: BeaconchainBaseResponse;
-	getEpoch: BeaconchainBaseResponse;
-	getExecutionBlock: BeaconchainBaseResponse;
-	getExecutionProducedBlocks: BeaconchainBaseResponse;
-	getNodeHealth: BeaconchainBaseResponse;
-	getLatestState: BeaconchainBaseResponse;
-	getNetworkPerformance: BeaconchainBaseResponse;
-	getRocketpoolValidator: BeaconchainBaseResponse;
-	getSlot: BeaconchainBaseResponse;
-	getSlotAttestations: BeaconchainBaseResponse;
-	getSlotAttesterSlashings: BeaconchainBaseResponse;
-	getSlotProposerSlashings: BeaconchainBaseResponse;
-	getSlotVoluntaryExits: BeaconchainBaseResponse;
-	getSyncCommittee: BeaconchainBaseResponse;
-	getValidator: BeaconchainBaseResponse;
-	getValidatorAttestationEfficiency: BeaconchainBaseResponse;
-	getValidatorAttestations: BeaconchainBaseResponse;
-	getValidatorBlsChanges: BeaconchainBaseResponse;
-	getValidatorBalanceHistory: BeaconchainBaseResponse;
-	getValidatorConsensusRewards: BeaconchainBaseResponse;
-	getValidatorDailyStats: BeaconchainBaseResponse;
-	getValidatorDeposits: BeaconchainBaseResponse;
-	getValidatorExecutionRewards: BeaconchainBaseResponse;
-	getValidatorIncomeHistory: BeaconchainBaseResponse;
-	getValidatorLeaderboard: BeaconchainBaseResponse;
-	getValidatorProposals: BeaconchainBaseResponse;
-	getQueues: BeaconchainBaseResponse;
-	getValidatorWithdrawals: BeaconchainBaseResponse;
-	getValidatorsProposalLuck: BeaconchainBaseResponse;
-	getValidatorsQueue: BeaconchainBaseResponse;
-	getValidatorsByDepositAddress: BeaconchainBaseResponse;
-	getValidatorsByWithdrawalCredentials: BeaconchainBaseResponse;
-	postValidators: BeaconchainBaseResponse;
-	resolveEns: BeaconchainBaseResponse;
+	getChart: BeaconchainV1Response;
+	getExecutionAddressErc20Tokens: BeaconchainV1Response;
+	getEthStoreDaily: BeaconchainV2Response;
+	getEth1DepositsByTxHash: BeaconchainV1Response;
+	getEpoch: BeaconchainV1Response;
+	getExecutionBlock: BeaconchainV2Response;
+	getExecutionProducedBlocks: BeaconchainV1Response;
+	getNodeHealth: BeaconchainHealthResponse;
+	getLatestState: BeaconchainV2Response;
+	getNetworkPerformance: BeaconchainV2Response;
+	getRocketpoolValidator: BeaconchainV1Response;
+	getSlot: BeaconchainV2Response;
+	getSlotAttestations: BeaconchainV1Response;
+	getSlotAttesterSlashings: BeaconchainV1Response;
+	getSlotProposerSlashings: BeaconchainV1Response;
+	getSlotVoluntaryExits: BeaconchainV1Response;
+	getSyncCommittee: BeaconchainV2Response;
+	getValidator: BeaconchainV2Response;
+	getValidatorAttestationEfficiency: BeaconchainV2Response;
+	getValidatorAttestations: BeaconchainV2Response;
+	getValidatorBlsChanges: BeaconchainV1Response;
+	getValidatorBalanceHistory: BeaconchainV2Response;
+	getValidatorConsensusRewards: BeaconchainV2Response;
+	getValidatorDailyStats: BeaconchainV1Response;
+	getValidatorDeposits: BeaconchainV1Response;
+	getValidatorExecutionRewards: BeaconchainV2Response;
+	getValidatorIncomeHistory: BeaconchainV2Response;
+	getValidatorLeaderboard: BeaconchainV1Response;
+	getValidatorProposals: BeaconchainV2Response;
+	getQueues: BeaconchainV2Response;
+	getValidatorWithdrawals: BeaconchainV1Response;
+	getValidatorsProposalLuck: BeaconchainV1Response;
+	getValidatorsQueue: BeaconchainV1Response;
+	getValidatorsByDepositAddress: BeaconchainV2Response;
+	getValidatorsByWithdrawalCredentials: BeaconchainV2Response;
+	postValidators: BeaconchainV2Response;
+	resolveEns: BeaconchainV1Response;
 };

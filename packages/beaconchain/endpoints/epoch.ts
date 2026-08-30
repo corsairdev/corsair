@@ -1,28 +1,27 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainV2Request } from '../client';
+import {
+	makeBeaconchainV1Request,
+	requireBeaconchainKey,
+	v1GetOptions,
+} from '../client';
 import type { BeaconchainEndpoints } from '../index';
-import type { BeaconchainBaseResponse } from './types';
+import { BeaconchainV1ResponseSchema, GetEpochInputSchema } from './types';
 
 export const getEpoch: BeaconchainEndpoints['getEpoch'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-		'ethereum/epoch',
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				chain: 'mainnet',
-				epoch: input.epochId,
-			},
-		},
+	const parsed = GetEpochInputSchema.parse(input);
+	const res = await makeBeaconchainV1Request(
+		`epoch/${parsed.epochId}`,
+		requireBeaconchainKey(ctx.key),
+		v1GetOptions(parsed.chain),
 	);
 	await logEventFromContext(
 		ctx,
 		'beaconchain.epoch.get',
-		{ epochId: String(input.epochId) },
+		{ epochId: String(parsed.epochId) },
 		'completed',
 	);
-	return res;
+	return BeaconchainV1ResponseSchema.parse(res);
 };

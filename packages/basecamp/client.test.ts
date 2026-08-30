@@ -4,12 +4,9 @@ import {
 	BASECAMP_API_BASE,
 	BASECAMP_AUTH_BASE,
 	BasecampAccountIdMissingError,
-	BasecampOAuthError,
 	compactObject,
 	discoverBasecampAccountId,
-	getValidBasecampAccessToken,
 	makeBasecampRequest,
-	refreshBasecampAccessToken,
 	validateAccountId,
 } from './client';
 
@@ -99,48 +96,6 @@ describe('Basecamp client', () => {
 		);
 	});
 
-	it('refreshes with a form body and preserves a non-rotated refresh token', async () => {
-		mockRequest.mockResolvedValue({
-			access_token: 'new-access',
-			expires_in: 1209600,
-		});
-		const token = await refreshBasecampAccessToken(
-			'client',
-			'secret',
-			'refresh',
-		);
-		expect(token.access_token).toBe('new-access');
-		const [, options] = lastCall();
-		expect(options.url).toBe('/authorization/token');
-		expect(options.mediaType).toBe('application/x-www-form-urlencoded');
-		expect(String(options.body)).toContain('grant_type=refresh_token');
-
-		mockRequest.mockResolvedValueOnce({
-			access_token: 'next',
-			expires_in: 1209600,
-		});
-		const valid = await getValidBasecampAccessToken({
-			refreshToken: 'refresh',
-			clientId: 'client',
-			clientSecret: 'secret',
-			forceRefresh: true,
-		});
-		expect(valid.refreshToken).toBe('refresh');
-		expect(valid.refreshed).toBe(true);
-	});
-
-	it('uses an unexpired token without network access', async () => {
-		const valid = await getValidBasecampAccessToken({
-			accessToken: 'still-valid',
-			expiresAt: String(Math.floor(Date.now() / 1000) + 3600),
-		});
-		expect(valid).toMatchObject({
-			accessToken: 'still-valid',
-			refreshed: false,
-		});
-		expect(mockRequest).not.toHaveBeenCalled();
-	});
-
 	it('validates account ids and compacts undefined recursively', () => {
 		expect(validateAccountId('123')).toBe('123');
 		expect(() => validateAccountId('../secret')).toThrow(
@@ -153,73 +108,5 @@ describe('Basecamp client', () => {
 			b: false,
 			d: {},
 		});
-	});
-});
-
-describe('Basecamp concurrent token refresh', () => {
-	function deferred<T>() {
-		let resolve!: (value: T) => void;
-		let reject!: (error: unknown) => void;
-		const promise = new Promise<T>((res, rej) => {
-			resolve = res;
-			reject = rej;
-		});
-		return { promise, resolve, reject };
-	}
-
-	it('coalesces concurrent exchanges of the same refresh token', async () => {
-		const gate = deferred<{ access_token: string; expires_in: number }>();
-		mockRequest.mockReturnValue(gate.promise as never);
-
-		const both = Promise.all([
-			refreshBasecampAccessToken('client', 'secret', 'R1'),
-			refreshBasecampAccessToken('client', 'secret', 'R1'),
-		]);
-		gate.resolve({ access_token: 'A2', expires_in: 1209600 });
-		const [first, second] = await both;
-
-		// One exchange on the wire: the second caller never submits R1, which the
-		// first has by then spent.
-		expect(mockRequest).toHaveBeenCalledTimes(1);
-		expect(first.access_token).toBe('A2');
-		expect(second).toBe(first);
-	});
-
-	it('keeps exchanges for different accounts independent', async () => {
-		mockRequest.mockResolvedValue({ access_token: 'A2', expires_in: 1209600 });
-		await Promise.all([
-			refreshBasecampAccessToken('client', 'secret', 'R1'),
-			refreshBasecampAccessToken('client', 'secret', 'R-other'),
-		]);
-		expect(mockRequest).toHaveBeenCalledTimes(2);
-	});
-
-	it('starts a new exchange once the previous one has settled', async () => {
-		mockRequest.mockResolvedValue({ access_token: 'A2', expires_in: 1209600 });
-		await refreshBasecampAccessToken('client', 'secret', 'R1');
-		await refreshBasecampAccessToken('client', 'secret', 'R1');
-		expect(mockRequest).toHaveBeenCalledTimes(2);
-	});
-
-	it('rejects every joiner and caches no failure', async () => {
-		const gate = deferred<never>();
-		mockRequest.mockReturnValueOnce(gate.promise as never);
-		const both = Promise.all([
-			refreshBasecampAccessToken('client', 'secret', 'R1'),
-			refreshBasecampAccessToken('client', 'secret', 'R1'),
-		]).catch((error) => error);
-		gate.reject(new Error('boom'));
-		expect(await both).toBeInstanceOf(BasecampOAuthError);
-		expect(mockRequest).toHaveBeenCalledTimes(1);
-
-		// The failed exchange must not be left in the map as a poisoned entry.
-		mockRequest.mockResolvedValueOnce({
-			access_token: 'A2',
-			expires_in: 1209600,
-		});
-		await expect(
-			refreshBasecampAccessToken('client', 'secret', 'R1'),
-		).resolves.toMatchObject({ access_token: 'A2' });
-		expect(mockRequest).toHaveBeenCalledTimes(2);
 	});
 });

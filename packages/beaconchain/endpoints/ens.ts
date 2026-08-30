@@ -1,22 +1,27 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainV1Request } from '../client';
+import {
+	makeBeaconchainV1Request,
+	requireBeaconchainKey,
+	v1GetOptions,
+} from '../client';
 import type { BeaconchainEndpoints } from '../index';
-import type { BeaconchainBaseResponse } from './types';
+import { BeaconchainV1ResponseSchema, ResolveEnsInputSchema } from './types';
 
 export const resolveEns: BeaconchainEndpoints['resolveEns'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeBeaconchainV1Request<BeaconchainBaseResponse>(
-		`ens/lookup/${input.name}`,
-		ctx.key,
-		{ method: 'GET' },
+	const parsed = ResolveEnsInputSchema.parse(input);
+	const res = await makeBeaconchainV1Request(
+		`ens/lookup/${parsed.name}`,
+		requireBeaconchainKey(ctx.key),
+		v1GetOptions(parsed.chain),
 	);
 	await logEventFromContext(
 		ctx,
 		'beaconchain.ens.resolve',
-		{ name: input.name },
+		{ name: parsed.name },
 		'completed',
 	);
-	return res;
+	return BeaconchainV1ResponseSchema.parse(res);
 };
