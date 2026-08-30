@@ -198,7 +198,8 @@ const brevoEndpointMeta = {
 		description: 'Delete a Brevo email campaign [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'emailCampaigns.sendNow': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Send a Brevo email campaign immediately',
 	},
 	'emailCampaigns.sendTest': {
@@ -208,7 +209,7 @@ const brevoEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof brevoEndpointsNested>;
 
 export const brevoAuthConfig = {
-	api_key: {},
+	api_key: { account: [] as const },
 } as const satisfies PluginAuthConfig;
 
 export type BaseBrevoPlugin<T extends BrevoPluginOptions> = CorsairPlugin<
