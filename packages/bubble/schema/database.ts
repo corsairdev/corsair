@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { N } from './primitives';
 
 /**
  * A single Bubble thing (database record), as returned by the Data API.
@@ -32,9 +31,9 @@ export const BubbleListResponse = z
 	.object({
 		response: z
 			.object({
-				cursor: N,
-				count: N,
-				remaining: N,
+				cursor: z.number(),
+				count: z.number(),
+				remaining: z.number(),
 				results: z.array(BubbleThingEntity),
 			})
 			.loose(),

@@ -124,8 +124,30 @@ export const BUBBLE_BULK_TIMEOUT_MS = 260_000;
 
 const isString = (value: unknown): value is string => typeof value === 'string';
 
+/**
+ * Bubble app slugs are a single DNS label (`letters`, `digits`, `hyphens`;
+ * e.g. `rentalunits`). Enforced before any origin is built so a crafted
+ * `appName` (e.g. `x@evil.example#`) can never repoint the request host and
+ * have the bearer token sent to it (SSRF via URL userinfo/hash).
+ */
+const APP_NAME_PATTERN = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/;
+
 function apiBase(appName: string, baseUrl?: string): string {
-	if (baseUrl) return baseUrl.replace(/\/+$/, '');
+	if (baseUrl) {
+		if (!baseUrl.toLowerCase().startsWith('https://')) {
+			throw new BubbleAPIError(
+				'Bubble base URL must use HTTPS so the API token is never sent in plaintext',
+				400,
+			);
+		}
+		return baseUrl.replace(/\/+$/, '');
+	}
+	if (!APP_NAME_PATTERN.test(appName)) {
+		throw new BubbleAPIError(
+			`Invalid Bubble app name "${appName}": expected a single DNS label (letters, digits, hyphens)`,
+			400,
+		);
+	}
 	return `https://${appName}.bubbleapps.io`;
 }
 
@@ -170,9 +192,15 @@ export async function makeBubbleRequest<T>(
 
 	const hasBody = body !== undefined && method !== 'GET' && method !== 'DELETE';
 
+	// `corsair/http` only substitutes `{api-version}` placeholders - it never
+	// appends a version path - so the `/api/1.1` prefix must be part of the
+	// path itself. Both the Data API (`/obj/...`) and the Workflow API
+	// (`/wf/...`) live under it: `https://{appName}.bubbleapps.io/api/1.1/...`.
+	const apiPath = `/api/1.1/${endpoint.replace(/^\/+/, '')}`;
+
 	const requestOptions: ApiRequestOptions = {
 		method,
-		url: endpoint,
+		url: apiPath,
 		body: hasBody ? body : undefined,
 		mediaType: hasBody
 			? (mediaType ?? (isString(body) ? 'text/plain' : 'application/json'))

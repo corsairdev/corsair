@@ -181,7 +181,9 @@ describe('things.get', () => {
 		});
 
 		expect(lastMethod).toBe('GET');
-		expect(lastUrl).toBe('https://rentalunits.bubbleapps.io/obj/unit/abc');
+		expect(lastUrl).toBe(
+			'https://rentalunits.bubbleapps.io/api/1.1/obj/unit/abc',
+		);
 		expect(result).toEqual(THING);
 		expect(db.things.upsertByEntityId).toHaveBeenCalledWith(THING._id, THING);
 		expect(db.things.upsertByEntityId).toHaveBeenCalledTimes(1);
@@ -255,7 +257,7 @@ describe('things.create', () => {
 		});
 
 		expect(lastMethod).toBe('POST');
-		expect(lastUrl).toBe('https://rentalunits.bubbleapps.io/obj/unit');
+		expect(lastUrl).toBe('https://rentalunits.bubbleapps.io/api/1.1/obj/unit');
 		expect(header(lastHeaders, 'Content-Type')).toBe('application/json');
 		expect(lastBody).toBe('{"Unit name":"Unit B","unitnumber":4}');
 		expect(result).toEqual({ status: 'success', id: 'created-id' });
@@ -278,7 +280,9 @@ describe('things.bulkCreate', () => {
 		});
 
 		expect(lastMethod).toBe('POST');
-		expect(lastUrl).toBe('https://rentalunits.bubbleapps.io/obj/unit/bulk');
+		expect(lastUrl).toBe(
+			'https://rentalunits.bubbleapps.io/api/1.1/obj/unit/bulk',
+		);
 		expect(header(lastHeaders, 'Content-Type')).toBe('text/plain');
 		expect(lastBody).toBe('{"Unit name":"A"}\n{"Unit name":"B"}');
 		expect(result).toEqual({
@@ -310,7 +314,9 @@ describe('things.update / replace / delete', () => {
 			await op(ctx, { typeName: 'unit', thingId: 'abc' } as never);
 
 			expect(lastMethod).toBe(method);
-			expect(lastUrl).toBe('https://rentalunits.bubbleapps.io/obj/unit/abc');
+			expect(lastUrl).toBe(
+				'https://rentalunits.bubbleapps.io/api/1.1/obj/unit/abc',
+			);
 			// update/replace/delete carry no payload
 			expect(lastBody).toBeUndefined();
 			expect(db.things.deleteByEntityId).toHaveBeenCalledWith('abc');
@@ -334,7 +340,9 @@ describe('workflows.run', () => {
 		});
 
 		expect(lastMethod).toBe('POST');
-		expect(lastUrl).toBe('https://rentalunits.bubbleapps.io/wf/notify_user');
+		expect(lastUrl).toBe(
+			'https://rentalunits.bubbleapps.io/api/1.1/wf/notify_user',
+		);
 		expect(lastBody).toBe('{"email":"user@example.com"}');
 		expect(result).toEqual({ status: 'success' });
 		expect(mockLogEvent).toHaveBeenCalledWith(

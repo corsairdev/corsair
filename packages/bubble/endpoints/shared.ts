@@ -31,7 +31,8 @@ export async function bubbleCall<T>(
 export function compact<T extends Record<string, unknown>>(obj: T): T {
 	const result = Object.create(null) as T;
 	for (const key of Object.keys(obj) as (keyof T)[]) {
-		result[key] = obj[key] as T[keyof T];
+		const value = obj[key];
+		if (value !== undefined) result[key] = value as T[keyof T];
 	}
 	return result;
 }

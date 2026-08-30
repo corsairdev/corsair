@@ -100,7 +100,7 @@ describe('makeBubbleRequest', () => {
 		);
 
 		expect(result).toEqual({ ok: true });
-		expect(lastUrl).toBe('https://rentalunits.bubbleapps.io/obj/unit');
+		expect(lastUrl).toBe('https://rentalunits.bubbleapps.io/api/1.1/obj/unit');
 		expect(header(lastCaptured.headers, 'Authorization')).toBe(
 			'Bearer test-secret',
 		);
@@ -112,7 +112,18 @@ describe('makeBubbleRequest', () => {
 			baseUrl: 'https://app.example.com/version-test',
 		});
 
-		expect(lastUrl).toBe('https://app.example.com/version-test/obj/unit');
+		expect(lastUrl).toBe(
+			'https://app.example.com/version-test/api/1.1/obj/unit',
+		);
+	});
+
+	it('rejects a custom baseUrl that is not HTTPS', async () => {
+		await expect(
+			makeBubbleRequest('obj/unit', '', 'key', {
+				method: 'GET',
+				baseUrl: 'http://app.example.com',
+			}),
+		).rejects.toThrow('HTTPS');
 	});
 
 	it('spreads GET query params into the URL', async () => {
@@ -122,7 +133,7 @@ describe('makeBubbleRequest', () => {
 		});
 
 		expect(lastUrl).toBe(
-			'https://rentalunits.bubbleapps.io/obj/unit?limit=10&cursor=3&descending=true',
+			'https://rentalunits.bubbleapps.io/api/1.1/obj/unit?limit=10&cursor=3&descending=true',
 		);
 	});
 
@@ -162,6 +173,27 @@ describe('makeBubbleRequest', () => {
 
 		await expect(
 			makeBubbleRequest('obj/unit', 'rentalunits', 'key', {
+				method: 'GET',
+			}),
+		).resolves.toBeDefined();
+	});
+
+	it('rejects appName values that could hijack the request host', async () => {
+		for (const appName of [
+			'x@evil.example#',
+			'foo.bar.example',
+			'..',
+			'foo/bar',
+		]) {
+			await expect(
+				makeBubbleRequest('obj/unit', appName, 'key', {
+					method: 'GET',
+				}),
+			).rejects.toThrow(/Invalid Bubble app name/);
+		}
+
+		await expect(
+			makeBubbleRequest('obj/unit', 'rental-units2', 'key', {
 				method: 'GET',
 			}),
 		).resolves.toBeDefined();
