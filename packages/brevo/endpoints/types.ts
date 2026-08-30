@@ -55,7 +55,7 @@ export type AccountGetResponse = z.infer<typeof AccountGetResponseSchema>;
 export const ContactSchema = z
 	.object({
 		id: z.number(),
-		email: z.string(),
+		email: z.string().nullish(),
 		emailBlacklisted: z.boolean().optional(),
 		smsBlacklisted: z.boolean().optional(),
 		createdAt: z.string().optional(),
@@ -333,7 +333,7 @@ export type EmailCampaignsSendNowResponse = z.infer<
 
 export const EmailCampaignsSendTestInputSchema = z.object({
 	campaignId: z.number(),
-	emailTo: z.array(z.string()),
+	emailTo: z.array(z.email()),
 });
 export type EmailCampaignsSendTestInput = z.infer<
 	typeof EmailCampaignsSendTestInputSchema

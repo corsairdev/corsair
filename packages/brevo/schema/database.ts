@@ -7,7 +7,7 @@ import { z } from 'zod';
 export const BrevoContact = z
 	.object({
 		id: z.union([z.number(), z.string()]),
-		email: z.string(),
+		email: z.string().optional(),
 		emailBlacklisted: z.boolean().optional(),
 		smsBlacklisted: z.boolean().optional(),
 		createdAt: z.coerce.date().nullable().optional(),
