@@ -206,6 +206,27 @@ describe('Beamer plugin auth', () => {
 });
 
 describe('Beamer error handlers', () => {
+	it('does not retry 429s at the HTTP layer', async () => {
+		let attempts = 0;
+		global.fetch = (async () => {
+			attempts += 1;
+			return {
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				url: 'https://api.getbeamer.com/v0/posts',
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				json: async () => ({ message: 'quota exceeded' }),
+				text: async () => JSON.stringify({ message: 'quota exceeded' }),
+			};
+		}) as unknown as typeof global.fetch;
+
+		await expect(
+			Posts.get({ key: 'test-api-key' } as Parameters<typeof Posts.get>[0], {}),
+		).rejects.toBeInstanceOf(ApiError);
+		expect(attempts).toBe(1);
+	});
+
 	it('does not retry monthly quota 429s', async () => {
 		const err = new ApiError(
 			{ method: 'GET', url: 'https://api.getbeamer.com/v0/posts' },
