@@ -49,32 +49,6 @@ describe('ApiError Redaction', () => {
 		expect(apiError.request.query).not.toBe(request.query);
 	});
 
-	it('should redact the access_key query parameter used by apilayer-style APIs', () => {
-		const request: ApiRequestOptions = {
-			method: 'GET',
-			url: '/v1/test',
-			query: {
-				access_key: 'secret-access-key',
-				normal_param: 'public-data',
-			},
-		};
-
-		const response: ApiResult = {
-			url: 'https://api.example.com/v1/test?access_key=secret-access-key&normal_param=public-data',
-			ok: false,
-			status: 401,
-			statusText: 'Unauthorized',
-			body: { error: 'Invalid auth' },
-		};
-
-		const apiError = new ApiError(request, response, 'Unauthorized');
-
-		expect(apiError.url).not.toContain('secret-access-key');
-		expect(apiError.url).toContain('access_key=%5BREDACTED%5D');
-		expect(apiError.request.query?.access_key).toBe('[REDACTED]');
-		expect(apiError.request.query?.normal_param).toBe('public-data');
-	});
-
 	it('should handle case-insensitive query parameter matching', () => {
 		const request: ApiRequestOptions = {
 			method: 'GET',

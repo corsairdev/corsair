@@ -1,13 +1,7 @@
 import type { ApiRequestOptions } from './ApiRequestOptions';
 import type { ApiResult } from './ApiResult';
 
-const SENSITIVE_QUERY_PARAMS = new Set([
-	'api_key',
-	'key',
-	'token',
-	'appid',
-	'access_key',
-]);
+const SENSITIVE_QUERY_PARAMS = new Set(['api_key', 'key', 'token', 'appid']);
 
 function isSensitiveQueryParam(key: string): boolean {
 	let normalized = key;
