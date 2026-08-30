@@ -2,13 +2,27 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { BrevoAPIError } from './client';
 
+function getStatus(error: Error): number | undefined {
+	if (error instanceof ApiError || error instanceof BrevoAPIError) {
+		return error.status;
+	}
+	return undefined;
+}
+
+function getRetryAfterMs(error: Error): number | undefined {
+	if (
+		(error instanceof ApiError || error instanceof BrevoAPIError) &&
+		typeof error.retryAfter === 'number'
+	) {
+		return error.retryAfter;
+	}
+	return undefined;
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error) => {
-			if (error instanceof ApiError && error.status === 429) {
-				return true;
-			}
-			if (error instanceof BrevoAPIError && error.status === 429) {
+			if (getStatus(error) === 429) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -19,26 +33,16 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error) => {
-			let retryAfter = 1;
-			if (
-				(error instanceof ApiError || error instanceof BrevoAPIError) &&
-				error.retryAfter
-			) {
-				retryAfter = error.retryAfter;
-			}
-
 			return {
 				maxRetries: 3,
-				backoffMs: retryAfter * 1000,
+				retryStrategy: 'exponential_backoff' as const,
+				headersRetryAfterMs: getRetryAfterMs(error),
 			};
 		},
 	},
 	AUTH_ERROR: {
 		match: (error) => {
-			if (
-				(error instanceof ApiError && error.status === 401) ||
-				(error instanceof BrevoAPIError && error.status === 401)
-			) {
+			if (getStatus(error) === 401) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -58,10 +62,7 @@ export const errorHandlers = {
 	},
 	PERMISSION_ERROR: {
 		match: (error) => {
-			if (
-				(error instanceof ApiError && error.status === 403) ||
-				(error instanceof BrevoAPIError && error.status === 403)
-			) {
+			if (getStatus(error) === 403) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -80,10 +81,7 @@ export const errorHandlers = {
 	},
 	NOT_FOUND_ERROR: {
 		match: (error) => {
-			if (
-				(error instanceof ApiError && error.status === 404) ||
-				(error instanceof BrevoAPIError && error.status === 404)
-			) {
+			if (getStatus(error) === 404) {
 				return true;
 			}
 			if (
@@ -104,12 +102,8 @@ export const errorHandlers = {
 	},
 	BAD_REQUEST_ERROR: {
 		match: (error) => {
-			if (
-				(error instanceof ApiError &&
-					(error.status === 400 || error.status === 422)) ||
-				(error instanceof BrevoAPIError &&
-					(error.status === 400 || error.status === 422))
-			) {
+			const status = getStatus(error);
+			if (status === 400 || status === 422) {
 				return true;
 			}
 			if (
@@ -135,12 +129,24 @@ export const errorHandlers = {
 			};
 		},
 	},
+	QUOTA_ERROR: {
+		match: (error) => {
+			if (getStatus(error) === 402) {
+				return true;
+			}
+			const errorMessage = error.message.toLowerCase();
+			return errorMessage.includes('payment required');
+		},
+		handler: async () => {
+			return {
+				maxRetries: 0,
+			};
+		},
+	},
 	SERVER_ERROR: {
 		match: (error) => {
-			if (
-				(error instanceof ApiError && error.status && error.status >= 500) ||
-				(error instanceof BrevoAPIError && error.status && error.status >= 500)
-			) {
+			const status = getStatus(error);
+			if (status !== undefined && status >= 500) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -153,7 +159,7 @@ export const errorHandlers = {
 		handler: async () => {
 			return {
 				maxRetries: 2,
-				backoffMs: 1000,
+				retryStrategy: 'exponential_backoff' as const,
 			};
 		},
 	},
@@ -161,12 +167,7 @@ export const errorHandlers = {
 		match: () => {
 			return true;
 		},
-		handler: async (error, context) => {
-			console.error(`[corsair:${context.pluginId}:${context.operation}]`, {
-				error: error.message,
-				input: context.input,
-			});
-
+		handler: async () => {
 			return {
 				maxRetries: 0,
 			};
