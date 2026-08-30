@@ -161,6 +161,16 @@ describe('RemoveBackground.remove', () => {
 		expect(body).not.toHaveProperty('add_shadow');
 	});
 
+	it('rejects shadowOpacity without shadowType', async () => {
+		await expect(
+			RemoveBackground.remove(ctx, {
+				imageUrl: 'https://example.com/photo.jpg',
+				shadowOpacity: 80,
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('returns the base64 cutout from the API response', async () => {
 		mockRequest.mockResolvedValueOnce({
 			data: {

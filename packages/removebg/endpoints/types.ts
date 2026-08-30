@@ -109,10 +109,18 @@ export const RemoveBackgroundInputSchema =
 	RemoveBackgroundBaseInputSchema.refine(
 		(value) => Boolean(value.imageUrl) !== Boolean(value.imageFileB64),
 		{ message: 'Provide exactly one of imageUrl or imageFileB64' },
-	).refine((value) => !(value.bgColor && value.bgImageUrl), {
-		message: 'Provide at most one of bgColor or bgImageUrl',
-		path: ['bgImageUrl'],
-	});
+	)
+		.refine((value) => !(value.bgColor && value.bgImageUrl), {
+			message: 'Provide at most one of bgColor or bgImageUrl',
+			path: ['bgImageUrl'],
+		})
+		.refine(
+			(value) => !(value.shadowOpacity !== undefined && !value.shadowType),
+			{
+				message: 'shadowOpacity requires shadowType to be set',
+				path: ['shadowOpacity'],
+			},
+		);
 export type RemoveBackgroundInput = z.input<typeof RemoveBackgroundInputSchema>;
 
 export const RemoveBackgroundOutputSchema = z.object({
