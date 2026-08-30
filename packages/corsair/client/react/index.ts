@@ -303,18 +303,23 @@ export function createCorsairReactClient(opts: CorsairReactClientOptions) {
 	};
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Corsair Connect — wrap the app in <CorsairProvider> (and data regions in
+// <CorsairBoundary>): an auth-missing failure anywhere opens the connect dialog
+// and resumes once connected, with no per-call code. useConnect exposes the
+// opt-in escape hatches (proactive `connect`, mutation `call`).
+// ─────────────────────────────────────────────────────────────────────────────
+export { CorsairBoundary, type CorsairBoundaryProps } from './boundary';
 export type {
 	ConnectPhase,
 	ConnectState,
 } from './connect-controller';
-export type { ConnectAppearance } from './connect-overlay';
-// ─────────────────────────────────────────────────────────────────────────────
-// Corsair Connect — <CorsairProvider> + useConnect: on a reconnect/auth-missing
-// failure, pop an overlay with the scoped connect link and resume once connected.
-// ─────────────────────────────────────────────────────────────────────────────
+export type { ConnectAppearance, ConnectTheme } from './connect-overlay';
 export {
 	type CorsairContextValue,
 	CorsairProvider,
+	type CorsairProviderProps,
+	type UseConnectResult,
 	useConnect,
 	useCorsair,
 } from './provider';

@@ -10,13 +10,11 @@ describe('connectReducer', () => {
 		const s = connectReducer(initialConnectState, {
 			type: 'OPEN',
 			plugin: 'gmail',
-			tenantId: 'acme',
 			connectUrl: 'https://hub/connect/tok',
 		});
 		expect(s).toEqual({
 			phase: 'connecting',
 			plugin: 'gmail',
-			tenantId: 'acme',
 			connectUrl: 'https://hub/connect/tok',
 		});
 	});
@@ -25,7 +23,6 @@ describe('connectReducer', () => {
 		const open = connectReducer(initialConnectState, {
 			type: 'OPEN',
 			plugin: 'gmail',
-			tenantId: null,
 			connectUrl: 'https://hub/connect/tok',
 		});
 		expect(connectReducer(open, { type: 'SUCCESS' })).toMatchObject({
@@ -38,7 +35,6 @@ describe('connectReducer', () => {
 		const open = connectReducer(initialConnectState, {
 			type: 'OPEN',
 			plugin: 'gmail',
-			tenantId: null,
 			connectUrl: 'https://hub/connect/tok',
 		});
 		expect(connectReducer(open, { type: 'CLOSE' })).toEqual(
