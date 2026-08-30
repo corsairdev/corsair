@@ -69,7 +69,6 @@ export const DocumentGetInputSchema = z
 		doc_id: z.string(),
 		include_elements: z.boolean().optional(),
 		include_binary: z.boolean().optional(),
-		include_original_elements: z.boolean().optional(),
 	})
 	.loose();
 
@@ -144,20 +143,10 @@ export type QueryGeneratePlanResponse = z.infer<
 	typeof QueryGeneratePlanResponseSchema
 >;
 
-// Note: Aryn's Platform API has no pagination on these list endpoints —
-// `GET /v1/async/list` returns all tasks in a single `tasks` map and the
-// storage docsets/docs list endpoints have no cursor/limit parameters in the
-// official OpenAPI spec (verified against docs.aryn.ai/api-reference).
-// If Aryn adds pagination later, extend the input schemas here.
 export const ASYNC_LIST_PATH_FILTER = '^/v1/storage/docsets/{docset_id}/docs$';
 
 export const AsyncTasksListInputSchema = z
 	.object({
-		/**
-		 * The Aryn API (GET /v1/async/list) only accepts the constant
-		 * `^/v1/storage/docsets/{docset_id}/docs$` for path_filter (OpenAPI enum).
-		 * Callers may omit it; if provided, it must match the supported value.
-		 */
 		path_filter: z
 			.string()
 			.regex(
@@ -207,7 +196,10 @@ export const DocumentPartitionInputSchema = z
 		file_url: z.string().optional(),
 		options: PartitionOptionsSchema.optional(),
 	})
-	.loose();
+	.loose()
+	.refine((value) => Boolean(value.file) || Boolean(value.file_url), {
+		message: 'Provide file or file_url',
+	});
 
 export type DocumentPartitionInput = z.infer<
 	typeof DocumentPartitionInputSchema
@@ -233,7 +225,10 @@ export const DocumentSubmitAsyncAddInputSchema = z
 		file_url: z.string().optional(),
 		options: PartitionOptionsSchema.optional(),
 	})
-	.loose();
+	.loose()
+	.refine((value) => Boolean(value.file) || Boolean(value.file_url), {
+		message: 'Provide file or file_url',
+	});
 
 export type DocumentSubmitAsyncAddInput = z.infer<
 	typeof DocumentSubmitAsyncAddInputSchema
