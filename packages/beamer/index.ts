@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Posts } from './endpoints';
 import type {
 	BeamerEndpointInputs,
@@ -25,7 +26,7 @@ import { errorHandlers } from './error-handlers';
 import { BeamerSchema } from './schema';
 
 export type BeamerPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	hooks?: InternalBeamerPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -79,9 +80,6 @@ export const beamerAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseBeamerPlugin<T extends BeamerPluginOptions> = CorsairPlugin<
@@ -122,21 +120,22 @@ export function beamer<const T extends BeamerPluginOptions>(
 		},
 
 		keyBuilder: async (ctx: BeamerKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
+			if (source === 'endpoint' && options.key !== undefined) {
+				if (!options.key.trim()) {
+					throw new AuthMissingError('beamer', 'api_key');
+				}
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
+			if (source === 'endpoint') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res?.trim()) {
+					throw new AuthMissingError('beamer', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('beamer', 'api_key');
 		},
 	} satisfies InternalBeamerPlugin;
 }

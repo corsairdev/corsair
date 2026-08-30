@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
@@ -13,7 +14,6 @@ export class BeamerAPIError extends Error {
 
 const BEAMER_API_BASE = 'https://api.getbeamer.com/v0';
 
-/** Sends an authenticated request to the Beamer v0 API. */
 export async function makeBeamerRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -23,6 +23,10 @@ export async function makeBeamerRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
+	if (!apiKey.trim()) {
+		throw new AuthMissingError('beamer', 'api_key');
+	}
+
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
@@ -53,8 +57,6 @@ export async function makeBeamerRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		// Preserve Corsair's ApiError so status/retry metadata
-		// remains available to the Beamer error handlers.
 		if (error instanceof ApiError) {
 			throw error;
 		}
