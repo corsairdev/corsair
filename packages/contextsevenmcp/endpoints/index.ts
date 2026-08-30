@@ -1,7 +1,9 @@
-import { get as exampleGet } from './example';
+import { contextGet } from './context';
+import { librarySearch } from './library';
 
-export const Example = {
-	get: exampleGet,
+export const ContextSevenMcp = {
+	librarySearch,
+	contextGet,
 };
 
 export * from './types';
