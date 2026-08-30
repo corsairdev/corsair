@@ -12,7 +12,7 @@ function keyBuilderOf(plugin: { keyBuilder?: unknown }) {
 describe('aryn plugin registration', () => {
 	it('supports api_key auth only (per OSS spec)', () => {
 		expect(arynAuthConfig).toEqual({
-			api_key: { account: ['tenant_external_id'] },
+			api_key: { account: [] },
 		});
 	});
 

@@ -162,7 +162,7 @@ const arynEndpointMeta = {
 
 export const arynAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
+		account: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
