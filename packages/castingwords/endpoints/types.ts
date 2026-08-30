@@ -2,9 +2,26 @@ import { z } from 'zod';
 
 const EmptyInputSchema = z.object({});
 
-const OrderSkuSchema = z.enum(['TRANS14', 'TRANS2', 'TRANS6', 'TRANS7', 'EMSR02', 'DIFFQ2', 'TSTMP1', 'CAPTION1']);
+const OrderSkuSchema = z.enum([
+	'TRANS14',
+	'TRANS2',
+	'TRANS6',
+	'TRANS7',
+	'EMSR02',
+	'DIFFQ2',
+	'TSTMP1',
+	'CAPTION1',
+]);
 
-const UpgradeSkuSchema = z.enum(['DIFFQ2', 'TSTMP1', 'CAPTION1', 'EDIT01', 'UPGRD1', 'UPGRD2', 'UPGRD3']);
+const UpgradeSkuSchema = z.enum([
+	'DIFFQ2',
+	'TSTMP1',
+	'CAPTION1',
+	'EDIT01',
+	'UPGRD1',
+	'UPGRD2',
+	'UPGRD3',
+]);
 
 const TranscriptExtensionSchema = z.enum([
 	'txt',
@@ -55,7 +72,10 @@ const SuccessResponseSchema = z
 export const CastingwordsEndpointInputSchemas = {
 	createOrder: z.object({
 		url: z.string().url(),
-		sku: z.array(OrderSkuSchema).min(1).describe('CastingWords SKU(s) to order'),
+		sku: z
+			.array(OrderSkuSchema)
+			.min(1)
+			.describe('CastingWords SKU(s) to order'),
 		test: z.boolean().optional(),
 		notes: z.string().optional(),
 		names: z.array(z.string()).optional(),
@@ -115,10 +135,20 @@ export const CastingwordsEndpointOutputSchemas = {
 		})
 		.loose(),
 	getWebhook: z
-		.object({ webhook: z.union([z.string().url(), z.literal('')]).nullable().optional() })
+		.object({
+			webhook: z
+				.union([z.string().url(), z.literal('')])
+				.nullable()
+				.optional(),
+		})
 		.loose(),
 	setWebhook: z
-		.object({ webhook: z.union([z.string().url(), z.literal('')]).nullable().optional() })
+		.object({
+			webhook: z
+				.union([z.string().url(), z.literal('')])
+				.nullable()
+				.optional(),
+		})
 		.loose(),
 } as const;
 
@@ -136,16 +166,23 @@ export type CastingwordsEndpointOutputs = {
 
 export type CreateOrderInput = CastingwordsEndpointInputs['createOrder'];
 export type CreateOrderResponse = CastingwordsEndpointOutputs['createOrder'];
-export type GetPrepayBalanceInput = CastingwordsEndpointInputs['getPrepayBalance'];
-export type GetPrepayBalanceResponse = CastingwordsEndpointOutputs['getPrepayBalance'];
-export type GetAudiofileDetailsInput = CastingwordsEndpointInputs['getAudiofileDetails'];
-export type GetAudiofileDetailsResponse = CastingwordsEndpointOutputs['getAudiofileDetails'];
+export type GetPrepayBalanceInput =
+	CastingwordsEndpointInputs['getPrepayBalance'];
+export type GetPrepayBalanceResponse =
+	CastingwordsEndpointOutputs['getPrepayBalance'];
+export type GetAudiofileDetailsInput =
+	CastingwordsEndpointInputs['getAudiofileDetails'];
+export type GetAudiofileDetailsResponse =
+	CastingwordsEndpointOutputs['getAudiofileDetails'];
 export type GetTranscriptInput = CastingwordsEndpointInputs['getTranscript'];
-export type GetTranscriptResponse = CastingwordsEndpointOutputs['getTranscript'];
+export type GetTranscriptResponse =
+	CastingwordsEndpointOutputs['getTranscript'];
 export type OrderUpgradeInput = CastingwordsEndpointInputs['orderUpgrade'];
 export type OrderUpgradeResponse = CastingwordsEndpointOutputs['orderUpgrade'];
-export type RefundAudiofileInput = CastingwordsEndpointInputs['refundAudiofile'];
-export type RefundAudiofileResponse = CastingwordsEndpointOutputs['refundAudiofile'];
+export type RefundAudiofileInput =
+	CastingwordsEndpointInputs['refundAudiofile'];
+export type RefundAudiofileResponse =
+	CastingwordsEndpointOutputs['refundAudiofile'];
 export type GetInvoiceInput = CastingwordsEndpointInputs['getInvoice'];
 export type GetInvoiceResponse = CastingwordsEndpointOutputs['getInvoice'];
 export type GetWebhookInput = CastingwordsEndpointInputs['getWebhook'];

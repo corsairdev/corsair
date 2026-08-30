@@ -1,15 +1,19 @@
 import { logEventFromContext } from 'corsair/core';
-import type { CastingwordsEndpoints } from '..';
 import { makeCastingwordsRequest } from '../../client';
+import type { CastingwordsEndpoints } from '..';
 import { CastingwordsEndpointOutputSchemas } from '../types';
 
-export const getTranscript: CastingwordsEndpoints['getTranscript'] = async (ctx, input) => {
+export const getTranscript: CastingwordsEndpoints['getTranscript'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeCastingwordsRequest<unknown>(
 		`audiofile/${encodeURIComponent(String(input.audiofileId))}/transcript.${input.extension}`,
 		ctx.key,
 		{ query: { test: input.test ? '1' : undefined } },
 	);
-	const parsed = CastingwordsEndpointOutputSchemas.getTranscript.parse(response);
+	const parsed =
+		CastingwordsEndpointOutputSchemas.getTranscript.parse(response);
 	await logEventFromContext(
 		ctx,
 		'castingwords.get_transcript',

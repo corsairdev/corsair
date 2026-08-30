@@ -24,8 +24,14 @@ import {
 	refundAudiofile,
 	setWebhook,
 } from './endpoints';
-import type { CastingwordsEndpointInputs, CastingwordsEndpointOutputs } from './endpoints/types';
-import { CastingwordsEndpointInputSchemas, CastingwordsEndpointOutputSchemas } from './endpoints/types';
+import type {
+	CastingwordsEndpointInputs,
+	CastingwordsEndpointOutputs,
+} from './endpoints/types';
+import {
+	CastingwordsEndpointInputSchemas,
+	CastingwordsEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CastingwordsSchema } from './schema';
 
@@ -42,14 +48,18 @@ export type CastingwordsContext = CorsairPluginContext<
 	CastingwordsPluginOptions
 >;
 
-export type CastingwordsKeyBuilderContext = KeyBuilderContext<CastingwordsPluginOptions>;
-export type CastingwordsBoundEndpoints = BindEndpoints<typeof castingwordsEndpointsNested>;
-
-type CastingwordsEndpoint<K extends keyof CastingwordsEndpointOutputs> = CorsairEndpoint<
-	CastingwordsContext,
-	CastingwordsEndpointInputs[K],
-	CastingwordsEndpointOutputs[K]
+export type CastingwordsKeyBuilderContext =
+	KeyBuilderContext<CastingwordsPluginOptions>;
+export type CastingwordsBoundEndpoints = BindEndpoints<
+	typeof castingwordsEndpointsNested
 >;
+
+type CastingwordsEndpoint<K extends keyof CastingwordsEndpointOutputs> =
+	CorsairEndpoint<
+		CastingwordsContext,
+		CastingwordsEndpointInputs[K],
+		CastingwordsEndpointOutputs[K]
+	>;
 
 export type CastingwordsEndpoints = {
 	createOrder: CastingwordsEndpoint<'createOrder'>;
@@ -114,12 +124,15 @@ const castingwordsEndpointSchemas = {
 		input: CastingwordsEndpointInputSchemas.setWebhook,
 		output: CastingwordsEndpointOutputSchemas.setWebhook,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof castingwordsEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof castingwordsEndpointsNested
+>;
 
 const castingwordsEndpointMeta = {
 	'createOrder.create': {
 		riskLevel: 'write',
-		description: 'Create a new CastingWords transcription order from a public media URL',
+		description:
+			'Create a new CastingWords transcription order from a public media URL',
 	},
 	'prepayBalance.get': {
 		riskLevel: 'read',
@@ -127,7 +140,8 @@ const castingwordsEndpointMeta = {
 	},
 	'audiofileDetails.get': {
 		riskLevel: 'read',
-		description: 'Get the current state and details of a CastingWords audiofile',
+		description:
+			'Get the current state and details of a CastingWords audiofile',
 	},
 	'transcript.get': {
 		riskLevel: 'read',
@@ -139,7 +153,8 @@ const castingwordsEndpointMeta = {
 	},
 	'refund.create': {
 		riskLevel: 'destructive',
-		description: 'Refund a CastingWords audiofile before transcription work begins',
+		description:
+			'Refund a CastingWords audiofile before transcription work begins',
 	},
 	'invoice.get': {
 		riskLevel: 'read',
@@ -153,7 +168,9 @@ const castingwordsEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Set the CastingWords webhook URL',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof castingwordsEndpointsNested>;
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof castingwordsEndpointsNested
+>;
 
 export const castingwordsAuthConfig = {
 	api_key: {
@@ -163,20 +180,24 @@ export const castingwordsAuthConfig = {
 
 const defaultAuthType: AuthTypes = 'api_key';
 
-export type BaseCastingwordsPlugin<T extends CastingwordsPluginOptions> = CorsairPlugin<
-	'castingwords',
-	typeof CastingwordsSchema,
-	typeof castingwordsEndpointsNested,
-	Record<string, never>,
-	T,
-	typeof defaultAuthType
->;
+export type BaseCastingwordsPlugin<T extends CastingwordsPluginOptions> =
+	CorsairPlugin<
+		'castingwords',
+		typeof CastingwordsSchema,
+		typeof castingwordsEndpointsNested,
+		Record<string, never>,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalCastingwordsPlugin = BaseCastingwordsPlugin<CastingwordsPluginOptions>;
-export type ExternalCastingwordsPlugin<T extends CastingwordsPluginOptions> = BaseCastingwordsPlugin<T>;
+export type InternalCastingwordsPlugin =
+	BaseCastingwordsPlugin<CastingwordsPluginOptions>;
+export type ExternalCastingwordsPlugin<T extends CastingwordsPluginOptions> =
+	BaseCastingwordsPlugin<T>;
 
 export function castingwords<const T extends CastingwordsPluginOptions>(
-	incomingOptions: CastingwordsPluginOptions & T = {} as CastingwordsPluginOptions & T,
+	incomingOptions: CastingwordsPluginOptions &
+		T = {} as CastingwordsPluginOptions & T,
 ): ExternalCastingwordsPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -219,20 +240,20 @@ export type {
 	CastingwordsEndpointOutputs,
 	CreateOrderInput,
 	CreateOrderResponse,
-	GetPrepayBalanceInput,
-	GetPrepayBalanceResponse,
 	GetAudiofileDetailsInput,
 	GetAudiofileDetailsResponse,
+	GetInvoiceInput,
+	GetInvoiceResponse,
+	GetPrepayBalanceInput,
+	GetPrepayBalanceResponse,
 	GetTranscriptInput,
 	GetTranscriptResponse,
+	GetWebhookInput,
+	GetWebhookResponse,
 	OrderUpgradeInput,
 	OrderUpgradeResponse,
 	RefundAudiofileInput,
 	RefundAudiofileResponse,
-	GetInvoiceInput,
-	GetInvoiceResponse,
-	GetWebhookInput,
-	GetWebhookResponse,
 	SetWebhookInput,
 	SetWebhookResponse,
 } from './endpoints/types';

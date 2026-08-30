@@ -1,9 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
-import type { CastingwordsEndpoints } from '..';
 import { makeCastingwordsRequest } from '../../client';
+import type { CastingwordsEndpoints } from '..';
 import { CastingwordsEndpointOutputSchemas } from '../types';
 
-export const refundAudiofile: CastingwordsEndpoints['refundAudiofile'] = async (ctx, input) => {
+export const refundAudiofile: CastingwordsEndpoints['refundAudiofile'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeCastingwordsRequest<unknown>(
 		`audiofile/${encodeURIComponent(String(input.audiofileId))}/refund`,
 		ctx.key,

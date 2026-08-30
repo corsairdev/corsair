@@ -1,4 +1,7 @@
-import { CastingwordsEndpointInputSchemas, CastingwordsEndpointOutputSchemas } from './endpoints/types';
+import {
+	CastingwordsEndpointInputSchemas,
+	CastingwordsEndpointOutputSchemas,
+} from './endpoints/types';
 import { CastingwordsSchema } from './schema';
 
 const validOrder = {
@@ -12,19 +15,56 @@ describe('CastingWords schemas', () => {
 	});
 
 	it('validates order input', () => {
-		expect(CastingwordsEndpointInputSchemas.createOrder.safeParse(validOrder).success).toBe(true);
-		expect(CastingwordsEndpointInputSchemas.createOrder.safeParse({ ...validOrder, url: 'not-url' }).success).toBe(false);
+		expect(
+			CastingwordsEndpointInputSchemas.createOrder.safeParse(validOrder)
+				.success,
+		).toBe(true);
+		expect(
+			CastingwordsEndpointInputSchemas.createOrder.safeParse({
+				...validOrder,
+				url: 'not-url',
+			}).success,
+		).toBe(false);
 	});
 
 	it('validates all endpoint input shapes', () => {
-		expect(CastingwordsEndpointInputSchemas.getPrepayBalance.safeParse({}).success).toBe(true);
-		expect(CastingwordsEndpointInputSchemas.getAudiofileDetails.safeParse({ audiofileId: 101 }).success).toBe(true);
-		expect(CastingwordsEndpointInputSchemas.getTranscript.safeParse({ audiofileId: 101, extension: 'txt' }).success).toBe(true);
-		expect(CastingwordsEndpointInputSchemas.orderUpgrade.safeParse({ audiofileId: 101, sku: ['TSTMP1'] }).success).toBe(true);
-		expect(CastingwordsEndpointInputSchemas.refundAudiofile.safeParse({ audiofileId: 101 }).success).toBe(true);
-		expect(CastingwordsEndpointInputSchemas.getInvoice.safeParse({ invoiceId: 10 }).success).toBe(true);
-		expect(CastingwordsEndpointInputSchemas.getWebhook.safeParse({}).success).toBe(true);
-		expect(CastingwordsEndpointInputSchemas.setWebhook.safeParse({ webhook: 'https://example.com/webhook' }).success).toBe(true);
+		expect(
+			CastingwordsEndpointInputSchemas.getPrepayBalance.safeParse({}).success,
+		).toBe(true);
+		expect(
+			CastingwordsEndpointInputSchemas.getAudiofileDetails.safeParse({
+				audiofileId: 101,
+			}).success,
+		).toBe(true);
+		expect(
+			CastingwordsEndpointInputSchemas.getTranscript.safeParse({
+				audiofileId: 101,
+				extension: 'txt',
+			}).success,
+		).toBe(true);
+		expect(
+			CastingwordsEndpointInputSchemas.orderUpgrade.safeParse({
+				audiofileId: 101,
+				sku: ['TSTMP1'],
+			}).success,
+		).toBe(true);
+		expect(
+			CastingwordsEndpointInputSchemas.refundAudiofile.safeParse({
+				audiofileId: 101,
+			}).success,
+		).toBe(true);
+		expect(
+			CastingwordsEndpointInputSchemas.getInvoice.safeParse({ invoiceId: 10 })
+				.success,
+		).toBe(true);
+		expect(
+			CastingwordsEndpointInputSchemas.getWebhook.safeParse({}).success,
+		).toBe(true);
+		expect(
+			CastingwordsEndpointInputSchemas.setWebhook.safeParse({
+				webhook: 'https://example.com/webhook',
+			}).success,
+		).toBe(true);
 	});
 
 	it('validates documented order output', () => {
@@ -37,7 +77,11 @@ describe('CastingWords schemas', () => {
 	});
 
 	it('validates documented balance and audiofile output', () => {
-		expect(CastingwordsEndpointOutputSchemas.getPrepayBalance.parse({ balance: 12.5 }).balance).toBe(12.5);
+		expect(
+			CastingwordsEndpointOutputSchemas.getPrepayBalance.parse({
+				balance: 12.5,
+			}).balance,
+		).toBe(12.5);
 		expect(
 			CastingwordsEndpointOutputSchemas.getAudiofileDetails.parse({
 				audiofile: { id: 101, statename: 'Delivered' },
@@ -46,7 +90,9 @@ describe('CastingWords schemas', () => {
 	});
 
 	it('validates transcript and invoice output', () => {
-		expect(CastingwordsEndpointOutputSchemas.getTranscript.parse('hello transcript')).toBe('hello transcript');
+		expect(
+			CastingwordsEndpointOutputSchemas.getTranscript.parse('hello transcript'),
+		).toBe('hello transcript');
 		expect(
 			CastingwordsEndpointOutputSchemas.getInvoice.parse({
 				id: 5,

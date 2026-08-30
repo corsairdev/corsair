@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { CastingwordsEndpoints } from '..';
 import { makeCastingwordsRequest } from '../../client';
+import type { CastingwordsEndpoints } from '..';
 import { CastingwordsEndpointOutputSchemas } from '../types';
 
 export const getWebhook: CastingwordsEndpoints['getWebhook'] = async (ctx) => {

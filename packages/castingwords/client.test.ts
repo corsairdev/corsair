@@ -1,5 +1,9 @@
 import { request } from 'corsair/http';
-import { CASTINGWORDS_API_BASE, makeCastingwordsRequest, toFormBody } from './client';
+import {
+	CASTINGWORDS_API_BASE,
+	makeCastingwordsRequest,
+	toFormBody,
+} from './client';
 
 jest.mock('corsair/http', () => ({
 	ApiError: class ApiError extends Error {},
@@ -16,9 +20,9 @@ describe('CastingWords client', () => {
 	});
 
 	it('encodes repeatable form fields', () => {
-		expect(toFormBody({ api_key: 'key', sku: ['TRANS14', 'TSTMP1'], test: '1' })).toBe(
-			'api_key=key&sku=TRANS14&sku=TSTMP1&test=1',
-		);
+		expect(
+			toFormBody({ api_key: 'key', sku: ['TRANS14', 'TSTMP1'], test: '1' }),
+		).toBe('api_key=key&sku=TRANS14&sku=TSTMP1&test=1');
 	});
 
 	it('adds the API key to GET query parameters', async () => {
@@ -48,6 +52,8 @@ describe('CastingWords client', () => {
 
 	it('preserves provider errors as CastingwordsAPIError', async () => {
 		requestMock.mockRejectedValue(new Error('provider failed'));
-		await expect(makeCastingwordsRequest('prepay_balance', 'secret')).rejects.toThrow('provider failed');
+		await expect(
+			makeCastingwordsRequest('prepay_balance', 'secret'),
+		).rejects.toThrow('provider failed');
 	});
 });

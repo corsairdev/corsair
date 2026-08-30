@@ -64,10 +64,7 @@ export async function makeCastingwordsRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		query:
-			method === 'GET'
-				? { api_key: apiKey, ...options.query }
-				: undefined,
+		query: method === 'GET' ? { api_key: apiKey, ...options.query } : undefined,
 		body: formBody,
 		mediaType: formBody ? 'application/x-www-form-urlencoded' : undefined,
 	};
