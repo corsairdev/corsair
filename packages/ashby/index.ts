@@ -611,6 +611,7 @@ const ashbyEndpointMeta = {
 	},
 	'candidate.anonymize': {
 		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Anonymize candidate personally identifiable data for GDPR compliance',
 	},
@@ -782,6 +783,7 @@ const ashbyEndpointMeta = {
 	},
 	'webhook.delete': {
 		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Delete a webhook subscription',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof ashbyEndpointsNested>;
