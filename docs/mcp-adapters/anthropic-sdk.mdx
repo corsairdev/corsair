@@ -1,5 +1,6 @@
 ---
 title: Anthropic SDK
+icon: "/icons/anthropic.svg"
 description: Connect Corsair to the Anthropic SDK using tool use.
 ---
 
@@ -39,6 +40,6 @@ for (const block of message.content) {
 }
 ```
 
-`AnthropicProvider.build()` is synchronous — it returns the tools array directly, ready to pass to any Anthropic API call.
+`AnthropicProvider.build()` is synchronous. It returns the tools array directly, ready to pass to any Anthropic API call.
 
 `toolRunner` handles the tool call loop automatically, invoking each tool and feeding results back until the model produces a final response.

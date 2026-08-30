@@ -1,0 +1,694 @@
+---
+title: API
+description: "API reference for PDFMonkey: every `pdfmonkey.api.*` operation with input and output types."
+---
+
+Every `pdfmonkey.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Documents
+
+### createDocument
+
+`documents.createDocument`
+
+Create a document and queue it for PDF generation
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfmonkey.api.documents.createDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="document full type">
+
+```ts
+{
+  document_template_id: string,
+  status?: draft | pending,
+  payload?: any,
+  meta?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `app_id` | `string` | Yes | — |
+| `document_template_id` | `string` | Yes | — |
+| `document_template_identifier` | `string` | No | — |
+| `status` | `draft \| pending \| generating \| success \| failure` | Yes | — |
+| `payload` | `any` | No | — |
+| `meta` | `any` | No | — |
+| `filename` | `string` | No | — |
+| `download_url` | `string` | No | — |
+| `preview_url` | `string` | No | — |
+| `public_share_link` | `string` | No | — |
+| `checksum` | `string` | No | — |
+| `generation_logs` | `any[]` | No | — |
+| `failure_cause` | `string` | No | — |
+| `output_type` | `pdf \| image` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### createDocumentSync
+
+`documents.createDocumentSync`
+
+Create a document and wait for generation to complete
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfmonkey.api.documents.createDocumentSync({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="document full type">
+
+```ts
+{
+  document_template_id: string,
+  status: draft | pending,
+  payload?: any,
+  meta?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `app_id` | `string` | Yes | — |
+| `document_template_id` | `string` | No | — |
+| `document_template_identifier` | `string` | No | — |
+| `status` | `draft \| pending \| generating \| success \| failure` | Yes | — |
+| `filename` | `string` | No | — |
+| `download_url` | `string` | No | — |
+| `preview_url` | `string` | No | — |
+| `public_share_link` | `string` | No | — |
+| `failure_cause` | `string` | No | — |
+| `meta` | `any` | No | — |
+| `output_type` | `pdf \| image` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### deleteDocument
+
+`documents.deleteDocument`
+
+Delete a document [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.pdfmonkey.api.documents.deleteDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getDocument
+
+`documents.getDocument`
+
+Get a full document including payload and generation logs
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfmonkey.api.documents.getDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `app_id` | `string` | Yes | — |
+| `document_template_id` | `string` | Yes | — |
+| `document_template_identifier` | `string` | No | — |
+| `status` | `draft \| pending \| generating \| success \| failure` | Yes | — |
+| `payload` | `any` | No | — |
+| `meta` | `any` | No | — |
+| `filename` | `string` | No | — |
+| `download_url` | `string` | No | — |
+| `preview_url` | `string` | No | — |
+| `public_share_link` | `string` | No | — |
+| `checksum` | `string` | No | — |
+| `generation_logs` | `any[]` | No | — |
+| `failure_cause` | `string` | No | — |
+| `output_type` | `pdf \| image` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### getDocumentCard
+
+`documents.getDocumentCard`
+
+Get a document card with status and download URL
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfmonkey.api.documents.getDocumentCard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `app_id` | `string` | Yes | — |
+| `document_template_id` | `string` | No | — |
+| `document_template_identifier` | `string` | No | — |
+| `status` | `draft \| pending \| generating \| success \| failure` | Yes | — |
+| `filename` | `string` | No | — |
+| `download_url` | `string` | No | — |
+| `preview_url` | `string` | No | — |
+| `public_share_link` | `string` | No | — |
+| `failure_cause` | `string` | No | — |
+| `meta` | `any` | No | — |
+| `output_type` | `pdf \| image` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+### listDocumentCards
+
+`documents.listDocumentCards`
+
+List document cards with pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfmonkey.api.documents.listDocumentCards({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | — |
+| `q` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="q full type">
+
+```ts
+{
+  document_template_id?: string,
+  status?: draft | pending | generating | success | failure,
+  workspace_id?: string,
+  updated_since?: string,
+  search?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_cards` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="document_cards full type">
+
+```ts
+{
+  id: string,
+  app_id: string,
+  document_template_id?: string,
+  document_template_identifier?: string,
+  status: draft | pending | generating | success | failure,
+  filename?: string | null,
+  download_url?: string | null,
+  preview_url?: string | null,
+  public_share_link?: string | null,
+  failure_cause?: string | null,
+  meta?: any | null,
+  output_type?: pdf | image,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  next_page?: number | null,
+  prev_page?: number | null,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDocument
+
+`documents.updateDocument`
+
+Update a document's payload, metadata, or template
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfmonkey.api.documents.updateDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_id` | `string` | Yes | — |
+| `document` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="document full type">
+
+```ts
+{
+  document_template_id?: string,
+  status?: draft | pending,
+  payload?: any,
+  meta?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `app_id` | `string` | Yes | — |
+| `document_template_id` | `string` | Yes | — |
+| `document_template_identifier` | `string` | No | — |
+| `status` | `draft \| pending \| generating \| success \| failure` | Yes | — |
+| `payload` | `any` | No | — |
+| `meta` | `any` | No | — |
+| `filename` | `string` | No | — |
+| `download_url` | `string` | No | — |
+| `preview_url` | `string` | No | — |
+| `public_share_link` | `string` | No | — |
+| `checksum` | `string` | No | — |
+| `generation_logs` | `any[]` | No | — |
+| `failure_cause` | `string` | No | — |
+| `output_type` | `pdf \| image` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+## Templates
+
+### createTemplate
+
+`templates.createTemplate`
+
+Create a new document template
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfmonkey.api.templates.createTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_template` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="document_template full type">
+
+```ts
+{
+  app_id: string,
+  identifier: string,
+  body: string,
+  body_draft?: string,
+  scss_style?: string,
+  scss_style_draft?: string,
+  sample_data?: string,
+  sample_data_draft?: string,
+  settings?: any,
+  settings_draft?: any,
+  pdf_engine_id?: string,
+  pdf_engine_draft_id?: string,
+  template_folder_id?: string,
+  ttl?: number | null,
+  edition_mode: code | builder,
+  output_type: pdf | image
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_template` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="document_template full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteTemplate
+
+`templates.deleteTemplate`
+
+Delete a template [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.pdfmonkey.api.templates.deleteTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getTemplate
+
+`templates.getTemplate`
+
+Get a template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfmonkey.api.templates.getTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_template` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="document_template full type">
+
+```ts
+{
+  id: string,
+  app_id: string,
+  identifier?: string,
+  body?: string,
+  body_draft?: string,
+  scss_style?: string,
+  scss_style_draft?: string,
+  sample_data?: string,
+  sample_data_draft?: string,
+  settings?: any,
+  settings_draft?: any,
+  pdf_engine_id?: string | null,
+  pdf_engine_draft_id?: string | null,
+  template_folder_id?: string | null,
+  template_folder_identifier?: string,
+  ttl?: number | null,
+  edition_mode?: code | builder,
+  output_type?: pdf | image,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTemplateCards
+
+`templates.listTemplateCards`
+
+List template cards for a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.pdfmonkey.api.templates.listTemplateCards({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | — |
+| `q` | `object` | Yes | — |
+| `sort` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="q full type">
+
+```ts
+{
+  workspace_id: string,
+  folders?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_template_cards` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="document_template_cards full type">
+
+```ts
+{
+  id: string,
+  app_id: string,
+  identifier?: string,
+  edition_mode?: code | builder,
+  output_type?: pdf | image,
+  is_draft?: boolean,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page: number,
+  next_page?: number | null,
+  prev_page?: number | null,
+  total_pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateTemplate
+
+`templates.updateTemplate`
+
+Update an existing template
+
+**Risk:** `write`
+
+```ts
+await corsair.pdfmonkey.api.templates.updateTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_template_id` | `string` | Yes | — |
+| `document_template` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="document_template full type">
+
+```ts
+{
+  identifier?: string,
+  body?: string,
+  body_draft?: string,
+  scss_style?: string,
+  scss_style_draft?: string,
+  sample_data?: string,
+  sample_data_draft?: string,
+  settings?: any,
+  settings_draft?: any,
+  pdf_engine_id?: string,
+  pdf_engine_draft_id?: string,
+  template_folder_id?: string,
+  ttl?: number | null,
+  edition_mode?: code | builder,
+  output_type?: pdf | image
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_template` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="document_template full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

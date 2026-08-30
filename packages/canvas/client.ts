@@ -11,7 +11,7 @@ import { request } from 'corsair/http';
  */
 export function normalizeCanvasBaseUrl(baseUrl: string): string {
 	let trimmed = baseUrl.trim();
-	// ponytail: avoid /\/+$/ — CodeQL flags it as ReDoS on long slash runs
+	// avoid /\/+$/ — CodeQL flags it as ReDoS on long slash runs
 	while (trimmed.endsWith('/')) {
 		trimmed = trimmed.slice(0, -1);
 	}

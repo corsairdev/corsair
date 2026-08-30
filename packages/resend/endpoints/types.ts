@@ -9,6 +9,7 @@ const EmailsSendInputSchema = z.object({
 	cc: z.union([z.string(), z.array(z.string())]).optional(),
 	bcc: z.union([z.string(), z.array(z.string())]).optional(),
 	reply_to: z.union([z.string(), z.array(z.string())]).optional(),
+	scheduled_at: z.string().optional(),
 	attachments: z
 		.array(
 			z.object({
@@ -64,15 +65,73 @@ const DomainsVerifyInputSchema = z.object({
 	id: z.string(),
 });
 
+// Resend's /emails/batch endpoint does not support attachments and accepts at
+// most 100 emails per request.
+const EmailsBatchItemSchema = EmailsSendInputSchema.omit({
+	attachments: true,
+});
+
+const EmailsBatchInputSchema = z.object({
+	emails: z.array(EmailsBatchItemSchema).max(100),
+});
+
+const EmailsCancelInputSchema = z.object({
+	id: z.string(),
+});
+
+const ContactsCreateInputSchema = z.object({
+	email: z.string().email(),
+	first_name: z.string().optional(),
+	last_name: z.string().optional(),
+	unsubscribed: z.boolean().optional(),
+	properties: z.record(z.string(), z.string()).optional(),
+	segments: z.array(z.object({ id: z.string() })).optional(),
+	topics: z
+		.array(
+			z.object({ id: z.string(), subscription: z.enum(['opt_in', 'opt_out']) }),
+		)
+		.optional(),
+});
+
+const ContactsGetInputSchema = z.object({
+	id: z.string(),
+});
+
+const ContactsListInputSchema = z
+	.object({
+		limit: z.number().optional(),
+		cursor: z.string().optional(),
+	})
+	.optional();
+
+const ContactsUpdateInputSchema = z.object({
+	id: z.string(),
+	first_name: z.string().optional(),
+	last_name: z.string().optional(),
+	unsubscribed: z.boolean().optional(),
+	properties: z.record(z.string(), z.string()).optional(),
+});
+
+const ContactsDeleteInputSchema = z.object({
+	id: z.string(),
+});
+
 export const ResendEndpointInputSchemas = {
 	emailsSend: EmailsSendInputSchema,
 	emailsGet: EmailsGetInputSchema,
 	emailsList: EmailsListInputSchema,
+	emailsBatch: EmailsBatchInputSchema,
+	emailsCancel: EmailsCancelInputSchema,
 	domainsCreate: DomainsCreateInputSchema,
 	domainsGet: DomainsGetInputSchema,
 	domainsList: DomainsListInputSchema,
 	domainsDelete: DomainsDeleteInputSchema,
 	domainsVerify: DomainsVerifyInputSchema,
+	contactsCreate: ContactsCreateInputSchema,
+	contactsGet: ContactsGetInputSchema,
+	contactsList: ContactsListInputSchema,
+	contactsUpdate: ContactsUpdateInputSchema,
+	contactsDelete: ContactsDeleteInputSchema,
 } as const;
 
 export type ResendEndpointInputs = {
@@ -95,9 +154,13 @@ const EmailSchema = z.object({
 
 const GetEmailResponseSchema = EmailSchema.loose();
 
-const ListEmailsResponseSchema = z.object({
-	data: z.array(EmailSchema),
-});
+const ListEmailsResponseSchema = z
+	.object({
+		object: z.string().optional(),
+		has_more: z.boolean().optional(),
+		data: z.array(EmailSchema),
+	})
+	.loose();
 
 const DomainSchema = z.object({
 	id: z.string(),
@@ -111,6 +174,8 @@ const DomainSchema = z.object({
 		'verified',
 		'pending',
 		'failed',
+		'partially_verified',
+		'partially_failed',
 	]),
 	created_at: z.coerce.date().nullable().optional(),
 	region: z.string().optional(),
@@ -120,9 +185,13 @@ const CreateDomainResponseSchema = DomainSchema.loose();
 
 const GetDomainResponseSchema = DomainSchema.loose();
 
-const ListDomainsResponseSchema = z.object({
-	data: z.array(DomainSchema),
-});
+const ListDomainsResponseSchema = z
+	.object({
+		object: z.string().optional(),
+		has_more: z.boolean().optional(),
+		data: z.array(DomainSchema),
+	})
+	.loose();
 
 const DeleteDomainResponseSchema = z.object({
 	id: z.string(),
@@ -132,8 +201,29 @@ const DeleteDomainResponseSchema = z.object({
 
 const VerifyDomainResponseSchema = z
 	.object({
+		object: z.string().optional(),
 		id: z.string().optional(),
-		name: z.string().optional(),
+		records: z
+			.array(
+				z.object({
+					record: z.string(),
+					name: z.string(),
+					type: z.string(),
+					value: z.string(),
+					status: z.enum([
+						'not_started',
+						'validation',
+						'scheduled',
+						'ready',
+						'error',
+						'verified',
+						'pending',
+					]),
+					ttl: z.string().optional(),
+					priority: z.number().optional(),
+				}),
+			)
+			.optional(),
 		status: z
 			.enum([
 				'not_started',
@@ -150,15 +240,76 @@ const VerifyDomainResponseSchema = z
 	})
 	.loose();
 
+const EmailBatchItemResponseSchema = z.object({
+	id: z.string(),
+});
+
+const EmailsBatchResponseSchema = z.object({
+	data: z.array(EmailBatchItemResponseSchema),
+});
+
+const EmailsCancelResponseSchema = z
+	.object({
+		id: z.string(),
+		object: z.string().optional(),
+		cancelled: z.boolean().optional(),
+	})
+	.loose();
+
+const ContactSchema = z.object({
+	object: z.string().optional(),
+	id: z.string(),
+	email: z.string(),
+	first_name: z.string().nullable().optional(),
+	last_name: z.string().nullable().optional(),
+	created_at: z.coerce.date().nullable().optional(),
+	unsubscribed: z.boolean().optional(),
+});
+
+// Create and update return only the object discriminator and id; fetch the
+// full contact via contacts.get before persisting it.
+const ContactsMutationResponseSchema = z.object({
+	object: z.string().optional(),
+	id: z.string(),
+});
+
+const ContactsGetResponseSchema = ContactSchema.loose();
+
+const ContactsListResponseSchema = z
+	.object({
+		object: z.string().optional(),
+		has_more: z.boolean().optional(),
+		data: z.array(ContactSchema),
+	})
+	.loose();
+
+const ContactsUpdateResponseSchema = ContactsMutationResponseSchema;
+
+const ContactsDeleteResponseSchema = z
+	.object({
+		id: z.string().optional(),
+		contact: z.string().optional(),
+		object: z.string().optional(),
+		deleted: z.boolean(),
+	})
+	.loose();
+
 export const ResendEndpointOutputSchemas = {
 	emailsSend: SendEmailResponseSchema,
 	emailsGet: GetEmailResponseSchema,
 	emailsList: ListEmailsResponseSchema,
+	emailsBatch: EmailsBatchResponseSchema,
+	emailsCancel: EmailsCancelResponseSchema,
 	domainsCreate: CreateDomainResponseSchema,
 	domainsGet: GetDomainResponseSchema,
 	domainsList: ListDomainsResponseSchema,
 	domainsDelete: DeleteDomainResponseSchema,
 	domainsVerify: VerifyDomainResponseSchema,
+	contactsCreate: ContactsMutationResponseSchema,
+	contactsGet: ContactsGetResponseSchema,
+	contactsList: ContactsListResponseSchema,
+	contactsUpdate: ContactsUpdateResponseSchema,
+	contactsDelete: ContactsDeleteResponseSchema,
 } as const;
 
 export type ResendEndpointOutputs = {
@@ -177,6 +328,12 @@ export type GetEmailResponse = z.infer<
 export type ListEmailsResponse = z.infer<
 	typeof ResendEndpointOutputSchemas.emailsList
 >;
+export type EmailsBatchResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.emailsBatch
+>;
+export type EmailsCancelResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.emailsCancel
+>;
 export type Domain = z.infer<typeof DomainSchema>;
 export type CreateDomainResponse = z.infer<
 	typeof ResendEndpointOutputSchemas.domainsCreate
@@ -192,4 +349,20 @@ export type DeleteDomainResponse = z.infer<
 >;
 export type VerifyDomainResponse = z.infer<
 	typeof ResendEndpointOutputSchemas.domainsVerify
+>;
+export type Contact = z.infer<typeof ContactSchema>;
+export type ContactsCreateResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.contactsCreate
+>;
+export type ContactsGetResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.contactsGet
+>;
+export type ContactsListResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.contactsList
+>;
+export type ContactsUpdateResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.contactsUpdate
+>;
+export type ContactsDeleteResponse = z.infer<
+	typeof ResendEndpointOutputSchemas.contactsDelete
 >;

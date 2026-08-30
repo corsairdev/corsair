@@ -1,6 +1,13 @@
 import { respondToHubDeliveryFromRequest } from '../../hub/delivery';
 import type { CorsairInternalConfig } from '..';
 import { getCorsairInternal } from '../utils/corsair-instance';
+import type { CappedReadOptions } from './body-limit';
+import {
+	bodyTooLargeError,
+	readRequestBodyTextCapped,
+	resolveBodyStallTimeoutMs,
+	resolveMaxBodyBytes,
+} from './body-limit';
 import { errorResponse, json, ManagementApiError, notFound } from './errors';
 import {
 	completeOAuthCallback,
@@ -28,7 +35,27 @@ import type { CreateConnectLinkInput, OAuthCallbackInput } from './types';
 export type ManagementHandlerOptions = {
 	/** Path prefix the handler is mounted at, e.g. '/api/corsair'. Stripped before dispatch. */
 	basePath?: string;
-	/** Override the default error response. Return undefined to fall through. */
+	/**
+	 * Upper bound for inbound request bodies in bytes. Defaults to
+	 * DEFAULT_MAX_BODY_BYTES (see body-limit.ts). Enforced as an advisory
+	 * content-length gate before ANY routing (including base-path Hub delivery)
+	 * and, on the Node adapters, against every forwarded body regardless of who
+	 * buffered it.
+	 */
+	maxBodyBytes?: number;
+	/**
+	 * Max idle gap between body bytes before a read answers 408
+	 * request_timeout. Bounds trickling uploads on hosts without their own
+	 * request deadline (Fastify ships `requestTimeout: 0`). 0 disables.
+	 * Defaults to DEFAULT_BODY_STALL_TIMEOUT_MS (see body-limit.ts).
+	 */
+	bodyStallTimeoutMs?: number;
+	/**
+	 * Override the default error response. Return undefined to fall through.
+	 * Covers errors raised inside the handler; adapter-stage failures thrown
+	 * before a Request exists (e.g. a 413 from body draining) are answered with
+	 * the built-in envelope and do not reach this hook.
+	 */
 	onError?: (
 		err: unknown,
 		req: Request,
@@ -194,13 +221,28 @@ function stripBasePath(pathname: string, basePath: string): string {
 	return pathname;
 }
 
-async function parseBody(req: Request): Promise<unknown> {
+// Reads the request body under the byte-counting cap and stall watchdog, then
+// parses it as JSON. Limit errors keep their own envelope (413/408); every
+// other read failure still maps to invalid_json exactly like before.
+async function parseBody(
+	req: Request,
+	limits: CappedReadOptions,
+): Promise<unknown> {
 	if (req.method === 'GET' || req.method === 'HEAD') return undefined;
 	const ct = req.headers.get('content-type') ?? '';
 	if (!ct.includes('application/json')) return undefined;
+	const text = await readRequestBodyTextCapped(req, limits).catch(
+		(err: unknown) => {
+			if (err instanceof ManagementApiError) throw err;
+			throw new ManagementApiError(
+				400,
+				'invalid_json',
+				'Request body is not valid JSON',
+			);
+		},
+	);
+	if (!text) return undefined;
 	try {
-		const text = await req.text();
-		if (!text) return undefined;
 		return JSON.parse(text);
 	} catch {
 		throw new ManagementApiError(
@@ -224,6 +266,10 @@ export function managementHandler(
 	opts: ManagementHandlerOptions = {},
 ): (req: Request) => Promise<Response> {
 	const basePath = opts.basePath ?? DEFAULT_BASE_PATH;
+	const maxBodyBytes = resolveMaxBodyBytes(opts.maxBodyBytes);
+	const bodyStallTimeoutMs = resolveBodyStallTimeoutMs(opts.bodyStallTimeoutMs);
+	// Every body read below funnels through these two resolved values.
+	const bodyLimits: CappedReadOptions = { maxBodyBytes, bodyStallTimeoutMs };
 	const internal = getCorsairInternal(
 		corsair,
 		() =>
@@ -234,6 +280,17 @@ export function managementHandler(
 
 	return async (req: Request): Promise<Response> => {
 		try {
+			// Cheap advisory gate BEFORE any routing: rejects oversized bodies
+			// that DECLARE their length without reading a byte (covers the
+			// base-path Hub delivery branch too). Bodies that arrive chunked
+			// with no declared length are bounded by the byte-counting reads
+			// themselves (parseBody / hub delivery), and the Node adapters by
+			// the bridge drain (resolveBody).
+			const contentLength = req.headers.get('content-length');
+			if (contentLength !== null && Number(contentLength) > maxBodyBytes) {
+				throw bodyTooLargeError(maxBodyBytes);
+			}
+
 			const url = new URL(req.url);
 			const pathname = stripBasePath(url.pathname, basePath);
 			const method = req.method.toUpperCase();
@@ -241,7 +298,10 @@ export function managementHandler(
 			// Hub delivery is mounted at the base path (e.g. GET /api/corsair?d=…,
 			// POST signed envelopes). OPTIONS supports browser-delivery CORS preflight.
 			if (method === 'OPTIONS' || pathname === '/' || pathname === '') {
-				return await respondToHubDeliveryFromRequest(corsair, req);
+				return await respondToHubDeliveryFromRequest(corsair, req, {
+					maxBodyBytes,
+					bodyStallTimeoutMs,
+				});
 			}
 
 			if (method !== 'GET' && method !== 'POST') {
@@ -257,7 +317,7 @@ export function managementHandler(
 				if (route.method !== method) continue;
 				const params = matchPattern(route.pattern, pathname);
 				if (!params) continue;
-				const body = await parseBody(req);
+				const body = await parseBody(req, bodyLimits);
 				return await route.handler({
 					corsair,
 					internal,

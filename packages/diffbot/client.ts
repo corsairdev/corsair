@@ -1,0 +1,118 @@
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
+
+export class DiffbotAPIError extends Error {
+	constructor(
+		message: string,
+		public readonly code?: string,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
+	) {
+		super(message);
+		this.name = 'DiffbotAPIError';
+	}
+}
+
+// Diffbot API v3 base URL (extract, crawl, bulk, custom, account)
+const DIFFBOT_API_BASE = 'https://api.diffbot.com/v3';
+
+// Diffbot Knowledge Graph base URL (DQL, enhance, kg-bulk)
+const DIFFBOT_KG_BASE = 'https://kg.diffbot.com/kg/v3';
+
+export type DiffbotRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	body?: unknown;
+	query?: Record<string, string | number | boolean | undefined>;
+	headers?: Record<string, string>;
+	useKgBase?: boolean;
+	customBase?: string;
+	timeout?: number;
+};
+
+function compactQuery(
+	query: Record<string, string | number | boolean | undefined>,
+): Record<string, string | number | boolean> {
+	const compacted: Record<string, string | number | boolean> = {};
+	for (const [key, value] of Object.entries(query)) {
+		if (value !== undefined) {
+			compacted[key] = value;
+		}
+	}
+	return compacted;
+}
+
+/**
+ * Make a request to the Diffbot API.
+ *
+ * Diffbot authenticates via `?token=<api-key>` as a query parameter.
+ *
+ * @param endpoint - The API endpoint path (e.g. 'article', 'dql', 'enhance')
+ * @param token - The Diffbot API key
+ * @param options - Request options including method, body, query params
+ */
+export async function makeDiffbotRequest<T>(
+	endpoint: string,
+	token: string,
+	options: DiffbotRequestOptions = {},
+): Promise<T> {
+	if (!token?.trim()) {
+		throw new Error('Diffbot API token is required');
+	}
+
+	const {
+		method = 'GET',
+		body,
+		query = {},
+		headers,
+		useKgBase = false,
+		customBase,
+		timeout,
+	} = options;
+
+	const baseUrl =
+		customBase ?? (useKgBase ? DIFFBOT_KG_BASE : DIFFBOT_API_BASE);
+
+	const config: OpenAPIConfig = {
+		BASE: baseUrl,
+		VERSION: '3',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		TOKEN: undefined,
+		TIMEOUT: timeout,
+		HEADERS: {
+			Accept: 'application/json',
+			...headers,
+		},
+	};
+
+	const queryWithToken = compactQuery({
+		...query,
+		token,
+	});
+
+	const requestOptions: ApiRequestOptions = {
+		method,
+		url: endpoint,
+		body:
+			method === 'POST' ||
+			method === 'PUT' ||
+			method === 'PATCH' ||
+			method === 'DELETE'
+				? body
+				: undefined,
+		mediaType: typeof body === 'string' ? 'text/plain' : 'application/json',
+		query: queryWithToken,
+	};
+
+	try {
+		return await request<T>(config, requestOptions);
+	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
+		if (error instanceof Error) {
+			throw new DiffbotAPIError(error.message);
+		}
+		throw new DiffbotAPIError('Unknown error occurred');
+	}
+}

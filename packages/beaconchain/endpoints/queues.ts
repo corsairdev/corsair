@@ -1,22 +1,25 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainV2Request } from '../client';
+import {
+	makeBeaconchainV2Request,
+	requireBeaconchainKey,
+	v2Body,
+} from '../client';
 import type { BeaconchainEndpoints } from '../index';
-import type { BeaconchainBaseResponse } from './types';
+import { BeaconchainV2ResponseSchema, GetQueuesInputSchema } from './types';
 
 export const getQueues: BeaconchainEndpoints['getQueues'] = async (
 	ctx,
-	_input,
+	input,
 ) => {
-	const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+	const parsed = GetQueuesInputSchema.parse(input);
+	const res = await makeBeaconchainV2Request(
 		'ethereum/queues',
-		ctx.key,
+		requireBeaconchainKey(ctx.key),
 		{
 			method: 'POST',
-			body: {
-				chain: 'mainnet',
-			},
+			body: v2Body(parsed),
 		},
 	);
 	await logEventFromContext(ctx, 'beaconchain.queues.get', {}, 'completed');
-	return res;
+	return BeaconchainV2ResponseSchema.parse(res);
 };

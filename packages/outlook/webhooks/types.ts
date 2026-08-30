@@ -96,25 +96,38 @@ export function createOutlookMatch(
 	options?: { excludeResourcePatterns?: RegExp[] },
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		const body =
-			typeof request.body === 'string'
-				? (JSON.parse(request.body) as unknown)
-				: request.body;
-		const payload = body as OutlookWebhookPayload;
-		return (
-			payload?.value?.some(
-				(notification) =>
-					notification.resource !== undefined &&
-					resourcePattern.test(notification.resource) &&
-					!(
-						options?.excludeResourcePatterns?.some((pattern) =>
-							pattern.test(notification.resource as string),
-						) ?? false
-					) &&
-					(notification.changeType === undefined ||
-						changeTypes.includes(notification.changeType)),
-			) ?? false
-		);
+		let body: unknown;
+		try {
+			body =
+				typeof request.body === 'string'
+					? (JSON.parse(request.body) as unknown)
+					: request.body;
+		} catch {
+			return false;
+		}
+		if (!body || typeof body !== 'object') return false;
+		const value = (body as Record<string, unknown>)['value'];
+		if (!Array.isArray(value)) return false;
+		return value.some((entry: unknown) => {
+			if (!entry || typeof entry !== 'object') return false;
+			const notification = entry as Record<string, unknown>;
+			const resource =
+				typeof notification['resource'] === 'string'
+					? notification['resource']
+					: undefined;
+			if (resource === undefined) return false;
+			return (
+				resourcePattern.test(resource) &&
+				!(
+					options?.excludeResourcePatterns?.some((pattern) =>
+						pattern.test(resource),
+					) ?? false
+				) &&
+				(notification['changeType'] === undefined ||
+					(typeof notification['changeType'] === 'string' &&
+						changeTypes.includes(notification['changeType'])))
+			);
+		});
 	};
 }
 
@@ -128,11 +141,17 @@ export function verifyOutlookWebhookSignature(
 		return { valid: false, error: 'Missing client state' };
 	}
 
+	const notifications = request.payload?.value;
+	if (!Array.isArray(notifications) || notifications.length === 0) {
+		return { valid: false, error: 'Invalid payload: missing value array' };
+	}
+
 	const expected = Buffer.from(clientState);
-	const notifications = request.payload?.value ?? [];
 	const allMatch = notifications.every((n) => {
-		if (typeof n.clientState !== 'string') return false;
-		const actual = Buffer.from(n.clientState);
+		if (!n || typeof n !== 'object') return false;
+		const client = (n as OutlookChangeNotification).clientState;
+		if (typeof client !== 'string') return false;
+		const actual = Buffer.from(client);
 		return (
 			actual.length === expected.length &&
 			crypto.timingSafeEqual(actual, expected)

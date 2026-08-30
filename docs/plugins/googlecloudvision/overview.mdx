@@ -1,0 +1,134 @@
+---
+title: Overview
+description: "Google Cloud Vision plugin for Corsair"
+---
+
+Use **Google Cloud Vision** through Corsair: one client, typed API calls.
+
+**What you get:**
+
+- 29 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/googlecloudvision
+```
+```bash yarn
+yarn add corsair @corsair-dev/googlecloudvision
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/googlecloudvision
+```
+```bash bun
+bun add corsair @corsair-dev/googlecloudvision
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { googlecloudvision } from '@corsair-dev/googlecloudvision';
+
+export const corsair = createCorsair({
+	plugins: [
+		googlecloudvision(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+googlecloudvision()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google Cloud Vision OAuth app.
+
+```ts
+googlecloudvision({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'googlecloudvision',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`files.annotate`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.files.annotate({});
+```
+
+
+**`files.asyncBatchAnnotate`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.files.asyncBatchAnnotate({});
+```
+
+
+See the full list on the [API](/plugins/googlecloudvision/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/googlecloudvision/api">
+    Every `googlecloudvision.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

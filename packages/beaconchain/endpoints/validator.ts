@@ -1,260 +1,253 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainV2Request } from '../client';
+import {
+	makeBeaconchainV1Request,
+	makeBeaconchainV2Request,
+	requireBeaconchainKey,
+	v1GetOptions,
+	v2Body,
+} from '../client';
 import type { BeaconchainEndpoints } from '../index';
-import type { BeaconchainBaseResponse } from './types';
+import {
+	BeaconchainV1ResponseSchema,
+	BeaconchainV2ResponseSchema,
+	GetValidatorAttestationEfficiencyInputSchema,
+	GetValidatorAttestationsInputSchema,
+	GetValidatorBalanceHistoryInputSchema,
+	GetValidatorBlsChangesInputSchema,
+	GetValidatorConsensusRewardsInputSchema,
+	GetValidatorDailyStatsInputSchema,
+	GetValidatorDepositsInputSchema,
+	GetValidatorExecutionRewardsInputSchema,
+	GetValidatorIncomeHistoryInputSchema,
+	GetValidatorInputSchema,
+	GetValidatorLeaderboardInputSchema,
+	GetValidatorProposalsInputSchema,
+	GetValidatorWithdrawalsInputSchema,
+} from './types';
+
+function validatorBody(
+	input: { chain?: 'mainnet' | 'hoodi'; cursor?: string; page_size?: number },
+	indexOrPubkey: string,
+	extra: Record<string, unknown> = {},
+) {
+	return v2Body(input, {
+		validator: { validator_identifiers: [indexOrPubkey] },
+		...extra,
+	});
+}
 
 export const getValidator: BeaconchainEndpoints['getValidator'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+	const parsed = GetValidatorInputSchema.parse(input);
+	const res = await makeBeaconchainV2Request(
 		'ethereum/validators',
-		ctx.key,
+		requireBeaconchainKey(ctx.key),
 		{
 			method: 'POST',
-			body: {
-				chain: 'mainnet',
-				validator: {
-					validator_identifiers: [input.indexOrPubkey],
-				},
-			},
+			body: validatorBody(parsed, parsed.indexOrPubkey),
 		},
 	);
 	await logEventFromContext(
 		ctx,
 		'beaconchain.validator.get',
-		{ indexOrPubkey: input.indexOrPubkey },
+		{ indexOrPubkey: parsed.indexOrPubkey },
 		'completed',
 	);
-	return res;
+	return BeaconchainV2ResponseSchema.parse(res);
 };
 
 export const getValidatorAttestationEfficiency: BeaconchainEndpoints['getValidatorAttestationEfficiency'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/validators/attestation-efficiency',
-			ctx.key,
+		const parsed = GetValidatorAttestationEfficiencyInputSchema.parse(input);
+		const res = await makeBeaconchainV2Request(
+			'ethereum/validators/performance-aggregate',
+			requireBeaconchainKey(ctx.key),
 			{
 				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					validator: {
-						validator_identifiers: [input.indexOrPubkey],
+				body: validatorBody(parsed, parsed.indexOrPubkey, {
+					range: {
+						evaluation_window: parsed.evaluation_window ?? '24h',
 					},
-				},
+				}),
 			},
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.validator.getAttestationEfficiency',
-			{ indexOrPubkey: input.indexOrPubkey },
+			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return res;
+		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
 export const getValidatorAttestations: BeaconchainEndpoints['getValidatorAttestations'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/validators/attestations',
-			ctx.key,
+		const parsed = GetValidatorAttestationsInputSchema.parse(input);
+		const res = await makeBeaconchainV2Request(
+			'ethereum/validators/attestation-slots',
+			requireBeaconchainKey(ctx.key),
 			{
 				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					validator: {
-						validator_identifiers: [input.indexOrPubkey],
-					},
-					...(input.page !== undefined ? { page: input.page } : {}),
-				},
+				body: validatorBody(parsed, parsed.indexOrPubkey),
 			},
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.validator.getAttestations',
-			{ indexOrPubkey: input.indexOrPubkey },
+			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return res;
+		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
 export const getValidatorBlsChanges: BeaconchainEndpoints['getValidatorBlsChanges'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/validators/bls-changes',
-			ctx.key,
-			{
-				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					...(input.page !== undefined ? { page: input.page } : {}),
-				},
-			},
+		const parsed = GetValidatorBlsChangesInputSchema.parse(input);
+		const res = await makeBeaconchainV1Request(
+			`validator/${parsed.indexOrPubkey}/blsChange`,
+			requireBeaconchainKey(ctx.key),
+			v1GetOptions(parsed.chain),
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.validator.getBlsChanges',
-			{},
+			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return res;
+		return BeaconchainV1ResponseSchema.parse(res);
 	};
 
 export const getValidatorBalanceHistory: BeaconchainEndpoints['getValidatorBalanceHistory'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/validators/balance-history',
-			ctx.key,
+		const parsed = GetValidatorBalanceHistoryInputSchema.parse(input);
+		const res = await makeBeaconchainV2Request(
+			'ethereum/validators/balances',
+			requireBeaconchainKey(ctx.key),
 			{
 				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					validator: {
-						validator_identifiers: [input.indexOrPubkey],
-					},
-				},
+				body: validatorBody(parsed, parsed.indexOrPubkey),
 			},
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.validator.getBalanceHistory',
-			{ indexOrPubkey: input.indexOrPubkey },
+			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return res;
+		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
 export const getValidatorConsensusRewards: BeaconchainEndpoints['getValidatorConsensusRewards'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/validators/rewards/consensus',
-			ctx.key,
+		const parsed = GetValidatorConsensusRewardsInputSchema.parse(input);
+		const res = await makeBeaconchainV2Request(
+			'ethereum/validators/rewards-aggregate',
+			requireBeaconchainKey(ctx.key),
 			{
 				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					validator: {
-						validator_identifiers: [input.indexOrPubkey],
+				body: validatorBody(parsed, parsed.indexOrPubkey, {
+					range: {
+						evaluation_window: parsed.evaluation_window ?? '24h',
 					},
-				},
+				}),
 			},
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.validator.getConsensusRewards',
-			{ indexOrPubkey: input.indexOrPubkey },
+			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return res;
+		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
 export const getValidatorDailyStats: BeaconchainEndpoints['getValidatorDailyStats'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/validators/stats/daily',
-			ctx.key,
-			{
-				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					validator: {
-						validator_identifiers: [input.indexOrPubkey],
-					},
-				},
-			},
+		const parsed = GetValidatorDailyStatsInputSchema.parse(input);
+		const res = await makeBeaconchainV1Request(
+			`validator/stats/${parsed.indexOrPubkey}`,
+			requireBeaconchainKey(ctx.key),
+			v1GetOptions(parsed.chain),
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.validator.getDailyStats',
-			{ indexOrPubkey: input.indexOrPubkey },
+			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return res;
+		return BeaconchainV1ResponseSchema.parse(res);
 	};
 
 export const getValidatorDeposits: BeaconchainEndpoints['getValidatorDeposits'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/validators/deposits',
-			ctx.key,
-			{
-				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					validator: {
-						validator_identifiers: [input.indexOrPubkey],
-					},
-				},
-			},
+		const parsed = GetValidatorDepositsInputSchema.parse(input);
+		const res = await makeBeaconchainV1Request(
+			`validator/${parsed.indexOrPubkey}/deposits`,
+			requireBeaconchainKey(ctx.key),
+			v1GetOptions(parsed.chain),
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.validator.getDeposits',
-			{ indexOrPubkey: input.indexOrPubkey },
+			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return res;
+		return BeaconchainV1ResponseSchema.parse(res);
 	};
 
 export const getValidatorExecutionRewards: BeaconchainEndpoints['getValidatorExecutionRewards'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/validators/rewards/execution',
-			ctx.key,
+		const parsed = GetValidatorExecutionRewardsInputSchema.parse(input);
+		const res = await makeBeaconchainV2Request(
+			'ethereum/validators/rewards-aggregate',
+			requireBeaconchainKey(ctx.key),
 			{
 				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					validator: {
-						validator_identifiers: [input.indexOrPubkey],
+				body: validatorBody(parsed, parsed.indexOrPubkey, {
+					range: {
+						evaluation_window: parsed.evaluation_window ?? '24h',
 					},
-				},
+				}),
 			},
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.validator.getExecutionRewards',
-			{ indexOrPubkey: input.indexOrPubkey },
+			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return res;
+		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
 export const getValidatorIncomeHistory: BeaconchainEndpoints['getValidatorIncomeHistory'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/validators/income-history',
-			ctx.key,
+		const parsed = GetValidatorIncomeHistoryInputSchema.parse(input);
+		const res = await makeBeaconchainV2Request(
+			'ethereum/validators/rewards-list',
+			requireBeaconchainKey(ctx.key),
 			{
 				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					validator: {
-						validator_identifiers: [input.indexOrPubkey],
-					},
-				},
+				body: validatorBody(parsed, parsed.indexOrPubkey),
 			},
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.validator.getIncomeHistory',
-			{ indexOrPubkey: input.indexOrPubkey },
+			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return res;
+		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
 export const getValidatorLeaderboard: BeaconchainEndpoints['getValidatorLeaderboard'] =
-	async (ctx, _input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/validators/leaderboard',
-			ctx.key,
-			{
-				method: 'POST',
-				body: {
-					chain: 'mainnet',
-				},
-			},
+	async (ctx, input) => {
+		const parsed = GetValidatorLeaderboardInputSchema.parse(input);
+		const res = await makeBeaconchainV1Request(
+			'validator/leaderboard',
+			requireBeaconchainKey(ctx.key),
+			v1GetOptions(parsed.chain),
 		);
 		await logEventFromContext(
 			ctx,
@@ -262,53 +255,42 @@ export const getValidatorLeaderboard: BeaconchainEndpoints['getValidatorLeaderbo
 			{},
 			'completed',
 		);
-		return res;
+		return BeaconchainV1ResponseSchema.parse(res);
 	};
 
 export const getValidatorProposals: BeaconchainEndpoints['getValidatorProposals'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/validators/proposals',
-			ctx.key,
+		const parsed = GetValidatorProposalsInputSchema.parse(input);
+		const res = await makeBeaconchainV2Request(
+			'ethereum/validators/proposal-slots',
+			requireBeaconchainKey(ctx.key),
 			{
 				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					validator: {
-						validator_identifiers: [input.indexOrPubkey],
-					},
-				},
+				body: validatorBody(parsed, parsed.indexOrPubkey),
 			},
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.validator.getProposals',
-			{ indexOrPubkey: input.indexOrPubkey },
+			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return res;
+		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
 export const getValidatorWithdrawals: BeaconchainEndpoints['getValidatorWithdrawals'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/validators/withdrawals',
-			ctx.key,
-			{
-				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					validator: {
-						validator_identifiers: [input.indexOrPubkey],
-					},
-				},
-			},
+		const parsed = GetValidatorWithdrawalsInputSchema.parse(input);
+		const res = await makeBeaconchainV1Request(
+			`validator/${parsed.indexOrPubkey}/withdrawals`,
+			requireBeaconchainKey(ctx.key),
+			v1GetOptions(parsed.chain),
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.validator.getWithdrawals',
-			{ indexOrPubkey: input.indexOrPubkey },
+			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return res;
+		return BeaconchainV1ResponseSchema.parse(res);
 	};

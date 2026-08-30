@@ -3,12 +3,12 @@ title: Overview
 description: "Instagram plugin for Corsair"
 ---
 
-Use **Instagram** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+Use **Instagram** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
 - 23 typed API operations
-- 5 database entities synced for fast `.search()` / `.list()` queries
+- 5 synced entities (`comments`, `conversations`, `media`, `messages`, `users`) for fast `.search()` / `.list()`
 - 3 incoming webhook event types
 
 ## Setup
@@ -16,134 +16,126 @@ Use **Instagram** through Corsair: one client, typed API calls, optional local D
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/instagram
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/instagram
 ```
+```bash yarn
+yarn add corsair @corsair-dev/instagram
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/instagram
+```
+```bash bun
+bun add corsair @corsair-dev/instagram
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { instagram } from '@corsair-dev/instagram';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [instagram()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { instagram } from '@corsair-dev/instagram';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [instagram()],
+	plugins: [
+		instagram(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/instagram/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=instagram
-```
+<Tab title="OAuth 2.0 (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/instagram/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=instagram --tenant=<tenantId>
-```
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Instagram OAuth app.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
-
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="OAuth 2.0 (Default)">
-
-```ts corsair.ts
+```ts
 instagram()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=instagram` (see [Get Credentials](/plugins/instagram/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
 </Tabs>
 
-## Webhooks
+</Step>
 
-This plugin registers **3** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-See [Webhooks](/plugins/instagram/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'instagram',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
 
-## Query synced data
-
-Synced entities support `corsair.instagram.db.<entity>.search()` and `.list()`. See [Database](/plugins/instagram/database) for filters and operators.
-
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `comments.get`
+**`comments.get`**
 
 ```ts
-await corsair.instagram.api.comments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.comments.get({});
 ```
 
 
-**Write-style (write):** `carousel.post`
+**`carousel.post`**
 
 ```ts
-await corsair.instagram.api.carousel.post({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.carousel.post({});
 ```
 
 
-See the full list on the [API](/plugins/instagram/api) page. Use `pnpm corsair list --plugin=instagram` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/instagram/api) page.
 
----
+## Query synced data
 
-## Hooks
+Synced entities support `tenant.instagram.db.<entity>.search()` and `.list()`: `comments`, `conversations`, `media`, `messages`, `users`.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/instagram/webhooks) page for payload types.
+See [Database](/plugins/instagram/database) for filters and operators.
 
----
+## Webhooks
 
-## Reference
+This plugin registers **3** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
 
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/instagram/api) |
-| Database | [Database](/plugins/instagram/database) |
-| Webhooks | [Webhooks](/plugins/instagram/webhooks) |
-| Credentials | [Get credentials](/plugins/instagram/get-credentials) |
+See [Webhooks](/plugins/instagram/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
 
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/instagram/api">
+    Every `instagram.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/instagram/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/instagram/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

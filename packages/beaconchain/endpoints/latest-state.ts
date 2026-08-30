@@ -1,20 +1,26 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainV2Request } from '../client';
+import {
+	makeBeaconchainV2Request,
+	requireBeaconchainKey,
+	v2Body,
+} from '../client';
 import type { BeaconchainEndpoints } from '../index';
-import type { BeaconchainBaseResponse } from './types';
+import {
+	BeaconchainV2ResponseSchema,
+	GetLatestStateInputSchema,
+} from './types';
 
 export const getLatestState: BeaconchainEndpoints['getLatestState'] = async (
 	ctx,
-	_input,
+	input,
 ) => {
-	const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-		'ethereum/state/latest',
-		ctx.key,
+	const parsed = GetLatestStateInputSchema.parse(input);
+	const res = await makeBeaconchainV2Request(
+		'ethereum/state',
+		requireBeaconchainKey(ctx.key),
 		{
 			method: 'POST',
-			body: {
-				chain: 'mainnet',
-			},
+			body: v2Body(parsed),
 		},
 	);
 	await logEventFromContext(
@@ -23,5 +29,5 @@ export const getLatestState: BeaconchainEndpoints['getLatestState'] = async (
 		{},
 		'completed',
 	);
-	return res;
+	return BeaconchainV2ResponseSchema.parse(res);
 };

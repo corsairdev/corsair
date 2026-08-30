@@ -476,7 +476,7 @@ const beaconchainEndpointMeta = {
 		description: 'Get validators registered with withdrawal credentials',
 	},
 	'validators.post': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Fetch multiple validators by indices or public keys',
 	},
 	'ens.resolve': {
@@ -488,9 +488,7 @@ const beaconchainEndpointMeta = {
 >;
 
 export const beaconchainAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseBeaconchainPlugin<T extends BeaconchainPluginOptions> =
@@ -523,15 +521,20 @@ export function beaconchain<const T extends BeaconchainPluginOptions>(
 		schema: BeaconchainSchema,
 		options: options,
 		hooks: options.hooks,
+		webhookHooks: undefined,
 		endpoints: beaconchainEndpointsNested,
 		webhooks: {},
 		endpointMeta: beaconchainEndpointMeta,
 		endpointSchemas: beaconchainEndpointSchemas,
-		pluginWebhookMatcher: () => false,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		pluginWebhookMatcher: undefined,
+		errorHandlers: (() => {
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: BeaconchainKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;

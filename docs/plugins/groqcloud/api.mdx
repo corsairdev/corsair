@@ -1,0 +1,394 @@
+---
+title: API
+description: "API reference for GroqCloud: every `groqcloud.api.*` operation with input and output types."
+---
+
+Every `groqcloud.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Audio
+
+### createTranscription
+
+`audio.createTranscription`
+
+Transcribe an audio file into text
+
+**Risk:** `write`
+
+```ts
+await corsair.groqcloud.api.audio.createTranscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `custom` | No | The audio data to transcribe |
+| `fileName` | `string` | No | File name for the uploaded audio; required with `file` |
+| `url` | `string` | No | Publicly reachable URL of the audio to transcribe |
+| `model` | `string` | Yes | The ID of the model to use |
+| `language` | `string` | No | The language of the input audio |
+| `prompt` | `string` | No | An optional text to guide the model |
+| `response_format` | `json \| text \| verbose_json` | No | Transcript output format. Groq accepts only json, text and verbose_json — srt and vtt are rejected with HTTP 400. |
+| `temperature` | `number` | No | The sampling temperature |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | The transcribed text |
+
+
+
+---
+
+### createTranslation
+
+`audio.createTranslation`
+
+Translate an audio recording into English text
+
+**Risk:** `write`
+
+```ts
+await corsair.groqcloud.api.audio.createTranslation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `custom` | No | The audio data to translate |
+| `fileName` | `string` | No | File name for the uploaded audio; required with `file` |
+| `url` | `string` | No | Publicly reachable URL of the audio to translate |
+| `model` | `string` | Yes | The ID of the model to use |
+| `prompt` | `string` | No | An optional text to guide the model |
+| `response_format` | `json \| text \| verbose_json` | No | Transcript output format. Groq accepts only json, text and verbose_json — srt and vtt are rejected with HTTP 400. |
+| `temperature` | `number` | No | The sampling temperature |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | The translated text |
+
+
+
+---
+
+### listVoices
+
+`audio.listVoices`
+
+Retrieve available TTS voices for Groq PlayAI models
+
+**Risk:** `read`
+
+```ts
+await corsair.groqcloud.api.audio.listVoices({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `english` | `string[]` | Yes | List of English TTS voices |
+| `arabic` | `string[]` | Yes | List of Arabic TTS voices |
+
+
+
+---
+
+## Chat
+
+### createCompletion
+
+`chat.createCompletion`
+
+Generate a chat completion from a list of messages
+
+**Risk:** `write`
+
+```ts
+await corsair.groqcloud.api.chat.createCompletion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | The ID of the model to use |
+| `messages` | `object[]` | Yes | A list of messages comprising the conversation so far |
+| `temperature` | `number` | No | Sampling temperature |
+| `max_completion_tokens` | `number` | No | The maximum number of tokens to generate |
+| `top_p` | `number` | No | Nucleus sampling parameter |
+| `stop` | `string \| string[]` | No | Up to 4 sequences where the API will stop generating further tokens |
+| `stream` | `false` | No | Streaming is not supported by this plugin. The shared transport buffers text/event-stream as plain text, so a streamed call would return a raw SSE string rather than the completion object this operation promises. |
+| `response_format` | `object` | No | Response format object |
+| `tools` | `any[]` | No | A list of tools the model may call |
+| `tool_choice` | `any` | No | Controls which tool is called by the model |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | user | assistant | tool,
+  content: string | any[],
+  name?: string,
+  tool_call_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="response_format full type">
+
+```ts
+{
+  type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | Yes | — |
+| `created` | `number` | Yes | — |
+| `model` | `string` | Yes | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index: number,
+  message: {
+    role: system | user | assistant | tool,
+    content: string | any[],
+    name?: string,
+    tool_call_id?: string
+  },
+  finish_reason?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createResponse
+
+`chat.createResponse`
+
+Create a model response for the given input (Responses API)
+
+**Risk:** `write`
+
+```ts
+await corsair.groqcloud.api.chat.createResponse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | The ID of the model to use |
+| `input` | `string \| any[]` | Yes | The input for the model response |
+| `instructions` | `string` | No | Optional instructions to guide the response |
+| `max_output_tokens` | `number` | No | Maximum number of output tokens |
+| `tools` | `any[]` | No | A list of tools |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `output` | `object[]` | Yes | Ordered output items; the reply is the `message` item |
+| `text` | `object` | No | Requested output format, echoed back — not the reply |
+| `usage` | `object` | No | — |
+| `error` | `any` | No | — |
+| `incomplete_details` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="output full type">
+
+```ts
+{
+  type: string,
+  id?: string,
+  status?: string,
+  role?: string,
+  content?: {
+    type: string,
+    text?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="text full type">
+
+```ts
+{
+  format: {
+    type: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  input_tokens?: number,
+  output_tokens?: number,
+  total_tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### listModels
+
+`models.listModels`
+
+Retrieve currently available Groq models
+
+**Risk:** `read`
+
+```ts
+await corsair.groqcloud.api.models.listModels({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: string,
+  created?: number,
+  owned_by?: string,
+  active?: boolean,
+  name?: string,
+  context_window?: number,
+  context_length?: number,
+  max_completion_tokens?: number,
+  max_output_length?: number,
+  hugging_face_id?: string | null,
+  input_modalities?: string[],
+  output_modalities?: string[],
+  supported_features?: string[],
+  supported_sampling_parameters?: string[],
+  public_apps?: any | null,
+  pricing?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveModel
+
+`models.retrieveModel`
+
+Retrieve detailed metadata for a specific model
+
+**Risk:** `read`
+
+```ts
+await corsair.groqcloud.api.models.retrieveModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | The ID of the model to use for this request |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | Yes | — |
+| `created` | `number` | No | — |
+| `owned_by` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `context_window` | `number` | No | — |
+| `context_length` | `number` | No | — |
+| `max_completion_tokens` | `number` | No | — |
+| `max_output_length` | `number` | No | — |
+| `hugging_face_id` | `string` | No | — |
+| `input_modalities` | `string[]` | No | — |
+| `output_modalities` | `string[]` | No | — |
+| `supported_features` | `string[]` | No | — |
+| `supported_sampling_parameters` | `string[]` | No | — |
+| `public_apps` | `any` | No | — |
+| `pricing` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pricing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

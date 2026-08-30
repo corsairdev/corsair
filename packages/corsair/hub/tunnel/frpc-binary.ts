@@ -12,7 +12,14 @@ export const FRPC_VERSION = '0.71.0';
 // CJS (jest runs without --experimental-vm-modules), where import.meta is a parse
 // error. esbuild shims __filename in the ESM build. nodeRequire, not require, so
 // the CJS output doesn't redeclare the module wrapper's own require.
-const nodeRequire = createRequire(__filename);
+// Lazy so importing this module doesn't touch __filename at load time: tsx-based
+// tools (e.g. the docs generator) load the source as ESM, where __filename is
+// undefined until the frpc code path actually runs.
+let cachedRequire: NodeJS.Require | undefined;
+function nodeRequire(): NodeJS.Require {
+	cachedRequire ??= createRequire(__filename);
+	return cachedRequire;
+}
 
 /**
  * The frpc binary carried by this platform's optional-dependency package
@@ -25,7 +32,7 @@ function platformPackageBinary(): string | null {
 	try {
 		// require.resolve honors the installed location (incl. pnpm's layout).
 		const bin = join(
-			dirname(nodeRequire.resolve(`${pkg}/package.json`)),
+			dirname(nodeRequire().resolve(`${pkg}/package.json`)),
 			binName(),
 		);
 		return existsSync(bin) ? bin : null;
@@ -45,7 +52,7 @@ function binName(): string {
 /**
  * Where the postinstall step drops the downloaded frpc. Kept in lockstep with
  * `scripts/postinstall-frpc.mjs` — both derive it from homedir + FRPC_VERSION.
- * ponytail: duplicated in that standalone install script (it can't import TS);
+ * duplicated in that standalone install script (it can't import TS);
  * a shared frpc-version.json is the upgrade path if this drifts.
  */
 export function frpcCacheBinary(): string {

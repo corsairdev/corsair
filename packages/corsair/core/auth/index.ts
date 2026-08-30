@@ -23,6 +23,12 @@ export {
 	initializeAccountDEK,
 	initializeIntegrationDEK,
 } from './key-manager';
+// OAuth access-token acquisition (BYO+Hub / inline switchboard)
+export {
+	getOAuthAccessToken,
+	type OAuthAccessContext,
+	type OAuthAccessOptions,
+} from './oauth-access';
 export {
 	type AuthFieldLevel,
 	type AuthFieldStatus,

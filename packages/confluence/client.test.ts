@@ -7,13 +7,6 @@ jest.mock('corsair/http', () => ({
 
 const mockRequest = jest.mocked(request);
 
-type ValidTokenResult = {
-	accessToken: string;
-	refreshToken: string;
-	expiresAt: number;
-	refreshed: boolean;
-};
-
 type AccessibleResource = {
 	id: string;
 	url: string;
@@ -22,14 +15,6 @@ type AccessibleResource = {
 };
 
 const clientUnderTest = client as typeof client & {
-	getValidConfluenceAccessToken: (input: {
-		accessToken?: string | null;
-		expiresAt?: string | null;
-		refreshToken: string;
-		clientId: string;
-		clientSecret: string;
-		forceRefresh?: boolean;
-	}) => Promise<ValidTokenResult>;
 	resolveConfluenceCloudResource: (
 		accessToken: string,
 		cloudUrl?: string | null,
@@ -89,42 +74,6 @@ describe('Confluence API client', () => {
 			),
 		).rejects.toThrow('cloud ID');
 		expect(mockRequest).not.toHaveBeenCalled();
-	});
-
-	it('refreshes expired Atlassian tokens and returns the rotated refresh token', async () => {
-		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
-			new Response(
-				JSON.stringify({
-					access_token: 'new-access-token',
-					refresh_token: 'new-refresh-token',
-					expires_in: 3600,
-				}),
-				{ status: 200 },
-			),
-		);
-
-		const result = await Promise.resolve().then(() =>
-			clientUnderTest.getValidConfluenceAccessToken({
-				accessToken: 'expired-token',
-				expiresAt: '1',
-				refreshToken: 'old-refresh-token',
-				clientId: 'client-id',
-				clientSecret: 'client-secret',
-			}),
-		);
-
-		expect(result).toMatchObject({
-			accessToken: 'new-access-token',
-			refreshToken: 'new-refresh-token',
-			refreshed: true,
-		});
-		expect(fetchMock).toHaveBeenCalledWith(
-			'https://auth.atlassian.com/oauth/token',
-			expect.objectContaining({
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-			}),
-		);
 	});
 
 	it('selects the configured Confluence site from multiple resources', async () => {

@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "ActiveCampaign plugin for Corsair"
+---
+
+Use **ActiveCampaign** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 304 typed API operations
+- 43 synced entities (`accountContacts`, `accountCustomFieldMeta`, `accounts`, `addresses`, `automations`, `brandings`, and 37 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/activecampaign
+```
+```bash yarn
+yarn add corsair @corsair-dev/activecampaign
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/activecampaign
+```
+```bash bun
+bun add corsair @corsair-dev/activecampaign
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { activecampaign } from '@corsair-dev/activecampaign';
+
+export const corsair = createCorsair({
+	plugins: [
+		activecampaign(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+activecampaign()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'activecampaign',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`accountContacts.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountContacts.get({});
+```
+
+
+**`accountContacts.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountContacts.create({});
+```
+
+
+See the full list on the [API](/plugins/activecampaign/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.activecampaign.db.<entity>.search()` and `.list()`: `accountContacts`, `accountCustomFieldMeta`, `accounts`, `addresses`, `automations`, `brandings`, `calendars`, `campaigns`, `connections`, `contactLists`, `contacts`, `contactTags`, `customObjectSchemas`, `dealCustomFieldMeta`, `dealGroups`, `dealRoles`, `deals`, `dealStages`, `dealTasks`, `dealTaskTypes`, `ecomCustomers`, `eventTrackingEvents`, `fieldOptions`, `fieldRels`, `fields`, `fieldValues`, `forms`, `groupLimits`, `groupMembers`, `groups`, `listGroups`, `lists`, `messages`, `notes`, `personalizations`, `savedResponses`, `scores`, `segments`, `tags`, `taskOutcomes`, `templates`, `users`, `webhooks`.
+
+See [Database](/plugins/activecampaign/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/activecampaign/api">
+    Every `activecampaign.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/activecampaign/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

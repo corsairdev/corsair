@@ -1,18 +1,28 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainV2Request } from '../client';
+import {
+	makeBeaconchainV2Request,
+	requireBeaconchainKey,
+	v2Body,
+} from '../client';
 import type { BeaconchainEndpoints } from '../index';
-import type { BeaconchainBaseResponse } from './types';
+import {
+	BeaconchainV2ResponseSchema,
+	GetNetworkPerformanceInputSchema,
+} from './types';
 
 export const getNetworkPerformance: BeaconchainEndpoints['getNetworkPerformance'] =
-	async (ctx, _input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/network/performance',
-			ctx.key,
+	async (ctx, input) => {
+		const parsed = GetNetworkPerformanceInputSchema.parse(input);
+		const res = await makeBeaconchainV2Request(
+			'ethereum/performance-aggregate',
+			requireBeaconchainKey(ctx.key),
 			{
 				method: 'POST',
-				body: {
-					chain: 'mainnet',
-				},
+				body: v2Body(parsed, {
+					range: {
+						evaluation_window: parsed.evaluation_window ?? '24h',
+					},
+				}),
 			},
 		);
 		await logEventFromContext(
@@ -21,5 +31,5 @@ export const getNetworkPerformance: BeaconchainEndpoints['getNetworkPerformance'
 			{},
 			'completed',
 		);
-		return res;
+		return BeaconchainV2ResponseSchema.parse(res);
 	};

@@ -374,3 +374,86 @@ export const emailReceived: ResendWebhooks['emailReceived'] = {
 		};
 	},
 };
+
+export const emailScheduled: ResendWebhooks['emailScheduled'] = {
+	match: createResendMatch('email.scheduled'),
+
+	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyResendWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
+		const event = request.payload;
+
+		if (event.type !== 'email.scheduled') {
+			return {
+				success: true,
+				data: undefined,
+			};
+		}
+
+		console.log('⏰ Resend Email Scheduled Event:', {
+			email_id: event.data.email_id,
+		});
+
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.emailScheduled',
+			{ ...event },
+			'completed',
+		);
+
+		return {
+			success: true,
+			data: event,
+		};
+	},
+};
+
+export const emailSuppressed: ResendWebhooks['emailSuppressed'] = {
+	match: createResendMatch('email.suppressed'),
+
+	handler: async (ctx, request) => {
+		const webhookSecret = ctx.key;
+		const verification = verifyResendWebhookSignature(request, webhookSecret);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
+		const event = request.payload;
+
+		if (event.type !== 'email.suppressed') {
+			return {
+				success: true,
+				data: undefined,
+			};
+		}
+
+		console.log('🚫 Resend Email Suppressed Event:', {
+			email_id: event.data.email_id,
+			suppressed_type: event.data.suppressed?.type,
+		});
+
+		await logEventFromContext(
+			ctx,
+			'resend.webhook.emailSuppressed',
+			{ ...event },
+			'completed',
+		);
+
+		return {
+			success: true,
+			data: event,
+		};
+	},
+};

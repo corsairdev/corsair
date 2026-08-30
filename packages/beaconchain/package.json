@@ -14,14 +14,13 @@
     }
   },
   "scripts": {
-    "build": "tsc --build --clean && tsc --build --force && tsup",
-
+    "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
-    "zod": "4.4.3"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
@@ -30,7 +29,7 @@
     "ts-jest": "^29.4.9",
     "tsup": "^8.0.1",
     "typescript": "catalog:",
-    "zod": "4.4.3"
+    "zod": "^4.1.13"
   },
   "keywords": [
     "corsair",

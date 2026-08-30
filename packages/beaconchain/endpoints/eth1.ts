@@ -1,26 +1,28 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainV2Request } from '../client';
+import {
+	makeBeaconchainV1Request,
+	requireBeaconchainKey,
+	v1GetOptions,
+} from '../client';
 import type { BeaconchainEndpoints } from '../index';
-import type { BeaconchainBaseResponse } from './types';
+import {
+	BeaconchainV1ResponseSchema,
+	GetEth1DepositsByTxHashInputSchema,
+} from './types';
 
 export const getEth1DepositsByTxHash: BeaconchainEndpoints['getEth1DepositsByTxHash'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
-			'ethereum/eth1/deposit',
-			ctx.key,
-			{
-				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					tx_hash: input.txHash,
-				},
-			},
+		const parsed = GetEth1DepositsByTxHashInputSchema.parse(input);
+		const res = await makeBeaconchainV1Request(
+			`eth1deposit/${parsed.txHash}`,
+			requireBeaconchainKey(ctx.key),
+			v1GetOptions(parsed.chain),
 		);
 		await logEventFromContext(
 			ctx,
 			'beaconchain.eth1.getDepositsByTxHash',
-			{ txHash: input.txHash },
+			{ txHash: parsed.txHash },
 			'completed',
 		);
-		return res;
+		return BeaconchainV1ResponseSchema.parse(res);
 	};

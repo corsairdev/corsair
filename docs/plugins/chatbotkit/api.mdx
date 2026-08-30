@@ -1,0 +1,2009 @@
+---
+title: API
+description: "API reference for Chatbotkit: every `chatbotkit.api.*` operation with input and output types."
+---
+
+Every `chatbotkit.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Blueprints
+
+### create
+
+`blueprints.create`
+
+Create a new blueprint configuration template
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.blueprints.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the blueprint template |
+| `description` | `string` | No | Description of the blueprint template |
+| `config` | `object` | No | Configuration dictionary |
+| `visibility` | `private \| protected \| public` | No | Visibility level |
+| `meta` | `object` | No | Custom metadata |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### delete
+
+`blueprints.delete`
+
+Permanently delete a blueprint template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chatbotkit.api.blueprints.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the blueprint to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### get
+
+`blueprints.get`
+
+Fetch a blueprint template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.blueprints.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the blueprint to fetch |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the blueprint |
+| `alias` | `string` | No | Custom alias for the blueprint |
+| `name` | `string` | Yes | Descriptive name of the blueprint |
+| `description` | `string` | No | Brief description of blueprint configuration |
+| `config` | `object` | No | Template configuration settings |
+| `visibility` | `string` | No | Visibility setting |
+| `meta` | `object` | No | Custom metadata |
+| `createdAt` | `number` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`blueprints.list`
+
+List blueprint templates, cursor-paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.blueprints.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Cursor for pagination |
+| `limit` | `number` | No | Maximum number of items to return |
+| `order` | `asc \| desc` | No | Sort order by creation time |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | List of blueprints matching the query |
+| `cursor` | `string` | No | Pagination cursor for the next page of results |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  alias?: string | null,
+  name: string,
+  description?: string | null,
+  config?: {
+  } | null,
+  visibility?: string | null,
+  meta?: {
+  } | null,
+  createdAt?: number | null,
+  updatedAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`blueprints.update`
+
+Update an existing blueprint template
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.blueprints.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the blueprint to update |
+| `name` | `string` | No | Updated name |
+| `description` | `string` | No | Updated description |
+| `config` | `object` | No | Updated configuration |
+| `visibility` | `private \| protected \| public` | No | Updated visibility |
+| `meta` | `object` | No | Updated metadata |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+## Bots
+
+### create
+
+`bots.create`
+
+Create a new AI bot
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.bots.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the bot |
+| `description` | `string` | No | Description of the bot |
+| `backstory` | `string` | No | Instructions and persona for the bot |
+| `model` | `string` | No | AI model to use for the bot |
+| `datasetId` | `string` | No | ID of the dataset to connect to the bot |
+| `skillsetId` | `string` | No | ID of the skillset to connect to the bot |
+| `blueprintId` | `string` | No | ID of the blueprint template to connect |
+| `privacy` | `boolean` | No | Enable PII protection and anonymization |
+| `moderation` | `boolean` | No | Enable content safety and filtering |
+| `visibility` | `private \| protected \| public` | No | Visibility level of the bot |
+| `meta` | `object` | No | Custom metadata |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### delete
+
+`bots.delete`
+
+Permanently delete a bot
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chatbotkit.api.bots.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the bot to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### downvote
+
+`bots.downvote`
+
+Register a downvote for a bot
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.bots.downvote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the bot to downvote |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### get
+
+`bots.get`
+
+Fetch a single bot by ID or alias
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.bots.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier or alias of the bot to fetch |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the bot |
+| `alias` | `string` | No | Custom alias for the bot |
+| `name` | `string` | Yes | Descriptive name of the bot |
+| `description` | `string` | No | Brief description of the bot purpose |
+| `blueprintId` | `string` | No | Associated blueprint ID |
+| `datasetId` | `string` | No | Associated dataset ID for knowledge retrieval |
+| `skillsetId` | `string` | No | Associated skillset ID for tools and capabilities |
+| `backstory` | `string` | No | Natural language instructions defining bot personality and behavior |
+| `model` | `string` | No | AI model configured for the bot |
+| `privacy` | `boolean` | No | Whether PII protection and anonymization is enabled |
+| `moderation` | `boolean` | No | Whether content safety and filtering is active |
+| `visibility` | `string` | No | Visibility access setting (e.g. private, protected, public) |
+| `meta` | `object` | No | Custom metadata attached to the bot |
+| `createdAt` | `number` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`bots.list`
+
+List bots on the ChatBotKit account, cursor-paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.bots.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Cursor for pagination |
+| `limit` | `number` | No | Maximum number of items to return |
+| `order` | `asc \| desc` | No | Sort order by creation time |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | List of bots matching the query |
+| `cursor` | `string` | No | Pagination cursor for the next page of results |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  alias?: string | null,
+  name: string,
+  description?: string | null,
+  blueprintId?: string | null,
+  datasetId?: string | null,
+  skillsetId?: string | null,
+  backstory?: string | null,
+  model?: string | null,
+  privacy?: boolean | null,
+  moderation?: boolean | null,
+  visibility?: string | null,
+  meta?: {
+  } | null,
+  createdAt?: number | null,
+  updatedAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`bots.update`
+
+Update an existing bot configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.bots.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the bot to update |
+| `name` | `string` | No | Updated name of the bot |
+| `description` | `string` | No | Updated description of the bot |
+| `backstory` | `string` | No | Updated persona instructions |
+| `model` | `string` | No | Updated model |
+| `datasetId` | `string` | No | Updated dataset ID |
+| `skillsetId` | `string` | No | Updated skillset ID |
+| `blueprintId` | `string` | No | Updated blueprint ID |
+| `visibility` | `private \| protected \| public` | No | Updated visibility |
+| `meta` | `object` | No | Updated metadata |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### upvote
+
+`bots.upvote`
+
+Register an upvote for a bot
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.bots.upvote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the bot to upvote |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+## Conversations
+
+### complete
+
+`conversations.complete`
+
+Send message to conversation and get AI response
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.conversations.complete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the conversation |
+| `text` | `string` | Yes | User message text sent to the chatbot |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | No | AI response message text |
+| `message` | `string` | No | Completion status or error message if limits reached |
+| `code` | `string` | No | Error code if completion failed |
+| `usage` | `object` | No | Token usage breakdown |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  tokens?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`conversations.create`
+
+Create a new conversation chat session
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.conversations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Name of the conversation |
+| `description` | `string` | No | Description of the conversation |
+| `botId` | `string` | No | ID of bot to associate |
+| `datasetId` | `string` | No | Dataset ID override |
+| `skillsetId` | `string` | No | Skillset ID override |
+| `blueprintId` | `string` | No | Blueprint template ID |
+| `visibility` | `private \| protected \| public` | No | Visibility level |
+| `meta` | `object` | No | Custom metadata |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### delete
+
+`conversations.delete`
+
+Permanently delete a conversation session
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chatbotkit.api.conversations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the conversation to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### get
+
+`conversations.get`
+
+Fetch a conversation by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.conversations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the conversation to fetch |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the conversation |
+| `alias` | `string` | No | Custom alias for the conversation |
+| `name` | `string` | No | Name of the conversation |
+| `description` | `string` | No | Description of the conversation |
+| `botId` | `string` | No | Associated bot ID |
+| `backstory` | `string` | No | Instructions override for the conversation |
+| `model` | `string` | No | Model override |
+| `datasetId` | `string` | No | Dataset ID override |
+| `skillsetId` | `string` | No | Skillset ID override |
+| `blueprintId` | `string` | No | Associated blueprint ID |
+| `visibility` | `string` | No | Visibility setting |
+| `meta` | `object` | No | Custom metadata |
+| `createdAt` | `number` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`conversations.list`
+
+List conversations, cursor-paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.conversations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Cursor for pagination |
+| `limit` | `number` | No | Maximum number of items to return |
+| `order` | `asc \| desc` | No | Sort order by creation time |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | List of conversations matching the query |
+| `cursor` | `string` | No | Pagination cursor for the next page of results |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  alias?: string | null,
+  name?: string | null,
+  description?: string | null,
+  botId?: string | null,
+  backstory?: string | null,
+  model?: string | null,
+  datasetId?: string | null,
+  skillsetId?: string | null,
+  blueprintId?: string | null,
+  visibility?: string | null,
+  meta?: {
+  } | null,
+  createdAt?: number | null,
+  updatedAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`conversations.update`
+
+Update conversation metadata or bot association
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.conversations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the conversation to update |
+| `name` | `string` | No | Updated name |
+| `description` | `string` | No | Updated description |
+| `botId` | `string` | No | Updated bot ID |
+| `visibility` | `private \| protected \| public` | No | Updated visibility |
+| `meta` | `object` | No | Updated metadata |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+## Datasets
+
+### create
+
+`datasets.create`
+
+Create a new knowledge dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.datasets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the dataset |
+| `description` | `string` | No | Description of the dataset |
+| `blueprintId` | `string` | No | ID of blueprint template to connect |
+| `visibility` | `private \| protected \| public` | No | Visibility level |
+| `meta` | `object` | No | Custom metadata |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### delete
+
+`datasets.delete`
+
+Permanently delete a dataset
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chatbotkit.api.datasets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the dataset to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### get
+
+`datasets.get`
+
+Fetch a dataset by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.datasets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the dataset to fetch |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the dataset |
+| `alias` | `string` | No | Custom alias for the dataset |
+| `name` | `string` | Yes | Descriptive name of the dataset |
+| `description` | `string` | No | Brief description of dataset contents |
+| `blueprintId` | `string` | No | Associated blueprint ID |
+| `reranker` | `string` | No | Configured reranker model |
+| `recordMaxTokens` | `number` | No | Maximum tokens per record |
+| `searchMinScore` | `number` | No | Minimum score for search retrieval |
+| `searchMaxRecords` | `number` | No | Maximum search records returned |
+| `searchMaxTokens` | `number` | No | Maximum search tokens returned |
+| `matchInstruction` | `string` | No | Prompt instruction on search match |
+| `mismatchInstruction` | `string` | No | Prompt instruction on search mismatch |
+| `separators` | `string[]` | No | Text chunk separators |
+| `visibility` | `string` | No | Visibility setting |
+| `meta` | `object` | No | Custom metadata |
+| `createdAt` | `number` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`datasets.list`
+
+List knowledge datasets, cursor-paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.datasets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Cursor for pagination |
+| `limit` | `number` | No | Maximum number of items to return |
+| `order` | `asc \| desc` | No | Sort order by creation time |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | List of datasets matching the query |
+| `cursor` | `string` | No | Pagination cursor for the next page of results |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  alias?: string | null,
+  name: string,
+  description?: string | null,
+  blueprintId?: string | null,
+  reranker?: string | null,
+  recordMaxTokens?: number | null,
+  searchMinScore?: number | null,
+  searchMaxRecords?: number | null,
+  searchMaxTokens?: number | null,
+  matchInstruction?: string | null,
+  mismatchInstruction?: string | null,
+  separators?: string[] | null,
+  visibility?: string | null,
+  meta?: {
+  } | null,
+  createdAt?: number | null,
+  updatedAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`datasets.search`
+
+Search a dataset for relevant knowledge records
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.datasets.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the dataset to search |
+| `query` | `string` | Yes | Search query string |
+| `limit` | `number` | No | Max records to return |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Array of search matches from the dataset |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  score?: number,
+  text: string,
+  meta?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`datasets.update`
+
+Update dataset configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.datasets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the dataset to update |
+| `name` | `string` | No | Updated name of the dataset |
+| `description` | `string` | No | Updated description of the dataset |
+| `blueprintId` | `string` | No | Updated blueprint ID |
+| `visibility` | `private \| protected \| public` | No | Updated visibility |
+| `meta` | `object` | No | Updated metadata |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+## Files
+
+### create
+
+`files.create`
+
+Create a new file record
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.files.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the file |
+| `description` | `string` | No | Description of the file |
+| `mimeType` | `string` | No | MIME type of the file |
+| `visibility` | `private \| protected \| public` | No | Visibility level |
+| `meta` | `object` | No | Custom metadata |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### delete
+
+`files.delete`
+
+Permanently delete a file resource
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chatbotkit.api.files.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the file to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### get
+
+`files.get`
+
+Fetch file metadata by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.files.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the file to fetch |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the file resource |
+| `name` | `string` | Yes | File name |
+| `description` | `string` | No | File description |
+| `mimeType` | `string` | No | MIME type of the file |
+| `size` | `number` | No | File size in bytes |
+| `visibility` | `string` | No | Visibility setting |
+| `meta` | `object` | No | Custom metadata |
+| `createdAt` | `number` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`files.list`
+
+List uploaded file resources, cursor-paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Cursor for pagination |
+| `limit` | `number` | No | Maximum number of items to return |
+| `order` | `asc \| desc` | No | Sort order by creation time |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | List of files matching query |
+| `cursor` | `string` | No | Pagination cursor for the next page of results |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  mimeType?: string | null,
+  size?: number | null,
+  visibility?: string | null,
+  meta?: {
+  } | null,
+  createdAt?: number | null,
+  updatedAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Secrets
+
+### create
+
+`secrets.create`
+
+Create a new integration secret credential
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.secrets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the secret |
+| `description` | `string` | No | Description of the secret |
+| `blueprintId` | `string` | No | Blueprint template ID |
+| `type` | `string` | No | Secret type or provider template |
+| `config` | `object` | No | Secret configuration credentials |
+| `visibility` | `private \| protected \| public` | No | Visibility level |
+| `meta` | `object` | No | Custom metadata |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### delete
+
+`secrets.delete`
+
+Permanently delete a secret credential
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chatbotkit.api.secrets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the secret to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### get
+
+`secrets.get`
+
+Fetch a secret credential by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.secrets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the secret to fetch |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the secret credential |
+| `alias` | `string` | No | Custom alias for the secret |
+| `name` | `string` | Yes | Descriptive name of the secret |
+| `description` | `string` | No | Description of the secret or connected service |
+| `blueprintId` | `string` | No | Associated blueprint ID |
+| `kind` | `string` | No | Kind of secret (e.g. personal, shared) |
+| `type` | `string` | No | Type of credential template |
+| `config` | `object` | No | Credential configuration |
+| `visibility` | `string` | No | Visibility setting |
+| `meta` | `object` | No | Custom metadata |
+| `createdAt` | `number` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`secrets.list`
+
+List integration secrets, cursor-paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.secrets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Cursor for pagination |
+| `limit` | `number` | No | Maximum number of items to return |
+| `order` | `asc \| desc` | No | Sort order by creation time |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | List of secrets matching the query |
+| `cursor` | `string` | No | Pagination cursor for the next page of results |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  alias?: string | null,
+  name: string,
+  description?: string | null,
+  blueprintId?: string | null,
+  kind?: string | null,
+  type?: string | null,
+  config?: {
+  } | null,
+  visibility?: string | null,
+  meta?: {
+  } | null,
+  createdAt?: number | null,
+  updatedAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`secrets.update`
+
+Update an existing integration secret credential
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.secrets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the secret to update |
+| `name` | `string` | No | Updated name |
+| `description` | `string` | No | Updated description |
+| `config` | `object` | No | Updated configuration credentials |
+| `visibility` | `private \| protected \| public` | No | Updated visibility |
+| `meta` | `object` | No | Updated metadata |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+## Skillsets
+
+### create
+
+`skillsets.create`
+
+Create a new skillset container
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.skillsets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the skillset |
+| `description` | `string` | No | Description of the skillset |
+| `blueprintId` | `string` | No | Blueprint template ID |
+| `visibility` | `private \| protected \| public` | No | Visibility level |
+| `meta` | `object` | No | Custom metadata |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### delete
+
+`skillsets.delete`
+
+Permanently delete a skillset
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chatbotkit.api.skillsets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the skillset to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### get
+
+`skillsets.get`
+
+Fetch a skillset by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.skillsets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the skillset to fetch |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the skillset |
+| `alias` | `string` | No | Custom alias for the skillset |
+| `name` | `string` | Yes | Descriptive name of the skillset |
+| `description` | `string` | No | Brief description of skillset capabilities |
+| `blueprintId` | `string` | No | Associated blueprint ID |
+| `visibility` | `string` | No | Visibility setting |
+| `state` | `string` | No | Operational state (e.g. enabled, disabled) |
+| `meta` | `object` | No | Custom metadata |
+| `createdAt` | `number` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`skillsets.list`
+
+List skillsets on the account, cursor-paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.skillsets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Cursor for pagination |
+| `limit` | `number` | No | Maximum number of items to return |
+| `order` | `asc \| desc` | No | Sort order by creation time |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | List of skillsets matching the query |
+| `cursor` | `string` | No | Pagination cursor for the next page of results |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  alias?: string | null,
+  name: string,
+  description?: string | null,
+  blueprintId?: string | null,
+  visibility?: string | null,
+  state?: string | null,
+  meta?: {
+  } | null,
+  createdAt?: number | null,
+  updatedAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`skillsets.update`
+
+Update skillset configuration or state
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.skillsets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the skillset to update |
+| `name` | `string` | No | Updated name of the skillset |
+| `description` | `string` | No | Updated description of the skillset |
+| `visibility` | `private \| protected \| public` | No | Updated visibility |
+| `state` | `enabled \| disabled` | No | Updated state |
+| `meta` | `object` | No | Updated metadata |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a new background execution task
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the background task |
+| `description` | `string` | No | Description of the task |
+| `botId` | `string` | No | ID of bot executing the task |
+| `schedule` | `string` | No | Cron schedule expression for recurring runs |
+| `visibility` | `private \| protected \| public` | No | Visibility level |
+| `meta` | `object` | No | Custom metadata |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Permanently delete a background task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chatbotkit.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the task to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Fetch a task by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the task to fetch |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the task |
+| `name` | `string` | Yes | Descriptive name of the task |
+| `description` | `string` | No | Brief description of the task |
+| `botId` | `string` | No | Associated bot ID |
+| `schedule` | `string` | No | Cron schedule string |
+| `status` | `string` | No | Task execution status |
+| `visibility` | `string` | No | Visibility setting |
+| `meta` | `object` | No | Custom metadata |
+| `createdAt` | `number` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List background tasks, cursor-paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.chatbotkit.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | Cursor for pagination |
+| `limit` | `number` | No | Maximum number of items to return |
+| `order` | `asc \| desc` | No | Sort order by creation time |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | List of tasks matching query |
+| `cursor` | `string` | No | Pagination cursor for next page of results |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  botId?: string | null,
+  schedule?: string | null,
+  status?: string | null,
+  visibility?: string | null,
+  meta?: {
+  } | null,
+  createdAt?: number | null,
+  updatedAt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update task schedule or bot assignment
+
+**Risk:** `write`
+
+```ts
+await corsair.chatbotkit.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the task to update |
+| `name` | `string` | No | Updated name |
+| `description` | `string` | No | Updated description |
+| `botId` | `string` | No | Updated bot ID |
+| `schedule` | `string` | No | Updated cron schedule |
+| `visibility` | `private \| protected \| public` | No | Updated visibility |
+| `meta` | `object` | No | Updated metadata |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the resource |
+
+
+
+---
+
