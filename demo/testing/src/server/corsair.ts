@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import { benchmarkemail } from '../../../packages/benchmarkemail/src/index.ts';
 
 dotenv.config({ path: '../.env' });
 
@@ -48,17 +47,6 @@ export const corsair = createCorsair({
 					'messages.post': 'require_approval',
 				},
 			},
-			plugins: [
-				benchmarkemail(),
-				slack({
-					permissions: {
-						mode: 'cautious',
-						overrides: {
-							'messages.post': 'require_approval',
-						},
-					},
-				}),
-			],
 		}),
 		googlesheets(),
 		googlecalendar(),
