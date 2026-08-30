@@ -1105,7 +1105,7 @@
                 ]
               },
               {
-                "group": "Google drive",
+                "group": "Google Drive",
                 "pages": [
                   "plugins/googledrive/overview",
                   "plugins/googledrive/get-credentials",
