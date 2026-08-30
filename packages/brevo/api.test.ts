@@ -346,6 +346,48 @@ describe('Brevo Plugin & Client Tests', () => {
 			).rejects.toThrow();
 			expect(mockMakeBrevoRequest).not.toHaveBeenCalled();
 		});
+
+		it('contacts.create rejects a contact with no identity', async () => {
+			const ctx = createMockContext();
+			await expect(
+				Contacts.create(ctx, { attributes: { FIRSTNAME: 'Ada' } } as never),
+			).rejects.toThrow();
+			expect(mockMakeBrevoRequest).not.toHaveBeenCalled();
+		});
+
+		it('contacts.create accepts an ext_id-only contact', async () => {
+			const ctx = createMockContext();
+			mockMakeBrevoRequest.mockResolvedValueOnce({ id: 202 });
+
+			const result = await Contacts.create(ctx, { ext_id: 'crm-202' });
+			expect(result).toEqual({ id: 202 });
+			expect(mockMakeBrevoRequest).toHaveBeenCalledWith(
+				'contacts',
+				'test-api-key',
+				expect.objectContaining({
+					method: 'POST',
+					body: { ext_id: 'crm-202' },
+				}),
+			);
+		});
+
+		it('contacts.create accepts an SMS-only contact', async () => {
+			const ctx = createMockContext();
+			mockMakeBrevoRequest.mockResolvedValueOnce({ id: 203 });
+
+			const result = await Contacts.create(ctx, {
+				attributes: { SMS: '+33123456789' },
+			});
+			expect(result).toEqual({ id: 203 });
+			expect(mockMakeBrevoRequest).toHaveBeenCalledWith(
+				'contacts',
+				'test-api-key',
+				expect.objectContaining({
+					method: 'POST',
+					body: { attributes: { SMS: '+33123456789' } },
+				}),
+			);
+		});
 	});
 
 	describe('Email Campaigns Endpoints', () => {
@@ -422,6 +464,14 @@ describe('Brevo Plugin & Client Tests', () => {
 					name: 'Weekly Promo',
 				}),
 			);
+		});
+
+		it('emailCampaigns.create rejects a campaign missing sender or content', async () => {
+			const ctx = createMockContext();
+			await expect(
+				EmailCampaigns.create(ctx, { name: 'New Product Launch' } as never),
+			).rejects.toThrow();
+			expect(mockMakeBrevoRequest).not.toHaveBeenCalled();
 		});
 
 		it('emailCampaigns.create creates a campaign', async () => {
@@ -524,6 +574,12 @@ describe('Brevo Plugin & Client Tests', () => {
 					method: 'POST',
 					body: { emailTo: ['tester@example.com'] },
 				}),
+			);
+			expect(mockLogEventFromContext).toHaveBeenCalledWith(
+				ctx,
+				'brevo.emailCampaigns.sendTest',
+				{ campaignId: 99, recipientCount: 1 },
+				'completed',
 			);
 		});
 	});

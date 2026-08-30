@@ -100,9 +100,9 @@ export const get: BrevoEndpoints['contactsGet'] = async (ctx, input) => {
 
 export const create: BrevoEndpoints['contactsCreate'] = async (ctx, input) => {
 	const parsed = BrevoEndpointInputSchemas.contactsCreate.parse(input);
-	const body: Record<string, unknown> = {
-		email: parsed.email,
-	};
+	const body: Record<string, unknown> = {};
+	if (parsed.email !== undefined) body.email = parsed.email;
+	if (parsed.ext_id !== undefined) body.ext_id = parsed.ext_id;
 	if (parsed.attributes) body.attributes = parsed.attributes;
 	if (parsed.emailBlacklisted !== undefined)
 		body.emailBlacklisted = parsed.emailBlacklisted;

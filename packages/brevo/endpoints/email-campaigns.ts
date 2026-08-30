@@ -222,7 +222,7 @@ export const sendTest: BrevoEndpoints['emailCampaignsSendTest'] = async (
 	await logEventFromContext(
 		ctx,
 		'brevo.emailCampaigns.sendTest',
-		{ campaignId: parsed.campaignId, emailTo: parsed.emailTo },
+		{ campaignId: parsed.campaignId, recipientCount: parsed.emailTo.length },
 		'completed',
 	);
 

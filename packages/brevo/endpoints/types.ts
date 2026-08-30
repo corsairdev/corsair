@@ -96,15 +96,24 @@ export type ContactsGetInput = z.infer<typeof ContactsGetInputSchema>;
 export const ContactsGetResponseSchema = ContactSchema;
 export type ContactsGetResponse = z.infer<typeof ContactsGetResponseSchema>;
 
-export const ContactsCreateInputSchema = z.object({
-	email: z.string().email(),
-	attributes: z.record(z.string(), z.unknown()).optional(),
-	emailBlacklisted: z.boolean().optional(),
-	smsBlacklisted: z.boolean().optional(),
-	listIds: z.array(z.number()).optional(),
-	updateEnabled: z.boolean().optional(),
-	smtpBlacklistSender: z.array(z.string()).optional(),
-});
+export const ContactsCreateInputSchema = z
+	.object({
+		email: z.email().optional(),
+		ext_id: z.string().min(1).optional(),
+		attributes: z.record(z.string(), z.unknown()).optional(),
+		emailBlacklisted: z.boolean().optional(),
+		smsBlacklisted: z.boolean().optional(),
+		listIds: z.array(z.number()).optional(),
+		updateEnabled: z.boolean().optional(),
+		smtpBlacklistSender: z.array(z.string()).optional(),
+	})
+	.refine((data) => {
+		if (data.email || data.ext_id) {
+			return true;
+		}
+		const sms = data.attributes?.SMS;
+		return typeof sms === 'string' && sms.trim().length > 0;
+	});
 export type ContactsCreateInput = z.infer<typeof ContactsCreateInputSchema>;
 
 export const ContactsCreateResponseSchema = z
@@ -238,23 +247,40 @@ export type EmailCampaignsGetResponse = z.infer<
 	typeof EmailCampaignsGetResponseSchema
 >;
 
-export const EmailCampaignsCreateInputSchema = z.object({
-	name: z.string(),
-	subject: z.string().optional(),
-	sender: CampaignSenderSchema.optional(),
-	htmlContent: z.string().optional(),
-	htmlUrl: z.string().optional(),
-	templateId: z.number().optional(),
-	scheduledAt: z.string().optional(),
-	recipients: CampaignRecipientsSchema.optional(),
-	replyTo: z.string().optional(),
-	toField: z.string().optional(),
-	tag: z.string().optional(),
-	header: z.string().optional(),
-	footer: z.string().optional(),
-	utmCampaign: z.string().optional(),
-	params: z.record(z.string(), z.unknown()).optional(),
-});
+export const CampaignCreateSenderSchema = z
+	.object({
+		name: z.string().optional(),
+		email: z.email().optional(),
+		id: z.number().optional(),
+	})
+	.refine(
+		(sender) => (sender.email !== undefined) !== (sender.id !== undefined),
+	);
+
+export const EmailCampaignsCreateInputSchema = z
+	.object({
+		name: z.string(),
+		subject: z.string().min(1),
+		sender: CampaignCreateSenderSchema,
+		htmlContent: z.string().optional(),
+		htmlUrl: z.string().optional(),
+		templateId: z.number().optional(),
+		scheduledAt: z.string().optional(),
+		recipients: CampaignRecipientsSchema.optional(),
+		replyTo: z.string().optional(),
+		toField: z.string().optional(),
+		tag: z.string().optional(),
+		header: z.string().optional(),
+		footer: z.string().optional(),
+		utmCampaign: z.string().optional(),
+		params: z.record(z.string(), z.unknown()).optional(),
+	})
+	.refine((data) => {
+		const sources = [data.htmlContent, data.htmlUrl, data.templateId].filter(
+			(value) => value !== undefined && value !== '',
+		);
+		return sources.length === 1;
+	});
 export type EmailCampaignsCreateInput = z.infer<
 	typeof EmailCampaignsCreateInputSchema
 >;
