@@ -21,12 +21,13 @@ export const BIGPICTUREIO_IP_API_BASE = 'https://ip.bigpicture.io';
 export const BIGPICTUREIO_STREAM_TIMEOUT_MS = 210_000;
 
 const BIGPICTUREIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: false,
+	enabled: true,
 	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: {
 		retryAfter: 'Retry-After',
+		resetTime: 'X-RateLimit-Reset',
 	},
 };
 
@@ -43,7 +44,7 @@ export async function makeBigpictureioRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: BigpictureioRequestOptions = {},
-): Promise<T> {
+): Promise<T | undefined> {
 	if (!apiKey.trim()) {
 		throw new AuthMissingError('bigpictureio', 'api_key');
 	}

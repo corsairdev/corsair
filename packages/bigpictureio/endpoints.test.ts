@@ -145,6 +145,27 @@ describe('bigpictureio request client', () => {
 		);
 	});
 
+	it('parses Retry-After without retrying in the transport', async () => {
+		await makeBigpictureioRequest('/v1/companies/find', 'bp_test_key', {
+			method: 'GET',
+			query: { domain: 'walmart.com' },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.anything(),
+			expect.objectContaining({
+				rateLimitConfig: expect.objectContaining({
+					enabled: true,
+					maxRetries: 0,
+					headerNames: expect.objectContaining({
+						retryAfter: 'Retry-After',
+					}),
+				}),
+			}),
+		);
+	});
+
 	it('rejects a missing api key', async () => {
 		await expect(
 			makeBigpictureioRequest('/v1/companies/find', ''),
@@ -310,6 +331,19 @@ describe('bigpictureio company.find', () => {
 			pending: true,
 			webhookUrl: 'https://hooks.example.com/bp',
 			webhookId: 'job-22',
+		});
+	});
+
+	it('returns pending when a webhook was supplied and the body is missing', async () => {
+		mockRequest.mockResolvedValue(undefined);
+		await expect(
+			endpoints().company.find(mockCtx, {
+				domain: 'walmart.com',
+				webhookUrl: 'https://hooks.example.com/bp',
+			}),
+		).resolves.toEqual({
+			pending: true,
+			webhookUrl: 'https://hooks.example.com/bp',
 		});
 	});
 });
