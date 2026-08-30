@@ -1,58 +1,75 @@
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
-import { z } from 'zod';
+import { createHmac, timingSafeEqual } from 'node:crypto';
+import type { WebhookRequest } from 'corsair/core';
 
-export const BrexWebhookPayloadSchema = z.object({
-	type: z.string(),
-	created_at: z.string(),
-	data: z.record(z.string(), z.unknown()),
-});
+const SIGNATURE_TOLERANCE_SEC = 300;
 
-export type BrexWebhookPayload = z.infer<
-	typeof BrexWebhookPayloadSchema
->;
+function headerValue(
+	headers: Record<string, string | string[] | undefined>,
+	name: string,
+): string | undefined {
+	const value = headers[name] ?? headers[name.toLowerCase()];
+	if (Array.isArray(value)) return value[0];
+	return value;
+}
 
-export const ExampleEventSchema = BrexWebhookPayloadSchema.extend({
-	type: z.literal('example'),
-	data: z
-		.object({
-			id: z.string(),
+function signaturesFromHeader(header: string): string[] {
+	return header
+		.split(/\s+/)
+		.map((part) => {
+			const [version, signature] = part.split(',', 2);
+			return version === 'v1' && signature ? signature : undefined;
 		})
-		.loose(),
-});
-
-export type ExampleEvent = z.infer<typeof ExampleEventSchema>;
-
-export type BrexWebhookOutputs = {
-	example: ExampleEvent;
-};
-
-function parseBody(body: unknown): Record<string, unknown> | null {
-	if (typeof body === 'string') {
-		try {
-			const parsed = JSON.parse(body);
-			return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
-				? (parsed as Record<string, unknown>)
-				: null;
-		} catch {
-			return null;
-		}
-	}
-	return body !== null && typeof body === 'object' && !Array.isArray(body)
-		? (body as Record<string, unknown>)
-		: null;
+		.filter((value): value is string => Boolean(value));
 }
 
-export function createBrexMatch(eventType: string): CorsairWebhookMatcher {
-	return (request: RawWebhookRequest) => {
-		const parsedBody = parseBody(request.body);
-		return parsedBody !== null && parsedBody.type === eventType;
-	};
+function digest(secret: string, content: string): Buffer {
+	return createHmac('sha256', secret).update(content).digest();
 }
 
+/**
+ * Official verification:
+ * signed_content = `${Webhook-Id}.${Webhook-Timestamp}.${rawBody}`
+ * https://developer.brex.com/guides/webhooks
+ */
 export function verifyBrexWebhookSignature(
-	request: WebhookRequest<BrexWebhookPayload>,
+	request: Pick<WebhookRequest<unknown>, 'headers' | 'rawBody'>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
-	return { valid: true };
+	if (!secret) return { valid: false, error: 'missing webhook secret' };
+
+	const id = headerValue(request.headers, 'webhook-id');
+	const timestamp = headerValue(request.headers, 'webhook-timestamp');
+	const signatureHeader = headerValue(request.headers, 'webhook-signature');
+	if (!id || !timestamp || !signatureHeader) {
+		return { valid: false, error: 'missing webhook signature headers' };
+	}
+
+	const ts = Number(timestamp);
+	if (!Number.isFinite(ts)) {
+		return { valid: false, error: 'invalid webhook timestamp' };
+	}
+	const skew = Math.abs(Date.now() / 1000 - ts);
+	if (skew > SIGNATURE_TOLERANCE_SEC) {
+		return { valid: false, error: 'webhook timestamp outside tolerance' };
+	}
+
+	const candidates = signaturesFromHeader(signatureHeader);
+	if (candidates.length === 0) {
+		return { valid: false, error: 'malformed webhook signature' };
+	}
+
+	const expected = digest(
+		secret,
+		`${id}.${timestamp}.${request.rawBody ?? ''}`,
+	);
+	for (const candidate of candidates) {
+		const provided = Buffer.from(candidate, 'base64');
+		if (
+			provided.length === expected.length &&
+			timingSafeEqual(provided, expected)
+		) {
+			return { valid: true };
+		}
+	}
+	return { valid: false, error: 'webhook signature mismatch' };
 }

@@ -1,9 +1,3 @@
-import { example } from './example';
-
-export const ExampleWebhooks = {
-	example: example,
-};
-
-export * from './types';
-export * from './tenant-matcher';
-export * from './oauth-tenant-link';
+export { resolveBrexOAuthWebhookTenantLink } from './oauth-tenant-link';
+export { matchBrexTenantWebhook } from './tenant-matcher';
+export { verifyBrexWebhookSignature } from './types';

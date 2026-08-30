@@ -1,33 +1,31 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { BrexEndpointInputs, BrexEndpointOutputs } from './endpoints/types';
-import { BrexEndpointInputSchemas, BrexEndpointOutputSchemas } from './endpoints/types';
-import type {
-	BrexWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { BrexSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { BREX_OAUTH_AUTHORIZE_URL, BREX_OAUTH_TOKEN_URL } from './client';
+import { brexEndpointsNested } from './endpoints';
+import type { BrexRouteKey } from './endpoints/routes';
+import { BREX_ROUTES } from './endpoints/routes';
+import {
+	BrexEndpointInputSchemas,
+	BrexEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchBrexTenantWebhook } from './webhooks/tenant-matcher';
+import { BrexSchema } from './schema';
 import { resolveBrexOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchBrexTenantWebhook } from './webhooks/tenant-matcher';
+
+const brexWebhooksNested = {} as const;
 
 export type BrexPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -39,6 +37,15 @@ export type BrexPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof brexEndpointsNested>;
 };
 
+export const brexAuthConfig = {
+	api_key: {
+		account: ['company_id'] as const,
+	},
+	oauth_2: {
+		account: ['company_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type BrexContext = CorsairPluginContext<
 	typeof BrexSchema,
 	BrexPluginOptions
@@ -48,73 +55,30 @@ export type BrexKeyBuilderContext = KeyBuilderContext<BrexPluginOptions>;
 
 export type BrexBoundEndpoints = BindEndpoints<typeof brexEndpointsNested>;
 
-type BrexEndpoint<
-	K extends keyof BrexEndpointOutputs,
-> = CorsairEndpoint<
-	BrexContext,
-	BrexEndpointInputs[K],
-	BrexEndpointOutputs[K]
->;
+export const brexEndpointSchemas = Object.fromEntries(
+	(Object.keys(BREX_ROUTES) as BrexRouteKey[]).map((key) => {
+		const route = BREX_ROUTES[key];
+		return [
+			`${route.group}.${route.op}`,
+			{
+				input: BrexEndpointInputSchemas[key],
+				output: BrexEndpointOutputSchemas[key],
+			},
+		];
+	}),
+) as unknown as RequiredPluginEndpointSchemas<typeof brexEndpointsNested>;
 
-export type BrexEndpoints = {
-	exampleGet: BrexEndpoint<'exampleGet'>;
-};
-
-type BrexWebhook<
-	K extends keyof BrexWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<BrexContext, TEvent, BrexWebhookOutputs[K]>;
-
-export type BrexWebhooks = {
-	example: BrexWebhook<'example', ExampleEvent>;
-};
-
-export type BrexBoundWebhooks = BindWebhooks<BrexWebhooks>;
-
-const brexEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
-} as const;
-
-const brexWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
-
-export const brexEndpointSchemas = {
-	'example.get': {
-		input: BrexEndpointInputSchemas.exampleGet,
-		output: BrexEndpointOutputSchemas.exampleGet,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof brexEndpointsNested>;
-
-const brexWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof brexWebhooksNested>;
+const brexEndpointMeta = Object.fromEntries(
+	(Object.keys(BREX_ROUTES) as BrexRouteKey[]).map((key) => {
+		const route = BREX_ROUTES[key];
+		return [
+			`${route.group}.${route.op}`,
+			{ riskLevel: route.risk, description: route.description },
+		];
+	}),
+) as unknown as RequiredPluginEndpointMeta<typeof brexEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
-
-const brexEndpointMeta = {
-	'example.get': {
-		riskLevel: 'read',
-		description: 'Get an example resource by ID',
-	},
-} as const satisfies RequiredPluginEndpointMeta<typeof brexEndpointsNested>;
-
-export const brexAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
 
 export type BaseBrexPlugin<T extends BrexPluginOptions> = CorsairPlugin<
 	'brex',
@@ -126,9 +90,7 @@ export type BaseBrexPlugin<T extends BrexPluginOptions> = CorsairPlugin<
 >;
 
 export type InternalBrexPlugin = BaseBrexPlugin<BrexPluginOptions>;
-
-export type ExternalBrexPlugin<T extends BrexPluginOptions> =
-	BaseBrexPlugin<T>;
+export type ExternalBrexPlugin<T extends BrexPluginOptions> = BaseBrexPlugin<T>;
 
 export function brex<const T extends BrexPluginOptions>(
 	incomingOptions: BrexPluginOptions & T = {} as BrexPluginOptions & T,
@@ -141,62 +103,83 @@ export function brex<const T extends BrexPluginOptions>(
 		id: 'brex',
 		authConfig: brexAuthConfig,
 		schema: BrexSchema,
-		options: options,
+		options,
+		oauthConfig: {
+			providerName: 'Brex',
+			authUrl: BREX_OAUTH_AUTHORIZE_URL,
+			tokenUrl: BREX_OAUTH_TOKEN_URL,
+			scopes: [
+				'openid',
+				'offline_access',
+				'users',
+				'users.readonly',
+				'cards',
+				'cards.readonly',
+				'expenses',
+				'expenses.card.readonly',
+				'budgets',
+				'vendors',
+				'transfers',
+				'accounts.cash.readonly',
+				'transactions.card.readonly',
+			],
+			tokenAuthMethod: 'body',
+		},
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: brexEndpointsNested,
 		webhooks: brexWebhooksNested,
 		endpointMeta: brexEndpointMeta,
 		endpointSchemas: brexEndpointSchemas,
-		webhookSchemas: brexWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-brex-signature' in headers;
-		},
+		pluginWebhookMatcher: () => false,
 		pluginTenantWebhookMatcher: matchBrexTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveBrexOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		keyBuilder: async (ctx: BrexKeyBuilderContext, source) => {
+		keyBuilder: async (ctx, source) => {
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
-
 			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				const secret = await ctx.keys.get_webhook_signature();
+				if (!secret) {
+					throw new AuthMissingError('brex', 'webhook_signature');
+				}
+				return secret;
 			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
-
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				const key = await ctx.keys.get_api_key();
+				if (!key) throw new AuthMissingError('brex', 'api_key');
+				return key;
 			}
-
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				return getOAuthAccessToken(ctx, {
+					plugin: 'brex',
+					tokenUrl: BREX_OAUTH_TOKEN_URL,
+					tokenAuthMethod: 'body',
+				});
 			}
-
-			return '';
+			throw new AuthMissingError('brex', ctx.authType ?? 'api_key');
 		},
 	} satisfies InternalBrexPlugin;
 }
 
-export type {
-	ExampleEvent,
-	BrexWebhookOutputs,
-} from './webhooks/types';
-
+export {
+	BREX_API_BASE,
+	BREX_OAUTH_AUTHORIZE_URL,
+	BREX_OAUTH_TOKEN_URL,
+	BrexAPIError,
+	BrexRateLimitError,
+	makeBrexRequest,
+} from './client';
+export { BREX_ROUTE_KEYS, BREX_ROUTES } from './endpoints/routes';
 export type {
 	BrexEndpointInputs,
 	BrexEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
 } from './endpoints/types';
+export { verifyBrexWebhookSignature } from './webhooks/types';

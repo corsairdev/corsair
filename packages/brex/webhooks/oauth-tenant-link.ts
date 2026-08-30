@@ -1,31 +1,29 @@
 import type { TokenResponse, WebhookTenantMatch } from 'corsair/core';
 import { asRecord, toExternalId } from 'corsair/core';
+import { BREX_API_BASE } from '../client';
 
-// TODO: Rename linkType 'tenant_external_id' to match pluginTenantWebhookMatcher.
-// Called after OAuth to store the routing id on corsair_accounts.config.
+/** Official: GET /v2/company returns the company id for the access token. */
 export async function resolveBrexOAuthWebhookTenantLink(
 	tokens: TokenResponse,
 ): Promise<WebhookTenantMatch | null> {
-	// TODO: Read from token response when the provider includes a stable id.
-	// const externalId = toExternalId(asRecord(tokens.team)?.id);
-	const externalId = toExternalId(tokens.tenant_external_id);
-	if (externalId) {
-		return { linkType: 'tenant_external_id', externalId };
-	}
+	const fromToken = toExternalId(
+		tokens.tenant_external_id ??
+			asRecord(tokens.company)?.id ??
+			asRecord(tokens)?.company_id,
+	);
+	if (fromToken) return { linkType: 'company_id', externalId: fromToken };
 
 	const accessToken = tokens.access_token;
 	if (!accessToken) return null;
 
-	// TODO: Fetch from provider API when the token response omits the id.
-	// const response = await fetch('https://api.example.com/me', {
-	// 	headers: { Authorization: `Bearer ${accessToken}` },
-	// });
-	// if (!response.ok) return null;
-	// const payload = (await response.json()) as { id?: string };
-	// const fetchedId = toExternalId(payload.id);
-	// return fetchedId
-	// 	? { linkType: 'tenant_external_id', externalId: fetchedId }
-	// 	: null;
-
-	return null;
+	const response = await fetch(`${BREX_API_BASE}/v2/company`, {
+		headers: {
+			Accept: 'application/json',
+			Authorization: `Bearer ${accessToken}`,
+		},
+	});
+	if (!response.ok) return null;
+	const payload = asRecord(await response.json());
+	const companyId = toExternalId(payload?.id);
+	return companyId ? { linkType: 'company_id', externalId: companyId } : null;
 }
