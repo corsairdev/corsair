@@ -33,7 +33,11 @@ function verifyAndExtract(
 	if (!notification) {
 		return {
 			ok: false as const,
-			result: { success: true as const, data: undefined },
+			result: {
+				success: false as const,
+				statusCode: 401,
+				error: 'Invalid payload: missing value array',
+			},
 		};
 	}
 
