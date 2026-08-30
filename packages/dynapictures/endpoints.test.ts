@@ -49,8 +49,12 @@ function classify(error: Error): string {
 	return name ?? 'none';
 }
 
-function httpError(status: number, message: string): ApiError {
-	return new ApiError(
+function httpError(
+	status: number,
+	message: string,
+	retryAfter?: number,
+): ApiError {
+	const err = new ApiError(
 		{ method: 'GET', url: 'https://api.dynapictures.com/templates' },
 		{
 			url: 'https://api.dynapictures.com/templates',
@@ -61,10 +65,14 @@ function httpError(status: number, message: string): ApiError {
 		},
 		message,
 	);
+	if (retryAfter !== undefined) {
+		(err as { retryAfter?: number }).retryAfter = retryAfter;
+	}
+	return err;
 }
 
 describe('dynapictures plugin shape', () => {
-	it('registers the 5 endpoints and no webhooks', () => {
+	it('registers the 4 endpoints and no webhooks', () => {
 		const plugin = dynapictures();
 		expect(plugin.id).toBe('dynapictures');
 		expect(plugin.options?.authType).toBe('api_key');
@@ -73,7 +81,6 @@ describe('dynapictures plugin shape', () => {
 		expect(plugin.pluginWebhookMatcher).toBeUndefined();
 		expect(plugin.webhookHooks).toBeUndefined();
 		expect(Object.keys(dynapicturesEndpointSchemas).sort()).toEqual([
-			'designs.delete',
 			'designs.generate',
 			'designs.get',
 			'designs.list',
@@ -145,7 +152,28 @@ describe('dynapictures request client', () => {
 		);
 	});
 
-	it('wraps unknown errors into DynapicturesAPIError', async () => {
+	it('preserves status, statusText, body, and retryAfter from ApiError in DynapicturesAPIError', async () => {
+		const apiErr = httpError(429, 'Rate limit exceeded', 5000);
+		mockRequest.mockRejectedValue(apiErr);
+
+		let caught: DynapicturesAPIError | undefined;
+		try {
+			await makeDynapicturesRequest('templates', 'dp_test_api_key');
+		} catch (err) {
+			if (err instanceof DynapicturesAPIError) {
+				caught = err;
+			}
+		}
+
+		expect(caught).toBeDefined();
+		expect(caught?.status).toBe(429);
+		expect(caught?.statusText).toBe('Error');
+		expect(caught?.retryAfter).toBe(5000);
+		expect(caught?.body).toEqual({ error: 'Rate limit exceeded' });
+		expect(classify(caught as Error)).toBe('RATE_LIMIT_ERROR');
+	});
+
+	it('wraps generic errors into DynapicturesAPIError', async () => {
 		mockRequest.mockRejectedValue(new Error('Network error'));
 
 		await expect(
@@ -281,35 +309,6 @@ describe('designs.list', () => {
 	});
 });
 
-describe('designs.delete', () => {
-	beforeEach(() => {
-		mockRequest.mockReset();
-		mockLog.mockReset();
-		mockRequest.mockResolvedValue({});
-	});
-
-	it('deletes design by id', async () => {
-		const result = await pluginEndpoints().designs.delete(mockCtx, {
-			id: 'img-101',
-		});
-
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({
-				method: 'DELETE',
-				url: '/designs/img-101',
-			}),
-		);
-		expect(result).toEqual({ success: true });
-		expect(mockLog).toHaveBeenCalledWith(
-			mockCtx,
-			'dynapictures.designs.delete',
-			{ id: 'img-101' },
-			'completed',
-		);
-	});
-});
-
 describe('templates.list', () => {
 	const templatesResponse = [
 		{ id: 'tpl-1', name: 'Banner Template', width: 1200, height: 630 },
@@ -348,5 +347,15 @@ describe('dynapictures error classification', () => {
 			'RATE_LIMIT_ERROR',
 		);
 		expect(classify(httpError(500, 'Server error'))).toBe('DEFAULT');
+
+		const dpRateLimit = new DynapicturesAPIError('Rate limit', undefined, {
+			cause: httpError(429, 'Rate limit', 2000),
+		});
+		expect(classify(dpRateLimit)).toBe('RATE_LIMIT_ERROR');
+
+		const dpAuthErr = new DynapicturesAPIError('Unauthorized', undefined, {
+			cause: httpError(401, 'Unauthorized'),
+		});
+		expect(classify(dpAuthErr)).toBe('AUTH_ERROR');
 	});
 });

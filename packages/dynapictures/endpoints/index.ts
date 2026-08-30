@@ -1,18 +1,14 @@
-import {
-	deleteDesign,
-	generateDesign,
-	getDesign,
-	listDesigns,
-} from './designs';
+import { generateDesign, getDesign, listDesigns } from './designs';
 import { listTemplates } from './templates';
 
+/** Design operations module grouping for Dynapictures endpoints */
 export const Designs = {
 	generate: generateDesign,
 	get: getDesign,
 	list: listDesigns,
-	delete: deleteDesign,
 };
 
+/** Template operations module grouping for Dynapictures endpoints */
 export const Templates = {
 	list: listTemplates,
 };
