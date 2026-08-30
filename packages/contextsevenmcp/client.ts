@@ -1,19 +1,20 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class ContextSevenMcpAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'ContextSevenMcpAPIError';
 	}
 }
 
-// TODO: Update with your API base URL
-const CONTEXTSEVENMCP_API_BASE = 'https://api.example.com';
+const CONTEXT7_API_BASE = 'https://context7.com/api';
 
 export async function makeContextSevenMcpRequest<T>(
 	endpoint: string,
@@ -24,18 +25,20 @@ export async function makeContextSevenMcpRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
+	if (!apiKey) {
+		throw new AuthMissingError('contextsevenmcp', 'api_key');
+	}
+
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
-		BASE: CONTEXTSEVENMCP_API_BASE,
-		VERSION: '1.0.0',
+		BASE: CONTEXT7_API_BASE,
+		VERSION: '2.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
 		HEADERS: {
-			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Accept: 'application/json',
 		},
 	};
 
@@ -47,12 +50,15 @@ export async function makeContextSevenMcpRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError || error instanceof AuthMissingError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new ContextSevenMcpAPIError(error.message);
 		}
