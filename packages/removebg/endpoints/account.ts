@@ -1,9 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeRemovebgRequest } from '../client';
 import type { RemovebgEndpoints } from '../index';
-import { AccountGetOutputSchema } from './types';
+import { AccountGetInputSchema, AccountGetOutputSchema } from './types';
 
-export const get: RemovebgEndpoints['account'] = async (ctx) => {
+export const get: RemovebgEndpoints['account'] = async (ctx, rawInput) => {
+	AccountGetInputSchema.parse(rawInput);
+
 	const response = AccountGetOutputSchema.parse(
 		await makeRemovebgRequest('/account', ctx.key, { method: 'GET' }),
 	);

@@ -112,6 +112,55 @@ describe('RemoveBackground.remove', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('rejects a request that provides both bgColor and bgImageUrl', async () => {
+		await expect(
+			RemoveBackground.remove(ctx, {
+				imageUrl: 'https://example.com/photo.jpg',
+				bgColor: '#ffffff',
+				bgImageUrl: 'https://example.com/bg.jpg',
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('accepts the current size, format, and type option set', async () => {
+		mockRequest.mockResolvedValueOnce({ data: { result_b64: 'aGVsbG8=' } });
+
+		await RemoveBackground.remove(ctx, {
+			imageUrl: 'https://example.com/photo.jpg',
+			size: '50MP',
+			format: 'webp',
+			type: 'animal',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				body: expect.objectContaining({
+					size: '50MP',
+					format: 'webp',
+					type: 'animal',
+				}),
+			}),
+		);
+	});
+
+	it('maps shadowType/shadowOpacity to shadow_type/shadow_opacity, not the deprecated add_shadow', async () => {
+		mockRequest.mockResolvedValueOnce({ data: { result_b64: 'aGVsbG8=' } });
+
+		await RemoveBackground.remove(ctx, {
+			imageUrl: 'https://example.com/photo.jpg',
+			shadowType: 'natural',
+			shadowOpacity: 80,
+		});
+
+		const [, options] = mockRequest.mock.calls[0] ?? [];
+		const body = options?.body as Record<string, unknown>;
+		expect(body.shadow_type).toBe('natural');
+		expect(body.shadow_opacity).toBe(80);
+		expect(body).not.toHaveProperty('add_shadow');
+	});
+
 	it('returns the base64 cutout from the API response', async () => {
 		mockRequest.mockResolvedValueOnce({
 			data: {
@@ -180,5 +229,27 @@ describe('Improvement.submit', () => {
 			Improvement.submit(ctx, { errorType: 'other' } as never),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('accepts a JSON acknowledgement body from remove.bg', async () => {
+		mockRequest.mockResolvedValueOnce({ data: { attributes: {} } });
+
+		const result = await Improvement.submit(ctx, {
+			imageUrl: 'https://example.com/photo.jpg',
+			errorType: 'other',
+		});
+
+		expect(result).toEqual({ success: true });
+	});
+
+	it('throws instead of reporting success on an unexpected response shape', async () => {
+		mockRequest.mockResolvedValueOnce('unexpected-plain-text-body');
+
+		await expect(
+			Improvement.submit(ctx, {
+				imageUrl: 'https://example.com/photo.jpg',
+				errorType: 'other',
+			}),
+		).rejects.toThrow();
 	});
 });

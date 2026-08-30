@@ -1,37 +1,41 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ApiError } from 'corsair/http';
+import type { RemovebgAPIError } from './client';
+
+// makeRemovebgRequest wraps every transport failure into RemovebgAPIError, so
+// matching on `instanceof ApiError` here would never fire; read the status
+// and retryAfter it republishes instead.
+function getStatus(error: Error): number | undefined {
+	return (error as Partial<RemovebgAPIError>).status;
+}
+
+function getRetryAfter(error: Error): number | undefined {
+	return (error as Partial<RemovebgAPIError>).retryAfter;
+}
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (getStatus(error) === 429) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async (error: Error) => ({
+			maxRetries: 5,
+			headersRetryAfterMs: getRetryAfter(error),
+		}),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
 			// remove.bg returns 403 (not 401) for a missing/invalid API key.
-			if (
-				error instanceof ApiError &&
-				(error.status === 401 || error.status === 403)
-			) {
-				return true;
-			}
+			const status = getStatus(error);
+			if (status === 401 || status === 403) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	INSUFFICIENT_CREDITS_ERROR: {
-		match: (error: Error) => error instanceof ApiError && error.status === 402,
+		match: (error: Error) => getStatus(error) === 402,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {

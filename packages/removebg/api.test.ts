@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Account, Improvement, RemoveBackground } from './endpoints';
+import { Account, RemoveBackground } from './endpoints';
 import type { RemovebgContext } from './index';
 
 /**
@@ -34,13 +34,8 @@ maybeDescribe('remove.bg live API', () => {
 		expect(result.data.result_b64.length).toBeGreaterThan(0);
 	});
 
-	it('submits an improvement report for a sample image', async () => {
-		const result = await Improvement.submit(ctx, {
-			imageUrl: SAMPLE_IMAGE,
-			errorType: 'other',
-			errorDescription: 'Automated test run from the Corsair test suite',
-		});
-
-		expect(result).toEqual({ success: true });
-	});
+	// No live test for Improvement.submit: it files a real report against
+	// remove.bg's Improvement program, and the sample image here isn't actually
+	// mis-processed. That behavior is covered by mocked tests in
+	// endpoints.test.ts instead.
 });

@@ -6,6 +6,7 @@ export class RemovebgAPIError extends Error {
 		message: string,
 		public readonly code?: string,
 		public readonly status?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'RemovebgAPIError';
@@ -75,6 +76,7 @@ export async function makeRemovebgRequest<T>(
 				extractErrorMessage(error.body) || error.message,
 				extractErrorCode(error.body),
 				error.status,
+				error.retryAfter,
 			);
 		}
 		if (error instanceof Error) {

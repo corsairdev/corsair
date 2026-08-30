@@ -1,7 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeRemovebgRequest } from '../client';
 import type { RemovebgEndpoints } from '../index';
-import { SubmitImprovementInputSchema } from './types';
+import {
+	SubmitImprovementInputSchema,
+	SubmitImprovementOutputSchema,
+	SubmitImprovementResponseSchema,
+} from './types';
 
 export const submit: RemovebgEndpoints['improvement'] = async (
 	ctx,
@@ -9,7 +13,7 @@ export const submit: RemovebgEndpoints['improvement'] = async (
 ) => {
 	const input = SubmitImprovementInputSchema.parse(rawInput);
 
-	await makeRemovebgRequest<unknown>('/improve', ctx.key, {
+	const rawResponse = await makeRemovebgRequest('/improve', ctx.key, {
 		method: 'POST',
 		body: {
 			image_url: input.imageUrl,
@@ -18,6 +22,11 @@ export const submit: RemovebgEndpoints['improvement'] = async (
 			error_description: input.errorDescription,
 		},
 	});
+
+	// Throws if remove.bg's response doesn't match the documented shape,
+	// instead of silently reporting success on a drifted/error payload.
+	SubmitImprovementResponseSchema.parse(rawResponse);
+	const response = SubmitImprovementOutputSchema.parse({ success: true });
 
 	await logEventFromContext(
 		ctx,
@@ -29,5 +38,5 @@ export const submit: RemovebgEndpoints['improvement'] = async (
 		'completed',
 	);
 
-	return { success: true };
+	return response;
 };

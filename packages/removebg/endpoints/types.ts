@@ -10,17 +10,26 @@ export const REMOVEBG_SIZE = [
 	'hd',
 	'full',
 	'4k',
+	'50MP',
 	'auto',
 ] as const;
 export type RemovebgSize = (typeof REMOVEBG_SIZE)[number];
 
-export const REMOVEBG_TYPE = ['auto', 'person', 'product', 'car'] as const;
+export const REMOVEBG_TYPE = [
+	'auto',
+	'person',
+	'product',
+	'car',
+	'animal',
+	'graphic',
+	'transportation',
+] as const;
 export type RemovebgType = (typeof REMOVEBG_TYPE)[number];
 
 export const REMOVEBG_TYPE_LEVEL = ['none', '1', '2', 'latest'] as const;
 export type RemovebgTypeLevel = (typeof REMOVEBG_TYPE_LEVEL)[number];
 
-export const REMOVEBG_FORMAT = ['auto', 'png', 'jpg', 'zip'] as const;
+export const REMOVEBG_FORMAT = ['auto', 'png', 'jpg', 'webp', 'zip'] as const;
 export type RemovebgFormat = (typeof REMOVEBG_FORMAT)[number];
 
 export const REMOVEBG_CHANNELS = ['rgba', 'alpha'] as const;
@@ -87,7 +96,10 @@ const RemoveBackgroundBaseInputSchema = z.object({
 	scale: z.string().optional(),
 	position: z.string().optional(),
 	channels: z.enum(REMOVEBG_CHANNELS).optional(),
-	addShadow: z.boolean().optional(),
+	/** e.g. 'natural' or 'drop'. Replaces the deprecated add_shadow boolean. */
+	shadowType: z.string().optional(),
+	/** 0-100. Only applies when shadowType is set. */
+	shadowOpacity: z.number().min(0).max(100).optional(),
 	semitransparency: z.boolean().optional(),
 	bgColor: z.string().optional(),
 	bgImageUrl: z.string().url().optional(),
@@ -97,7 +109,10 @@ export const RemoveBackgroundInputSchema =
 	RemoveBackgroundBaseInputSchema.refine(
 		(value) => Boolean(value.imageUrl) !== Boolean(value.imageFileB64),
 		{ message: 'Provide exactly one of imageUrl or imageFileB64' },
-	);
+	).refine((value) => !(value.bgColor && value.bgImageUrl), {
+		message: 'Provide at most one of bgColor or bgImageUrl',
+		path: ['bgImageUrl'],
+	});
 export type RemoveBackgroundInput = z.input<typeof RemoveBackgroundInputSchema>;
 
 export const RemoveBackgroundOutputSchema = z.object({
@@ -135,6 +150,15 @@ export const SubmitImprovementInputSchema =
 export type SubmitImprovementInput = z.input<
 	typeof SubmitImprovementInputSchema
 >;
+
+/**
+ * remove.bg responds to a successful submission with HTTP 200 and either an
+ * empty body or a small JSON acknowledgement — never a `success` field. This
+ * validates the raw response shape before the endpoint derives its own
+ * `{ success }` output, so unexpected provider payloads surface as a
+ * validation failure instead of being silently discarded.
+ */
+export const SubmitImprovementResponseSchema = z.object({}).loose().optional();
 
 export const SubmitImprovementOutputSchema = z.object({
 	success: z.boolean(),
