@@ -38,9 +38,13 @@ jest.mock('corsair/http', () => ({
 	},
 }));
 
-jest.mock('corsair/core', () => ({
-	logEventFromContext: jest.fn(),
-}));
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual('corsair/core') as Record<string, unknown>;
+	return {
+		...actual,
+		logEventFromContext: jest.fn(),
+	};
+});
 
 import { ApiError, request } from 'corsair/http';
 
@@ -94,14 +98,43 @@ describe('Aryn error handlers', () => {
 				new ArynAPIError('Request failed with status 401', undefined, 401),
 			),
 		).toBe(true);
+		expect(
+			errorHandlers.AUTH_ERROR.match(
+				new ArynAPIError('Invalid Aryn API key', undefined, 403),
+			),
+		).toBe(true);
 		const decision = await errorHandlers.AUTH_ERROR.handler();
 		expect(decision.maxRetries).toBe(0);
+	});
+
+	it('keeps DEFAULT last', () => {
+		const keys = Object.keys(errorHandlers);
+		expect(keys[keys.length - 1]).toBe('DEFAULT');
 	});
 
 	it('has a catch-all DEFAULT handler that never retries', async () => {
 		expect(errorHandlers.DEFAULT.match()).toBe(true);
 		const decision = await errorHandlers.DEFAULT.handler();
 		expect(decision.maxRetries).toBe(0);
+	});
+
+	it('makeArynRequest throws AuthMissingError when the api key is missing', async () => {
+		const { AuthMissingError } = jest.requireActual('corsair/core') as {
+			AuthMissingError: new (...args: unknown[]) => Error;
+		};
+		await expect(makeArynRequest('/v1/async/list', '')).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('makeArynBinaryRequest throws AuthMissingError when the api key is missing', async () => {
+		const { AuthMissingError } = jest.requireActual('corsair/core') as {
+			AuthMissingError: new (...args: unknown[]) => Error;
+		};
+		await expect(
+			makeArynBinaryRequest('/test/binary', ''),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('makeArynRequest wraps unknown transport failures in ArynAPIError', async () => {

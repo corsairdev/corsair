@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
@@ -15,10 +16,6 @@ export class ArynAPIError extends Error {
 
 const ARYN_API_BASE = 'https://api.aryn.ai';
 
-/**
- * Parse Aryn's `Retry-After` header (seconds) into milliseconds so the
- * rate-limit error handler can feed `headersRetryAfterMs` for raw-fetch paths.
- */
 export function parseArynRetryAfterMs(response: Response): number | undefined {
 	const raw = response.headers.get('Retry-After');
 	if (!raw) return undefined;
@@ -27,29 +24,17 @@ export function parseArynRetryAfterMs(response: Response): number | undefined {
 	return seconds * 1000;
 }
 
-/**
- * Maximum attempts for the raw-fetch binary path when Aryn responds with
- * HTTP 429. The JSON path relies on `corsair/http`'s built-in rate-limit
- * retry loop (3 retries, honors Retry-After); this constant keeps the
- * binary path's retry budget aligned so neither path stacks retries on
- * top of the other (see the note in error-handlers.ts).
- */
 const BINARY_MAX_RETRIES = 3;
 const BINARY_INITIAL_RETRY_DELAY_MS = 1000;
 
-/**
- * Perform a raw binary fetch with built-in 429 handling: retry up to
- * `BINARY_MAX_RETRIES` times, waiting the server-provided Retry-After
- * duration when present, otherwise falling back to exponential backoff.
- * The retry lives inside this function (rather than in the plugin-level
- * error handler) so the raw-fetch path does not multiply with the
- * JSON path's transport-level retries.
- */
 export async function makeArynBinaryRequest(
 	endpoint: string,
 	apiKey: string,
 	baseUrl = ARYN_API_BASE,
 ): Promise<ArrayBuffer> {
+	if (!apiKey) {
+		throw new AuthMissingError('aryn', 'api_key');
+	}
 	const url = `${baseUrl}${endpoint}`;
 	let attempt = 0;
 	while (true) {
@@ -91,6 +76,10 @@ export async function makeArynRequest<T>(
 		baseUrl?: string;
 	} = {},
 ): Promise<T> {
+	if (!apiKey) {
+		throw new AuthMissingError('aryn', 'api_key');
+	}
+
 	const {
 		method = 'GET',
 		body,
@@ -125,7 +114,6 @@ export async function makeArynRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		// Preserve status / Retry-After so error-handlers can classify and retry.
 		if (error instanceof ApiError) {
 			throw new ArynAPIError(
 				error.message,
@@ -133,6 +121,9 @@ export async function makeArynRequest<T>(
 				error.status,
 				error.retryAfter,
 			);
+		}
+		if (error instanceof AuthMissingError) {
+			throw error;
 		}
 		if (error instanceof Error) {
 			throw new ArynAPIError(error.message);
