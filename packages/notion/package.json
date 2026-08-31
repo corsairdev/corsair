@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && tsc --build --force && tsup",
+    "build": "rimraf dist && tsc --build --force && tsup",
     "build:watch": "tsc --build --watch & tsup --watch",
     "typecheck": "tsc --noEmit",
     "test": "jest"
