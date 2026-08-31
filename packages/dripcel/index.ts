@@ -1,21 +1,23 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import {
+	CatalogEndpoints,
+	ContactsEndpoints,
+	MessagingEndpoints,
+} from './endpoints';
 import type {
 	DripcelEndpointInputs,
 	DripcelEndpointOutputs,
@@ -26,18 +28,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { DripcelSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveDripcelOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchDripcelTenantWebhook } from './webhooks/tenant-matcher';
-import type { DripcelWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type DripcelPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalDripcelPlugin['hooks'];
-	webhookHooks?: InternalDripcelPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof dripcelEndpointsNested>;
 };
@@ -60,64 +55,226 @@ type DripcelEndpoint<K extends keyof DripcelEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type DripcelEndpoints = {
-	exampleGet: DripcelEndpoint<'exampleGet'>;
+	getContact: DripcelEndpoint<'getContact'>;
+	createContacts: DripcelEndpoint<'createContacts'>;
+	upsertContacts: DripcelEndpoint<'upsertContacts'>;
+	deleteContact: DripcelEndpoint<'deleteContact'>;
+	addContactTags: DripcelEndpoint<'addContactTags'>;
+	optOutContact: DripcelEndpoint<'optOutContact'>;
+	checkCompliance: DripcelEndpoint<'checkCompliance'>;
+	listDeliveries: DripcelEndpoint<'listDeliveries'>;
+	listCampaigns: DripcelEndpoint<'listCampaigns'>;
+	getBalance: DripcelEndpoint<'getBalance'>;
+	listEmailTemplates: DripcelEndpoint<'listEmailTemplates'>;
+	uploadSales: DripcelEndpoint<'uploadSales'>;
+	listTags: DripcelEndpoint<'listTags'>;
+	deleteTag: DripcelEndpoint<'deleteTag'>;
+	searchReplies: DripcelEndpoint<'searchReplies'>;
+	searchSendLogs: DripcelEndpoint<'searchSendLogs'>;
+	sendSms: DripcelEndpoint<'sendSms'>;
+	sendBulkEmail: DripcelEndpoint<'sendBulkEmail'>;
 };
-
-type DripcelWebhook<
-	K extends keyof DripcelWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<DripcelContext, TEvent, DripcelWebhookOutputs[K]>;
-
-export type DripcelWebhooks = {
-	example: DripcelWebhook<'example', ExampleEvent>;
-};
-
-export type DripcelBoundWebhooks = BindWebhooks<DripcelWebhooks>;
 
 const dripcelEndpointsNested = {
-	example: {
-		get: Example.get,
+	contacts: {
+		get: ContactsEndpoints.get,
+		create: ContactsEndpoints.create,
+		upsert: ContactsEndpoints.upsert,
+		delete: ContactsEndpoints.delete,
+		addTags: ContactsEndpoints.addTags,
+		optOut: ContactsEndpoints.optOut,
 	},
-} as const;
-
-const dripcelWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	compliance: {
+		checkSend: MessagingEndpoints.checkSend,
+	},
+	deliveries: {
+		list: MessagingEndpoints.listDeliveries,
+	},
+	campaigns: {
+		list: CatalogEndpoints.listCampaigns,
+	},
+	balance: {
+		get: CatalogEndpoints.getBalance,
+	},
+	emailTemplates: {
+		list: CatalogEndpoints.listEmailTemplates,
+	},
+	sales: {
+		upload: CatalogEndpoints.uploadSales,
+	},
+	tags: {
+		list: CatalogEndpoints.listTags,
+		delete: CatalogEndpoints.deleteTag,
+	},
+	replies: {
+		search: MessagingEndpoints.searchReplies,
+	},
+	sendLogs: {
+		search: MessagingEndpoints.searchSendLogs,
+	},
+	send: {
+		sms: MessagingEndpoints.sms,
+		bulkEmail: MessagingEndpoints.bulkEmail,
 	},
 } as const;
 
 export const dripcelEndpointSchemas = {
-	'example.get': {
-		input: DripcelEndpointInputSchemas.exampleGet,
-		output: DripcelEndpointOutputSchemas.exampleGet,
+	'contacts.get': {
+		input: DripcelEndpointInputSchemas.getContact,
+		output: DripcelEndpointOutputSchemas.getContact,
+	},
+	'contacts.create': {
+		input: DripcelEndpointInputSchemas.createContacts,
+		output: DripcelEndpointOutputSchemas.createContacts,
+	},
+	'contacts.upsert': {
+		input: DripcelEndpointInputSchemas.upsertContacts,
+		output: DripcelEndpointOutputSchemas.upsertContacts,
+	},
+	'contacts.delete': {
+		input: DripcelEndpointInputSchemas.deleteContact,
+		output: DripcelEndpointOutputSchemas.deleteContact,
+	},
+	'contacts.addTags': {
+		input: DripcelEndpointInputSchemas.addContactTags,
+		output: DripcelEndpointOutputSchemas.addContactTags,
+	},
+	'contacts.optOut': {
+		input: DripcelEndpointInputSchemas.optOutContact,
+		output: DripcelEndpointOutputSchemas.optOutContact,
+	},
+	'compliance.checkSend': {
+		input: DripcelEndpointInputSchemas.checkCompliance,
+		output: DripcelEndpointOutputSchemas.checkCompliance,
+	},
+	'deliveries.list': {
+		input: DripcelEndpointInputSchemas.listDeliveries,
+		output: DripcelEndpointOutputSchemas.listDeliveries,
+	},
+	'campaigns.list': {
+		input: DripcelEndpointInputSchemas.listCampaigns,
+		output: DripcelEndpointOutputSchemas.listCampaigns,
+	},
+	'balance.get': {
+		input: DripcelEndpointInputSchemas.getBalance,
+		output: DripcelEndpointOutputSchemas.getBalance,
+	},
+	'emailTemplates.list': {
+		input: DripcelEndpointInputSchemas.listEmailTemplates,
+		output: DripcelEndpointOutputSchemas.listEmailTemplates,
+	},
+	'sales.upload': {
+		input: DripcelEndpointInputSchemas.uploadSales,
+		output: DripcelEndpointOutputSchemas.uploadSales,
+	},
+	'tags.list': {
+		input: DripcelEndpointInputSchemas.listTags,
+		output: DripcelEndpointOutputSchemas.listTags,
+	},
+	'tags.delete': {
+		input: DripcelEndpointInputSchemas.deleteTag,
+		output: DripcelEndpointOutputSchemas.deleteTag,
+	},
+	'replies.search': {
+		input: DripcelEndpointInputSchemas.searchReplies,
+		output: DripcelEndpointOutputSchemas.searchReplies,
+	},
+	'sendLogs.search': {
+		input: DripcelEndpointInputSchemas.searchSendLogs,
+		output: DripcelEndpointOutputSchemas.searchSendLogs,
+	},
+	'send.sms': {
+		input: DripcelEndpointInputSchemas.sendSms,
+		output: DripcelEndpointOutputSchemas.sendSms,
+	},
+	'send.bulkEmail': {
+		input: DripcelEndpointInputSchemas.sendBulkEmail,
+		output: DripcelEndpointOutputSchemas.sendBulkEmail,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof dripcelEndpointsNested
 >;
 
-const dripcelWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof dripcelWebhooksNested>;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const dripcelEndpointMeta = {
-	'example.get': {
+	'contacts.get': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Get a Dripcel contact by cell number (MSISDN)',
+	},
+	'contacts.create': {
+		riskLevel: 'write',
+		description: 'Create new Dripcel contacts in bulk (POST /contacts)',
+	},
+	'contacts.upsert': {
+		riskLevel: 'write',
+		description: 'Create or update Dripcel contacts in bulk (PUT /contacts)',
+	},
+	'contacts.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Dripcel contact by cell number [DESTRUCTIVE]',
+	},
+	'contacts.addTags': {
+		riskLevel: 'write',
+		description: 'Add tags to a Dripcel contact by cell number',
+	},
+	'contacts.optOut': {
+		riskLevel: 'write',
+		description: 'Opt a Dripcel contact out of campaigns',
+	},
+	'compliance.checkSend': {
+		riskLevel: 'read',
+		description: 'Check whether phone numbers may receive SMS',
+	},
+	'deliveries.list': {
+		riskLevel: 'read',
+		description: 'List Dripcel deliveries by cell or send customerId',
+	},
+	'campaigns.list': {
+		riskLevel: 'read',
+		description: 'List Dripcel campaigns',
+	},
+	'balance.get': {
+		riskLevel: 'read',
+		description: 'Get the current Dripcel credit balance',
+	},
+	'emailTemplates.list': {
+		riskLevel: 'read',
+		description: 'List Dripcel email templates',
+	},
+	'sales.upload': {
+		riskLevel: 'write',
+		description: 'Upload sales to Dripcel (POST /sales)',
+	},
+	'tags.list': {
+		riskLevel: 'read',
+		description: 'List all Dripcel tags',
+	},
+	'tags.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Dripcel tag by ID [DESTRUCTIVE]',
+	},
+	'replies.search': {
+		riskLevel: 'read',
+		description: 'Search Dripcel message replies',
+	},
+	'sendLogs.search': {
+		riskLevel: 'read',
+		description: 'Search Dripcel send logs',
+	},
+	'send.sms': {
+		riskLevel: 'write',
+		description: 'Send a single SMS via Dripcel',
+	},
+	'send.bulkEmail': {
+		riskLevel: 'write',
+		description: 'Send bulk email via a Dripcel template',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof dripcelEndpointsNested>;
 
 export const dripcelAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -125,7 +282,7 @@ export type BaseDripcelPlugin<T extends DripcelPluginOptions> = CorsairPlugin<
 	'dripcel',
 	typeof DripcelSchema,
 	typeof dripcelEndpointsNested,
-	typeof dripcelWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
@@ -148,59 +305,39 @@ export function dripcel<const T extends DripcelPluginOptions>(
 		schema: DripcelSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: dripcelEndpointsNested,
-		webhooks: dripcelWebhooksNested,
+		webhooks: {},
 		endpointMeta: dripcelEndpointMeta,
 		endpointSchemas: dripcelEndpointSchemas,
-		webhookSchemas: dripcelWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-dripcel-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchDripcelTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveDripcelOAuthWebhookTenantLink,
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: DripcelKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('dripcel', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('dripcel', 'api_key');
 		},
 	} satisfies InternalDripcelPlugin;
 }
 
+export {
+	DripcelAPIError,
+	DripcelRateLimitError,
+	makeDripcelRequest,
+} from './client';
 export type {
 	DripcelEndpointInputs,
 	DripcelEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
 } from './endpoints/types';
-export type {
-	DripcelWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
