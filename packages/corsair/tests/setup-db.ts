@@ -55,6 +55,27 @@ export function createTestDatabase(): {
 			payload TEXT NOT NULL,
 			status TEXT
 		);
+
+		CREATE TABLE IF NOT EXISTS corsair_usage_counters (
+			key TEXT PRIMARY KEY,
+			count INTEGER NOT NULL DEFAULT 1,
+			expires_at TEXT NOT NULL
+		);
+		CREATE INDEX IF NOT EXISTS corsair_usage_counters_expires_at
+			ON corsair_usage_counters (expires_at);
+
+		CREATE TABLE IF NOT EXISTS corsair_permissions (
+			id TEXT PRIMARY KEY,
+			created_at INTEGER NOT NULL,
+			updated_at INTEGER NOT NULL,
+			token TEXT NOT NULL,
+			plugin TEXT NOT NULL,
+			endpoint TEXT NOT NULL,
+			args TEXT NOT NULL,
+			tenant_id TEXT NOT NULL,
+			status TEXT NOT NULL,
+			expires_at TEXT NOT NULL
+		);
 	`);
 
 	const db = new Kysely<CorsairKyselyDatabase>({

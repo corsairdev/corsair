@@ -1,4 +1,5 @@
 import type { CorsairPermissionsNamespace } from '../core/permissions';
+import { runPermissionExecution } from '../core/permissions';
 import type { CorsairDatabase } from '../db/kysely/database';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -195,7 +196,7 @@ export async function executePermission(
 			typeof permission.args === 'string'
 				? JSON.parse(permission.args)
 				: permission.args;
-		const result = await endpointFn(parsedArgs);
+		const result = await runPermissionExecution(() => endpointFn(parsedArgs));
 		await corsair.permissions.set_completed(permission.id);
 		return { plugin: permission.plugin, endpoint: permission.endpoint, result };
 	} catch (error) {

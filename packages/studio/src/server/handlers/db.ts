@@ -7,6 +7,7 @@ const CORE_TABLES = [
 	'corsair_entities',
 	'corsair_events',
 	'corsair_permissions',
+	'corsair_usage_counters',
 ] as const;
 
 type KyselyDb = {

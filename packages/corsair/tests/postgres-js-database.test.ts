@@ -67,6 +67,13 @@ CREATE TABLE IF NOT EXISTS ${TEST_SCHEMA}.corsair_permissions (
     expires_at TEXT NOT NULL,
     error TEXT NULL
 );
+CREATE TABLE IF NOT EXISTS ${TEST_SCHEMA}.corsair_usage_counters (
+    key TEXT PRIMARY KEY,
+    count INTEGER NOT NULL DEFAULT 1,
+    expires_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS corsair_usage_counters_expires_at
+    ON ${TEST_SCHEMA}.corsair_usage_counters (expires_at);
 `;
 
 async function canConnect(): Promise<boolean> {

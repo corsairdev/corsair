@@ -158,6 +158,27 @@ export type CorsairPermissionInsert = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Corsair Usage Counters
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const CorsairUsageSchema = z.object({
+	/** Composite key identifying the limit scope and time window epoch */
+	key: z.string(),
+	/** Number of logical tool attempts within this window */
+	count: z.number().int().default(1),
+	/** ISO8601 timestamp — when this counter can be safely pruned */
+	expires_at: z.string(),
+});
+
+export type CorsairUsage = z.infer<typeof CorsairUsageSchema>;
+
+export type CorsairUsageInsert = {
+	key: string;
+	count?: number;
+	expires_at: string;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Table Names
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -167,6 +188,7 @@ export type CorsairTableName =
 	| 'corsair_entities'
 	| 'corsair_events'
 	| 'corsair_permissions'
+	| 'corsair_usage_counters'
 	| (string & {});
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -178,6 +200,7 @@ export type CorsairTableRow = {
 	corsair_accounts: CorsairAccount;
 	corsair_entities: CorsairEntity;
 	corsair_events: CorsairEvent;
+	corsair_usage_counters: CorsairUsage;
 };
 
 export type TableRowType<T extends CorsairTableName> =
@@ -234,6 +257,7 @@ export type CorsairTableInsert = {
 	corsair_accounts: CorsairAccountInsert;
 	corsair_entities: CorsairEntityInsert;
 	corsair_events: CorsairEventInsert;
+	corsair_usage_counters: CorsairUsageInsert;
 };
 
 export type TableInsertType<T extends CorsairTableName> =
@@ -266,6 +290,7 @@ export type CorsairTableUpdate = {
 	corsair_accounts: CorsairAccountUpdate;
 	corsair_entities: CorsairEntityUpdate;
 	corsair_events: CorsairEventUpdate;
+	corsair_usage_counters: Partial<CorsairUsage>;
 };
 
 export type TableUpdateType<T extends CorsairTableName> =

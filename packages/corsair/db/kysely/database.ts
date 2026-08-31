@@ -9,6 +9,7 @@ import type {
 	CorsairEvent,
 	CorsairIntegration,
 	CorsairPermission,
+	CorsairUsage,
 } from '../index';
 import { SqliteDatePlugin } from './sqlite-date-plugin.js';
 
@@ -18,6 +19,7 @@ export type CorsairKyselyDatabase = {
 	corsair_entities: CorsairEntity;
 	corsair_events: CorsairEvent;
 	corsair_permissions: CorsairPermission;
+	corsair_usage_counters: CorsairUsage;
 };
 
 export type CorsairDatabase = {

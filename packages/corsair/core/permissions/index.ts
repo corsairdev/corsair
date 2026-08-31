@@ -8,6 +8,7 @@ import type {
 	EndpointRiskLevel,
 	PermissionMode,
 	PermissionPolicy,
+	UsageLimit,
 } from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -26,6 +27,15 @@ import type {
  * agent-authored scripts under a hard read-only guarantee.
  */
 const readonlyScope = new AsyncLocalStorage<true>();
+const permissionExecutionScope = new AsyncLocalStorage<true>();
+
+export function runPermissionExecution<T>(fn: () => T): T {
+	return permissionExecutionScope.run(true, fn);
+}
+
+function isPermissionExecutionActive(): boolean {
+	return permissionExecutionScope.getStore() === true;
+}
 
 /**
  * Thrown when a write or destructive operation is attempted inside a
@@ -236,12 +246,20 @@ export type EnforcePermissionOptions = {
 		| 'synchronous'
 		| 'asynchronous'
 		| (() => 'synchronous' | 'asynchronous');
+	globalLimits?: (UsageLimit & { scope?: 'global' | 'tenant' })[];
+	pluginLimits?: UsageLimit[];
 };
 
 export type EnforcePermissionResult = {
 	result: 'allow' | 'blocked';
 	/** Why the call was blocked. Only present when result === 'blocked'. */
-	reason?: 'denied' | 'policy' | 'timeout' | 'pending';
+	reason?:
+		| 'denied'
+		| 'policy'
+		| 'timeout'
+		| 'pending'
+		| 'rate_limit_exceeded'
+		| 'budget_exhausted';
 	/** Permission record ID. Present when a pending approval record exists. */
 	id?: string;
 	/** Permission token (the value embedded in review URLs). Present when a pending approval record exists. */
@@ -322,7 +340,6 @@ export async function enforcePermission(
 	opts: EnforcePermissionOptions,
 ): Promise<EnforcePermissionResult> {
 	const policy = evaluatePermission(opts.riskLevel, opts.mode, opts.override);
-	if (policy === 'allow') return { result: 'allow' };
 
 	const irreversibleNote = opts.meta?.irreversible ? ' (irreversible)' : '';
 	const description = opts.meta?.description
@@ -338,73 +355,157 @@ export async function enforcePermission(
 		return { result: 'blocked', reason: 'policy' };
 	}
 
-	const argsJson = JSON.stringify(opts.args);
-	const now = new Date().toISOString();
 	const tenantId = opts.tenantId ?? 'default';
 
-	// Check for an existing, non-expired permission record for this plugin + endpoint + args + tenant
-	const existing = await opts.db.db
-		.selectFrom('corsair_permissions')
-		.selectAll()
-		.where('plugin', '=', opts.pluginId)
-		.where('endpoint', '=', opts.endpointPath)
-		.where('args', '=', argsJson)
-		.where('tenant_id', '=', tenantId)
-		.where('expires_at', '>', now)
-		.where('status', 'in', ['pending', 'approved', 'executing'])
-		.orderBy('created_at', 'desc')
-		.limit(1)
-		.executeTakeFirst();
+	const argsJson = JSON.stringify(opts.args);
+	const now = new Date().toISOString();
 
-	if (existing) {
-		if (existing.status === 'approved') {
-			// Single-use: let the call through; onComplete will mark it 'completed'
-			const db = opts.db;
-			const permissionId = existing.id;
+	if (policy !== 'allow') {
+		const existing = await opts.db.db
+			.selectFrom('corsair_permissions')
+			.selectAll()
+			.where('plugin', '=', opts.pluginId)
+			.where('endpoint', '=', opts.endpointPath)
+			.where('args', '=', argsJson)
+			.where('tenant_id', '=', tenantId)
+			.where('expires_at', '>', now)
+			.where('status', 'in', ['pending', 'approved', 'executing'])
+			.orderBy('created_at', 'desc')
+			.limit(1)
+			.executeTakeFirst();
+
+		if (existing) {
+			if (existing.status === 'approved') {
+				const db = opts.db;
+				const permissionId = existing.id;
+				const claimed = await db.db
+					.updateTable('corsair_permissions')
+					.set({ status: 'executing', updated_at: new Date() })
+					.where('id', '=', permissionId)
+					.where('status', '=', 'approved')
+					.returning('id')
+					.executeTakeFirst();
+				if (claimed) {
+					return {
+						result: 'allow',
+						onComplete: async () => {
+							await db.db
+								.updateTable('corsair_permissions')
+								.set({ status: 'completed', updated_at: new Date() })
+								.where('id', '=', permissionId)
+								.execute();
+						},
+					};
+				}
+				return {
+					result: 'blocked',
+					reason: 'pending',
+					id: existing.id,
+					token: existing.token,
+					expiresAt: existing.expires_at,
+				};
+			}
+
+			if (existing.status === 'executing') {
+				if (isPermissionExecutionActive()) {
+					return { result: 'allow' };
+				}
+				return {
+					result: 'blocked',
+					reason: 'pending',
+					id: existing.id,
+					token: existing.token,
+					expiresAt: existing.expires_at,
+				};
+			}
+
+			console.log(
+				`[corsair/${opts.pluginId}] '${opts.endpointPath}' blocked — approval already pending.`,
+				`\n  Action: ${description}`,
+				`\n  Permission ID: ${existing.id}`,
+				`\n  Use the token to approve or deny this request.`,
+			);
+			const resolvedMode =
+				typeof opts.approvalMode === 'function'
+					? opts.approvalMode()
+					: opts.approvalMode;
+			if (resolvedMode === 'synchronous') {
+				return pollUntilResolved(
+					opts.db,
+					existing.id,
+					opts.timeoutMs ?? 10 * 60 * 1_000,
+				);
+			}
 			return {
-				result: 'allow',
-				onComplete: async () => {
-					await db.db
-						.updateTable('corsair_permissions')
-						.set({ status: 'completed', updated_at: new Date() })
-						.where('id', '=', permissionId)
-						.execute();
-				},
+				result: 'blocked',
+				reason: 'pending',
+				id: existing.id,
+				token: existing.token,
+				expiresAt: existing.expires_at,
 			};
 		}
-
-		if (existing.status === 'executing') {
-			// executePermission is actively running this — let the endpoint body proceed.
-			// Completion is handled by executePermission itself, not via onComplete here.
-			return { result: 'allow' };
-		}
-
-		// status === 'pending': already waiting for approval, don't create a duplicate
-		console.log(
-			`[corsair/${opts.pluginId}] '${opts.endpointPath}' blocked — approval already pending.`,
-			`\n  Action: ${description}`,
-			`\n  Permission ID: ${existing.id}`,
-			`\n  Use the token to approve or deny this request.`,
-		);
-		const resolvedMode =
-			typeof opts.approvalMode === 'function'
-				? opts.approvalMode()
-				: opts.approvalMode;
-		if (resolvedMode === 'synchronous') {
-			return pollUntilResolved(
-				opts.db,
-				existing.id,
-				opts.timeoutMs ?? 10 * 60 * 1_000,
-			);
-		}
-		return {
-			result: 'blocked',
-			reason: 'pending',
-			id: existing.id,
-			token: existing.token,
-			expiresAt: existing.expires_at,
-		};
 	}
+
+	const applicableLimits = [
+		...(opts.globalLimits || []).map((l) => ({
+			...l,
+			resolvedScope: l.scope === 'tenant' ? `tenant:${tenantId}` : `global`,
+		})),
+		...(opts.pluginLimits || []).map((l) => ({
+			...l,
+			resolvedScope: `plugin:${opts.pluginId}:tenant:${tenantId}`,
+		})),
+	].filter((l) => !l.riskLevel || l.riskLevel === opts.riskLevel);
+
+	if (applicableLimits.length > 0) {
+		const { sql } = await import('kysely');
+		const nowTs = Date.now();
+		await opts.db.db
+			.deleteFrom('corsair_usage_counters')
+			.where('expires_at', '<', new Date(nowTs).toISOString())
+			.execute();
+
+		let exceeded: (typeof applicableLimits)[number] | undefined;
+		for (const limit of applicableLimits) {
+			const windowMs = parseDurationMs(limit.window);
+			const epoch = Math.floor(nowTs / windowMs);
+			const limitFingerprint = `${limit.type}_${limit.max}_${limit.window}_${limit.riskLevel ?? 'all'}`;
+			const key = `usage:${limit.resolvedScope}:${limitFingerprint}:${epoch}`;
+			const expiresAt = new Date(nowTs + windowMs).toISOString();
+
+			const res = await opts.db.db
+				.insertInto('corsair_usage_counters')
+				.values({ key, count: 1, expires_at: expiresAt })
+				.onConflict((oc) =>
+					oc
+						.column('key')
+						.doUpdateSet({ count: sql`corsair_usage_counters.count + 1` }),
+				)
+				.returning('count')
+				.executeTakeFirst();
+
+			if (res && res.count > limit.max && !exceeded) {
+				exceeded = limit;
+			}
+		}
+
+		if (exceeded) {
+			console.log(
+				`[corsair/${opts.pluginId}] '${opts.endpointPath}' blocked — ${exceeded.type} exceeded.`,
+				`\n  Action: ${description}`,
+				`\n  Limit: ${exceeded.max} per ${exceeded.window}`,
+			);
+			return {
+				result: 'blocked',
+				reason:
+					exceeded.type === 'budget'
+						? 'budget_exhausted'
+						: 'rate_limit_exceeded',
+			};
+		}
+	}
+
+	if (policy === 'allow') return { result: 'allow' };
 
 	// No existing actionable record — create a new pending approval request
 	const id = uuidv4();

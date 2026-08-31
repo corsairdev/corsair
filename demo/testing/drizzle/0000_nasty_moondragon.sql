@@ -39,6 +39,14 @@ CREATE TABLE `corsair_integrations` (
 	`dek` text
 );
 --> statement-breakpoint
+CREATE TABLE `corsair_usage_counters` (
+	`key` text PRIMARY KEY NOT NULL,
+	`count` integer NOT NULL DEFAULT 1,
+	`expires_at` text NOT NULL
+);
+--> statement-breakpoint
+CREATE INDEX `corsair_usage_counters_expires_at` ON `corsair_usage_counters` (`expires_at`);
+--> statement-breakpoint
 CREATE TABLE `corsair_permissions` (
 	`id` text PRIMARY KEY NOT NULL,
 	`created_at` integer NOT NULL,
