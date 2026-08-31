@@ -1,6 +1,3 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
 export class DripcelAPIError extends Error {
 	constructor(
 		message: string,
@@ -25,6 +22,7 @@ export class DripcelRateLimitError extends DripcelAPIError {
 }
 
 const DRIPCEL_API_BASE = 'https://api.dripcel.com';
+const REQUEST_TIMEOUT_MS = 20_000;
 
 export type DripcelRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -54,26 +52,26 @@ function formatError(error: unknown): string {
 	return 'Dripcel request failed';
 }
 
-function errorMessage(error: ApiError): string {
-	return formatError(error.body) !== 'Dripcel request failed'
-		? formatError(error.body)
-		: error.message;
-}
-
-function retryAfterMs(error: ApiError): number | undefined {
-	if (error.retryAfter !== undefined) return error.retryAfter;
-	const body =
-		error.body && typeof error.body === 'object'
-			? (error.body as Record<string, unknown>)
+function retryAfterMs(res: Response, body: unknown): number | undefined {
+	const raw = res.headers.get('Retry-After');
+	if (raw) {
+		const seconds = Number(raw);
+		if (Number.isFinite(seconds)) return seconds * 1000;
+		const at = Date.parse(raw);
+		if (Number.isFinite(at)) return Math.max(0, at - Date.now());
+	}
+	const record =
+		body && typeof body === 'object'
+			? (body as Record<string, unknown>)
 			: undefined;
 	const nested =
-		body?.error && typeof body.error === 'object'
-			? (body.error as Record<string, unknown>)
+		record?.error && typeof record.error === 'object'
+			? (record.error as Record<string, unknown>)
 			: undefined;
-	const resetsAt =
-		typeof nested?.resetsAt === 'number' ? nested.resetsAt : undefined;
-	if (resetsAt === undefined) return undefined;
-	return Math.max(0, resetsAt * 1000 - Date.now());
+	if (typeof nested?.resetsAt === 'number') {
+		return Math.max(0, nested.resetsAt * 1000 - Date.now());
+	}
+	return undefined;
 }
 
 function unwrapData<T>(raw: unknown): T {
@@ -87,6 +85,20 @@ function unwrapData<T>(raw: unknown): T {
 	return raw as T;
 }
 
+function buildUrl(
+	endpoint: string,
+	query?: Record<string, string | number | boolean | undefined>,
+): string {
+	const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+	const url = new URL(`${DRIPCEL_API_BASE}${path}`);
+	if (query) {
+		for (const [key, value] of Object.entries(query)) {
+			if (value !== undefined) url.searchParams.set(key, String(value));
+		}
+	}
+	return url.toString();
+}
+
 export async function makeDripcelRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -96,49 +108,54 @@ export async function makeDripcelRequest<T>(
 	const isWriteMethod =
 		method === 'POST' || method === 'PUT' || method === 'PATCH';
 
-	const config: OpenAPIConfig = {
-		BASE: DRIPCEL_API_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			Accept: 'application/json',
-			Authorization: `Bearer ${apiKey}`,
-		},
-	};
-
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint.startsWith('/') ? endpoint : `/${endpoint}`,
-		body: isWriteMethod ? (body as Record<string, unknown>) : undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query,
-	};
-
+	let res: Response;
 	try {
-		return unwrapData<T>(await request<unknown>(config, requestOptions));
-	} catch (error: unknown) {
-		if (error instanceof DripcelAPIError) throw error;
-		if (error instanceof ApiError) {
-			if (error.status === 429) {
-				throw new DripcelRateLimitError(
-					errorMessage(error),
-					retryAfterMs(error),
-					error.body,
-				);
-			}
-			throw new DripcelAPIError(
-				errorMessage(error),
-				error.status,
-				error.status,
-				error.body,
-			);
+		res = await fetch(buildUrl(endpoint, query), {
+			method,
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+				Authorization: `Bearer ${apiKey}`,
+			},
+			body: isWriteMethod ? JSON.stringify(body) : undefined,
+			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+		});
+	} catch (error) {
+		if (error instanceof Error && error.name === 'TimeoutError') {
+			throw new DripcelAPIError('Dripcel request timed out');
 		}
-		if (error instanceof Error) {
-			throw new DripcelAPIError(error.message);
-		}
-		throw new DripcelAPIError('Unknown error');
+		throw new DripcelAPIError(
+			error instanceof Error ? error.message : 'Dripcel request failed',
+		);
 	}
+
+	let parsed: unknown;
+	try {
+		parsed = await res.json();
+	} catch {
+		parsed = undefined;
+	}
+
+	if (res.status === 429) {
+		throw new DripcelRateLimitError(
+			formatError(parsed) === 'Dripcel request failed'
+				? 'Too Many Requests'
+				: formatError(parsed),
+			retryAfterMs(res, parsed),
+			parsed,
+		);
+	}
+
+	if (!res.ok) {
+		throw new DripcelAPIError(
+			formatError(parsed) === 'Dripcel request failed'
+				? `Dripcel request failed (${res.status})`
+				: formatError(parsed),
+			res.status,
+			res.status,
+			parsed,
+		);
+	}
+
+	return unwrapData<T>(parsed);
 }

@@ -1,5 +1,4 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { ApiError, request } from 'corsair/http';
 import {
 	DripcelAPIError,
 	DripcelRateLimitError,
@@ -23,20 +22,16 @@ jest.mock('corsair/core', () => {
 	};
 });
 
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual('corsair/http');
-	return {
-		...actual,
-		request: jest.fn(),
-	};
+const mockFetch = jest.fn();
+
+beforeAll(() => {
+	globalThis.fetch = mockFetch as typeof fetch;
 });
 
-const mockRequest = request as jest.MockedFunction<typeof request>;
-
 beforeEach(() => {
-	mockRequest.mockReset();
+	mockFetch.mockReset();
 	jest.mocked(logEventFromContext).mockReset();
-	mockRequest.mockResolvedValue({ ok: true, data: {} } as never);
+	mockFetch.mockResolvedValue(jsonResponse({ ok: true, data: {} }));
 });
 
 const ctx = {
@@ -44,11 +39,39 @@ const ctx = {
 	$getAccountId: async () => 'test-account',
 } as never;
 
+function jsonResponse(body: unknown, init?: ResponseInit): Response {
+	const headers = new Headers({
+		'Content-Type': 'application/json',
+		...(init?.headers as Record<string, string>),
+	});
+	return new Response(JSON.stringify(body), {
+		status: 200,
+		...init,
+		headers,
+	});
+}
+
 function lastCall() {
-	expect(mockRequest).toHaveBeenCalled();
-	const call = mockRequest.mock.calls[0];
-	expect(call).toBeDefined();
-	return { config: call?.[0], options: call?.[1] };
+	expect(mockFetch).toHaveBeenCalled();
+	const [input, init] = mockFetch.mock.calls[0] as [
+		string | URL | Request,
+		RequestInit | undefined,
+	];
+	const url =
+		typeof input === 'string'
+			? input
+			: input instanceof URL
+				? input.toString()
+				: input.url;
+	const parsed = new URL(url);
+	return {
+		url,
+		path: parsed.pathname,
+		query: Object.fromEntries(parsed.searchParams.entries()),
+		method: init?.method,
+		body: init?.body ? JSON.parse(String(init.body)) : undefined,
+		auth: new Headers(init?.headers).get('Authorization'),
+	};
 }
 
 describe('Dripcel plugin', () => {
@@ -89,69 +112,77 @@ describe('Dripcel plugin', () => {
 
 describe('official Dripcel request mapping', () => {
 	it('GET /contacts/:cell', async () => {
-		mockRequest.mockResolvedValue({
-			ok: true,
-			data: { cell: '0821234567', firstname: 'John' },
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: true,
+				data: { cell: '0821234567', firstname: 'John' },
+			}),
+		);
 		const result = await Contacts.get(ctx, { cell: '0821234567' });
-		const { config, options } = lastCall();
-		expect(config?.BASE).toBe('https://api.dripcel.com');
-		expect(options?.method).toBe('GET');
-		expect(options?.url).toBe('/contacts/0821234567');
+		const call = lastCall();
+		expect(call.url.startsWith('https://api.dripcel.com')).toBe(true);
+		expect(call.method).toBe('GET');
+		expect(call.path).toBe('/contacts/0821234567');
 		expect(result.firstname).toBe('John');
 	});
 
 	it('POST /contacts', async () => {
-		mockRequest.mockResolvedValue({
-			ok: true,
-			data: { validContact: 1, invalidContacts: [] },
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: true,
+				data: { validContact: 1, invalidContacts: [] },
+			}),
+		);
 		const result = await Contacts.create(ctx, {
 			country: 'ZA',
 			contacts: [{ cell: '0821234567', firstname: 'John' }],
 		});
-		const { options } = lastCall();
-		expect(options?.method).toBe('POST');
-		expect(options?.url).toBe('/contacts');
+		const call = lastCall();
+		expect(call.method).toBe('POST');
+		expect(call.path).toBe('/contacts');
 		expect(result.validContacts).toBe(1);
 	});
 
 	it('PUT /contacts', async () => {
-		mockRequest.mockResolvedValue({
-			ok: true,
-			data: { validContacts: 1, invalidContacts: [] },
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: true,
+				data: { validContacts: 1, invalidContacts: [] },
+			}),
+		);
 		await Contacts.upsert(ctx, {
 			contacts: [{ cell: '0821234567' }],
 		});
-		const { options } = lastCall();
-		expect(options?.method).toBe('PUT');
-		expect(options?.url).toBe('/contacts');
+		const call = lastCall();
+		expect(call.method).toBe('PUT');
+		expect(call.path).toBe('/contacts');
 	});
 
 	it('DELETE /contacts/:cell', async () => {
-		mockRequest.mockResolvedValue({ ok: true } as never);
+		mockFetch.mockResolvedValue(jsonResponse({ ok: true }));
 		const result = await Contacts.deleteContact(ctx, { cell: '0821234567' });
-		const { options } = lastCall();
-		expect(options?.method).toBe('DELETE');
-		expect(options?.url).toBe('/contacts/0821234567');
+		const call = lastCall();
+		expect(call.method).toBe('DELETE');
+		expect(call.path).toBe('/contacts/0821234567');
 		expect(result).toEqual({ ok: true });
 	});
 
 	it('PUT /contacts/:cell/tag/add', async () => {
-		mockRequest.mockResolvedValue({
-			ok: true,
-			data: { matchedCount: 1, modifiedCount: 1 },
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: true,
+				data: { matchedCount: 1, modifiedCount: 1 },
+			}),
+		);
 		const result = await Contacts.addTags(ctx, {
 			cell: '0821234567',
 			tag_ids: ['tag1'],
 			create_missing_contact: true,
 		});
-		const { options } = lastCall();
-		expect(options?.method).toBe('PUT');
-		expect(options?.url).toBe('/contacts/0821234567/tag/add');
-		expect(options?.body).toEqual({
+		const call = lastCall();
+		expect(call.method).toBe('PUT');
+		expect(call.path).toBe('/contacts/0821234567/tag/add');
+		expect(call.body).toEqual({
 			tag_ids: ['tag1'],
 			create_missing_contact: true,
 		});
@@ -159,35 +190,39 @@ describe('official Dripcel request mapping', () => {
 	});
 
 	it('POST /contacts/:cell/optOut', async () => {
-		mockRequest.mockResolvedValue({
-			ok: true,
-			data: { matchedCount: 1, modifiedCount: 1 },
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: true,
+				data: { matchedCount: 1, modifiedCount: 1 },
+			}),
+		);
 		await Contacts.optOut(ctx, { cell: '0821234567', all: true });
-		const { options } = lastCall();
-		expect(options?.method).toBe('POST');
-		expect(options?.url).toBe('/contacts/0821234567/optOut');
-		expect(options?.body).toEqual({ all: true });
+		const call = lastCall();
+		expect(call.method).toBe('POST');
+		expect(call.path).toBe('/contacts/0821234567/optOut');
+		expect(call.body).toEqual({ all: true });
 	});
 
 	it('POST /compliance/send', async () => {
-		mockRequest.mockResolvedValue({
-			ok: true,
-			data: {
-				credits_used: 0.14,
-				results: [{ cell: '0821234567', can_send: true }],
-			},
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: true,
+				data: {
+					credits_used: 0.14,
+					results: [{ cell: '0821234567', can_send: true }],
+				},
+			}),
+		);
 		const result = await Messaging.checkSend(ctx, {
 			cells: ['0821234567'],
 			country: 'ZA',
 			campaign_id: 'c1',
 		});
-		const { options } = lastCall();
-		expect(options?.method).toBe('POST');
-		expect(options?.url).toBe('/compliance/send');
-		expect(options?.query).toEqual({ campaign_id: 'c1' });
-		expect(options?.body).toEqual({
+		const call = lastCall();
+		expect(call.method).toBe('POST');
+		expect(call.path).toBe('/compliance/send');
+		expect(call.query).toEqual({ campaign_id: 'c1' });
+		expect(call.body).toEqual({
 			cells: ['0821234567'],
 			country: 'ZA',
 		});
@@ -195,108 +230,115 @@ describe('official Dripcel request mapping', () => {
 	});
 
 	it('GET /deliveries', async () => {
-		mockRequest.mockResolvedValue({
-			ok: true,
-			data: [{ cell: '0821234567' }],
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: true,
+				data: [{ cell: '0821234567' }],
+			}),
+		);
 		const result = await Messaging.listDeliveries(ctx, {
 			cell: '0821234567',
 		});
-		const { options } = lastCall();
-		expect(options?.method).toBe('GET');
-		expect(options?.url).toBe('/deliveries');
-		expect(options?.query).toEqual({
-			cell: '0821234567',
-			customerId: undefined,
-		});
+		const call = lastCall();
+		expect(call.method).toBe('GET');
+		expect(call.path).toBe('/deliveries');
+		expect(call.query).toEqual({ cell: '0821234567' });
 		expect(result.deliveries).toHaveLength(1);
 	});
 
 	it('GET /campaigns', async () => {
-		mockRequest.mockResolvedValue({ ok: true, data: [] } as never);
+		mockFetch.mockResolvedValue(jsonResponse({ ok: true, data: [] }));
 		const result = await Catalog.listCampaigns(ctx, {});
-		const { options } = lastCall();
-		expect(options?.method).toBe('GET');
-		expect(options?.url).toBe('/campaigns');
+		const call = lastCall();
+		expect(call.method).toBe('GET');
+		expect(call.path).toBe('/campaigns');
 		expect(result.campaigns).toEqual([]);
 	});
 
 	it('GET /balance', async () => {
-		mockRequest.mockResolvedValue({ ok: true, data: 35 } as never);
+		mockFetch.mockResolvedValue(jsonResponse({ ok: true, data: 35 }));
 		const result = await Catalog.getBalance(ctx, {});
-		const { options } = lastCall();
-		expect(options?.method).toBe('GET');
-		expect(options?.url).toBe('/balance');
+		const call = lastCall();
+		expect(call.method).toBe('GET');
+		expect(call.path).toBe('/balance');
 		expect(result.balance).toBe(35);
 	});
 
 	it('GET /email/templates', async () => {
-		mockRequest.mockResolvedValue({
-			ok: true,
-			data: { templates: [] },
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: true,
+				data: { templates: [] },
+			}),
+		);
 		const result = await Catalog.listEmailTemplates(ctx, {});
-		const { options } = lastCall();
-		expect(options?.url).toBe('/email/templates');
+		const call = lastCall();
+		expect(call.path).toBe('/email/templates');
 		expect(result.templates).toEqual([]);
 	});
 
 	it('POST /sales', async () => {
-		mockRequest.mockResolvedValue({ ok: true } as never);
+		mockFetch.mockResolvedValue(jsonResponse({ ok: true }));
 		const result = await Catalog.uploadSales(ctx, {
 			sales: [{ cell: '0111111111', campaign_id: 'c1' }],
 		});
-		const { options } = lastCall();
-		expect(options?.method).toBe('POST');
-		expect(options?.url).toBe('/sales');
-		expect(options?.body).toEqual([{ cell: '0111111111', campaign_id: 'c1' }]);
+		const call = lastCall();
+		expect(call.method).toBe('POST');
+		expect(call.path).toBe('/sales');
+		expect(call.body).toEqual([{ cell: '0111111111', campaign_id: 'c1' }]);
 		expect(result).toEqual({ ok: true });
 	});
 
 	it('GET /tags', async () => {
-		mockRequest.mockResolvedValue({
-			ok: true,
-			data: [{ _id: 't1', name: 'First Tag' }],
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: true,
+				data: [{ _id: 't1', name: 'First Tag' }],
+			}),
+		);
 		const result = await Catalog.listTags(ctx, {});
-		const { options } = lastCall();
-		expect(options?.url).toBe('/tags');
+		const call = lastCall();
+		expect(call.path).toBe('/tags');
 		expect(result.tags[0]?.name).toBe('First Tag');
 	});
 
 	it('DELETE /tags/:tag_id', async () => {
-		mockRequest.mockResolvedValue({
-			ok: true,
-			data: { _id: 't1', name: 'First Tag' },
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: true,
+				data: { _id: 't1', name: 'First Tag' },
+			}),
+		);
 		const result = await Catalog.deleteTag(ctx, { tag_id: 't1' });
-		const { options } = lastCall();
-		expect(options?.method).toBe('DELETE');
-		expect(options?.url).toBe('/tags/t1');
+		const call = lastCall();
+		expect(call.method).toBe('DELETE');
+		expect(call.path).toBe('/tags/t1');
 		expect(result._id).toBe('t1');
 	});
 
 	it('POST /replies/search', async () => {
-		mockRequest.mockResolvedValue({ ok: true, data: [] } as never);
+		mockFetch.mockResolvedValue(jsonResponse({ ok: true, data: [] }));
 		const result = await Messaging.searchReplies(ctx, { kind: 'optOut' });
-		const { options } = lastCall();
-		expect(options?.method).toBe('POST');
-		expect(options?.url).toBe('/replies/search');
+		const call = lastCall();
+		expect(call.method).toBe('POST');
+		expect(call.path).toBe('/replies/search');
 		expect(result.replies).toEqual([]);
 	});
 
 	it('POST /send-logs/search', async () => {
-		mockRequest.mockResolvedValue({
-			ok: true,
-			data: { total: 0, send_logs: [], parsed: {} },
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: true,
+				data: { total: 0, send_logs: [], parsed: {} },
+			}),
+		);
 		const result = await Messaging.searchSendLogs(ctx, {
 			options: { skip: 0, limit: 10 },
 		});
-		const { options } = lastCall();
-		expect(options?.method).toBe('POST');
-		expect(options?.url).toBe('/send-logs/search');
-		expect(options?.body).toEqual({
+		const call = lastCall();
+		expect(call.method).toBe('POST');
+		expect(call.path).toBe('/send-logs/search');
+		expect(call.body).toEqual({
 			options: { skip: 0, limit: 10 },
 			find: {},
 		});
@@ -304,10 +346,12 @@ describe('official Dripcel request mapping', () => {
 	});
 
 	it('POST /send/sms', async () => {
-		mockRequest.mockResolvedValue({
-			ok: true,
-			data: { customerId: 's1', totalCost: 0.1 },
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: true,
+				data: { customerId: 's1', totalCost: 0.1 },
+			}),
+		);
 		const result = await Messaging.sms(ctx, {
 			content: 'Hello',
 			cell: '0821234567',
@@ -316,49 +360,46 @@ describe('official Dripcel request mapping', () => {
 			deliveryMethod: 'reverse',
 			sendOptions: { testMode: true },
 		});
-		const { options } = lastCall();
-		expect(options?.method).toBe('POST');
-		expect(options?.url).toBe('/send/sms');
+		const call = lastCall();
+		expect(call.method).toBe('POST');
+		expect(call.path).toBe('/send/sms');
 		expect(result.customerId).toBe('s1');
 	});
 
 	it('POST /send/email/bulk', async () => {
-		mockRequest.mockResolvedValue({ ok: true, data: {} } as never);
+		mockFetch.mockResolvedValue(jsonResponse({ ok: true, data: {} }));
 		await Messaging.bulkEmail(ctx, {
 			from: 'a@example.com',
 			template_id: 'tpl1',
 			destinations: ['b@example.com'],
 		});
-		const { options } = lastCall();
-		expect(options?.method).toBe('POST');
-		expect(options?.url).toBe('/send/email/bulk');
+		const call = lastCall();
+		expect(call.method).toBe('POST');
+		expect(call.path).toBe('/send/email/bulk');
 	});
 });
 
 describe('Dripcel client errors', () => {
 	it('unwraps ok:false envelopes', async () => {
-		mockRequest.mockResolvedValue({
-			ok: false,
-			error: 'Contact not found',
-		} as never);
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				ok: false,
+				error: 'Contact not found',
+			}),
+		);
 		await expect(makeDripcelRequest('/contacts/1', 'k')).rejects.toThrow(
 			'Contact not found',
 		);
 	});
 
 	it('preserves 429 retry metadata', async () => {
-		mockRequest.mockRejectedValue(
-			new ApiError(
-				{ method: 'GET', url: '/balance' },
+		mockFetch.mockResolvedValue(
+			jsonResponse(
+				{ ok: false, error: { resetsAt: 1, remaining: 0 } },
 				{
-					url: 'https://api.dripcel.com/balance',
-					ok: false,
 					status: 429,
-					statusText: 'Too Many Requests',
-					body: { ok: false, error: { resetsAt: 1, remaining: 0 } },
+					headers: { 'Retry-After': '1' },
 				},
-				'Too Many Requests',
-				{ retryAfter: 1000 },
 			),
 		);
 		const err = await makeDripcelRequest('/balance', 'k').catch(
@@ -370,18 +411,8 @@ describe('Dripcel client errors', () => {
 	});
 
 	it('maps HTTP errors to DripcelAPIError', async () => {
-		mockRequest.mockRejectedValue(
-			new ApiError(
-				{ method: 'GET', url: '/balance' },
-				{
-					url: 'https://api.dripcel.com/balance',
-					ok: false,
-					status: 401,
-					statusText: 'Unauthorized',
-					body: { ok: false, error: 'Unauthorized' },
-				},
-				'Unauthorized',
-			),
+		mockFetch.mockResolvedValue(
+			jsonResponse({ ok: false, error: 'Unauthorized' }, { status: 401 }),
 		);
 		const err = await makeDripcelRequest('/balance', 'k').catch(
 			(error: unknown) => error,
