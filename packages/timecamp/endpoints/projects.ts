@@ -140,6 +140,29 @@ export const getList: TimecampEndpoints['getProjectsList'] = async (
 				console.warn('Failed to cache TimeCamp project:', error);
 			}
 		}
+
+		// /tasks returns the whole account task tree, so a cached project that
+		// is no longer a root-level task must have been deleted or moved under
+		// a parent. Evicting it keeps the mirror from describing records
+		// upstream no longer reports - an upsert-only cache would keep them
+		// forever. Best-effort like every other cache write.
+		try {
+			const liveIds = new Set(allProjects.map((project) => project.task_id));
+			const cachedProjects = (await ctx.db.projects.list?.()) ?? [];
+			for (const cached of cachedProjects) {
+				if (liveIds.has(cached.entity_id)) continue;
+				try {
+					await ctx.db.projects.deleteByEntityId?.(cached.entity_id);
+				} catch (error) {
+					console.warn(
+						'Failed to evict stale TimeCamp project from cache:',
+						error,
+					);
+				}
+			}
+		} catch (error) {
+			console.warn('Failed to reconcile TimeCamp project cache:', error);
+		}
 	}
 
 	await logEventFromContext(

@@ -149,9 +149,15 @@ describe('projects.getList', () => {
 });
 
 describe('cache reconciliation', () => {
-	/** Captures upserts so the cached set can be compared to the returned set. */
-	function makeCachingCtx() {
+	/**
+	 * Captures upserts and evictions so the cached set can be compared to the
+	 * returned set. `cachedRows` seeds the store with projects written by an
+	 * earlier refresh, mirroring a real tenant.
+	 */
+	function makeCachingCtx(cachedRows: string[] = []) {
 		const upserts: { id: string; archived?: boolean }[] = [];
+		const deletes: string[] = [];
+		const rows = new Map(cachedRows.map((id) => [id, {}]));
 		const ctx = {
 			key: 'tc-test-token',
 			options: {},
@@ -162,12 +168,19 @@ describe('cache reconciliation', () => {
 						value: { archived?: boolean },
 					) => {
 						upserts.push({ id, archived: value.archived });
+						rows.set(id, {});
 						return { id };
 					},
+					deleteByEntityId: async (id: string) => {
+						deletes.push(id);
+						return rows.delete(id);
+					},
+					list: async () =>
+						[...rows.keys()].map((entity_id) => ({ entity_id })),
 				},
 			},
 		} as never;
-		return { ctx, upserts };
+		return { ctx, upserts, deletes };
 	}
 
 	it('caches archived projects even though they are filtered from the response', async () => {
@@ -196,6 +209,84 @@ describe('cache reconciliation', () => {
 		await Projects.getList(ctx, {});
 
 		expect(upserts.map((u) => u.id)).not.toContain('103');
+	});
+
+	// ─────────────────────────────────────────────────────────────────────────
+	// Regressions from review round 4: the refresh is a full-account snapshot,
+	// so cached projects that left the root task set must be evicted.
+	// ─────────────────────────────────────────────────────────────────────────
+
+	it('evicts a cached project that no longer appears as a root task', async () => {
+		// 104 is cached but absent from the /tasks response - deleted upstream.
+		const { ctx, deletes } = makeCachingCtx(['101', '104']);
+
+		await Projects.getList(ctx, {});
+
+		expect(deletes).toEqual(['104']);
+	});
+
+	it('keeps cached projects that are still root tasks', async () => {
+		const { ctx, deletes } = makeCachingCtx(['101']);
+
+		await Projects.getList(ctx, {});
+
+		expect(deletes).toEqual([]);
+	});
+
+	it('evicts a project that was reparented under another task', async () => {
+		// 103 still appears in the task tree, but now as a child of 101, so it
+		// has stopped being a project and must leave the mirror.
+		const { ctx, deletes } = makeCachingCtx(['103']);
+
+		await Projects.getList(ctx, {});
+
+		expect(deletes).toEqual(['103']);
+	});
+
+	it('drops every cached project when the account has none', async () => {
+		requestMock.mockResolvedValue({});
+		const { ctx, deletes } = makeCachingCtx(['101', '102']);
+
+		await Projects.getList(ctx, {});
+
+		expect(deletes).toEqual(['101', '102']);
+	});
+
+	it('skips eviction when the store cannot enumerate cached rows', async () => {
+		const deleteByEntityId = jest.fn();
+		const ctx = {
+			key: 'tc-test-token',
+			options: {},
+			db: {
+				projects: {
+					upsertByEntityId: async () => ({ id: 'x' }),
+					deleteByEntityId,
+				},
+			},
+		} as never;
+
+		const result = await Projects.getList(ctx, {});
+
+		expect(result.projects.length).toBe(1);
+		expect(deleteByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('a failed eviction does not fail the read', async () => {
+		const ctx = {
+			key: 'tc-test-token',
+			options: {},
+			db: {
+				projects: {
+					upsertByEntityId: async () => ({ id: 'x' }),
+					deleteByEntityId: jest.fn().mockRejectedValue(new Error('locked')),
+					list: jest.fn(async () => [{ entity_id: '404' }]),
+				},
+			},
+		} as never;
+
+		await expect(Projects.getList(ctx, {})).resolves.toMatchObject({
+			count: 1,
+		});
 	});
 });
 
