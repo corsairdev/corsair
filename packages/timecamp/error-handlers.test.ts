@@ -70,11 +70,32 @@ describe('rate limiting', () => {
 	it('does not treat an unrelated failure as a rate limit', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(wrapped(500))).toBe(false);
 	});
+
+	it('does not treat a 500 as a rate limit just because the message mentions 429', () => {
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(
+				wrapped(500, 'proxy echoed HTTP 429 from an earlier hop'),
+			),
+		).toBe(false);
+	});
 });
 
 describe('auth and plan failures', () => {
 	it('matches a wrapped 401', () => {
 		expect(errorHandlers.AUTH_ERROR.match(wrapped(401))).toBe(true);
+	});
+
+	it('does not treat a 500 as auth failure just because the message mentions 401', () => {
+		expect(
+			errorHandlers.AUTH_ERROR.match(
+				wrapped(500, 'upstream returned 401 from a dependency'),
+			),
+		).toBe(false);
+		expect(
+			errorHandlers.SERVER_ERROR.match(
+				wrapped(500, 'upstream returned 401 from a dependency'),
+			),
+		).toBe(true);
 	});
 
 	it('never retries an auth failure', async () => {

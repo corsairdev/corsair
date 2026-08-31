@@ -25,7 +25,8 @@ function getRetryAfter(error: Error): number | undefined {
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (getStatus(error) === 429) return true;
+			const status = getStatus(error);
+			if (status !== undefined) return status === 429;
 			const msg = error.message.toLowerCase();
 			return msg.includes('429') || msg.includes('rate limit');
 		},
@@ -36,13 +37,10 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (getStatus(error) === 401) return true;
+			const status = getStatus(error);
+			if (status !== undefined) return status === 401;
 			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('unauthorized') ||
-				msg.includes('invalid token') ||
-				msg.includes('401')
-			);
+			return msg.includes('unauthorized') || msg.includes('invalid token');
 		},
 		handler: async () => {
 			console.warn(
@@ -54,9 +52,10 @@ export const errorHandlers = {
 	},
 	PLAN_OR_PERMISSION_ERROR: {
 		match: (error: Error) => {
-			if (getStatus(error) === 403) return true;
+			const status = getStatus(error);
+			if (status !== undefined) return status === 403;
 			const msg = error.message.toLowerCase();
-			return msg.includes('forbidden') || msg.includes('403');
+			return msg.includes('forbidden');
 		},
 		handler: async () => {
 			console.warn(
