@@ -1,8 +1,6 @@
 import { ApiError, request } from 'corsair/http';
-import {
-	AnthropicAdministratorAPIError,
-	makeAnthropicAdministratorRequest,
-} from './client';
+import { AnthropicAdministratorAPIError } from './api-error';
+import { makeAnthropicAdministratorRequest } from './client';
 import { errorHandlers } from './error-handlers';
 
 jest.mock('corsair/http', () => {

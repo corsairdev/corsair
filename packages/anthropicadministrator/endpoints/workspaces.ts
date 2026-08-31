@@ -3,7 +3,7 @@ import { cacheEntity, cacheList, callAdminApi, compact } from './shared';
 import type {
 	AnthropicAdministratorEndpointOutputs as Outputs,
 	Workspace,
-} from './types';
+} from './types/index';
 
 const BASE = '/v1/organizations/workspaces';
 
