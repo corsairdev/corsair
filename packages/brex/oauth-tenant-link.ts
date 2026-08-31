@@ -1,9 +1,9 @@
 import type { TokenResponse, WebhookTenantMatch } from 'corsair/core';
 import { asRecord, toExternalId } from 'corsair/core';
-import { BREX_API_BASE } from '../client';
+import { BREX_API_BASE } from './client';
 
 /** Official: GET /v2/company returns the company id for the access token. */
-export async function resolveBrexOAuthWebhookTenantLink(
+export async function resolveBrexOAuthTenantLink(
 	tokens: TokenResponse,
 ): Promise<WebhookTenantMatch | null> {
 	const fromToken = toExternalId(

@@ -1,4 +1,3 @@
-import { createHmac } from 'node:crypto';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import {
 	BREX_API_BASE,
@@ -20,9 +19,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { brex } from './index';
-import { resolveBrexOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchBrexTenantWebhook } from './webhooks/tenant-matcher';
-import { verifyBrexWebhookSignature } from './webhooks/types';
+import { resolveBrexOAuthTenantLink } from './oauth-tenant-link';
 
 jest.mock('corsair/core', () => {
 	class AuthMissingError extends Error {
@@ -293,72 +290,13 @@ describe('Brex plugin', () => {
 	});
 });
 
-describe('Brex webhooks', () => {
-	it('matches company_id from official payloads', () => {
-		expect(
-			matchBrexTenantWebhook({
-				headers: {},
-				body: {
-					company_id: 'cuacc_123',
-					event_type: 'USER_UPDATED',
-				},
-			}),
-		).toEqual({ linkType: 'company_id', externalId: 'cuacc_123' });
-		expect(
-			matchBrexTenantWebhook({
-				headers: {},
-				body: '{"company_id":"cuacc_123"}',
-			}),
-		).toEqual({ linkType: 'company_id', externalId: 'cuacc_123' });
-		expect(
-			matchBrexTenantWebhook({ headers: {}, body: '{not-json' }),
-		).toBeNull();
-	});
-
-	it('returns null when OAuth company lookup fails', async () => {
+describe('Brex OAuth tenant link', () => {
+	it('returns null when company lookup fails', async () => {
 		mockFetch.mockRejectedValueOnce(new Error('network'));
 		await expect(
-			resolveBrexOAuthWebhookTenantLink({
+			resolveBrexOAuthTenantLink({
 				access_token: 'token',
 			} as never),
 		).resolves.toBeNull();
-	});
-
-	it('rejects unsigned webhook payloads', () => {
-		expect(
-			verifyBrexWebhookSignature({ headers: {}, rawBody: '{}' }, 'secret')
-				.valid,
-		).toBe(false);
-	});
-
-	it('skips provider HMAC when Hub already verified the delivery', async () => {
-		expect(
-			verifyBrexWebhookSignature(
-				{ headers: {}, rawBody: '{}', hubVerified: true },
-				undefined,
-			),
-		).toEqual({ valid: true });
-	});
-
-	it('accepts a valid official HMAC signature', () => {
-		const id = 'msg_1';
-		const timestamp = String(Math.floor(Date.now() / 1000));
-		const rawBody = '{"company_id":"cuacc_123"}';
-		const digest = createHmac('sha256', 'whsec')
-			.update(`${id}.${timestamp}.${rawBody}`)
-			.digest('base64');
-		expect(
-			verifyBrexWebhookSignature(
-				{
-					headers: {
-						'webhook-id': id,
-						'webhook-timestamp': timestamp,
-						'webhook-signature': `v1,${digest}`,
-					},
-					rawBody,
-				},
-				'whsec',
-			),
-		).toEqual({ valid: true });
 	});
 });

@@ -21,16 +21,14 @@ import {
 	BrexEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { resolveBrexOAuthTenantLink } from './oauth-tenant-link';
 import { BrexSchema } from './schema';
-import { resolveBrexOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchBrexTenantWebhook } from './webhooks/tenant-matcher';
 
 const brexWebhooksNested = {} as const;
 
 export type BrexPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalBrexPlugin['hooks'];
 	webhookHooks?: InternalBrexPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -134,23 +132,12 @@ export function brex<const T extends BrexPluginOptions>(
 		endpointMeta: brexEndpointMeta,
 		endpointSchemas: brexEndpointSchemas,
 		pluginWebhookMatcher: () => false,
-		pluginTenantWebhookMatcher: matchBrexTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveBrexOAuthWebhookTenantLink,
+		oauthWebhookTenantLinkResolver: resolveBrexOAuthTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-			if (source === 'webhook') {
-				const secret = await ctx.keys.get_webhook_signature();
-				if (!secret) {
-					throw new AuthMissingError('brex', 'webhook_signature');
-				}
-				return secret;
-			}
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -184,4 +171,3 @@ export type {
 	BrexEndpointInputs,
 	BrexEndpointOutputs,
 } from './endpoints/types';
-export { verifyBrexWebhookSignature } from './webhooks/types';
