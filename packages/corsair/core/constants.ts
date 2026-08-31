@@ -71,6 +71,7 @@ export const BaseProviders = [
 	'beaconstac',
 	'beeminder',
 	'bettercontact',
+	'betterproposals',
 	'betterstack',
 	'bigdatacloud',
 	'bigmailer',
@@ -90,7 +91,9 @@ export const BaseProviders = [
 	'box',
 	'boxhero',
 	'brandfetch',
+	'brex',
 	'browseai',
+	'browserless',
 	'bugsnag',
 	'cal',
 	'calendly',
@@ -106,6 +109,7 @@ export const BaseProviders = [
 	'collegefootballdata',
 	'confluence',
 	'contentfulgraphql',
+	'contextsevenmcp',
 	'crowterminal',
 	'cursor',
 	'customgpt',
@@ -213,6 +217,7 @@ export const BaseProviders = [
 	'textrazor',
 	'ticktick',
 	'tisane',
+	'timecamp',
 	'todoist',
 	'toggl',
 	'trello',
@@ -301,6 +306,7 @@ export const ProviderDisplayNames = {
 	beaconstac: 'Beaconstac',
 	beeminder: 'Beeminder',
 	bettercontact: 'BetterContact',
+	betterproposals: 'Better Proposals',
 	betterstack: 'Better Stack',
 	bigdatacloud: 'BigDataCloud',
 	bigmailer: 'BigMailer',
@@ -320,7 +326,9 @@ export const ProviderDisplayNames = {
 	box: 'Box',
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
+	brex: 'Brex',
 	browseai: 'Browse AI',
+	browserless: 'Browserless',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
@@ -336,6 +344,7 @@ export const ProviderDisplayNames = {
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	contentfulgraphql: 'Contentful GraphQL',
+	contextsevenmcp: 'Context7',
 	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
 	customgpt: 'CustomGPT',
@@ -444,6 +453,7 @@ export const ProviderDisplayNames = {
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
 	tisane: 'Tisane',
+	timecamp: 'TimeCamp',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -539,6 +549,7 @@ export type AllProviders =
 	| 'beaconstac'
 	| 'beeminder'
 	| 'bettercontact'
+	| 'betterproposals'
 	| 'betterstack'
 	| 'bigdatacloud'
 	| 'bigmailer'
@@ -558,7 +569,9 @@ export type AllProviders =
 	| 'box'
 	| 'boxhero'
 	| 'brandfetch'
+	| 'brex'
 	| 'browseai'
+	| 'browserless'
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
@@ -574,6 +587,7 @@ export type AllProviders =
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'contentfulgraphql'
+	| 'contextsevenmcp'
 	| 'crowterminal'
 	| 'cursor'
 	| 'customgpt'
@@ -681,6 +695,7 @@ export type AllProviders =
 	| 'textrazor'
 	| 'ticktick'
 	| 'tisane'
+	| 'timecamp'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
