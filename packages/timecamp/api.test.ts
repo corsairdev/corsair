@@ -74,6 +74,13 @@ describe('projects.getList', () => {
 		});
 	});
 
+	it('rejects a non-boolean include_archived before calling TimeCamp', async () => {
+		await expect(
+			Projects.getList(makeCtx(), { include_archived: 'false' } as never),
+		).rejects.toThrow();
+		expect(requestMock).not.toHaveBeenCalled();
+	});
+
 	it('returns only root-level tasks, excluding children', async () => {
 		const result = await Projects.getList(makeCtx(), {});
 		expect(result.projects.map((p) => p.task_id)).not.toContain('103');
@@ -279,6 +286,9 @@ describe('cache reconciliation', () => {
 	});
 
 	it('a failed eviction does not fail the read', async () => {
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
 		const ctx = {
 			key: 'tc-test-token',
 			options: {},
@@ -291,9 +301,14 @@ describe('cache reconciliation', () => {
 			},
 		} as never;
 
-		await expect(Projects.getList(ctx, {})).resolves.toMatchObject({
-			count: 1,
-		});
+		try {
+			await expect(Projects.getList(ctx, {})).resolves.toMatchObject({
+				count: 1,
+			});
+			expect(warn).toHaveBeenCalled();
+		} finally {
+			warn.mockRestore();
+		}
 	});
 });
 

@@ -2,6 +2,10 @@ import { logEventFromContext } from 'corsair/core';
 import { makeTimecampRequest } from '../client';
 import type { TimecampEndpoints } from '../index';
 import type { TimecampProject } from './types';
+import {
+	TimecampEndpointInputSchemas,
+	TimecampEndpointOutputSchemas,
+} from './types';
 
 /**
  * TimeCamp's task payload is loosely typed — ids arrive as strings in some
@@ -106,6 +110,8 @@ export const getList: TimecampEndpoints['getProjectsList'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = TimecampEndpointInputSchemas.getProjectsList.parse(input);
+
 	const raw = await makeTimecampRequest<unknown>('tasks', ctx.key, {
 		query: { status: 'all' },
 	});
@@ -120,7 +126,7 @@ export const getList: TimecampEndpoints['getProjectsList'] = async (
 	// cached: a project that has since been archived must still reconcile its
 	// stored record, or the cache keeps reporting it as active forever.
 	const projects = allProjects.filter(
-		(project) => input.include_archived || !project.archived,
+		(project) => parsed.include_archived || !project.archived,
 	);
 
 	if (ctx.db.projects) {
@@ -170,9 +176,12 @@ export const getList: TimecampEndpoints['getProjectsList'] = async (
 	await logEventFromContext(
 		ctx,
 		'timecamp.projects.getList',
-		{ ...input },
+		{ ...parsed },
 		'completed',
 	);
 
-	return { projects, count: projects.length };
+	return TimecampEndpointOutputSchemas.getProjectsList.parse({
+		projects,
+		count: projects.length,
+	});
 };
