@@ -447,7 +447,7 @@ export type ImportFileInput = z.infer<typeof ImportFileInputSchema>;
 const UploadFileInputSchema = z.object({
 	/** Official: max 80 MB decoded per file. */
 	file_base64: z
-		.string()
+		.base64()
 		.refine(
 			(value) => Buffer.from(value, 'base64').byteLength <= MAX_UPLOAD_BYTES,
 			{ message: 'file_base64 exceeds 80 MB decoded' },

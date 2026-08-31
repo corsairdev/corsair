@@ -2,10 +2,12 @@ import { ApiError } from 'corsair/http';
 import { makeScaleAiRequest } from './client';
 import { ScaleAiProject, ScaleAiTask, ScaleAiTeammate } from './schema';
 
+const LIVE_ENABLED = process.env.SCALE_AI_LIVE === '1';
 const LIVE_KEY = process.env.SCALE_API_KEY;
-const describeIfKey = LIVE_KEY ? describe : describe.skip;
+const describeIfLive = LIVE_ENABLED ? describe : describe.skip;
+const describeIfKey = LIVE_ENABLED && LIVE_KEY ? describe : describe.skip;
 
-describe('Scale AI live REST v1', () => {
+describeIfLive('Scale AI live REST v1', () => {
 	it('rejects an invalid API key on GET /v1/projects', async () => {
 		const err = await makeScaleAiRequest('projects', 'invalid_scale_key').catch(
 			(error: unknown) => error,

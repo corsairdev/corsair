@@ -743,5 +743,11 @@ describe('official contracts', () => {
 				file_name: 'ok.bin',
 			}).success,
 		).toBe(true);
+		expect(
+			ScaleAiEndpointInputSchemas.uploadFile.safeParse({
+				file_base64: 'not-base64!!!',
+				file_name: 'ok.bin',
+			}).success,
+		).toBe(false);
 	});
 });
