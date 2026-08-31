@@ -13,7 +13,6 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'dropboxsign',
 	'ably',
 	'abstract',
 	'abuseipdb',
@@ -124,6 +123,7 @@ export const BaseProviders = [
 	'doppler',
 	'dreamstudio',
 	'dropbox',
+	'dropboxsign',
 	'epicgames',
 	'exa',
 	'facebook',
@@ -172,6 +172,7 @@ export const BaseProviders = [
 	'merriamwebsterdict',
 	'monday',
 	'neon',
+	'newsapi',
 	'nextdns',
 	'notion',
 	'ocrspace',
@@ -405,6 +406,7 @@ export const ProviderDisplayNames = {
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	monday: 'Monday',
 	neon: 'Neon',
+	newsapi: 'News API',
 	nextdns: 'NextDNS',
 	notion: 'Notion',
 	ocrspace: 'OCR.space',
@@ -644,6 +646,7 @@ export type AllProviders =
 	| 'merriamwebsterdict'
 	| 'monday'
 	| 'neon'
+	| 'newsapi'
 	| 'nextdns'
 	| 'notion'
 	| 'ocrspace'
