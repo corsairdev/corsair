@@ -73,7 +73,10 @@ describe('auth', () => {
 	it('defaults to api_key', () => {
 		const plugin = pushbullet();
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(Object.keys(plugin.authConfig ?? {})).toEqual(['api_key']);
+		expect(Object.keys(plugin.authConfig ?? {})).toEqual([
+			'api_key',
+			'oauth_2',
+		]);
 	});
 
 	it('declares no webhooks', () => {
@@ -99,6 +102,53 @@ describe('auth', () => {
 	it('raises when no key exists anywhere', async () => {
 		const plugin = pushbullet();
 		const ctx = { keys: { get_api_key: async () => null } } as never;
+		await expect(plugin.keyBuilder?.(ctx, 'endpoint')).rejects.toThrow();
+	});
+
+	it('declares the OAuth2 scheme from the OSS page with no extra fields', () => {
+		const authConfig = pushbullet().authConfig as Record<
+			string,
+			{ account: readonly string[] }
+		>;
+		const oauthScheme = authConfig.oauth_2;
+		expect(oauthScheme).toBeDefined();
+		expect(oauthScheme?.account).toEqual([]);
+	});
+
+	it('exposes the verified Pushbullet OAuth endpoints and no scopes', () => {
+		// Contract with https://docs.pushbullet.com/#oauth — a typo in either
+		// URL would break every OAuth connect at runtime.
+		expect(pushbullet().oauthConfig).toMatchObject({
+			providerName: 'Pushbullet',
+			authUrl: 'https://www.pushbullet.com/authorize',
+			tokenUrl: 'https://api.pushbullet.com/oauth2/token',
+			scopes: [],
+			requiresRegisteredRedirect: true,
+		});
+	});
+
+	it('oauth_2 returns the stored access token without touching the api key', async () => {
+		const plugin = pushbullet({ authType: 'oauth_2' });
+		const ctx = {
+			authType: 'oauth_2',
+			keys: {
+				get_access_token: async () => 'o.oauth-token',
+				get_api_key: async () => {
+					throw new Error('get_api_key must not be called');
+				},
+			},
+		} as never;
+		await expect(plugin.keyBuilder?.(ctx, 'endpoint')).resolves.toBe(
+			'o.oauth-token',
+		);
+	});
+
+	it('oauth_2 raises when no access token is stored', async () => {
+		const plugin = pushbullet({ authType: 'oauth_2' });
+		const ctx = {
+			authType: 'oauth_2',
+			keys: { get_access_token: async () => null },
+		} as never;
 		await expect(plugin.keyBuilder?.(ctx, 'endpoint')).rejects.toThrow();
 	});
 });

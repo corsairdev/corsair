@@ -27,8 +27,12 @@ import { errorHandlers } from './error-handlers';
 import { PushbulletSchema } from './schema';
 
 export type PushbulletPluginOptions = {
-	/** Authentication method. Pushbullet issues account access tokens. */
-	authType?: PickAuth<'api_key'>;
+	/**
+	 * Authentication method: an access token copied from Account Settings
+	 * (`api_key`) or one minted by a registered Pushbullet OAuth2 client
+	 * (`oauth_2`).
+	 */
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	/**
 	 * Pushbullet access token from Account Settings. Account-level, and sent in
 	 * the `Access-Token` header rather than as a bearer token.
@@ -216,6 +220,11 @@ export const pushbulletAuthConfig = {
 	api_key: {
 		account: [] as const,
 	},
+	// No extension fields: the base oauth_2 manager already stores the access
+	// token, and Pushbullet issues no refresh tokens or scopes.
+	oauth_2: {
+		account: [] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BasePushbulletPlugin<T extends PushbulletPluginOptions> =
@@ -249,6 +258,18 @@ export function pushbullet<const T extends PushbulletPluginOptions>(
 	return {
 		id: 'pushbullet',
 		authConfig: pushbulletAuthConfig,
+		// https://docs.pushbullet.com/#oauth — server-side
+		// `response_type=code` flow. Pushbullet has no scopes, and OAuth
+		// clients are registered with a fixed redirect_uri, so the caller must
+		// supply that pre-registered URL instead of an auto-generated
+		// localhost callback.
+		oauthConfig: {
+			providerName: 'Pushbullet',
+			authUrl: 'https://www.pushbullet.com/authorize',
+			tokenUrl: 'https://api.pushbullet.com/oauth2/token',
+			scopes: [],
+			requiresRegisteredRedirect: true,
+		},
 		schema: PushbulletSchema,
 		options: options,
 		hooks: options.hooks,
@@ -269,6 +290,21 @@ export function pushbullet<const T extends PushbulletPluginOptions>(
 			}
 
 			if (source === 'endpoint') {
+				// Pushbullet's OAuth access tokens carry no expiry and the
+				// provider has no refresh flow (docs: "The access_token does
+				// not have a set expiration time"), so the stored token is
+				// returned as-is — a revoked one can only be fixed by
+				// reconnecting, never by refreshing.
+				if (ctx.authType === 'oauth_2') {
+					const token = await tryGetStoredKey(() =>
+						ctx.keys?.get_access_token(),
+					);
+					if (!token) {
+						throw new AuthMissingError('pushbullet', 'oauth_2');
+					}
+					return token;
+				}
+
 				const stored = await tryGetStoredKey(() => ctx.keys?.get_api_key());
 				if (!stored) {
 					throw new AuthMissingError('pushbullet', 'api_key');
