@@ -199,4 +199,47 @@ describe('Kraken endpoint operations', () => {
 			Account.checkStatus(ctx as never, undefined as never),
 		).rejects.toThrow();
 	});
+
+	it('strips presigned-URL query strings before logging, for every image endpoint', async () => {
+		makeKrakenRequest.mockResolvedValue({
+			success: true,
+			kraked_url: 'http://dl.kraken.io/x.jpg',
+		});
+		const ctx = createContext();
+		const signedUrl =
+			'https://bucket.s3.amazonaws.com/x.jpg?X-Amz-Signature=super-secret&X-Amz-Credential=leaked';
+		const signedCallbackUrl = 'https://hooks.example.com/kraken?token=leaked';
+
+		await Image.optimizeUrl(
+			ctx as never,
+			{
+				url: signedUrl,
+				callback_url: signedCallbackUrl,
+			} as never,
+		);
+		await Image.preserveMetadata(
+			ctx as never,
+			{
+				url: signedUrl,
+				preserve_meta: ['profile'],
+			} as never,
+		);
+		await Image.sandboxUpload(ctx as never, { url: signedUrl } as never);
+
+		for (const call of mockLog.mock.calls) {
+			const payload = call[2] as Record<string, unknown>;
+			const loggedUrl = JSON.stringify(payload);
+			expect(loggedUrl).not.toContain('super-secret');
+			expect(loggedUrl).not.toContain('leaked');
+		}
+		expect(mockLog).toHaveBeenCalledWith(
+			ctx,
+			'kraken.image.optimizeUrl',
+			expect.objectContaining({
+				url: 'https://bucket.s3.amazonaws.com/x.jpg',
+				callback_url: 'https://hooks.example.com/kraken',
+			}),
+			'completed',
+		);
+	});
 });

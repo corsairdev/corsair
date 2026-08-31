@@ -6,6 +6,22 @@ import {
 	KrakenEndpointOutputSchemas,
 } from './types';
 
+/**
+ * Callers often pass presigned URLs (S3, GCS, ...) carrying a signed access
+ * token in the query string. Event payloads are durably stored, so strip the
+ * query string before logging — the scheme/host/path is enough to identify
+ * the request without persisting the credential.
+ */
+function redactUrlForLogging(url: string): string {
+	try {
+		const parsed = new URL(url);
+		parsed.search = '';
+		return parsed.toString();
+	} catch {
+		return '[redacted]';
+	}
+}
+
 export const optimizeUrl: KrakenEndpoints['imageOptimizeUrl'] = async (
 	ctx,
 	rawInput,
@@ -25,7 +41,13 @@ export const optimizeUrl: KrakenEndpoints['imageOptimizeUrl'] = async (
 	await logEventFromContext(
 		ctx,
 		'kraken.image.optimizeUrl',
-		{ ...input },
+		{
+			...input,
+			url: redactUrlForLogging(input.url),
+			callback_url: input.callback_url
+				? redactUrlForLogging(input.callback_url)
+				: undefined,
+		},
 		'completed',
 	);
 	return result;
@@ -50,7 +72,7 @@ export const preserveMetadata: KrakenEndpoints['imagePreserveMetadata'] =
 		await logEventFromContext(
 			ctx,
 			'kraken.image.preserveMetadata',
-			{ ...input },
+			{ ...input, url: redactUrlForLogging(input.url) },
 			'completed',
 		);
 		return result;
@@ -80,7 +102,7 @@ export const sandboxUpload: KrakenEndpoints['imageSandboxUpload'] = async (
 	await logEventFromContext(
 		ctx,
 		'kraken.image.sandboxUpload',
-		{ ...input },
+		{ ...input, url: redactUrlForLogging(input.url) },
 		'completed',
 	);
 	return result;

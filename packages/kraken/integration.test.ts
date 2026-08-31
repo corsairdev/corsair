@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import { KrakenAPIError } from './client';
 import { kraken } from './index';
 
 // Live end-to-end test — skipped unless both KRAKEN_API_KEY and
@@ -57,21 +56,10 @@ describe('Kraken plugin integration', () => {
 		try {
 			const before = await corsair.kraken.api.account.checkStatus(undefined);
 
-			let result: Awaited<
-				ReturnType<typeof corsair.kraken.api.image.sandboxUpload>
-			>;
-			try {
-				result = await corsair.kraken.api.image.sandboxUpload({
-					url: TEST_IMAGE_URL,
-					wait: true,
-				});
-			} catch (error) {
-				if (error instanceof KrakenAPIError) {
-					testDb.cleanup();
-					return;
-				}
-				throw error;
-			}
+			const result = await corsair.kraken.api.image.sandboxUpload({
+				url: TEST_IMAGE_URL,
+				wait: true,
+			});
 
 			expect(result.success).toBe(true);
 
