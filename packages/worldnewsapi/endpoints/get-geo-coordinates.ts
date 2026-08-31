@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeWorldNewsApiRequest } from '../client';
 import type { WorldNewsApiEndpoints } from '../index';
-import type { WorldNewsApiEndpointOutputs } from './types';
+import { GetGeoCoordinatesOutputSchema } from './types';
 
 export const getGeoCoordinates: WorldNewsApiEndpoints['newsGetGeoCoordinates'] =
 	async (ctx, input) => {
@@ -9,12 +9,15 @@ export const getGeoCoordinates: WorldNewsApiEndpoints['newsGetGeoCoordinates'] =
 			location: input.location,
 		};
 
-		const response = await makeWorldNewsApiRequest<
-			WorldNewsApiEndpointOutputs['news.getGeoCoordinates']
-		>('geo-coordinates', ctx.key, {
-			method: 'GET',
-			query,
-		});
+		const response = await makeWorldNewsApiRequest(
+			'geo-coordinates',
+			ctx.key,
+			{
+				method: 'GET',
+				query,
+			},
+			GetGeoCoordinatesOutputSchema,
+		);
 
 		try {
 			await ctx.db.geoCoordinates.upsertByEntityId(input.location, {

@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeWorldNewsApiRequest, validatePublicUrl } from '../client';
 import type { WorldNewsApiEndpoints } from '../index';
-import type { WorldNewsApiEndpointOutputs } from './types';
+import { ExtractNewsOutputSchema } from './types';
 
 export const extractNews: WorldNewsApiEndpoints['newsExtractNews'] = async (
 	ctx,
@@ -15,12 +15,15 @@ export const extractNews: WorldNewsApiEndpoints['newsExtractNews'] = async (
 		analyze: input.analyze,
 	};
 
-	const response = await makeWorldNewsApiRequest<
-		WorldNewsApiEndpointOutputs['news.extractNews']
-	>('extract-news', ctx.key, {
-		method: 'GET',
-		query,
-	});
+	const response = await makeWorldNewsApiRequest(
+		'extract-news',
+		ctx.key,
+		{
+			method: 'GET',
+			query,
+		},
+		ExtractNewsOutputSchema,
+	);
 
 	try {
 		await ctx.db.extractedArticles.upsertByEntityId(input.url, {

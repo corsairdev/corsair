@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeWorldNewsApiRequest } from '../client';
 import type { WorldNewsApiEndpoints } from '../index';
-import type { WorldNewsApiEndpointOutputs } from './types';
+import { TopNewsOutputSchema } from './types';
 
 export const topNews: WorldNewsApiEndpoints['newsTopNews'] = async (
 	ctx,
@@ -15,12 +15,15 @@ export const topNews: WorldNewsApiEndpoints['newsTopNews'] = async (
 		'max-news-per-cluster': input.maxNewsPerCluster,
 	};
 
-	const response = await makeWorldNewsApiRequest<
-		WorldNewsApiEndpointOutputs['news.topNews']
-	>('top-news', ctx.key, {
-		method: 'GET',
-		query,
-	});
+	const response = await makeWorldNewsApiRequest(
+		'top-news',
+		ctx.key,
+		{
+			method: 'GET',
+			query,
+		},
+		TopNewsOutputSchema,
+	);
 
 	// Persist articles if db is available
 	if (response.top_news && Array.isArray(response.top_news)) {

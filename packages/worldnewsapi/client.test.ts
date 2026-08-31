@@ -215,4 +215,54 @@ describe('World News API Client', () => {
 			expect(() => parseRssFeedXml('')).toThrow(WorldNewsApiError);
 		});
 	});
+
+	describe('Runtime Response Schema Validation', () => {
+		it('validates provider response against schema when schema is provided', async () => {
+			const validPayload = {
+				latitude: 35.6762,
+				longitude: 139.6503,
+				city: 'Tokyo',
+			};
+			mockFetch({ body: validPayload });
+
+			const { z } = await import('zod');
+			const GeoSchema = z.object({
+				latitude: z.number(),
+				longitude: z.number(),
+				city: z.string().optional(),
+			});
+
+			const result = await makeWorldNewsApiRequest(
+				'/geo-coordinates',
+				'secret-key',
+				{},
+				GeoSchema,
+			);
+			expect(result.latitude).toBe(35.6762);
+			expect(result.city).toBe('Tokyo');
+		});
+
+		it('throws ZodError at runtime when provider response does not match schema', async () => {
+			const malformedPayload = {
+				latitude: 'not-a-number',
+				longitude: 139.6503,
+			};
+			mockFetch({ body: malformedPayload });
+
+			const { z } = await import('zod');
+			const GeoSchema = z.object({
+				latitude: z.number(),
+				longitude: z.number(),
+			});
+
+			await expect(
+				makeWorldNewsApiRequest(
+					'/geo-coordinates',
+					'secret-key',
+					{},
+					GeoSchema,
+				),
+			).rejects.toThrow();
+		});
+	});
 });

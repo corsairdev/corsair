@@ -355,4 +355,83 @@ describe('World News API Endpoints', () => {
 			);
 		});
 	});
+
+	describe('Runtime Response Validation (P1 Fix)', () => {
+		it('rejects topNews when provider payload is malformed or missing required top_news array', async () => {
+			mockFetch({ body: { invalid_key: 'malformed_data' } });
+
+			await expect(
+				topNews(mockCtx, {
+					sourceCountry: 'us',
+					language: 'en',
+				}),
+			).rejects.toThrow();
+		});
+
+		it('rejects getGeoCoordinates when provider returns incorrect field types', async () => {
+			mockFetch({
+				body: {
+					latitude: 'invalid-string-not-number',
+					longitude: 139.6503,
+				},
+			});
+
+			await expect(
+				getGeoCoordinates(mockCtx, {
+					location: 'Tokyo',
+				}),
+			).rejects.toThrow();
+		});
+
+		it('rejects searchNews when articles are missing required id or title', async () => {
+			mockFetch({
+				body: {
+					offset: 0,
+					number: 10,
+					available: 1,
+					news: [
+						{
+							// Missing id and url
+							title: 'Article Without Required Fields',
+						},
+					],
+				},
+			});
+
+			await expect(
+				searchNews(mockCtx, {
+					text: 'test',
+				}),
+			).rejects.toThrow();
+		});
+
+		it('rejects searchNewsSources when available count is not a number', async () => {
+			mockFetch({
+				body: {
+					available: 'ten',
+					sources: [],
+				},
+			});
+
+			await expect(
+				searchNewsSources(mockCtx, {
+					name: 'bbc',
+				}),
+			).rejects.toThrow();
+		});
+
+		it('rejects extractNewsLinks when news_links is not an array of strings', async () => {
+			mockFetch({
+				body: {
+					news_links: 'https://example.com/not-an-array',
+				},
+			});
+
+			await expect(
+				extractNewsLinks(mockCtx, {
+					url: 'https://example.com',
+				}),
+			).rejects.toThrow();
+		});
+	});
 });

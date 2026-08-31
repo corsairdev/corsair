@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeWorldNewsApiRequest } from '../client';
 import type { WorldNewsApiEndpoints } from '../index';
-import type { WorldNewsApiEndpointOutputs } from './types';
+import { SearchNewsSourcesOutputSchema } from './types';
 
 export const searchNewsSources: WorldNewsApiEndpoints['newsSearchNewsSources'] =
 	async (ctx, input) => {
@@ -9,12 +9,15 @@ export const searchNewsSources: WorldNewsApiEndpoints['newsSearchNewsSources'] =
 			name: input.name,
 		};
 
-		const response = await makeWorldNewsApiRequest<
-			WorldNewsApiEndpointOutputs['news.searchNewsSources']
-		>('search-news-sources', ctx.key, {
-			method: 'GET',
-			query,
-		});
+		const response = await makeWorldNewsApiRequest(
+			'search-news-sources',
+			ctx.key,
+			{
+				method: 'GET',
+				query,
+			},
+			SearchNewsSourcesOutputSchema,
+		);
 
 		if (response.sources && Array.isArray(response.sources)) {
 			for (const source of response.sources) {

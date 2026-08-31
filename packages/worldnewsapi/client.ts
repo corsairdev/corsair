@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
+import type { z } from 'zod';
 
 export class WorldNewsApiError extends Error {
 	constructor(
@@ -223,11 +224,13 @@ export type WorldNewsRequestOptions = {
 /**
  * Performs an authenticated HTTP request to the World News API.
  * Uses x-api-key header for production authentication.
+ * If a Zod schema is provided, the response payload is parsed and validated at runtime.
  */
 export async function makeWorldNewsApiRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: WorldNewsRequestOptions = {},
+	schema?: z.ZodType<T>,
 ): Promise<T> {
 	if (!apiKey || !apiKey.trim()) {
 		throw new WorldNewsApiError(
@@ -261,5 +264,11 @@ export async function makeWorldNewsApiRequest<T>(
 		query,
 	};
 
-	return await request<T>(config, requestOptions);
+	const data = await request<unknown>(config, requestOptions);
+
+	if (schema) {
+		return schema.parse(data);
+	}
+
+	return data as T;
 }
