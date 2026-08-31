@@ -26,9 +26,9 @@ const GenerateDesignInputSchema = z.object({
 	/** Array of layer parameter overrides */
 	params: z.array(DynapicturesParamSchema).optional(),
 	/** Target output format */
-	format: z.enum(['png', 'jpeg', 'webp', 'pdf']).optional(),
-	/** Custom metadata associated with the render */
-	metadata: z.union([z.string(), z.record(z.string(), z.unknown())]).optional(),
+	format: z.enum(['png', 'jpeg', 'webp']).optional(),
+	/** Custom metadata associated with the render (string only) */
+	metadata: z.string().optional(),
 });
 
 /** Input parameters for generating a design image */

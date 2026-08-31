@@ -234,6 +234,32 @@ describe('designs.generate', () => {
 			DynapicturesEndpointInputSchemas.generateDesign.parse({ designId: '' }),
 		).toThrow();
 	});
+
+	it('accepts metadata string in generateDesign input schema', () => {
+		const parsed = DynapicturesEndpointInputSchemas.generateDesign.parse({
+			designId: 'tpl-1',
+			metadata: 'custom-render-id-123',
+		});
+		expect(parsed.metadata).toBe('custom-render-id-123');
+	});
+
+	it('rejects metadata object in generateDesign input schema', () => {
+		expect(() =>
+			DynapicturesEndpointInputSchemas.generateDesign.parse({
+				designId: 'tpl-1',
+				metadata: { key: 'val' } as unknown as string,
+			}),
+		).toThrow();
+	});
+
+	it('rejects pdf format in generateDesign input schema', () => {
+		expect(() =>
+			DynapicturesEndpointInputSchemas.generateDesign.parse({
+				designId: 'tpl-1',
+				format: 'pdf' as unknown as 'png',
+			}),
+		).toThrow();
+	});
 });
 
 describe('designs.get', () => {
@@ -338,6 +364,29 @@ describe('templates.list', () => {
 			'completed',
 		);
 	});
+
+	it('normalizes provider thumbnail field to thumbnailUrl', async () => {
+		mockRequest.mockResolvedValue([
+			{
+				id: 'tpl-1',
+				name: 'Banner Template',
+				width: 1200,
+				height: 630,
+				thumbnail: 'https://api.dynapictures.com/thumbnail.png',
+			},
+		]);
+
+		const result = await pluginEndpoints().templates.list(mockCtx, {});
+		expect(result).toEqual([
+			{
+				id: 'tpl-1',
+				name: 'Banner Template',
+				width: 1200,
+				height: 630,
+				thumbnailUrl: 'https://api.dynapictures.com/thumbnail.png',
+			},
+		]);
+	});
 });
 
 describe('dynapictures error classification', () => {
@@ -357,5 +406,25 @@ describe('dynapictures error classification', () => {
 			cause: httpError(401, 'Unauthorized'),
 		});
 		expect(classify(dpAuthErr)).toBe('AUTH_ERROR');
+	});
+
+	it('does not classify structured 500 containing "429" as RATE_LIMIT_ERROR', () => {
+		const err = httpError(500, 'Internal server error 429');
+		expect(classify(err)).toBe('DEFAULT');
+	});
+
+	it('does not classify structured 500 containing "unauthorized" as AUTH_ERROR', () => {
+		const err = httpError(500, 'unauthorized internal server error');
+		expect(classify(err)).toBe('DEFAULT');
+	});
+
+	it('classifies ApiError 401 containing "429" as AUTH_ERROR and not RATE_LIMIT_ERROR', () => {
+		const err = httpError(401, 'Unauthorized request 429');
+		expect(classify(err)).toBe('AUTH_ERROR');
+	});
+
+	it('classifies generic Error containing "429" as RATE_LIMIT_ERROR', () => {
+		const err = new Error('Request 429 rate limited');
+		expect(classify(err)).toBe('RATE_LIMIT_ERROR');
 	});
 });
