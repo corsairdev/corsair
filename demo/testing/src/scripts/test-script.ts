@@ -18,25 +18,7 @@ async function setInstagramCredentials() {
 	}
 }
 
-async function testDynapictures() {
-	const dynapicturesApiKey = process.env.DYNAPICTURES_API_KEY;
-
-	if (!dynapicturesApiKey) {
-		console.log(
-			'DYNAPICTURES_API_KEY is not set. Gracefully skipping live Dynapictures API call.',
-		);
-		return;
-	}
-
-	await corsair.keys.dynapictures.set_api_key(dynapicturesApiKey);
-
-	const templates = await corsair.dynapictures.api.templates.list({});
-	console.log('Dynapictures templates:', templates);
-}
-
 const main = async () => {
-	await setInstagramCredentials();
-	await testDynapictures();
 	const res = await corsair.slack.api.messages.post({
 		channel: 'general',
 		text: 'hello',
