@@ -143,13 +143,22 @@ export const removeAll: PushbulletEndpoints['pushesDeleteAll'] = async (
 	// The remote pushes are gone, so every cached row is now stale. Leaving them
 	// would let local lookups keep returning pushes that no longer exist.
 	if (ctx.db.pushes) {
+		let cached: Awaited<ReturnType<typeof ctx.db.pushes.search>> = [];
 		try {
-			const cached = await ctx.db.pushes.search({});
-			for (const entity of cached) {
-				await ctx.db.pushes.deleteByEntityId(entity.entity_id);
-			}
+			cached = await ctx.db.pushes.search({});
 		} catch (error) {
-			console.warn('Failed to evict cached pushes after deleteAll:', error);
+			// Cache reads are best-effort; a broken cache must not fail the delete.
+			console.warn('Failed to read cached pushes after deleteAll:', error);
+			cached = [];
+		}
+		// Eviction is best-effort per row: one failed delete must not abort the
+		// loop, or later cached pushes would stay visible after deleteAll.
+		for (const entity of cached) {
+			try {
+				await ctx.db.pushes.deleteByEntityId(entity.entity_id);
+			} catch (error) {
+				console.warn('Failed to evict cached push after deleteAll:', error);
+			}
 		}
 	}
 

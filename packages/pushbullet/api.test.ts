@@ -40,6 +40,10 @@ beforeEach(() => {
 		pushes: [],
 		devices: [],
 		chats: [],
+		file_name: 'a.png',
+		file_type: 'image/png',
+		upload_url: 'https://upload.pushbullet.test/s3',
+		file_url: 'https://file.pushbullet.test/a.png',
 	});
 });
 

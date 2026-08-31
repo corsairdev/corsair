@@ -211,10 +211,12 @@ const EmptyResponseSchema = z.object({}).loose();
 
 const UploadRequestResponseSchema = z
 	.object({
-		file_name: z.string().optional(),
-		file_type: z.string().optional(),
-		file_url: z.string().optional(),
-		upload_url: z.string().optional(),
+		file_name: z.string(),
+		file_type: z.string(),
+		/** Needed to POST the actual bytes to Pushbullet's S3 bucket. */
+		upload_url: z.string(),
+		/** Needed by any subsequent file push that references the upload. */
+		file_url: z.string(),
 	})
 	.loose();
 
