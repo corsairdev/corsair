@@ -41,10 +41,12 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('429') || msg.includes('rate limit');
 		},
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs: getRetryAfter(error),
-		}),
+		// corsair/http already retried this 429 three times honoring
+		// Retry-After before the error escaped the transport (async-core
+		// request(), DEFAULT_RATE_LIMIT_CONFIG). Re-running the endpoint here
+		// would multiply those attempts (up to 16) and replay a POST the
+		// server may already have applied.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {

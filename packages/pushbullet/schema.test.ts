@@ -160,11 +160,15 @@ describe('error policy', () => {
 		).toBe(true);
 	});
 
-	it('surfaces the provider Retry-After', async () => {
-		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
-			wrapped(429, 'slow down', 15_000),
-		);
-		expect(result.headersRetryAfterMs).toBe(15_000);
+	it('never retries a 429 — the transport already retried it', async () => {
+		// corsair/http retries 429 three times honoring Retry-After
+		// (DEFAULT_RATE_LIMIT_CONFIG); plugin-level retries would both
+		// amplify those attempts and replay unsafe writes.
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(wrapped(429, 'slow down')),
+		).toBe(true);
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler();
+		expect(result.maxRetries).toBe(0);
 	});
 
 	it('never retries an auth failure', async () => {
@@ -237,6 +241,40 @@ describe('input validation', () => {
 	});
 });
 
+describe('upload reservation validation', () => {
+	it('rejects a reservation whose upload_url is unusable', () => {
+		// An empty upload_url would let the reservation "succeed" while the
+		// caller cannot upload any bytes to it.
+		const r = PushbulletEndpointOutputSchemas.filesUploadRequest.safeParse({
+			file_name: 'a.png',
+			file_type: 'image/png',
+			upload_url: '',
+			file_url: 'https://pushbullet.test/a.png',
+		});
+		expect(r.success).toBe(false);
+	});
+
+	it('rejects a reservation whose file_url is unusable', () => {
+		const r = PushbulletEndpointOutputSchemas.filesUploadRequest.safeParse({
+			file_name: 'a.png',
+			file_type: 'image/png',
+			upload_url: 'https://pushbullet.test/upload',
+			file_url: 'not a url',
+		});
+		expect(r.success).toBe(false);
+	});
+
+	it('accepts a reservation with usable URLs', () => {
+		const r = PushbulletEndpointOutputSchemas.filesUploadRequest.safeParse({
+			file_name: 'a.png',
+			file_type: 'image/png',
+			upload_url: 'https://upload.pushbullet.test/s3',
+			file_url: 'https://file.pushbullet.test/a.png',
+		});
+		expect(r.success).toBe(true);
+	});
+});
+
 describe('retry safety for non-idempotent writes', () => {
 	/** Builds the error shape the client throws, carrying the HTTP method. */
 	function wrappedWithMethod(status: number, method: string) {
@@ -266,6 +304,17 @@ describe('retry safety for non-idempotent writes', () => {
 			wrappedWithMethod(500, 'DELETE'),
 		);
 		expect(result.maxRetries).toBeGreaterThan(0);
+	});
+
+	it('never replays a rate-limited POST — the transport already retried it', async () => {
+		// Same reasoning as the 5xx POST case, but for a 429: the request
+		// escaped the transport after four attempts, so re-running the
+		// endpoint here would only add more replays of an unsafe write.
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(wrappedWithMethod(429, 'POST')),
+		).toBe(true);
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler();
+		expect(result.maxRetries).toBe(0);
 	});
 
 	it('treats an unknown method as unsafe to replay', async () => {

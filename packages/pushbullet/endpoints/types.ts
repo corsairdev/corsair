@@ -213,10 +213,17 @@ const UploadRequestResponseSchema = z
 	.object({
 		file_name: z.string(),
 		file_type: z.string(),
-		/** Needed to POST the actual bytes to Pushbullet's S3 bucket. */
-		upload_url: z.string(),
-		/** Needed by any subsequent file push that references the upload. */
-		file_url: z.string(),
+		/**
+		 * Needed to POST the actual bytes to Pushbullet's S3 bucket. Validated
+		 * as a URL so an empty or malformed reservation fails here instead of
+		 * handing the caller an upload target that cannot work.
+		 */
+		upload_url: z.string().url(),
+		/**
+		 * Needed by any subsequent file push that references the upload;
+		 * unusable if Pushbullet ever returned it malformed or empty.
+		 */
+		file_url: z.string().url(),
 	})
 	.loose();
 
