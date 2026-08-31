@@ -5,12 +5,12 @@ import { BuildkiteEndpointOutputSchemas } from './types';
 
 export const listPipelineAgents: BuildkiteEndpoints['listPipelineAgents'] =
 	async (ctx, input) => {
-		const orgSlug = encodeURIComponent(input.orgSlug);
 		const response = await makeBuildkiteRequest<unknown>(
-			`/v2/organizations/${orgSlug}/agents`,
+			'/v2/organizations/{orgSlug}/agents',
 			ctx.key,
 			{
 				method: 'GET',
+				path: { orgSlug: input.orgSlug },
 				query: {
 					name: input.name,
 					hostname: input.hostname,

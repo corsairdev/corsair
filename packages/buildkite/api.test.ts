@@ -248,10 +248,10 @@ describe('Buildkite plugin', () => {
 		expect(options?.query).toEqual({ page: 2, per_page: 30 });
 	});
 
-	it('listPipelineAgents encodes org slug and applies official filters', async () => {
+	it('listPipelineAgents uses a static path template and official filters', async () => {
 		mockRequest.mockResolvedValue([agentFixture] as never);
 		const input = BuildkiteEndpointInputSchemas.listPipelineAgents.parse({
-			orgSlug: 'my org/prod',
+			orgSlug: 'my-great-org',
 			name: 'ci-agent-1',
 			hostname: 'ci-box-1',
 			version: '2.1.0',
@@ -263,7 +263,8 @@ describe('Buildkite plugin', () => {
 		expect(result[0]?.connection_state).toBe('connected');
 		BuildkiteEndpointOutputSchemas.listPipelineAgents.parse(result);
 		const { options } = lastCall();
-		expect(options?.url).toBe('/v2/organizations/my%20org%2Fprod/agents');
+		expect(options?.url).toBe('/v2/organizations/{orgSlug}/agents');
+		expect(options?.path).toEqual({ orgSlug: 'my-great-org' });
 		expect(options?.query).toMatchObject({
 			name: 'ci-agent-1',
 			hostname: 'ci-box-1',
@@ -272,6 +273,19 @@ describe('Buildkite plugin', () => {
 			page: 1,
 			per_page: 100,
 		});
+	});
+
+	it('rejects org slugs that are not official slug characters', () => {
+		expect(() =>
+			BuildkiteEndpointInputSchemas.listPipelineAgents.parse({
+				orgSlug: 'my org/prod',
+			}),
+		).toThrow();
+		expect(() =>
+			BuildkiteEndpointInputSchemas.listPipelineAgents.parse({
+				orgSlug: '(aaaaaaaa',
+			}),
+		).toThrow();
 	});
 });
 

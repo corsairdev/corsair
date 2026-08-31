@@ -30,6 +30,7 @@ export type BuildkiteRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
+	path?: Record<string, string>;
 };
 
 function errorMessage(error: ApiError): string {
@@ -48,7 +49,7 @@ export async function makeBuildkiteRequest<T>(
 	apiKey: string | undefined,
 	options: BuildkiteRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, path } = options;
 	const isWriteMethod =
 		method === 'POST' || method === 'PUT' || method === 'PATCH';
 
@@ -68,6 +69,7 @@ export async function makeBuildkiteRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
+		path,
 		body: isWriteMethod ? body : undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query,

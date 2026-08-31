@@ -39,7 +39,7 @@ export type ListOrganizationsOutput = z.infer<
 export const ListPipelineAgentsInputSchema = z.object({
 	orgSlug: z
 		.string()
-		.min(1)
+		.regex(/^[a-z0-9][a-z0-9-]*$/)
 		.describe(
 			'Official path param {org.slug} on GET /v2/organizations/{org.slug}/agents',
 		),
