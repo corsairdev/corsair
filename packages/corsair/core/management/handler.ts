@@ -250,7 +250,8 @@ const ROUTES: Route[] = [
 			const request = internal.database
 				? await readConnectRequest(internal.database, tenantId)
 				: null;
-			return json(200, { request });
+			// Tenant-scoped connect link — never let a shared cache reuse it.
+			return json(200, { request }, { 'cache-control': 'no-store' });
 		},
 	},
 	{
