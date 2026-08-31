@@ -1,3 +1,2 @@
-export { Employees } from './employees';
-export { Leaves } from './leaves';
+export * from './handlers';
 export * from './types';
