@@ -9,10 +9,17 @@ export type ConnectState = {
 	phase: ConnectPhase;
 	plugin: string | null;
 	connectUrl: string | null;
+	// Explicit tenant for a proactive connect; null means the handler resolves it.
+	tenantId: string | null;
 };
 
 export type ConnectAction =
-	| { type: 'OPEN'; plugin: string; connectUrl: string }
+	| {
+			type: 'OPEN';
+			plugin: string;
+			connectUrl: string;
+			tenantId: string | null;
+	  }
 	| { type: 'SUCCESS' }
 	| { type: 'CLOSE' };
 
@@ -20,6 +27,7 @@ export const initialConnectState: ConnectState = {
 	phase: 'idle',
 	plugin: null,
 	connectUrl: null,
+	tenantId: null,
 };
 
 export function connectReducer(
@@ -32,6 +40,7 @@ export function connectReducer(
 				phase: 'connecting',
 				plugin: action.plugin,
 				connectUrl: action.connectUrl,
+				tenantId: action.tenantId,
 			};
 		case 'SUCCESS':
 			return { ...state, phase: 'success' };

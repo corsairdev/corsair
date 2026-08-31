@@ -140,6 +140,9 @@ export function PluginIcon({
 	const [src, setSrc] = useState<string | null>(null);
 	useEffect(() => {
 		let live = true;
+		// Drop the prior brand mark so a reused icon shows the monogram, not the
+		// last plugin's logo, while the new one loads (or if it fails).
+		setSrc(null);
 		const img = new Image();
 		img.referrerPolicy = 'no-referrer';
 		img.onload = () => {

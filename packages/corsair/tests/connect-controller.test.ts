@@ -6,16 +6,18 @@ import {
 } from '../client/react/connect-controller';
 
 describe('connectReducer', () => {
-	it('OPEN moves to connecting and holds the plugin + link', () => {
+	it('OPEN moves to connecting and holds the plugin, link, and tenant', () => {
 		const s = connectReducer(initialConnectState, {
 			type: 'OPEN',
 			plugin: 'gmail',
 			connectUrl: 'https://hub/connect/tok',
+			tenantId: 'acme',
 		});
 		expect(s).toEqual({
 			phase: 'connecting',
 			plugin: 'gmail',
 			connectUrl: 'https://hub/connect/tok',
+			tenantId: 'acme',
 		});
 	});
 
@@ -24,6 +26,7 @@ describe('connectReducer', () => {
 			type: 'OPEN',
 			plugin: 'gmail',
 			connectUrl: 'https://hub/connect/tok',
+			tenantId: null,
 		});
 		expect(connectReducer(open, { type: 'SUCCESS' })).toMatchObject({
 			phase: 'success',
@@ -36,6 +39,7 @@ describe('connectReducer', () => {
 			type: 'OPEN',
 			plugin: 'gmail',
 			connectUrl: 'https://hub/connect/tok',
+			tenantId: null,
 		});
 		expect(connectReducer(open, { type: 'CLOSE' })).toEqual(
 			initialConnectState,
