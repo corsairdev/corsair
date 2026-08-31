@@ -2,6 +2,17 @@ import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { KrakenAPIError } from './client';
 
+/**
+ * Only `account.checkStatus` is safe to retry: it's a read with no side
+ * effects. Every `image.*` operation consumes account quota and has no
+ * idempotency key, so if Kraken accepted the optimization before the 429/5xx
+ * response reached us, retrying would resubmit the same non-idempotent write
+ * and burn quota a second time for one logical request.
+ */
+function isRetryableOperation(context: ErrorContext): boolean {
+	return context.operation === 'account.checkStatus';
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
@@ -10,7 +21,10 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate limit') || msg.includes('too many requests');
 		},
-		handler: async (error: Error) => {
+		handler: async (error: Error, context: ErrorContext) => {
+			if (!isRetryableOperation(context)) {
+				return { maxRetries: 0 };
+			}
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter * 1000;
@@ -68,10 +82,12 @@ export const errorHandlers = {
 			}
 			return false;
 		},
-		handler: async (_error: Error, _context: ErrorContext) => ({
-			maxRetries: 2,
-			headersRetryAfterMs: 1000,
-		}),
+		handler: async (_error: Error, context: ErrorContext) => {
+			if (!isRetryableOperation(context)) {
+				return { maxRetries: 0 };
+			}
+			return { maxRetries: 2, headersRetryAfterMs: 1000 };
+		},
 	},
 	DEFAULT: {
 		match: () => true,

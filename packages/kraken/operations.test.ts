@@ -153,4 +153,50 @@ describe('Kraken endpoint operations', () => {
 			},
 		);
 	});
+
+	it('applies the schema default wait: true when the caller omits it', async () => {
+		makeKrakenRequest.mockResolvedValue({
+			success: true,
+			kraked_url: 'http://dl.kraken.io/default-wait.jpg',
+		});
+		const ctx = createContext();
+
+		await Image.optimizeUrl(
+			ctx as never,
+			{
+				url: 'https://example.com/default-wait.jpg',
+			} as never,
+		);
+
+		expect(makeKrakenRequest).toHaveBeenCalledWith(
+			'v1/url',
+			{ apiKey: 'the-key', apiSecret: 'the-secret' },
+			expect.objectContaining({ wait: true }),
+		);
+	});
+
+	it('rejects input before calling the API when preserve_meta is empty', async () => {
+		const ctx = createContext();
+
+		await expect(
+			Image.preserveMetadata(
+				ctx as never,
+				{
+					url: 'https://example.com/x.jpg',
+					preserve_meta: [],
+				} as never,
+			),
+		).rejects.toThrow();
+		expect(makeKrakenRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a malformed provider response instead of returning it untyped', async () => {
+		// Missing the required `success` field.
+		makeKrakenRequest.mockResolvedValue({ quota_remaining: 'not-a-number' });
+		const ctx = createContext();
+
+		await expect(
+			Account.checkStatus(ctx as never, undefined as never),
+		).rejects.toThrow();
+	});
 });

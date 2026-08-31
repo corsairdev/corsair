@@ -59,16 +59,53 @@ describe('errorHandlers', () => {
 		expect(matchedHandlerName(transportError(400))).toBe('BAD_REQUEST_ERROR');
 	});
 
-	it('classifies a 500 as SERVER_ERROR and allows retries', async () => {
+	it('classifies a 500 as SERVER_ERROR and retries the idempotent read', async () => {
 		const error = transportError(500);
 		expect(matchedHandlerName(error)).toBe('SERVER_ERROR');
 		const result = await errorHandlers.SERVER_ERROR.handler(error, {
+			pluginId: 'kraken',
+			operation: 'account.checkStatus',
+			input: {},
+			originalError: error,
+		});
+		expect(result).toEqual({ maxRetries: 2, headersRetryAfterMs: 1000 });
+	});
+
+	it('never retries a 500 on a quota-consuming write, to avoid double-spending quota', async () => {
+		const error = transportError(500);
+		for (const operation of [
+			'image.optimizeUrl',
+			'image.preserveMetadata',
+			'image.sandboxUpload',
+		]) {
+			const result = await errorHandlers.SERVER_ERROR.handler(error, {
+				pluginId: 'kraken',
+				operation,
+				input: {},
+				originalError: error,
+			});
+			expect(result).toEqual({ maxRetries: 0 });
+		}
+	});
+
+	it('retries a 429 on the idempotent read but not on writes', async () => {
+		const error = transportError(429);
+
+		const readResult = await errorHandlers.RATE_LIMIT_ERROR.handler(error, {
+			pluginId: 'kraken',
+			operation: 'account.checkStatus',
+			input: {},
+			originalError: error,
+		});
+		expect(readResult).toEqual({ maxRetries: 3, headersRetryAfterMs: 1000 });
+
+		const writeResult = await errorHandlers.RATE_LIMIT_ERROR.handler(error, {
 			pluginId: 'kraken',
 			operation: 'image.optimizeUrl',
 			input: {},
 			originalError: error,
 		});
-		expect(result).toEqual({ maxRetries: 2, headersRetryAfterMs: 1000 });
+		expect(writeResult).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry auth failures', async () => {
