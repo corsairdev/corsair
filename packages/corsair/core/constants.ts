@@ -68,6 +68,7 @@ export const BaseProviders = [
 	'basecamp',
 	'baselinker',
 	'basin',
+
 	'beaconstac',
 	'beeminder',
 	'bettercontact',
@@ -93,7 +94,9 @@ export const BaseProviders = [
 	'brandfetch',
 	'brex',
 	'browseai',
+
 	'browserless',
+	'browsertool',
 	'bugsnag',
 	'cal',
 	'calendly',
@@ -328,6 +331,7 @@ export const ProviderDisplayNames = {
 	brex: 'Brex',
 	browseai: 'Browse AI',
 	browserless: 'Browserless',
+	browsertool: 'BrowserTool',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
@@ -570,6 +574,7 @@ export type AllProviders =
 	| 'brex'
 	| 'browseai'
 	| 'browserless'
+	| 'browsertool'
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
