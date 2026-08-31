@@ -35,10 +35,12 @@ export const create: PushbulletEndpoints['pushesCreate'] = async (
 		}
 	}
 
+	// The event log keeps identifiers, not content: the push title, body and
+	// the target email are personal data and do not belong in events.
 	await logEventFromContext(
 		ctx,
 		'pushbullet.pushes.create',
-		{ ...input },
+		{ iden: result.iden, type: result.type },
 		'completed',
 	);
 	return result;
@@ -78,10 +80,20 @@ export const update: PushbulletEndpoints['pushesUpdate'] = async (
 
 	if (result.iden && ctx.db.pushes) {
 		try {
+			// upsertByEntityId replaces the stored record rather than merging
+			// into it, so writing only the mutable fields would wipe the
+			// cached type, title, body, url, direction and created. The
+			// update response is the full push, so cache it like create does.
 			await ctx.db.pushes.upsertByEntityId(result.iden, {
 				id: result.iden,
-				dismissed: result.dismissed,
+				type: result.type,
+				title: result.title,
+				body: result.body,
+				url: result.url,
 				active: result.active,
+				dismissed: result.dismissed,
+				direction: result.direction,
+				created: result.created,
 			});
 		} catch (error) {
 			console.warn('Failed to update cached push:', error);

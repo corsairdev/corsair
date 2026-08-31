@@ -239,6 +239,36 @@ describe('input validation', () => {
 		});
 		expect(r.success).toBe(false);
 	});
+
+	it('rejects a push aimed at more than one target', () => {
+		// Pushbullet delivers to one target per push; a request naming two
+		// would silently drop one, so the schema refuses it up front.
+		const r = PushbulletEndpointInputSchemas.pushesCreate.safeParse({
+			type: 'note',
+			device_iden: 'dv1',
+			email: 'a@b.test',
+		});
+		expect(r.success).toBe(false);
+	});
+
+	it('accepts a push aimed at exactly one target', () => {
+		const r = PushbulletEndpointInputSchemas.pushesCreate.safeParse({
+			type: 'note',
+			device_iden: 'dv1',
+		});
+		expect(r.success).toBe(true);
+	});
+
+	it('rejects a file push missing file_type', () => {
+		// Pushbullet's create-push contract for type=file requires
+		// file_name, file_type and file_url together.
+		const r = PushbulletEndpointInputSchemas.pushesCreate.safeParse({
+			type: 'file',
+			file_name: 'a.png',
+			file_url: 'https://file.pushbullet.test/a.png',
+		});
+		expect(r.success).toBe(false);
+	});
 });
 
 describe('upload reservation validation', () => {

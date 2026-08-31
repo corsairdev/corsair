@@ -16,10 +16,12 @@ export const create: PushbulletEndpoints['chatsCreate'] = async (
 		schema: PushbulletEndpointOutputSchemas.chatsCreate,
 	});
 
+	// The event log keeps identifiers, not content: the chat target's email
+	// is personal data and does not belong in events.
 	await logEventFromContext(
 		ctx,
 		'pushbullet.chats.create',
-		{ ...input },
+		{ iden: result.iden },
 		'completed',
 	);
 	return result;

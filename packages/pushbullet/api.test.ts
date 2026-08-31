@@ -4,6 +4,9 @@
  * and that path parameters are interpolated rather than sent as a body field.
  */
 const requestMock = jest.fn();
+// Captures what handlers hand to logEventFromContext, so tests can assert
+// the event log never receives message content or personal data.
+const loggedEvents: Array<{ event: string; payload: unknown }> = [];
 const realRequest = jest.requireActual('corsair/http').request as (
 	...a: unknown[]
 ) => Promise<unknown>;
@@ -19,7 +22,13 @@ jest.mock('corsair/http', () => ({
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
-	logEventFromContext: async () => undefined,
+	logEventFromContext: async (
+		_ctx: unknown,
+		event: string,
+		payload: unknown,
+	) => {
+		loggedEvents.push({ event, payload });
+	},
 }));
 
 import { PushbulletAPIError } from './client';
@@ -53,6 +62,7 @@ function lastCall(): RequestOptions {
 
 beforeEach(() => {
 	requestMock.mockReset();
+	loggedEvents.length = 0;
 	requestMock.mockResolvedValue({
 		iden: 'ujx1',
 		pushes: [],
@@ -241,6 +251,80 @@ describe('deleteAll cache reconciliation', () => {
 		} finally {
 			warn.mockRestore();
 		}
+	});
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Regressions from review round 2.
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('update cache preservation', () => {
+	it('caches the full updated push, not just the mutable fields', async () => {
+		const upserts: Array<Record<string, unknown>> = [];
+		const ctx = {
+			key: 'o.testtoken',
+			options: {},
+			db: {
+				pushes: {
+					upsertByEntityId: async (
+						_id: string,
+						data: Record<string, unknown>,
+					) => {
+						upserts.push(data);
+					},
+				},
+			},
+		} as never;
+
+		requestMock.mockResolvedValue({
+			iden: 'ujx1',
+			type: 'note',
+			title: 'kept title',
+			body: 'kept body',
+			url: 'https://example.test',
+			dismissed: true,
+			active: true,
+			direction: 'self',
+			created: 1_700_000_000,
+		});
+		await Pushes.update(ctx, { iden: 'ujx1', dismissed: true });
+
+		expect(upserts).toHaveLength(1);
+		// upsertByEntityId replaces the stored record rather than merging
+		// into it, so a partial write would have wiped the cached title,
+		// body and url even though the update response still carries them.
+		expect(upserts[0]).toMatchObject({
+			id: 'ujx1',
+			type: 'note',
+			title: 'kept title',
+			body: 'kept body',
+			url: 'https://example.test',
+			dismissed: true,
+			direction: 'self',
+			created: 1_700_000_000,
+		});
+	});
+});
+
+describe('event log privacy', () => {
+	it('logs push and chat identifiers, not content or emails', async () => {
+		requestMock.mockResolvedValue({ iden: 'ujx1', type: 'note' });
+		await Pushes.create(makeCtx(), {
+			type: 'note',
+			title: 'secret title',
+			body: 'secret body',
+			email: 'target@example.test',
+		});
+		await Chats.create(makeCtx(), { email: 'friend@example.test' });
+
+		const pushEvent = loggedEvents.find(
+			(e) => e.event === 'pushbullet.pushes.create',
+		);
+		const chatEvent = loggedEvents.find(
+			(e) => e.event === 'pushbullet.chats.create',
+		);
+		expect(pushEvent?.payload).toEqual({ iden: 'ujx1', type: 'note' });
+		expect(chatEvent?.payload).toEqual({ iden: 'ujx1' });
 	});
 });
 

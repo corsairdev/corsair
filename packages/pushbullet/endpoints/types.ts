@@ -118,7 +118,17 @@ const PushesCreateInputSchema = z
 	})
 	.refine((v) => v.type !== 'file' || Boolean(v.file_url && v.file_name), {
 		message: 'A file push requires file_url and file_name',
-	});
+	})
+	.refine((v) => v.type !== 'file' || Boolean(v.file_type), {
+		message: 'A file push requires file_type',
+	})
+	.refine(
+		(v) =>
+			[v.device_iden, v.email, v.channel_tag, v.client_iden].filter(
+				(target) => target !== undefined,
+			).length <= 1,
+		{ message: 'A push targets at most one recipient' },
+	);
 
 const PushesListInputSchema = z.object({
 	/** Unix seconds; returns only pushes modified after this time. */
