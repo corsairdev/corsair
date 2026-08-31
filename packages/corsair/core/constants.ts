@@ -67,10 +67,10 @@ export const BaseProviders = [
 	'bart',
 	'basecamp',
 	'baselinker',
-  'basin',
-  'beaconstac',
-  'beeminder',
-  'bettercontact',
+	'basin',
+	'beaconstac',
+	'beeminder',
+	'bettercontact',
 	'betterproposals',
 	'betterstack',
 	'bigdatacloud',
@@ -300,10 +300,10 @@ export const ProviderDisplayNames = {
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
-    basin: 'Basin',
-    beaconstac: 'Beaconstac',
-    beeminder: 'Beeminder',
-    bettercontact: 'BetterContact',
+	basin: 'Basin',
+	beaconstac: 'Beaconstac',
+	beeminder: 'Beeminder',
+	bettercontact: 'BetterContact',
 	betterproposals: 'Better Proposals',
 	betterstack: 'Better Stack',
 	bigdatacloud: 'BigDataCloud',
@@ -541,11 +541,11 @@ export type AllProviders =
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
-  | 'basin'
-  | 'beaconstac'
-  | 'beeminder'
-  | 'bettercontact'
-  | 'betterproposals'
+	| 'basin'
+	| 'beaconstac'
+	| 'beeminder'
+	| 'bettercontact'
+	| 'betterproposals'
 	| 'betterproposals'
 	| 'betterstack'
 	| 'bigdatacloud'
