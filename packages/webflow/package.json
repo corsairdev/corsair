@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && tsc --build --force && tsup",
+    "build": "rimraf dist && tsc --build --force && tsup",
     "test": "jest --config jest.config.json",
     "test:live": "jest --config jest.config.json --testPathIgnorePatterns=/node_modules/ --testPathPattern=live.test",
     "typecheck": "tsc --noEmit"
