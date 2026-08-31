@@ -71,6 +71,7 @@ export const BaseProviders = [
 	'beaconstac',
 	'beeminder',
 	'bettercontact',
+	'betterproposals',
 	'betterstack',
 	'bigdatacloud',
 	'bigmailer',
@@ -91,6 +92,7 @@ export const BaseProviders = [
 	'boxhero',
 	'brandfetch',
 	'browseai',
+	'browserless',
 	'bugsnag',
 	'cal',
 	'calendly',
@@ -106,6 +108,7 @@ export const BaseProviders = [
 	'collegefootballdata',
 	'confluence',
 	'contentfulgraphql',
+	'contextsevenmcp',
 	'crowterminal',
 	'cursor',
 	'customgpt',
@@ -300,6 +303,7 @@ export const ProviderDisplayNames = {
 	beaconstac: 'Beaconstac',
 	beeminder: 'Beeminder',
 	bettercontact: 'BetterContact',
+	betterproposals: 'Better Proposals',
 	betterstack: 'Better Stack',
 	bigdatacloud: 'BigDataCloud',
 	bigmailer: 'BigMailer',
@@ -320,6 +324,7 @@ export const ProviderDisplayNames = {
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
 	browseai: 'Browse AI',
+	browserless: 'Browserless',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
@@ -335,6 +340,7 @@ export const ProviderDisplayNames = {
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	contentfulgraphql: 'Contentful GraphQL',
+	contextsevenmcp: 'Context7',
 	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
 	customgpt: 'CustomGPT',
@@ -537,6 +543,7 @@ export type AllProviders =
 	| 'beaconstac'
 	| 'beeminder'
 	| 'bettercontact'
+	| 'betterproposals'
 	| 'betterstack'
 	| 'bigdatacloud'
 	| 'bigmailer'
@@ -557,6 +564,7 @@ export type AllProviders =
 	| 'boxhero'
 	| 'brandfetch'
 	| 'browseai'
+	| 'browserless'
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
@@ -572,6 +580,7 @@ export type AllProviders =
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'contentfulgraphql'
+	| 'contextsevenmcp'
 	| 'crowterminal'
 	| 'cursor'
 	| 'customgpt'
