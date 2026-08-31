@@ -11,8 +11,7 @@ import { makeNewsApiRequest } from './client';
 import type {
 	GetEverythingResponse,
 	GetTopHeadlinesResponse,
-	GetV1ArticlesResponse,
-	SourcesListResponse,
+	SourcesGetResponse,
 } from './endpoints/types';
 import { NewsApiEndpointOutputSchemas } from './endpoints/types';
 
@@ -36,7 +35,7 @@ describeLive('News API live checks', () => {
 		).toBe(true);
 	});
 
-	it('articlesGetTopHeadlines returns the declared shape', async () => {
+	it('headlinesGetTop returns the declared shape', async () => {
 		const response = await makeNewsApiRequest<GetTopHeadlinesResponse>(
 			'v2/top-headlines',
 			key,
@@ -44,32 +43,19 @@ describeLive('News API live checks', () => {
 		);
 
 		expect(
-			NewsApiEndpointOutputSchemas.articlesGetTopHeadlines.safeParse(response)
-				.success,
+			NewsApiEndpointOutputSchemas.headlinesGetTop.safeParse(response).success,
 		).toBe(true);
 	});
 
-	it('sourcesList returns the declared shape', async () => {
-		const response = await makeNewsApiRequest<SourcesListResponse>(
+	it('sourcesGet returns the declared shape', async () => {
+		const response = await makeNewsApiRequest<SourcesGetResponse>(
 			'v2/top-headlines/sources',
 			key,
 			{ query: { language: 'en' } },
 		);
 
 		expect(
-			NewsApiEndpointOutputSchemas.sourcesList.safeParse(response).success,
-		).toBe(true);
-	});
-
-	it('articlesGetV1 returns the declared shape for a known source', async () => {
-		const response = await makeNewsApiRequest<GetV1ArticlesResponse>(
-			'v1/articles',
-			key,
-			{ query: { source: 'techcrunch' } },
-		);
-
-		expect(
-			NewsApiEndpointOutputSchemas.articlesGetV1.safeParse(response).success,
+			NewsApiEndpointOutputSchemas.sourcesGet.safeParse(response).success,
 		).toBe(true);
 	});
 });

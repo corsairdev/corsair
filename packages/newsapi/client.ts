@@ -7,6 +7,8 @@ export class NewsApiError extends Error {
 		public readonly code?: string,
 		public readonly status?: number,
 		public readonly body?: unknown,
+		/** Milliseconds to wait before retrying, from the provider's Retry-After header. */
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'NewsApiError';
@@ -52,6 +54,7 @@ export async function makeNewsApiRequest<T>(
 				body?.code,
 				error.status,
 				error.body,
+				error.retryAfter,
 			);
 		}
 		if (error instanceof Error) {

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
-import { Articles, Sources } from './endpoints';
+import { Articles, Headlines, Sources } from './endpoints';
 import { NewsApiEndpointInputSchemas } from './endpoints/types';
 import type { NewsApiContext } from './index';
 
@@ -78,14 +78,14 @@ describe('NewsApi endpoints routing & event logging', () => {
 		);
 	});
 
-	it('articles.getTopHeadlines issues GET /v2/top-headlines and caches articles', async () => {
+	it('headlines.getTop issues GET /v2/top-headlines and caches articles', async () => {
 		mockMakeNewsApiRequest.mockResolvedValueOnce({
 			status: 'ok',
 			totalResults: 1,
 			articles: [{ url: 'https://example.com/b', title: 'B' }],
 		} as any);
 
-		const result = await Articles.getTopHeadlines(ctx, {
+		const result = await Headlines.getTop(ctx, {
 			country: 'us',
 			category: 'technology',
 		});
@@ -105,41 +105,21 @@ describe('NewsApi endpoints routing & event logging', () => {
 			'https://example.com/b',
 			expect.objectContaining({ url: 'https://example.com/b' }),
 		);
-	});
-
-	it('articles.getV1 issues GET /v1/articles for the legacy source-based lookup', async () => {
-		mockMakeNewsApiRequest.mockResolvedValueOnce({
-			status: 'ok',
-			source: 'techcrunch',
-			sortBy: 'top',
-			articles: [{ title: 'Legacy article' }],
-		} as any);
-
-		const result = await Articles.getV1(ctx, { source: 'techcrunch' });
-
-		expect(result.source).toBe('techcrunch');
-		expect(mockMakeNewsApiRequest).toHaveBeenCalledWith(
-			'v1/articles',
-			'test-api-key',
-			expect.objectContaining({
-				query: expect.objectContaining({ source: 'techcrunch' }),
-			}),
-		);
 		expect(mockLogEventFromContext).toHaveBeenCalledWith(
 			ctx,
-			'newsapi.articles.getV1',
+			'newsapi.headlines.getTop',
 			expect.any(Object),
 			'completed',
 		);
 	});
 
-	it('sources.list issues GET /v2/top-headlines/sources and caches by id', async () => {
+	it('sources.get issues GET /v2/top-headlines/sources and caches by id', async () => {
 		mockMakeNewsApiRequest.mockResolvedValueOnce({
 			status: 'ok',
 			sources: [{ id: 'bbc-news', name: 'BBC News', category: 'general' }],
 		} as any);
 
-		const result = await Sources.list(ctx, { category: 'general' });
+		const result = await Sources.get(ctx, { category: 'general' });
 
 		expect(result.sources).toHaveLength(1);
 		expect(mockMakeNewsApiRequest).toHaveBeenCalledWith(
@@ -155,19 +135,19 @@ describe('NewsApi endpoints routing & event logging', () => {
 		);
 		expect(mockLogEventFromContext).toHaveBeenCalledWith(
 			ctx,
-			'newsapi.sources.list',
+			'newsapi.sources.get',
 			expect.any(Object),
 			'completed',
 		);
 	});
 
-	it('sources.list works with no input at all', async () => {
+	it('sources.get works with no input at all', async () => {
 		mockMakeNewsApiRequest.mockResolvedValueOnce({
 			status: 'ok',
 			sources: [],
 		} as any);
 
-		const result = await Sources.list(ctx, undefined);
+		const result = await Sources.get(ctx, undefined);
 
 		expect(result.sources).toEqual([]);
 		expect(mockMakeNewsApiRequest).toHaveBeenCalledWith(
@@ -215,24 +195,17 @@ describe('NewsApi input validation', () => {
 	});
 
 	it('rejects top-headlines queries that mix sources with country', () => {
-		const result =
-			NewsApiEndpointInputSchemas.articlesGetTopHeadlines.safeParse({
-				sources: 'bbc-news',
-				country: 'us',
-			});
+		const result = NewsApiEndpointInputSchemas.headlinesGetTop.safeParse({
+			sources: 'bbc-news',
+			country: 'us',
+		});
 		expect(result.success).toBe(false);
 	});
 
 	it('accepts top-headlines queries with sources alone', () => {
-		const result =
-			NewsApiEndpointInputSchemas.articlesGetTopHeadlines.safeParse({
-				sources: 'bbc-news',
-			});
+		const result = NewsApiEndpointInputSchemas.headlinesGetTop.safeParse({
+			sources: 'bbc-news',
+		});
 		expect(result.success).toBe(true);
-	});
-
-	it('requires a source for the legacy v1 articles endpoint', () => {
-		const result = NewsApiEndpointInputSchemas.articlesGetV1.safeParse({});
-		expect(result.success).toBe(false);
 	});
 });

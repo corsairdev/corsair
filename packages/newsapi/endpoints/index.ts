@@ -1,14 +1,17 @@
-import { getEverything, getTopHeadlines, getV1 } from './articles';
-import { list } from './sources';
+import { getEverything } from './articles';
+import { getTop } from './headlines';
+import { get } from './sources';
 
 export const Articles = {
 	getEverything,
-	getTopHeadlines,
-	getV1,
+};
+
+export const Headlines = {
+	getTop,
 };
 
 export const Sources = {
-	list,
+	get,
 };
 
 export * from './types';

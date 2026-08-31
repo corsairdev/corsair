@@ -13,6 +13,16 @@ function codeOf(error: Error): string | undefined {
 	return undefined;
 }
 
+// makeNewsApiRequest always wraps ApiError into NewsApiError before it
+// reaches error-handlers.ts, so NewsApiError.retryAfter (already in ms) is
+// the value actually populated here; the ApiError check is a defensive
+// fallback for callers that hit corsair/http directly.
+function retryAfterOf(error: Error): number | undefined {
+	if (error instanceof NewsApiError) return error.retryAfter;
+	if (error instanceof ApiError) return error.retryAfter;
+	return undefined;
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error) => {
@@ -22,13 +32,9 @@ export const errorHandlers = {
 			return code === 'rateLimited' || code === 'apiKeyExhausted';
 		},
 		handler: async (error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter * 1000;
-			}
 			return {
 				maxRetries: 3,
-				headersRetryAfterMs: retryAfterMs,
+				headersRetryAfterMs: retryAfterOf(error),
 			};
 		},
 	},
@@ -79,7 +85,7 @@ export const errorHandlers = {
 			return status !== undefined && status >= 500;
 		},
 		handler: async () => {
-			return { maxRetries: 2, backoffMs: 1000 };
+			return { maxRetries: 2, retryStrategy: 'linear_1s' };
 		},
 	},
 	DEFAULT: {

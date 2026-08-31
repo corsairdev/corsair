@@ -12,7 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Articles, Sources } from './endpoints';
+import { Articles, Headlines, Sources } from './endpoints';
 import type {
 	NewsApiEndpointInputs,
 	NewsApiEndpointOutputs,
@@ -26,9 +26,9 @@ import { NewsApiSchema } from './schema';
 
 /**
  * News API is a read-only REST API for searching and retrieving live
- * articles: full-text search across 150,000+ sources, live top headlines,
- * and source lookups. It has no write surface and no webhook delivery
- * mechanism.
+ * articles: full-text search across 150,000+ sources (articles.getEverything),
+ * live top headlines (headlines.getTop), and source lookups (sources.get).
+ * It has no write surface and no webhook delivery mechanism.
  *
  * @see https://newsapi.org/docs
  */
@@ -65,19 +65,19 @@ type NewsApiEndpoint<K extends keyof NewsApiEndpointOutputs> = CorsairEndpoint<
 
 export type NewsApiEndpoints = {
 	articlesGetEverything: NewsApiEndpoint<'articlesGetEverything'>;
-	articlesGetTopHeadlines: NewsApiEndpoint<'articlesGetTopHeadlines'>;
-	articlesGetV1: NewsApiEndpoint<'articlesGetV1'>;
-	sourcesList: NewsApiEndpoint<'sourcesList'>;
+	headlinesGetTop: NewsApiEndpoint<'headlinesGetTop'>;
+	sourcesGet: NewsApiEndpoint<'sourcesGet'>;
 };
 
 const newsApiEndpointsNested = {
 	articles: {
 		getEverything: Articles.getEverything,
-		getTopHeadlines: Articles.getTopHeadlines,
-		getV1: Articles.getV1,
+	},
+	headlines: {
+		getTop: Headlines.getTop,
 	},
 	sources: {
-		list: Sources.list,
+		get: Sources.get,
 	},
 } as const;
 
@@ -86,17 +86,13 @@ export const newsApiEndpointSchemas = {
 		input: NewsApiEndpointInputSchemas.articlesGetEverything,
 		output: NewsApiEndpointOutputSchemas.articlesGetEverything,
 	},
-	'articles.getTopHeadlines': {
-		input: NewsApiEndpointInputSchemas.articlesGetTopHeadlines,
-		output: NewsApiEndpointOutputSchemas.articlesGetTopHeadlines,
+	'headlines.getTop': {
+		input: NewsApiEndpointInputSchemas.headlinesGetTop,
+		output: NewsApiEndpointOutputSchemas.headlinesGetTop,
 	},
-	'articles.getV1': {
-		input: NewsApiEndpointInputSchemas.articlesGetV1,
-		output: NewsApiEndpointOutputSchemas.articlesGetV1,
-	},
-	'sources.list': {
-		input: NewsApiEndpointInputSchemas.sourcesList,
-		output: NewsApiEndpointOutputSchemas.sourcesList,
+	'sources.get': {
+		input: NewsApiEndpointInputSchemas.sourcesGet,
+		output: NewsApiEndpointOutputSchemas.sourcesGet,
 	},
 } as const;
 
@@ -113,17 +109,12 @@ const newsApiEndpointMeta = {
 		description:
 			'Search every article published by over 150,000 sources; requires at least one of q, sources, language, or domains',
 	},
-	'articles.getTopHeadlines': {
+	'headlines.getTop': {
 		riskLevel: 'read',
 		description:
 			'Get live top and breaking headlines filtered by country, category, sources, or keywords',
 	},
-	'articles.getV1': {
-		riskLevel: 'read',
-		description:
-			'Get live article metadata from a single source via the legacy v1 API',
-	},
-	'sources.list': {
+	'sources.get': {
 		riskLevel: 'read',
 		description:
 			'Get available news sources filtered by category, language, or country',
@@ -200,14 +191,12 @@ export function newsapi<const T extends NewsApiPluginOptions>(
 export type {
 	Article,
 	ArticlesGetEverythingInput,
-	ArticlesGetTopHeadlinesInput,
-	ArticlesGetV1Input,
 	GetEverythingResponse,
 	GetTopHeadlinesResponse,
-	GetV1ArticlesResponse,
+	HeadlinesGetTopInput,
 	NewsApiEndpointInputs,
 	NewsApiEndpointOutputs,
 	Source,
-	SourcesListInput,
-	SourcesListResponse,
+	SourcesGetInput,
+	SourcesGetResponse,
 } from './endpoints/types';

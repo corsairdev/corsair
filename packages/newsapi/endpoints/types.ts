@@ -45,7 +45,7 @@ const ArticlesGetEverythingInputSchema = z
 
 // News API rejects `sources` combined with `country` or `category` on
 // top-headlines — enforced client-side for the same reason as above.
-const ArticlesGetTopHeadlinesInputSchema = z
+const HeadlinesGetTopInputSchema = z
 	.object({
 		country: z.string().length(2).optional(),
 		category: z.enum(CATEGORY_VALUES).optional(),
@@ -58,12 +58,7 @@ const ArticlesGetTopHeadlinesInputSchema = z
 		message: 'sources cannot be combined with country or category',
 	});
 
-const ArticlesGetV1InputSchema = z.object({
-	source: z.string(),
-	sortBy: z.enum(['top', 'latest', 'popular']).optional(),
-});
-
-const SourcesListInputSchema = z
+const SourcesGetInputSchema = z
 	.object({
 		category: z.enum(CATEGORY_VALUES).optional(),
 		language: z.string().optional(),
@@ -74,24 +69,19 @@ const SourcesListInputSchema = z
 export type ArticlesGetEverythingInput = z.infer<
 	typeof ArticlesGetEverythingInputSchema
 >;
-export type ArticlesGetTopHeadlinesInput = z.infer<
-	typeof ArticlesGetTopHeadlinesInputSchema
->;
-export type ArticlesGetV1Input = z.infer<typeof ArticlesGetV1InputSchema>;
-export type SourcesListInput = z.infer<typeof SourcesListInputSchema>;
+export type HeadlinesGetTopInput = z.infer<typeof HeadlinesGetTopInputSchema>;
+export type SourcesGetInput = z.infer<typeof SourcesGetInputSchema>;
 
 export const NewsApiEndpointInputSchemas = {
 	articlesGetEverything: ArticlesGetEverythingInputSchema,
-	articlesGetTopHeadlines: ArticlesGetTopHeadlinesInputSchema,
-	articlesGetV1: ArticlesGetV1InputSchema,
-	sourcesList: SourcesListInputSchema,
+	headlinesGetTop: HeadlinesGetTopInputSchema,
+	sourcesGet: SourcesGetInputSchema,
 } as const;
 
 export type NewsApiEndpointInputs = {
 	articlesGetEverything: ArticlesGetEverythingInput;
-	articlesGetTopHeadlines: ArticlesGetTopHeadlinesInput;
-	articlesGetV1: ArticlesGetV1Input;
-	sourcesList: SourcesListInput;
+	headlinesGetTop: HeadlinesGetTopInput;
+	sourcesGet: SourcesGetInput;
 };
 
 const ArticleSchema = z
@@ -120,26 +110,6 @@ const ArticlesResponseSchema = z
 	})
 	.loose();
 
-const V1ArticleSchema = z
-	.object({
-		author: z.string().nullable().optional(),
-		title: z.string().optional(),
-		description: z.string().nullable().optional(),
-		url: z.string().optional(),
-		urlToImage: z.string().nullable().optional(),
-		publishedAt: z.string().optional(),
-	})
-	.loose();
-
-const V1ArticlesResponseSchema = z
-	.object({
-		status: z.string(),
-		source: z.string().optional(),
-		sortBy: z.string().optional(),
-		articles: z.array(V1ArticleSchema),
-	})
-	.loose();
-
 const SourceSchema = z
 	.object({
 		id: z.string(),
@@ -161,9 +131,8 @@ const SourcesResponseSchema = z
 
 export const NewsApiEndpointOutputSchemas = {
 	articlesGetEverything: ArticlesResponseSchema,
-	articlesGetTopHeadlines: ArticlesResponseSchema,
-	articlesGetV1: V1ArticlesResponseSchema,
-	sourcesList: SourcesResponseSchema,
+	headlinesGetTop: ArticlesResponseSchema,
+	sourcesGet: SourcesResponseSchema,
 } as const;
 
 export type NewsApiEndpointOutputs = {
@@ -178,11 +147,8 @@ export type GetEverythingResponse = z.infer<
 	typeof NewsApiEndpointOutputSchemas.articlesGetEverything
 >;
 export type GetTopHeadlinesResponse = z.infer<
-	typeof NewsApiEndpointOutputSchemas.articlesGetTopHeadlines
+	typeof NewsApiEndpointOutputSchemas.headlinesGetTop
 >;
-export type GetV1ArticlesResponse = z.infer<
-	typeof NewsApiEndpointOutputSchemas.articlesGetV1
->;
-export type SourcesListResponse = z.infer<
-	typeof NewsApiEndpointOutputSchemas.sourcesList
+export type SourcesGetResponse = z.infer<
+	typeof NewsApiEndpointOutputSchemas.sourcesGet
 >;

@@ -11,31 +11,23 @@ function toCsv(value: string | string[] | undefined): string | undefined {
 	return Array.isArray(value) ? value.join(',') : value;
 }
 
-export const getEverything: NewsApiEndpoints['articlesGetEverything'] = async (
+export const getTop: NewsApiEndpoints['headlinesGetTop'] = async (
 	ctx,
 	rawInput,
 ) => {
-	const input =
-		NewsApiEndpointInputSchemas.articlesGetEverything.parse(rawInput);
+	const input = NewsApiEndpointInputSchemas.headlinesGetTop.parse(rawInput);
 
-	const raw = await makeNewsApiRequest('v2/everything', ctx.key, {
+	const raw = await makeNewsApiRequest('v2/top-headlines', ctx.key, {
 		query: {
-			q: input.q,
-			qInTitle: input.qInTitle,
-			searchIn: input.searchIn,
+			country: input.country,
+			category: input.category,
 			sources: toCsv(input.sources),
-			domains: toCsv(input.domains),
-			excludeDomains: toCsv(input.excludeDomains),
-			from: input.from,
-			to: input.to,
-			language: input.language,
-			sortBy: input.sortBy,
+			q: input.q,
 			pageSize: input.pageSize,
 			page: input.page,
 		},
 	});
-	const response =
-		NewsApiEndpointOutputSchemas.articlesGetEverything.parse(raw);
+	const response = NewsApiEndpointOutputSchemas.headlinesGetTop.parse(raw);
 
 	if (ctx.db.articles) {
 		try {
@@ -45,13 +37,13 @@ export const getEverything: NewsApiEndpoints['articlesGetEverything'] = async (
 				}
 			}
 		} catch (error) {
-			console.warn('Failed to save articles to database:', error);
+			console.warn('Failed to save top headlines to database:', error);
 		}
 	}
 
 	await logEventFromContext(
 		ctx,
-		'newsapi.articles.getEverything',
+		'newsapi.headlines.getTop',
 		{ ...input },
 		'completed',
 	);

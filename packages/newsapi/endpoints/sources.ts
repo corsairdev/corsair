@@ -6,8 +6,8 @@ import {
 	NewsApiEndpointOutputSchemas,
 } from './types';
 
-export const list: NewsApiEndpoints['sourcesList'] = async (ctx, rawInput) => {
-	const input = NewsApiEndpointInputSchemas.sourcesList.parse(rawInput);
+export const get: NewsApiEndpoints['sourcesGet'] = async (ctx, rawInput) => {
+	const input = NewsApiEndpointInputSchemas.sourcesGet.parse(rawInput);
 
 	const raw = await makeNewsApiRequest('v2/top-headlines/sources', ctx.key, {
 		query: {
@@ -16,7 +16,7 @@ export const list: NewsApiEndpoints['sourcesList'] = async (ctx, rawInput) => {
 			country: input?.country,
 		},
 	});
-	const response = NewsApiEndpointOutputSchemas.sourcesList.parse(raw);
+	const response = NewsApiEndpointOutputSchemas.sourcesGet.parse(raw);
 
 	if (ctx.db.sources) {
 		try {
@@ -30,7 +30,7 @@ export const list: NewsApiEndpoints['sourcesList'] = async (ctx, rawInput) => {
 
 	await logEventFromContext(
 		ctx,
-		'newsapi.sources.list',
+		'newsapi.sources.get',
 		{ ...input },
 		'completed',
 	);
