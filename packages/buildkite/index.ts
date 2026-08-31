@@ -1,20 +1,18 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { BuildkiteEndpointsImpl as Endpoints } from './endpoints';
 import type {
 	BuildkiteEndpointInputs,
@@ -26,18 +24,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BuildkiteSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveBuildkiteOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchBuildkiteTenantWebhook } from './webhooks/tenant-matcher';
-import type { BuildkiteWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type BuildkitePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalBuildkitePlugin['hooks'];
-	webhookHooks?: InternalBuildkitePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof buildkiteEndpointsNested>;
 };
@@ -69,29 +60,12 @@ export type BuildkiteEndpoints = {
 	listPipelineAgents: BuildkiteEndpoint<'listPipelineAgents'>;
 };
 
-type BuildkiteWebhook<
-	K extends keyof BuildkiteWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<BuildkiteContext, TEvent, BuildkiteWebhookOutputs[K]>;
-
-export type BuildkiteWebhooks = {
-	example: BuildkiteWebhook<'example', ExampleEvent>;
-};
-
-export type BuildkiteBoundWebhooks = BindWebhooks<BuildkiteWebhooks>;
-
 const buildkiteEndpointsNested = {
 	getCurrentAccessToken: Endpoints.getCurrentAccessToken,
 	getMeta: Endpoints.getMeta,
 	getUser: Endpoints.getUser,
 	listOrganizations: Endpoints.listOrganizations,
 	listPipelineAgents: Endpoints.listPipelineAgents,
-} as const;
-
-const buildkiteWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
 } as const;
 
 export const buildkiteEndpointSchemas = {
@@ -119,43 +93,33 @@ export const buildkiteEndpointSchemas = {
 	typeof buildkiteEndpointsNested
 >;
 
-const buildkiteWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof buildkiteWebhooksNested
->;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const buildkiteEndpointMeta = {
 	getCurrentAccessToken: {
 		riskLevel: 'read',
 		description:
-			'Retrieve details about the API access token used to authenticate the request.',
+			'Retrieve the authenticated API access token details. Use when you need to confirm the validity and scopes of the current API token.',
 	},
 	getMeta: {
 		riskLevel: 'read',
 		description:
-			'Retrieve Buildkite metadata, including current webhook IP information.',
+			'Retrieve metadata about the Buildkite API. Use when you need to fetch webhook IP addresses for firewall or security configurations.',
 	},
 	getUser: {
 		riskLevel: 'read',
 		description:
-			'Retrieve details about the currently authenticated Buildkite user.',
+			'Retrieve details about the current authenticated user. Use when you need to get information about the user account that owns the API token.',
 	},
 	listOrganizations: {
 		riskLevel: 'read',
 		description:
-			'List organizations accessible to the authenticated Buildkite user/token.',
+			'List all organizations the current user is a member of. Use when you need to discover available organizations or get organization slugs for other operations.',
 	},
 	listPipelineAgents: {
 		riskLevel: 'read',
 		description:
-			'List connected and stopping agents for a Buildkite organization.',
+			'List connected agents for an organization. Use after confirming the organization slug. Supports optional filtering and pagination.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof buildkiteEndpointsNested
@@ -163,10 +127,7 @@ const buildkiteEndpointMeta = {
 
 export const buildkiteAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -175,7 +136,7 @@ export type BaseBuildkitePlugin<T extends BuildkitePluginOptions> =
 		'buildkite',
 		typeof BuildkiteSchema,
 		typeof buildkiteEndpointsNested,
-		typeof buildkiteWebhooksNested,
+		{},
 		T,
 		typeof defaultAuthType
 	>;
@@ -200,57 +161,39 @@ export function buildkite<const T extends BuildkitePluginOptions>(
 		schema: BuildkiteSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: buildkiteEndpointsNested,
-		webhooks: buildkiteWebhooksNested,
+		webhooks: {},
 		endpointMeta: buildkiteEndpointMeta,
 		endpointSchemas: buildkiteEndpointSchemas,
-		webhookSchemas: buildkiteWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-buildkite-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchBuildkiteTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveBuildkiteOAuthWebhookTenantLink,
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: BuildkiteKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('buildkite', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('buildkite', 'api_key');
 		},
 	} satisfies InternalBuildkitePlugin;
 }
 
+export {
+	BuildkiteAPIError,
+	BuildkiteRateLimitError,
+	makeBuildkiteRequest,
+} from './client';
 export type {
 	BuildkiteEndpointInputs,
 	BuildkiteEndpointOutputs,
 } from './endpoints/types';
-export type {
-	BuildkiteWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';

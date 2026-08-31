@@ -5,15 +5,19 @@ import type { BuildkiteEndpointOutputs } from './types';
 
 export const listPipelineAgents: BuildkiteEndpoints['listPipelineAgents'] =
 	async (ctx, input) => {
-		const query: Record<string, string | number> = {};
-		if (input.page !== undefined) query.page = input.page;
-		if (input.perPage !== undefined) query.per_page = input.perPage;
-
+		const orgSlug = encodeURIComponent(input.orgSlug);
 		const response = await makeBuildkiteRequest<
 			BuildkiteEndpointOutputs['listPipelineAgents']
-		>(`/v2/organizations/${input.orgSlug}/agents`, ctx.key, {
+		>(`/v2/organizations/${orgSlug}/agents`, ctx.key, {
 			method: 'GET',
-			query,
+			query: {
+				name: input.name,
+				hostname: input.hostname,
+				version: input.version,
+				cluster_queue_id: input.cluster_queue_id,
+				page: input.page,
+				per_page: input.per_page,
+			},
 		});
 
 		await logEventFromContext(

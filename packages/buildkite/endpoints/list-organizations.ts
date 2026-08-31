@@ -5,13 +5,15 @@ import type { BuildkiteEndpointOutputs } from './types';
 
 export const listOrganizations: BuildkiteEndpoints['listOrganizations'] =
 	async (ctx, input) => {
-		const query: Record<string, string | number> = {};
-		if (input.page !== undefined) query.page = input.page;
-		if (input.perPage !== undefined) query.per_page = input.perPage;
-
 		const response = await makeBuildkiteRequest<
 			BuildkiteEndpointOutputs['listOrganizations']
-		>('/v2/organizations', ctx.key, { method: 'GET', query });
+		>('/v2/organizations', ctx.key, {
+			method: 'GET',
+			query: {
+				page: input.page,
+				per_page: input.per_page,
+			},
+		});
 
 		await logEventFromContext(
 			ctx,

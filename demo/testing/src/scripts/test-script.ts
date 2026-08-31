@@ -19,37 +19,10 @@ async function setInstagramCredentials() {
 }
 
 const main = async () => {
-	// Buildkite tests
-	if (process.env.BUILDKITE_API_TOKEN) {
-		const meta = await corsair.buildkite.api.getMeta({});
-		console.log('Buildkite Meta:', meta);
-
-		const token = await corsair.buildkite.api.getCurrentAccessToken({});
-		console.log('Buildkite Token:', token);
-
-		const user = await corsair.buildkite.api.getUser({});
-		console.log('Buildkite User:', user);
-
-		const orgs = await corsair.buildkite.api.listOrganizations({ perPage: 1 });
-		console.log('Buildkite Orgs:', orgs);
-
-		if (orgs.length > 0 && orgs[0].slug) {
-			const agents = await corsair.buildkite.api.listPipelineAgents({
-				orgSlug: orgs[0].slug,
-				perPage: 1,
-			});
-			console.log('Buildkite Agents:', agents);
-		}
-	} else {
-		console.log(
-			'Skipping Buildkite tests because BUILDKITE_API_TOKEN is not set.',
-		);
-	}
-
-	// const res = await corsair.slack.api.messages.post({
-	// 	channel: 'general',
-	// 	text: 'hello',
-	// });
+	const res = await corsair.slack.api.messages.post({
+		channel: 'general',
+		text: 'hello',
+	});
 };
 
 main().catch((err) => {

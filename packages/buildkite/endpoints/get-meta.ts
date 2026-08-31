@@ -6,11 +6,7 @@ import type { BuildkiteEndpointOutputs } from './types';
 export const getMeta: BuildkiteEndpoints['getMeta'] = async (ctx, input) => {
 	const response = await makeBuildkiteRequest<
 		BuildkiteEndpointOutputs['getMeta']
-	>(
-		'/v2/meta',
-		undefined, // Unauthenticated endpoint
-		{ method: 'GET' },
-	);
+	>('/v2/meta', undefined, { method: 'GET' });
 
 	await logEventFromContext(
 		ctx,
