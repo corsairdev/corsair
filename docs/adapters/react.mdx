@@ -1,6 +1,6 @@
 ---
 title: React hooks
-description: createCorsairReactClient returns typed React hooks over the management API, including useTenants, useConnectionStatus, and useOAuthCallback.
+description: Typed React hooks over the management API (useTenants, useConnectionStatus, …), plus Corsair Connect — <CorsairProvider> opens a connect dialog and resumes the failed work when a tenant isn't connected.
 ---
 
 `createCorsairReactClient({ baseURL })` returns a set of typed React hooks built on top of [`createCorsairClient`](/adapters/client). One factory call per app, then use the returned hooks anywhere in your component tree.
@@ -20,6 +20,75 @@ export const {
 ```
 
 React 18+ is a peer dependency. If you aren't on React, use the [vanilla client](/adapters/client).
+
+## Corsair Connect
+
+The hooks in this client give you the pieces — read status, mint a link, route the user. **Corsair Connect** wires them together: wrap your app once, and any Corsair call that fails because the tenant hasn't connected a plugin opens a connect dialog and resumes the work once they're done. No per-call code at the call sites.
+
+Wrap the app at the root and point `onConnected` at a refresh so reads that failed re-run against the now-connected account:
+
+```tsx app/providers.tsx
+"use client";
+import { CorsairProvider } from "corsair/client/react";
+import { useRouter } from "next/navigation";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  return (
+    <CorsairProvider onConnected={() => router.refresh()}>
+      {children}
+    </CorsairProvider>
+  );
+}
+```
+
+`baseURL` defaults to `/api/corsair` — set it if your handler is mounted elsewhere. `appearance` is `"light"`, `"dark"`, or `"auto"` (the default, which follows the OS color scheme).
+
+### Read regions
+
+Wrap a server-rendered region that reads Corsair data in `<CorsairBoundary>`. When the render fails because the tenant must connect, the boundary opens the dialog and — once connected — retries the region instead of crashing the tree:
+
+```tsx inbox.tsx
+import { CorsairBoundary } from "corsair/client/react";
+
+<CorsairBoundary fallback={<p>Couldn't load Gmail.</p>}>
+  <Inbox />   {/* a Server Component that reads Gmail */}
+</CorsairBoundary>
+```
+
+`fallback` renders only for a genuine error or when the user dismisses the dialog; it defaults to `null`.
+
+### Mutations
+
+Wrap a mutation in `call` so it re-runs after connect. It resolves `null` if the user dismisses the dialog, and rethrows any error that isn't a pending connect:
+
+```tsx send.tsx
+"use client";
+import { useConnect } from "corsair/client/react";
+
+function SendButton() {
+  const { call } = useConnect();
+  return <button onClick={() => call(() => sendEmail())}>Send</button>;
+}
+```
+
+### Proactive connect
+
+For a plain "Connect X" button, before anything has failed, `connect(plugin)` mints a fresh link and opens the same dialog. It resolves `true` once connected:
+
+```tsx connect-slack.tsx
+"use client";
+import { useConnect } from "corsair/client/react";
+
+function ConnectSlack() {
+  const { connect } = useConnect();
+  return <button onClick={() => connect("slack")}>Connect Slack</button>;
+}
+```
+
+<Note>
+Corsair Connect is React-only — the provider, boundary, and dialog are client components. A non-React frontend still gets the server side: the failed call records a connect-request that you read at `/api/corsair/connect/request`, so you can build your own prompt or redirect to the connect link. See the [vanilla client](/adapters/client).
+</Note>
 
 ## Read hooks
 
