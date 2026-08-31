@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && tsc --build --force && tsup",
+    "build": "rimraf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=integration"
