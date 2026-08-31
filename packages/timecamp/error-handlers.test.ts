@@ -5,7 +5,11 @@
  * handlers read status and Retry-After off the *wrapper*. Matching on
  * `instanceof ApiError` here would silently never fire.
  */
-import { TIMECAMP_RATE_LIMIT_CONFIG, TimecampAPIError } from './client';
+import {
+	TIMECAMP_RATE_LIMIT_CONFIG,
+	TimecampAPIError,
+	tryGetStoredKey,
+} from './client';
 import { errorHandlers } from './error-handlers';
 
 /** Builds the error shape the client actually throws. */
@@ -18,6 +22,29 @@ function wrapped(
 	Object.assign(error, { status, retryAfter });
 	return error as Error;
 }
+
+describe('tryGetStoredKey', () => {
+	it('treats a missing DEK as "no stored key" instead of failing', async () => {
+		await expect(
+			tryGetStoredKey(async () => {
+				throw new Error('No DEK found for account');
+			}),
+		).resolves.toBeUndefined();
+	});
+
+	it('propagates any other storage failure', async () => {
+		const failure = new Error('keychain locked');
+		await expect(
+			tryGetStoredKey(async () => {
+				throw failure;
+			}),
+		).rejects.toBe(failure);
+	});
+
+	it('normalizes a null stored key to undefined', async () => {
+		await expect(tryGetStoredKey(async () => null)).resolves.toBeUndefined();
+	});
+});
 
 describe('rate limiting', () => {
 	it('matches a wrapped 429 by status, not by message text', () => {
