@@ -117,6 +117,14 @@
           {
             "group": "Reference",
             "pages": [
+              {
+                "group": "SDK",
+                "pages": [
+                  "adapters/handlers",
+                  "adapters/client",
+                  "adapters/react"
+                ]
+              },
               "concepts/api",
               "concepts/auth",
               "concepts/provisioning",

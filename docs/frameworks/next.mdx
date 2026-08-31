@@ -121,7 +121,28 @@ The read and write paths above assume a tenant has already connected GitHub. Tha
 
 <ClientReact />
 
-## Go green
+### Or let Corsair Connect drive it
+
+The hooks above are the manual flow. **Corsair Connect** is the batteries-included version — wrap the app once and a failed call opens the connect dialog and resumes. Wrap your root layout:
+
+```tsx app/providers.tsx
+"use client";
+import { CorsairProvider } from "corsair/client/react";
+import { useRouter } from "next/navigation";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  return (
+    <CorsairProvider onConnected={() => router.refresh()}>
+      {children}
+    </CorsairProvider>
+  );
+}
+```
+
+Use `<Providers>` in `app/layout.tsx`. Then a `<CorsairBoundary>` around a Server Component read, `useConnect().call` around a mutation, or `useConnect().connect` for a button each open the dialog on their own. Full API: [React hooks → Corsair Connect](/adapters/react#corsair-connect).
+
+## Start the server
 
 ```bash
 npm run dev

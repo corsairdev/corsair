@@ -56,7 +56,7 @@ import { CorsairBoundary } from "corsair/client/react";
 </CorsairBoundary>
 ```
 
-`fallback` renders only for a genuine error or when the user dismisses the dialog; it defaults to `null`.
+`fallback` renders only for a genuine error or when the user dismisses the dialog; it defaults to `null`. Like `useConnect`, `<CorsairBoundary>` reads the provider context — it must sit inside the `<CorsairProvider>` from the step above, or it throws.
 
 ### Mutations
 

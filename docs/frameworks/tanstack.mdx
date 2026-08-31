@@ -89,7 +89,27 @@ The connect UI is plain React, so use the typed [React hooks](/adapters/react) c
 
 <ClientReact />
 
-## Go green
+### Or let Corsair Connect drive it
+
+**Corsair Connect** wraps the app once so a failed call opens the connect dialog and resumes. Mount the provider in your root route; TanStack re-runs loaders through `router.invalidate()`:
+
+```tsx routes/__root.tsx
+import { CorsairProvider } from "corsair/client/react";
+import { Outlet, useRouter } from "@tanstack/react-router";
+
+function RootComponent() {
+  const router = useRouter();
+  return (
+    <CorsairProvider onConnected={() => router.invalidate()}>
+      <Outlet />
+    </CorsairProvider>
+  );
+}
+```
+
+Then `useConnect().call` around a mutation and `useConnect().connect` for a button open the dialog on their own. (The `<CorsairBoundary>` read helper is specific to Next's Server Components; in TanStack, reads live in loaders.) Full API: [React hooks → Corsair Connect](/adapters/react#corsair-connect).
+
+## Start the server
 
 ```bash
 npm run dev
