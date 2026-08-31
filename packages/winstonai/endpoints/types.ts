@@ -17,8 +17,8 @@ const SentenceScoreSchema = z
 const DetectAiTextInputSchema = z
 	.object({
 		text: z.string().optional(),
-		file: z.string().optional(),
-		website: z.string().optional(),
+		file: z.url().optional(),
+		website: z.url().optional(),
 		version: z.string().optional(),
 		sentences: z.boolean().optional(),
 		language: z.string().optional(),
@@ -52,8 +52,8 @@ export type DetectAiTextResponse = z.infer<typeof DetectAiTextResponseSchema>;
 const DetectPlagiarismInputSchema = z
 	.object({
 		text: z.string().optional(),
-		file: z.string().optional(),
-		website: z.string().optional(),
+		file: z.url().optional(),
+		website: z.url().optional(),
 		excluded_sources: z.array(z.string()).optional(),
 		language: z.string().optional(),
 		country: z.string().optional(),
@@ -133,7 +133,7 @@ export type DetectPlagiarismResponse = z.infer<
 >;
 
 const DetectAiImageInputSchema = z.object({
-	url: z.string().min(1),
+	url: z.url(),
 	version: z.string().optional(),
 });
 
@@ -176,3 +176,15 @@ export const WinstonaiEndpointOutputSchemas = {
 	detectPlagiarism: DetectPlagiarismResponseSchema,
 	detectAiImage: DetectAiImageResponseSchema,
 } as const;
+
+export function toDetectEventPayload(input: {
+	text?: string;
+	file?: string;
+	website?: string;
+	url?: string;
+}): Record<string, unknown> {
+	if (input.website) return { inputType: 'website' };
+	if (input.file) return { inputType: 'file' };
+	if (input.url) return { inputType: 'url' };
+	return { inputType: 'text', textLength: input.text?.length ?? 0 };
+}

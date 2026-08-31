@@ -1,13 +1,22 @@
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { Detect } from './endpoints';
 import {
+	toDetectEventPayload,
 	WinstonaiEndpointInputSchemas,
 	WinstonaiEndpointOutputSchemas,
 } from './endpoints/types';
 import { winstonai } from './index';
 import { WinstonaiSchema } from './schema';
 import { createContext, installFetchHarness } from './test-harness';
+
+jest.mock('corsair/core', () => {
+	const original = jest.requireActual('corsair/core');
+	return {
+		...original,
+		logEventFromContext: jest.fn().mockResolvedValue(null),
+	};
+});
 
 const AI_TEXT = `${'Human writers choose specific details. '.repeat(12)}That sentence is long enough for Winston AI.`;
 const PLAGIARISM_TEXT = `${'Original research needs citations and a point of view. '.repeat(3)}End.`;
@@ -99,6 +108,45 @@ describe('Winstonai input schemas', () => {
 			}).success,
 		).toBe(false);
 	});
+
+	it('rejects file and website values that are not URLs', () => {
+		expect(
+			WinstonaiEndpointInputSchemas.detectAiText.safeParse({
+				file: 'not-a-url',
+			}).success,
+		).toBe(false);
+		expect(
+			WinstonaiEndpointInputSchemas.detectPlagiarism.safeParse({
+				website: 'example.com/article',
+			}).success,
+		).toBe(false);
+	});
+
+	it('rejects an image url that is not a URL', () => {
+		expect(
+			WinstonaiEndpointInputSchemas.detectAiImage.safeParse({
+				url: 'not-a-url',
+			}).success,
+		).toBe(false);
+	});
+});
+
+describe('Winstonai event payloads', () => {
+	it('logs input type and text length instead of the submitted text', () => {
+		expect(toDetectEventPayload({ text: PLAGIARISM_TEXT })).toEqual({
+			inputType: 'text',
+			textLength: PLAGIARISM_TEXT.length,
+		});
+		expect(toDetectEventPayload({ website: 'https://example.com' })).toEqual({
+			inputType: 'website',
+		});
+		expect(
+			toDetectEventPayload({ file: 'https://example.com/doc.pdf' }),
+		).toEqual({ inputType: 'file' });
+		expect(
+			toDetectEventPayload({ url: 'https://example.com/cat.png' }),
+		).toEqual({ inputType: 'url' });
+	});
 });
 
 describe('Winstonai endpoints', () => {
@@ -106,6 +154,8 @@ describe('Winstonai endpoints', () => {
 
 	beforeEach(() => {
 		harness = installFetchHarness();
+		jest.mocked(logEventFromContext).mockReset();
+		jest.mocked(logEventFromContext).mockResolvedValue(null);
 	});
 
 	afterEach(() => {
@@ -213,5 +263,47 @@ describe('Winstonai endpoints', () => {
 		await expect(
 			Detect.aiText(createContext(), { text: AI_TEXT }),
 		).rejects.toThrow();
+	});
+
+	it('rejects short AI text before calling Winston', async () => {
+		await expect(
+			Detect.aiText(createContext(), { text: 'too short' }),
+		).rejects.toThrow();
+		expect(harness.requests).toHaveLength(0);
+	});
+
+	it('rejects a malformed website URL before calling Winston', async () => {
+		await expect(
+			Detect.plagiarism(createContext(), { website: 'not-a-url' }),
+		).rejects.toThrow();
+		expect(harness.requests).toHaveLength(0);
+	});
+
+	it('rejects a malformed image URL before calling Winston', async () => {
+		await expect(
+			Detect.aiImage(createContext(), { url: 'not-a-url' }),
+		).rejects.toThrow();
+		expect(harness.requests).toHaveLength(0);
+	});
+
+	it('logs plagiarism metadata without the submitted text', async () => {
+		harness.queue({
+			body: {
+				status: 200,
+				result: { score: 12 },
+			},
+		});
+
+		await Detect.plagiarism(createContext(), { text: PLAGIARISM_TEXT });
+
+		expect(logEventFromContext).toHaveBeenCalledWith(
+			expect.anything(),
+			'winstonai.detect.plagiarism',
+			{ inputType: 'text', textLength: PLAGIARISM_TEXT.length },
+			'completed',
+		);
+		const payload = jest.mocked(logEventFromContext).mock.calls[0]?.[2];
+		expect(payload).not.toHaveProperty('text');
+		expect(JSON.stringify(payload)).not.toContain(PLAGIARISM_TEXT);
 	});
 });

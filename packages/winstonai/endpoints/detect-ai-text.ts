@@ -1,24 +1,30 @@
 import { logEventFromContext } from 'corsair/core';
 import type { WinstonaiEndpoints } from '..';
 import { makeWinstonaiRequest } from '../client';
-import { WinstonaiEndpointOutputSchemas } from './types';
+import {
+	toDetectEventPayload,
+	WinstonaiEndpointInputSchemas,
+	WinstonaiEndpointOutputSchemas,
+} from './types';
 
 export const detectAiText: WinstonaiEndpoints['detectAiText'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = WinstonaiEndpointInputSchemas.detectAiText.parse(input);
+
 	const response = await makeWinstonaiRequest(
 		'/ai-content-detection',
 		ctx.key,
 		{
 			schema: WinstonaiEndpointOutputSchemas.detectAiText,
 			body: {
-				text: input.text,
-				file: input.file,
-				website: input.website,
-				version: input.version,
-				sentences: input.sentences,
-				language: input.language,
+				text: parsed.text,
+				file: parsed.file,
+				website: parsed.website,
+				version: parsed.version,
+				sentences: parsed.sentences,
+				language: parsed.language,
 			},
 		},
 	);
@@ -26,7 +32,7 @@ export const detectAiText: WinstonaiEndpoints['detectAiText'] = async (
 	await logEventFromContext(
 		ctx,
 		'winstonai.detect.aiText',
-		{ ...input },
+		toDetectEventPayload(parsed),
 		'completed',
 	);
 
