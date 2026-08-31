@@ -4,10 +4,17 @@
  * and that path parameters are interpolated rather than sent as a body field.
  */
 const requestMock = jest.fn();
+const realRequest = jest.requireActual('corsair/http').request as (
+	...a: unknown[]
+) => Promise<unknown>;
+// Live mode flips the shared transport from the mock to the real fetch. Set
+// only inside the live describe below, so the mocked suite stays untouched.
+let useLive = false;
 
 jest.mock('corsair/http', () => ({
 	...jest.requireActual('corsair/http'),
-	request: (...args: unknown[]) => requestMock(...args),
+	request: (...args: unknown[]) =>
+		useLive ? realRequest(...args) : requestMock(...args),
 }));
 
 jest.mock('corsair/core', () => ({
@@ -15,7 +22,18 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: async () => undefined,
 }));
 
+import { PushbulletAPIError } from './client';
 import { Chats, Devices, Files, Pushes, Users } from './endpoints';
+import { PushbulletEndpointOutputSchemas } from './endpoints/types';
+
+const liveApiKey = process.env.PUSHBULLET_API_KEY ?? '';
+// Live coverage runs only when a real key is provided; otherwise the whole
+// block is skipped and CI keeps exercising the mocked suite above.
+const describeLive = liveApiKey ? describe : describe.skip;
+
+function makeLiveCtx(overrideKey?: string) {
+	return { key: overrideKey ?? liveApiKey, db: {}, options: {} } as never;
+}
 
 function makeCtx() {
 	return { key: 'o.testtoken', db: {}, options: {} } as never;
@@ -223,5 +241,252 @@ describe('deleteAll cache reconciliation', () => {
 		} finally {
 			warn.mockRestore();
 		}
+	});
+});
+
+// Live API coverage. Hits the real Pushbullet API and mutates the test
+// account, proving every operation works end to end and that API errors
+// surface as PushbulletAPIError. Skipped unless PUSHBULLET_API_KEY is set.
+describeLive('pushbullet live API', () => {
+	beforeAll(() => {
+		useLive = true;
+	});
+
+	afterAll(() => {
+		useLive = false;
+	});
+
+	// users
+
+	describe('users.me', () => {
+		it('returns the authenticated account and passes the output schema', async () => {
+			const me = await Users.me(makeLiveCtx(), {});
+			expect(me.iden).toBeTruthy();
+			expect(me.email).toBeTruthy();
+			PushbulletEndpointOutputSchemas.usersMe.parse(me);
+		});
+
+		it('rejects an invalid access token with PushbulletAPIError', async () => {
+			await expect(
+				Users.me(makeLiveCtx('o.definitely-wrong-token'), {}),
+			).rejects.toBeInstanceOf(PushbulletAPIError);
+		});
+	});
+
+	// devices
+
+	describe('devices', () => {
+		let deviceIden: string | undefined;
+
+		it('list returns the devices on the account', async () => {
+			const { devices } = await Devices.list(makeLiveCtx(), {});
+			expect(Array.isArray(devices)).toBe(true);
+			for (const device of devices) {
+				expect(device.iden).toBeTruthy();
+			}
+		});
+
+		it('register creates a device and returns its iden', async () => {
+			const device = await Devices.register(makeLiveCtx(), {
+				nickname: 'corsair-live-test',
+				model: 'corsair-test-runner',
+			});
+			expect(device.iden).toBeTruthy();
+			deviceIden = device.iden;
+		});
+
+		it('update renames the device', async () => {
+			expect(deviceIden).toBeTruthy();
+			const updated = await Devices.update(makeLiveCtx(), {
+				iden: deviceIden as string,
+				nickname: 'corsair-live-test-renamed',
+			});
+			expect(updated.nickname).toBe('corsair-live-test-renamed');
+		});
+
+		it('register rejects an invalid token with PushbulletAPIError', async () => {
+			await expect(
+				Devices.register(makeLiveCtx('o.bad-token'), {
+					nickname: 'nope',
+				}),
+			).rejects.toBeInstanceOf(PushbulletAPIError);
+		});
+
+		it('remove deletes the device', async () => {
+			expect(deviceIden).toBeTruthy();
+			await expect(
+				Devices.delete(makeLiveCtx(), { iden: deviceIden as string }),
+			).resolves.toBeDefined();
+		});
+	});
+
+	// chats
+
+	describe('chats', () => {
+		let chatIden: string | undefined;
+		let partnerEmail: string;
+
+		it('create opens a chat with a Pushbullet user by email', async () => {
+			// Pushbullet only opens chats with registered users (unknown emails
+			// get a server error, verified live) and rejects a second chat with
+			// the same email, so the suite chats with the account itself after
+			// clearing any active chat a previous run left behind.
+			const me = await Users.me(makeLiveCtx(), {});
+			if (!me.email) {
+				throw new Error('live account has no email to chat with');
+			}
+			partnerEmail = me.email;
+
+			const { chats } = await Chats.list(makeLiveCtx(), {});
+			for (const chat of chats) {
+				if (chat.with?.email === me.email && chat.active !== false) {
+					await Chats.delete(makeLiveCtx(), { iden: chat.iden });
+				}
+			}
+
+			const chat = await Chats.create(makeLiveCtx(), {
+				email: partnerEmail,
+			});
+			expect(chat.iden).toBeTruthy();
+			chatIden = chat.iden;
+		});
+
+		it('list returns chats including the one just created', async () => {
+			const { chats } = await Chats.list(makeLiveCtx(), {
+				active: true,
+			});
+			expect(Array.isArray(chats)).toBe(true);
+			expect(
+				chats.some((chat: { iden?: string }) => chat.iden === chatIden),
+			).toBe(true);
+		});
+
+		it('setMuted toggles muted on the chat', async () => {
+			expect(chatIden).toBeTruthy();
+			const updated = await Chats.setMuted(makeLiveCtx(), {
+				iden: chatIden as string,
+				muted: true,
+			});
+			expect(updated.muted).toBe(true);
+		});
+
+		it('create rejects a duplicate chat with PushbulletAPIError', async () => {
+			await expect(
+				Chats.create(makeLiveCtx(), { email: partnerEmail }),
+			).rejects.toBeInstanceOf(PushbulletAPIError);
+		});
+
+		it('create rejects a malformed email with PushbulletAPIError', async () => {
+			await expect(
+				Chats.create(makeLiveCtx(), { email: 'not-an-email' }),
+			).rejects.toBeInstanceOf(PushbulletAPIError);
+		});
+
+		it('remove deletes the chat', async () => {
+			expect(chatIden).toBeTruthy();
+			await expect(
+				Chats.delete(makeLiveCtx(), { iden: chatIden as string }),
+			).resolves.toBeDefined();
+		});
+	});
+
+	// pushes
+
+	describe('pushes', () => {
+		let pushIden: string | undefined;
+
+		it('create sends a note and returns its iden', async () => {
+			const push = await Pushes.create(makeLiveCtx(), {
+				type: 'note',
+				title: 'corsair live test',
+				body: 'sent by the corsair pushbullet live suite',
+			});
+			expect(push.iden).toBeTruthy();
+			pushIden = push.iden;
+		});
+
+		it('list returns pushes including the one just created', async () => {
+			const { pushes } = await Pushes.list(makeLiveCtx(), {
+				active: true,
+				limit: 10,
+			});
+			expect(Array.isArray(pushes)).toBe(true);
+			expect(pushes.some((p: { iden?: string }) => p.iden === pushIden)).toBe(
+				true,
+			);
+		});
+
+		it('create rejects an invalid access token with PushbulletAPIError', async () => {
+			await expect(
+				Pushes.create(makeLiveCtx('o.bad-token'), {
+					type: 'note',
+					body: 'nope',
+				}),
+			).rejects.toBeInstanceOf(PushbulletAPIError);
+		});
+
+		it('update dismisses the push', async () => {
+			expect(pushIden).toBeTruthy();
+			await expect(
+				Pushes.update(makeLiveCtx(), {
+					iden: pushIden as string,
+					dismissed: true,
+				}),
+			).resolves.toBeDefined();
+		});
+
+		it('remove deletes the push', async () => {
+			expect(pushIden).toBeTruthy();
+			await expect(
+				Pushes.delete(makeLiveCtx(), { iden: pushIden as string }),
+			).resolves.toBeDefined();
+		});
+
+		it('removeAll clears remaining test pushes', async () => {
+			await Pushes.create(makeLiveCtx(), {
+				type: 'note',
+				body: 'sweep me',
+			});
+			await expect(Pushes.deleteAll(makeLiveCtx(), {})).resolves.toBeDefined();
+			// Pushbullet applies bulk deletes asynchronously (see the
+			// endpoint), so poll the active list until it drains instead
+			// of asserting that it is empty right away.
+			let remaining = -1;
+			for (let attempt = 0; attempt < 10; attempt += 1) {
+				const { pushes } = await Pushes.list(makeLiveCtx(), {
+					active: true,
+				});
+				remaining = pushes.filter((p: { active?: boolean }) => p.active).length;
+				if (remaining === 0) {
+					break;
+				}
+				await new Promise((resolve) => {
+					setTimeout(resolve, 500);
+				});
+			}
+			expect(remaining).toBe(0);
+		});
+	});
+
+	// files
+
+	describe('files', () => {
+		it('uploadRequest returns an upload URL and file URL', async () => {
+			const res = await Files.uploadRequest(makeLiveCtx(), {
+				file_name: 'corsair-live-test.txt',
+				file_type: 'text/plain',
+			});
+			expect(res.upload_url).toBeTruthy();
+			expect(res.file_url).toBeTruthy();
+		});
+
+		it('uploadRequest rejects an invalid token with PushbulletAPIError', async () => {
+			await expect(
+				Files.uploadRequest(makeLiveCtx('o.bad-token'), {
+					file_name: 'x.txt',
+					file_type: 'text/plain',
+				}),
+			).rejects.toBeInstanceOf(PushbulletAPIError);
+		});
 	});
 });
