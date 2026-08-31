@@ -8,6 +8,7 @@ import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
 import { hubspot } from '@corsair-dev/hubspot';
+import { instagram } from '@corsair-dev/instagram';
 import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
 import { sharepoint } from '@corsair-dev/sharepoint';
@@ -19,30 +20,26 @@ import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
 
 const hubProjectApiKey =
-	process.env.CORSAIR_DEV_API_KEY ?? process.env.CORSAIR_API_KEY;
+	process.env.CORSAIR_DEV_API_KEY ?? process.env.CORSAIR_API_KEY!;
 const hubSigningSecret =
-	process.env.CORSAIR_DEV_SIGNING_SECRET ?? process.env.CORSAIR_SIGNING_SECRET;
+	process.env.CORSAIR_DEV_SIGNING_SECRET ?? process.env.CORSAIR_SIGNING_SECRET!;
 // const hubApiUrl = process.env.HUB_API_URL;
 // const hubOAuthCallbackUrl = process.env.HUB_OAUTH_CALLBACK_URL;
 
 export const corsair = createCorsair({
 	multiTenancy: false,
 	database: sqlite,
-	kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+	kek: process.env.CORSAIR_KEK!,
 	permissions: {
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
-	...(hubProjectApiKey && hubSigningSecret
-		? {
-				hub: {
-					// apiUrl: hubApiUrl,
-					// oauthCallbackUrl: hubOAuthCallbackUrl,
-					projectApiKey: hubProjectApiKey,
-					signingSecret: hubSigningSecret,
-				},
-			}
-		: {}),
+	hub: {
+		// apiUrl: hubApiUrl,
+		// oauthCallbackUrl: hubOAuthCallbackUrl,
+		projectApiKey: hubProjectApiKey,
+		signingSecret: hubSigningSecret,
+	},
 	plugins: [
 		// github({ authType: 'managed' }),
 		slack({
@@ -68,6 +65,7 @@ export const corsair = createCorsair({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
 		}),
+		instagram(),
 		dynapictures(),
 	],
 });
