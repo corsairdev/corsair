@@ -9,11 +9,6 @@ import { z } from 'zod';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const GetProjectsListInputSchema = z.object({
-	/**
-	 * Include archived projects. TimeCamp returns archived tasks by default;
-	 * they are filtered out unless asked for, since the common case is listing
-	 * projects that are still active.
-	 */
 	include_archived: z.boolean().optional(),
 });
 

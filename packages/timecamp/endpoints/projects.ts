@@ -106,7 +106,9 @@ export const getList: TimecampEndpoints['getProjectsList'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeTimecampRequest<unknown>('tasks', ctx.key);
+	const raw = await makeTimecampRequest<unknown>('tasks', ctx.key, {
+		query: { status: 'all' },
+	});
 
 	// Every root-level project TimeCamp reports, archived or not.
 	const allProjects = toTaskList(raw)

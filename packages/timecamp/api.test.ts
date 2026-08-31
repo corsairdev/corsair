@@ -67,6 +67,13 @@ describe('projects.getList', () => {
 		});
 	});
 
+	it('requests status=all so archived projects can be filtered locally', async () => {
+		await Projects.getList(makeCtx(), {});
+		expect(requestMock.mock.calls[0][1]).toMatchObject({
+			query: { status: 'all' },
+		});
+	});
+
 	it('returns only root-level tasks, excluding children', async () => {
 		const result = await Projects.getList(makeCtx(), {});
 		expect(result.projects.map((p) => p.task_id)).not.toContain('103');
