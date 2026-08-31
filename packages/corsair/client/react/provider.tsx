@@ -98,6 +98,7 @@ export function CorsairProvider({
 	const resolveRef = useRef<((ok: boolean) => void) | null>(null);
 	const popupRef = useRef<Window | null>(null);
 	const watchRef = useRef<ReturnType<typeof setInterval> | null>(null);
+	const graceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	// Bumped on every open and close so an in-flight poll from a superseded or
 	// closed attempt can't settle the current one.
 	const attemptRef = useRef(0);
@@ -124,12 +125,13 @@ export function CorsairProvider({
 	// completion signal (works self-hosted and for custom connect pages). On
 	// connect: clear the request, let the host refresh, resume any waiter.
 	const beginWatch = useCallback(
-		(plugin: string) => {
+		(plugin: string, tenantId: string | null) => {
 			stopWatch();
 			const attempt = attemptRef.current;
+			const scope = tenantId ? { tenantId } : undefined;
 			const check = () => {
 				client.connectionStatus
-					.get()
+					.get(scope)
 					.then((status) => {
 						if (
 							shouldSettleConnected({
@@ -139,10 +141,13 @@ export function CorsairProvider({
 								plugin,
 							})
 						) {
+							// Bump first so a slower poll from this same attempt (a request
+							// still in flight past the interval) can't repeat these effects.
+							attemptRef.current += 1;
 							popupRef.current?.close();
 							popupRef.current = null;
 							dispatch({ type: 'SUCCESS' });
-							client.connectRequest.clear().catch(() => {});
+							client.connectRequest.clear(scope).catch(() => {});
 							onConnectedRef.current?.();
 							setConnectNonce((n) => n + 1);
 							settle(true);
@@ -157,11 +162,11 @@ export function CorsairProvider({
 				// within the grace window, the closed popup means the user backed out.
 				if (popupRef.current?.closed) {
 					stopWatch();
-					window.setTimeout(() => {
+					graceRef.current = setTimeout(() => {
 						if (attempt !== attemptRef.current || !resolveRef.current) return;
 						attemptRef.current += 1;
 						popupRef.current = null;
-						client.connectRequest.clear().catch(() => {});
+						client.connectRequest.clear(scope).catch(() => {});
 						dispatch({ type: 'CLOSE' });
 						settle(false);
 					}, POPUP_CLOSE_GRACE_MS);
@@ -172,10 +177,14 @@ export function CorsairProvider({
 	);
 
 	const openDialog = useCallback(
-		(plugin: string, connectUrl: string): Promise<boolean> => {
+		(
+			plugin: string,
+			connectUrl: string,
+			tenantId: string | null,
+		): Promise<boolean> => {
 			attemptRef.current += 1;
 			resolveRef.current?.(false);
-			dispatch({ type: 'OPEN', plugin, connectUrl });
+			dispatch({ type: 'OPEN', plugin, connectUrl, tenantId });
 			return new Promise<boolean>((resolve) => {
 				resolveRef.current = resolve;
 			});
@@ -189,16 +198,18 @@ export function CorsairProvider({
 				plugin,
 				tenantId: opts?.tenantId,
 			});
-			return openDialog(plugin, connectUrl);
+			return openDialog(plugin, connectUrl, opts?.tenantId ?? null);
 		},
 		[client, openDialog],
 	);
 
+	// Reactive path: the handler recorded the request under the resolved tenant,
+	// so leave scoping to it (null) rather than guess a tenant here.
 	const requireConnect =
 		useCallback(async (): Promise<RequireConnectOutcome> => {
 			const { request } = await client.connectRequest.get();
 			if (!request) return 'none';
-			const ok = await openDialog(request.plugin, request.connectUrl);
+			const ok = await openDialog(request.plugin, request.connectUrl, null);
 			return ok ? 'connected' : 'cancelled';
 		}, [client, openDialog]);
 
@@ -220,26 +231,42 @@ export function CorsairProvider({
 
 	// User clicked "Connect" — open Hub's page in a popup and start watching.
 	const handleOpen = useCallback(() => {
-		const { connectUrl, plugin } = connectState;
+		const { connectUrl, plugin, tenantId } = connectState;
 		if (!connectUrl || !plugin) return;
 		popupRef.current = window.open(
 			connectUrl,
 			'corsair-connect',
 			'width=520,height=720',
 		);
-		beginWatch(plugin);
+		beginWatch(plugin, tenantId);
 	}, [beginWatch, connectState]);
 
 	const handleClose = useCallback(() => {
 		attemptRef.current += 1;
 		popupRef.current?.close();
 		popupRef.current = null;
-		client.connectRequest.clear().catch(() => {});
+		const scope = connectState.tenantId
+			? { tenantId: connectState.tenantId }
+			: undefined;
+		client.connectRequest.clear(scope).catch(() => {});
 		settle(false);
 		dispatch({ type: 'CLOSE' });
-	}, [client, settle]);
+	}, [client, settle, connectState.tenantId]);
 
-	useEffect(() => stopWatch, [stopWatch]);
+	// Unmount mid-flow: stop the timers, invalidate any in-flight poll, close the
+	// popup, and resolve a waiting caller so its promise can't hang forever.
+	useEffect(
+		() => () => {
+			stopWatch();
+			if (graceRef.current) clearTimeout(graceRef.current);
+			attemptRef.current += 1;
+			popupRef.current?.close();
+			popupRef.current = null;
+			resolveRef.current?.(false);
+			resolveRef.current = null;
+		},
+		[stopWatch],
+	);
 
 	// Hold the "connected" check briefly, then dismiss — the resolved call has
 	// already resumed, so the success card is just a confirmation.
