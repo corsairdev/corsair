@@ -43,6 +43,8 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - uses: pnpm/action-setup@v4
         with:
@@ -72,7 +74,7 @@ jobs:
         run: pnpm install --frozen-lockfile --filter . --filter "@corsair/www..."
 
       - name: Turbo cache for main
-        if: github.event_name == 'push' && steps.scope.outputs.skip_heavy != 'true'
+        if: github.event_name == 'push' && steps.scope.outputs.lane == 'full'
         uses: actions/cache@v4
         with:
           path: .turbo
