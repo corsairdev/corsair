@@ -52,8 +52,10 @@ beforeEach(() => {
 	jest.mocked(logEventFromContext).mockReset();
 });
 
+const TEST_KEY = 'test-key';
+
 const ctx = {
-	key: 'bkua_test_token',
+	key: TEST_KEY,
 	$getAccountId: async () => 'test-account',
 } as never;
 
@@ -77,7 +79,7 @@ const metaFixture = { webhook_ips: ['192.0.2.0/24', '198.51.100.12'] };
 
 const userFixture = {
 	id: 'abc123-4567-8910',
-	graphql_id: 'VXNlci0tLWU1N2ZiYTBmLWFiMTQtNGNjMC1iYjViLTY5NTc3NGZmYmZiZQ==',
+	graphql_id: 'gql-user',
 	name: 'John Smith',
 	email: 'john.smith@example.com',
 	avatar_url: 'https://www.gravatar.com/avatar/abc123',
@@ -86,8 +88,7 @@ const userFixture = {
 
 const orgFixture = {
 	id: 'bb3125de-4dc9-44cf-ad18-65d2b71a5a34',
-	graphql_id:
-		'T3JnYW5pemF0aW9uLS0tOGEzMjAwOTMtMjE4OC00MmNiLWI5ZGQtNzE4NjZjZTYyYjA4',
+	graphql_id: 'gql-org',
 	url: 'https://api.buildkite.com/v2/organizations/my-great-org',
 	web_url: 'https://buildkite.com/my-great-org',
 	name: 'My Great Org',
@@ -101,14 +102,61 @@ const orgFixture = {
 
 const agentFixture = {
 	id: '0b461f65-e7be-4c80-888a-ef11d81fd971',
+	graphql_id: 'gql-agent',
+	url: 'https://api.buildkite.com/v2/organizations/my-great-org/agents/my-agent',
+	web_url:
+		'https://buildkite.com/organizations/my-great-org/clusters/78088c9a-6e72-4896-848d-e6f479f50c24/queues/c109939f-3b71-4cd3-b175-8eb79d2eb38e/agents/0b461f65-e7be-4c80-888a-ef11d81fd971',
 	name: 'my-agent',
 	connection_state: 'connected',
 	hostname: 'some.server',
 	ip_address: '144.132.19.12',
+	user_agent: 'buildkite-agent/2.1.0 (linux; amd64)',
 	version: '2.1.0',
 	os_id: 'linux',
 	arch: 'amd64',
 	queue: 'default',
+	creator: {
+		id: '2eba97bc-7cc7-427f-8feb-1008c72aa1d8',
+		name: 'Keith Pitt',
+		email: 'me@keithpitt.com',
+		avatar_url:
+			'https://www.gravatar.com/avatar/e14f55d3f939977cecbf51b64ff6f861',
+		created_at: '2015-05-09T21:05:59.874Z',
+	},
+	created_at: '2014-02-24T22:33:45.263Z',
+	connected_at: '2014-02-24T22:33:45.263Z',
+	disconnected_at: null,
+	lost_at: null,
+	stopped_at: null,
+	job: {
+		id: 'cd164055-9649-452b-8d8e-28fe67370a1e',
+		graphql_id: 'gql-job',
+		type: 'script',
+		name: 'rspec',
+		agent_query_rules: ['*'],
+		state: 'passed',
+		build_url:
+			'https://api.buildkite.com/v2/organizations/my-great-org/pipelines/sleeper/builds/50',
+		web_url:
+			'https://buildkite.com/my-great-org/sleeper/builds/50#cd164055-9649-452b-8d8e-28fe67370a1e',
+		log_url:
+			'https://api.buildkite.com/v2/organizations/my-great-org/pipelines/sleeper/builds/50/jobs/cd164055-9649-452b-8d8e-28fe67370a1e/log',
+		raw_log_url:
+			'https://api.buildkite.com/v2/organizations/my-great-org/pipelines/sleeper/builds/50/jobs/cd164055-9649-452b-8d8e-28fe67370a1e/log.txt',
+		artifacts_url:
+			'https://api.buildkite.com/v2/organizations/my-great-org/pipelines/sleeper/builds/50/jobs/cd164055-9649-452b-8d8e-28fe67370a1e/artifacts',
+		script_path: 'sleep 1',
+		command: 'sleep 1',
+		soft_failed: false,
+		exit_status: 0,
+		artifact_paths: '*',
+		agent: null,
+		created_at: '2015-07-30T12:58:22.942Z',
+		scheduled_at: '2015-07-30T12:58:22.935Z',
+		started_at: '2015-07-30T12:58:34.000Z',
+		finished_at: '2015-07-30T12:58:37.000Z',
+	},
+	last_job_finished_at: null,
 	priority: null,
 	meta_data: ['key1=val1', 'key2=val2'],
 };
@@ -124,7 +172,7 @@ describe('Buildkite plugin', () => {
 	});
 
 	it('returns an explicit key from keyBuilder', async () => {
-		const plugin = buildkite({ key: 'explicit-key' });
+		const plugin = buildkite({ key: TEST_KEY });
 		await expect(
 			plugin.keyBuilder?.(
 				{
@@ -133,7 +181,7 @@ describe('Buildkite plugin', () => {
 				} as never,
 				'endpoint',
 			),
-		).resolves.toBe('explicit-key');
+		).resolves.toBe(TEST_KEY);
 	});
 
 	it('throws AuthMissingError when no API key is stored', async () => {
@@ -161,7 +209,7 @@ describe('Buildkite plugin', () => {
 		expect(options?.method).toBe('GET');
 		expect(
 			(config?.HEADERS as Record<string, string> | undefined)?.Authorization,
-		).toBe('Bearer bkua_test_token');
+		).toBe(`Bearer ${TEST_KEY}`);
 	});
 
 	it('getMeta hits unauthenticated GET /v2/meta', async () => {
@@ -244,10 +292,10 @@ describe('Buildkite client errors', () => {
 		mockRequest.mockRejectedValue(apiError);
 
 		await expect(
-			makeBuildkiteRequest('/v2/user', 'token'),
+			makeBuildkiteRequest('/v2/user', TEST_KEY),
 		).rejects.toBeInstanceOf(BuildkiteRateLimitError);
 		try {
-			await makeBuildkiteRequest('/v2/user', 'token');
+			await makeBuildkiteRequest('/v2/user', TEST_KEY);
 		} catch (error) {
 			expect(error).toBeInstanceOf(BuildkiteRateLimitError);
 			expect((error as BuildkiteRateLimitError).retryAfterMs).toBe(42000);
@@ -273,10 +321,10 @@ describe('Buildkite client errors', () => {
 		);
 		mockRequest.mockRejectedValue(apiError);
 		await expect(
-			makeBuildkiteRequest('/v2/user', 'bad'),
+			makeBuildkiteRequest('/v2/user', TEST_KEY),
 		).rejects.toBeInstanceOf(BuildkiteAPIError);
 		try {
-			await makeBuildkiteRequest('/v2/user', 'bad');
+			await makeBuildkiteRequest('/v2/user', TEST_KEY);
 		} catch (error) {
 			expect(errorHandlers.AUTH_ERROR.match(error as Error)).toBe(true);
 		}
@@ -294,5 +342,11 @@ describe('official docs fixtures', () => {
 		expect(BuildkiteAgent.parse(agentFixture).connection_state).toBe(
 			'connected',
 		);
+		expect(() =>
+			BuildkiteAgent.parse({
+				...agentFixture,
+				connection_state: 'running',
+			}),
+		).toThrow();
 	});
 });

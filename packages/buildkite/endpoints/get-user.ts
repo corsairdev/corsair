@@ -1,12 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BuildkiteEndpoints } from '..';
 import { makeBuildkiteRequest } from '../client';
-import type { BuildkiteEndpointOutputs } from './types';
+import { BuildkiteEndpointOutputSchemas } from './types';
 
 export const getUser: BuildkiteEndpoints['getUser'] = async (ctx, input) => {
-	const response = await makeBuildkiteRequest<
-		BuildkiteEndpointOutputs['getUser']
-	>('/v2/user', ctx.key, { method: 'GET' });
+	const response = await makeBuildkiteRequest<unknown>('/v2/user', ctx.key, {
+		method: 'GET',
+	});
+	const parsed = BuildkiteEndpointOutputSchemas.getUser.parse(response);
 
 	await logEventFromContext(
 		ctx,
@@ -14,5 +15,5 @@ export const getUser: BuildkiteEndpoints['getUser'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
-	return response;
+	return parsed;
 };

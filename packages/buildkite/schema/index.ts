@@ -20,6 +20,8 @@ export const BuildkiteSchema = {
 export {
 	BuildkiteAccessToken,
 	BuildkiteAgent,
+	BuildkiteAgentCreator,
+	BuildkiteAgentJob,
 	BuildkiteMeta,
 	BuildkiteOrganization,
 	BuildkiteUser,

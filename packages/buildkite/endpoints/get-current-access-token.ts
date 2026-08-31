@@ -1,13 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BuildkiteEndpoints } from '..';
 import { makeBuildkiteRequest } from '../client';
-import type { BuildkiteEndpointOutputs } from './types';
+import { BuildkiteEndpointOutputSchemas } from './types';
 
 export const getCurrentAccessToken: BuildkiteEndpoints['getCurrentAccessToken'] =
 	async (ctx, input) => {
-		const response = await makeBuildkiteRequest<
-			BuildkiteEndpointOutputs['getCurrentAccessToken']
-		>('/v2/access-token', ctx.key, { method: 'GET' });
+		const response = await makeBuildkiteRequest<unknown>(
+			'/v2/access-token',
+			ctx.key,
+			{ method: 'GET' },
+		);
+		const parsed =
+			BuildkiteEndpointOutputSchemas.getCurrentAccessToken.parse(response);
 
 		await logEventFromContext(
 			ctx,
@@ -15,5 +19,5 @@ export const getCurrentAccessToken: BuildkiteEndpoints['getCurrentAccessToken'] 
 			{ ...input },
 			'completed',
 		);
-		return response;
+		return parsed;
 	};

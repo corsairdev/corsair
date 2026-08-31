@@ -37,11 +37,19 @@ export type ListOrganizationsOutput = z.infer<
 >;
 
 export const ListPipelineAgentsInputSchema = z.object({
-	orgSlug: z.string().min(1),
-	name: z.string().optional(),
-	hostname: z.string().optional(),
-	version: z.string().optional(),
-	cluster_queue_id: z.string().optional(),
+	orgSlug: z
+		.string()
+		.min(1)
+		.describe(
+			'Official path param {org.slug} on GET /v2/organizations/{org.slug}/agents',
+		),
+	name: z.string().optional().describe('Official query: ?name='),
+	hostname: z.string().optional().describe('Official query: ?hostname='),
+	version: z.string().optional().describe('Official query: ?version='),
+	cluster_queue_id: z
+		.string()
+		.optional()
+		.describe('Official query: ?cluster_queue_id='),
 	page: z.number().int().min(1).optional(),
 	per_page: z.number().int().min(1).max(100).optional(),
 });

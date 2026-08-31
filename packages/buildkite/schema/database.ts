@@ -77,9 +77,46 @@ export const BuildkiteOrganization = z
 export type BuildkiteOrganization = z.infer<typeof BuildkiteOrganization>;
 
 /**
+ * Agent creator is a user or the token that registered the agent.
+ * Official: https://buildkite.com/docs/apis/rest-api/agents
+ */
+export const BuildkiteAgentCreator = z
+	.object({
+		id: z.string().optional(),
+		graphql_id: z.string().optional(),
+		name: z.string().optional(),
+		email: z.string().optional(),
+		avatar_url: z.string().optional(),
+		created_at: z.string().optional(),
+	})
+	.loose();
+
+export type BuildkiteAgentCreator = z.infer<typeof BuildkiteAgentCreator>;
+
+/**
+ * Current job on a listed agent (fields from the official list-agents example).
+ * Official: GET /v2/organizations/{org.slug}/agents
+ * https://buildkite.com/docs/apis/rest-api/agents
+ */
+export const BuildkiteAgentJob = z
+	.object({
+		id: z.string().optional(),
+		graphql_id: z.string().optional(),
+		type: z.string().optional(),
+		name: z.string().optional(),
+		state: z.string().optional(),
+		command: z.string().optional(),
+	})
+	.loose();
+
+export type BuildkiteAgentJob = z.infer<typeof BuildkiteAgentJob>;
+
+/**
  * Connected or stopping agent for an organization.
  * Official: GET /v2/organizations/{org.slug}/agents
  * https://buildkite.com/docs/apis/rest-api/agents
+ *
+ * connection_state: never_connected | connected | disconnected | stopping | stopped | lost
  */
 export const BuildkiteAgent = z
 	.object({
@@ -88,7 +125,14 @@ export const BuildkiteAgent = z
 		url: z.string().optional(),
 		web_url: z.string().optional(),
 		name: z.string(),
-		connection_state: z.string(),
+		connection_state: z.enum([
+			'never_connected',
+			'connected',
+			'disconnected',
+			'stopping',
+			'stopped',
+			'lost',
+		]),
 		hostname: z.string().optional(),
 		ip_address: z.string().optional(),
 		user_agent: z.string().optional(),
@@ -96,13 +140,13 @@ export const BuildkiteAgent = z
 		os_id: z.string().optional(),
 		arch: z.string().optional(),
 		queue: z.string().optional(),
-		creator: BuildkiteUser.nullable().optional(),
+		creator: BuildkiteAgentCreator.nullable().optional(),
 		created_at: z.string().optional(),
 		connected_at: z.string().nullable().optional(),
 		disconnected_at: z.string().nullable().optional(),
 		lost_at: z.string().nullable().optional(),
 		stopped_at: z.string().nullable().optional(),
-		job: z.unknown().nullable().optional(),
+		job: BuildkiteAgentJob.nullable().optional(),
 		last_job_finished_at: z.string().nullable().optional(),
 		priority: z.number().nullable().optional(),
 		meta_data: z.array(z.string()).optional(),
