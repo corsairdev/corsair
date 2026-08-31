@@ -182,6 +182,21 @@ describe('NewsApi endpoints routing & event logging', () => {
 			}),
 		);
 	});
+
+	it('articles.getEverything rejects invalid input before calling the client', async () => {
+		await expect(
+			Articles.getEverything(ctx, { pageSize: 10 } as any),
+		).rejects.toThrow();
+		expect(mockMakeNewsApiRequest).not.toHaveBeenCalled();
+	});
+
+	it('articles.getEverything rejects a malformed provider response', async () => {
+		mockMakeNewsApiRequest.mockResolvedValueOnce({ status: 'ok' } as any);
+
+		await expect(
+			Articles.getEverything(ctx, { q: 'bitcoin' }),
+		).rejects.toThrow();
+	});
 });
 
 describe('NewsApi input validation', () => {

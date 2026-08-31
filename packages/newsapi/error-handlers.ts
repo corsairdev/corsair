@@ -28,7 +28,7 @@ export const errorHandlers = {
 			}
 			return {
 				maxRetries: 3,
-				backoffMs: retryAfterMs ?? 1000,
+				headersRetryAfterMs: retryAfterMs,
 			};
 		},
 	},

@@ -1,7 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeNewsApiRequest } from '../client';
 import type { NewsApiEndpoints } from '../index';
-import type { NewsApiEndpointOutputs } from './types';
+import {
+	NewsApiEndpointInputSchemas,
+	NewsApiEndpointOutputSchemas,
+} from './types';
 
 function toCsv(value: string | string[] | undefined): string | undefined {
 	if (value === undefined) return undefined;
@@ -10,11 +13,12 @@ function toCsv(value: string | string[] | undefined): string | undefined {
 
 export const getEverything: NewsApiEndpoints['articlesGetEverything'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const response = await makeNewsApiRequest<
-		NewsApiEndpointOutputs['articlesGetEverything']
-	>('v2/everything', ctx.key, {
+	const input =
+		NewsApiEndpointInputSchemas.articlesGetEverything.parse(rawInput);
+
+	const raw = await makeNewsApiRequest('v2/everything', ctx.key, {
 		query: {
 			q: input.q,
 			qInTitle: input.qInTitle,
@@ -30,6 +34,8 @@ export const getEverything: NewsApiEndpoints['articlesGetEverything'] = async (
 			page: input.page,
 		},
 	});
+	const response =
+		NewsApiEndpointOutputSchemas.articlesGetEverything.parse(raw);
 
 	if (ctx.db.articles) {
 		try {
@@ -53,10 +59,11 @@ export const getEverything: NewsApiEndpoints['articlesGetEverything'] = async (
 };
 
 export const getTopHeadlines: NewsApiEndpoints['articlesGetTopHeadlines'] =
-	async (ctx, input) => {
-		const response = await makeNewsApiRequest<
-			NewsApiEndpointOutputs['articlesGetTopHeadlines']
-		>('v2/top-headlines', ctx.key, {
+	async (ctx, rawInput) => {
+		const input =
+			NewsApiEndpointInputSchemas.articlesGetTopHeadlines.parse(rawInput);
+
+		const raw = await makeNewsApiRequest('v2/top-headlines', ctx.key, {
 			query: {
 				country: input.country,
 				category: input.category,
@@ -66,6 +73,8 @@ export const getTopHeadlines: NewsApiEndpoints['articlesGetTopHeadlines'] =
 				page: input.page,
 			},
 		});
+		const response =
+			NewsApiEndpointOutputSchemas.articlesGetTopHeadlines.parse(raw);
 
 		if (ctx.db.articles) {
 			try {
@@ -90,15 +99,19 @@ export const getTopHeadlines: NewsApiEndpoints['articlesGetTopHeadlines'] =
 		return response;
 	};
 
-export const getV1: NewsApiEndpoints['articlesGetV1'] = async (ctx, input) => {
-	const response = await makeNewsApiRequest<
-		NewsApiEndpointOutputs['articlesGetV1']
-	>('v1/articles', ctx.key, {
+export const getV1: NewsApiEndpoints['articlesGetV1'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input = NewsApiEndpointInputSchemas.articlesGetV1.parse(rawInput);
+
+	const raw = await makeNewsApiRequest('v1/articles', ctx.key, {
 		query: {
 			source: input.source,
 			sortBy: input.sortBy,
 		},
 	});
+	const response = NewsApiEndpointOutputSchemas.articlesGetV1.parse(raw);
 
 	await logEventFromContext(
 		ctx,
