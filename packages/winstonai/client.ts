@@ -1,69 +1,78 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { ZodType } from 'zod';
 
-export class WinstonAiAPIError extends Error {
-	public readonly status?: number;
-	public readonly retryAfter?: number;
+export const WINSTONAI_API_BASE = 'https://api.gowinston.ai/v2';
 
-	constructor(
-		message: string,
-		public readonly code?: string,
-		options?: { cause?: Error },
-	) {
-		super(message, options);
-		this.name = 'WinstonAiAPIError';
+export const WINSTONAI_NO_RETRY: RateLimitConfig = {
+	enabled: false,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'retry-after',
+	},
+};
 
-		if (options?.cause instanceof ApiError) {
-			this.status = options.cause.status;
-			this.retryAfter = options.cause.retryAfter;
+export function compactBody(
+	body: Record<string, unknown>,
+): Record<string, unknown> {
+	const compacted: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(body)) {
+		if (value !== undefined) {
+			compacted[key] = value;
 		}
 	}
+	return compacted;
 }
 
-const WINSTONAI_API_BASE = 'https://api.gowinston.ai/v2';
-
-export async function makeWinstonAiRequest<T>(
+export async function makeWinstonaiRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		schema: ZodType<T>;
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
-	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
+	if (!apiKey?.trim()) {
+		throw new AuthMissingError('winstonai', 'api_key');
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: WINSTONAI_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: '2',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		TOKEN: apiKey.trim(),
 		HEADERS: {
-			...(isWrite ? { 'Content-Type': 'application/json' } : {}),
-			Authorization: `Bearer ${apiKey}`,
+			Accept: 'application/json',
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
-		method,
+		method: 'POST',
 		url: endpoint,
-		body: isWrite ? body : undefined,
-		mediaType: isWrite ? 'application/json; charset=utf-8' : undefined,
-		query: method === 'GET' ? query : undefined,
+		body: options.body ? compactBody(options.body) : undefined,
+		mediaType: 'application/json; charset=utf-8',
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		const raw = await request(config, requestOptions, {
+			rateLimitConfig: WINSTONAI_NO_RETRY,
+		});
+		return options.schema.parse(raw);
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new WinstonAiAPIError(error.message, String(error.status), {
-				cause: error,
-			});
+		if (error instanceof ApiError || error instanceof AuthMissingError) {
+			throw error;
 		}
 		if (error instanceof Error) {
-			throw new WinstonAiAPIError(error.message, undefined, { cause: error });
+			throw error;
 		}
-		throw new WinstonAiAPIError('Unknown error');
+		throw new Error('Unknown Winston AI request error');
 	}
 }
