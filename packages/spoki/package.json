@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/spoki",
   "version": "0.1.0",
-  "description": "TwoChat plugin for Corsair",
+  "description": "Spoki integration for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -35,7 +35,7 @@
   },
   "keywords": [
     "corsair",
-    "twochat",
+    "spoki",
     "plugin"
   ],
   "author": "",
