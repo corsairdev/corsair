@@ -1,6 +1,3 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
 export class ChatfaiAPIError extends Error {
 	constructor(
 		message: string,
@@ -26,6 +23,7 @@ export class ChatfaiRateLimitError extends ChatfaiAPIError {
 
 /** Official ChatFAI REST v1. https://chatfai.com/developers/docs */
 export const CHATFAI_API_BASE = 'https://api.chatfai.com/v1';
+const REQUEST_TIMEOUT_MS = 20_000;
 
 export type ChatfaiRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -33,18 +31,49 @@ export type ChatfaiRequestOptions = {
 	query?: Record<string, string | number | boolean | undefined>;
 };
 
-function errorMessage(error: ApiError): string {
-	const body =
-		typeof error.body === 'object' && error.body !== null
-			? (error.body as Record<string, unknown>)
-			: undefined;
-	if (body && typeof body.error === 'string' && body.error.length > 0) {
-		return body.error;
+function retryAfterMs(res: Response): number | undefined {
+	const raw = res.headers.get('Retry-After');
+	if (!raw) return undefined;
+	const seconds = Number(raw);
+	if (Number.isFinite(seconds)) return seconds * 1000;
+	const at = Date.parse(raw);
+	return Number.isFinite(at) ? Math.max(0, at - Date.now()) : undefined;
+}
+
+function errorMessage(status: number, body: unknown): string {
+	if (body && typeof body === 'object') {
+		const rec = body as Record<string, unknown>;
+		if (typeof rec.error === 'string' && rec.error.length > 0) return rec.error;
+		if (typeof rec.message === 'string' && rec.message.length > 0) {
+			return rec.message;
+		}
 	}
-	if (body && typeof body.message === 'string' && body.message.length > 0) {
-		return body.message;
+	if (typeof body === 'string' && body.length > 0) return body;
+	return `ChatFAI request failed (${status})`;
+}
+
+async function parseBody(res: Response): Promise<unknown> {
+	const text = await res.text();
+	if (!text) return undefined;
+	try {
+		return JSON.parse(text) as unknown;
+	} catch {
+		return text;
 	}
-	return error.message;
+}
+
+function requestUrl(
+	endpoint: string,
+	query?: Record<string, string | number | boolean | undefined>,
+): string {
+	const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+	const url = new URL(`${CHATFAI_API_BASE}${path}`);
+	if (query) {
+		for (const [key, value] of Object.entries(query)) {
+			if (value !== undefined) url.searchParams.set(key, String(value));
+		}
+	}
+	return url.toString();
 }
 
 export async function makeChatfaiRequest<T>(
@@ -55,48 +84,44 @@ export async function makeChatfaiRequest<T>(
 	const { method = 'GET', body, query } = options;
 	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
-	const config: OpenAPIConfig = {
-		BASE: CHATFAI_API_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			Accept: 'application/json',
-			Authorization: `Bearer ${apiKey}`,
-		},
-	};
-
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body: isWrite ? body : undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query,
-	};
-
+	let res: Response;
 	try {
-		return await request<T>(config, requestOptions);
-	} catch (error: unknown) {
-		if (error instanceof ApiError) {
-			if (error.status === 429) {
-				throw new ChatfaiRateLimitError(
-					errorMessage(error),
-					error.retryAfter,
-					error.body,
-				);
-			}
-			throw new ChatfaiAPIError(
-				errorMessage(error),
-				error.status,
-				error.status,
-				error.body,
-			);
+		res = await fetch(requestUrl(endpoint, query), {
+			method,
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+				Authorization: `Bearer ${apiKey}`,
+			},
+			body: isWrite && body !== undefined ? JSON.stringify(body) : undefined,
+			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+		});
+	} catch (error) {
+		if (error instanceof Error && error.name === 'TimeoutError') {
+			throw new ChatfaiAPIError('ChatFAI request timed out');
 		}
-		if (error instanceof Error) {
-			throw new ChatfaiAPIError(error.message);
-		}
-		throw new ChatfaiAPIError('Unknown error');
+		throw new ChatfaiAPIError(
+			error instanceof Error ? error.message : 'ChatFAI request failed',
+		);
 	}
+
+	if (res.status === 429) {
+		const parsed = await parseBody(res);
+		throw new ChatfaiRateLimitError(
+			errorMessage(res.status, parsed),
+			retryAfterMs(res),
+			parsed,
+		);
+	}
+
+	const parsed = await parseBody(res);
+	if (!res.ok) {
+		throw new ChatfaiAPIError(
+			errorMessage(res.status, parsed),
+			res.status,
+			res.status,
+			parsed,
+		);
+	}
+	return parsed as T;
 }
