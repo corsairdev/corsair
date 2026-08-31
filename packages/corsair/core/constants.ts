@@ -215,6 +215,7 @@ export const BaseProviders = [
 	'textrazor',
 	'ticktick',
 	'tisane',
+	'timecamp',
 	'todoist',
 	'toggl',
 	'trello',
@@ -448,6 +449,7 @@ export const ProviderDisplayNames = {
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
 	tisane: 'Tisane',
+	timecamp: 'TimeCamp',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -687,6 +689,7 @@ export type AllProviders =
 	| 'textrazor'
 	| 'ticktick'
 	| 'tisane'
+	| 'timecamp'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
