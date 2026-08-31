@@ -61,14 +61,29 @@ function queryString(
 	return qs ? `?${qs}` : '';
 }
 
-function retryAfterMs(res: Response): number | undefined {
-	const raw =
-		res.headers.get('Retry-After') ?? res.headers.get('RateLimit-Reset');
+function headerWaitMs(res: Response, name: string): number | undefined {
+	const raw = res.headers.get(name);
 	if (!raw) return undefined;
 	const seconds = Number(raw);
 	if (Number.isFinite(seconds)) return seconds * 1000;
 	const at = Date.parse(raw);
 	return Number.isFinite(at) ? Math.max(0, at - Date.now()) : undefined;
+}
+
+function retryAfterMs(res: Response, body?: unknown): number | undefined {
+	const retryAfter = headerWaitMs(res, 'Retry-After');
+	const orgReset = headerWaitMs(res, 'RateLimit-Reset');
+	const userReset = headerWaitMs(res, 'RateLimit-User-Reset');
+	const scope =
+		body && typeof body === 'object' && 'scope' in body
+			? String((body as { scope: unknown }).scope)
+			: undefined;
+	if (scope === 'rest_user') return retryAfter ?? userReset;
+	if (scope) return retryAfter ?? orgReset;
+	const waits = [retryAfter, orgReset, userReset].filter(
+		(ms): ms is number => ms !== undefined,
+	);
+	return waits.length ? Math.max(...waits) : undefined;
 }
 
 function bodyMessage(body: unknown, fallback: string): string {
@@ -92,6 +107,7 @@ export async function makeBuildkiteRequest<T>(
 	if (apiKey) headers.Authorization = `Bearer ${apiKey}`;
 
 	let res: Response;
+	let parsed: unknown;
 	try {
 		res = await fetch(url, {
 			method,
@@ -102,26 +118,24 @@ export async function makeBuildkiteRequest<T>(
 					: undefined,
 			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 		});
+		const text = await res.text();
+		if (text) {
+			try {
+				parsed = JSON.parse(text);
+			} catch {
+				parsed = text;
+			}
+		}
 	} catch (error) {
 		throw new BuildkiteAPIError(
 			error instanceof Error ? error.message : 'Buildkite request failed',
 		);
 	}
 
-	let parsed: unknown;
-	const text = await res.text();
-	if (text) {
-		try {
-			parsed = JSON.parse(text);
-		} catch {
-			parsed = text;
-		}
-	}
-
 	if (res.status === 429) {
 		throw new BuildkiteRateLimitError(
 			bodyMessage(parsed, 'Too Many Requests'),
-			retryAfterMs(res),
+			retryAfterMs(res, parsed),
 			parsed,
 		);
 	}

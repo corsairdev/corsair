@@ -340,6 +340,58 @@ describe('Buildkite client errors', () => {
 		}
 	});
 
+	it('uses RateLimit-User-Reset when the 429 scope is rest_user', async () => {
+		mockFetch.mockImplementation(() =>
+			jsonResponse(
+				{ message: 'Rate limit exceeded', scope: 'rest_user' },
+				{
+					status: 429,
+					headers: {
+						'RateLimit-Reset': '10',
+						'RateLimit-User-Reset': '42',
+					},
+				},
+			),
+		);
+		try {
+			await makeBuildkiteRequest('/v2/user', TEST_KEY);
+		} catch (error) {
+			expect((error as BuildkiteRateLimitError).retryAfterMs).toBe(42000);
+		}
+	});
+
+	it('waits for the later reset when 429 scope is not explicit', async () => {
+		mockFetch.mockImplementation(() =>
+			jsonResponse(
+				{ message: 'Rate limit exceeded' },
+				{
+					status: 429,
+					headers: {
+						'RateLimit-Reset': '10',
+						'RateLimit-User-Reset': '42',
+					},
+				},
+			),
+		);
+		try {
+			await makeBuildkiteRequest('/v2/user', TEST_KEY);
+		} catch (error) {
+			expect((error as BuildkiteRateLimitError).retryAfterMs).toBe(42000);
+		}
+	});
+
+	it('maps a body-read abort to BuildkiteAPIError', async () => {
+		mockFetch.mockResolvedValue({
+			status: 200,
+			ok: true,
+			headers: new Headers(),
+			text: () => Promise.reject(new Error('The operation was aborted')),
+		});
+		await expect(
+			makeBuildkiteRequest('/v2/user', TEST_KEY),
+		).rejects.toBeInstanceOf(BuildkiteAPIError);
+	});
+
 	it('wraps 401 as BuildkiteAPIError matched by AUTH_ERROR', async () => {
 		mockFetch.mockImplementation(() =>
 			jsonResponse({ message: 'Unauthorized' }, { status: 401 }),
