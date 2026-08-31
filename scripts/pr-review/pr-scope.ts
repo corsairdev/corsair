@@ -29,6 +29,50 @@ function isWwwFile(file: string): boolean {
 	return file === 'www' || file.startsWith('www/');
 }
 
+export function isGitZeroOid(oid: string): boolean {
+	return oid.length > 0 && /^0+$/.test(oid);
+}
+
+export type PushChangeSet =
+	| { kind: 'known'; files: string[] }
+	| { kind: 'unknown'; reason: string };
+
+export function pushRangeFromGithubEvent(
+	event: unknown,
+): { before: string; after: string } | null {
+	if (typeof event !== 'object' || event === null) {
+		return null;
+	}
+	if (!('before' in event) || !('after' in event)) {
+		return null;
+	}
+	if (typeof event.before !== 'string' || typeof event.after !== 'string') {
+		return null;
+	}
+	if (event.before.length === 0 || event.after.length === 0) {
+		return null;
+	}
+	return { before: event.before, after: event.after };
+}
+
+export function changeSetForPush(options: {
+	before: string;
+	after: string;
+	diff: (before: string, after: string) => string[];
+}): PushChangeSet {
+	if (isGitZeroOid(options.before)) {
+		return { kind: 'unknown', reason: 'unborn revision' };
+	}
+	return { kind: 'known', files: options.diff(options.before, options.after) };
+}
+
+export function classifyPushChangeSet(changeSet: PushChangeSet): PrScope {
+	if (changeSet.kind === 'unknown') {
+		return { lane: 'full', includeWww: true };
+	}
+	return classifyPrScope(changeSet.files);
+}
+
 export function classifyPrScope(changedFiles: string[]): PrScope {
 	const plugins = new Set(
 		changedFiles
