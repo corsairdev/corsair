@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 import { agentql } from '@corsair-dev/agentql';
+import { anthropicadministrator } from '@corsair-dev/anthropicadministrator';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
@@ -40,6 +41,9 @@ export const corsair = createCorsair({
 	},
 	plugins: [
 		// github({ authType: 'managed' }),
+		anthropicadministrator({
+			key: process.env.ANTHROPIC_ADMIN_API_KEY,
+		}),
 		slack({
 			permissions: {
 				mode: 'cautious',
