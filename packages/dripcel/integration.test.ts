@@ -70,29 +70,35 @@ describeIfKey('Dripcel live API', () => {
 	});
 
 	it('creates, reads, and deletes a contact', async () => {
-		const local = '0821234567';
-		const msisdn = '27821234567';
-		const created = await makeDripcelRequest<{
-			validContact?: number;
-			validContacts?: number;
-			invalidContacts?: unknown[];
-		}>('/contacts', LIVE_KEY as string, {
-			method: 'POST',
-			body: {
-				country: 'ZA',
-				contacts: [{ cell: local, firstname: 'CorsairTest' }],
-			},
-		});
-		expect(created.validContact ?? created.validContacts).toBe(1);
+		const local = `082${String(Date.now()).slice(-7)}`;
+		const msisdn = `27${local.slice(1)}`;
+		let created = false;
+		try {
+			const uploaded = await makeDripcelRequest<{
+				validContact?: number;
+				validContacts?: number;
+				invalidContacts?: unknown[];
+			}>('/contacts', LIVE_KEY as string, {
+				method: 'POST',
+				body: {
+					country: 'ZA',
+					contacts: [{ cell: local, firstname: 'CorsairTest' }],
+				},
+			});
+			created = true;
+			expect(uploaded.validContact ?? uploaded.validContacts).toBe(1);
 
-		const contact = await makeDripcelRequest<{ cell?: string }>(
-			`/contacts/${msisdn}`,
-			LIVE_KEY as string,
-		);
-		expect(contact.cell).toBeDefined();
-
-		await makeDripcelRequest(`/contacts/${msisdn}`, LIVE_KEY as string, {
-			method: 'DELETE',
-		});
+			const contact = await makeDripcelRequest<{ cell?: string }>(
+				`/contacts/${msisdn}`,
+				LIVE_KEY as string,
+			);
+			expect(contact.cell).toBeDefined();
+		} finally {
+			if (created) {
+				await makeDripcelRequest(`/contacts/${msisdn}`, LIVE_KEY as string, {
+					method: 'DELETE',
+				});
+			}
+		}
 	});
 });

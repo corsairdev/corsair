@@ -7,6 +7,10 @@ import {
 import * as Catalog from './endpoints/catalog';
 import * as Contacts from './endpoints/contacts';
 import * as Messaging from './endpoints/messaging';
+import {
+	CreateContactsInputSchema,
+	UploadSalesInputSchema,
+} from './endpoints/types';
 import { dripcel } from './index';
 
 jest.mock('corsair/core', () => {
@@ -107,6 +111,16 @@ describe('Dripcel plugin', () => {
 				'endpoint',
 			),
 		).rejects.toThrow(AuthMissingError);
+	});
+
+	it('requires cell on contact upload and campaign_id plus cell on sales', () => {
+		expect(() => CreateContactsInputSchema.parse({ contacts: [{}] })).toThrow();
+		expect(
+			CreateContactsInputSchema.parse({
+				contacts: [{ cell: '0821234567', firstname: 'Jane' }],
+			}).contacts[0]?.firstname,
+		).toBe('Jane');
+		expect(() => UploadSalesInputSchema.parse({ sales: [{}] })).toThrow();
 	});
 });
 

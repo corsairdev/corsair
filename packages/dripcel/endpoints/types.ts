@@ -29,9 +29,13 @@ export type GetContactInput = z.infer<typeof GetContactInputSchema>;
 export const GetContactOutputSchema = DripcelContact;
 export type GetContactOutput = z.infer<typeof GetContactOutputSchema>;
 
+const ContactUploadRowSchema = DripcelContact.extend({
+	cell: z.string(),
+}).passthrough();
+
 export const CreateContactsInputSchema = z
 	.object({
-		contacts: z.array(DripcelContact.passthrough()),
+		contacts: z.array(ContactUploadRowSchema),
 		country: z.enum(['ZA', 'NA']).optional(),
 		tag_ids: z.array(z.string()).optional(),
 		send: z.record(z.string(), z.unknown()).optional(),
@@ -141,9 +145,14 @@ export type ListEmailTemplatesOutput = z.infer<
 	typeof ListEmailTemplatesOutputSchema
 >;
 
+const SaleUploadRowSchema = DripcelSale.extend({
+	campaign_id: z.string(),
+	cell: z.string(),
+}).passthrough();
+
 export const UploadSalesInputSchema = z
 	.object({
-		sales: z.array(DripcelSale),
+		sales: z.array(SaleUploadRowSchema),
 	})
 	.passthrough();
 export type UploadSalesInput = z.infer<typeof UploadSalesInputSchema>;
