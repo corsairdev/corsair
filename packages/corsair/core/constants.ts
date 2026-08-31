@@ -91,6 +91,7 @@ export const BaseProviders = [
 	'box',
 	'boxhero',
 	'brandfetch',
+	'brex',
 	'browseai',
 	'browserless',
 	'bugsnag',
@@ -215,6 +216,7 @@ export const BaseProviders = [
 	'textrazor',
 	'ticktick',
 	'tisane',
+	'timecamp',
 	'todoist',
 	'toggl',
 	'trello',
@@ -324,6 +326,7 @@ export const ProviderDisplayNames = {
 	box: 'Box',
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
+	brex: 'Brex',
 	browseai: 'Browse AI',
 	browserless: 'Browserless',
 	bugsnag: 'BugSnag',
@@ -449,6 +452,7 @@ export const ProviderDisplayNames = {
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
 	tisane: 'Tisane',
+	timecamp: 'TimeCamp',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -565,6 +569,7 @@ export type AllProviders =
 	| 'box'
 	| 'boxhero'
 	| 'brandfetch'
+	| 'brex'
 	| 'browseai'
 	| 'browserless'
 	| 'bugsnag'
@@ -689,6 +694,7 @@ export type AllProviders =
 	| 'textrazor'
 	| 'ticktick'
 	| 'tisane'
+	| 'timecamp'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
