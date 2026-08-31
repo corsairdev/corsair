@@ -213,8 +213,11 @@ export function CorsairProvider({
 			return ok ? 'connected' : 'cancelled';
 		}, [client, openDialog]);
 
-	// Opt-in mutation wrapper: run the action; if it failed because the tenant
-	// must connect, open the dialog and re-run. A non-connect error rethrows.
+	// Opt-in mutation wrapper: run the action; on failure, if a connect-request is
+	// pending, open the dialog and re-run once connected — otherwise rethrow. The
+	// server records that request across the RSC boundary where the typed error is
+	// lost, so this can't classify the error itself; wrap only connect-gated or
+	// retry-safe mutations.
 	const call = useCallback(
 		async <T,>(fn: () => Promise<T>): Promise<T | null> => {
 			try {
@@ -233,13 +236,23 @@ export function CorsairProvider({
 	const handleOpen = useCallback(() => {
 		const { connectUrl, plugin, tenantId } = connectState;
 		if (!connectUrl || !plugin) return;
-		popupRef.current = window.open(
+		const popup = window.open(
 			connectUrl,
 			'corsair-connect',
 			'width=520,height=720',
 		);
+		if (!popup) {
+			// Popup blocked — there's no window to watch, so end the attempt instead
+			// of leaving connect() pending forever. The caller can retry once the
+			// user allows popups.
+			attemptRef.current += 1;
+			settle(false);
+			dispatch({ type: 'CLOSE' });
+			return;
+		}
+		popupRef.current = popup;
 		beginWatch(plugin, tenantId);
-	}, [beginWatch, connectState]);
+	}, [beginWatch, connectState, settle]);
 
 	const handleClose = useCallback(() => {
 		attemptRef.current += 1;
@@ -326,9 +339,10 @@ export type UseConnectResult = {
 	/** Proactively open the dialog for a plugin (e.g. a "Connect GitHub" button),
 	 * before any call has failed. Resolves `true` once connected. */
 	connect: (plugin: string, opts?: { tenantId?: string }) => Promise<boolean>;
-	/** Run a mutation; if it fails because the tenant must connect, open the
-	 * dialog and re-run once connected. Resolves `null` if the user cancels, and
-	 * rethrows any error that isn't auth-missing. */
+	/** Run a connect-gated mutation; if it fails while a connect-request is
+	 * pending, open the dialog and re-run once connected. Resolves `null` if the
+	 * user cancels, and rethrows the original error when nothing is pending. Wrap
+	 * only connect-gated or retry-safe mutations. */
 	call: <T>(fn: () => Promise<T>) => Promise<T | null>;
 	/** Current dialog state, for driving your own connect UI if needed. */
 	status: ConnectState;
