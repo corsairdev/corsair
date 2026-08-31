@@ -1,21 +1,19 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { Characters, Conversations } from './endpoints';
 import type {
 	ChatfaiEndpointInputs,
 	ChatfaiEndpointOutputs,
@@ -26,28 +24,26 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ChatfaiSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveChatfaiOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchChatfaiTenantWebhook } from './webhooks/tenant-matcher';
-import type { ChatfaiWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type ChatfaiPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalChatfaiPlugin['hooks'];
-	webhookHooks?: InternalChatfaiPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof chatfaiEndpointsNested>;
 };
 
 export type ChatfaiContext = CorsairPluginContext<
 	typeof ChatfaiSchema,
-	ChatfaiPluginOptions
+	ChatfaiPluginOptions,
+	undefined,
+	typeof chatfaiAuthConfig
 >;
 
-export type ChatfaiKeyBuilderContext = KeyBuilderContext<ChatfaiPluginOptions>;
+export type ChatfaiKeyBuilderContext = KeyBuilderContext<
+	ChatfaiPluginOptions,
+	typeof chatfaiAuthConfig
+>;
 
 export type ChatfaiBoundEndpoints = BindEndpoints<
 	typeof chatfaiEndpointsNested
@@ -60,64 +56,61 @@ type ChatfaiEndpoint<K extends keyof ChatfaiEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type ChatfaiEndpoints = {
-	exampleGet: ChatfaiEndpoint<'exampleGet'>;
+	charactersSearch: ChatfaiEndpoint<'charactersSearch'>;
+	charactersGet: ChatfaiEndpoint<'charactersGet'>;
+	conversationsList: ChatfaiEndpoint<'conversationsList'>;
 };
-
-type ChatfaiWebhook<
-	K extends keyof ChatfaiWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ChatfaiContext, TEvent, ChatfaiWebhookOutputs[K]>;
-
-export type ChatfaiWebhooks = {
-	example: ChatfaiWebhook<'example', ExampleEvent>;
-};
-
-export type ChatfaiBoundWebhooks = BindWebhooks<ChatfaiWebhooks>;
 
 const chatfaiEndpointsNested = {
-	example: {
-		get: Example.get,
+	characters: {
+		search: Characters.search,
+		get: Characters.get,
 	},
-} as const;
-
-const chatfaiWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	conversations: {
+		list: Conversations.list,
 	},
 } as const;
 
 export const chatfaiEndpointSchemas = {
-	'example.get': {
-		input: ChatfaiEndpointInputSchemas.exampleGet,
-		output: ChatfaiEndpointOutputSchemas.exampleGet,
+	'characters.search': {
+		input: ChatfaiEndpointInputSchemas.charactersSearch,
+		output: ChatfaiEndpointOutputSchemas.charactersSearch,
+	},
+	'characters.get': {
+		input: ChatfaiEndpointInputSchemas.charactersGet,
+		output: ChatfaiEndpointOutputSchemas.charactersGet,
+	},
+	'conversations.list': {
+		input: ChatfaiEndpointInputSchemas.conversationsList,
+		output: ChatfaiEndpointOutputSchemas.conversationsList,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof chatfaiEndpointsNested
 >;
 
-const chatfaiWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof chatfaiWebhooksNested>;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const chatfaiEndpointMeta = {
-	'example.get': {
+	'characters.search': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description:
+			'Search public ChatFAI characters by name or keyword (GET /v1/characters/search)',
+	},
+	'characters.get': {
+		riskLevel: 'read',
+		description:
+			'Get a public ChatFAI character by ID (GET /v1/characters/{id})',
+	},
+	'conversations.list': {
+		riskLevel: 'read',
+		description:
+			'List conversations for the authenticated user (GET /v1/conversations)',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof chatfaiEndpointsNested>;
 
 export const chatfaiAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -125,9 +118,10 @@ export type BaseChatfaiPlugin<T extends ChatfaiPluginOptions> = CorsairPlugin<
 	'chatfai',
 	typeof ChatfaiSchema,
 	typeof chatfaiEndpointsNested,
-	typeof chatfaiWebhooksNested,
+	{},
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof chatfaiAuthConfig
 >;
 
 export type InternalChatfaiPlugin = BaseChatfaiPlugin<ChatfaiPluginOptions>;
@@ -146,61 +140,46 @@ export function chatfai<const T extends ChatfaiPluginOptions>(
 		id: 'chatfai',
 		authConfig: chatfaiAuthConfig,
 		schema: ChatfaiSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: chatfaiEndpointsNested,
-		webhooks: chatfaiWebhooksNested,
+		webhooks: {},
 		endpointMeta: chatfaiEndpointMeta,
 		endpointSchemas: chatfaiEndpointSchemas,
-		webhookSchemas: chatfaiWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-chatfai-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchChatfaiTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveChatfaiOAuthWebhookTenantLink,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ChatfaiKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
-
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('chatfai', 'api_key');
+				}
+				return res;
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('chatfai', 'api_key');
 		},
 	} satisfies InternalChatfaiPlugin;
 }
 
+export {
+	ChatfaiAPIError,
+	ChatfaiRateLimitError,
+	makeChatfaiRequest,
+} from './client';
 export type {
+	CharactersGetInput,
+	CharactersGetOutput,
+	CharactersSearchInput,
+	CharactersSearchOutput,
 	ChatfaiEndpointInputs,
 	ChatfaiEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	ConversationsListInput,
+	ConversationsListOutput,
 } from './endpoints/types';
-export type {
-	ChatfaiWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';

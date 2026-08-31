@@ -1,26 +1,37 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ApiError } from 'corsair/http';
+import { ChatfaiAPIError, ChatfaiRateLimitError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (error instanceof ChatfaiRateLimitError) return true;
+			if (error instanceof ChatfaiAPIError && error.status === 429) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return (
+				msg.includes('too many requests') ||
+				msg.includes('rate_limited') ||
+				msg.includes('rate limit')
+			);
 		},
 		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
+			const retryAfterMs =
+				error instanceof ChatfaiRateLimitError ? error.retryAfterMs : undefined;
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (error instanceof ChatfaiAPIError && error.status === 401) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid api key') ||
+				msg.includes('401')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

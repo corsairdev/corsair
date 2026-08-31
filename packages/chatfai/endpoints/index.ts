@@ -1,7 +1,13 @@
-import { get as exampleGet } from './example';
+import { get, search } from './characters';
+import { list } from './conversations';
 
-export const Example = {
-	get: exampleGet,
+export const Characters = {
+	search,
+	get,
+};
+
+export const Conversations = {
+	list,
 };
 
 export * from './types';
