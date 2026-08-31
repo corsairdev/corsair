@@ -1,7 +1,5 @@
-import {
-	anthropicAdministratorEndpointSchemas,
-	anthropicadministrator,
-} from './index';
+import { anthropicadministrator } from './index';
+import { anthropicAdministratorEndpointSchemas } from './meta';
 import { AnthropicAdministratorSchema } from './schema';
 
 function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {
@@ -24,6 +22,9 @@ const EXPECTED_OPERATIONS = [
 	'invites.deleteInvite',
 	'invites.getInvite',
 	'invites.listInvites',
+	'messages.createMessage',
+	'models.getModel',
+	'models.listModels',
 	'organization.getOrganization',
 	'users.getUser',
 	'users.listUsers',
@@ -53,7 +54,7 @@ function keyBuilderOf(plugin: { keyBuilder?: unknown }) {
 describe('anthropicadministrator plugin shape', () => {
 	const plugin = anthropicadministrator();
 
-	it('exposes exactly the 22 Admin API operations', () => {
+	it('exposes exactly the 25 Admin API operations', () => {
 		expect(
 			endpointPaths(plugin.endpoints as Record<string, unknown>).sort(),
 		).toEqual(EXPECTED_OPERATIONS);
