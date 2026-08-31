@@ -13,7 +13,6 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'dropboxsign',
 	'ably',
 	'abstract',
 	'abuseipdb',
@@ -124,6 +123,7 @@ export const BaseProviders = [
 	'doppler',
 	'dreamstudio',
 	'dropbox',
+	'dropboxsign',
 	'epicgames',
 	'exa',
 	'facebook',
@@ -163,6 +163,7 @@ export const BaseProviders = [
 	'jigsawstack',
 	'jira',
 	'kaggle',
+	'kraken',
 	'linear',
 	'linkedin',
 	'loyverse',
@@ -396,6 +397,7 @@ export const ProviderDisplayNames = {
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	kaggle: 'Kaggle',
+	kraken: 'Kraken',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
 	loyverse: 'Loyverse',
@@ -635,6 +637,7 @@ export type AllProviders =
 	| 'jigsawstack'
 	| 'jira'
 	| 'kaggle'
+	| 'kraken'
 	| 'linear'
 	| 'linkedin'
 	| 'loyverse'
