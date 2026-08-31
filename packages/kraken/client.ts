@@ -9,6 +9,8 @@ export class KrakenAPIError extends Error {
 		message: string,
 		public readonly code?: string,
 		public readonly status?: number,
+		/** Milliseconds to wait before retrying, from `ApiError.retryAfter`. */
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'KrakenAPIError';
@@ -87,6 +89,7 @@ export async function makeKrakenRequest<T>(
 				errBody?.message ?? error.message,
 				undefined,
 				error.status,
+				error.retryAfter,
 			);
 		}
 		if (error instanceof Error) {

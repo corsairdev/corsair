@@ -19,7 +19,7 @@ function lastCall(): [OpenAPIConfig, ApiRequestOptions] {
 	return call as unknown as [OpenAPIConfig, ApiRequestOptions];
 }
 
-function apiError(status: number): ApiError {
+function apiError(status: number, retryAfter?: number): ApiError {
 	return new ApiError(
 		{ method: 'POST', url: 'url' },
 		{
@@ -30,6 +30,7 @@ function apiError(status: number): ApiError {
 			body: { message: 'boom' },
 		},
 		'Kraken request failed',
+		{ retryAfter },
 	);
 }
 
@@ -118,6 +119,16 @@ describe('makeKrakenRequest', () => {
 			name: 'KrakenAPIError',
 			status: 401,
 			message: 'boom',
+		});
+	});
+
+	it('preserves retryAfter (already in ms) from a transport-level ApiError', async () => {
+		mockRequest.mockRejectedValue(apiError(429, 30_000));
+
+		await expect(makeKrakenRequest('url', credentials)).rejects.toMatchObject({
+			name: 'KrakenAPIError',
+			status: 429,
+			retryAfter: 30_000,
 		});
 	});
 

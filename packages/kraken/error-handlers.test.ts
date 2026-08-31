@@ -108,6 +108,19 @@ describe('errorHandlers', () => {
 		expect(writeResult).toEqual({ maxRetries: 0 });
 	});
 
+	it('honors a provider-supplied retryAfter (already ms) on the idempotent read without rescaling it', async () => {
+		const error = new KrakenAPIError('rate limited', undefined, 429, 5_000);
+
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(error, {
+			pluginId: 'kraken',
+			operation: 'account.checkStatus',
+			input: {},
+			originalError: error,
+		});
+
+		expect(result).toEqual({ maxRetries: 3, headersRetryAfterMs: 5_000 });
+	});
+
 	it('does not retry auth failures', async () => {
 		const error = transportError(401);
 		const result = await errorHandlers.AUTH_ERROR.handler(error, {

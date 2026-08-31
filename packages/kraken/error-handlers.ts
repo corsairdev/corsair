@@ -25,9 +25,13 @@ export const errorHandlers = {
 			if (!isRetryableOperation(context)) {
 				return { maxRetries: 0 };
 			}
+			// By the time an error reaches error-handlers it has already been
+			// wrapped as KrakenAPIError by makeKrakenRequest (never a raw
+			// ApiError), and retryAfter is already in milliseconds — no unit
+			// conversion needed.
 			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter * 1000;
+			if (error instanceof KrakenAPIError && error.retryAfter !== undefined) {
+				retryAfterMs = error.retryAfter;
 			}
 			return { maxRetries: 3, headersRetryAfterMs: retryAfterMs ?? 1000 };
 		},
