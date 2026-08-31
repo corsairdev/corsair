@@ -6,9 +6,6 @@ import {
 import { ChatfaiCharacter } from './schema';
 
 const LIVE_KEY = process.env.CHATFAI_API_KEY;
-const describeIfKey = LIVE_KEY ? describe : describe.skip;
-
-const LIVE_KEY = process.env.CHATFAI_API_KEY;
 const runLive = process.env.CHATFAI_LIVE_TESTS === 'true';
 const describeLive = runLive ? describe : describe.skip;
 const describeIfKey = LIVE_KEY && runLive ? describe : describe.skip;
