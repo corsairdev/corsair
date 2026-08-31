@@ -12,4 +12,5 @@ export {
 	createBrexEventMatch,
 	hasBrexWebhookHeaders,
 	verifyBrexWebhookSignature,
+	webhookBodyRecord,
 } from './types';

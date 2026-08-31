@@ -4,7 +4,21 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { asRecord } from 'corsair/core';
 import { z } from 'zod';
+
+export function webhookBodyRecord(
+	body: unknown,
+): Record<string, unknown> | null {
+	if (typeof body === 'string') {
+		try {
+			return asRecord(JSON.parse(body));
+		} catch {
+			return null;
+		}
+	}
+	return asRecord(body);
+}
 
 /** Official webhook envelope. https://developer.brex.com/guides/webhooks */
 export const BrexWebhookEventSchema = z
@@ -22,13 +36,8 @@ export type BrexWebhookOutputs = {
 };
 
 export function createBrexEventMatch(eventType: string): CorsairWebhookMatcher {
-	return (request: RawWebhookRequest) => {
-		const body =
-			typeof request.body === 'string'
-				? (JSON.parse(request.body) as Record<string, unknown>)
-				: (request.body as Record<string, unknown> | undefined);
-		return body?.event_type === eventType;
-	};
+	return (request: RawWebhookRequest) =>
+		webhookBodyRecord(request.body)?.event_type === eventType;
 }
 
 export function hasBrexWebhookHeaders(

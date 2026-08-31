@@ -27,6 +27,7 @@ export const BREX_OAUTH_AUTHORIZE_URL =
 	'https://accounts-api.brex.com/oauth2/default/v1/authorize';
 export const BREX_OAUTH_TOKEN_URL =
 	'https://accounts-api.brex.com/oauth2/default/v1/token';
+const REQUEST_TIMEOUT_MS = 20_000;
 
 export type BrexRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -82,6 +83,7 @@ export async function makeBrexRequest<T>(
 			...headers,
 		},
 		body: body !== undefined ? JSON.stringify(body) : undefined,
+		signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 	});
 
 	if (res.status === 204) return {} as T;

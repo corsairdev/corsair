@@ -22,7 +22,10 @@ import { errorHandlers } from './error-handlers';
 import { brex } from './index';
 import { resolveBrexOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchBrexTenantWebhook } from './webhooks/tenant-matcher';
-import { verifyBrexWebhookSignature } from './webhooks/types';
+import {
+	createBrexEventMatch,
+	verifyBrexWebhookSignature,
+} from './webhooks/types';
 import { userUpdated } from './webhooks/users';
 
 jest.mock('corsair/core', () => {
@@ -98,6 +101,7 @@ function lastCall() {
 		method: init?.method ?? 'GET',
 		auth: new Headers(init?.headers).get('Authorization'),
 		idempotency: new Headers(init?.headers).get('Idempotency-Key'),
+		hasSignal: init?.signal instanceof AbortSignal,
 	};
 }
 
@@ -274,6 +278,7 @@ describe('Brex plugin', () => {
 			idempotency_key: 'card-create-1',
 		});
 		expect(lastCall().idempotency).toBe('card-create-1');
+		expect(lastCall().hasSignal).toBe(true);
 	});
 
 	it('keeps the continuation cursor after the transaction scan cap', async () => {
@@ -313,6 +318,18 @@ describe('Brex webhooks', () => {
 				},
 			}),
 		).toEqual({ linkType: 'company_id', externalId: 'cuacc_123' });
+		expect(
+			matchBrexTenantWebhook({
+				headers: {},
+				body: '{"company_id":"cuacc_123"}',
+			}),
+		).toEqual({ linkType: 'company_id', externalId: 'cuacc_123' });
+		expect(
+			matchBrexTenantWebhook({ headers: {}, body: '{not-json' }),
+		).toBeNull();
+		expect(
+			createBrexEventMatch('USER_UPDATED')({ headers: {}, body: '{' }),
+		).toBe(false);
 	});
 
 	it('verifies USER_UPDATED before handling', async () => {
@@ -383,6 +400,46 @@ describe('Brex webhooks', () => {
 			},
 		);
 		expect(accepted.success).toBe(true);
+	});
+
+	it('returns 400 for invalid user payloads and 503 when upsert fails', async () => {
+		const invalid = await userUpdated.handler(
+			{
+				key: undefined,
+				db: { users: { upsertByEntityId: async () => ({}) } },
+			} as never,
+			{
+				headers: {},
+				hubVerified: true,
+				payload: {
+					event_type: 'USER_UPDATED',
+					data: { id: 'u1', email: 1 },
+				},
+			},
+		);
+		expect(invalid).toMatchObject({ success: false, statusCode: 400 });
+
+		const failed = await userUpdated.handler(
+			{
+				key: undefined,
+				db: {
+					users: {
+						upsertByEntityId: async () => {
+							throw new Error('db down');
+						},
+					},
+				},
+			} as never,
+			{
+				headers: {},
+				hubVerified: true,
+				payload: {
+					event_type: 'USER_UPDATED',
+					data: { id: 'u1', email: 'ada@example.com' },
+				},
+			},
+		);
+		expect(failed).toMatchObject({ success: false, statusCode: 503 });
 	});
 
 	it('accepts a valid official HMAC signature', () => {
