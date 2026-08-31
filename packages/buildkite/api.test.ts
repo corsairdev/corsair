@@ -1,5 +1,4 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { ApiError, request } from 'corsair/http';
 import {
 	BuildkiteAPIError,
 	BuildkiteRateLimitError,
@@ -37,20 +36,41 @@ jest.mock('corsair/core', () => {
 	};
 });
 
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual('corsair/http');
-	return {
-		...actual,
-		request: jest.fn(),
-	};
-});
+const mockFetch = jest.fn();
 
-const mockRequest = request as jest.MockedFunction<typeof request>;
+beforeAll(() => {
+	globalThis.fetch = mockFetch as typeof fetch;
+});
 
 beforeEach(() => {
-	mockRequest.mockReset();
+	mockFetch.mockReset();
 	jest.mocked(logEventFromContext).mockReset();
 });
+
+function jsonResponse(body: unknown, init?: ResponseInit): Response {
+	return new Response(JSON.stringify(body), {
+		status: 200,
+		...init,
+		headers: {
+			'Content-Type': 'application/json',
+			...(init?.headers as Record<string, string>),
+		},
+	});
+}
+
+function lastRequest(): { url: string; auth: string | null; method: string } {
+	expect(mockFetch).toHaveBeenCalled();
+	const [input, init] = mockFetch.mock.calls[0] as [
+		string,
+		RequestInit | undefined,
+	];
+	const headers = new Headers(init?.headers);
+	return {
+		url: input,
+		auth: headers.get('Authorization'),
+		method: init?.method ?? 'GET',
+	};
+}
 
 const TEST_KEY = 'test-key';
 
@@ -58,13 +78,6 @@ const ctx = {
 	key: TEST_KEY,
 	$getAccountId: async () => 'test-account',
 } as never;
-
-function lastCall() {
-	expect(mockRequest).toHaveBeenCalled();
-	const call = mockRequest.mock.calls[0];
-	expect(call).toBeDefined();
-	return { config: call?.[0], options: call?.[1] };
-}
 
 const tokenFixture = {
 	uuid: 'b63254c0-3271-4a98-8270-7cfbd6c2f14e',
@@ -198,61 +211,53 @@ describe('Buildkite plugin', () => {
 	});
 
 	it('getMeta does not require a key', async () => {
-		mockRequest.mockResolvedValue(metaFixture as never);
+		mockFetch.mockResolvedValue(jsonResponse(metaFixture));
 		const result = await getMeta({ key: undefined } as never, {});
 		expect(result.webhook_ips).toEqual(metaFixture.webhook_ips);
-		expect(
-			(lastCall().config?.HEADERS as Record<string, string> | undefined)
-				?.Authorization,
-		).toBeUndefined();
+		expect(lastRequest().auth).toBeNull();
 	});
 
 	it('getUser requires a key', async () => {
 		await expect(getUser({ key: '' } as never, {})).rejects.toThrow(
 			AuthMissingError,
 		);
-		expect(mockRequest).not.toHaveBeenCalled();
+		expect(mockFetch).not.toHaveBeenCalled();
 	});
 
 	it('getCurrentAccessToken hits GET /v2/access-token', async () => {
-		mockRequest.mockResolvedValue(tokenFixture as never);
+		mockFetch.mockResolvedValue(jsonResponse(tokenFixture));
 		const input = BuildkiteEndpointInputSchemas.getCurrentAccessToken.parse({});
 		const result = await getCurrentAccessToken(ctx, input);
 		expect(result.uuid).toBe(tokenFixture.uuid);
 		BuildkiteEndpointOutputSchemas.getCurrentAccessToken.parse(result);
-		const { config, options } = lastCall();
-		expect(config?.BASE).toBe('https://api.buildkite.com');
-		expect(options?.url).toBe('/v2/access-token');
-		expect(options?.method).toBe('GET');
-		expect(
-			(config?.HEADERS as Record<string, string> | undefined)?.Authorization,
-		).toBe(`Bearer ${TEST_KEY}`);
+		const req = lastRequest();
+		expect(req.url).toBe('https://api.buildkite.com/v2/access-token');
+		expect(req.method).toBe('GET');
+		expect(req.auth).toBe(`Bearer ${TEST_KEY}`);
 	});
 
 	it('getMeta hits unauthenticated GET /v2/meta', async () => {
-		mockRequest.mockResolvedValue(metaFixture as never);
+		mockFetch.mockResolvedValue(jsonResponse(metaFixture));
 		const input = BuildkiteEndpointInputSchemas.getMeta.parse({});
 		const result = await getMeta(ctx, input);
 		expect(result.webhook_ips).toEqual(metaFixture.webhook_ips);
 		BuildkiteEndpointOutputSchemas.getMeta.parse(result);
-		const { config, options } = lastCall();
-		expect(options?.url).toBe('/v2/meta');
-		expect(
-			(config?.HEADERS as Record<string, string> | undefined)?.Authorization,
-		).toBeUndefined();
+		const req = lastRequest();
+		expect(req.url).toBe('https://api.buildkite.com/v2/meta');
+		expect(req.auth).toBeNull();
 	});
 
 	it('getUser hits GET /v2/user', async () => {
-		mockRequest.mockResolvedValue(userFixture as never);
+		mockFetch.mockResolvedValue(jsonResponse(userFixture));
 		const input = BuildkiteEndpointInputSchemas.getUser.parse({});
 		const result = await getUser(ctx, input);
 		expect(result.email).toBe(userFixture.email);
 		BuildkiteEndpointOutputSchemas.getUser.parse(result);
-		expect(lastCall().options?.url).toBe('/v2/user');
+		expect(lastRequest().url).toBe('https://api.buildkite.com/v2/user');
 	});
 
 	it('listOrganizations pages with official query params', async () => {
-		mockRequest.mockResolvedValue([orgFixture] as never);
+		mockFetch.mockResolvedValue(jsonResponse([orgFixture]));
 		const input = BuildkiteEndpointInputSchemas.listOrganizations.parse({
 			page: 2,
 			per_page: 30,
@@ -260,13 +265,14 @@ describe('Buildkite plugin', () => {
 		const result = await listOrganizations(ctx, input);
 		expect(result[0]?.slug).toBe('my-great-org');
 		BuildkiteEndpointOutputSchemas.listOrganizations.parse(result);
-		const { options } = lastCall();
-		expect(options?.url).toBe('/v2/organizations');
-		expect(options?.query).toEqual({ page: 2, per_page: 30 });
+		const req = lastRequest();
+		expect(req.url).toBe(
+			'https://api.buildkite.com/v2/organizations?page=2&per_page=30',
+		);
 	});
 
-	it('listPipelineAgents uses a static path template and official filters', async () => {
-		mockRequest.mockResolvedValue([agentFixture] as never);
+	it('listPipelineAgents substitutes org slug and official filters', async () => {
+		mockFetch.mockResolvedValue(jsonResponse([agentFixture]));
 		const input = BuildkiteEndpointInputSchemas.listPipelineAgents.parse({
 			orgSlug: 'my-great-org',
 			name: 'ci-agent-1',
@@ -279,17 +285,20 @@ describe('Buildkite plugin', () => {
 		const result = await listPipelineAgents(ctx, input);
 		expect(result[0]?.connection_state).toBe('connected');
 		BuildkiteEndpointOutputSchemas.listPipelineAgents.parse(result);
-		const { options } = lastCall();
-		expect(options?.url).toBe('/v2/organizations/{orgSlug}/agents');
-		expect(options?.path).toEqual({ orgSlug: 'my-great-org' });
-		expect(options?.query).toMatchObject({
-			name: 'ci-agent-1',
-			hostname: 'ci-box-1',
-			version: '2.1.0',
-			cluster_queue_id: 'c109939f-3b71-4cd3-b175-8eb79d2eb38e',
-			page: 1,
-			per_page: 100,
-		});
+		const req = lastRequest();
+		expect(
+			req.url.startsWith(
+				'https://api.buildkite.com/v2/organizations/my-great-org/agents?',
+			),
+		).toBe(true);
+		expect(req.url).toContain('name=ci-agent-1');
+		expect(req.url).toContain('hostname=ci-box-1');
+		expect(req.url).toContain('version=2.1.0');
+		expect(req.url).toContain(
+			'cluster_queue_id=c109939f-3b71-4cd3-b175-8eb79d2eb38e',
+		);
+		expect(req.url).toContain('page=1');
+		expect(req.url).toContain('per_page=100');
 	});
 
 	it('rejects org slugs that are not official slug characters', () => {
@@ -308,19 +317,12 @@ describe('Buildkite plugin', () => {
 
 describe('Buildkite client errors', () => {
 	it('wraps 429 as BuildkiteRateLimitError with retry metadata', async () => {
-		const apiError = new ApiError(
-			{ method: 'GET', url: '/v2/user' },
-			{
-				url: 'https://api.buildkite.com/v2/user',
-				ok: false,
-				status: 429,
-				statusText: 'Too Many Requests',
-				body: { message: 'Rate limit exceeded' },
-			},
-			'Rate limit exceeded',
-			{ retryAfter: 42000 },
+		mockFetch.mockImplementation(() =>
+			jsonResponse(
+				{ message: 'Rate limit exceeded' },
+				{ status: 429, headers: { 'Retry-After': '42' } },
+			),
 		);
-		mockRequest.mockRejectedValue(apiError);
 
 		await expect(
 			makeBuildkiteRequest('/v2/user', TEST_KEY),
@@ -339,18 +341,9 @@ describe('Buildkite client errors', () => {
 	});
 
 	it('wraps 401 as BuildkiteAPIError matched by AUTH_ERROR', async () => {
-		const apiError = new ApiError(
-			{ method: 'GET', url: '/v2/user' },
-			{
-				url: 'https://api.buildkite.com/v2/user',
-				ok: false,
-				status: 401,
-				statusText: 'Unauthorized',
-				body: { message: 'Unauthorized' },
-			},
-			'Unauthorized',
+		mockFetch.mockImplementation(() =>
+			jsonResponse({ message: 'Unauthorized' }, { status: 401 }),
 		);
-		mockRequest.mockRejectedValue(apiError);
 		await expect(
 			makeBuildkiteRequest('/v2/user', TEST_KEY),
 		).rejects.toBeInstanceOf(BuildkiteAPIError);

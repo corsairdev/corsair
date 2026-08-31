@@ -1,6 +1,4 @@
 import { AuthMissingError } from 'corsair/core';
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
 
 export function requireBuildkiteKey(key: string | undefined): string {
 	if (!key) {
@@ -33,6 +31,7 @@ export class BuildkiteRateLimitError extends BuildkiteAPIError {
 }
 
 const BUILDKITE_API_BASE = 'https://api.buildkite.com';
+const REQUEST_TIMEOUT_MS = 20_000;
 
 export type BuildkiteRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -41,15 +40,42 @@ export type BuildkiteRequestOptions = {
 	path?: Record<string, string>;
 };
 
-function errorMessage(error: ApiError): string {
-	const bodyObj =
-		typeof error.body === 'object' && error.body !== null
-			? (error.body as Record<string, unknown>)
-			: undefined;
-	return (
-		(bodyObj && 'message' in bodyObj ? String(bodyObj.message) : undefined) ||
-		error.message
-	);
+function applyPath(template: string, path?: Record<string, string>): string {
+	if (!path) return template;
+	let out = template;
+	for (const [key, value] of Object.entries(path)) {
+		out = out.replaceAll(`{${key}}`, encodeURIComponent(value));
+	}
+	return out;
+}
+
+function queryString(
+	query?: Record<string, string | number | boolean | undefined>,
+): string {
+	if (!query) return '';
+	const params = new URLSearchParams();
+	for (const [key, value] of Object.entries(query)) {
+		if (value !== undefined) params.set(key, String(value));
+	}
+	const qs = params.toString();
+	return qs ? `?${qs}` : '';
+}
+
+function retryAfterMs(res: Response): number | undefined {
+	const raw =
+		res.headers.get('Retry-After') ?? res.headers.get('RateLimit-Reset');
+	if (!raw) return undefined;
+	const seconds = Number(raw);
+	if (Number.isFinite(seconds)) return seconds * 1000;
+	const at = Date.parse(raw);
+	return Number.isFinite(at) ? Math.max(0, at - Date.now()) : undefined;
+}
+
+function bodyMessage(body: unknown, fallback: string): string {
+	if (body && typeof body === 'object' && 'message' in body) {
+		return String((body as { message: unknown }).message);
+	}
+	return fallback;
 }
 
 export async function makeBuildkiteRequest<T>(
@@ -58,52 +84,54 @@ export async function makeBuildkiteRequest<T>(
 	options: BuildkiteRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query, path } = options;
-	const isWriteMethod =
-		method === 'POST' || method === 'PUT' || method === 'PATCH';
-
-	const config: OpenAPIConfig = {
-		BASE: BUILDKITE_API_BASE,
-		VERSION: '2.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: apiKey ?? '',
-		HEADERS: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json',
-			...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
-		},
+	const url = `${BUILDKITE_API_BASE}${applyPath(endpoint, path)}${queryString(query)}`;
+	const headers: Record<string, string> = {
+		Accept: 'application/json',
+		'Content-Type': 'application/json',
 	};
+	if (apiKey) headers.Authorization = `Bearer ${apiKey}`;
 
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		path,
-		body: isWriteMethod ? body : undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query,
-	};
-
+	let res: Response;
 	try {
-		return await request<T>(config, requestOptions);
-	} catch (error: unknown) {
-		if (error instanceof ApiError) {
-			if (error.status === 429) {
-				throw new BuildkiteRateLimitError(
-					errorMessage(error),
-					error.retryAfter,
-					error.body,
-				);
-			}
-			throw new BuildkiteAPIError(
-				errorMessage(error),
-				error.status,
-				error.status,
-				error.body,
-			);
-		}
-		if (error instanceof Error) {
-			throw new BuildkiteAPIError(error.message);
-		}
-		throw new BuildkiteAPIError('Unknown error');
+		res = await fetch(url, {
+			method,
+			headers,
+			body:
+				method === 'POST' || method === 'PUT' || method === 'PATCH'
+					? JSON.stringify(body)
+					: undefined,
+			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+		});
+	} catch (error) {
+		throw new BuildkiteAPIError(
+			error instanceof Error ? error.message : 'Buildkite request failed',
+		);
 	}
+
+	let parsed: unknown;
+	const text = await res.text();
+	if (text) {
+		try {
+			parsed = JSON.parse(text);
+		} catch {
+			parsed = text;
+		}
+	}
+
+	if (res.status === 429) {
+		throw new BuildkiteRateLimitError(
+			bodyMessage(parsed, 'Too Many Requests'),
+			retryAfterMs(res),
+			parsed,
+		);
+	}
+	if (!res.ok) {
+		throw new BuildkiteAPIError(
+			bodyMessage(parsed, `Buildkite API error ${res.status}`),
+			res.status,
+			res.status,
+			parsed,
+		);
+	}
+	return parsed as T;
 }
