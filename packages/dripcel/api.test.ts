@@ -120,7 +120,9 @@ describe('official Dripcel request mapping', () => {
 		);
 		const result = await Contacts.get(ctx, { cell: '0821234567' });
 		const call = lastCall();
-		expect(call.url.startsWith('https://api.dripcel.com')).toBe(true);
+		const parsed = new URL(call.url);
+		expect(parsed.protocol).toBe('https:');
+		expect(parsed.hostname).toBe('api.dripcel.com');
 		expect(call.method).toBe('GET');
 		expect(call.path).toBe('/contacts/0821234567');
 		expect(result.firstname).toBe('John');
