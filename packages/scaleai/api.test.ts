@@ -1,6 +1,16 @@
+import { AuthMissingError } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { makeScaleAiRequest } from './client';
-import { Batches, Studio, Tasks } from './endpoints';
+import { encodeScalePathSegment, makeScaleAiRequest } from './client';
+import {
+	Audits,
+	Batches,
+	Files,
+	Projects,
+	Quality,
+	Studio,
+	Tasks,
+	Teams,
+} from './endpoints';
 import {
 	ScaleAiEndpointInputSchemas,
 	ScaleAiEndpointOutputSchemas,
@@ -184,10 +194,14 @@ describe('endpoint request wiring', () => {
 		await Batches.finalizeBatch(ctx, { batchName: 'b1' });
 		expect(captured?.url).toBe('https://api.scale.com/v1/batches/b1/finalize');
 
-		nextResponseBody = { status: 'in_progress', pending: 2, completed: 1 };
+		nextResponseBody = {
+			status: 'in_progress',
+			tasks_pending: 2,
+			tasks_completed: 1,
+		};
 		const status = await Batches.getBatchStatus(ctx, { batchName: 'b1' });
 		expect(captured?.url).toBe('https://api.scale.com/v1/batches/b1/status');
-		expect(status.pending).toBe(2);
+		expect(status.tasks_pending).toBe(2);
 	});
 
 	it('setBatchPriorities -> POST /studio/batches/set_priorities with wrapped names', async () => {
@@ -359,10 +373,10 @@ describe('output schema validation', () => {
 	it('parses a batch-status response', () => {
 		const parsed = ScaleAiEndpointOutputSchemas.getBatchStatus.parse({
 			status: 'completed',
-			pending: 0,
-			completed: 10,
+			tasks_pending: 0,
+			tasks_completed: 10,
 		});
-		expect(parsed.completed).toBe(10);
+		expect(parsed.tasks_completed).toBe(10);
 	});
 });
 
@@ -403,7 +417,7 @@ describe('scaleai() plugin', () => {
 		} as unknown as ScaleAiContext;
 		await expect(
 			noKey.keyBuilder?.(emptyCtx as never, 'endpoint'),
-		).resolves.toBe('');
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('every task-create endpoint has write risk and read endpoints are marked read', () => {
@@ -462,6 +476,272 @@ describe('error handling', () => {
 	it('RATE_LIMIT_ERROR matches Scale\'s "Too Many Requests" message', () => {
 		expect(
 			errorHandlers.RATE_LIMIT_ERROR.match(new Error('Too Many Requests')),
+		).toBe(true);
+	});
+});
+
+describe('every exported operation maps to an official path', () => {
+	const geometries = { box: { objects_to_annotate: ['cat'] } };
+
+	it.each([
+		[
+			'createSegmentationAnnotationTask',
+			() =>
+				Tasks.createSegmentationAnnotationTask(ctx, {
+					attachment: 'https://x/a.png',
+					labels: ['road'],
+				}),
+			'POST',
+			'/v1/task/segmentannotation',
+		],
+		[
+			'createVideoAnnotationTask',
+			() =>
+				Tasks.createVideoAnnotationTask(ctx, {
+					attachments: ['https://x/1.png'],
+					geometries,
+				}),
+			'POST',
+			'/v1/task/videoannotation',
+		],
+		[
+			'createVideoPlaybackAnnotationTask',
+			() =>
+				Tasks.createVideoPlaybackAnnotationTask(ctx, {
+					attachment: 'https://x/v.mp4',
+					geometries,
+				}),
+			'POST',
+			'/v1/task/videoplaybackannotation',
+		],
+		[
+			'createLidarAnnotationTask',
+			() => Tasks.createLidarAnnotationTask(ctx, { project: 'p' }),
+			'POST',
+			'/v1/task/lidarannotation',
+		],
+		[
+			'createLidarSegmentationTask',
+			() => Tasks.createLidarSegmentationTask(ctx, { project: 'p' }),
+			'POST',
+			'/v1/task/lidarsegmentation',
+		],
+		[
+			'createNamedEntityRecognitionTask',
+			() =>
+				Tasks.createNamedEntityRecognitionTask(ctx, {
+					text: 'hi',
+					labels: ['PERSON'],
+				}),
+			'POST',
+			'/v1/task/namedentityrecognition',
+		],
+		[
+			'createTextCollectionTask',
+			() =>
+				Tasks.createTextCollectionTask(ctx, { fields: [{ field_id: 'a' }] }),
+			'POST',
+			'/v1/task/textcollection',
+		],
+		[
+			'createDocumentTranscriptionTask',
+			() =>
+				Tasks.createDocumentTranscriptionTask(ctx, {
+					attachment: 'https://x/d.pdf',
+				}),
+			'POST',
+			'/v1/task/documenttranscription',
+		],
+		[
+			'updateTaskUniqueId',
+			() => Tasks.updateTaskUniqueId(ctx, { taskId: 't1', unique_id: 'u1' }),
+			'POST',
+			'/v1/task/t1/unique_id',
+		],
+		[
+			'getTaskResponseUrl',
+			() => Tasks.getTaskResponseUrl(ctx, { taskId: 't1', uuid: 'u-1' }),
+			'GET',
+			'/v1/task/t1/response_url/u-1',
+		],
+		[
+			'sendTaskCallback',
+			() => Tasks.sendTaskCallback(ctx, { taskId: 't1' }),
+			'POST',
+			'/v1/task/t1/send_callback',
+		],
+		[
+			'getBatch',
+			() => Batches.getBatch(ctx, { batchName: 'b1' }),
+			'GET',
+			'/v1/batches/b1',
+		],
+		[
+			'listBatches',
+			() => Batches.listBatches(ctx, { project: 'p', limit: 10 }),
+			'GET',
+			'/v1/batches?',
+		],
+		[
+			'getProject',
+			() => Projects.getProject(ctx, { name: 'kitten_labeling' }),
+			'GET',
+			'/v1/projects/kitten_labeling',
+		],
+		[
+			'listProjects',
+			() => Projects.listProjects(ctx, { archived: false }),
+			'GET',
+			'/v1/projects?archived=false',
+		],
+		[
+			'setProjectParams',
+			() =>
+				Projects.setProjectParams(ctx, {
+					project: 'p',
+					instruction: 'label cats',
+				}),
+			'POST',
+			'/v1/projects/p/setParams',
+		],
+		[
+			'setProjectOntology',
+			() =>
+				Projects.setProjectOntology(ctx, { project: 'p', ontology: ['cat'] }),
+			'POST',
+			'/v1/projects/p/setOntology',
+		],
+		[
+			'getAssets',
+			() => Files.getAssets(ctx, { project: 'p', limit: 1 }),
+			'GET',
+			'/v1/files?',
+		],
+		[
+			'importFile',
+			() => Files.importFile(ctx, { file_url: 'https://x/a.png' }),
+			'POST',
+			'/v1/files/import',
+		],
+		['getTeams', () => Teams.getTeams(ctx, {}), 'GET', '/v1/teams'],
+		[
+			'inviteTeamMember',
+			() =>
+				Teams.inviteTeamMember(ctx, { emails: ['a@b.com'], role: 'member' }),
+			'POST',
+			'/v1/teams/invite',
+		],
+		[
+			'getStudioAssignments',
+			() => Studio.getStudioAssignments(ctx, {}),
+			'GET',
+			'/v1/studio/assignments',
+		],
+		[
+			'removeStudioAssignments',
+			() =>
+				Studio.removeStudioAssignments(ctx, {
+					emails: ['a@b.com'],
+					projects: ['p'],
+				}),
+			'POST',
+			'/v1/studio/assignments/remove',
+		],
+		[
+			'getStudioBatches',
+			() => Studio.getStudioBatches(ctx, {}),
+			'GET',
+			'/v1/studio/batches',
+		],
+		[
+			'resetBatchPriorities',
+			() => Studio.resetBatchPriorities(ctx, {}),
+			'POST',
+			'/v1/studio/batches/reset_priorities',
+		],
+		[
+			'getFixlessAudits',
+			() => Audits.getFixlessAudits(ctx, { task_id: 't1' }),
+			'GET',
+			'/v1/audits?',
+		],
+		[
+			'getQualityLabelers',
+			() => Quality.getQualityLabelers(ctx, { labeler_emails: ['a@b.com'] }),
+			'GET',
+			'/v1/quality/labelers?',
+		],
+	] as const)('%s hits %s %s', async (_name, run, method, path) => {
+		nextResponseBody = {
+			task_id: 't1',
+			name: 'b1',
+			docs: [],
+			success: true,
+		};
+		await run();
+		expect(captured?.method).toBe(method);
+		expect(captured?.url).toContain(`https://api.scale.com${path}`);
+	});
+
+	it('uploadFile -> POST /files/upload', async () => {
+		nextResponseBody = { attachment_url: 'scaledata://x' };
+		await Files.uploadFile(ctx, {
+			file_base64: Buffer.from('hi').toString('base64'),
+			file_name: 'a.txt',
+		});
+		expect(captured?.method).toBe('POST');
+		expect(captured?.url).toBe('https://api.scale.com/v1/files/upload');
+	});
+});
+
+describe('official contracts', () => {
+	it('encodes path delimiters and rejects traversal', () => {
+		expect(encodeScalePathSegment('a/b')).toBe('a%2Fb');
+		expect(() => encodeScalePathSegment('..')).toThrow('Invalid path segment');
+		expect(() => encodeScalePathSegment('.')).toThrow('Invalid path segment');
+	});
+
+	it('getTask encodes a slash in taskId', async () => {
+		nextResponseBody = { task_id: 'x' };
+		await Tasks.getTask(ctx, { taskId: 'a/b' });
+		expect(captured?.url).toBe('https://api.scale.com/v1/task/a%2Fb');
+	});
+
+	it('accepts 5 tags and rejects 6', () => {
+		expect(
+			ScaleAiEndpointInputSchemas.createImageAnnotationTask.safeParse({
+				attachment: 'https://x/a.png',
+				geometries: { box: {} },
+				tags: ['1', '2', '3', '4', '5'],
+			}).success,
+		).toBe(true);
+		expect(
+			ScaleAiEndpointInputSchemas.createImageAnnotationTask.safeParse({
+				attachment: 'https://x/a.png',
+				geometries: { box: {} },
+				tags: ['1', '2', '3', '4', '5', '6'],
+			}).success,
+		).toBe(false);
+	});
+
+	it('requires video geometries and playback attachment', () => {
+		expect(
+			ScaleAiEndpointInputSchemas.createVideoAnnotationTask.safeParse({})
+				.success,
+		).toBe(false);
+		expect(
+			ScaleAiEndpointInputSchemas.createVideoPlaybackAnnotationTask.safeParse({
+				geometries: { box: {} },
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts a decoded upload under 80 MB', () => {
+		expect(
+			ScaleAiEndpointInputSchemas.uploadFile.safeParse({
+				file_base64: Buffer.from('ok').toString('base64'),
+				file_name: 'ok.bin',
+			}).success,
 		).toBe(true);
 	});
 });

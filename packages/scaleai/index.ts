@@ -503,7 +503,10 @@ export function scaleai<const T extends ScaleAiPluginOptions>(
 			}
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('scaleai', 'api_key');
+				}
+				return res;
 			}
 			throw new AuthMissingError('scaleai', 'api_key');
 		},

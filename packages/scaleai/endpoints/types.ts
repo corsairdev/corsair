@@ -1,4 +1,12 @@
 import { z } from 'zod';
+import {
+	ScaleAiBatch,
+	ScaleAiBatchStatus,
+	ScaleAiFile,
+	ScaleAiProject,
+	ScaleAiTask,
+	ScaleAiTeammate,
+} from '../schema/database';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared primitives
@@ -8,6 +16,8 @@ const JsonObject = z.record(z.string(), z.unknown());
 
 /** ISO 8601 date-time or date string, e.g. '2021-04-25' or '2021-04-25T03:14:15-07:00'. */
 const IsoTime = z.string();
+
+const MAX_UPLOAD_BYTES = 80 * 1024 * 1024;
 
 export const SCALE_TASK_TYPES = [
 	'imageannotation',
@@ -47,70 +57,19 @@ export const SCALE_TEAM_ROLES = ['labeler', 'member', 'manager'] as const;
 // and vary widely by task type)
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const ScaleTaskSchema = z
-	.object({
-		task_id: z.string(),
-		created_at: IsoTime.optional(),
-		updated_at: IsoTime.optional(),
-		completed_at: IsoTime.optional(),
-		type: z.string().optional(),
-		status: z.string().optional(),
-		instruction: z.string().optional(),
-		params: JsonObject.optional(),
-		callback_url: z.string().optional(),
-		project: z.string().optional(),
-		batch: z.string().optional(),
-		metadata: JsonObject.optional(),
-		response: JsonObject.optional(),
-		audits: z.array(JsonObject).optional(),
-		tags: z.array(z.string()).optional(),
-		unique_id: z.string().nullable().optional(),
-	})
-	.catchall(z.unknown());
+export const ScaleTaskSchema = ScaleAiTask;
+export type ScaleTask = ScaleAiTask;
 
-export type ScaleTask = z.infer<typeof ScaleTaskSchema>;
+export const ScaleBatchSchema = ScaleAiBatch;
+export type ScaleBatch = ScaleAiBatch;
 
-export const ScaleBatchSchema = z
-	.object({
-		name: z.string(),
-		project: z.string().optional(),
-		status: z.string().optional(),
-		created_at: IsoTime.optional(),
-		callback: z.string().optional(),
-		metadata: JsonObject.optional(),
-	})
-	.catchall(z.unknown());
+export const ScaleProjectSchema = ScaleAiProject;
+export type ScaleProject = ScaleAiProject;
 
-export type ScaleBatch = z.infer<typeof ScaleBatchSchema>;
+export const ScaleFileSchema = ScaleAiFile;
+export type ScaleFile = ScaleAiFile;
 
-export const ScaleProjectSchema = z
-	.object({
-		type: z.string().optional(),
-		name: z.string(),
-		param_history: z.array(JsonObject).optional(),
-		created_at: IsoTime.optional(),
-	})
-	.catchall(z.unknown());
-
-export type ScaleProject = z.infer<typeof ScaleProjectSchema>;
-
-export const ScaleFileSchema = z
-	.object({
-		id: z.string().optional(),
-		attachment_url: z.string().optional(),
-		created_at: IsoTime.optional(),
-	})
-	.catchall(z.unknown());
-
-export type ScaleFile = z.infer<typeof ScaleFileSchema>;
-
-export const ScaleTeammateSchema = z
-	.object({
-		id: z.string().optional(),
-		email: z.string().optional(),
-		role: z.string().optional(),
-	})
-	.catchall(z.unknown());
+export const ScaleTeammateSchema = ScaleAiTeammate;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Task creation — one endpoint per task type, all POST /task/{type}
@@ -133,8 +92,8 @@ const TaskCreateBaseShape = {
 	metadata: JsonObject.optional(),
 	/** Task priority (higher is worked first). */
 	priority: z.number().int().optional(),
-	/** Up to 5 tags for querying tasks later. */
-	tags: z.array(z.string()).optional(),
+	/** Official: at most 5 tags per task. */
+	tags: z.array(z.string()).max(5).optional(),
 } as const;
 
 const ImageAnnotationCreateInputSchema = z
@@ -142,7 +101,7 @@ const ImageAnnotationCreateInputSchema = z
 		...TaskCreateBaseShape,
 		attachment: z.string(),
 		attachment_type: z.string().optional(),
-		geometries: JsonObject.optional(),
+		geometries: JsonObject,
 		annotation_attributes: JsonObject.optional(),
 	})
 	.catchall(z.unknown());
@@ -154,7 +113,7 @@ const SegmentationAnnotationCreateInputSchema = z
 	.object({
 		...TaskCreateBaseShape,
 		attachment: z.string(),
-		labels: z.array(z.union([z.string(), JsonObject])),
+		labels: z.array(z.union([z.string(), JsonObject])).max(50),
 		allow_unlabeled: z.boolean().optional(),
 	})
 	.catchall(z.unknown());
@@ -168,7 +127,7 @@ const VideoAnnotationCreateInputSchema = z
 		attachment: z.string().optional(),
 		attachments: z.array(z.string()).optional(),
 		attachment_type: z.string().optional(),
-		geometries: JsonObject.optional(),
+		geometries: JsonObject,
 		annotation_attributes: JsonObject.optional(),
 		events_to_annotate: z.array(z.string()).optional(),
 	})
@@ -180,9 +139,9 @@ export type VideoAnnotationCreateInput = z.infer<
 const VideoPlaybackAnnotationCreateInputSchema = z
 	.object({
 		...TaskCreateBaseShape,
-		attachment: z.string().optional(),
+		attachment: z.string(),
 		attachments: z.array(z.string()).optional(),
-		geometries: JsonObject.optional(),
+		geometries: JsonObject,
 		annotation_attributes: JsonObject.optional(),
 	})
 	.catchall(z.unknown());
@@ -210,7 +169,10 @@ const LidarSegmentationCreateInputSchema = z
 		attachment: z.string().optional(),
 		labels: z.array(z.union([z.string(), JsonObject])).optional(),
 	})
-	.catchall(z.unknown());
+	.catchall(z.unknown())
+	.refine((v) => Boolean(v.project) || Boolean(v.batch), {
+		message: 'Either project or batch must be provided',
+	});
 export type LidarSegmentationCreateInput = z.infer<
 	typeof LidarSegmentationCreateInputSchema
 >;
@@ -381,16 +343,8 @@ const BatchNameInputSchema = z.object({
 });
 export type BatchNameInput = z.infer<typeof BatchNameInputSchema>;
 
-const BatchStatusResponseSchema = z
-	.object({
-		status: z.string().optional(),
-		pending: z.number().optional(),
-		completed: z.number().optional(),
-		error: z.number().optional(),
-		canceled: z.number().optional(),
-	})
-	.catchall(z.unknown());
-export type BatchStatusResponse = z.infer<typeof BatchStatusResponseSchema>;
+const BatchStatusResponseSchema = ScaleAiBatchStatus;
+export type BatchStatusResponse = ScaleAiBatchStatus;
 
 const ListBatchesInputSchema = z.object({
 	project: z.string().optional(),
@@ -398,6 +352,7 @@ const ListBatchesInputSchema = z.object({
 	start_time: IsoTime.optional(),
 	end_time: IsoTime.optional(),
 	exclude_archived: z.boolean().optional(),
+	detailed: z.boolean().optional(),
 	limit: z.number().int().min(1).max(100).optional(),
 	offset: z.number().int().min(0).optional(),
 });
@@ -490,8 +445,13 @@ const ImportFileInputSchema = z
 export type ImportFileInput = z.infer<typeof ImportFileInputSchema>;
 
 const UploadFileInputSchema = z.object({
-	/** Base64-encoded file content (max 80 MB decoded). */
-	file_base64: z.string(),
+	/** Official: max 80 MB decoded per file. */
+	file_base64: z
+		.string()
+		.refine(
+			(value) => Buffer.from(value, 'base64').byteLength <= MAX_UPLOAD_BYTES,
+			{ message: 'file_base64 exceeds 80 MB decoded' },
+		),
 	/** File name including extension. */
 	file_name: z.string(),
 	/** MIME type of the file. */

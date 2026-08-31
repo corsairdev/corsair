@@ -29,7 +29,10 @@ export const addStudioAssignments: ScaleAiEndpoints['addStudioAssignments'] =
 		await logEventFromContext(
 			ctx,
 			'scaleai.studio.addAssignments',
-			{ emails: input.emails, projects: input.projects },
+			{
+				email_count: input.emails.length,
+				project_count: input.projects.length,
+			},
 			'completed',
 		);
 		return response;
@@ -45,7 +48,10 @@ export const removeStudioAssignments: ScaleAiEndpoints['removeStudioAssignments'
 		await logEventFromContext(
 			ctx,
 			'scaleai.studio.removeAssignments',
-			{ emails: input.emails, projects: input.projects },
+			{
+				email_count: input.emails.length,
+				project_count: input.projects.length,
+			},
 			'completed',
 		);
 		return response;

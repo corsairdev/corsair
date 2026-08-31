@@ -9,10 +9,14 @@ describe('ScaleAi schema', () => {
 	it('declares an entities map', () => {
 		expect(typeof ScaleAiSchema.entities).toBe('object');
 		expect(ScaleAiSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(ScaleAiSchema.entities))).toBe(true);
-		for (const entity of Object.values(ScaleAiSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		expect(Object.keys(ScaleAiSchema.entities).sort()).toEqual([
+			'batchStatuses',
+			'batches',
+			'files',
+			'projects',
+			'tasks',
+			'teammates',
+		]);
 	});
 });
 

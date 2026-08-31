@@ -43,6 +43,14 @@ export type ScaleAiRequestOptions = {
 	formData?: Record<string, unknown>;
 };
 
+/** Reject traversal segments and encode caller-supplied path pieces. */
+export function encodeScalePathSegment(value: string): string {
+	if (value === '.' || value === '..' || value.length === 0) {
+		throw new ScaleAiAPIError('Invalid path segment');
+	}
+	return encodeURIComponent(value);
+}
+
 export async function makeScaleAiRequest<T>(
 	endpoint: string,
 	apiKey: string,

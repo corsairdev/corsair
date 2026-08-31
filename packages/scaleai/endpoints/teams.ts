@@ -38,7 +38,7 @@ export const inviteTeamMember: ScaleAiEndpoints['inviteTeamMember'] = async (
 	await logEventFromContext(
 		ctx,
 		'scaleai.teams.invite',
-		{ emails: input.emails, role: input.role },
+		{ email_count: input.emails.length, role: input.role },
 		'completed',
 	);
 	return response;

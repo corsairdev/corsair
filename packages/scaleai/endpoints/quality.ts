@@ -19,8 +19,8 @@ export const getQualityLabelers: ScaleAiEndpoints['getQualityLabelers'] =
 			ctx,
 			'scaleai.quality.getLabelers',
 			{
-				quality_task_ids: input.quality_task_ids,
-				labeler_emails: input.labeler_emails,
+				quality_task_count: input.quality_task_ids?.length ?? 0,
+				labeler_count: input.labeler_emails?.length ?? 0,
 			},
 			'completed',
 		);

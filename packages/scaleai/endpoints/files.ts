@@ -56,7 +56,7 @@ export const importFile: ScaleAiEndpoints['importFile'] = async (
 	await logEventFromContext(
 		ctx,
 		'scaleai.files.import',
-		{ file_url: input.file_url, project_name: input.project_name },
+		{ project_name: input.project_name },
 		'completed',
 	);
 	return response;

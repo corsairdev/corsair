@@ -1,7 +1,7 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import type { ScaleAiContext, ScaleAiEndpoints } from '..';
-import { makeScaleAiRequest } from '../client';
+import { encodeScalePathSegment, makeScaleAiRequest } from '../client';
 import type {
 	ListTasksResponse,
 	ScaleTask,
@@ -95,7 +95,7 @@ export const createDocumentTranscriptionTask = createTaskEndpoint(
 
 export const getTask: ScaleAiEndpoints['getTask'] = async (ctx, input) => {
 	const response = await makeScaleAiRequest<ScaleTask>(
-		`task/${input.taskId}`,
+		`task/${encodeScalePathSegment(input.taskId)}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -129,7 +129,7 @@ export const listTasks: ScaleAiEndpoints['listTasks'] = async (ctx, input) => {
 export const getTaskResponseUrl: ScaleAiEndpoints['getTaskResponseUrl'] =
 	async (ctx, input) => {
 		const response = await makeScaleAiRequest<unknown>(
-			`task/${input.taskId}/response_url/${input.uuid}`,
+			`task/${encodeScalePathSegment(input.taskId)}/response_url/${encodeScalePathSegment(input.uuid)}`,
 			ctx.key,
 			{ method: 'GET' },
 		);
@@ -147,7 +147,7 @@ export const sendTaskCallback: ScaleAiEndpoints['sendTaskCallback'] = async (
 	input,
 ) => {
 	const response = await makeScaleAiRequest<SendTaskCallbackResponse>(
-		`task/${input.taskId}/send_callback`,
+		`task/${encodeScalePathSegment(input.taskId)}/send_callback`,
 		ctx.key,
 		{ method: 'POST' },
 	);
@@ -167,7 +167,7 @@ export const addTaskTags: ScaleAiEndpoints['addTaskTags'] = async (
 	input,
 ) => {
 	const response = await makeScaleAiRequest<ScaleTask>(
-		`task/${input.taskId}/tags`,
+		`task/${encodeScalePathSegment(input.taskId)}/tags`,
 		ctx.key,
 		{ method: 'PUT', body: input.tags },
 	);
@@ -185,7 +185,7 @@ export const deleteTaskTags: ScaleAiEndpoints['deleteTaskTags'] = async (
 	input,
 ) => {
 	const response = await makeScaleAiRequest<ScaleTask>(
-		`task/${input.taskId}/tags`,
+		`task/${encodeScalePathSegment(input.taskId)}/tags`,
 		ctx.key,
 		{ method: 'DELETE', body: input.tags },
 	);
@@ -203,7 +203,7 @@ export const deleteTaskTags: ScaleAiEndpoints['deleteTaskTags'] = async (
 export const updateTaskUniqueId: ScaleAiEndpoints['updateTaskUniqueId'] =
 	async (ctx, input) => {
 		const response = await makeScaleAiRequest<ScaleTask>(
-			`task/${input.taskId}/unique_id`,
+			`task/${encodeScalePathSegment(input.taskId)}/unique_id`,
 			ctx.key,
 			{ method: 'POST', body: { unique_id: input.unique_id } },
 		);
@@ -219,7 +219,7 @@ export const updateTaskUniqueId: ScaleAiEndpoints['updateTaskUniqueId'] =
 export const deleteTaskUniqueId: ScaleAiEndpoints['deleteTaskUniqueId'] =
 	async (ctx, input) => {
 		const response = await makeScaleAiRequest<ScaleTask>(
-			`task/${input.taskId}/unique_id`,
+			`task/${encodeScalePathSegment(input.taskId)}/unique_id`,
 			ctx.key,
 			{ method: 'DELETE' },
 		);
@@ -239,7 +239,7 @@ export const setTaskMetadata: ScaleAiEndpoints['setTaskMetadata'] = async (
 	input,
 ) => {
 	const response = await makeScaleAiRequest<ScaleTask>(
-		`task/${input.taskId}/setMetadata`,
+		`task/${encodeScalePathSegment(input.taskId)}/setMetadata`,
 		ctx.key,
 		{ method: 'POST', body: input.metadata },
 	);
