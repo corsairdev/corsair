@@ -270,7 +270,7 @@ export function bindEndpointsRecursively({
 							});
 						}
 						await recordConnectRequestBestEffort(database, {
-							tenantId,
+							tenantId: err.tenantId ?? tenantId,
 							plugin: err.plugin,
 							connectUrl: err.connectUrl,
 						});
@@ -305,7 +305,7 @@ export function bindEndpointsRecursively({
 						} catch (enriched) {
 							if (enriched instanceof AuthMissingError) {
 								await recordConnectRequestBestEffort(database, {
-									tenantId,
+									tenantId: enriched.tenantId ?? tenantId,
 									plugin: enriched.pluginId,
 									connectUrl: enriched.connectUrl,
 								});
