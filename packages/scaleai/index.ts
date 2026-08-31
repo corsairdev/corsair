@@ -32,7 +32,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ScaleAiSchema } from './schema';
-import { matchScaleAiTenantWebhook } from './webhooks/tenant-matcher';
 
 export type ScaleAiPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -122,8 +121,6 @@ const scaleAiEndpointsNested = {
 		getQualityLabelers: Quality.getQualityLabelers,
 	},
 } as const;
-
-const scaleAiWebhooksNested = {} as const;
 
 export const scaleAiEndpointSchemas = {
 	'tasks.createImageAnnotationTask': {
@@ -465,7 +462,7 @@ export type BaseScaleAiPlugin<T extends ScaleAiPluginOptions> = CorsairPlugin<
 	'scaleai',
 	typeof ScaleAiSchema,
 	typeof scaleAiEndpointsNested,
-	typeof scaleAiWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
@@ -488,11 +485,9 @@ export function scaleai<const T extends ScaleAiPluginOptions>(
 		options,
 		hooks: options.hooks,
 		endpoints: scaleAiEndpointsNested,
-		webhooks: scaleAiWebhooksNested,
+		webhooks: {},
 		endpointMeta: scaleAiEndpointMeta,
 		endpointSchemas: scaleAiEndpointSchemas,
-		pluginWebhookMatcher: () => false,
-		pluginTenantWebhookMatcher: matchScaleAiTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
