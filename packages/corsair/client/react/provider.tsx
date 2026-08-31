@@ -17,6 +17,7 @@ import type { ConnectState } from './connect-controller';
 import {
 	connectReducer,
 	initialConnectState,
+	isPluginConnected,
 	shouldSettleConnected,
 } from './connect-controller';
 import type { ConnectAppearance } from './connect-overlay';
@@ -129,11 +130,34 @@ export function CorsairProvider({
 			stopWatch();
 			const attempt = attemptRef.current;
 			const scope = tenantId ? { tenantId } : undefined;
+			// Guard every settle: the poll must still belong to this attempt and a
+			// caller must still be waiting. Bumping the attempt makes it single-shot.
+			const isCurrent = () =>
+				attempt === attemptRef.current && !!resolveRef.current;
+			const finishConnected = () => {
+				attemptRef.current += 1;
+				popupRef.current?.close();
+				popupRef.current = null;
+				dispatch({ type: 'SUCCESS' });
+				client.connectRequest.clear(scope).catch(() => {});
+				onConnectedRef.current?.();
+				setConnectNonce((n) => n + 1);
+				settle(true);
+			};
+			const finishCancelled = () => {
+				attemptRef.current += 1;
+				popupRef.current?.close();
+				popupRef.current = null;
+				client.connectRequest.clear(scope).catch(() => {});
+				dispatch({ type: 'CLOSE' });
+				settle(false);
+			};
 			const check = () => {
 				client.connectionStatus
 					.get(scope)
 					.then((status) => {
 						if (
+							isCurrent() &&
 							shouldSettleConnected({
 								capturedAttempt: attempt,
 								currentAttempt: attemptRef.current,
@@ -141,16 +165,7 @@ export function CorsairProvider({
 								plugin,
 							})
 						) {
-							// Bump first so a slower poll from this same attempt (a request
-							// still in flight past the interval) can't repeat these effects.
-							attemptRef.current += 1;
-							popupRef.current?.close();
-							popupRef.current = null;
-							dispatch({ type: 'SUCCESS' });
-							client.connectRequest.clear(scope).catch(() => {});
-							onConnectedRef.current?.();
-							setConnectNonce((n) => n + 1);
-							settle(true);
+							finishConnected();
 						}
 					})
 					.catch(() => {});
@@ -158,17 +173,23 @@ export function CorsairProvider({
 			watchRef.current = setInterval(() => {
 				check();
 				// Popup gone — the user closed it, or the success page self-closed.
-				// The check() just fired settles a completed connect; if it hasn't
-				// within the grace window, the closed popup means the user backed out.
+				// After the grace window, decide with one authoritative check rather
+				// than assume a cancel: the success page closes the popup only once the
+				// connection persisted, so a slow final poll must not discard success.
 				if (popupRef.current?.closed) {
 					stopWatch();
 					graceRef.current = setTimeout(() => {
-						if (attempt !== attemptRef.current || !resolveRef.current) return;
-						attemptRef.current += 1;
-						popupRef.current = null;
-						client.connectRequest.clear(scope).catch(() => {});
-						dispatch({ type: 'CLOSE' });
-						settle(false);
+						if (!isCurrent()) return;
+						client.connectionStatus
+							.get(scope)
+							.then((status) => {
+								if (!isCurrent()) return;
+								if (isPluginConnected(status, plugin)) finishConnected();
+								else finishCancelled();
+							})
+							.catch(() => {
+								if (isCurrent()) finishCancelled();
+							});
 					}, POPUP_CLOSE_GRACE_MS);
 				}
 			}, WATCH_INTERVAL_MS);
