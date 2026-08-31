@@ -1,5 +1,13 @@
+import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+
+export function requireBuildkiteKey(key: string | undefined): string {
+	if (!key) {
+		throw new AuthMissingError('buildkite', 'api_key');
+	}
+	return key;
+}
 
 export class BuildkiteAPIError extends Error {
 	constructor(

@@ -1,13 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BuildkiteEndpoints } from '..';
-import { makeBuildkiteRequest } from '../client';
+import { makeBuildkiteRequest, requireBuildkiteKey } from '../client';
 import { BuildkiteEndpointOutputSchemas } from './types';
 
 export const listOrganizations: BuildkiteEndpoints['listOrganizations'] =
 	async (ctx, input) => {
 		const response = await makeBuildkiteRequest<unknown>(
 			'/v2/organizations',
-			ctx.key,
+			requireBuildkiteKey(ctx.key),
 			{
 				method: 'GET',
 				query: {

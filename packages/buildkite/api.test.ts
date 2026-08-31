@@ -184,7 +184,7 @@ describe('Buildkite plugin', () => {
 		).resolves.toBe(TEST_KEY);
 	});
 
-	it('throws AuthMissingError when no API key is stored', async () => {
+	it('resolves an empty key so getMeta can run without api_key', async () => {
 		const plugin = buildkite();
 		await expect(
 			plugin.keyBuilder?.(
@@ -194,7 +194,24 @@ describe('Buildkite plugin', () => {
 				} as never,
 				'endpoint',
 			),
-		).rejects.toThrow(AuthMissingError);
+		).resolves.toBe('');
+	});
+
+	it('getMeta does not require a key', async () => {
+		mockRequest.mockResolvedValue(metaFixture as never);
+		const result = await getMeta({ key: undefined } as never, {});
+		expect(result.webhook_ips).toEqual(metaFixture.webhook_ips);
+		expect(
+			(lastCall().config?.HEADERS as Record<string, string> | undefined)
+				?.Authorization,
+		).toBeUndefined();
+	});
+
+	it('getUser requires a key', async () => {
+		await expect(getUser({ key: '' } as never, {})).rejects.toThrow(
+			AuthMissingError,
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('getCurrentAccessToken hits GET /v2/access-token', async () => {

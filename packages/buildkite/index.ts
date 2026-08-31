@@ -12,7 +12,6 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
 import { BuildkiteEndpointsImpl as Endpoints } from './endpoints';
 import type {
 	BuildkiteEndpointInputs,
@@ -176,14 +175,10 @@ export function buildkite<const T extends BuildkitePluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (!res) {
-					throw new AuthMissingError('buildkite', 'api_key');
-				}
-				return res;
+				return (await ctx.keys.get_api_key()) ?? '';
 			}
 
-			throw new AuthMissingError('buildkite', 'api_key');
+			return '';
 		},
 	} satisfies InternalBuildkitePlugin;
 }
