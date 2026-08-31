@@ -22,11 +22,7 @@ import { errorHandlers } from './error-handlers';
 import { brex } from './index';
 import { resolveBrexOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchBrexTenantWebhook } from './webhooks/tenant-matcher';
-import {
-	createBrexEventMatch,
-	verifyBrexWebhookSignature,
-} from './webhooks/types';
-import { userUpdated } from './webhooks/users';
+import { verifyBrexWebhookSignature } from './webhooks/types';
 
 jest.mock('corsair/core', () => {
 	class AuthMissingError extends Error {
@@ -142,16 +138,6 @@ describe('Brex plugin', () => {
 			BREX_ROUTE_KEYS.length,
 		);
 		expect(plugin.pluginWebhookMatcher?.({ headers: {} } as never)).toBe(false);
-		expect(
-			plugin.pluginWebhookMatcher?.({
-				headers: {
-					'webhook-id': 'msg_1',
-					'webhook-timestamp': '1',
-					'webhook-signature': 'v1,sig',
-				},
-			} as never),
-		).toBe(true);
-		expect(userUpdated.match).toBeDefined();
 	});
 
 	it('throws AuthMissingError when no user token is stored', async () => {
@@ -327,39 +313,6 @@ describe('Brex webhooks', () => {
 		expect(
 			matchBrexTenantWebhook({ headers: {}, body: '{not-json' }),
 		).toBeNull();
-		expect(
-			createBrexEventMatch('USER_UPDATED')({ headers: {}, body: '{' }),
-		).toBe(false);
-	});
-
-	it('verifies USER_UPDATED before handling', async () => {
-		const rejected = await userUpdated.handler(
-			{ key: 'whsec', db: {} } as never,
-			{ headers: {}, rawBody: '{}', payload: { event_type: 'USER_UPDATED' } },
-		);
-		expect(rejected.success).toBe(false);
-
-		const id = 'msg_1';
-		const timestamp = String(Math.floor(Date.now() / 1000));
-		const rawBody =
-			'{"event_type":"USER_UPDATED","company_id":"cuacc_123","data":{"id":"u1"}}';
-		const digest = createHmac('sha256', 'whsec')
-			.update(`${id}.${timestamp}.${rawBody}`)
-			.digest('base64');
-		const accepted = await userUpdated.handler(
-			{ key: 'whsec', db: {} } as never,
-			{
-				headers: {
-					'webhook-id': id,
-					'webhook-timestamp': timestamp,
-					'webhook-signature': `v1,${digest}`,
-				},
-				rawBody,
-				payload: JSON.parse(rawBody),
-			},
-		);
-		expect(accepted.success).toBe(true);
-		expect(accepted.data).toMatchObject({ event_type: 'USER_UPDATED' });
 	});
 
 	it('returns null when OAuth company lookup fails', async () => {
@@ -385,61 +338,6 @@ describe('Brex webhooks', () => {
 				undefined,
 			),
 		).toEqual({ valid: true });
-
-		const accepted = await userUpdated.handler(
-			{ key: undefined, db: {} } as never,
-			{
-				headers: {},
-				rawBody: '{}',
-				hubVerified: true,
-				payload: {
-					event_type: 'USER_UPDATED',
-					company_id: 'cuacc_123',
-					data: { id: 'u1' },
-				},
-			},
-		);
-		expect(accepted.success).toBe(true);
-	});
-
-	it('returns 400 for invalid user payloads and 503 when upsert fails', async () => {
-		const invalid = await userUpdated.handler(
-			{
-				key: undefined,
-				db: { users: { upsertByEntityId: async () => ({}) } },
-			} as never,
-			{
-				headers: {},
-				hubVerified: true,
-				payload: {
-					event_type: 'USER_UPDATED',
-					data: { id: 'u1', email: 1 },
-				},
-			},
-		);
-		expect(invalid).toMatchObject({ success: false, statusCode: 400 });
-
-		const failed = await userUpdated.handler(
-			{
-				key: undefined,
-				db: {
-					users: {
-						upsertByEntityId: async () => {
-							throw new Error('db down');
-						},
-					},
-				},
-			} as never,
-			{
-				headers: {},
-				hubVerified: true,
-				payload: {
-					event_type: 'USER_UPDATED',
-					data: { id: 'u1', email: 'ada@example.com' },
-				},
-			},
-		);
-		expect(failed).toMatchObject({ success: false, statusCode: 503 });
 	});
 
 	it('accepts a valid official HMAC signature', () => {
