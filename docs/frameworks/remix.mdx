@@ -104,7 +104,27 @@ A tenant has to connect GitHub before the loader has anything to read. That flow
 
 <ClientReact />
 
-## Go green
+### Or let Corsair Connect drive it
+
+**Corsair Connect** wraps the app once so a failed call opens the connect dialog and resumes. Mount the provider in `app/root.tsx`; Remix re-runs loaders through `useRevalidator`, so wire that into `onConnected`:
+
+```tsx app/root.tsx
+import { CorsairProvider } from "corsair/client/react";
+import { Outlet, useRevalidator } from "@remix-run/react";
+
+export default function App() {
+  const { revalidate } = useRevalidator();
+  return (
+    <CorsairProvider onConnected={() => revalidate()}>
+      <Outlet />
+    </CorsairProvider>
+  );
+}
+```
+
+Then `useConnect().call` around a mutation and `useConnect().connect` for a button open the dialog on their own. (The `<CorsairBoundary>` read helper is specific to Next's Server Components; in Remix, reads live in loaders.) Full API: [React hooks → Corsair Connect](/adapters/react#corsair-connect).
+
+## Start the server
 
 ```bash
 npm run dev
