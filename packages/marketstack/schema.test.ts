@@ -6,8 +6,16 @@ describe('Marketstack schema', () => {
 		expect(MarketstackSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
+	it('declares official Marketstack entities', () => {
 		expect(typeof MarketstackSchema.entities).toBe('object');
 		expect(MarketstackSchema.entities).not.toBeNull();
+		expect(Object.keys(MarketstackSchema.entities).sort()).toEqual([
+			'currencies',
+			'dividends',
+			'eodBars',
+			'exchanges',
+			'splits',
+			'tickers',
+		]);
 	});
 });

@@ -158,7 +158,7 @@ const marketstackEndpointMeta = {
 	'tickers.get': {
 		riskLevel: 'read',
 		description:
-			'Retrieve detailed information about a stock ticker, including exchange, name, and data availability',
+			'Retrieve detailed ticker information including exchange, sector, and industry',
 	},
 	'tickers.list': {
 		riskLevel: 'read',
@@ -177,7 +177,7 @@ const marketstackEndpointMeta = {
 	'exchanges.get': {
 		riskLevel: 'read',
 		description:
-			'Retrieve detailed information for a specific stock exchange by its MIC',
+			'Retrieve exchange details by MIC, including location, status, and operational fields',
 	},
 	'exchanges.list': {
 		riskLevel: 'read',
@@ -190,7 +190,7 @@ const marketstackEndpointMeta = {
 	'dividends.get': {
 		riskLevel: 'read',
 		description:
-			'Retrieve historical dividend data for one or more ticker symbols',
+			'Retrieve historical dividend amounts and payment dates for one or more tickers',
 	},
 	'splits.get': {
 		riskLevel: 'read',

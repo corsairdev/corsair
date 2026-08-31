@@ -4,6 +4,7 @@ import { ApiError, request } from 'corsair/http';
 export class MarketstackAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	/** Raw Marketstack JSON body; narrowed only after isMarketstackErrorBody. */
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 	public readonly apiCode?: string;

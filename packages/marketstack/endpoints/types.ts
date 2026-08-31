@@ -1,4 +1,13 @@
 import { z } from 'zod';
+import {
+	MarketstackCurrency,
+	MarketstackDividend,
+	MarketstackEodBar,
+	MarketstackExchange,
+	MarketstackSplit,
+	MarketstackStockExchangeRef,
+	MarketstackTicker,
+} from '../schema/database';
 
 const DateStringSchema = z.iso.date();
 
@@ -35,82 +44,24 @@ export const PaginationSchema = z.object({
 	total: z.number(),
 });
 
-export const EodBarSchema = z.object({
-	open: z.number().nullable(),
-	high: z.number().nullable(),
-	low: z.number().nullable(),
-	close: z.number().nullable(),
-	volume: z.number().nullable(),
-	adj_high: z.number().nullable().optional(),
-	adj_low: z.number().nullable().optional(),
-	adj_close: z.number().nullable().optional(),
-	adj_open: z.number().nullable().optional(),
-	adj_volume: z.number().nullable().optional(),
-	split_factor: z.number().nullable().optional(),
-	dividend: z.number().nullable().optional(),
-	symbol: z.string(),
-	exchange: z.string().optional(),
-	date: z.string(),
-});
-
+export const EodBarSchema = MarketstackEodBar;
 export type EodBar = z.infer<typeof EodBarSchema>;
 
-export const DividendSchema = z.object({
-	symbol: z.string(),
-	date: z.string(),
-	dividend: z.number(),
-});
-
+export const DividendSchema = MarketstackDividend;
 export type Dividend = z.infer<typeof DividendSchema>;
 
-export const SplitSchema = z.object({
-	symbol: z.string(),
-	date: z.string(),
-	split_factor: z.number(),
-});
-
+export const SplitSchema = MarketstackSplit;
 export type Split = z.infer<typeof SplitSchema>;
 
-export const StockExchangeRefSchema = z.object({
-	name: z.string().optional(),
-	acronym: z.string().nullable().optional(),
-	mic: z.string().optional(),
-	country: z.string().nullable().optional(),
-	country_code: z.string().nullable().optional(),
-	city: z.string().nullable().optional(),
-	website: z.string().nullable().optional(),
-});
+export const StockExchangeRefSchema = MarketstackStockExchangeRef;
 
-export const TickerSchema = z.object({
-	name: z.string().optional(),
-	symbol: z.string(),
-	has_intraday: z.boolean().optional(),
-	has_eod: z.boolean().optional(),
-	country: z.string().nullable().optional(),
-	stock_exchange: StockExchangeRefSchema.optional(),
-});
-
+export const TickerSchema = MarketstackTicker;
 export type Ticker = z.infer<typeof TickerSchema>;
 
-export const ExchangeSchema = z.object({
-	name: z.string().optional(),
-	acronym: z.string().nullable().optional(),
-	mic: z.string(),
-	country: z.string().nullable().optional(),
-	country_code: z.string().nullable().optional(),
-	city: z.string().nullable().optional(),
-	website: z.string().nullable().optional(),
-});
-
+export const ExchangeSchema = MarketstackExchange;
 export type Exchange = z.infer<typeof ExchangeSchema>;
 
-export const CurrencySchema = z.object({
-	code: z.string(),
-	symbol: z.string().optional(),
-	name: z.string().optional(),
-	symbol_native: z.string().optional(),
-});
-
+export const CurrencySchema = MarketstackCurrency;
 export type Currency = z.infer<typeof CurrencySchema>;
 
 // GET /eod
@@ -165,9 +116,16 @@ export type GetTickerEodResponse = z.infer<typeof GetTickerEodResponseSchema>;
 // GetTickerEodResponseSchema by the endpoint.
 export const GetTickerEodWireResponseSchema = z.object({
 	pagination: PaginationSchema,
-	data: z.object({
-		eod: z.array(EodBarSchema),
-	}),
+	data: z
+		.object({
+			name: z.string().optional(),
+			symbol: z.string().optional(),
+			has_intraday: z.boolean().optional(),
+			has_eod: z.boolean().optional(),
+			country: z.string().nullable().optional(),
+			eod: z.array(EodBarSchema),
+		})
+		.loose(),
 });
 
 // GET /tickers/{symbol}/eod/latest
@@ -222,13 +180,8 @@ export type ListTickersResponse = z.infer<typeof ListTickersResponseSchema>;
 export const ListTickersWireResponseSchema = z.object({
 	pagination: PaginationSchema,
 	data: z.array(
-		z.object({
-			name: z.string().optional(),
+		MarketstackTicker.omit({ symbol: true }).extend({
 			ticker: z.string(),
-			has_intraday: z.boolean().optional(),
-			has_eod: z.boolean().optional(),
-			country: z.string().nullable().optional(),
-			stock_exchange: StockExchangeRefSchema.optional(),
 		}),
 	),
 });
