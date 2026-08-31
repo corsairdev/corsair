@@ -1,6 +1,8 @@
 import { timingSafeEqual } from 'node:crypto';
 import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 import { z } from 'zod';
+import type { TeamsEndpointOutputs } from '../endpoints/types';
+import { TeamsEndpointOutputSchemas } from '../endpoints/types';
 
 // ── Graph API Notification Schemas ────────────────────────────────────────────
 
@@ -52,6 +54,18 @@ export const TeamsChannelMessageEventSchema = z.object({
 export type TeamsChannelMessageEvent = z.infer<
 	typeof TeamsChannelMessageEventSchema
 >;
+
+export const TeamsChannelMessageWebhookResponseSchema =
+	TeamsChannelMessageEventSchema.extend({
+		teamId: z.string().optional(),
+		channelId: z.string().optional(),
+		message: TeamsEndpointOutputSchemas.messagesGet.optional(),
+	});
+export type TeamsChannelMessageWebhookResponse = TeamsChannelMessageEvent & {
+	teamId?: string;
+	channelId?: string;
+	message?: TeamsEndpointOutputs['messagesGet'];
+};
 
 // ── Chat Message Event ────────────────────────────────────────────────────────
 
@@ -125,7 +139,7 @@ export type TeamsWebhookPayload<TEvent> = {
 // ── Webhook Outputs Map ───────────────────────────────────────────────────────
 
 export type TeamsWebhookOutputs = {
-	channelMessage: TeamsChannelMessageEvent;
+	channelMessage: TeamsChannelMessageWebhookResponse;
 	chatMessage: TeamsChatMessageEvent;
 	channelCreated: TeamsChannelCreatedEvent;
 	membershipChanged: TeamsMembershipChangedEvent;
