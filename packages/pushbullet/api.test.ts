@@ -324,6 +324,28 @@ describe('event log privacy', () => {
     expect(pushEvent?.payload).toEqual({ iden: 'ujx1', type: 'note' })
     expect(chatEvent?.payload).toEqual({ iden: 'ujx1' })
   })
+
+  it('does not log a device push_token', async () => {
+    requestMock.mockResolvedValue({ iden: 'dv1', nickname: 'phone' })
+    await Devices.register(makeCtx(), {
+      nickname: 'phone',
+      push_token: 'fcm-secret-token',
+    })
+    await Devices.update(makeCtx(), {
+      iden: 'dv1',
+      nickname: 'phone',
+      push_token: 'fcm-secret-token',
+    })
+
+    const devicePayloads = loggedEvents
+      .filter(e => e.event.startsWith('pushbullet.devices.'))
+      .map(e => JSON.stringify(e.payload))
+    expect(devicePayloads.length).toBeGreaterThan(0)
+    for (const payload of devicePayloads) {
+      expect(payload).not.toContain('fcm-secret-token')
+      expect(payload).not.toContain('push_token')
+    }
+  })
 })
 
 describe('handler input validation', () => {

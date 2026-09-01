@@ -45,7 +45,7 @@ export const register: PushbulletEndpoints['devicesRegister'] = async (
   await logEventFromContext(
     ctx,
     'pushbullet.devices.register',
-    { ...parsed },
+    { iden: result.iden, nickname: parsed.nickname },
     'completed'
   )
   return result
@@ -88,7 +88,7 @@ export const update: PushbulletEndpoints['devicesUpdate'] = async (
   await logEventFromContext(
     ctx,
     'pushbullet.devices.update',
-    { ...parsed },
+    { iden: result.iden ?? parsed.iden, nickname: parsed.nickname },
     'completed'
   )
   return result
