@@ -334,7 +334,7 @@ export const ProviderDisplayNames = {
 	calendly: 'Calendly',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
-	capsulecrm: 'CapsuleCrm',
+	capsulecrm: 'Capsule CRM',
 	chatbotkit: 'ChatBotKit',
 	circleci: 'CircleCI',
 	clickhouse: 'Clickhouse',
