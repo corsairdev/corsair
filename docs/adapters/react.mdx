@@ -70,10 +70,10 @@ Wrap a mutation in `call` so the dialog opens **and** the action re-runs after c
 
 ```tsx send.tsx
 "use client";
-import { useConnect } from "corsair/client/react";
+import { useConnections } from "corsair/client/react";
 
 function SendButton() {
-  const { call } = useConnect();
+  const { call } = useConnections();
   return <button onClick={() => call(() => sendEmail())}>Send</button>;
 }
 ```
@@ -87,19 +87,26 @@ A Server Component that reads Corsair data throws when the tenant isn't connecte
 export { CorsairErrorBoundary as default } from "corsair/client/react";
 ```
 
-### Proactive connect — `connect`
+### Proactive connect — `connect` + `isConnected`
 
-For a plain "Connect X" button, before anything has failed, `connect(plugin)` mints a fresh link and opens the same dialog. It resolves `true` once connected:
+For a plain "Connect X" button, before anything has failed, `connect(plugin)` mints a fresh link and opens the same dialog; it resolves `true` once connected. The same hook reports this user's live connection status, so the button reflects reality and doesn't re-prompt an already-connected plugin — status refreshes itself after a successful connect, no manual refetch:
 
 ```tsx connect-slack.tsx
 "use client";
-import { useConnect } from "corsair/client/react";
+import { useConnections } from "corsair/client/react";
 
 function ConnectSlack() {
-  const { connect } = useConnect();
-  return <button onClick={() => connect("slack")}>Connect Slack</button>;
+  const { connect, isConnected, loading } = useConnections();
+  if (loading) return null; // status not in yet — don't flash "Connect"
+  return (
+    <button onClick={() => connect("slack")} disabled={isConnected("slack")}>
+      {isConnected("slack") ? "Slack connected" : "Connect Slack"}
+    </button>
+  );
 }
 ```
+
+`useConnections()` returns `{ connect, call, isConnected, connections, loading }` for the app's own (default-scope) user. For a multi-tenant **admin dashboard** reading arbitrary tenants, use the factory's [`useConnectionStatus({ tenantId })`](#read-hooks) instead.
 
 <Note>
 Corsair Connect is React-only — the provider, boundary, and dialog are client components. A non-React frontend still gets the server side: the failed call records a connect-request that you read at `/api/corsair/connect/request`, so you can build your own prompt or redirect to the connect link. See the [vanilla client](/adapters/client).

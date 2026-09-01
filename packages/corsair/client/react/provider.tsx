@@ -9,10 +9,11 @@ import {
 	useMemo,
 	useReducer,
 	useRef,
+	useState,
 } from 'react';
+import type { ConnectionStatus } from '../../core/management/types';
 import { createCorsairClient } from '../index';
 import type { CorsairManagementClient } from '../types';
-import type { ConnectState } from './connect-controller';
 import {
 	connectReducer,
 	initialConnectState,
@@ -41,7 +42,13 @@ export type CorsairContextValue = {
 	/** Read the pending connect-request and open the overlay. Used by the boundary
 	 * and by `call` — returns 'none' when there's nothing to connect. */
 	requireConnect: () => Promise<RequireConnectOutcome>;
-	status: ConnectState;
+	/** Per-plugin connection status for the default scope, or `null` until the
+	 * first fetch resolves. Refetched after every successful connect. */
+	connections: ConnectionStatus | null;
+	/** `true` while the connection-status fetch is in flight. */
+	connectionsLoading: boolean;
+	/** Force a connection-status refetch (e.g. after an out-of-band change). */
+	refreshConnections: () => void;
 };
 
 const CorsairContext = createContext<CorsairContextValue | null>(null);
@@ -82,7 +89,7 @@ export type CorsairProviderProps = {
  * A client call that rejects with an auth-missing error opens the dialog on its
  * own — no `call` wrapper needed (see `captureUnhandled`). Pair it with
  * {@link CorsairErrorBoundary} (a Next `error.tsx`) for server-read regions, and
- * reach for {@link useConnect}'s `call` only when a mutation should also
+ * reach for {@link useConnections}'s `call` only when a mutation should also
  * auto-resume after connect.
  */
 export function CorsairProvider({
@@ -104,6 +111,31 @@ export function CorsairProvider({
 		connectReducer,
 		initialConnectState,
 	);
+
+	// Provider-owned connection status: fetched once on mount and refetched after
+	// every successful connect, so every `useConnections()` reads one source and
+	// flips to connected without the caller wiring a refetch.
+	const [connections, setConnections] = useState<ConnectionStatus | null>(null);
+	const [connectionsLoading, setConnectionsLoading] = useState(true);
+	// Monotonic token: only the latest fetch may write, so an earlier slow request
+	// can't clobber a newer one (mount fetch racing a post-connect refetch).
+	const connFetchRef = useRef(0);
+	const refreshConnections = useCallback(() => {
+		const token = ++connFetchRef.current;
+		setConnectionsLoading(true);
+		client.connectionStatus
+			.get()
+			.then((s) => {
+				if (token === connFetchRef.current) setConnections(s);
+			})
+			.catch(() => {})
+			.finally(() => {
+				if (token === connFetchRef.current) setConnectionsLoading(false);
+			});
+	}, [client]);
+	useEffect(() => {
+		refreshConnections();
+	}, [refreshConnections]);
 
 	const resolveRef = useRef<((ok: boolean) => void) | null>(null);
 	const popupRef = useRef<Window | null>(null);
@@ -154,6 +186,7 @@ export function CorsairProvider({
 				dispatch({ type: 'SUCCESS' });
 				client.connectRequest.clear(scope).catch(() => {});
 				onConnectedRef.current?.();
+				refreshConnections();
 				settle(true);
 			};
 			const finishCancelled = () => {
@@ -206,7 +239,7 @@ export function CorsairProvider({
 				}
 			}, WATCH_INTERVAL_MS);
 		},
-		[client, settle, stopWatch],
+		[client, settle, stopWatch, refreshConnections],
 	);
 
 	const openDialog = useCallback(
@@ -344,9 +377,19 @@ export function CorsairProvider({
 			connect,
 			call,
 			requireConnect,
-			status: connectState,
+			connections,
+			connectionsLoading,
+			refreshConnections,
 		}),
-		[client, connect, call, requireConnect, connectState],
+		[
+			client,
+			connect,
+			call,
+			requireConnect,
+			connections,
+			connectionsLoading,
+			refreshConnections,
+		],
 	);
 
 	const overlayOpen =
@@ -369,21 +412,31 @@ export function CorsairProvider({
 }
 
 /**
- * Access the full Corsair Connect context — the management client plus the
- * connect/call/status API and the internals {@link CorsairErrorBoundary} relies on.
- * Most components want {@link useConnect} instead; reach for this only when you
- * need the raw `client`. Throws if used outside {@link CorsairProvider}.
+ * Internal accessor for the raw Corsair Connect context — the management client
+ * plus the connect/call API and the bits {@link CorsairErrorBoundary} relies on.
+ * Not part of the public surface; app code uses {@link useConnections}. Throws if
+ * used outside {@link CorsairProvider}.
  */
 export function useCorsair(): CorsairContextValue {
 	const ctx = useContext(CorsairContext);
 	if (!ctx) {
-		throw new Error('useCorsair must be used within <CorsairProvider>');
+		throw new Error('useConnections must be used within <CorsairProvider>');
 	}
 	return ctx;
 }
 
-/** Return value of {@link useConnect}. */
-export type UseConnectResult = {
+/** Return value of {@link useConnections}. */
+export type UseConnectionsResult = {
+	/** Per-plugin connection status for the default scope, e.g.
+	 * `{ linear: 'connected' }` — `null` until the first fetch resolves. Refreshes
+	 * itself after every successful `connect` or `call`. */
+	connections: ConnectionStatus | null;
+	/** `true` if the given plugin has a usable credential. Convenience over
+	 * `connections?.[plugin] === 'connected'`; `false` while status is loading. */
+	isConnected: (plugin: string) => boolean;
+	/** `true` while the first connection-status fetch is in flight. Render a
+	 * placeholder rather than flash a "Connect" button that may already be done. */
+	loading: boolean;
 	/** Proactively open the dialog for a plugin (e.g. a "Connect GitHub" button),
 	 * before any call has failed. Resolves `true` once connected. */
 	connect: (plugin: string, opts?: { tenantId?: string }) => Promise<boolean>;
@@ -392,16 +445,26 @@ export type UseConnectResult = {
 	 * user cancels, and rethrows the original error when nothing is pending. Wrap
 	 * only connect-gated or retry-safe mutations. */
 	call: <T>(fn: () => Promise<T>) => Promise<T | null>;
-	/** Current dialog state, for driving your own connect UI if needed. */
-	status: ConnectState;
 };
 
 /**
- * The everyday hook into Corsair Connect. Use `connect` for a proactive connect
- * button and `call` to wrap a mutation so it auto-resumes after connect. Server
+ * The everyday hook into Corsair Connect. Reads this user's connection status
+ * (`connections` / `isConnected`) and drives the connect flow: `connect` for a
+ * proactive "Connect X" button, `call` to wrap a mutation so it auto-resumes
+ * after connect. Status refreshes itself on every successful connect. Server
  * read regions gate through {@link CorsairErrorBoundary} (a Next `error.tsx`).
  */
-export function useConnect(): UseConnectResult {
-	const { connect, call, status } = useCorsair();
-	return { connect, call, status };
+export function useConnections(): UseConnectionsResult {
+	const { connect, call, connections, connectionsLoading } = useCorsair();
+	const isConnected = useCallback(
+		(plugin: string) => connections?.[plugin] === 'connected',
+		[connections],
+	);
+	return {
+		connections,
+		isConnected,
+		loading: connectionsLoading,
+		connect,
+		call,
+	};
 }
