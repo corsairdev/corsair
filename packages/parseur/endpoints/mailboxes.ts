@@ -170,7 +170,6 @@ export const copyMailbox: ParseurEndpoints['copyMailbox'] = async (
 		{
 			apiKey: ctx.key,
 			method: 'POST',
-			body: { name: parsed.name },
 		},
 	);
 
@@ -179,7 +178,7 @@ export const copyMailbox: ParseurEndpoints['copyMailbox'] = async (
 	await logEventFromContext(
 		ctx,
 		'parseur.mailboxes.copyMailbox',
-		{ id: parsed.id, name: parsed.name },
+		{ id: parsed.id },
 		'completed',
 	);
 

@@ -97,7 +97,9 @@ export async function uploadParseurMultipart<T>(
 			const commaIndex = file.indexOf(',');
 			const metadata = commaIndex !== -1 ? file.slice(5, commaIndex) : '';
 			const data = commaIndex !== -1 ? file.slice(commaIndex + 1) : file;
-			const isBase64 = metadata.includes(';base64');
+			const isBase64 = metadata
+				.split(';')
+				.some((token) => token.trim() === 'base64');
 			const mime = metadata.split(';')[0] || 'application/octet-stream';
 			const buffer = isBase64
 				? Buffer.from(data, 'base64')

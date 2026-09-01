@@ -10,6 +10,9 @@ import {
 	DisableWebhookOutputSchema,
 	EnableWebhookInputSchema,
 	EnableWebhookOutputSchema,
+	ListWebhooksInputSchema,
+	ListWebhooksOutputSchema,
+	ParserSchema,
 } from './types';
 
 export const createWebhook: ParseurEndpoints['createWebhook'] = async (
@@ -20,7 +23,15 @@ export const createWebhook: ParseurEndpoints['createWebhook'] = async (
 	const response = await makeParseurRequest<unknown>('/webhook', {
 		apiKey: ctx.key,
 		method: 'POST',
-		body: parsed,
+		body: {
+			event: parsed.event,
+			target: parsed.target,
+			...(parsed.name ? { name: parsed.name } : {}),
+			...(parsed.headers ? { headers: parsed.headers } : {}),
+			category: parsed.category ?? 'CUSTOM',
+			...(parsed.parser ? { parser: parsed.parser } : {}),
+			...(parsed.parser_field ? { parser_field: parsed.parser_field } : {}),
+		},
 	});
 
 	const output = CreateWebhookOutputSchema.parse(response);
@@ -28,7 +39,7 @@ export const createWebhook: ParseurEndpoints['createWebhook'] = async (
 	await logEventFromContext(
 		ctx,
 		'parseur.webhooks.createWebhook',
-		{ target_url: parsed.target_url },
+		{ event: parsed.event, id: output.id },
 		'completed',
 	);
 
@@ -48,7 +59,7 @@ export const enableWebhook: ParseurEndpoints['enableWebhook'] = async (
 		},
 	);
 
-	const output = EnableWebhookOutputSchema.parse(response ?? { success: true });
+	const output = EnableWebhookOutputSchema.parse(response);
 
 	await logEventFromContext(
 		ctx,
@@ -101,4 +112,29 @@ export const deleteWebhook: ParseurEndpoints['deleteWebhook'] = async (
 	);
 
 	return DeleteWebhookOutputSchema.parse({ success: true });
+};
+
+export const listWebhooks: ParseurEndpoints['listWebhooks'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = ListWebhooksInputSchema.parse(input);
+	const response = await makeParseurRequest<unknown>(`/parser/${parsed.id}`, {
+		apiKey: ctx.key,
+		method: 'GET',
+	});
+	const mailbox = ParserSchema.parse(response);
+	const output = ListWebhooksOutputSchema.parse({
+		webhook_set: mailbox.webhook_set ?? [],
+		available_webhook_set: mailbox.available_webhook_set ?? [],
+	});
+
+	await logEventFromContext(
+		ctx,
+		'parseur.webhooks.listWebhooks',
+		{ mailboxId: parsed.id },
+		'completed',
+	);
+
+	return output;
 };

@@ -46,6 +46,7 @@ export const Webhook = {
 	enableWebhook: WebhooksModule.enableWebhook,
 	disableWebhook: WebhooksModule.disableWebhook,
 	deleteWebhook: WebhooksModule.deleteWebhook,
+	listWebhooks: WebhooksModule.listWebhooks,
 };
 
 export const Bootstrap = {

@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
@@ -34,27 +31,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ParseurSchema } from './schema';
-import { DocumentWebhooks } from './webhooks';
-import { matchParseurTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	DocumentProcessedEvent,
-	ParseurWebhookOutputs,
-	ProcessFailedEvent,
-	TableItemProcessedEvent,
-} from './webhooks/types';
-import {
-	DocumentProcessedEventSchema,
-	matchParseurPluginWebhook,
-	ProcessFailedEventSchema,
-	TableItemProcessedEventSchema,
-} from './webhooks/types';
 
 export type ParseurPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalParseurPlugin['hooks'];
-	webhookHooks?: InternalParseurPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof parseurEndpointsNested>;
 };
@@ -84,7 +65,6 @@ export type ParseurEndpoints = {
 	deleteMailbox: ParseurEndpoint<'deleteMailbox'>;
 	getMailboxSchema: ParseurEndpoint<'getMailboxSchema'>;
 	copyMailbox: ParseurEndpoint<'copyMailbox'>;
-
 	listDocuments: ParseurEndpoint<'listDocuments'>;
 	getDocument: ParseurEndpoint<'getDocument'>;
 	deleteDocument: ParseurEndpoint<'deleteDocument'>;
@@ -94,43 +74,21 @@ export type ParseurEndpoints = {
 	processDocument: ParseurEndpoint<'processDocument'>;
 	skipDocument: ParseurEndpoint<'skipDocument'>;
 	copyDocument: ParseurEndpoint<'copyDocument'>;
-
 	listTemplates: ParseurEndpoint<'listTemplates'>;
 	getTemplate: ParseurEndpoint<'getTemplate'>;
 	deleteTemplate: ParseurEndpoint<'deleteTemplate'>;
 	copyTemplate: ParseurEndpoint<'copyTemplate'>;
-
 	listExportConfigs: ParseurEndpoint<'listExportConfigs'>;
 	createExportConfig: ParseurEndpoint<'createExportConfig'>;
 	updateExportConfig: ParseurEndpoint<'updateExportConfig'>;
 	deleteExportConfig: ParseurEndpoint<'deleteExportConfig'>;
-
 	createWebhook: ParseurEndpoint<'createWebhook'>;
 	enableWebhook: ParseurEndpoint<'enableWebhook'>;
 	disableWebhook: ParseurEndpoint<'disableWebhook'>;
 	deleteWebhook: ParseurEndpoint<'deleteWebhook'>;
-
+	listWebhooks: ParseurEndpoint<'listWebhooks'>;
 	getBootstrap: ParseurEndpoint<'getBootstrap'>;
 };
-
-type ParseurWebhook<
-	K extends keyof ParseurWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ParseurContext, TEvent, ParseurWebhookOutputs[K]>;
-
-export type ParseurWebhooks = {
-	documentProcessed: ParseurWebhook<
-		'documentProcessed',
-		DocumentProcessedEvent
-	>;
-	tableItemProcessed: ParseurWebhook<
-		'tableItemProcessed',
-		TableItemProcessedEvent
-	>;
-	processFailed: ParseurWebhook<'processFailed', ProcessFailedEvent>;
-};
-
-export type ParseurBoundWebhooks = BindWebhooks<ParseurWebhooks>;
 
 export const parseurEndpointsNested = {
 	mailboxes: {
@@ -170,6 +128,7 @@ export const parseurEndpointsNested = {
 		enableWebhook: Webhook.enableWebhook,
 		disableWebhook: Webhook.disableWebhook,
 		deleteWebhook: Webhook.deleteWebhook,
+		listWebhooks: Webhook.listWebhooks,
 	},
 	bootstrap: {
 		getBootstrap: Bootstrap.getBootstrap,
@@ -205,7 +164,6 @@ export const parseurEndpointSchemas = {
 		input: ParseurEndpointInputSchemas.copyMailbox,
 		output: ParseurEndpointOutputSchemas.copyMailbox,
 	},
-
 	'documents.listDocuments': {
 		input: ParseurEndpointInputSchemas.listDocuments,
 		output: ParseurEndpointOutputSchemas.listDocuments,
@@ -242,7 +200,6 @@ export const parseurEndpointSchemas = {
 		input: ParseurEndpointInputSchemas.copyDocument,
 		output: ParseurEndpointOutputSchemas.copyDocument,
 	},
-
 	'templates.listTemplates': {
 		input: ParseurEndpointInputSchemas.listTemplates,
 		output: ParseurEndpointOutputSchemas.listTemplates,
@@ -259,7 +216,6 @@ export const parseurEndpointSchemas = {
 		input: ParseurEndpointInputSchemas.copyTemplate,
 		output: ParseurEndpointOutputSchemas.copyTemplate,
 	},
-
 	'exportConfigs.listExportConfigs': {
 		input: ParseurEndpointInputSchemas.listExportConfigs,
 		output: ParseurEndpointOutputSchemas.listExportConfigs,
@@ -276,7 +232,6 @@ export const parseurEndpointSchemas = {
 		input: ParseurEndpointInputSchemas.deleteExportConfig,
 		output: ParseurEndpointOutputSchemas.deleteExportConfig,
 	},
-
 	'webhooks.createWebhook': {
 		input: ParseurEndpointInputSchemas.createWebhook,
 		output: ParseurEndpointOutputSchemas.createWebhook,
@@ -293,169 +248,163 @@ export const parseurEndpointSchemas = {
 		input: ParseurEndpointInputSchemas.deleteWebhook,
 		output: ParseurEndpointOutputSchemas.deleteWebhook,
 	},
-
+	'webhooks.listWebhooks': {
+		input: ParseurEndpointInputSchemas.listWebhooks,
+		output: ParseurEndpointOutputSchemas.listWebhooks,
+	},
 	'bootstrap.getBootstrap': {
 		input: ParseurEndpointInputSchemas.getBootstrap,
 		output: ParseurEndpointOutputSchemas.getBootstrap,
 	},
 } satisfies RequiredPluginEndpointSchemas<typeof parseurEndpointsNested>;
 
-const parseurWebhooksNested = {
-	documents: {
-		documentProcessed: DocumentWebhooks.documentProcessed,
-		tableItemProcessed: DocumentWebhooks.tableItemProcessed,
-		processFailed: DocumentWebhooks.processFailed,
-	},
-} as const;
-
-export const parseurWebhookSchemas = {
-	'documents.documentProcessed': {
-		description: 'A document was successfully parsed and processed',
-		payload: DocumentProcessedEventSchema,
-		response: DocumentProcessedEventSchema,
-	},
-	'documents.tableItemProcessed': {
-		description: 'A table item was extracted and processed from a document',
-		payload: TableItemProcessedEventSchema,
-		response: TableItemProcessedEventSchema,
-	},
-	'documents.processFailed': {
-		description: 'Document parsing or processing failed',
-		payload: ProcessFailedEventSchema,
-		response: ProcessFailedEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof parseurWebhooksNested>;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const parseurEndpointMeta = {
 	'mailboxes.listMailboxes': {
 		riskLevel: 'read',
-		description: 'List mailboxes (parsers) in Parseur',
+		description:
+			'List mailboxes (parsers) with full configuration details. Use when you need comprehensive mailbox information including field configurations, processing options, and webhook settings.',
 	},
 	'mailboxes.createMailbox': {
 		riskLevel: 'write',
-		description: 'Create a new mailbox (parser)',
+		description:
+			'Create a new mailbox (parser) in Parseur. Use when you need to set up a new parser for document parsing with custom configuration.',
 	},
 	'mailboxes.getMailbox': {
 		riskLevel: 'read',
-		description: 'Get details of a specific mailbox',
+		description:
+			'Retrieve full mailbox (parser) configuration by ID, including fields, webhooks, and settings.',
 	},
 	'mailboxes.updateMailbox': {
 		riskLevel: 'write',
-		description: 'Update an existing mailbox configuration',
+		description:
+			'Update a mailbox (parser) configuration such as name, AI engine, processing options, or document handling rules.',
 	},
 	'mailboxes.deleteMailbox': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a mailbox [DESTRUCTIVE · IRREVERSIBLE]',
+		description: 'Delete a mailbox (parser) by ID [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'mailboxes.getMailboxSchema': {
 		riskLevel: 'read',
-		description: 'Get the extracted fields schema for a mailbox',
+		description:
+			"Retrieve the JSON schema for a mailbox's parsed fields. Use when you need the structure and types of data fields extracted by a parser.",
 	},
 	'mailboxes.copyMailbox': {
 		riskLevel: 'write',
-		description: 'Create a copy of a mailbox',
+		description:
+			'Copy a mailbox (parser) in Parseur. Creates a duplicate of the mailbox with all its configuration.',
 	},
-
 	'documents.listDocuments': {
 		riskLevel: 'read',
 		description:
-			'List documents in a mailbox with optional filters and pagination',
+			'List documents within a mailbox. Use when you need to paginate, search, or sort documents after obtaining the mailbox ID.',
 	},
 	'documents.getDocument': {
 		riskLevel: 'read',
-		description: 'Get details and extracted fields of a document',
+		description:
+			'Retrieve full details of a document by ID: status, processing info, parsed results, and download URLs.',
 	},
 	'documents.deleteDocument': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a document [DESTRUCTIVE · IRREVERSIBLE]',
+		description: 'Delete a document by ID [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'documents.getDocumentLogs': {
 		riskLevel: 'read',
-		description: 'Get processing logs for a document',
+		description:
+			'Get document logs for a document. Returns a paginated list of logs with status, source, and message details.',
 	},
 	'documents.uploadDocument': {
 		riskLevel: 'write',
-		description: 'Upload a binary file/document for parsing',
+		description:
+			'Upload a binary file to a Parseur mailbox as multipart/form-data.',
 	},
 	'documents.createEmailDocument': {
 		riskLevel: 'write',
-		description: 'Send or ingest an email document for parsing',
+		description:
+			'Upload an email or text document to Parseur for parsing. Requires subject, from, and recipient.',
 	},
 	'documents.processDocument': {
 		riskLevel: 'write',
-		description: 'Reprocess a document against mailbox templates',
+		description:
+			'Reprocess a document with the current template configuration.',
 	},
 	'documents.skipDocument': {
 		riskLevel: 'write',
-		description: 'Skip document processing',
+		description: 'Skip a document. Marks the document with status SKIPPED.',
 	},
 	'documents.copyDocument': {
 		riskLevel: 'write',
-		description: 'Copy a document to another mailbox',
+		description: 'Copy a document to another mailbox.',
 	},
-
 	'templates.listTemplates': {
 		riskLevel: 'read',
-		description: 'List templates configured in a mailbox',
+		description: 'List all templates in a mailbox.',
 	},
 	'templates.getTemplate': {
 		riskLevel: 'read',
-		description: 'Get details of a parsing template',
+		description: 'Get a template by ID.',
 	},
 	'templates.deleteTemplate': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a parsing template [DESTRUCTIVE · IRREVERSIBLE]',
+		description: 'Delete a template by ID [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'templates.copyTemplate': {
 		riskLevel: 'write',
-		description: 'Copy a parsing template to another mailbox',
+		description: 'Copy a template to another mailbox.',
 	},
-
 	'exportConfigs.listExportConfigs': {
 		riskLevel: 'read',
-		description: 'List custom download/export configurations',
+		description: 'List custom downloads (export configurations) for a mailbox.',
 	},
 	'exportConfigs.createExportConfig': {
 		riskLevel: 'write',
-		description: 'Create a custom download/export configuration',
+		description:
+			'Create a custom download for a mailbox. Requires type and items (field names).',
 	},
 	'exportConfigs.updateExportConfig': {
 		riskLevel: 'write',
-		description: 'Update a custom download/export configuration',
+		description:
+			'Update a custom download field list, name, or type for an existing configuration.',
 	},
 	'exportConfigs.deleteExportConfig': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete an export configuration [DESTRUCTIVE · IRREVERSIBLE]',
+		description:
+			'Delete a custom download from a mailbox [DESTRUCTIVE · IRREVERSIBLE]',
 	},
-
 	'webhooks.createWebhook': {
 		riskLevel: 'write',
-		description: 'Create a new webhook endpoint in Parseur',
+		description:
+			'Create a webhook. Official body uses target (URL), event, and category CUSTOM.',
 	},
 	'webhooks.enableWebhook': {
 		riskLevel: 'write',
-		description: 'Link/enable a webhook on a mailbox',
+		description:
+			'Enable a paused webhook for a mailbox. Only webhooks in available_webhook_set can be enabled.',
 	},
 	'webhooks.disableWebhook': {
 		riskLevel: 'write',
-		description: 'Unlink/disable a webhook on a mailbox',
+		description:
+			'Disable a webhook for a mailbox. Removes the webhook from webhook_set.',
 	},
 	'webhooks.deleteWebhook': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a webhook endpoint [DESTRUCTIVE · IRREVERSIBLE]',
+		description: 'Delete a webhook by ID [DESTRUCTIVE · IRREVERSIBLE]',
 	},
-
+	'webhooks.listWebhooks': {
+		riskLevel: 'read',
+		description:
+			'List active (webhook_set) and paused (available_webhook_set) webhooks for a mailbox via GET /parser/{id}.',
+	},
 	'bootstrap.getBootstrap': {
 		riskLevel: 'read',
 		description:
-			'Get account, user profile, and mailbox summary bootstrap data',
+			'Retrieve bootstrap configuration: choices, mappings, max_field_lengths, email_domain, extra_fields, and master_parser_set.',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof parseurEndpointsNested>;
 
@@ -469,7 +418,7 @@ export type BaseParseurPlugin<T extends ParseurPluginOptions> = CorsairPlugin<
 	'parseur',
 	typeof ParseurSchema,
 	typeof parseurEndpointsNested,
-	typeof parseurWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
@@ -492,14 +441,11 @@ export function parseur<const T extends ParseurPluginOptions>(
 		schema: ParseurSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: parseurEndpointsNested,
-		webhooks: parseurWebhooksNested,
+		webhooks: {},
 		endpointMeta: parseurEndpointMeta,
 		endpointSchemas: parseurEndpointSchemas,
-		webhookSchemas: parseurWebhookSchemas,
-		pluginWebhookMatcher: matchParseurPluginWebhook,
-		pluginTenantWebhookMatcher: matchParseurTenantWebhook,
+		pluginWebhookMatcher: () => false,
 		errorHandlers: (() => {
 			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
 			return {
@@ -509,18 +455,6 @@ export function parseur<const T extends ParseurPluginOptions>(
 			};
 		})(),
 		keyBuilder: async (ctx: ParseurKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				if (!res) {
-					throw new AuthMissingError('parseur', 'webhook_signature');
-				}
-				return res;
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -542,9 +476,3 @@ export type {
 	ParseurEndpointInputs,
 	ParseurEndpointOutputs,
 } from './endpoints/types';
-export type {
-	DocumentProcessedEvent,
-	ParseurWebhookOutputs,
-	ProcessFailedEvent,
-	TableItemProcessedEvent,
-} from './webhooks/types';

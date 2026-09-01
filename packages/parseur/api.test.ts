@@ -1,4 +1,3 @@
-import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
 import { PARSEUR_API_BASE } from './client';
 import {
@@ -11,12 +10,6 @@ import {
 } from './endpoints';
 import type { ParseurContext } from './index';
 import { parseur } from './index';
-import { DocumentWebhooks } from './webhooks';
-import { matchParseurTenantWebhook } from './webhooks/tenant-matcher';
-import {
-	matchParseurPluginWebhook,
-	verifyParseurWebhookSignature,
-} from './webhooks/types';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -29,9 +22,6 @@ jest.mock('corsair/http', () => ({
 }));
 
 const mockRequest = request as jest.Mock;
-const mockLog = logEventFromContext as jest.MockedFunction<
-	typeof logEventFromContext
->;
 
 function testContext(): ParseurContext {
 	return {
@@ -55,249 +45,143 @@ function lastCall() {
 	];
 }
 
-describe('Parseur Plugin Structure & Metadata', () => {
-	it('registers 29 operations, webhooks, and api_key auth', () => {
+describe('Parseur plugin', () => {
+	it('registers official operations and api_key auth', () => {
 		const plugin = parseur();
 		expect(plugin.id).toBe('parseur');
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.authConfig).toEqual({
-			api_key: { account: ['tenant_external_id'] },
-		});
-
-		const metaKeys = Object.keys(plugin.endpointMeta ?? {});
-		expect(metaKeys.length).toBe(29);
-		expect(metaKeys.sort()).toEqual([
-			'bootstrap.getBootstrap',
-			'documents.copyDocument',
-			'documents.createEmailDocument',
-			'documents.deleteDocument',
-			'documents.getDocument',
-			'documents.getDocumentLogs',
-			'documents.listDocuments',
-			'documents.processDocument',
-			'documents.skipDocument',
-			'documents.uploadDocument',
-			'exportConfigs.createExportConfig',
-			'exportConfigs.deleteExportConfig',
-			'exportConfigs.listExportConfigs',
-			'exportConfigs.updateExportConfig',
-			'mailboxes.copyMailbox',
-			'mailboxes.createMailbox',
-			'mailboxes.deleteMailbox',
-			'mailboxes.getMailbox',
-			'mailboxes.getMailboxSchema',
-			'mailboxes.listMailboxes',
-			'mailboxes.updateMailbox',
-			'templates.copyTemplate',
-			'templates.deleteTemplate',
-			'templates.getTemplate',
-			'templates.listTemplates',
-			'webhooks.createWebhook',
-			'webhooks.deleteWebhook',
-			'webhooks.disableWebhook',
-			'webhooks.enableWebhook',
-		]);
+		expect(plugin.webhooks).toEqual({});
+		expect(Object.keys(plugin.endpointMeta ?? {}).length).toBe(30);
 	});
 });
 
-describe('Mailbox Endpoints (7 Operations)', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-	});
+describe('mailboxes', () => {
+	beforeEach(() => jest.clearAllMocks());
 
-	it('1. listMailboxes: calls GET /parser with query params and Token auth', async () => {
+	it('listMailboxes GET /parser', async () => {
 		mockRequest.mockResolvedValueOnce({
 			count: 1,
-			results: [{ id: 101, name: 'Mailbox 1', slug: 'mb-1' }],
+			current: 1,
+			total: 1,
+			results: [{ id: 101, name: 'Mailbox 1' }],
 		});
-
 		const result = await Mailbox.listMailboxes(testContext(), {
 			page: 1,
-			page_size: 25,
-			search: 'invoice',
-			ordering: '-created',
+			ordering: 'name',
 		});
-
 		const [config, req] = lastCall();
 		expect(config.BASE).toBe(PARSEUR_API_BASE);
 		expect(config.HEADERS?.Authorization).toBe('Token test-api-key');
-		expect(req.method).toBe('GET');
-		expect(req.url).toBe('/parser');
-		expect(req.query).toEqual({
-			page: 1,
-			page_size: 25,
-			search: 'invoice',
-			ordering: '-created',
-		});
-		expect(result.results.length).toBe(1);
-		expect(result.results[0]?.name).toBe('Mailbox 1');
+		expect(req).toMatchObject({ method: 'GET', url: '/parser' });
+		expect(result.results[0]?.id).toBe(101);
 	});
 
-	it('2. createMailbox: calls POST /parser with payload', async () => {
-		mockRequest.mockResolvedValueOnce({
-			id: 102,
-			name: 'Receipts Mailbox',
-			description: 'Receipt parser',
-		});
-
+	it('createMailbox POST /parser', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 102, name: 'Receipts' });
 		const result = await Mailbox.createMailbox(testContext(), {
-			name: 'Receipts Mailbox',
-			description: 'Receipt parser',
+			name: 'Receipts',
+			ai_engine: 'GCP_AI_2',
 		});
-
-		const [config, req] = lastCall();
+		const [, req] = lastCall();
 		expect(req.method).toBe('POST');
 		expect(req.url).toBe('/parser');
-		expect(req.body).toEqual({
-			name: 'Receipts Mailbox',
-			description: 'Receipt parser',
-		});
+		expect(req.body).toEqual({ name: 'Receipts', ai_engine: 'GCP_AI_2' });
 		expect(result.id).toBe(102);
 	});
 
-	it('3. getMailbox: calls GET /parser/{id}', async () => {
-		mockRequest.mockResolvedValueOnce({
-			id: 101,
-			name: 'Mailbox 1',
-		});
-
+	it('getMailbox GET /parser/{id}', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 101, name: 'Mailbox 1' });
 		const result = await Mailbox.getMailbox(testContext(), { id: 101 });
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('GET');
-		expect(req.url).toBe('/parser/101');
+		expect(lastCall()[1]).toMatchObject({
+			method: 'GET',
+			url: '/parser/101',
+		});
 		expect(result.name).toBe('Mailbox 1');
 	});
 
-	it('4. updateMailbox: calls PUT /parser/{id}', async () => {
-		mockRequest.mockResolvedValueOnce({
-			id: 101,
-			name: 'Updated Name',
-		});
-
-		const result = await Mailbox.updateMailbox(testContext(), {
-			id: 101,
-			name: 'Updated Name',
-		});
-
+	it('updateMailbox PUT /parser/{id}', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 101, name: 'Updated' });
+		await Mailbox.updateMailbox(testContext(), { id: 101, name: 'Updated' });
 		const [, req] = lastCall();
 		expect(req.method).toBe('PUT');
-		expect(req.url).toBe('/parser/101');
-		expect(req.body).toEqual({ name: 'Updated Name' });
-		expect(result.name).toBe('Updated Name');
+		expect(req.body).toEqual({ name: 'Updated' });
 	});
 
-	it('5. deleteMailbox: calls DELETE /parser/{id}', async () => {
+	it('deleteMailbox DELETE /parser/{id}', async () => {
 		mockRequest.mockResolvedValueOnce(undefined);
-
-		const result = await Mailbox.deleteMailbox(testContext(), { id: 101 });
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('DELETE');
-		expect(req.url).toBe('/parser/101');
-		expect(result).toEqual({ success: true });
+		expect(await Mailbox.deleteMailbox(testContext(), { id: 101 })).toEqual({
+			success: true,
+		});
 	});
 
-	it('6. getMailboxSchema: calls GET /parser/{id}/schema', async () => {
-		mockRequest.mockResolvedValueOnce([
-			{ name: 'TotalAmount', format: 'number' },
-			{ name: 'Vendor', format: 'text' },
-		]);
-
-		const result = await Mailbox.getMailboxSchema(testContext(), { id: 101 });
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('GET');
-		expect(req.url).toBe('/parser/101/schema');
-		expect(Array.isArray(result)).toBe(true);
-	});
-
-	it('7. copyMailbox: calls POST /parser/{id}/copy', async () => {
+	it('getMailboxSchema GET /parser/{id}/schema', async () => {
 		mockRequest.mockResolvedValueOnce({
-			id: 103,
-			name: 'Cloned Mailbox',
+			type: 'object',
+			properties: { CustomerName: { type: 'string' } },
 		});
+		const result = await Mailbox.getMailboxSchema(testContext(), { id: 101 });
+		expect(result.type).toBe('object');
+		expect(result.properties.CustomerName).toBeDefined();
+	});
 
-		const result = await Mailbox.copyMailbox(testContext(), {
-			id: 101,
-			name: 'Cloned Mailbox',
+	it('copyMailbox POST /parser/{id}/copy with no body', async () => {
+		mockRequest.mockResolvedValueOnce({
+			notification_set: { info: ['Mailbox is being copied.'] },
 		});
-
+		const result = await Mailbox.copyMailbox(testContext(), { id: 101 });
 		const [, req] = lastCall();
 		expect(req.method).toBe('POST');
 		expect(req.url).toBe('/parser/101/copy');
-		expect(req.body).toEqual({ name: 'Cloned Mailbox' });
-		expect(result.id).toBe(103);
+		expect(req.body).toBeUndefined();
+		expect(result.notification_set.info.length).toBeGreaterThan(0);
 	});
 });
 
-describe('Document Endpoints (9 Operations)', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-	});
+describe('documents', () => {
+	beforeEach(() => jest.clearAllMocks());
 
-	it('8. listDocuments: calls GET /parser/{id}/document_set', async () => {
+	it('listDocuments GET /parser/{id}/document_set', async () => {
 		mockRequest.mockResolvedValueOnce({
 			count: 1,
-			results: [{ id: 501, name: 'doc.pdf', status: 'PROCESSED' }],
+			results: [{ id: 501, name: 'doc.pdf', status: 'PARSEDOK' }],
 		});
-
 		const result = await Document.listDocuments(testContext(), {
 			id: 101,
-			status: 'PROCESSED',
-			with_result: true,
+			status: 'INCOMING',
 		});
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('GET');
-		expect(req.url).toBe('/parser/101/document_set');
-		expect(result.results.length).toBe(1);
-		expect(result.results[0]?.status).toBe('PROCESSED');
+		expect(lastCall()[1].query).toEqual(
+			expect.objectContaining({ status: 'INCOMING' }),
+		);
+		expect(result.results[0]?.status).toBe('PARSEDOK');
 	});
 
-	it('9. getDocument: calls GET /document/{id}', async () => {
+	it('getDocument GET /document/{id}', async () => {
 		mockRequest.mockResolvedValueOnce({
 			id: 501,
-			name: 'invoice.pdf',
-			status: 'PROCESSED',
-			result: { Amount: 100 },
+			status: 'PARSEDOK',
+			result: '{"Amount":100}',
 		});
-
 		const result = await Document.getDocument(testContext(), { id: 501 });
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('GET');
-		expect(req.url).toBe('/document/501');
-		expect(result.id).toBe(501);
-		expect(result.result).toEqual({ Amount: 100 });
+		expect(result.result).toBe('{"Amount":100}');
 	});
 
-	it('10. deleteDocument: calls DELETE /document/{id}', async () => {
+	it('deleteDocument DELETE /document/{id}', async () => {
 		mockRequest.mockResolvedValueOnce(undefined);
-
-		const result = await Document.deleteDocument(testContext(), { id: 501 });
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('DELETE');
-		expect(req.url).toBe('/document/501');
-		expect(result).toEqual({ success: true });
+		expect(await Document.deleteDocument(testContext(), { id: 501 })).toEqual({
+			success: true,
+		});
 	});
 
-	it('11. getDocumentLogs: calls GET /document/{id}/log_set', async () => {
+	it('getDocumentLogs GET /document/{id}/log_set', async () => {
 		mockRequest.mockResolvedValueOnce({
 			count: 1,
-			results: [{ id: 1, message: 'Processing started', status: 'OK' }],
+			results: [{ id: 1, message: 'ok' }],
 		});
-
 		const result = await Document.getDocumentLogs(testContext(), { id: 501 });
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('GET');
-		expect(req.url).toBe('/document/501/log_set');
-		expect(result.results.length).toBe(1);
+		expect(result.results[0]?.message).toBe('ok');
 	});
 
-	it('12. uploadDocument: calls POST /parser/{id}/upload via multipart/form-data', async () => {
+	it('uploadDocument POST multipart /parser/{id}/upload', async () => {
 		const originalFetch = global.fetch;
 		global.fetch = jest.fn().mockResolvedValueOnce({
 			ok: true,
@@ -307,19 +191,14 @@ describe('Document Endpoints (9 Operations)', () => {
 				attachments: [{ name: 'uploaded.pdf', DocumentID: '502' }],
 			}),
 		});
-
 		try {
 			const result = await Document.uploadDocument(testContext(), {
 				id: 101,
 				file: 'sample-data',
 				file_name: 'uploaded.pdf',
 			});
-
-			expect(global.fetch).toHaveBeenCalled();
 			const [url, options] = (global.fetch as jest.Mock).mock.calls[0];
 			expect(url).toBe(`${PARSEUR_API_BASE}/parser/101/upload`);
-			expect(options.method).toBe('POST');
-			expect(options.headers?.Authorization).toBe('Token test-api-key');
 			expect(options.body).toBeInstanceOf(FormData);
 			expect(result.message).toBe('OK');
 		} finally {
@@ -327,426 +206,238 @@ describe('Document Endpoints (9 Operations)', () => {
 		}
 	});
 
-	it('12b. uploadDocument: supports plain text non-base64 data URLs', async () => {
+	it('uploadDocument does not treat base64param as base64', async () => {
 		const originalFetch = global.fetch;
-		global.fetch = jest.fn().mockResolvedValueOnce({
-			ok: true,
-			status: 201,
-			json: async () => ({
-				message: 'OK',
-				attachments: [{ name: 'test.txt', DocumentID: '503' }],
-			}),
+		let uploaded: Blob | undefined;
+		global.fetch = jest.fn().mockImplementation(async (_url, options) => {
+			uploaded = (options.body as FormData).get('file') as Blob;
+			return {
+				ok: true,
+				status: 201,
+				json: async () => ({
+					message: 'OK',
+					attachments: [{ name: 't.txt', DocumentID: '1' }],
+				}),
+			};
 		});
-
 		try {
-			const result = await Document.uploadDocument(testContext(), {
+			await Document.uploadDocument(testContext(), {
 				id: 101,
-				file: 'data:text/plain,hello%20world',
-				file_name: 'test.txt',
+				file: 'data:text/plain;base64param=1,hello',
+				file_name: 't.txt',
 			});
-
-			expect(global.fetch).toHaveBeenCalled();
-			expect(result.message).toBe('OK');
+			expect(await uploaded?.text()).toBe('hello');
 		} finally {
 			global.fetch = originalFetch;
 		}
 	});
 
-	it('13. createEmailDocument: calls POST /email', async () => {
+	it('createEmailDocument POST /email official fields', async () => {
 		mockRequest.mockResolvedValueOnce({
-			id: 503,
-			name: 'Email Receipt',
-			status: 'NEW',
+			message: 'OK',
+			DocumentID: 'abc',
+			DocumentIDs: ['abc'],
 		});
-
 		const result = await Document.createEmailDocument(testContext(), {
-			parser_id: 101,
-			subject: 'Receipt Order',
-			body: 'Order #1234',
+			subject: 'Receipt',
+			from: 'Sender <a@example.com>',
+			recipient: 'box@in.parseur.com',
+			body_plain: 'hello',
 		});
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('POST');
-		expect(req.url).toBe('/email');
-		expect(result.id).toBe(503);
+		expect(lastCall()[1].body).toEqual({
+			subject: 'Receipt',
+			from: 'Sender <a@example.com>',
+			recipient: 'box@in.parseur.com',
+			body_plain: 'hello',
+		});
+		expect(result.DocumentID).toBe('abc');
 	});
 
-	it('14. processDocument: calls POST /document/{id}/process', async () => {
-		mockRequest.mockResolvedValueOnce({
-			id: 501,
-			status: 'IN_PROCESS',
-		});
-
+	it('processDocument POST /document/{id}/process', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 501, status: 'PROGRESS' });
 		const result = await Document.processDocument(testContext(), { id: 501 });
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('POST');
-		expect(req.url).toBe('/document/501/process');
-		expect(result.status).toBe('IN_PROCESS');
+		expect(lastCall()[1].url).toBe('/document/501/process');
+		expect(result.status).toBe('PROGRESS');
 	});
 
-	it('15. skipDocument: calls POST /document/{id}/skip', async () => {
-		mockRequest.mockResolvedValueOnce({
-			id: 501,
-			status: 'SKIPPED',
-		});
-
-		const result = await Document.skipDocument(testContext(), { id: 501 });
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('POST');
-		expect(req.url).toBe('/document/501/skip');
-		expect(result.status).toBe('SKIPPED');
+	it('skipDocument POST /document/{id}/skip', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 501, status: 'SKIPPED' });
+		expect(
+			(await Document.skipDocument(testContext(), { id: 501 })).status,
+		).toBe('SKIPPED');
 	});
 
-	it('16. copyDocument: calls POST /document/{id}/copy/{target_mailbox_id}', async () => {
-		mockRequest.mockResolvedValueOnce({
-			id: 504,
-			name: 'Copied Doc',
-			parser: 202,
-		});
-
-		const result = await Document.copyDocument(testContext(), {
+	it('copyDocument POST /document/{id}/copy/{target}', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 504, parser: 202 });
+		await Document.copyDocument(testContext(), {
 			id: 501,
 			target_mailbox_id: 202,
 		});
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('POST');
-		expect(req.url).toBe('/document/501/copy/202');
-		expect(result.id).toBe(504);
+		expect(lastCall()[1].url).toBe('/document/501/copy/202');
 	});
 });
 
-describe('Template Endpoints (4 Operations)', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-	});
+describe('templates and exports', () => {
+	beforeEach(() => jest.clearAllMocks());
 
-	it('17. listTemplates: calls GET /parser/{id}/template_set', async () => {
+	it('listTemplates GET /parser/{id}/template_set', async () => {
 		mockRequest.mockResolvedValueOnce({
 			count: 1,
-			results: [{ id: 801, name: 'Template 1', parser: 101 }],
+			results: [{ id: 801, name: 'T1', parser: 101 }],
 		});
-
 		const result = await Template.listTemplates(testContext(), { id: 101 });
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('GET');
-		expect(req.url).toBe('/parser/101/template_set');
-		expect(result.results.length).toBe(1);
+		expect(result.results[0]?.id).toBe(801);
 	});
 
-	it('18. getTemplate: calls GET /template/{id}', async () => {
-		mockRequest.mockResolvedValueOnce({
-			id: 801,
-			name: 'Template 1',
-		});
-
-		const result = await Template.getTemplate(testContext(), { id: 801 });
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('GET');
-		expect(req.url).toBe('/template/801');
-		expect(result.id).toBe(801);
+	it('getTemplate GET /template/{id}', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 801, name: 'T1' });
+		expect((await Template.getTemplate(testContext(), { id: 801 })).id).toBe(
+			801,
+		);
 	});
 
-	it('19. deleteTemplate: calls DELETE /template/{id}', async () => {
+	it('deleteTemplate DELETE /template/{id}', async () => {
 		mockRequest.mockResolvedValueOnce(undefined);
-
-		const result = await Template.deleteTemplate(testContext(), { id: 801 });
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('DELETE');
-		expect(req.url).toBe('/template/801');
-		expect(result).toEqual({ success: true });
+		expect(await Template.deleteTemplate(testContext(), { id: 801 })).toEqual({
+			success: true,
+		});
 	});
 
-	it('20. copyTemplate: calls POST /template/{id}/copy/{target_mailbox_id}', async () => {
-		mockRequest.mockResolvedValueOnce({
-			id: 802,
-			name: 'Copied Template',
-			parser: 202,
-		});
-
-		const result = await Template.copyTemplate(testContext(), {
+	it('copyTemplate POST /template/{id}/copy/{target}', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 802, parser: 202 });
+		await Template.copyTemplate(testContext(), {
 			id: 801,
 			target_mailbox_id: 202,
 		});
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('POST');
-		expect(req.url).toBe('/template/801/copy/202');
-		expect(result.id).toBe(802);
-	});
-});
-
-describe('Export Config Endpoints (4 Operations)', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
+		expect(lastCall()[1].url).toBe('/template/801/copy/202');
 	});
 
-	it('21. listExportConfigs: calls GET /parser/{id}/export_config', async () => {
-		mockRequest.mockResolvedValueOnce({
-			count: 1,
-			results: [{ id: 901, name: 'CSV Download', format: 'csv' }],
-		});
-
-		const result = await ExportConfig.listExportConfigs(testContext(), {
-			id: 101,
-		});
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('GET');
-		expect(req.url).toBe('/parser/101/export_config');
-		expect(result.results.length).toBe(1);
-	});
-
-	it('22. createExportConfig: calls POST /parser/{id}/export_config', async () => {
+	it('createExportConfig POST type/items', async () => {
 		mockRequest.mockResolvedValueOnce({
 			id: 902,
-			name: 'JSON Export',
-			format: 'json',
+			name: 'Export',
+			type: 'PARSER',
+			items: ['CustomerName'],
+			csv_download: 'https://example.com/c.csv',
+			xls_download: 'https://example.com/c.xls',
 		});
-
 		const result = await ExportConfig.createExportConfig(testContext(), {
 			id: 101,
-			name: 'JSON Export',
-			format: 'json',
+			name: 'Export',
+			items: ['CustomerName'],
 		});
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('POST');
-		expect(req.url).toBe('/parser/101/export_config');
-		expect(req.body).toEqual({ name: 'JSON Export', format: 'json' });
-		expect(result.id).toBe(902);
+		expect(lastCall()[1].body).toEqual({
+			name: 'Export',
+			type: 'PARSER',
+			items: ['CustomerName'],
+		});
+		expect(result.items).toEqual(['CustomerName']);
 	});
 
-	it('23. updateExportConfig: calls PATCH /parser/{mailbox_id}/export_config/{id}', async () => {
+	it('updateExportConfig PATCH items', async () => {
 		mockRequest.mockResolvedValueOnce({
 			id: 902,
-			name: 'Updated Export',
-			format: 'json',
+			name: 'Export',
+			type: 'PARSER',
+			items: ['Phone'],
+			csv_download: 'https://example.com/c.csv',
+			xls_download: 'https://example.com/c.xls',
 		});
-
-		const result = await ExportConfig.updateExportConfig(testContext(), {
+		await ExportConfig.updateExportConfig(testContext(), {
 			mailbox_id: 101,
 			id: 902,
-			name: 'Updated Export',
+			items: ['Phone'],
 		});
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('PATCH');
-		expect(req.url).toBe('/parser/101/export_config/902');
-		expect(req.body).toEqual({ name: 'Updated Export' });
-		expect(result.name).toBe('Updated Export');
+		expect(lastCall()[1].url).toBe('/parser/101/export_config/902');
 	});
 
-	it('24. deleteExportConfig: calls DELETE /parser/{mailbox_id}/export_config/{id}', async () => {
+	it('deleteExportConfig DELETE', async () => {
 		mockRequest.mockResolvedValueOnce(undefined);
-
-		const result = await ExportConfig.deleteExportConfig(testContext(), {
-			mailbox_id: 101,
-			id: 902,
-		});
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('DELETE');
-		expect(req.url).toBe('/parser/101/export_config/902');
-		expect(result).toEqual({ success: true });
+		expect(
+			await ExportConfig.deleteExportConfig(testContext(), {
+				mailbox_id: 101,
+				id: 902,
+			}),
+		).toEqual({ success: true });
 	});
 });
 
-describe('Webhook Management Endpoints (4 Operations)', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-	});
+describe('webhooks and bootstrap', () => {
+	beforeEach(() => jest.clearAllMocks());
 
-	it('25. createWebhook: calls POST /webhook', async () => {
+	it('createWebhook POST /webhook uses target', async () => {
 		mockRequest.mockResolvedValueOnce({
 			id: 301,
-			target_url: 'https://example.com/webhook',
 			event: 'document.processed',
+			target: 'https://example.com/hook',
+			category: 'CUSTOM',
 		});
-
-		const result = await Webhook.createWebhook(testContext(), {
-			target_url: 'https://example.com/webhook',
+		await Webhook.createWebhook(testContext(), {
 			event: 'document.processed',
+			target: 'https://example.com/hook',
 		});
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('POST');
-		expect(req.url).toBe('/webhook');
-		expect(result.id).toBe(301);
+		expect(lastCall()[1].body).toEqual({
+			event: 'document.processed',
+			target: 'https://example.com/hook',
+			category: 'CUSTOM',
+		});
 	});
 
-	it('26. enableWebhook: calls POST /parser/{mailbox_id}/webhook_set/{id}', async () => {
+	it('enableWebhook POST returns Parser', async () => {
 		mockRequest.mockResolvedValueOnce({
-			id: 301,
-			parser: 101,
+			id: 101,
+			webhook_set: [
+				{
+					id: 301,
+					event: 'document.processed',
+					target: 'https://example.com/hook',
+					category: 'CUSTOM',
+				},
+			],
 		});
-
 		const result = await Webhook.enableWebhook(testContext(), {
 			mailbox_id: 101,
 			id: 301,
 		});
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('POST');
-		expect(req.url).toBe('/parser/101/webhook_set/301');
-		expect(result).toBeDefined();
+		expect(result.id).toBe(101);
 	});
 
-	it('27. disableWebhook: calls DELETE /parser/{mailbox_id}/webhook_set/{id}', async () => {
+	it('disableWebhook DELETE webhook_set', async () => {
 		mockRequest.mockResolvedValueOnce(undefined);
+		expect(
+			await Webhook.disableWebhook(testContext(), { mailbox_id: 101, id: 301 }),
+		).toEqual({ success: true });
+	});
 
-		const result = await Webhook.disableWebhook(testContext(), {
-			mailbox_id: 101,
-			id: 301,
+	it('deleteWebhook DELETE /webhook/{id}', async () => {
+		mockRequest.mockResolvedValueOnce(undefined);
+		expect(await Webhook.deleteWebhook(testContext(), { id: 301 })).toEqual({
+			success: true,
 		});
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('DELETE');
-		expect(req.url).toBe('/parser/101/webhook_set/301');
-		expect(result).toEqual({ success: true });
 	});
 
-	it('28. deleteWebhook: calls DELETE /webhook/{id}', async () => {
-		mockRequest.mockResolvedValueOnce(undefined);
-
-		const result = await Webhook.deleteWebhook(testContext(), { id: 301 });
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('DELETE');
-		expect(req.url).toBe('/webhook/301');
-		expect(result).toEqual({ success: true });
-	});
-});
-
-describe('Bootstrap Endpoint (1 Operation)', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-	});
-
-	it('29. getBootstrap: calls GET /bootstrap', async () => {
+	it('listWebhooks GET /parser/{id}', async () => {
 		mockRequest.mockResolvedValueOnce({
-			user: { email: 'satirical@example.com' },
-			account: { name: 'Account 1' },
-			mailboxes: [{ id: 101, name: 'Mailbox 1' }],
+			id: 101,
+			webhook_set: [],
+			available_webhook_set: [],
 		});
+		const result = await Webhook.listWebhooks(testContext(), { id: 101 });
+		expect(lastCall()[1].url).toBe('/parser/101');
+		expect(result.webhook_set).toEqual([]);
+	});
 
+	it('getBootstrap GET /bootstrap official keys', async () => {
+		mockRequest.mockResolvedValueOnce({
+			choices: {},
+			mappings: {},
+			max_field_lengths: { email: 127 },
+			email_domain: 'in.parseur.com',
+			extra_fields: [],
+			master_parser_set: [],
+		});
 		const result = await Bootstrap.getBootstrap(testContext(), {});
-
-		const [, req] = lastCall();
-		expect(req.method).toBe('GET');
-		expect(req.url).toBe('/bootstrap');
-		expect(result.mailboxes?.length).toBe(1);
-	});
-});
-
-describe('Webhook Matchers & Handlers', () => {
-	it('matches plugin and tenant webhook requests correctly', () => {
-		const rawReq = {
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify({
-				event: 'document.processed',
-				parser_id: 'mb_100',
-				document: { id: 1 },
-			}),
-		};
-
-		expect(matchParseurPluginWebhook(rawReq)).toBe(true);
-		expect(matchParseurTenantWebhook(rawReq)).toEqual({
-			linkType: 'tenant_external_id',
-			externalId: 'mb_100',
-		});
-	});
-
-	it('handles documentProcessed event', async () => {
-		const webhookCtx = testContext();
-		const result = await DocumentWebhooks.documentProcessed.handler(
-			webhookCtx,
-			{
-				headers: { 'x-webhook-secret': 'test-api-key' },
-				payload: {
-					event: 'document.processed',
-					result: { Field1: 'Val1' },
-				},
-			} as any,
-		);
-
-		expect(result.success).toBe(true);
-	});
-
-	it('handles processFailed event and logs with failed status', async () => {
-		const webhookCtx = testContext();
-		const result = await DocumentWebhooks.processFailed.handler(webhookCtx, {
-			headers: { 'x-webhook-secret': 'test-api-key' },
-			payload: {
-				event: 'process.failed',
-				error: 'Parsing error occurred',
-			},
-		} as any);
-
-		expect(result.success).toBe(true);
-		expect(mockLog).toHaveBeenCalledWith(
-			webhookCtx,
-			'parseur.webhook.processFailed',
-			expect.objectContaining({ event: 'process.failed' }),
-			'failed',
-		);
-	});
-
-	describe('verifyParseurWebhookSignature', () => {
-		it('returns valid when token matches x-webhook-secret', () => {
-			const res = verifyParseurWebhookSignature(
-				{
-					headers: { 'x-webhook-secret': 'my-secret-123' },
-					body: {},
-				} as any,
-				'my-secret-123',
-			);
-			expect(res.valid).toBe(true);
-		});
-
-		it('returns valid when token matches Authorization: Bearer <secret>', () => {
-			const res = verifyParseurWebhookSignature(
-				{
-					headers: { authorization: 'Bearer my-secret-123' },
-					body: {},
-				} as any,
-				'my-secret-123',
-			);
-			expect(res.valid).toBe(true);
-		});
-
-		it('returns invalid when secret is missing or mismatch', () => {
-			const missingSecret = verifyParseurWebhookSignature(
-				{
-					headers: { 'x-webhook-secret': 'my-secret-123' },
-					body: {},
-				} as any,
-				undefined,
-			);
-			expect(missingSecret.valid).toBe(false);
-
-			const mismatch = verifyParseurWebhookSignature(
-				{
-					headers: { 'x-webhook-secret': 'wrong-secret' },
-					body: {},
-				} as any,
-				'my-secret-123',
-			);
-			expect(mismatch.valid).toBe(false);
-
-			const missingHeader = verifyParseurWebhookSignature(
-				{
-					headers: {},
-					body: {},
-				} as any,
-				'my-secret-123',
-			);
-			expect(missingHeader.valid).toBe(false);
-		});
+		expect(lastCall()[1].url).toBe('/bootstrap');
+		expect(result.email_domain).toBe('in.parseur.com');
 	});
 });

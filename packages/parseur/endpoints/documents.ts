@@ -40,8 +40,6 @@ export const listDocuments: ParseurEndpoints['listDocuments'] = async (
 				status: parsed.status,
 				received_after: parsed.received_after,
 				received_before: parsed.received_before,
-				processed_after: parsed.processed_after,
-				processed_before: parsed.processed_before,
 				tz: parsed.tz,
 				with_result: parsed.with_result,
 			},
@@ -160,10 +158,23 @@ export const uploadDocument: ParseurEndpoints['uploadDocument'] = async (
 export const createEmailDocument: ParseurEndpoints['createEmailDocument'] =
 	async (ctx, input) => {
 		const parsed = CreateEmailDocumentInputSchema.parse(input);
+		const body = {
+			subject: parsed.subject,
+			from: parsed.from,
+			recipient: parsed.recipient,
+			...(parsed.to ? { to: parsed.to } : {}),
+			...(parsed.cc ? { cc: parsed.cc } : {}),
+			...(parsed.bcc ? { bcc: parsed.bcc } : {}),
+			...(parsed.body_html ? { body_html: parsed.body_html } : {}),
+			...(parsed.body_plain ? { body_plain: parsed.body_plain } : {}),
+			...(parsed.message_headers
+				? { message_headers: parsed.message_headers }
+				: {}),
+		};
 		const response = await makeParseurRequest<unknown>('/email', {
 			apiKey: ctx.key,
 			method: 'POST',
-			body: parsed,
+			body,
 		});
 
 		const output = CreateEmailDocumentOutputSchema.parse(response);
@@ -171,7 +182,7 @@ export const createEmailDocument: ParseurEndpoints['createEmailDocument'] =
 		await logEventFromContext(
 			ctx,
 			'parseur.documents.createEmailDocument',
-			{ parser_id: parsed.parser_id ?? parsed.mailbox_id },
+			{ recipient: parsed.recipient },
 			'completed',
 		);
 

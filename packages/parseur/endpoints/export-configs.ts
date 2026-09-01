@@ -50,7 +50,12 @@ export const createExportConfig: ParseurEndpoints['createExportConfig'] =
 			{
 				apiKey: ctx.key,
 				method: 'POST',
-				body,
+				body: {
+					name: body.name,
+					type: body.type ?? 'PARSER',
+					items: body.items,
+					parser_field_id: body.parser_field_id,
+				},
 			},
 		);
 
