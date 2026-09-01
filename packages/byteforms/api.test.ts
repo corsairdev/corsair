@@ -1,8 +1,11 @@
 import { makeByteFormsRequest } from './client';
 import { ByteFormsEndpointOutputSchemas } from './endpoints/types';
 
-describe('ByteForms live API', () => {
-	const key = process.env.BYTEFORMS_API_KEY ?? '';
+const liveApiKey = process.env.BYTEFORMS_API_KEY ?? '';
+const describeLive = liveApiKey ? describe : describe.skip;
+
+describeLive('ByteForms live API', () => {
+	const key = liveApiKey;
 	let createdFormId: number | undefined;
 	const uniqueName = `corsair-live-test-${Date.now()}`;
 
