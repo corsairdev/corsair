@@ -17,7 +17,7 @@ export class HubCredentialsMissingError extends Error {
 	constructor() {
 		super(
 			'Hub credentials are missing. Pass hub: { projectApiKey, signingSecret } to createCorsair() ' +
-				'with non-empty values, or omit `hub: {}` entirely if you are not using Corsair Hub.',
+				'with non-empty values, or omit `hub` entirely if you are not using Corsair Hub.',
 		);
 		this.name = 'HubCredentialsMissingError';
 	}

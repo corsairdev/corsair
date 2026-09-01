@@ -1,13 +1,15 @@
 import { createCorsair } from 'corsair';
 
+import { getCorsairInternal } from '../core/utils/corsair-instance';
 import {
+	getHubConfig,
 	HubCredentialsMissingError,
 	normalizeHubConfig,
 	resolveHubConfigInput,
 } from '../hub/config';
 
 describe('resolveHubConfigInput', () => {
-	it('normalizes complete credentials', () => {
+	it('trims hub credential strings (not used as scrypt password material)', () => {
 		expect(
 			resolveHubConfigInput({
 				projectApiKey: ' ck_dev_test ',
@@ -21,67 +23,77 @@ describe('resolveHubConfigInput', () => {
 		);
 	});
 
-	it('throws when hub is enabled but credentials are missing', () => {
+	it('throws HubCredentialsMissingError when hub is enabled but credentials are undefined', () => {
+		// Simulates env vars typed as string but undefined at runtime.
+		const missing = undefined as unknown as string;
 		expect(() =>
 			resolveHubConfigInput({
-				projectApiKey: undefined as unknown as string,
-				signingSecret: undefined as unknown as string,
+				projectApiKey: missing,
+				signingSecret: missing,
 			}),
 		).toThrow(HubCredentialsMissingError);
 	});
 
-	it('throws for blank credentials', () => {
+	it('throws HubCredentialsMissingError for blank credentials after trim', () => {
 		expect(() =>
 			resolveHubConfigInput({
 				projectApiKey: '  ',
 				signingSecret: '',
 			}),
-		).toThrow(/Hub credentials are missing/);
+		).toThrow(HubCredentialsMissingError);
 	});
 });
 
 describe('createCorsair — hub validation', () => {
-	it('initializes without hub when hub is omitted', () => {
-		expect(() =>
-			createCorsair({
-				plugins: [],
-				kek: 'test-kek',
-			}),
-		).not.toThrow();
+	it('leaves hub unset when the hub block is omitted', () => {
+		const corsair = createCorsair({
+			plugins: [],
+			kek: 'test-kek',
+		});
+
+		expect(getCorsairInternal(corsair).hub).toBeUndefined();
+		expect(() => getHubConfig(corsair)).toThrow(/Hub is not configured/);
 	});
 
-	it('throws at init when hub is enabled without credentials', () => {
+	it('throws HubCredentialsMissingError at init when hub is enabled without credentials', () => {
+		const missing = undefined as unknown as string;
 		expect(() =>
 			createCorsair({
 				plugins: [],
 				kek: 'test-kek',
 				hub: {
-					projectApiKey: undefined as unknown as string,
-					signingSecret: undefined as unknown as string,
+					projectApiKey: missing,
+					signingSecret: missing,
 				},
 			}),
 		).toThrow(HubCredentialsMissingError);
 	});
 
-	it('initializes when hub credentials are provided', () => {
-		expect(() =>
-			createCorsair({
-				plugins: [],
-				kek: 'test-kek',
-				hub: {
-					projectApiKey: 'ck_dev_test',
-					signingSecret: 'signing-secret',
-				},
+	it('registers normalized hub credentials when hub is enabled', () => {
+		const corsair = createCorsair({
+			plugins: [],
+			kek: 'test-kek',
+			hub: {
+				projectApiKey: 'ck_dev_test',
+				signingSecret: 'signing-secret',
+			},
+		});
+
+		expect(getHubConfig(corsair)).toEqual(
+			expect.objectContaining({
+				projectApiKey: 'ck_dev_test',
+				signingSecret: 'signing-secret',
 			}),
-		).not.toThrow();
+		);
 	});
 });
 
 describe('normalizeHubConfig', () => {
-	it('throws HubCredentialsMissingError for incomplete credentials', () => {
+	it('throws HubCredentialsMissingError when only one credential is present', () => {
+		const missing = undefined as unknown as string;
 		expect(() =>
 			normalizeHubConfig({
-				projectApiKey: undefined as unknown as string,
+				projectApiKey: missing,
 				signingSecret: 'secret',
 			}),
 		).toThrow(HubCredentialsMissingError);
