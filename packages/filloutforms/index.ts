@@ -1,27 +1,27 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
 	Auth,
+	Databases,
+	Fields,
 	Forms,
+	Records,
 	Submissions,
+	Tables,
 	Token,
-	Unsupported,
 	Webhooks,
 } from './endpoints';
 import type {
@@ -34,21 +34,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { FilloutFormsSchema } from './schema';
-import { FormWebhooks } from './webhooks';
-import { resolveFilloutFormsOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchFilloutFormsTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	FilloutFormSubmissionEvent,
-	FilloutWebhookOutputs,
-} from './webhooks/types';
-import { FilloutFormSubmissionEventPayloadSchema } from './webhooks/types';
 
 export type FilloutFormsPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalFilloutFormsPlugin['hooks'];
-	webhookHooks?: InternalFilloutFormsPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof filloutFormsEndpointsNested>;
 };
@@ -88,8 +78,13 @@ export type FilloutFormsEndpoints = {
 	listSubmissions: FilloutFormsEndpoint<'listSubmissions'>;
 	getSubmissionById: FilloutFormsEndpoint<'getSubmissionById'>;
 	createSubmission: FilloutFormsEndpoint<'createSubmission'>;
-	updateSubmission: FilloutFormsEndpoint<'updateSubmission'>;
 	deleteSubmission: FilloutFormsEndpoint<'deleteSubmission'>;
+	listRecords: FilloutFormsEndpoint<'listRecords'>;
+	getRecordById: FilloutFormsEndpoint<'getRecordById'>;
+	createRecord: FilloutFormsEndpoint<'createRecord'>;
+	updateRecord: FilloutFormsEndpoint<'updateRecord'>;
+	deleteRecord: FilloutFormsEndpoint<'deleteRecord'>;
+	createFormWebhook: FilloutFormsEndpoint<'createFormWebhook'>;
 	createDatabaseWebhook: FilloutFormsEndpoint<'createDatabaseWebhook'>;
 	listDatabaseWebhooks: FilloutFormsEndpoint<'listDatabaseWebhooks'>;
 	deleteDatabaseWebhook: FilloutFormsEndpoint<'deleteDatabaseWebhook'>;
@@ -98,65 +93,52 @@ export type FilloutFormsEndpoints = {
 	authorizeOAuth: FilloutFormsEndpoint<'authorizeOAuth'>;
 };
 
-type FilloutFormsWebhook<
-	K extends keyof FilloutWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<FilloutFormsContext, TEvent, FilloutWebhookOutputs[K]>;
-
-export type FilloutFormsWebhooks = {
-	formSubmission: FilloutFormsWebhook<
-		'formSubmission',
-		FilloutFormSubmissionEvent
-	>;
-};
-
-export type FilloutFormsBoundWebhooks = BindWebhooks<FilloutFormsWebhooks>;
-
 const filloutFormsEndpointsNested = {
 	forms: {
 		getForms: Forms.getForms,
 		getFormMetadata: Forms.getFormMetadata,
 	},
 	databases: {
-		getDatabases: Unsupported.getDatabases,
-		getDatabaseById: Unsupported.getDatabaseById,
-		createDatabase: Unsupported.createDatabase,
-		deleteDatabase: Unsupported.deleteDatabase,
+		get: Databases.get,
+		getById: Databases.getById,
+		create: Databases.create,
+		delete: Databases.delete,
 	},
 	tables: {
-		createTable: Unsupported.createTable,
-		updateTable: Unsupported.updateTable,
-		deleteTable: Unsupported.deleteTable,
+		create: Tables.create,
+		update: Tables.update,
+		delete: Tables.delete,
 	},
 	fields: {
-		createField: Unsupported.createField,
-		updateField: Unsupported.updateField,
-		deleteField: Unsupported.deleteField,
+		create: Fields.create,
+		update: Fields.update,
+		delete: Fields.delete,
 	},
 	submissions: {
 		list: Submissions.list,
 		getById: Submissions.getById,
 		create: Submissions.create,
-		update: Unsupported.updateSubmission,
 		delete: Submissions.delete,
 	},
+	records: {
+		list: Records.list,
+		getById: Records.getById,
+		create: Records.create,
+		update: Records.update,
+		delete: Records.delete,
+	},
 	webhooks: {
-		create: Webhooks.create,
-		list: Unsupported.listDatabaseWebhooks,
-		delete: Unsupported.deleteDatabaseWebhook,
-		removeForm: Webhooks.remove,
+		createForm: Webhooks.createForm,
+		removeForm: Webhooks.removeForm,
+		createDatabase: Webhooks.createDatabase,
+		listDatabase: Webhooks.listDatabase,
+		deleteDatabase: Webhooks.deleteDatabase,
 	},
 	token: {
 		invalidate: Token.invalidateAccessToken,
 	},
 	oauth: {
 		authorize: Auth.authorizeOAuth,
-	},
-} as const;
-
-const filloutFormsWebhooksNested = {
-	form: {
-		formSubmission: FormWebhooks.formSubmission,
 	},
 } as const;
 
@@ -169,43 +151,43 @@ export const filloutFormsEndpointSchemas = {
 		input: FilloutFormsEndpointInputSchemas.getFormMetadata,
 		output: FilloutFormsEndpointOutputSchemas.getFormMetadata,
 	},
-	'databases.getDatabases': {
+	'databases.get': {
 		input: FilloutFormsEndpointInputSchemas.getDatabases,
 		output: FilloutFormsEndpointOutputSchemas.getDatabases,
 	},
-	'databases.getDatabaseById': {
+	'databases.getById': {
 		input: FilloutFormsEndpointInputSchemas.getDatabaseById,
 		output: FilloutFormsEndpointOutputSchemas.getDatabaseById,
 	},
-	'databases.createDatabase': {
+	'databases.create': {
 		input: FilloutFormsEndpointInputSchemas.createDatabase,
 		output: FilloutFormsEndpointOutputSchemas.createDatabase,
 	},
-	'databases.deleteDatabase': {
+	'databases.delete': {
 		input: FilloutFormsEndpointInputSchemas.deleteDatabase,
 		output: FilloutFormsEndpointOutputSchemas.deleteDatabase,
 	},
-	'tables.createTable': {
+	'tables.create': {
 		input: FilloutFormsEndpointInputSchemas.createTable,
 		output: FilloutFormsEndpointOutputSchemas.createTable,
 	},
-	'tables.updateTable': {
+	'tables.update': {
 		input: FilloutFormsEndpointInputSchemas.updateTable,
 		output: FilloutFormsEndpointOutputSchemas.updateTable,
 	},
-	'tables.deleteTable': {
+	'tables.delete': {
 		input: FilloutFormsEndpointInputSchemas.deleteTable,
 		output: FilloutFormsEndpointOutputSchemas.deleteTable,
 	},
-	'fields.createField': {
+	'fields.create': {
 		input: FilloutFormsEndpointInputSchemas.createField,
 		output: FilloutFormsEndpointOutputSchemas.createField,
 	},
-	'fields.updateField': {
+	'fields.update': {
 		input: FilloutFormsEndpointInputSchemas.updateField,
 		output: FilloutFormsEndpointOutputSchemas.updateField,
 	},
-	'fields.deleteField': {
+	'fields.delete': {
 		input: FilloutFormsEndpointInputSchemas.deleteField,
 		output: FilloutFormsEndpointOutputSchemas.deleteField,
 	},
@@ -221,29 +203,49 @@ export const filloutFormsEndpointSchemas = {
 		input: FilloutFormsEndpointInputSchemas.createSubmission,
 		output: FilloutFormsEndpointOutputSchemas.createSubmission,
 	},
-	'submissions.update': {
-		input: FilloutFormsEndpointInputSchemas.updateSubmission,
-		output: FilloutFormsEndpointOutputSchemas.updateSubmission,
-	},
 	'submissions.delete': {
 		input: FilloutFormsEndpointInputSchemas.deleteSubmission,
 		output: FilloutFormsEndpointOutputSchemas.deleteSubmission,
 	},
-	'webhooks.create': {
-		input: FilloutFormsEndpointInputSchemas.createDatabaseWebhook,
-		output: FilloutFormsEndpointOutputSchemas.createDatabaseWebhook,
+	'records.list': {
+		input: FilloutFormsEndpointInputSchemas.listRecords,
+		output: FilloutFormsEndpointOutputSchemas.listRecords,
 	},
-	'webhooks.list': {
-		input: FilloutFormsEndpointInputSchemas.listDatabaseWebhooks,
-		output: FilloutFormsEndpointOutputSchemas.listDatabaseWebhooks,
+	'records.getById': {
+		input: FilloutFormsEndpointInputSchemas.getRecordById,
+		output: FilloutFormsEndpointOutputSchemas.getRecordById,
 	},
-	'webhooks.delete': {
-		input: FilloutFormsEndpointInputSchemas.deleteDatabaseWebhook,
-		output: FilloutFormsEndpointOutputSchemas.deleteDatabaseWebhook,
+	'records.create': {
+		input: FilloutFormsEndpointInputSchemas.createRecord,
+		output: FilloutFormsEndpointOutputSchemas.createRecord,
+	},
+	'records.update': {
+		input: FilloutFormsEndpointInputSchemas.updateRecord,
+		output: FilloutFormsEndpointOutputSchemas.updateRecord,
+	},
+	'records.delete': {
+		input: FilloutFormsEndpointInputSchemas.deleteRecord,
+		output: FilloutFormsEndpointOutputSchemas.deleteRecord,
+	},
+	'webhooks.createForm': {
+		input: FilloutFormsEndpointInputSchemas.createFormWebhook,
+		output: FilloutFormsEndpointOutputSchemas.createFormWebhook,
 	},
 	'webhooks.removeForm': {
 		input: FilloutFormsEndpointInputSchemas.removeFormWebhook,
 		output: FilloutFormsEndpointOutputSchemas.removeFormWebhook,
+	},
+	'webhooks.createDatabase': {
+		input: FilloutFormsEndpointInputSchemas.createDatabaseWebhook,
+		output: FilloutFormsEndpointOutputSchemas.createDatabaseWebhook,
+	},
+	'webhooks.listDatabase': {
+		input: FilloutFormsEndpointInputSchemas.listDatabaseWebhooks,
+		output: FilloutFormsEndpointOutputSchemas.listDatabaseWebhooks,
+	},
+	'webhooks.deleteDatabase': {
+		input: FilloutFormsEndpointInputSchemas.deleteDatabaseWebhook,
+		output: FilloutFormsEndpointOutputSchemas.deleteDatabaseWebhook,
 	},
 	'token.invalidate': {
 		input: FilloutFormsEndpointInputSchemas.invalidateAccessToken,
@@ -257,16 +259,6 @@ export const filloutFormsEndpointSchemas = {
 	typeof filloutFormsEndpointsNested
 >;
 
-const filloutFormsWebhookSchemas = {
-	'form.formSubmission': {
-		description: 'Fires when a form submission is received via Fillout webhook',
-		payload: FilloutFormSubmissionEventPayloadSchema,
-		response: FilloutFormSubmissionEventPayloadSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof filloutFormsWebhooksNested
->;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const filloutFormsEndpointMeta = {
@@ -278,55 +270,45 @@ const filloutFormsEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get form metadata including questions and configuration',
 	},
-	'databases.getDatabases': {
+	'databases.get': {
 		riskLevel: 'read',
-		description:
-			'Not supported by Fillout API. Fillout does not expose database endpoints.',
+		description: 'List Zite databases for the organization',
 	},
-	'databases.getDatabaseById': {
+	'databases.getById': {
 		riskLevel: 'read',
-		description:
-			'Not supported by Fillout API. Fillout does not expose database endpoints.',
+		description: 'Get a Zite database with tables, fields, and views',
 	},
-	'databases.createDatabase': {
+	'databases.create': {
 		riskLevel: 'write',
-		description:
-			'Not supported by Fillout API. Fillout does not expose database endpoints.',
+		description: 'Create a Zite database with tables and fields',
 	},
-	'databases.deleteDatabase': {
+	'databases.delete': {
 		riskLevel: 'destructive',
-		description:
-			'Not supported by Fillout API. Fillout does not expose database endpoints.',
+		description: 'Permanently delete a Zite database [DESTRUCTIVE]',
 	},
-	'tables.createTable': {
+	'tables.create': {
 		riskLevel: 'write',
-		description:
-			'Not supported by Fillout API. Fillout does not expose table endpoints.',
+		description: 'Create a table in a Zite database',
 	},
-	'tables.updateTable': {
+	'tables.update': {
 		riskLevel: 'write',
-		description:
-			'Not supported by Fillout API. Fillout does not expose table endpoints.',
+		description: 'Update Zite table properties such as name',
 	},
-	'tables.deleteTable': {
+	'tables.delete': {
 		riskLevel: 'destructive',
-		description:
-			'Not supported by Fillout API. Fillout does not expose table endpoints.',
+		description: 'Permanently delete a Zite table [DESTRUCTIVE]',
 	},
-	'fields.createField': {
+	'fields.create': {
 		riskLevel: 'write',
-		description:
-			'Not supported by Fillout API. Fillout does not expose field endpoints.',
+		description: 'Add a field to a Zite table',
 	},
-	'fields.updateField': {
+	'fields.update': {
 		riskLevel: 'write',
-		description:
-			'Not supported by Fillout API. Fillout does not expose field endpoints.',
+		description: 'Update a Zite field name or template',
 	},
-	'fields.deleteField': {
+	'fields.delete': {
 		riskLevel: 'destructive',
-		description:
-			'Not supported by Fillout API. Fillout does not expose field endpoints.',
+		description: 'Permanently delete a Zite field [DESTRUCTIVE]',
 	},
 	'submissions.list': {
 		riskLevel: 'read',
@@ -340,36 +322,53 @@ const filloutFormsEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Create new form submissions',
 	},
-	'submissions.update': {
-		riskLevel: 'write',
-		description:
-			'Not supported by Fillout API. Use submissions.create to add new submissions.',
-	},
 	'submissions.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a form submission by ID',
+		description: 'Delete a form submission by ID [DESTRUCTIVE]',
 	},
-	'webhooks.create': {
-		riskLevel: 'write',
-		description: 'Create a webhook subscription for form submissions',
-	},
-	'webhooks.list': {
+	'records.list': {
 		riskLevel: 'read',
-		description:
-			'Not supported by Fillout API. Fillout does not expose webhook listing.',
+		description: 'List Zite records with filter, sort, and pagination',
 	},
-	'webhooks.delete': {
+	'records.getById': {
+		riskLevel: 'read',
+		description: 'Get a Zite record by UUID',
+	},
+	'records.create': {
+		riskLevel: 'write',
+		description: 'Create a Zite record',
+	},
+	'records.update': {
+		riskLevel: 'write',
+		description: 'Update fields on a Zite record',
+	},
+	'records.delete': {
 		riskLevel: 'destructive',
-		description:
-			'Not supported by Fillout API. Use webhooks.removeForm to remove form webhooks.',
+		description: 'Permanently delete a Zite record [DESTRUCTIVE]',
+	},
+	'webhooks.createForm': {
+		riskLevel: 'write',
+		description: 'Create a Fillout form submission webhook',
 	},
 	'webhooks.removeForm': {
 		riskLevel: 'destructive',
-		description: 'Remove a webhook from a form',
+		description: 'Remove a Fillout form webhook [DESTRUCTIVE]',
+	},
+	'webhooks.createDatabase': {
+		riskLevel: 'write',
+		description: 'Create a Zite database webhook',
+	},
+	'webhooks.listDatabase': {
+		riskLevel: 'read',
+		description: 'List Zite database webhooks',
+	},
+	'webhooks.deleteDatabase': {
+		riskLevel: 'destructive',
+		description: 'Delete a Zite database webhook [DESTRUCTIVE]',
 	},
 	'token.invalidate': {
 		riskLevel: 'destructive',
-		description: 'Invalidate/revoke an OAuth access token',
+		description: 'Invalidate/revoke an OAuth access token [DESTRUCTIVE]',
 	},
 	'oauth.authorize': {
 		riskLevel: 'read',
@@ -393,7 +392,7 @@ export type BaseFilloutFormsPlugin<T extends FilloutFormsPluginOptions> =
 		'filloutforms',
 		typeof FilloutFormsSchema,
 		typeof filloutFormsEndpointsNested,
-		typeof filloutFormsWebhooksNested,
+		{},
 		T,
 		typeof defaultAuthType
 	>;
@@ -424,37 +423,16 @@ export function filloutforms<const T extends FilloutFormsPluginOptions>(
 		schema: FilloutFormsSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: filloutFormsEndpointsNested,
-		webhooks: filloutFormsWebhooksNested,
+		webhooks: {},
 		endpointMeta: filloutFormsEndpointMeta,
 		endpointSchemas: filloutFormsEndpointSchemas,
-		webhookSchemas: filloutFormsWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-fillout-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchFilloutFormsTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveFilloutFormsOAuthWebhookTenantLink,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: FilloutFormsKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				if (!res) {
-					throw new Error(
-						'[auth-missing:filloutforms:webhook_signature]: Fillout webhook signature is missing',
-					);
-				}
-				return res;
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -480,27 +458,13 @@ export function filloutforms<const T extends FilloutFormsPluginOptions>(
 	} satisfies InternalFilloutFormsPlugin;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Webhook Type Exports
-// ─────────────────────────────────────────────────────────────────────────────
-
-export type {
-	FilloutFormSubmissionEvent,
-	FilloutWebhookOutputs,
-	FilloutWebhookSubmission,
-} from './webhooks/types';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Endpoint Type Exports
-// ─────────────────────────────────────────────────────────────────────────────
-
 export type {
 	AuthorizeOAuthInput,
 	AuthorizeOAuthResponse,
+	CreateFormWebhookInput,
+	CreateFormWebhookResponse,
 	CreateSubmissionInput,
 	CreateSubmissionResponse,
-	CreateWebhookInput,
-	CreateWebhookResponse,
 	DeleteSubmissionInput,
 	DeleteSubmissionResponse,
 	FilloutFormsEndpointInputs,
@@ -515,6 +479,6 @@ export type {
 	InvalidateAccessTokenResponse,
 	ListSubmissionsInput,
 	ListSubmissionsResponse,
-	RemoveWebhookInput,
-	RemoveWebhookResponse,
+	RemoveFormWebhookInput,
+	RemoveFormWebhookResponse,
 } from './endpoints/types';

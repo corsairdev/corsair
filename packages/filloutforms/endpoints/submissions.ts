@@ -8,7 +8,6 @@ export const listSubmissions: FilloutFormsEndpoints['listSubmissions'] = async (
 	input,
 ) => {
 	const { formId, ...queryParams } = input;
-
 	const query: Record<string, string | number | boolean | undefined> = {};
 	if (queryParams.limit !== undefined) query.limit = queryParams.limit;
 	if (queryParams.afterDate !== undefined)
@@ -26,12 +25,15 @@ export const listSubmissions: FilloutFormsEndpoints['listSubmissions'] = async (
 
 	const response = await makeFilloutRequest<
 		FilloutFormsEndpointOutputs['listSubmissions']
-	>(`forms/${formId}/submissions`, ctx.key, { method: 'GET', query });
+	>(`forms/${encodeURIComponent(formId)}/submissions`, ctx.key, {
+		method: 'GET',
+		query,
+	});
 
 	await logEventFromContext(
 		ctx,
 		'filloutforms.submissions.list',
-		{ ...input },
+		{ formId, limit: queryParams.limit, offset: queryParams.offset },
 		'completed',
 	);
 	return response;
@@ -45,15 +47,16 @@ export const getSubmissionById: FilloutFormsEndpoints['getSubmissionById'] =
 
 		const response = await makeFilloutRequest<
 			FilloutFormsEndpointOutputs['getSubmissionById']
-		>(`forms/${input.formId}/submissions/${input.submissionId}`, ctx.key, {
-			method: 'GET',
-			query,
-		});
+		>(
+			`forms/${encodeURIComponent(input.formId)}/submissions/${encodeURIComponent(input.submissionId)}`,
+			ctx.key,
+			{ method: 'GET', query },
+		);
 
 		await logEventFromContext(
 			ctx,
 			'filloutforms.submissions.getById',
-			{ ...input },
+			{ formId: input.formId, submissionId: input.submissionId },
 			'completed',
 		);
 		return response;
@@ -62,18 +65,16 @@ export const getSubmissionById: FilloutFormsEndpoints['getSubmissionById'] =
 export const createSubmission: FilloutFormsEndpoints['createSubmission'] =
 	async (ctx, input) => {
 		const { formId, submissions } = input;
-
 		const response = await makeFilloutRequest<
 			FilloutFormsEndpointOutputs['createSubmission']
-		>(`forms/${formId}/submissions`, ctx.key, {
+		>(`forms/${encodeURIComponent(formId)}/submissions`, ctx.key, {
 			method: 'POST',
 			body: { submissions },
 		});
-
 		await logEventFromContext(
 			ctx,
 			'filloutforms.submissions.create',
-			{ ...input },
+			{ formId, count: submissions.length },
 			'completed',
 		);
 		return response;
@@ -83,14 +84,15 @@ export const deleteSubmission: FilloutFormsEndpoints['deleteSubmission'] =
 	async (ctx, input) => {
 		const response = await makeFilloutRequest<
 			FilloutFormsEndpointOutputs['deleteSubmission']
-		>(`forms/${input.formId}/submissions/${input.submissionId}`, ctx.key, {
-			method: 'DELETE',
-		});
-
+		>(
+			`forms/${encodeURIComponent(input.formId)}/submissions/${encodeURIComponent(input.submissionId)}`,
+			ctx.key,
+			{ method: 'DELETE' },
+		);
 		await logEventFromContext(
 			ctx,
 			'filloutforms.submissions.delete',
-			{ ...input },
+			{ formId: input.formId, submissionId: input.submissionId },
 			'completed',
 		);
 		return { deleted: true, ...response };

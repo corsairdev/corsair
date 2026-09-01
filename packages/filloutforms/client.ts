@@ -14,7 +14,7 @@ export class FilloutFormsAPIError extends Error {
 }
 
 export const FILLOUT_API_BASE = 'https://api.fillout.com/v1/api';
-export const FILLOUT_SERVER_BASE = 'https://server.fillout.com';
+export const ZITE_API_BASE = 'https://tables.zite.com/api/v1';
 export const FILLOUT_AUTH_URL = 'https://build.fillout.com/authorize/oauth';
 export const FILLOUT_TOKEN_URL =
 	'https://server.fillout.com/public/oauth/accessToken';
@@ -53,18 +53,14 @@ export async function makeFilloutRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' || method === 'DELETE' ? query : undefined,
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new FilloutFormsAPIError(
-				error.message,
-				error.status,
-				error.retryAfter,
-			);
+			throw error;
 		}
 		if (error instanceof Error) {
 			throw new FilloutFormsAPIError(error.message);

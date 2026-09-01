@@ -23,7 +23,7 @@ export const getFormMetadata: FilloutFormsEndpoints['getFormMetadata'] = async (
 ) => {
 	const response = await makeFilloutRequest<
 		FilloutFormsEndpointOutputs['getFormMetadata']
-	>(`forms/${input.formId}`, ctx.key, { method: 'GET' });
+	>(`forms/${encodeURIComponent(input.formId)}`, ctx.key, { method: 'GET' });
 
 	await logEventFromContext(
 		ctx,

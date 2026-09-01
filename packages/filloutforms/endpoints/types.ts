@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-// ── Shared Schemas ──────────────────────────────────────────────────────────
-
 const QuestionResponseSchema = z
 	.object({
 		id: z.string(),
@@ -71,26 +69,132 @@ const FormMetadataSchema = z
 	})
 	.loose();
 
-// ── Forms ───────────────────────────────────────────────────────────────────
+// Official Zite FieldType: https://developers.zite.com/api/fields/create-field
+export const ZiteFieldTypeSchema = z.enum([
+	'single_line_text',
+	'long_text',
+	'email',
+	'url',
+	'phone_number',
+	'number',
+	'currency',
+	'percent',
+	'rating',
+	'duration',
+	'single_select',
+	'multiple_select',
+	'checkbox',
+	'date',
+	'datetime',
+	'attachments',
+	'linked_record',
+	'lookup',
+	'autonumber',
+	'source',
+]);
 
-const GetFormsInputSchema = z.object({});
+const FieldTemplateSchema = z.record(z.string(), z.unknown());
 
-const GetFormsResponseSchema = z.array(FormSummarySchema);
-
-const GetFormMetadataInputSchema = z.object({
-	formId: z.string(),
+const CreateFieldInTableSchema = z.object({
+	type: ZiteFieldTypeSchema,
+	name: z.string().min(1),
+	template: FieldTemplateSchema,
 });
 
-const GetFormMetadataResponseSchema = FormMetadataSchema;
+const ZiteFieldSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		type: z.string(),
+		template: z.record(z.string(), z.unknown()),
+		order: z.number().int(),
+	})
+	.loose();
 
-// ── Submissions ─────────────────────────────────────────────────────────────
+const ZiteViewSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		type: z.string(),
+		config: z.record(z.string(), z.unknown()).optional(),
+	})
+	.loose();
+
+const ZiteTableSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		order: z.number().int(),
+		primaryFieldId: z.string(),
+		fields: z.array(ZiteFieldSchema),
+		views: z.array(ZiteViewSchema),
+		url: z.string(),
+	})
+	.loose();
+
+const ZiteDatabaseSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		tables: z.array(ZiteTableSchema),
+		createdAt: z.string(),
+		updatedAt: z.string(),
+		url: z.string(),
+		workspaceId: z.string().optional(),
+	})
+	.loose();
+
+const DatabaseListItemSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		url: z.string().optional(),
+	})
+	.loose();
+
+const ZiteRecordSchema = z
+	.object({
+		id: z.string(),
+		data: z.record(z.string(), z.unknown()),
+		fields: z.record(z.string(), z.unknown()),
+		createdAt: z.string(),
+		updatedAt: z.string(),
+	})
+	.loose();
+
+const WebhookEventTypeSchema = z.enum([
+	'record.created',
+	'record.updated',
+	'record.deleted',
+	'table.created',
+	'table.updated',
+	'table.deleted',
+	'field.created',
+	'field.updated',
+	'field.deleted',
+]);
+
+const DatabaseWebhookSchema = z
+	.object({
+		id: z.number().int(),
+		url: z.string(),
+		events: z.array(z.string()),
+		active: z.boolean(),
+		tableIds: z.array(z.string()).nullable().optional(),
+	})
+	.loose();
+
+const GetFormsInputSchema = z.object({});
+const GetFormsResponseSchema = z.array(FormSummarySchema);
+const GetFormMetadataInputSchema = z.object({ formId: z.string() });
+const GetFormMetadataResponseSchema = FormMetadataSchema;
 
 const ListSubmissionsInputSchema = z.object({
 	formId: z.string(),
-	limit: z.number().min(1).max(150).optional(),
+	limit: z.number().int().min(1).max(150).optional(),
 	afterDate: z.string().optional(),
 	beforeDate: z.string().optional(),
-	offset: z.number().optional(),
+	offset: z.number().int().min(0).optional(),
 	status: z.enum(['finished', 'in_progress']).optional(),
 	includeEditLink: z.boolean().optional(),
 	includePreview: z.boolean().optional(),
@@ -165,39 +269,164 @@ const DeleteSubmissionResponseSchema = z
 	})
 	.loose();
 
-// ── Webhooks ────────────────────────────────────────────────────────────────
-
-const CreateWebhookInputSchema = z.object({
+const CreateFormWebhookInputSchema = z.object({
 	formId: z.string(),
-	url: z.string(),
+	url: z.string().url(),
 });
 
-const CreateWebhookResponseSchema = z
+const CreateFormWebhookResponseSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 	})
 	.loose();
 
-const RemoveWebhookInputSchema = z.object({
-	webhookId: z.string(),
+const RemoveFormWebhookInputSchema = z.object({
+	webhookId: z.union([z.string(), z.number()]),
 });
 
-const RemoveWebhookResponseSchema = z.object({}).loose();
+const RemoveFormWebhookResponseSchema = z.object({}).loose();
 
-// ── Database/Table/Field Operations (not supported by Fillout API) ─────────
+const GetDatabasesInputSchema = z.object({});
+const GetDatabasesResponseSchema = z.array(DatabaseListItemSchema);
 
-const UnsupportedInputSchema = z.object({
-	reason: z.string().optional(),
+const GetDatabaseByIdInputSchema = z.object({ databaseId: z.string() });
+const GetDatabaseByIdResponseSchema = ZiteDatabaseSchema;
+
+const CreateDatabaseInputSchema = z.object({
+	name: z.string().min(1),
+	tables: z
+		.array(
+			z.object({
+				name: z.string().min(1),
+				fields: z.array(CreateFieldInTableSchema).min(1),
+			}),
+		)
+		.min(1),
+});
+const CreateDatabaseResponseSchema = ZiteDatabaseSchema;
+
+const DeleteDatabaseInputSchema = z.object({ databaseId: z.string() });
+const DeleteDatabaseResponseSchema = z.object({}).loose();
+
+const CreateTableInputSchema = z.object({
+	databaseId: z.string(),
+	name: z.string().min(1),
+	fields: z.array(CreateFieldInTableSchema).min(1),
+});
+const CreateTableResponseSchema = ZiteTableSchema;
+
+const UpdateTableInputSchema = z.object({
+	databaseId: z.string(),
+	tableId: z.string(),
+	name: z.string().min(1).optional(),
+});
+const UpdateTableResponseSchema = ZiteTableSchema;
+
+const DeleteTableInputSchema = z.object({
+	databaseId: z.string(),
+	tableId: z.string(),
+});
+const DeleteTableResponseSchema = z.object({}).loose();
+
+const CreateFieldInputSchema = z.object({
+	databaseId: z.string(),
+	tableId: z.string(),
+	name: z.string().min(1),
+	type: ZiteFieldTypeSchema,
+	template: FieldTemplateSchema.optional(),
+});
+const CreateFieldResponseSchema = ZiteFieldSchema;
+
+const UpdateFieldInputSchema = z.object({
+	databaseId: z.string(),
+	tableId: z.string(),
+	fieldId: z.string(),
+	name: z.string().min(1).optional(),
+	template: FieldTemplateSchema.optional(),
+});
+const UpdateFieldResponseSchema = ZiteFieldSchema;
+
+const DeleteFieldInputSchema = z.object({
+	databaseId: z.string(),
+	tableId: z.string(),
+	fieldId: z.string(),
+});
+const DeleteFieldResponseSchema = z.object({}).loose();
+
+const ListRecordsInputSchema = z.object({
+	databaseId: z.string(),
+	tableId: z.string(),
+	filter: z.record(z.string(), z.unknown()).optional(),
+	sort: z.array(z.record(z.string(), z.unknown())).optional(),
+	limit: z.number().int().min(1).max(2000).optional(),
+	offset: z.number().int().min(0).optional(),
 });
 
-const UnsupportedResponseSchema = z
+const ListRecordsResponseSchema = z
 	.object({
-		supported: z.literal(false),
-		message: z.string(),
+		records: z.array(ZiteRecordSchema),
+		total: z.number().optional(),
 	})
 	.loose();
 
-// ── Authorize OAuth ─────────────────────────────────────────────────────────
+const GetRecordByIdInputSchema = z.object({
+	databaseId: z.string(),
+	tableId: z.string(),
+	recordId: z.string(),
+});
+const GetRecordByIdResponseSchema = ZiteRecordSchema;
+
+const CreateRecordInputSchema = z.object({
+	databaseId: z.string(),
+	tableId: z.string(),
+	record: z.record(z.string(), z.unknown()),
+});
+const CreateRecordResponseSchema = ZiteRecordSchema;
+
+const UpdateRecordInputSchema = z.object({
+	databaseId: z.string(),
+	tableId: z.string(),
+	recordId: z.string(),
+	record: z.record(z.string(), z.unknown()),
+});
+const UpdateRecordResponseSchema = ZiteRecordSchema;
+
+const DeleteRecordInputSchema = z.object({
+	databaseId: z.string(),
+	tableId: z.string(),
+	recordId: z.string(),
+});
+const DeleteRecordResponseSchema = z.object({}).loose();
+
+const CreateDatabaseWebhookInputSchema = z.object({
+	databaseId: z.string(),
+	url: z.string().url(),
+	events: z.array(WebhookEventTypeSchema).min(1),
+	tableId: z.string().optional(),
+});
+
+const CreateDatabaseWebhookResponseSchema = z
+	.object({
+		id: z.number().int(),
+		secret: z.string(),
+	})
+	.loose();
+
+const ListDatabaseWebhooksInputSchema = z.object({
+	databaseId: z.string(),
+});
+
+const ListDatabaseWebhooksResponseSchema = z
+	.object({
+		webhooks: z.array(DatabaseWebhookSchema),
+	})
+	.loose();
+
+const DeleteDatabaseWebhookInputSchema = z.object({
+	databaseId: z.string(),
+	webhookId: z.union([z.string(), z.number()]),
+});
+const DeleteDatabaseWebhookResponseSchema = z.object({}).loose();
 
 const AuthorizeOAuthInputSchema = z.object({
 	clientId: z.string(),
@@ -211,71 +440,72 @@ const AuthorizeOAuthResponseSchema = z
 	})
 	.loose();
 
-// ── Invalidate Access Token ─────────────────────────────────────────────────
-
 const InvalidateAccessTokenInputSchema = z.object({
-	accessToken: z.string(),
+	token: z.string(),
 });
-
 const InvalidateAccessTokenResponseSchema = z.object({}).loose();
-
-// ── Export Input Schemas ────────────────────────────────────────────────────
 
 export const FilloutFormsEndpointInputSchemas = {
 	getForms: GetFormsInputSchema,
 	getFormMetadata: GetFormMetadataInputSchema,
-	getDatabases: UnsupportedInputSchema,
-	getDatabaseById: UnsupportedInputSchema,
-	createDatabase: UnsupportedInputSchema,
-	deleteDatabase: UnsupportedInputSchema,
-	createTable: UnsupportedInputSchema,
-	updateTable: UnsupportedInputSchema,
-	deleteTable: UnsupportedInputSchema,
-	createField: UnsupportedInputSchema,
-	updateField: UnsupportedInputSchema,
-	deleteField: UnsupportedInputSchema,
+	getDatabases: GetDatabasesInputSchema,
+	getDatabaseById: GetDatabaseByIdInputSchema,
+	createDatabase: CreateDatabaseInputSchema,
+	deleteDatabase: DeleteDatabaseInputSchema,
+	createTable: CreateTableInputSchema,
+	updateTable: UpdateTableInputSchema,
+	deleteTable: DeleteTableInputSchema,
+	createField: CreateFieldInputSchema,
+	updateField: UpdateFieldInputSchema,
+	deleteField: DeleteFieldInputSchema,
 	listSubmissions: ListSubmissionsInputSchema,
 	getSubmissionById: GetSubmissionByIdInputSchema,
 	createSubmission: CreateSubmissionInputSchema,
-	updateSubmission: UnsupportedInputSchema,
 	deleteSubmission: DeleteSubmissionInputSchema,
-	createDatabaseWebhook: CreateWebhookInputSchema,
-	listDatabaseWebhooks: UnsupportedInputSchema,
-	deleteDatabaseWebhook: UnsupportedInputSchema,
-	removeFormWebhook: RemoveWebhookInputSchema,
+	listRecords: ListRecordsInputSchema,
+	getRecordById: GetRecordByIdInputSchema,
+	createRecord: CreateRecordInputSchema,
+	updateRecord: UpdateRecordInputSchema,
+	deleteRecord: DeleteRecordInputSchema,
+	createFormWebhook: CreateFormWebhookInputSchema,
+	createDatabaseWebhook: CreateDatabaseWebhookInputSchema,
+	listDatabaseWebhooks: ListDatabaseWebhooksInputSchema,
+	deleteDatabaseWebhook: DeleteDatabaseWebhookInputSchema,
+	removeFormWebhook: RemoveFormWebhookInputSchema,
 	invalidateAccessToken: InvalidateAccessTokenInputSchema,
 	authorizeOAuth: AuthorizeOAuthInputSchema,
 } as const;
 
-// ── Export Output Schemas ───────────────────────────────────────────────────
-
 export const FilloutFormsEndpointOutputSchemas = {
 	getForms: GetFormsResponseSchema,
 	getFormMetadata: GetFormMetadataResponseSchema,
-	getDatabases: UnsupportedResponseSchema,
-	getDatabaseById: UnsupportedResponseSchema,
-	createDatabase: UnsupportedResponseSchema,
-	deleteDatabase: UnsupportedResponseSchema,
-	createTable: UnsupportedResponseSchema,
-	updateTable: UnsupportedResponseSchema,
-	deleteTable: UnsupportedResponseSchema,
-	createField: UnsupportedResponseSchema,
-	updateField: UnsupportedResponseSchema,
-	deleteField: UnsupportedResponseSchema,
+	getDatabases: GetDatabasesResponseSchema,
+	getDatabaseById: GetDatabaseByIdResponseSchema,
+	createDatabase: CreateDatabaseResponseSchema,
+	deleteDatabase: DeleteDatabaseResponseSchema,
+	createTable: CreateTableResponseSchema,
+	updateTable: UpdateTableResponseSchema,
+	deleteTable: DeleteTableResponseSchema,
+	createField: CreateFieldResponseSchema,
+	updateField: UpdateFieldResponseSchema,
+	deleteField: DeleteFieldResponseSchema,
 	listSubmissions: ListSubmissionsResponseSchema,
 	getSubmissionById: GetSubmissionByIdResponseSchema,
 	createSubmission: CreateSubmissionResponseSchema,
-	updateSubmission: UnsupportedResponseSchema,
 	deleteSubmission: DeleteSubmissionResponseSchema,
-	createDatabaseWebhook: CreateWebhookResponseSchema,
-	listDatabaseWebhooks: UnsupportedResponseSchema,
-	deleteDatabaseWebhook: UnsupportedResponseSchema,
-	removeFormWebhook: RemoveWebhookResponseSchema,
+	listRecords: ListRecordsResponseSchema,
+	getRecordById: GetRecordByIdResponseSchema,
+	createRecord: CreateRecordResponseSchema,
+	updateRecord: UpdateRecordResponseSchema,
+	deleteRecord: DeleteRecordResponseSchema,
+	createFormWebhook: CreateFormWebhookResponseSchema,
+	createDatabaseWebhook: CreateDatabaseWebhookResponseSchema,
+	listDatabaseWebhooks: ListDatabaseWebhooksResponseSchema,
+	deleteDatabaseWebhook: DeleteDatabaseWebhookResponseSchema,
+	removeFormWebhook: RemoveFormWebhookResponseSchema,
 	invalidateAccessToken: InvalidateAccessTokenResponseSchema,
 	authorizeOAuth: AuthorizeOAuthResponseSchema,
 } as const;
-
-// ── Export Types ────────────────────────────────────────────────────────────
 
 export type FilloutFormsEndpointInputs = {
 	[K in keyof typeof FilloutFormsEndpointInputSchemas]: z.infer<
@@ -288,8 +518,6 @@ export type FilloutFormsEndpointOutputs = {
 		(typeof FilloutFormsEndpointOutputSchemas)[K]
 	>;
 };
-
-// ── Named Type Exports ─────────────────────────────────────────────────────
 
 export type GetFormsInput = z.infer<typeof GetFormsInputSchema>;
 export type GetFormsResponse = z.infer<typeof GetFormsResponseSchema>;
@@ -315,10 +543,18 @@ export type DeleteSubmissionInput = z.infer<typeof DeleteSubmissionInputSchema>;
 export type DeleteSubmissionResponse = z.infer<
 	typeof DeleteSubmissionResponseSchema
 >;
-export type CreateWebhookInput = z.infer<typeof CreateWebhookInputSchema>;
-export type CreateWebhookResponse = z.infer<typeof CreateWebhookResponseSchema>;
-export type RemoveWebhookInput = z.infer<typeof RemoveWebhookInputSchema>;
-export type RemoveWebhookResponse = z.infer<typeof RemoveWebhookResponseSchema>;
+export type CreateFormWebhookInput = z.infer<
+	typeof CreateFormWebhookInputSchema
+>;
+export type CreateFormWebhookResponse = z.infer<
+	typeof CreateFormWebhookResponseSchema
+>;
+export type RemoveFormWebhookInput = z.infer<
+	typeof RemoveFormWebhookInputSchema
+>;
+export type RemoveFormWebhookResponse = z.infer<
+	typeof RemoveFormWebhookResponseSchema
+>;
 export type AuthorizeOAuthInput = z.infer<typeof AuthorizeOAuthInputSchema>;
 export type AuthorizeOAuthResponse = z.infer<
 	typeof AuthorizeOAuthResponseSchema

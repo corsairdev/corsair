@@ -1,32 +1,57 @@
 import { authorizeOAuth } from './auth';
+import {
+	createDatabase,
+	deleteDatabase,
+	getDatabaseById,
+	getDatabases,
+} from './databases';
+import { createField, deleteField, updateField } from './fields';
 import { getFormMetadata, getForms } from './forms';
+import {
+	createRecord,
+	deleteRecord,
+	getRecordById,
+	listRecords,
+	updateRecord,
+} from './records';
 import {
 	createSubmission,
 	deleteSubmission,
 	getSubmissionById,
 	listSubmissions,
 } from './submissions';
+import { createTable, deleteTable, updateTable } from './tables';
 import { invalidateAccessToken } from './token';
 import {
-	createDatabase,
-	createField,
-	createTable,
-	deleteDatabase,
+	createDatabaseWebhook,
+	createFormWebhook,
 	deleteDatabaseWebhook,
-	deleteField,
-	deleteTable,
-	getDatabaseById,
-	getDatabases,
 	listDatabaseWebhooks,
-	updateField,
-	updateSubmission,
-	updateTable,
-} from './unsupported';
-import { createWebhook, removeFormWebhook } from './webhooks';
+	removeFormWebhook,
+} from './webhooks';
 
 export const Forms = {
 	getForms,
 	getFormMetadata,
+};
+
+export const Databases = {
+	get: getDatabases,
+	getById: getDatabaseById,
+	create: createDatabase,
+	delete: deleteDatabase,
+};
+
+export const Tables = {
+	create: createTable,
+	update: updateTable,
+	delete: deleteTable,
+};
+
+export const Fields = {
+	create: createField,
+	update: updateField,
+	delete: deleteField,
 };
 
 export const Submissions = {
@@ -36,9 +61,20 @@ export const Submissions = {
 	delete: deleteSubmission,
 };
 
+export const Records = {
+	list: listRecords,
+	getById: getRecordById,
+	create: createRecord,
+	update: updateRecord,
+	delete: deleteRecord,
+};
+
 export const Webhooks = {
-	create: createWebhook,
-	remove: removeFormWebhook,
+	createForm: createFormWebhook,
+	removeForm: removeFormWebhook,
+	createDatabase: createDatabaseWebhook,
+	listDatabase: listDatabaseWebhooks,
+	deleteDatabase: deleteDatabaseWebhook,
 };
 
 export const Auth = {
@@ -47,22 +83,6 @@ export const Auth = {
 
 export const Token = {
 	invalidateAccessToken,
-};
-
-export const Unsupported = {
-	getDatabases,
-	getDatabaseById,
-	createDatabase,
-	deleteDatabase,
-	createTable,
-	updateTable,
-	deleteTable,
-	createField,
-	updateField,
-	deleteField,
-	updateSubmission,
-	listDatabaseWebhooks,
-	deleteDatabaseWebhook,
 };
 
 export * from './types';

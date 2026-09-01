@@ -50,3 +50,25 @@ export const FilloutWebhook = z
 	.loose();
 
 export type FilloutWebhook = z.infer<typeof FilloutWebhook>;
+
+export const ZiteDatabase = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		url: z.string().optional(),
+	})
+	.loose();
+
+export type ZiteDatabase = z.infer<typeof ZiteDatabase>;
+
+export const ZiteRecord = z
+	.object({
+		id: z.string(),
+		data: z.record(z.string(), z.unknown()).optional(),
+		fields: z.record(z.string(), z.unknown()).optional(),
+		createdAt: z.string().optional(),
+		updatedAt: z.string().optional(),
+	})
+	.loose();
+
+export type ZiteRecord = z.infer<typeof ZiteRecord>;
