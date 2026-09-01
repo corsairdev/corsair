@@ -14,7 +14,6 @@ export {
 	AuthMissingError,
 	CorsairKekMissingError,
 	createMissingConfigProxy,
-	resolveKekAtInit,
 } from './errors';
 export type { TokenResponse } from './exchange';
 // Token exchange utility
