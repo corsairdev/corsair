@@ -2,20 +2,26 @@ import { logEventFromContext } from 'corsair/core';
 import { makeByteFormsRequest } from '../client';
 import type { ByteFormsEndpoints } from '../index';
 import type { ByteFormsEndpointOutputs } from './types';
+import {
+	ByteFormsEndpointInputSchemas,
+	ByteFormsEndpointOutputSchemas,
+} from './types';
 
 export const create: ByteFormsEndpoints['formsCreate'] = async (ctx, input) => {
+	const parsed = ByteFormsEndpointInputSchemas.formsCreate.parse(input);
 	const body = Object.fromEntries(
-		Object.entries(input).filter(([, value]) => value !== undefined),
+		Object.entries(parsed).filter(([, value]) => value !== undefined),
 	);
 
-	const response = await makeByteFormsRequest<
+	const raw = await makeByteFormsRequest<
 		ByteFormsEndpointOutputs['formsCreate']
 	>('form', ctx.key, { method: 'POST', body });
+	const response = ByteFormsEndpointOutputSchemas.formsCreate.parse(raw);
 
 	await logEventFromContext(
 		ctx,
 		'byteforms.forms.create',
-		{ name: input.name },
+		{ name: parsed.name },
 		'completed',
 	);
 	return response;
@@ -25,37 +31,47 @@ export const deleteForm: ByteFormsEndpoints['formsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeByteFormsRequest<
+	const parsed = ByteFormsEndpointInputSchemas.formsDelete.parse(input);
+	const raw = await makeByteFormsRequest<
 		ByteFormsEndpointOutputs['formsDelete']
-	>(`form/${encodeURIComponent(input.formId)}`, ctx.key, { method: 'DELETE' });
+	>(`form/${encodeURIComponent(parsed.formId)}`, ctx.key, { method: 'DELETE' });
+	const response = ByteFormsEndpointOutputSchemas.formsDelete.parse(raw);
 
 	await logEventFromContext(
 		ctx,
 		'byteforms.forms.delete',
-		{ formId: input.formId },
+		{ formId: parsed.formId },
 		'completed',
 	);
 	return response;
 };
 
 export const getById: ByteFormsEndpoints['formsGet'] = async (ctx, input) => {
-	const response = await makeByteFormsRequest<
-		ByteFormsEndpointOutputs['formsGet']
-	>(`form/${encodeURIComponent(input.formId)}`, ctx.key, { method: 'GET' });
+	const parsed = ByteFormsEndpointInputSchemas.formsGet.parse(input);
+	const raw = await makeByteFormsRequest<ByteFormsEndpointOutputs['formsGet']>(
+		`form/${encodeURIComponent(parsed.formId)}`,
+		ctx.key,
+		{ method: 'GET' },
+	);
+	const response = ByteFormsEndpointOutputSchemas.formsGet.parse(raw);
 
 	await logEventFromContext(
 		ctx,
 		'byteforms.forms.get',
-		{ formId: input.formId },
+		{ formId: parsed.formId },
 		'completed',
 	);
 	return response;
 };
 
 export const getAll: ByteFormsEndpoints['formsList'] = async (ctx, input) => {
-	const response = await makeByteFormsRequest<
-		ByteFormsEndpointOutputs['formsList']
-	>('form', ctx.key, { method: 'GET' });
+	ByteFormsEndpointInputSchemas.formsList.parse(input);
+	const raw = await makeByteFormsRequest<ByteFormsEndpointOutputs['formsList']>(
+		'form',
+		ctx.key,
+		{ method: 'GET' },
+	);
+	const response = ByteFormsEndpointOutputSchemas.formsList.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -70,14 +86,16 @@ export const getResponses: ByteFormsEndpoints['formsResponses'] = async (
 	ctx,
 	input,
 ) => {
-	const { formId, ...query } = input;
+	const parsed = ByteFormsEndpointInputSchemas.formsResponses.parse(input);
+	const { formId, ...query } = parsed;
 
-	const response = await makeByteFormsRequest<
+	const raw = await makeByteFormsRequest<
 		ByteFormsEndpointOutputs['formsResponses']
 	>(`form/responses/${encodeURIComponent(formId)}`, ctx.key, {
 		method: 'GET',
 		query,
 	});
+	const response = ByteFormsEndpointOutputSchemas.formsResponses.parse(raw);
 
 	await logEventFromContext(
 		ctx,

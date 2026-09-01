@@ -30,7 +30,17 @@ beforeEach(() => {
 describe('ByteForms endpoints', () => {
 	it('create posts to /form with the API key and returns the envelope', async () => {
 		mockRequest.mockResolvedValue({
-			data: { id: 1, public_id: 'abc', name: 'Demo' },
+			data: {
+				id: 1,
+				public_id: 'abc',
+				name: 'Demo',
+				body: [],
+				is_custom: false,
+				options: {},
+				user_id: 1,
+				created_at: '2024-01-01T00:00:00Z',
+				updated_at: '2024-01-01T00:00:00Z',
+			},
 			status: 'success',
 		});
 
@@ -154,5 +164,49 @@ describe('ByteForms endpoints', () => {
 		);
 		expect(res.count).toBe(2);
 		expect(res.cursor).toEqual({ after: null, before: null });
+	});
+
+	it('strips unknown fields before creating a form', async () => {
+		mockRequest.mockResolvedValue({ status: 'success' });
+
+		await create(ctx, {
+			name: 'Demo',
+			unexpected: 'nope',
+		} as never);
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'form',
+			'test-api-key',
+			expect.objectContaining({
+				method: 'POST',
+				body: { name: 'Demo' },
+			}),
+		);
+	});
+
+	it('does not fetch a form when formId is missing', async () => {
+		await expect(getById(ctx, {} as never)).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('does not request responses with an invalid order', async () => {
+		await expect(
+			getResponses(ctx, { formId: '9', order: 'sideways' } as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('normalizes null responses data to an empty array', async () => {
+		mockRequest.mockResolvedValue({
+			count: 0,
+			cursor: { after: null, before: null },
+			data: null,
+			status: 'success',
+		});
+
+		const res = await getResponses(ctx, { formId: '9' });
+
+		expect(Array.isArray(res.data)).toBe(true);
+		expect(res.data).toEqual([]);
 	});
 });
