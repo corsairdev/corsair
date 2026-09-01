@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { Contacts, Lists, Mail, Senders, Suppressions } from './endpoints';
@@ -27,17 +24,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { SendGridSchema } from './schema';
-import { EventWebhooks } from './webhooks';
-import { matchSendGridTenantWebhook } from './webhooks/tenant-matcher';
-import type { SendGridEvent, SendGridWebhookOutputs } from './webhooks/types';
-import { EmailEventWebhookSchema } from './webhooks/types';
 
 export type SendGridPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalSendGridPlugin['hooks'];
-	webhookHooks?: InternalSendGridPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof sendGridEndpointsNested>;
 };
@@ -70,17 +61,6 @@ export type SendGridEndpoints = {
 	sendersGetAll: SendGridEndpoint<'sendersGetAll'>;
 };
 
-type SendGridWebhook<
-	K extends keyof SendGridWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<SendGridContext, TEvent, SendGridWebhookOutputs[K]>;
-
-export type SendGridWebhooks = {
-	emailEvent: SendGridWebhook<'emailEvent', SendGridEvent>;
-};
-
-export type SendGridBoundWebhooks = BindWebhooks<SendGridWebhooks>;
-
 const sendGridEndpointsNested = {
 	mail: {
 		send: Mail.send,
@@ -97,12 +77,6 @@ const sendGridEndpointsNested = {
 	},
 	senders: {
 		getAll: Senders.getAll,
-	},
-} as const;
-
-const sendGridWebhooksNested = {
-	events: {
-		emailEvent: EventWebhooks.emailEvent,
 	},
 } as const;
 
@@ -133,16 +107,6 @@ export const sendGridEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof sendGridEndpointsNested
->;
-
-const sendGridWebhookSchemas = {
-	'events.emailEvent': {
-		description: 'SendGrid email event webhook notification',
-		payload: EmailEventWebhookSchema,
-		response: EmailEventWebhookSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof sendGridWebhooksNested
 >;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -176,7 +140,7 @@ const sendGridEndpointMeta = {
 
 export const sendGridAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
+		account: ['one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -184,7 +148,7 @@ export type BaseSendGridPlugin<T extends SendGridPluginOptions> = CorsairPlugin<
 	'sendgrid',
 	typeof SendGridSchema,
 	typeof sendGridEndpointsNested,
-	typeof sendGridWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
@@ -207,37 +171,17 @@ export function sendgrid<const T extends SendGridPluginOptions>(
 		schema: SendGridSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: sendGridEndpointsNested,
-		webhooks: sendGridWebhooksNested,
+		webhooks: {},
 		endpointMeta: sendGridEndpointMeta,
 		endpointSchemas: sendGridEndpointSchemas,
-		webhookSchemas: sendGridWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-twilio-email-event-webhook-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchSendGridTenantWebhook,
-		oauthWebhookTenantLinkResolver: () => null,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: SendGridKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				if (!res) {
-					throw new Error(
-						'[auth-missing:sendgrid:webhook_signature]: SendGrid webhook verification key is missing',
-					);
-				}
-				return res;
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -271,7 +215,3 @@ export type {
 	SuppressionsGetBouncesInput,
 	SuppressionsGetBouncesOutput,
 } from './endpoints/types';
-export type {
-	SendGridEvent,
-	SendGridWebhookOutputs,
-} from './webhooks/types';

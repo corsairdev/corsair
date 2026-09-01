@@ -86,26 +86,3 @@ export const SendGridVerifiedSender = z
 	.catchall(z.unknown());
 
 export type SendGridVerifiedSender = z.infer<typeof SendGridVerifiedSender>;
-
-/**
- * Event Webhook delivery/engagement event.
- * Official: Event Webhook payload object
- * https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/event
- */
-export const SendGridEmailEvent = z
-	.object({
-		email: z.string(),
-		event: z.string(),
-		timestamp: z.number(),
-		sg_event_id: z.string().optional(),
-		sg_message_id: z.string().optional(),
-		reason: z.string().optional(),
-		status: z.string().optional(),
-		response: z.string().optional(),
-		url: z.string().optional(),
-		category: z.union([z.string(), z.array(z.string())]).optional(),
-		tenant_external_id: z.string().optional(),
-	})
-	.catchall(z.unknown());
-
-export type SendGridEmailEvent = z.infer<typeof SendGridEmailEvent>;

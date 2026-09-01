@@ -1,7 +1,6 @@
 import {
 	SendGridBounce,
 	SendGridContact,
-	SendGridEmailEvent,
 	SendGridList,
 	SendGridVerifiedSender,
 } from './database';
@@ -13,14 +12,12 @@ export const SendGridSchema = {
 		lists: SendGridList,
 		bounces: SendGridBounce,
 		senders: SendGridVerifiedSender,
-		events: SendGridEmailEvent,
 	},
 } as const;
 
 export {
 	SendGridBounce,
 	SendGridContact,
-	SendGridEmailEvent,
 	SendGridList,
 	SendGridVerifiedSender,
 } from './database';

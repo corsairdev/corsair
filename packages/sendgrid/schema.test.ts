@@ -2,7 +2,6 @@ import { SendGridSchema } from './schema';
 import {
 	SendGridBounce,
 	SendGridContact,
-	SendGridEmailEvent,
 	SendGridList,
 	SendGridVerifiedSender,
 } from './schema/database';
@@ -15,7 +14,7 @@ describe('SendGrid schema', () => {
 
 	it('declares official entity maps', () => {
 		expect(Object.keys(SendGridSchema.entities).sort()).toEqual(
-			['bounces', 'contacts', 'events', 'lists', 'senders'].sort(),
+			['bounces', 'contacts', 'lists', 'senders'].sort(),
 		);
 	});
 
@@ -65,16 +64,5 @@ describe('SendGrid schema', () => {
 			country: 'AU',
 		});
 		expect(contact.email).toBe('alex@example.com');
-	});
-
-	it('parses official event webhook object', () => {
-		const event = SendGridEmailEvent.parse({
-			email: 'example@test.com',
-			timestamp: 1513299569,
-			event: 'delivered',
-			sg_event_id: 'sg_event_id',
-			sg_message_id: 'sg_message_id',
-		});
-		expect(event.event).toBe('delivered');
 	});
 });
