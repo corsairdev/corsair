@@ -17,6 +17,7 @@ import type { ConnectState } from './connect-controller';
 import {
 	connectReducer,
 	initialConnectState,
+	isConnectError,
 	isPluginConnected,
 	retryAfterConnect,
 	shouldSettleConnected,
@@ -65,23 +66,33 @@ export type CorsairProviderProps = {
 	 * now-connected account. Mutations resume on their own via `call`.
 	 */
 	onConnected?: () => void;
+	/**
+	 * Auto-open the dialog when an unwrapped client call rejects with a Corsair
+	 * auth-missing error — no `call` wrapper needed at the call site. On by
+	 * default; set `false` to opt out and drive the dialog only through `call`,
+	 * `connect`, and the error boundary. Note this opens the dialog but can't
+	 * resume the original work (use `call` when you want auto-resume).
+	 */
+	captureUnhandled?: boolean;
 	children: ReactNode;
 };
 
 /**
  * App-wide provider for Corsair Connect — wrap your app once at the root. When a
- * server-side Corsair call fails because the tenant hasn't connected a plugin,
- * the provider surfaces a connect dialog, waits for the user to finish, then
- * lets the failed work resume — no per-call code at any of the call sites.
+ * Corsair call fails because the tenant hasn't connected a plugin, the provider
+ * surfaces a connect dialog and waits for the user to finish.
  *
- * Pair it with {@link CorsairErrorBoundary} (a Next `error.tsx`) for server-read
- * regions, and with {@link useConnect}'s `call` to wrap mutations that should
- * auto-resume.
+ * A client call that rejects with an auth-missing error opens the dialog on its
+ * own — no `call` wrapper needed (see `captureUnhandled`). Pair it with
+ * {@link CorsairErrorBoundary} (a Next `error.tsx`) for server-read regions, and
+ * reach for {@link useConnect}'s `call` only when a mutation should also
+ * auto-resume after connect.
  */
 export function CorsairProvider({
 	baseURL,
 	appearance,
 	onConnected,
+	captureUnhandled,
 	children,
 }: CorsairProviderProps): ReactElement {
 	const clientRef = useRef<CorsairManagementClient | null>(null);
@@ -107,6 +118,10 @@ export function CorsairProvider({
 	const attemptRef = useRef(0);
 	const onConnectedRef = useRef(onConnected);
 	onConnectedRef.current = onConnected;
+	// Mirror the phase for the unhandled-rejection listener so it can skip when a
+	// dialog is already up (its closure would otherwise read a stale phase).
+	const phaseRef = useRef(connectState.phase);
+	phaseRef.current = connectState.phase;
 
 	const stopWatch = useCallback(() => {
 		if (watchRef.current) {
@@ -311,6 +326,22 @@ export function CorsairProvider({
 		const t = setTimeout(() => dispatch({ type: 'CLOSE' }), 1100);
 		return () => clearTimeout(t);
 	}, [connectState.phase]);
+
+	// Global auto-prompt: an unwrapped client call that rejects with a Corsair
+	// auth-missing error opens the dialog without a `call` wrapper. Wrapped calls
+	// are caught by `call` and never surface here, so there's no double-prompt.
+	useEffect(() => {
+		if (captureUnhandled === false) return;
+		const onRejection = (event: PromiseRejectionEvent) => {
+			if (!isConnectError(event.reason)) return;
+			if (phaseRef.current !== 'idle') return;
+			// Known connect error — take over from the framework's error overlay.
+			event.preventDefault();
+			void requireConnect();
+		};
+		window.addEventListener('unhandledrejection', onRejection);
+		return () => window.removeEventListener('unhandledrejection', onRejection);
+	}, [captureUnhandled, requireConnect]);
 
 	const value = useMemo<CorsairContextValue>(
 		() => ({

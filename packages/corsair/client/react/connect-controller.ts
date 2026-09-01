@@ -103,6 +103,30 @@ export async function retryAfterConnect<T>(
 	throw lastErr;
 }
 
+// Recognise a Corsair auth-missing / reconnect failure from an unhandled
+// rejection so the provider can auto-open the dialog without the call site
+// wrapping anything. Matches the error markers, which survive the server-action
+// boundary in dev (prod redacts the message, so global capture is best-effort
+// there — reads still gate through the error boundary, mutations through call).
+export function isConnectError(reason: unknown): boolean {
+	if (reason == null) return false;
+	const named = reason as { name?: unknown; message?: unknown };
+	if (
+		named.name === 'AuthMissingError' ||
+		named.name === 'ReconnectRequiredError'
+	)
+		return true;
+	const message =
+		typeof reason === 'string'
+			? reason
+			: typeof named.message === 'string'
+				? named.message
+				: '';
+	return (
+		/\[auth-missing:/.test(message) || /\breconnect required\b/i.test(message)
+	);
+}
+
 /** What a Corsair error boundary does once the caught read's connect flow settles. */
 export type BoundaryAction = 'retry' | 'rethrow' | 'dismissed';
 

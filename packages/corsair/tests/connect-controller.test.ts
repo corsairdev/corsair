@@ -1,6 +1,7 @@
 import {
 	connectReducer,
 	initialConnectState,
+	isConnectError,
 	isPluginConnected,
 	resolveBoundaryAction,
 	retryAfterConnect,
@@ -164,5 +165,35 @@ describe('retryAfterConnect', () => {
 			},
 		});
 		expect(waits).toEqual([100, 200]);
+	});
+});
+
+describe('isConnectError', () => {
+	it('matches the auth-missing marker message', () => {
+		expect(isConnectError(new Error('[auth-missing:linear:oauth_2]'))).toBe(
+			true,
+		);
+	});
+
+	it('matches the reconnect-required message', () => {
+		expect(isConnectError(new Error('Reconnect required'))).toBe(true);
+	});
+
+	it('matches by error name when the message was replaced', () => {
+		const e = new Error('An error occurred in the Server Components render');
+		e.name = 'AuthMissingError';
+		expect(isConnectError(e)).toBe(true);
+	});
+
+	it('matches a bare string reason', () => {
+		expect(isConnectError('[auth-missing:slack:oauth_2]')).toBe(true);
+	});
+
+	it('ignores unrelated rejections and empty reasons', () => {
+		expect(isConnectError(new Error('boom'))).toBe(false);
+		expect(isConnectError('network down')).toBe(false);
+		expect(isConnectError(null)).toBe(false);
+		expect(isConnectError(undefined)).toBe(false);
+		expect(isConnectError({})).toBe(false);
 	});
 });
