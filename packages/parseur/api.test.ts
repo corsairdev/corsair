@@ -1,4 +1,4 @@
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import { PARSEUR_API_BASE } from './client';
 import {
 	Bootstrap,
@@ -8,6 +8,7 @@ import {
 	Template,
 	Webhook,
 } from './endpoints';
+import { errorHandlers } from './error-handlers';
 import type { ParseurContext } from './index';
 import { parseur } from './index';
 
@@ -201,6 +202,35 @@ describe('documents', () => {
 			expect(url).toBe(`${PARSEUR_API_BASE}/parser/101/upload`);
 			expect(options.body).toBeInstanceOf(FormData);
 			expect(result.message).toBe('OK');
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+
+	it('uploadDocument 429 preserves Retry-After on ApiError', async () => {
+		const originalFetch = global.fetch;
+		global.fetch = jest.fn().mockResolvedValueOnce({
+			ok: false,
+			status: 429,
+			statusText: 'Too Many Requests',
+			headers: { get: (name: string) => (name === 'Retry-After' ? '2' : null) },
+			text: async () => 'rate limited',
+		});
+		try {
+			const err = await Document.uploadDocument(testContext(), {
+				id: 101,
+				file: 'sample-data',
+				file_name: 'uploaded.pdf',
+			}).catch((error: unknown) => error);
+			expect(err).toBeInstanceOf(ApiError);
+			expect((err as ApiError).status).toBe(429);
+			expect((err as ApiError).retryAfter).toBe(2000);
+			expect(
+				await errorHandlers.RATE_LIMIT_ERROR.handler(err as Error),
+			).toEqual({
+				maxRetries: 5,
+				headersRetryAfterMs: 2000,
+			});
 		} finally {
 			global.fetch = originalFetch;
 		}

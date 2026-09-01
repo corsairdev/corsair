@@ -61,6 +61,15 @@ async function handleRequestError(error: unknown): Promise<never> {
 	throw new Error('Unknown Parseur API error');
 }
 
+function retryAfterMs(response: Response): number | undefined {
+	const raw = response.headers.get('Retry-After');
+	if (!raw) return undefined;
+	const seconds = Number(raw);
+	if (Number.isFinite(seconds)) return seconds * 1000;
+	const at = Date.parse(raw);
+	return Number.isFinite(at) ? Math.max(0, at - Date.now()) : undefined;
+}
+
 export async function makeParseurRequest<T>(
 	endpoint: string,
 	options: ParseurRequestOptions = {},
@@ -145,6 +154,7 @@ export async function uploadParseurMultipart<T>(
 				body: text,
 			},
 			`Parseur upload failed (${response.status}): ${text}`,
+			{ retryAfter: retryAfterMs(response) },
 		);
 	}
 
