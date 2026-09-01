@@ -19,6 +19,11 @@ export const errorHandlers = {
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
+			} else if (
+				error instanceof TimelinkAPIError &&
+				error.retryAfter !== undefined
+			) {
+				retryAfterMs = error.retryAfter;
 			}
 			// deletePerson is a non-idempotent write; avoid nested retries on 429
 			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };

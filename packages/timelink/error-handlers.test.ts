@@ -26,26 +26,30 @@ describe('Timelink error handlers', () => {
 	});
 
 	it('matches rate-limit errors by status on wrapped TimelinkAPIError', async () => {
-		const wrapped = new TimelinkAPIError('Too Many Requests', 429);
+		const wrapped = new TimelinkAPIError(
+			'Too Many Requests',
+			makeApiError(429, 2500),
+		);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(wrapped)).toBe(true);
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(wrapped);
 		expect(result.maxRetries).toBe(0);
+		expect(result.headersRetryAfterMs).toBe(2500);
 	});
 
 	it('does not match non-429 wrapped errors as rate limit', () => {
-		const wrapped = new TimelinkAPIError('Unauthorized', 401);
+		const wrapped = new TimelinkAPIError('Unauthorized', makeApiError(401));
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(wrapped)).toBe(false);
 	});
 
 	it('matches auth errors by status, not only message', async () => {
-		const wrapped = new TimelinkAPIError('Forbidden', 401);
+		const wrapped = new TimelinkAPIError('Forbidden', makeApiError(401));
 		expect(errorHandlers.AUTH_ERROR.match(wrapped)).toBe(true);
 		const result = await errorHandlers.AUTH_ERROR.handler(wrapped);
 		expect(result.maxRetries).toBe(0);
 	});
 
 	it('falls back to DEFAULT for unmatched errors', async () => {
-		const wrapped = new TimelinkAPIError('Server Error', 500);
+		const wrapped = new TimelinkAPIError('Server Error', makeApiError(500));
 		expect(errorHandlers.DEFAULT.match(wrapped)).toBe(true);
 		const result = await errorHandlers.DEFAULT.handler(wrapped);
 		expect(result.maxRetries).toBe(0);
