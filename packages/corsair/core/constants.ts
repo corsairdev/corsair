@@ -13,7 +13,6 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'dropboxsign',
 	'ably',
 	'abstract',
 	'abuseipdb',
@@ -96,6 +95,7 @@ export const BaseProviders = [
 	'calendly',
 	'canva',
 	'canvas',
+	'certifier',
 	'chatbotkit',
 	'circleci',
 	'clickhouse',
@@ -121,6 +121,7 @@ export const BaseProviders = [
 	'doppler',
 	'dreamstudio',
 	'dropbox',
+	'dropboxsign',
 	'epicgames',
 	'exa',
 	'facebook',
@@ -325,6 +326,7 @@ export const ProviderDisplayNames = {
 	calendly: 'Calendly',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
+	certifier: 'Certifier',
 	chatbotkit: 'ChatBotKit',
 	circleci: 'CircleCI',
 	clickhouse: 'Clickhouse',
@@ -562,6 +564,7 @@ export type AllProviders =
 	| 'calendly'
 	| 'canva'
 	| 'canvas'
+	| 'certifier'
 	| 'chatbotkit'
 	| 'circleci'
 	| 'clickhouse'
