@@ -25,7 +25,7 @@ describe('ByteForms error handlers', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(wrapped)).toBe(true);
 
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(wrapped);
-		expect(result.maxRetries).toBeGreaterThan(0);
+		expect(result.maxRetries).toBe(0);
 		expect(
 			(result as { headersRetryAfterMs?: number }).headersRetryAfterMs,
 		).toBe(2000);
