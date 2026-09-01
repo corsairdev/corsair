@@ -1,63 +1,65 @@
+import { slack } from '@corsair-dev/slack';
 import { createCorsair } from '../core';
 import { decryptDEK, encryptDEK, generateDEK } from '../core/auth/encryption';
-import {
-	CorsairKekMissingError,
-	resolveKekAtInit,
-} from '../core/auth/errors/kek-missing';
+import { CorsairKekMissingError } from '../core/auth/errors/kek-missing';
+import { createMissingConfigProxy } from '../core/auth/errors/missing-config';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { createTestDatabase } from './setup-db';
 
-describe('resolveKekAtInit', () => {
-	it('preserves byte-exact KEK including surrounding whitespace', () => {
-		const kek = '  test-kek  ';
-		expect(resolveKekAtInit(kek, true)).toBe(kek);
-	});
-
-	it('does not trim KEK — a trimmed key cannot decrypt DEKs wrapped with the original', async () => {
-		const kek = '  padded-kek  ';
-		const encryptedDek = await encryptDEK(generateDEK(), kek);
-
-		await expect(decryptDEK(encryptedDek, kek)).resolves.toEqual(
-			expect.any(String),
-		);
-		await expect(decryptDEK(encryptedDek, kek.trim())).rejects.toThrow();
-	});
-
-	it('throws CorsairKekMissingError when database is configured without KEK', () => {
-		expect(() => resolveKekAtInit(undefined, true)).toThrow(
-			CorsairKekMissingError,
-		);
-		expect(() => resolveKekAtInit('', true)).toThrow(CorsairKekMissingError);
-	});
-
-	it('allows missing KEK when no database is configured', () => {
-		expect(resolveKekAtInit(undefined, false)).toBe('');
-	});
-});
-
 describe('createCorsair — KEK validation', () => {
 	let env: ReturnType<typeof createTestDatabase>;
-	afterEach(() => env?.cleanup?.());
+	afterEach(() => env.cleanup());
 
-	it('throws CorsairKekMissingError at init when database is configured without KEK', () => {
+	it('does not throw at construction when the KEK is empty', () => {
 		env = createTestDatabase();
 		expect(() =>
 			createCorsair({
-				plugins: [],
+				plugins: [slack({ authType: 'api_key', key: 'fake-key' })],
 				database: env.db,
-			} as any),
-		).toThrow(CorsairKekMissingError);
+				kek: '',
+				multiTenancy: false,
+			}),
+		).not.toThrow();
 	});
 
-	it('stores the byte-exact KEK on the internal config when database is configured', () => {
+	it('stores the byte-exact KEK on the internal config', () => {
 		env = createTestDatabase();
 		const kek = '  byte-exact-kek  ';
 		const corsair = createCorsair({
-			plugins: [],
+			plugins: [slack({ authType: 'api_key', key: 'fake-key' })],
 			database: env.db,
 			kek,
-		} as any);
+			multiTenancy: false,
+		});
 
 		expect(getCorsairInternal(corsair).kek).toBe(kek);
+	});
+});
+
+describe('createMissingConfigProxy', () => {
+	it('throws CorsairKekMissingError on access when a database is configured without a KEK', () => {
+		const keys = createMissingConfigProxy<Record<string, unknown>>(true, false);
+		expect(() => keys.get_integration_credentials).toThrow(
+			CorsairKekMissingError,
+		);
+	});
+
+	it('reports both missing pieces when database and KEK are absent', () => {
+		const keys = createMissingConfigProxy<Record<string, unknown>>(
+			false,
+			false,
+		);
+		expect(() => keys.get_integration_credentials).toThrow(/database and kek/);
+	});
+});
+
+describe('KEK byte-exactness', () => {
+	it('a trimmed KEK cannot decrypt DEKs wrapped with the original', async () => {
+		const kek = '  padded-kek  ';
+		const dek = generateDEK();
+		const encryptedDek = await encryptDEK(dek, kek);
+
+		await expect(decryptDEK(encryptedDek, kek)).resolves.toBe(dek);
+		await expect(decryptDEK(encryptedDek, kek.trim())).rejects.toThrow();
 	});
 });
