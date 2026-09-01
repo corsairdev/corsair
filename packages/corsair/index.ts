@@ -6,6 +6,7 @@ export { CorsairClientError, createCorsairClient } from './client';
 export type { ResolveConnectLinkResult } from './core';
 export {
 	AuthMissingError,
+	CorsairKekMissingError,
 	createCorsair,
 	PermissionRequiredError,
 	ReadonlyForbiddenError,
