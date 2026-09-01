@@ -1,5 +1,13 @@
-import type { CorsairErrorHandler } from 'corsair/core';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { BrightDataAPIError, BrightDataRateLimitError } from './client';
+
+const SNAPSHOT_WRITE_OPS = new Set(['crawlApi', 'filterDataset']);
+
+function retryAfterMsFrom(error: Error): number | undefined {
+	return error instanceof BrightDataRateLimitError
+		? error.retryAfterMs
+		: undefined;
+}
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
@@ -16,13 +24,12 @@ export const errorHandlers = {
 				msg.includes('429')
 			);
 		},
-		handler: async (error: Error) => {
-			const retryAfterMs =
-				error instanceof BrightDataRateLimitError
-					? error.retryAfterMs
-					: undefined;
-			// crawl/filter POSTs create billed snapshots and are not idempotent
-			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
+		handler: async (error: Error, context: ErrorContext) => {
+			const retryAfterMs = retryAfterMsFrom(error);
+			if (SNAPSHOT_WRITE_OPS.has(context.operation)) {
+				return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
+			}
+			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {

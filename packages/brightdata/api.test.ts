@@ -306,11 +306,27 @@ describe('Bright Data client errors', () => {
 			expect(error).toBeInstanceOf(BrightDataRateLimitError);
 			expect((error as BrightDataRateLimitError).retryAfterMs).toBe(42000);
 			expect(errorHandlers.RATE_LIMIT_ERROR.match(error as Error)).toBe(true);
-			const policy = await errorHandlers.RATE_LIMIT_ERROR.handler(
+			const readPolicy = await errorHandlers.RATE_LIMIT_ERROR.handler(
 				error as Error,
+				{
+					pluginId: 'brightdata',
+					operation: 'listDatasets',
+					input: {},
+					originalError: error as Error,
+				},
 			);
-			expect(policy.maxRetries).toBe(0);
-			expect(policy.headersRetryAfterMs).toBe(42000);
+			expect(readPolicy.maxRetries).toBe(5);
+			expect(readPolicy.headersRetryAfterMs).toBe(42000);
+			const writePolicy = await errorHandlers.RATE_LIMIT_ERROR.handler(
+				error as Error,
+				{
+					pluginId: 'brightdata',
+					operation: 'crawlApi',
+					input: {},
+					originalError: error as Error,
+				},
+			);
+			expect(writePolicy.maxRetries).toBe(0);
 		}
 	});
 
