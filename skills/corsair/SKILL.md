@@ -1,11 +1,9 @@
 ---
 name: corsair
-description: Use when adding Corsair to a TypeScript/JavaScript app, to connect the app's own tools or its end users' accounts to external services (GitHub, Slack, Gmail, Linear, Stripe, and hundreds more, via OAuth or API keys), wire the /api/corsair route, handle integration webhooks, or give an AI agent tools to call those services.
+description: Use when adding Corsair to a TypeScript app to integrate the app with external services (GitHub, Slack, Linear, Stripe, Gmail, and hundreds more, via OAuth or API keys). Can be used with agents, UIs, webhooks, knowledge bases, etc.
 ---
 
 # Corsair setup
-
-Corsair is an open-source SDK that runs inside the user's own app. It connects the app, or its end users, to hundreds of services, and handles OAuth, token refresh, webhooks, and rate limits. Every credential is encrypted in the user's own database under their KEK. Corsair Hub is the hosted piece that owns the parts needing a public URL: the OAuth connect page, callbacks, and approvals. Hub keeps none of the user's credentials.
 
 This skill takes an app from nothing to a working integration, then covers webhooks, workflows, agent access over MCP, and production. Two rules hold throughout. Read the real docs before wiring anything (`https://docs.corsair.dev/llms.txt`). And don't stop when the server runs; you're done when a real API call returns data.
 
@@ -35,7 +33,7 @@ Terms you'll use. A tenant is one of the app's end users. A plugin is one servic
 
 ## Phase 2: implement
 
-```
+```text
 New / empty app?  ── install → corsair.ts → /api/corsair route → keys in .env
                                 → start server (dot goes green) → connect an account → real API call
 Adding to an app? ── detect stack → install → add route → keys → connect the services named
@@ -62,7 +60,7 @@ Corsair needs a dev API key, a signing secret, and the KEK in `.env`. The API-ke
 
 Fastest path: mint a sign-in link with the project name in the query string.
 
-```
+```text
 https://hub.corsair.dev/login?title=My%20App
 ```
 
@@ -87,8 +85,8 @@ export const corsair = createCorsair({
   kek: process.env.CORSAIR_KEK!,
   database: db, // the app's own DB handle; Corsair persists here, Hub stores nothing
   hub: {
-    projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-    signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+    projectApiKey: (process.env.CORSAIR_PROD_API_KEY ?? process.env.CORSAIR_DEV_API_KEY)!,
+    signingSecret: (process.env.CORSAIR_PROD_SIGNING_SECRET ?? process.env.CORSAIR_DEV_SIGNING_SECRET)!,
   },
   plugins: [github()],
   multiTenancy: true, // from the "whose accounts?" choice
@@ -104,18 +102,19 @@ export const corsair = createCorsair({
 | `multiTenancy` | `true` scopes everything per end user; `false` is for the app's own tools. |
 | `permissions` | Optional approval gate. See [permissions](https://docs.corsair.dev/concepts/permissions.md). |
 
-Self-hosting the OAuth and approval URLs instead of using Hub? Swap `hub` for a `manual: { baseUrl, redirectUri, approvalBaseUrl, onApprovalRequired }` block. See [manual vs Hub](https://docs.corsair.dev/hub/manual-vs-hub.md).
-
 ## Add the `/api/corsair` route
 
-Every adapter wraps the same `managementHandler(corsair)`, a `(Request) => Promise<Response>`. Pick the one for the framework:
+Each framework has its own adapter that wraps the shared handler. Pick the one for the stack:
 
 | Framework | Route |
 | --- | --- |
 | Next.js (App Router), file `app/api/corsair/[[...path]]/route.ts` | `export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, { basePath: "/api/corsair" });` |
-| Express | `app.use(express.json()); app.use("/api/corsair", toExpressHandler(corsair, { basePath: "/api/corsair" }));`. `express.json()` must run before the route so Hub's delivery POSTs parse. |
+| Express | `app.use("/api/corsair", toExpressHandler(corsair, { basePath: "/api/corsair" }));`. Mount it with no body parser. A global `express.json()` before this route re-serializes the body and breaks Hub's signature. If you have one, scope `express.raw({ type: "application/json" })` to this route and register the global parser after it, or capture `req.rawBody`. |
 | Hono | `app.all("/api/corsair/*", toHonoHandler(corsair, { basePath: "/api/corsair" }));` |
-| Any other Web-standard runtime (SvelteKit, Remix, Astro, Nuxt, Bun, Deno, Workers) | `const handler = managementHandler(corsair, { basePath: "/api/corsair" });`, then wire GET/POST to `({ request }) => handler(request)`. |
+| SvelteKit / Astro | `export const { GET, POST, OPTIONS } = toSvelteKitHandler(corsair, { basePath: "/api/corsair" });`. Astro uses `toAstroHandler` with the same shape. |
+| Remix / React Router | `export const { loader, action } = toRemixHandler(corsair, { basePath: "/api/corsair" });` |
+| Nuxt / Nitro | `export default toNuxtHandler(corsair, { basePath: "/api/corsair" });`. Mount it early, before any body parser runs. |
+| Web runtimes (Bun, Deno, Workers) | `toWebHandler(corsair, { basePath: "/api/corsair" })` is a `(Request) => Promise<Response>` handler. |
 
 Full per-stack detail: [adapters/handlers](https://docs.corsair.dev/adapters/handlers.md).
 
@@ -128,7 +127,7 @@ Mint a connect link server-side and send the user through it. `tenantId` comes f
 ```ts
 const { connectUrl } = await corsair.manage.connect.createLink({
   plugin: "github",
-  tenantId: "acme",
+  tenantId: session.userId,
 });
 // redirect the user to connectUrl
 ```
@@ -177,7 +176,7 @@ github({
   webhookHooks: {
     pullRequestOpened: {
       after: async (ctx, result) => {
-        await corsair.slack.api.messages.post({ channel: "#eng", text: "PR opened" });
+        await corsair.withTenant(ctx.tenantId).slack.api.messages.post({ channel: "#eng", text: "PR opened" });
       },
     },
   },
@@ -192,7 +191,7 @@ Workflows are event-driven automations built on those webhook hooks. An event fi
 
 ## Expose Corsair to an AI agent (MCP)
 
-`@corsair-dev/mcp` exposes Corsair's tools to agents with no manual schema wiring, through three tools: `list_operations`, `get_schema`, and `run_script`. For Claude Code, use a stdio server (`mcp-server.ts`):
+Install `@corsair-dev/mcp`. It exposes Corsair's tools to agents with no manual schema wiring, through three tools: `list_operations`, `get_schema`, and `run_script`. For Claude Code, use a stdio server (`mcp-server.ts`):
 
 ```ts
 import "dotenv/config";
@@ -213,7 +212,7 @@ Gate risky operations. The root config is `permissions: { timeout: "30m", onTime
 
 ## Go to production
 
-1. Add `CORSAIR_PROD_API_KEY` (`ck_prod_`) and `CORSAIR_PROD_SIGNING_SECRET`. The `ck_prod_` prefix flips the SDK to production.
+1. Set `CORSAIR_PROD_API_KEY` (`ck_prod_`) and `CORSAIR_PROD_SIGNING_SECRET` in the deploy environment. The `corsair.ts` above prefers them when present, and the `ck_prod_` prefix flips the SDK to production.
 2. Register the app's public HTTPS delivery URL in the dashboard Delivery URLs tab and activate production. Dev self-registers; prod is explicit.
 3. Deploy. See [environments](https://docs.corsair.dev/hub/environments.md) and [delivery URLs](https://docs.corsair.dev/hub/delivery-urls.md).
 
