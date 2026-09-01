@@ -1,8 +1,17 @@
 import { z } from 'zod';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Common schemas
-// ─────────────────────────────────────────────────────────────────────────────
+const IsoDateSchema = z.iso.date();
+
+const PublishDateFilterSchema = z.string().refine((value) => {
+	if (IsoDateSchema.safeParse(value).success) return true;
+	const match = /^(\d{4}-\d{2}-\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(value);
+	if (!match) return false;
+	if (!IsoDateSchema.safeParse(match[1]).success) return false;
+	const hours = Number(match[2]);
+	const minutes = Number(match[3]);
+	const seconds = Number(match[4]);
+	return hours < 24 && minutes < 60 && seconds < 60;
+}, 'Date must be YYYY-MM-DD or YYYY-MM-DD HH:MM:SS');
 
 export const WorldNewsArticleSchema = z.object({
 	id: z.number(),
@@ -14,7 +23,7 @@ export const WorldNewsArticleSchema = z.object({
 	video: z.string().nullable().optional(),
 	publish_date: z.string().optional(),
 	author: z.string().nullable().optional(),
-	authors: z.array(z.string()).optional(),
+	authors: z.array(z.string().nullable()).optional(),
 	category: z.string().optional(),
 	language: z.string().optional(),
 	source_country: z.string().optional(),
@@ -79,13 +88,9 @@ export const TopNewsInputSchema = z.object({
 		.describe(
 			'The 2-letter ISO 639-1 language code of the top news (e.g., "en", "es", "fr").',
 		),
-	date: z
-		.string()
-		.regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be formatted as YYYY-MM-DD')
-		.optional()
-		.describe(
-			'The date for which the top news should be retrieved (YYYY-MM-DD). Defaults to today.',
-		),
+	date: IsoDateSchema.optional().describe(
+		'The date for which the top news should be retrieved (YYYY-MM-DD). Defaults to today.',
+	),
 	headlinesOnly: z
 		.boolean()
 		.optional()
@@ -123,6 +128,10 @@ export const ExtractNewsLinksInputSchema = z.object({
 		.describe(
 			'The webpage or site URL from which news article links should be extracted.',
 		),
+	analyze: z
+		.boolean()
+		.optional()
+		.describe('Whether to analyze extracted links. Defaults to false.'),
 	prefix: z
 		.string()
 		.max(100)
@@ -171,108 +180,121 @@ export const SearchNewsSourcesInputSchema = z.object({
 		),
 });
 
-export const SearchNewsInputSchema = z.object({
-	text: z
-		.string()
-		.min(3)
-		.max(100)
-		.optional()
-		.describe(
-			'Search query text. Supports implicit AND, OR, negation with -, parentheses, and quotes for exact phrases.',
-		),
-	textMatchIndexes: z
-		.string()
-		.optional()
-		.describe(
-			'Where to search for text: "title", "content", or "title,content".',
-		),
-	sourceCountry: z
-		.string()
-		.length(2)
-		.optional()
-		.describe('Filter by 2-letter ISO 3166 country code.'),
-	language: z
-		.string()
-		.length(2)
-		.optional()
-		.describe('Filter by 2-letter ISO 639-1 language code.'),
-	minSentiment: z
-		.number()
-		.min(-1)
-		.max(1)
-		.optional()
-		.describe(
-			'Minimum sentiment score between -1.0 (very negative) and 1.0 (very positive).',
-		),
-	maxSentiment: z
-		.number()
-		.min(-1)
-		.max(1)
-		.optional()
-		.describe('Maximum sentiment score between -1.0 and 1.0.'),
-	earliestPublishDate: z
-		.string()
-		.optional()
-		.describe(
+export const SearchNewsInputSchema = z
+	.object({
+		text: z
+			.string()
+			.min(3)
+			.max(100)
+			.optional()
+			.describe(
+				'Search query text. Supports implicit AND, OR, negation with -, parentheses, and quotes for exact phrases.',
+			),
+		textMatchIndexes: z
+			.string()
+			.optional()
+			.describe(
+				'Where to search for text: "title", "content", or "title,content".',
+			),
+		sourceCountry: z
+			.string()
+			.length(2)
+			.optional()
+			.describe('Filter by 2-letter ISO 3166 country code.'),
+		language: z
+			.string()
+			.length(2)
+			.optional()
+			.describe('Filter by 2-letter ISO 639-1 language code.'),
+		minSentiment: z
+			.number()
+			.min(-1)
+			.max(1)
+			.optional()
+			.describe(
+				'Minimum sentiment score between -1.0 (very negative) and 1.0 (very positive).',
+			),
+		maxSentiment: z
+			.number()
+			.min(-1)
+			.max(1)
+			.optional()
+			.describe('Maximum sentiment score between -1.0 and 1.0.'),
+		earliestPublishDate: PublishDateFilterSchema.optional().describe(
 			'Filter for news published on or after this timestamp (YYYY-MM-DD HH:MM:SS or YYYY-MM-DD).',
 		),
-	latestPublishDate: z
-		.string()
-		.optional()
-		.describe(
+		latestPublishDate: PublishDateFilterSchema.optional().describe(
 			'Filter for news published on or before this timestamp (YYYY-MM-DD HH:MM:SS or YYYY-MM-DD).',
 		),
-	newsSources: z
-		.string()
-		.optional()
-		.describe(
-			'Comma-separated list of up to 10 news sources (e.g., "bbc.co.uk,nytimes.com").',
-		),
-	authors: z
-		.string()
-		.optional()
-		.describe('Comma-separated list of author names.'),
-	categories: z
-		.string()
-		.optional()
-		.describe(
-			'Comma-separated categories (politics, sports, business, technology, entertainment, health, science, etc.).',
-		),
-	entities: z
-		.string()
-		.optional()
-		.describe('Filter by semantic entities (e.g., "ORG:Tesla,PER:Elon Musk").'),
-	locationFilter: z
-		.string()
-		.optional()
-		.describe(
-			'Filter by geographic radius in the format "latitude,longitude,radius in km" (radius: 1-100).',
-		),
-	sort: z
-		.string()
-		.optional()
-		.describe('Sort criteria, typically "publish-time".'),
-	sortDirection: z
-		.enum(['ASC', 'DESC'])
-		.optional()
-		.describe(
-			'Sort direction: "ASC" or "DESC". Defaults to DESC for publish-time.',
-		),
-	offset: z
-		.number()
-		.int()
-		.min(0)
-		.max(100000)
-		.optional()
-		.describe('Number of results to skip for pagination.'),
-	number: z
-		.number()
-		.int()
-		.min(1)
-		.max(100)
-		.optional()
-		.describe('Number of results to return (1-100). Defaults to 10.'),
-});
+		newsSources: z
+			.string()
+			.optional()
+			.describe(
+				'Comma-separated list of up to 10 news sources (e.g., "bbc.co.uk,nytimes.com").',
+			),
+		authors: z
+			.string()
+			.optional()
+			.describe('Comma-separated list of author names.'),
+		categories: z
+			.string()
+			.optional()
+			.describe(
+				'Comma-separated categories (politics, sports, business, technology, entertainment, health, science, etc.).',
+			),
+		entities: z
+			.string()
+			.optional()
+			.describe(
+				'Filter by semantic entities (e.g., "ORG:Tesla,PER:Elon Musk").',
+			),
+		locationFilter: z
+			.string()
+			.optional()
+			.describe(
+				'Filter by geographic radius in the format "latitude,longitude,radius in km" (radius: 1-100).',
+			),
+		sort: z
+			.string()
+			.optional()
+			.describe('Sort criteria, typically "publish-time".'),
+		sortDirection: z
+			.enum(['ASC', 'DESC'])
+			.optional()
+			.describe(
+				'Sort direction: "ASC" or "DESC". Defaults to DESC for publish-time.',
+			),
+		offset: z
+			.number()
+			.int()
+			.min(0)
+			.max(100000)
+			.optional()
+			.describe('Number of results to skip for pagination.'),
+		number: z
+			.number()
+			.int()
+			.min(1)
+			.max(100)
+			.optional()
+			.describe('Number of results to return (1-100). Defaults to 10.'),
+	})
+	.refine(
+		(input) =>
+			input.text !== undefined ||
+			input.sourceCountry !== undefined ||
+			input.language !== undefined ||
+			input.minSentiment !== undefined ||
+			input.maxSentiment !== undefined ||
+			input.earliestPublishDate !== undefined ||
+			input.latestPublishDate !== undefined ||
+			input.newsSources !== undefined ||
+			input.authors !== undefined ||
+			input.categories !== undefined ||
+			input.entities !== undefined ||
+			input.locationFilter !== undefined,
+		{ message: 'At least one search filter is required' },
+	);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Output Schemas
@@ -298,7 +320,7 @@ export const ExtractNewsOutputSchema = z.object({
 	videos: z.array(WorldNewsVideoItemSchema).optional(),
 	publish_date: z.string().optional(),
 	author: z.string().nullable().optional(),
-	authors: z.array(z.string()).optional(),
+	authors: z.array(z.string().nullable()).optional(),
 	language: z.string().optional(),
 	source_country: z.string().optional(),
 	sentiment: z.number().optional(),
@@ -306,6 +328,7 @@ export const ExtractNewsOutputSchema = z.object({
 });
 
 export const ExtractNewsLinksOutputSchema = z.object({
+	status: z.string().optional(),
 	news_links: z.array(z.string()),
 });
 

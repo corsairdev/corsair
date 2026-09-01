@@ -1,6 +1,7 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 import type { z } from 'zod';
+import { ZodError } from 'zod';
 
 export class WorldNewsApiError extends Error {
 	constructor(
@@ -58,24 +59,7 @@ export function validatePublicUrl(rawUrl: string): URL {
 	}
 
 	const hostname = parsed.hostname.toLowerCase();
-
-	// Guard against loopback and private network targets (SSRF protection)
-	const isLocalhost =
-		hostname === 'localhost' ||
-		hostname === '127.0.0.1' ||
-		hostname === '::1' ||
-		hostname === '0.0.0.0' ||
-		hostname.endsWith('.localhost') ||
-		hostname.endsWith('.local') ||
-		hostname.endsWith('.internal');
-
-	const isPrivateIp =
-		/^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
-		/^192\.168\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
-		/^172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
-		/^169\.254\.\d{1,3}\.\d{1,3}$/.test(hostname);
-
-	if (isLocalhost || isPrivateIp) {
+	if (isBlockedHost(hostname)) {
 		throw new WorldNewsApiError(
 			`Access to private or local network hosts (${hostname}) is not permitted.`,
 			400,
@@ -84,6 +68,59 @@ export function validatePublicUrl(rawUrl: string): URL {
 	}
 
 	return parsed;
+}
+
+function isPrivateIpv4(ip: string): boolean {
+	if (/^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(ip)) return true;
+	if (/^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(ip)) return true;
+	if (/^192\.168\.\d{1,3}\.\d{1,3}$/.test(ip)) return true;
+	if (/^172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}$/.test(ip)) return true;
+	if (/^169\.254\.\d{1,3}\.\d{1,3}$/.test(ip)) return true;
+	if (ip === '0.0.0.0') return true;
+	return false;
+}
+
+function isBlockedHost(hostname: string): boolean {
+	const host = hostname.replace(/^\[|\]$/g, '').toLowerCase();
+	if (
+		host === 'localhost' ||
+		host === '::1' ||
+		host === '::' ||
+		host === '0:0:0:0:0:0:0:1' ||
+		host.endsWith('.localhost') ||
+		host.endsWith('.local') ||
+		host.endsWith('.internal')
+	) {
+		return true;
+	}
+	const mapped = /^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/.exec(host);
+	if (mapped?.[1] && isPrivateIpv4(mapped[1])) return true;
+	const hexMapped = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/.exec(host);
+	if (hexMapped?.[1] && hexMapped[2]) {
+		const high = parseInt(hexMapped[1], 16);
+		const low = parseInt(hexMapped[2], 16);
+		const ipv4 = `${(high >> 8) & 255}.${high & 255}.${(low >> 8) & 255}.${low & 255}`;
+		if (isPrivateIpv4(ipv4)) return true;
+	}
+	if (isPrivateIpv4(host)) return true;
+	if (host.includes(':')) {
+		if (
+			host.startsWith('fe80:') ||
+			host.startsWith('fc') ||
+			host.startsWith('fd')
+		) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/** Origin + path with userinfo and query stripped, for cache keys and logs. */
+export function publicUrlKey(rawUrl: string): string {
+	const parsed = validatePublicUrl(rawUrl);
+	parsed.username = '';
+	parsed.password = '';
+	return `${parsed.origin}${parsed.pathname}`;
 }
 
 /**
@@ -96,14 +133,22 @@ function decodeXmlEntities(text: string): string {
 		.replace(/&quot;/g, '"')
 		.replace(/&apos;/g, "'")
 		.replace(/&amp;/g, '&')
-		.replace(/&#(\d+);/g, (_, dec) => {
-			const code = parseInt(dec, 10);
-			return Number.isNaN(code) ? '' : String.fromCharCode(code);
-		})
-		.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => {
-			const code = parseInt(hex, 16);
-			return Number.isNaN(code) ? '' : String.fromCharCode(code);
-		});
+		.replace(/&#(\d+);/g, (_, dec) => decodeXmlCodePoint(parseInt(dec, 10)))
+		.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
+			decodeXmlCodePoint(parseInt(hex, 16)),
+		);
+}
+
+function decodeXmlCodePoint(code: number): string {
+	if (
+		!Number.isFinite(code) ||
+		code < 0 ||
+		code > 0x10ffff ||
+		(code >= 0xd800 && code <= 0xdfff)
+	) {
+		return '';
+	}
+	return String.fromCodePoint(code);
 }
 
 function stripCdata(text: string): string {
@@ -158,9 +203,15 @@ export function parseRssFeedXml(xmlContent: string): ParsedRssFeed {
 		);
 	}
 
-	// Extract channel block
 	const channelMatch = xmlContent.match(/<channel[^>]*>([\s\S]*?)<\/channel>/i);
-	const channelXml = channelMatch ? (channelMatch[1] ?? '') : xmlContent;
+	if (!channelMatch) {
+		throw new WorldNewsApiError(
+			'RSS response is missing a channel element',
+			422,
+			'MALFORMED_RSS',
+		);
+	}
+	const channelXml = channelMatch[1] ?? '';
 
 	const title = extractTagValue(channelXml, 'title');
 	const link = extractTagValue(channelXml, 'link');
@@ -230,7 +281,7 @@ export async function makeWorldNewsApiRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: WorldNewsRequestOptions = {},
-	schema?: z.ZodType<T>,
+	schema: z.ZodType<T>,
 ): Promise<T> {
 	if (!apiKey || !apiKey.trim()) {
 		throw new WorldNewsApiError(
@@ -266,9 +317,16 @@ export async function makeWorldNewsApiRequest<T>(
 
 	const data = await request<unknown>(config, requestOptions);
 
-	if (schema) {
+	try {
 		return schema.parse(data);
+	} catch (error) {
+		if (error instanceof ZodError) {
+			throw new WorldNewsApiError(
+				'World News API returned a payload that does not match the documented schema',
+				422,
+				'INVALID_RESPONSE',
+			);
+		}
+		throw error;
 	}
-
-	return data as T;
 }

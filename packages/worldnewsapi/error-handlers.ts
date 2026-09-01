@@ -2,46 +2,57 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { WorldNewsApiError } from './client';
 
+function statusOf(error: unknown): number | undefined {
+	if (error instanceof ApiError || error instanceof WorldNewsApiError) {
+		return error.status;
+	}
+	return undefined;
+}
+
+function messageOf(error: unknown): string {
+	return error instanceof Error ? error.message.toLowerCase() : '';
+}
+
+function retryAfterOf(error: unknown): number | undefined {
+	return error instanceof ApiError ? error.retryAfter : undefined;
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: any, context?: any) => {
-			if (error instanceof ApiError && error.status === 429) {
-				return true;
-			}
-			if (error instanceof WorldNewsApiError && error.status === 429) {
-				return true;
-			}
-			const message = (error?.message || '').toLowerCase();
+		match: (error: unknown, _context?: unknown) => {
+			if (statusOf(error) === 429) return true;
+			const message = messageOf(error);
 			return (
 				message.includes('rate_limit') ||
 				message.includes('ratelimit') ||
 				message.includes('429') ||
-				message.includes('too many requests') ||
-				message.includes('quota exceeded')
+				message.includes('too many requests')
 			);
 		},
-		handler: async (error: any, context: any) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
+		handler: async (error: unknown, _context?: unknown) => ({
+			maxRetries: 5,
+			headersRetryAfterMs: retryAfterOf(error),
+		}),
+	},
 
-			return {
-				maxRetries: 5,
-				headersRetryAfterMs: retryAfterMs,
-			};
+	QUOTA_ERROR: {
+		match: (error: unknown, _context?: unknown) => {
+			if (statusOf(error) === 402) return true;
+			const message = messageOf(error);
+			return (
+				message.includes('quota exceeded') ||
+				message.includes('payment required')
+			);
 		},
+		handler: async (_error?: unknown, _context?: unknown) => ({
+			maxRetries: 0,
+		}),
 	},
 
 	AUTH_ERROR: {
-		match: (error: any, context?: any) => {
-			if (error instanceof ApiError && error.status === 401) {
-				return true;
-			}
-			if (error instanceof WorldNewsApiError && error.status === 401) {
-				return true;
-			}
-			const message = (error?.message || '').toLowerCase();
+		match: (error: unknown, _context?: unknown) => {
+			if (statusOf(error) === 401) return true;
+			const message = messageOf(error);
 			return (
 				message.includes('unauthorized') ||
 				message.includes('invalid api key') ||
@@ -49,68 +60,41 @@ export const errorHandlers = {
 				message.includes('authentication failed')
 			);
 		},
-		handler: async (error: any, context: any) => {
-			console.warn(
-				`[WORLDNEWSAPI:${context?.operation}] Authentication failed: please verify your WORLD_NEWS_API_KEY`,
-			);
-			return {
-				maxRetries: 0,
-			};
-		},
+		handler: async (_error?: unknown, _context?: unknown) => ({
+			maxRetries: 0,
+		}),
 	},
 
 	PERMISSION_ERROR: {
-		match: (error: any, context?: any) => {
-			if (error instanceof ApiError && error.status === 403) {
-				return true;
-			}
-			if (error instanceof WorldNewsApiError && error.status === 403) {
-				return true;
-			}
-			const message = (error?.message || '').toLowerCase();
+		match: (error: unknown, _context?: unknown) => {
+			if (statusOf(error) === 403) return true;
+			const message = messageOf(error);
 			return (
 				message.includes('forbidden') ||
 				message.includes('access denied') ||
 				message.includes('insufficient_permissions')
 			);
 		},
-		handler: async (error: any, context: any) => {
-			console.warn(
-				`[WORLDNEWSAPI:${context?.operation}] Access forbidden: ${error?.message}`,
-			);
-			return {
-				maxRetries: 0,
-			};
-		},
+		handler: async (_error?: unknown, _context?: unknown) => ({
+			maxRetries: 0,
+		}),
 	},
 
 	NOT_FOUND_ERROR: {
-		match: (error: any, context?: any) => {
-			if (error instanceof ApiError && error.status === 404) {
-				return true;
-			}
-			if (error instanceof WorldNewsApiError && error.status === 404) {
-				return true;
-			}
-			const message = (error?.message || '').toLowerCase();
+		match: (error: unknown, _context?: unknown) => {
+			if (statusOf(error) === 404) return true;
+			const message = messageOf(error);
 			return message.includes('not found') || message.includes('404');
 		},
-		handler: async (error: any, context: any) => {
-			return {
-				maxRetries: 0,
-			};
-		},
+		handler: async (_error?: unknown, _context?: unknown) => ({
+			maxRetries: 0,
+		}),
 	},
 
 	BAD_REQUEST_ERROR: {
-		match: (error: any, context?: any) => {
-			if (error instanceof ApiError && error.status === 400) {
-				return true;
-			}
-			if (error instanceof WorldNewsApiError && error.status === 400) {
-				return true;
-			}
-			const message = (error?.message || '').toLowerCase();
+		match: (error: unknown, _context?: unknown) => {
+			if (statusOf(error) === 400) return true;
+			const message = messageOf(error);
 			return (
 				message.includes('bad request') ||
 				message.includes('invalid_url') ||
@@ -119,22 +103,15 @@ export const errorHandlers = {
 				message.includes('ssrf_protected')
 			);
 		},
-		handler: async (error: any, context: any) => {
-			return {
-				maxRetries: 0,
-			};
-		},
+		handler: async (_error?: unknown, _context?: unknown) => ({
+			maxRetries: 0,
+		}),
 	},
 
 	DEFAULT: {
-		match: (error?: any, context?: any) => true,
-		handler: async (error: any, context: any) => {
-			console.error(
-				`[WORLDNEWSAPI:${context?.operation}] Unhandled error: ${error?.message}`,
-			);
-			return {
-				maxRetries: 0,
-			};
-		},
+		match: (_error?: unknown, _context?: unknown) => true,
+		handler: async (_error?: unknown, _context?: unknown) => ({
+			maxRetries: 0,
+		}),
 	},
 } satisfies CorsairErrorHandler;

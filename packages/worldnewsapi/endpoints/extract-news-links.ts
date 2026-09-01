@@ -1,5 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeWorldNewsApiRequest, validatePublicUrl } from '../client';
+import {
+	makeWorldNewsApiRequest,
+	publicUrlKey,
+	validatePublicUrl,
+} from '../client';
 import type { WorldNewsApiEndpoints } from '../index';
 import { ExtractNewsLinksOutputSchema } from './types';
 
@@ -9,6 +13,7 @@ export const extractNewsLinks: WorldNewsApiEndpoints['newsExtractNewsLinks'] =
 
 		const query: Record<string, string | number | boolean | undefined> = {
 			url: input.url,
+			analyze: input.analyze,
 			prefix: input.prefix,
 			'sub-domain': input.subDomain,
 		};
@@ -26,7 +31,10 @@ export const extractNewsLinks: WorldNewsApiEndpoints['newsExtractNewsLinks'] =
 		await logEventFromContext(
 			ctx,
 			'worldnewsapi.news.extractNewsLinks',
-			{ url: input.url, linksCount: response.news_links?.length ?? 0 },
+			{
+				url: publicUrlKey(input.url),
+				linksCount: response.news_links?.length ?? 0,
+			},
 			'completed',
 		);
 

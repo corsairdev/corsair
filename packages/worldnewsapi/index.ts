@@ -115,37 +115,37 @@ const worldNewsApiEndpointMeta = {
 	'news.topNews': {
 		riskLevel: 'read',
 		description:
-			'Retrieve the top and breaking news headlines for a country, language, and date, clustered from multiple sources.',
+			'Get the top news from a country in a specific language for a given date. The top news are clustered from multiple sources in the specified country.',
 	},
 	'news.extractNews': {
 		riskLevel: 'read',
 		description:
-			'Extract a news article from a URL into structured content including text, images, videos, authors, and sentiment.',
+			'Extract a news article from a website to a well-structured JSON object, including title, text, images, videos, publish date, authors, language, and sentiment.',
 	},
 	'news.extractNewsLinks': {
 		riskLevel: 'read',
 		description:
-			'Extract and discover news article URLs from a website or section page.',
+			'Extract news article links from a website or webpage, with optional filtering by URL prefix and subdomain inclusion.',
 	},
 	'news.getGeoCoordinates': {
 		riskLevel: 'read',
 		description:
-			'Retrieve latitude and longitude coordinates for a location to use in geographic news filtering.',
+			'Retrieve latitude and longitude of a location name to fill the location-filter parameter in news search operations.',
 	},
 	'news.newsWebsiteToRssFeed': {
 		riskLevel: 'read',
 		description:
-			'Convert any news website or section page into a structured RSS 2.0 feed.',
+			'Convert any news website page into an RSS feed with the latest news from that page.',
 	},
 	'news.searchNewsSources': {
 		riskLevel: 'read',
 		description:
-			'Search and check whether specific news sources are monitored by the World News API.',
+			'Search whether a news source is being monitored by the World News API.',
 	},
 	'news.searchNews': {
 		riskLevel: 'read',
 		description:
-			'Search and filter global news articles by keywords, date, country, language, sentiment, categories, and geographic location.',
+			'Search and filter news by text, date, location, category, language, and more.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof worldNewsApiEndpointsNested

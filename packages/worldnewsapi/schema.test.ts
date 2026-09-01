@@ -1,3 +1,4 @@
+import { SearchNewsInputSchema, TopNewsInputSchema } from './endpoints/types';
 import {
 	WorldNewsArticle,
 	WorldNewsExtractedArticle,
@@ -68,5 +69,22 @@ describe('World News API Schema Tests', () => {
 
 		const parsed = WorldNewsSource.parse(validSource);
 		expect(parsed.name).toBe('BBC News');
+	});
+
+	it('rejects impossible top-news calendar dates', () => {
+		expect(
+			TopNewsInputSchema.safeParse({
+				sourceCountry: 'us',
+				language: 'en',
+				date: '2026-99-99',
+			}).success,
+		).toBe(false);
+	});
+
+	it('requires at least one search-news filter', () => {
+		expect(SearchNewsInputSchema.safeParse({}).success).toBe(false);
+		expect(SearchNewsInputSchema.safeParse({ language: 'en' }).success).toBe(
+			true,
+		);
 	});
 });

@@ -176,6 +176,7 @@ describe('World News API Endpoints', () => {
 	describe('WORLD_NEWS_API_EXTRACT_NEWS_LINKS', () => {
 		it('extracts news article links from a webpage', async () => {
 			const mockPayload = {
+				status: 'success',
 				news_links: [
 					'https://www.example.com/news/1',
 					'https://www.example.com/news/2',
@@ -251,6 +252,16 @@ describe('World News API Endpoints', () => {
 			expect(res.title).toBe('Daily Digest');
 			expect(res.items).toHaveLength(1);
 			expect(res.items[0]?.title).toBe('Headline 1');
+		});
+
+		it('rejects HTML error pages instead of returning an empty feed', async () => {
+			mockFetch({ body: '<html><body>quota exceeded</body></html>' });
+
+			await expect(
+				newsWebsiteToRssFeed(mockCtx, {
+					url: 'https://www.example.com',
+				}),
+			).rejects.toThrow('RSS response is missing a channel element');
 		});
 	});
 

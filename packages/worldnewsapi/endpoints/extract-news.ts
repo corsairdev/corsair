@@ -1,5 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeWorldNewsApiRequest, validatePublicUrl } from '../client';
+import {
+	makeWorldNewsApiRequest,
+	publicUrlKey,
+	validatePublicUrl,
+} from '../client';
 import type { WorldNewsApiEndpoints } from '../index';
 import { ExtractNewsOutputSchema } from './types';
 
@@ -7,8 +11,8 @@ export const extractNews: WorldNewsApiEndpoints['newsExtractNews'] = async (
 	ctx,
 	input,
 ) => {
-	// Validate URL against SSRF before making outbound request
 	validatePublicUrl(input.url);
+	const cacheKey = publicUrlKey(input.url);
 
 	const query: Record<string, string | number | boolean | undefined> = {
 		url: input.url,
@@ -26,10 +30,12 @@ export const extractNews: WorldNewsApiEndpoints['newsExtractNews'] = async (
 	);
 
 	try {
-		await ctx.db.extractedArticles.upsertByEntityId(input.url, {
-			url: input.url,
+		await ctx.db.extractedArticles.upsertByEntityId(cacheKey, {
+			url: cacheKey,
 			title: response.title,
 			text: response.text,
+			image: response.image,
+			video: response.video,
 			publish_date: response.publish_date,
 			author: response.author,
 			authors: response.authors,
@@ -38,14 +44,14 @@ export const extractNews: WorldNewsApiEndpoints['newsExtractNews'] = async (
 			sentiment: response.sentiment,
 			extractedAt: new Date(),
 		});
-	} catch (error) {
+	} catch {
 		// Ignore DB cache errors
 	}
 
 	await logEventFromContext(
 		ctx,
 		'worldnewsapi.news.extractNews',
-		{ url: input.url, title: response.title },
+		{ url: cacheKey, title: response.title },
 		'completed',
 	);
 

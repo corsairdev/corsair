@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import {
 	makeWorldNewsApiRequest,
 	parseRssFeedXml,
@@ -65,9 +66,14 @@ describe('World News API Client', () => {
 		it('sends API key in x-api-key header and does not expose it in URL query', async () => {
 			mockFetch({ body: { available: 1, news: [] } });
 
-			await makeWorldNewsApiRequest('/top-news', 'secret-api-key', {
-				query: { 'source-country': 'us', language: 'en' },
-			});
+			await makeWorldNewsApiRequest(
+				'/top-news',
+				'secret-api-key',
+				{
+					query: { 'source-country': 'us', language: 'en' },
+				},
+				z.object({ available: z.number().optional() }).passthrough(),
+			);
 
 			expect(captured?.headers['x-api-key']).toBe('secret-api-key');
 			expect(captured?.url).not.toContain('api-key=');
@@ -75,22 +81,27 @@ describe('World News API Client', () => {
 		});
 
 		it('throws an error if API key is missing or empty', async () => {
-			await expect(makeWorldNewsApiRequest('/top-news', '')).rejects.toThrow(
-				'World News API key is required',
-			);
-			await expect(makeWorldNewsApiRequest('/top-news', '   ')).rejects.toThrow(
-				'World News API key is required',
-			);
+			await expect(
+				makeWorldNewsApiRequest('/top-news', '', {}, z.unknown()),
+			).rejects.toThrow('World News API key is required');
+			await expect(
+				makeWorldNewsApiRequest('/top-news', '   ', {}, z.unknown()),
+			).rejects.toThrow('World News API key is required');
 		});
 
 		it('sets appropriate Accept header for RSS requests vs JSON requests', async () => {
 			mockFetch({ body: '<rss><channel></channel></rss>' });
 
-			await makeWorldNewsApiRequest('feed.rss', 'secret-key');
+			await makeWorldNewsApiRequest('feed.rss', 'secret-key', {}, z.string());
 			expect(captured?.headers.accept).toContain('application/xml');
 
 			mockFetch({ body: { available: 1 } });
-			await makeWorldNewsApiRequest('search-news', 'secret-key');
+			await makeWorldNewsApiRequest(
+				'search-news',
+				'secret-key',
+				{},
+				z.object({ available: z.number() }),
+			);
 			expect(captured?.headers.accept).toContain('application/json');
 		});
 	});
@@ -145,6 +156,21 @@ describe('World News API Client', () => {
 				validatePublicUrl('http://169.254.169.254/metadata'),
 			).toThrow('Access to private or local network hosts');
 			expect(() => validatePublicUrl('http://service.internal/')).toThrow(
+				'Access to private or local network hosts',
+			);
+			expect(() => validatePublicUrl('http://[::1]/')).toThrow(
+				'Access to private or local network hosts',
+			);
+			expect(() => validatePublicUrl('http://[fd00::1]/')).toThrow(
+				'Access to private or local network hosts',
+			);
+			expect(() => validatePublicUrl('http://[fe80::1]/')).toThrow(
+				'Access to private or local network hosts',
+			);
+			expect(() => validatePublicUrl('http://[::ffff:10.0.0.1]/')).toThrow(
+				'Access to private or local network hosts',
+			);
+			expect(() => validatePublicUrl('http://127.0.0.2/secret')).toThrow(
 				'Access to private or local network hosts',
 			);
 		});
@@ -213,6 +239,9 @@ describe('World News API Client', () => {
 
 		it('throws an error on empty or invalid XML input', () => {
 			expect(() => parseRssFeedXml('')).toThrow(WorldNewsApiError);
+			expect(() =>
+				parseRssFeedXml('<html><body>not rss</body></html>'),
+			).toThrow(WorldNewsApiError);
 		});
 	});
 
@@ -242,14 +271,13 @@ describe('World News API Client', () => {
 			expect(result.city).toBe('Tokyo');
 		});
 
-		it('throws ZodError at runtime when provider response does not match schema', async () => {
+		it('throws WorldNewsApiError when provider response does not match schema', async () => {
 			const malformedPayload = {
 				latitude: 'not-a-number',
 				longitude: 139.6503,
 			};
 			mockFetch({ body: malformedPayload });
 
-			const { z } = await import('zod');
 			const GeoSchema = z.object({
 				latitude: z.number(),
 				longitude: z.number(),
@@ -262,7 +290,7 @@ describe('World News API Client', () => {
 					{},
 					GeoSchema,
 				),
-			).rejects.toThrow();
+			).rejects.toThrow(WorldNewsApiError);
 		});
 	});
 });

@@ -34,13 +34,36 @@ describe('World News API Error Handlers', () => {
 
 		it('matches WorldNewsApiError with 429 status', () => {
 			const wnError = new WorldNewsApiError(
-				'Quota exceeded',
+				'Too many requests',
 				429,
-				'QUOTA_EXCEEDED',
+				'RATE_LIMIT',
 			);
 			expect(errorHandlers.RATE_LIMIT_ERROR.match(wnError, mockContext)).toBe(
 				true,
 			);
+		});
+	});
+
+	describe('QUOTA_ERROR', () => {
+		it('matches HTTP 402 and does not retry', async () => {
+			const apiError = new ApiError(
+				{ method: 'GET', url: '/search-news' },
+				{
+					status: 402,
+					statusText: 'Payment Required',
+					ok: false,
+					url: '/search-news',
+					body: {},
+				},
+				'Quota exceeded',
+			);
+
+			expect(errorHandlers.QUOTA_ERROR.match(apiError, mockContext)).toBe(true);
+			const result = await errorHandlers.QUOTA_ERROR.handler(
+				apiError,
+				mockContext,
+			);
+			expect(result.maxRetries).toBe(0);
 		});
 	});
 
