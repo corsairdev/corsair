@@ -436,6 +436,7 @@ async function createHubModeConnectLink(
 	return {
 		connectUrl: session.connectUrl,
 		expiresAt: session.expiresAt,
+		oauthCallbackUrl: session.oauthCallbackUrl,
 	};
 }
 

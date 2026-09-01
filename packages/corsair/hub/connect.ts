@@ -2,7 +2,11 @@ import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import type { CorsairDatabase } from '../db/kysely/database';
 import { hubApiPost } from './client/http';
-import { getHubConfig, inferHubEnvironmentSlug } from './config';
+import {
+	getHubConfig,
+	inferHubEnvironmentSlug,
+	resolveHubOAuthCallbackUrl,
+} from './config';
 import type { ConnectPluginManifestEntry } from './contracts/connect-api';
 import { parseConnectSessionResponse } from './contracts/connect-api';
 import { resolveHubDeliveryUrl } from './resolve-delivery-url';
@@ -53,7 +57,7 @@ export async function postHubConnectSession(
 		});
 	}
 
-	return hubApiPost({
+	const result = await hubApiPost({
 		hub,
 		path: '/connect/sessions',
 		notFoundMessage:
@@ -61,6 +65,15 @@ export async function postHubConnectSession(
 		body,
 		parseResponse: parseConnectSessionResponse,
 	});
+
+	// Managed OAuth (e.g. GitHub) is hosted by the Hub, which uses this exact
+	// callback URL when generating the provider authorize link. If the
+	// provider's OAuth app does not have it registered, the user gets an opaque
+	// provider error (GitHub's "Error code 404") after login. Surface it so the
+	// app can verify registration instead of guessing.
+	result.oauthCallbackUrl = resolveHubOAuthCallbackUrl(hub);
+
+	return result;
 }
 
 /**

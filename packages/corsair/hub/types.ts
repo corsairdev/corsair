@@ -61,6 +61,15 @@ export type HubConnectSessionResult = {
 	projectId: string;
 	environmentId: string;
 	expiresAt?: string;
+	/**
+	 * OAuth redirect URL the Hub will use when finishing the provider flow.
+	 * For managed OAuth (e.g. GitHub) the provider's OAuth app must have this
+	 * exact URL registered; otherwise the provider rejects the callback with a
+	 * generic error (GitHub's "Error code 404") right after the user logs in.
+	 * Exposed so apps can verify registration instead of chasing an opaque
+	 * provider error.
+	 */
+	oauthCallbackUrl?: string;
 };
 
 export type HubListProjectConnectionsInput = {

@@ -61,6 +61,14 @@ export type CreateConnectLinkInput = {
 export type ConnectLink = {
 	connectUrl: string;
 	expiresAt?: string;
+	/**
+	 * Hub mode only. OAuth callback URL the Hub uses to finish the provider
+	 * flow. With BYO, the app must register this exact URL on its own OAuth
+	 * app; with managed auth, the Hub's registered app is used. Exposed so
+	 * consumers can verify registration instead of chasing a generic provider
+	 * error.
+	 */
+	oauthCallbackUrl?: string;
 };
 
 export type ResolvedConnectLink = {
