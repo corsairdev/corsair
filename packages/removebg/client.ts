@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export class RemovebgAPIError extends Error {
@@ -14,6 +18,19 @@ export class RemovebgAPIError extends Error {
 }
 
 const REMOVEBG_API_BASE = 'https://api.remove.bg/v1.0';
+
+const REMOVEBG_NO_TRANSPORT_RETRIES: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'retry-after',
+		resetTime: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
+};
 
 type RemovebgError = { title?: unknown; detail?: unknown; code?: unknown };
 
@@ -69,7 +86,9 @@ export async function makeRemovebgRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: REMOVEBG_NO_TRANSPORT_RETRIES,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new RemovebgAPIError(

@@ -193,6 +193,7 @@ export type {
 	RemovebgEndpointOutputs,
 	RemovebgFormat,
 	RemovebgImprovementErrorType,
+	RemovebgShadowType,
 	RemovebgSize,
 	RemovebgType,
 	RemovebgTypeLevel,

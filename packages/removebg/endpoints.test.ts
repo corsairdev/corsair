@@ -45,6 +45,9 @@ describe('Account.get', () => {
 				HEADERS: expect.objectContaining({ 'X-Api-Key': TEST_API_KEY }),
 			}),
 			expect.objectContaining({ method: 'GET', url: '/account' }),
+			expect.objectContaining({
+				rateLimitConfig: expect.objectContaining({ maxRetries: 0 }),
+			}),
 		);
 	});
 
@@ -94,6 +97,7 @@ describe('RemoveBackground.remove', () => {
 					type: 'product',
 				}),
 			}),
+			expect.anything(),
 		);
 	});
 
@@ -142,6 +146,7 @@ describe('RemoveBackground.remove', () => {
 					type: 'animal',
 				}),
 			}),
+			expect.anything(),
 		);
 	});
 
@@ -169,6 +174,32 @@ describe('RemoveBackground.remove', () => {
 			}),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects an unknown shadowType', async () => {
+		await expect(
+			RemoveBackground.remove(ctx, {
+				imageUrl: 'https://example.com/photo.jpg',
+				shadowType: 'glow',
+			} as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('disables transport-level 429 retries so the plugin handler owns backoff', async () => {
+		mockRequest.mockResolvedValueOnce({ data: { result_b64: 'aGVsbG8=' } });
+
+		await RemoveBackground.remove(ctx, {
+			imageUrl: 'https://example.com/photo.jpg',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.anything(),
+			expect.objectContaining({
+				rateLimitConfig: expect.objectContaining({ maxRetries: 0 }),
+			}),
+		);
 	});
 
 	it('returns the base64 cutout from the API response', async () => {
@@ -230,6 +261,7 @@ describe('Improvement.submit', () => {
 					error_type: 'foreground-edges',
 				}),
 			}),
+			expect.anything(),
 		);
 		expect(result).toEqual({ success: true });
 	});
@@ -254,6 +286,19 @@ describe('Improvement.submit', () => {
 
 	it('throws instead of reporting success on an unexpected response shape', async () => {
 		mockRequest.mockResolvedValueOnce('unexpected-plain-text-body');
+
+		await expect(
+			Improvement.submit(ctx, {
+				imageUrl: 'https://example.com/photo.jpg',
+				errorType: 'other',
+			}),
+		).rejects.toThrow();
+	});
+
+	it('throws instead of reporting success when the body contains provider errors', async () => {
+		mockRequest.mockResolvedValueOnce({
+			errors: [{ title: 'Could not process image' }],
+		});
 
 		await expect(
 			Improvement.submit(ctx, {

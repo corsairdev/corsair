@@ -23,8 +23,6 @@ export const submit: RemovebgEndpoints['improvement'] = async (
 		},
 	});
 
-	// Throws if remove.bg's response doesn't match the documented shape,
-	// instead of silently reporting success on a drifted/error payload.
 	SubmitImprovementResponseSchema.parse(rawResponse);
 	const response = SubmitImprovementOutputSchema.parse({ success: true });
 

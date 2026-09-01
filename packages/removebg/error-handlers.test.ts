@@ -22,6 +22,21 @@ describe('RATE_LIMIT_ERROR', () => {
 			headersRetryAfterMs: 5000,
 		});
 	});
+
+	it('does not treat a 500 as a rate limit just because the message mentions 429', () => {
+		const error = new RemovebgAPIError('upstream 429', undefined, 500);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+	});
+
+	it('still matches a rate-limit message when no HTTP status is present', () => {
+		const error = new RemovebgAPIError('rate_limited');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+	});
+
+	it('does not treat a plain Error with a status field as a rate limit', () => {
+		const error = Object.assign(new Error('nope'), { status: 429 });
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+	});
 });
 
 describe('AUTH_ERROR', () => {
@@ -29,6 +44,16 @@ describe('AUTH_ERROR', () => {
 		const error = new RemovebgAPIError('Forbidden', undefined, 403);
 
 		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
+	});
+
+	it('matches a 401 RemovebgAPIError', () => {
+		const error = new RemovebgAPIError('Unauthorized', undefined, 401);
+		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
+	});
+
+	it('does not treat a 500 as auth failure just because the message mentions unauthorized', () => {
+		const error = new RemovebgAPIError('unauthorized backend', undefined, 500);
+		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(false);
 	});
 });
 
