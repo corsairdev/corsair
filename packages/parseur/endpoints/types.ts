@@ -240,6 +240,18 @@ export type DeleteMailboxInput = z.input<typeof DeleteMailboxInputSchema>;
 export const DeleteMailboxOutputSchema = DeleteSuccessSchema;
 export type DeleteMailboxOutput = z.infer<typeof DeleteMailboxOutputSchema>;
 
+/** Official async receipt for copy/process operations. */
+export const NotificationSetSchema = z
+	.object({
+		notification_set: z
+			.object({
+				info: z.array(z.string()),
+			})
+			.loose(),
+	})
+	.loose();
+export type NotificationSet = z.infer<typeof NotificationSetSchema>;
+
 export const GetMailboxSchemaInputSchema = z.object({ id: Id });
 export type GetMailboxSchemaInput = z.input<typeof GetMailboxSchemaInputSchema>;
 export const GetMailboxSchemaOutputSchema = z
@@ -254,15 +266,7 @@ export type GetMailboxSchemaOutput = z.infer<
 
 export const CopyMailboxInputSchema = z.object({ id: Id });
 export type CopyMailboxInput = z.input<typeof CopyMailboxInputSchema>;
-export const CopyMailboxOutputSchema = z
-	.object({
-		notification_set: z
-			.object({
-				info: z.array(z.string()),
-			})
-			.loose(),
-	})
-	.loose();
+export const CopyMailboxOutputSchema = NotificationSetSchema;
 export type CopyMailboxOutput = z.infer<typeof CopyMailboxOutputSchema>;
 
 export const ListDocumentsInputSchema = z.object({
@@ -373,7 +377,7 @@ export type CreateEmailDocumentOutput = z.infer<
 
 export const ProcessDocumentInputSchema = z.object({ id: Id });
 export type ProcessDocumentInput = z.input<typeof ProcessDocumentInputSchema>;
-export const ProcessDocumentOutputSchema = DocumentSchema;
+export const ProcessDocumentOutputSchema = NotificationSetSchema;
 export type ProcessDocumentOutput = z.infer<typeof ProcessDocumentOutputSchema>;
 
 export const SkipDocumentInputSchema = z.object({ id: Id });
@@ -386,7 +390,7 @@ export const CopyDocumentInputSchema = z.object({
 	target_mailbox_id: Id,
 });
 export type CopyDocumentInput = z.input<typeof CopyDocumentInputSchema>;
-export const CopyDocumentOutputSchema = DocumentSchema;
+export const CopyDocumentOutputSchema = NotificationSetSchema;
 export type CopyDocumentOutput = z.infer<typeof CopyDocumentOutputSchema>;
 
 export const ListTemplatesInputSchema = z.object({
@@ -417,7 +421,7 @@ export const CopyTemplateInputSchema = z.object({
 	target_mailbox_id: Id,
 });
 export type CopyTemplateInput = z.input<typeof CopyTemplateInputSchema>;
-export const CopyTemplateOutputSchema = TemplateSchema;
+export const CopyTemplateOutputSchema = NotificationSetSchema;
 export type CopyTemplateOutput = z.infer<typeof CopyTemplateOutputSchema>;
 
 export const ListExportConfigsInputSchema = z.object({

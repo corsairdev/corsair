@@ -25,6 +25,27 @@ describe('Parseur live API', () => {
 });
 
 describeIfKey('Parseur live API (authenticated)', () => {
+	let mailboxId: string | number | undefined;
+
+	beforeAll(async () => {
+		const created = ParserSchema.parse(
+			await makeParseurRequest<unknown>('/parser', {
+				apiKey: LIVE_KEY,
+				method: 'POST',
+				body: { name: 'corsair-parseur-live-read' },
+			}),
+		);
+		mailboxId = created.id;
+	});
+
+	afterAll(async () => {
+		if (mailboxId === undefined) return;
+		await makeParseurRequest<unknown>(`/parser/${mailboxId}`, {
+			apiKey: LIVE_KEY,
+			method: 'DELETE',
+		}).catch(() => undefined);
+	});
+
 	it('GET /bootstrap matches official keys', async () => {
 		const raw = await makeParseurRequest<unknown>('/bootstrap', {
 			apiKey: LIVE_KEY,
@@ -36,56 +57,49 @@ describeIfKey('Parseur live API (authenticated)', () => {
 		expect(boot.master_parser_set).toBeDefined();
 	});
 
-	it('GET /parser lists mailboxes that parse as Parser', async () => {
+	it('GET /parser lists the disposable mailbox', async () => {
 		const raw = await makeParseurRequest<unknown>('/parser', {
 			apiKey: LIVE_KEY,
 			method: 'GET',
-			query: { page_size: 5 },
+			query: { page_size: 25, search: 'corsair-parseur-live-read' },
 		});
 		const listed = ListMailboxesOutputSchema.parse(raw);
+		expect(mailboxId).toBeDefined();
 		expect(listed.results.length).toBeGreaterThan(0);
-		const parser = ParseurParser.parse(listed.results[0]);
-		expect(parser.id).toBeGreaterThan(0);
+		const parser = ParseurParser.parse(
+			listed.results.find((row) => row.id === mailboxId) ?? listed.results[0],
+		);
+		expect(parser.id).toBe(mailboxId);
 	});
 
-	it('GET mailbox, schema, documents, templates, exports, webhooks', async () => {
-		const listed = ListMailboxesOutputSchema.parse(
-			await makeParseurRequest<unknown>('/parser', {
-				apiKey: LIVE_KEY,
-				method: 'GET',
-				query: { page_size: 1 },
-			}),
-		);
-		const id = listed.results[0]?.id;
-		expect(id).toBeDefined();
-
+	it('GET mailbox, schema, documents, templates, exports', async () => {
 		const mailbox = ParserSchema.parse(
-			await makeParseurRequest<unknown>(`/parser/${id}`, {
+			await makeParseurRequest<unknown>(`/parser/${mailboxId}`, {
 				apiKey: LIVE_KEY,
 				method: 'GET',
 			}),
 		);
-		expect(mailbox.id).toBe(id);
+		expect(mailbox.id).toBe(mailboxId);
 
 		const schema = await makeParseurRequest<{ type: string }>(
-			`/parser/${id}/schema`,
+			`/parser/${mailboxId}/schema`,
 			{ apiKey: LIVE_KEY, method: 'GET' },
 		);
 		expect(schema.type).toBe('object');
 
 		ListDocumentsOutputSchema.parse(
-			await makeParseurRequest<unknown>(`/parser/${id}/document_set`, {
+			await makeParseurRequest<unknown>(`/parser/${mailboxId}/document_set`, {
 				apiKey: LIVE_KEY,
 				method: 'GET',
 				query: { page_size: 2 },
 			}),
 		);
 
-		await makeParseurRequest<unknown>(`/parser/${id}/template_set`, {
+		await makeParseurRequest<unknown>(`/parser/${mailboxId}/template_set`, {
 			apiKey: LIVE_KEY,
 			method: 'GET',
 		});
-		await makeParseurRequest<unknown>(`/parser/${id}/export_config`, {
+		await makeParseurRequest<unknown>(`/parser/${mailboxId}/export_config`, {
 			apiKey: LIVE_KEY,
 			method: 'GET',
 		});
@@ -99,8 +113,9 @@ describeIfKey('Parseur live API (authenticated)', () => {
 				body: { name: 'corsair-parseur-live-test' },
 			}),
 		);
-		const mailboxId = created.id;
+		const writeMailboxId = created.id;
 		const recipient = `${created.email_prefix}@in.parseur.com`;
+		let webhookId: number | undefined;
 
 		try {
 			const uploaded = CreateEmailDocumentOutputSchema.parse(
@@ -144,7 +159,7 @@ describeIfKey('Parseur live API (authenticated)', () => {
 
 			const exportCfg = ExportConfigSchema.parse(
 				await makeParseurRequest<unknown>(
-					`/parser/${mailboxId}/export_config`,
+					`/parser/${writeMailboxId}/export_config`,
 					{
 						apiKey: LIVE_KEY,
 						method: 'POST',
@@ -159,7 +174,7 @@ describeIfKey('Parseur live API (authenticated)', () => {
 			expect(exportCfg.items?.length).toBeGreaterThan(0);
 
 			await makeParseurRequest<unknown>(
-				`/parser/${mailboxId}/export_config/${exportCfg.id}`,
+				`/parser/${writeMailboxId}/export_config/${exportCfg.id}`,
 				{ apiKey: LIVE_KEY, method: 'DELETE' },
 			);
 
@@ -176,22 +191,24 @@ describeIfKey('Parseur live API (authenticated)', () => {
 					},
 				},
 			);
+			webhookId = webhook.id;
 			expect(webhook.target).toContain('https://');
-
-			await makeParseurRequest<unknown>(`/webhook/${webhook.id}`, {
-				apiKey: LIVE_KEY,
-				method: 'DELETE',
-			});
 
 			await makeParseurRequest<unknown>(`/document/${documentId}`, {
 				apiKey: LIVE_KEY,
 				method: 'DELETE',
 			});
 		} finally {
-			await makeParseurRequest<unknown>(`/parser/${mailboxId}`, {
+			if (webhookId !== undefined) {
+				await makeParseurRequest<unknown>(`/webhook/${webhookId}`, {
+					apiKey: LIVE_KEY,
+					method: 'DELETE',
+				}).catch(() => undefined);
+			}
+			await makeParseurRequest<unknown>(`/parser/${writeMailboxId}`, {
 				apiKey: LIVE_KEY,
 				method: 'DELETE',
-			});
+			}).catch(() => undefined);
 		}
 	});
 });

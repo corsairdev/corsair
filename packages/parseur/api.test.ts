@@ -284,10 +284,12 @@ describe('documents', () => {
 	});
 
 	it('processDocument POST /document/{id}/process', async () => {
-		mockRequest.mockResolvedValueOnce({ id: 501, status: 'PROGRESS' });
+		mockRequest.mockResolvedValueOnce({
+			notification_set: { info: ['Document is being processed.'] },
+		});
 		const result = await Document.processDocument(testContext(), { id: 501 });
 		expect(lastCall()[1].url).toBe('/document/501/process');
-		expect(result.status).toBe('PROGRESS');
+		expect(result.notification_set.info[0]).toContain('processed');
 	});
 
 	it('skipDocument POST /document/{id}/skip', async () => {
@@ -298,12 +300,15 @@ describe('documents', () => {
 	});
 
 	it('copyDocument POST /document/{id}/copy/{target}', async () => {
-		mockRequest.mockResolvedValueOnce({ id: 504, parser: 202 });
-		await Document.copyDocument(testContext(), {
+		mockRequest.mockResolvedValueOnce({
+			notification_set: { info: ['Document is being copied.'] },
+		});
+		const result = await Document.copyDocument(testContext(), {
 			id: 501,
 			target_mailbox_id: 202,
 		});
 		expect(lastCall()[1].url).toBe('/document/501/copy/202');
+		expect(result.notification_set.info.length).toBeGreaterThan(0);
 	});
 });
 
@@ -334,12 +339,15 @@ describe('templates and exports', () => {
 	});
 
 	it('copyTemplate POST /template/{id}/copy/{target}', async () => {
-		mockRequest.mockResolvedValueOnce({ id: 802, parser: 202 });
-		await Template.copyTemplate(testContext(), {
+		mockRequest.mockResolvedValueOnce({
+			notification_set: { info: ['Template is being copied.'] },
+		});
+		const result = await Template.copyTemplate(testContext(), {
 			id: 801,
 			target_mailbox_id: 202,
 		});
 		expect(lastCall()[1].url).toBe('/template/801/copy/202');
+		expect(result.notification_set.info.length).toBeGreaterThan(0);
 	});
 
 	it('createExportConfig POST type/items', async () => {
