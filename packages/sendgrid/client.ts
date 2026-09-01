@@ -6,6 +6,7 @@ export class SendGridAPIError extends Error {
 		message: string,
 		public readonly code?: string,
 		public readonly status?: number,
+		public readonly body?: unknown,
 	) {
 		super(message);
 		this.name = 'SendGridAPIError';
@@ -19,11 +20,12 @@ export async function makeSendGridRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		body?: unknown;
 		query?: Record<string, string | number | boolean | undefined>;
+		responseHeader?: string;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, responseHeader } = options;
 	const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
 
 	const config: OpenAPIConfig = {
@@ -34,7 +36,6 @@ export async function makeSendGridRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 
@@ -47,13 +48,33 @@ export async function makeSendGridRequest<T>(
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query: method === 'GET' ? query : undefined,
+		responseHeader,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw error;
+			const bodyObj =
+				typeof error.body === 'object' && error.body !== null
+					? (error.body as Record<string, unknown>)
+					: undefined;
+			const firstError =
+				Array.isArray(bodyObj?.errors) &&
+				typeof bodyObj.errors[0] === 'object' &&
+				bodyObj.errors[0] !== null
+					? (bodyObj.errors[0] as Record<string, unknown>)
+					: undefined;
+			const msg =
+				typeof firstError?.message === 'string'
+					? firstError.message
+					: error.message;
+			throw new SendGridAPIError(
+				msg,
+				typeof firstError?.field === 'string' ? firstError.field : undefined,
+				error.status,
+				error.body,
+			);
 		}
 		if (error instanceof Error) {
 			throw new SendGridAPIError(error.message);

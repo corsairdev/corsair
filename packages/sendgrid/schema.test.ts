@@ -1,4 +1,11 @@
 import { SendGridSchema } from './schema';
+import {
+	SendGridBounce,
+	SendGridContact,
+	SendGridEmailEvent,
+	SendGridList,
+	SendGridVerifiedSender,
+} from './schema/database';
 
 describe('SendGrid schema', () => {
 	it('declares a semver version', () => {
@@ -6,15 +13,68 @@ describe('SendGrid schema', () => {
 		expect(SendGridSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof SendGridSchema.entities).toBe('object');
-		expect(SendGridSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(SendGridSchema.entities))).toBe(true);
-		for (const entity of Object.values(SendGridSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares official entity maps', () => {
+		expect(Object.keys(SendGridSchema.entities).sort()).toEqual(
+			['bounces', 'contacts', 'events', 'lists', 'senders'].sort(),
+		);
+	});
+
+	it('parses official VerifiedSenderResponse example', () => {
+		const sender = SendGridVerifiedSender.parse({
+			id: 1234,
+			nickname: 'Example Orders',
+			from_email: 'orders@example.com',
+			from_name: 'Example Orders',
+			reply_to: 'orders@example.com',
+			reply_to_name: 'Example Orders',
+			address: '1234 Fake St.',
+			address2: 'PO Box 1234',
+			state: 'CA',
+			city: 'San Francisco',
+			country: 'USA',
+			zip: '94105',
+			verified: true,
+			locked: false,
+		});
+		expect(sender.from_email).toBe('orders@example.com');
+	});
+
+	it('parses official bounce suppression record', () => {
+		const bounce = SendGridBounce.parse({
+			created: 1251606766,
+			email: 'test@example.com',
+			reason: '500 unknown recipient',
+			status: '5.0.0',
+		});
+		expect(bounce.email).toBe('test@example.com');
+	});
+
+	it('parses official marketing list and contact request', () => {
+		const list = SendGridList.parse({
+			id: 'e1',
+			name: 'Newsletter',
+			contact_count: 12,
+		});
+		expect(list.contact_count).toBe(12);
+
+		const contact = SendGridContact.parse({
+			email: 'alex@example.com',
+			first_name: 'Alex',
+			last_name: 'Bloggs',
+			city: 'Port Douglas',
+			country: 'AU',
+		});
+		expect(contact.email).toBe('alex@example.com');
+	});
+
+	it('parses official event webhook object', () => {
+		const event = SendGridEmailEvent.parse({
+			email: 'example@test.com',
+			timestamp: 1513299569,
+			event: 'delivered',
+			sg_event_id: 'sg_event_id',
+			sg_message_id: 'sg_message_id',
+		});
+		expect(event.event).toBe('delivered');
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

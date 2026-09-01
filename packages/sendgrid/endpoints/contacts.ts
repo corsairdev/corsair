@@ -11,7 +11,7 @@ export const addOrUpdate: SendGridEndpoints['contactsAddOrUpdate'] = async (
 		SendGridEndpointOutputs['contactsAddOrUpdate']
 	>('marketing/contacts', ctx.key, {
 		method: 'PUT',
-		body: input as unknown as Record<string, unknown>,
+		body: input,
 	});
 
 	await logEventFromContext(
@@ -19,7 +19,7 @@ export const addOrUpdate: SendGridEndpoints['contactsAddOrUpdate'] = async (
 		'sendgrid.contacts.addOrUpdate',
 		{
 			contact_count: input.contacts.length,
-			list_ids: input.list_ids,
+			list_count: input.list_ids?.length ?? 0,
 		},
 		'completed',
 	);

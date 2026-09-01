@@ -5,8 +5,8 @@ import type { SendGridEndpointOutputs } from './types';
 
 export const getAll: SendGridEndpoints['listsGetAll'] = async (ctx, input) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.pageSize) query.page_size = input.pageSize;
-	if (input.pageToken) query.page_token = input.pageToken;
+	if (input.page_size) query.page_size = input.page_size;
+	if (input.page_token) query.page_token = input.page_token;
 
 	const response = await makeSendGridRequest<
 		SendGridEndpointOutputs['listsGetAll']
@@ -18,7 +18,7 @@ export const getAll: SendGridEndpoints['listsGetAll'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'sendgrid.lists.getAll',
-		{ ...input },
+		{ result_count: response.result.length },
 		'completed',
 	);
 	return response;
@@ -29,13 +29,17 @@ export const create: SendGridEndpoints['listsCreate'] = async (ctx, input) => {
 		SendGridEndpointOutputs['listsCreate']
 	>('marketing/lists', ctx.key, {
 		method: 'POST',
-		body: input as unknown as Record<string, unknown>,
+		body: input,
 	});
+
+	if (ctx.db.lists && response.id) {
+		await ctx.db.lists.upsertByEntityId(response.id, response);
+	}
 
 	await logEventFromContext(
 		ctx,
 		'sendgrid.lists.create',
-		{ ...input },
+		{ list_id: response.id },
 		'completed',
 	);
 	return response;

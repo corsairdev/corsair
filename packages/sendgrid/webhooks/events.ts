@@ -14,7 +14,11 @@ export const emailEvent: SendGridWebhooks['emailEvent'] = {
 			};
 		}
 
-		const events = Array.isArray(request.payload) ? request.payload : [];
+		const events = Array.isArray(request.payload)
+			? request.payload
+			: request.payload
+				? [request.payload]
+				: [];
 		return {
 			success: true,
 			data: {

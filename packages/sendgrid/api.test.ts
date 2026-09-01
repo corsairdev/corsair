@@ -1,12 +1,17 @@
-import { ApiError } from 'corsair/http';
-import { makeSendGridRequest } from './client';
+import { makeSendGridRequest, SendGridAPIError } from './client';
 import { Contacts, Lists, Mail, Senders, Suppressions } from './endpoints';
+import { SendGridEndpointOutputSchemas } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+
+const TEST_API_KEY = process.env.SENDGRID_API_KEY;
+const describeLive = TEST_API_KEY ? describe : describe.skip;
 
 describe('SendGrid Endpoints Execution & Error Policies', () => {
 	const mockCtx: any = {
 		key: 'SG.test_api_key_123',
 		authType: 'api_key',
 		$getAccountId: async () => 'acc-123',
+		db: {},
 		database: {},
 	};
 
@@ -18,7 +23,11 @@ describe('SendGrid Endpoints Execution & Error Policies', () => {
 		jest.resetAllMocks();
 	});
 
-	function mockResponse(status: number, data: any) {
+	function mockResponse(
+		status: number,
+		data: unknown,
+		headers: Record<string, string> = {},
+	) {
 		const bodyText = typeof data === 'string' ? data : JSON.stringify(data);
 		return {
 			ok: status >= 200 && status < 300,
@@ -26,7 +35,11 @@ describe('SendGrid Endpoints Execution & Error Policies', () => {
 			statusText: status === 401 ? 'Unauthorized' : 'OK',
 			headers: {
 				get: (name: string) => {
-					if (name.toLowerCase() === 'content-type') return 'application/json';
+					const key = name.toLowerCase();
+					if (key === 'content-type') return 'application/json';
+					for (const [header, value] of Object.entries(headers)) {
+						if (header.toLowerCase() === key) return value;
+					}
 					return null;
 				},
 			},
@@ -35,8 +48,10 @@ describe('SendGrid Endpoints Execution & Error Policies', () => {
 		};
 	}
 
-	it('executes Mail.send endpoint with correct request formatting', async () => {
-		(global.fetch as jest.Mock).mockResolvedValueOnce(mockResponse(202, {}));
+	it('executes Mail.send and returns X-Message-Id', async () => {
+		(global.fetch as jest.Mock).mockResolvedValueOnce(
+			mockResponse(202, '', { 'X-Message-Id': 'msg-1.filter' }),
+		);
 
 		const res = await Mail.send(mockCtx, {
 			personalizations: [{ to: [{ email: 'recipient@example.com' }] }],
@@ -45,7 +60,7 @@ describe('SendGrid Endpoints Execution & Error Policies', () => {
 			content: [{ type: 'text/plain', value: 'Hello' }],
 		});
 
-		expect(res.success).toBe(true);
+		expect(res.x_message_id).toBe('msg-1.filter');
 		expect(global.fetch).toHaveBeenCalledWith(
 			'https://api.sendgrid.com/v3/mail/send',
 			expect.objectContaining({
@@ -74,8 +89,8 @@ describe('SendGrid Endpoints Execution & Error Policies', () => {
 		);
 
 		const res = await Lists.getAll(mockCtx, {
-			pageSize: 20,
-			pageToken: 'token123',
+			page_size: 20,
+			page_token: 'token123',
 		});
 
 		expect(res.result).toHaveLength(1);
@@ -107,7 +122,10 @@ describe('SendGrid Endpoints Execution & Error Policies', () => {
 			]),
 		);
 
-		const res = await Suppressions.getBounces(mockCtx, {});
+		const res = await Suppressions.getBounces(mockCtx, {
+			limit: 10,
+			offset: 0,
+		});
 
 		expect(res.bounces).toHaveLength(1);
 		expect(res.bounces[0]!.email).toBe('b@example.com');
@@ -127,18 +145,59 @@ describe('SendGrid Endpoints Execution & Error Policies', () => {
 			}),
 		);
 
-		const res = await Senders.getAll(mockCtx, {});
+		const res = await Senders.getAll(mockCtx, { limit: 10 });
 
 		expect(res.results[0]!.verified).toBe(true);
 	});
 
-	it('preserves ApiError on HTTP error status (401)', async () => {
+	it('preserves HTTP status on SendGridAPIError (401)', async () => {
 		(global.fetch as jest.Mock).mockResolvedValueOnce(
 			mockResponse(401, { errors: [{ message: 'Unauthorized' }] }),
 		);
 
 		await expect(
 			makeSendGridRequest('mail/send', 'SG.key', { method: 'POST' }),
-		).rejects.toThrow(ApiError);
+		).rejects.toMatchObject({
+			name: 'SendGridAPIError',
+			status: 401,
+		});
+	});
+
+	it('classifies 429 as RATE_LIMIT_ERROR', async () => {
+		const error = new SendGridAPIError('Too Many Requests', undefined, 429);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		const policy = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
+		expect(policy.maxRetries).toBe(3);
+	});
+});
+
+describeLive('SendGrid live API', () => {
+	it('senders.getAll matches VerifiedSenderResponse', async () => {
+		const result = await makeSendGridRequest<{ results: unknown[] }>(
+			'verified_senders',
+			TEST_API_KEY!,
+		);
+		SendGridEndpointOutputSchemas.sendersGetAll.parse(result);
+	});
+
+	it('suppressions.getBounces returns bounce records', async () => {
+		const result = await makeSendGridRequest<unknown>(
+			'suppression/bounces',
+			TEST_API_KEY!,
+			{ query: { limit: 1 } },
+		);
+		const bounces = Array.isArray(result) ? result : [];
+		SendGridEndpointOutputSchemas.suppressionsGetBounces.parse({ bounces });
+	});
+
+	it('lists.getAll matches marketing lists payload', async () => {
+		const result = await makeSendGridRequest<unknown>(
+			'marketing/lists',
+			TEST_API_KEY!,
+			{
+				query: { page_size: 1 },
+			},
+		);
+		SendGridEndpointOutputSchemas.listsGetAll.parse(result);
 	});
 });

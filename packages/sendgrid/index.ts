@@ -15,6 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Contacts, Lists, Mail, Senders, Suppressions } from './endpoints';
 import type {
 	SendGridEndpointInputs,
@@ -27,7 +28,6 @@ import {
 import { errorHandlers } from './error-handlers';
 import { SendGridSchema } from './schema';
 import { EventWebhooks } from './webhooks';
-import { resolveSendGridOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchSendGridTenantWebhook } from './webhooks/tenant-matcher';
 import type { SendGridEvent, SendGridWebhookOutputs } from './webhooks/types';
 import { EmailEventWebhookSchema } from './webhooks/types';
@@ -218,7 +218,7 @@ export function sendgrid<const T extends SendGridPluginOptions>(
 			return 'x-twilio-email-event-webhook-signature' in headers;
 		},
 		pluginTenantWebhookMatcher: matchSendGridTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveSendGridOAuthWebhookTenantLink,
+		oauthWebhookTenantLinkResolver: () => null,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -230,7 +230,12 @@ export function sendgrid<const T extends SendGridPluginOptions>(
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:sendgrid:webhook_signature]: SendGrid webhook verification key is missing',
+					);
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && options.key) {
@@ -239,10 +244,13 @@ export function sendgrid<const T extends SendGridPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('sendgrid', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('sendgrid', 'api_key');
 		},
 	} satisfies InternalSendGridPlugin;
 }

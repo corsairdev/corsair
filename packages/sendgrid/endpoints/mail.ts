@@ -3,14 +3,14 @@ import type { SendGridEndpoints } from '..';
 import { makeSendGridRequest } from '../client';
 
 export const send: SendGridEndpoints['mailSend'] = async (ctx, input) => {
-	await makeSendGridRequest<unknown>('mail/send', ctx.key, {
-		method: 'POST',
-		body: input as unknown as Record<string, unknown>,
-	});
-
-	const totalRecipients = input.personalizations.reduce(
-		(sum, p) => sum + p.to.length,
-		0,
+	const xMessageId = await makeSendGridRequest<string | undefined>(
+		'mail/send',
+		ctx.key,
+		{
+			method: 'POST',
+			body: input,
+			responseHeader: 'X-Message-Id',
+		},
 	);
 
 	await logEventFromContext(
@@ -18,11 +18,14 @@ export const send: SendGridEndpoints['mailSend'] = async (ctx, input) => {
 		'sendgrid.mail.send',
 		{
 			from_email: input.from.email,
-			recipient_count: totalRecipients,
+			recipient_count: input.personalizations.reduce(
+				(sum, p) => sum + p.to.length,
+				0,
+			),
 			template_id: input.template_id,
 		},
 		'completed',
 	);
 
-	return { success: true };
+	return { x_message_id: xMessageId };
 };

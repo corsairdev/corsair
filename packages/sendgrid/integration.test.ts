@@ -23,4 +23,16 @@ describe('SendGrid Plugin Integration', () => {
 		expect(plugin.endpointMeta?.['lists.getAll']?.riskLevel).toBe('read');
 		expect(plugin.endpointMeta?.['senders.getAll']?.riskLevel).toBe('read');
 	});
+
+	it('matches signed SendGrid event webhook headers', () => {
+		const plugin = sendgrid({ key: 'SG.test_key' });
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				body: '[]',
+				headers: {
+					'x-twilio-email-event-webhook-signature': 'sig',
+				},
+			}),
+		).toBe(true);
+	});
 });

@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import {
+	SendGridBounce,
+	SendGridContact,
+	SendGridList,
+	SendGridVerifiedSender,
+} from '../schema/database';
 
 const EmailRecipientSchema = z.object({
 	email: z.string().email(),
@@ -10,7 +16,11 @@ const PersonalizationSchema = z.object({
 	cc: z.array(EmailRecipientSchema).optional(),
 	bcc: z.array(EmailRecipientSchema).optional(),
 	subject: z.string().optional(),
+	headers: z.record(z.string(), z.string()).optional(),
+	substitutions: z.record(z.string(), z.string()).optional(),
 	dynamic_template_data: z.record(z.string(), z.unknown()).optional(),
+	custom_args: z.record(z.string(), z.string()).optional(),
+	send_at: z.number().int().optional(),
 });
 
 const ContentSchema = z.object({
@@ -18,6 +28,11 @@ const ContentSchema = z.object({
 	value: z.string(),
 });
 
+/**
+ * Mail Send v3 request.
+ * Official: POST /v3/mail/send
+ * https://www.twilio.com/docs/sendgrid/api-reference/mail-send/mail-send
+ */
 const MailSendInputSchema = z.object({
 	personalizations: z.array(PersonalizationSchema).min(1),
 	from: EmailRecipientSchema,
@@ -26,27 +41,28 @@ const MailSendInputSchema = z.object({
 	reply_to: EmailRecipientSchema.optional(),
 	template_id: z.string().optional(),
 	categories: z.array(z.string()).optional(),
+	send_at: z.number().int().optional(),
+	batch_id: z.string().optional(),
+	ip_pool_name: z.string().optional(),
+	asm: z
+		.object({
+			group_id: z.number().int(),
+			groups_to_display: z.array(z.number().int()).optional(),
+		})
+		.optional(),
 });
 
 export type MailSendInput = z.infer<typeof MailSendInputSchema>;
 
 const MailSendOutputSchema = z.object({
-	success: z.boolean(),
-	messageId: z.string().optional(),
+	x_message_id: z.string().optional(),
 });
 
 export type MailSendOutput = z.infer<typeof MailSendOutputSchema>;
 
-const ContactInputSchema = z.object({
-	email: z.string().email(),
-	first_name: z.string().optional(),
-	last_name: z.string().optional(),
-	custom_fields: z.record(z.string(), z.unknown()).optional(),
-});
-
 const ContactsAddOrUpdateInputSchema = z.object({
 	list_ids: z.array(z.string()).optional(),
-	contacts: z.array(ContactInputSchema).min(1),
+	contacts: z.array(SendGridContact).min(1),
 });
 
 export type ContactsAddOrUpdateInput = z.infer<
@@ -62,20 +78,14 @@ export type ContactsAddOrUpdateOutput = z.infer<
 >;
 
 const ListsGetAllInputSchema = z.object({
-	pageSize: z.number().int().positive().optional(),
-	pageToken: z.string().optional(),
+	page_size: z.number().int().positive().max(1000).optional(),
+	page_token: z.string().optional(),
 });
 
 export type ListsGetAllInput = z.infer<typeof ListsGetAllInputSchema>;
 
-const ContactListSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	contact_count: z.number(),
-});
-
 const ListsGetAllOutputSchema = z.object({
-	result: z.array(ContactListSchema),
+	result: z.array(SendGridList),
 	_metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -87,47 +97,39 @@ const ListsCreateInputSchema = z.object({
 
 export type ListsCreateInput = z.infer<typeof ListsCreateInputSchema>;
 
-const ListsCreateOutputSchema = ContactListSchema;
+const ListsCreateOutputSchema = SendGridList;
 
 export type ListsCreateOutput = z.infer<typeof ListsCreateOutputSchema>;
 
 const SuppressionsGetBouncesInputSchema = z.object({
 	start_time: z.number().int().optional(),
 	end_time: z.number().int().optional(),
+	limit: z.number().int().positive().optional(),
+	offset: z.number().int().nonnegative().optional(),
 });
 
 export type SuppressionsGetBouncesInput = z.infer<
 	typeof SuppressionsGetBouncesInputSchema
 >;
 
-const BounceItemSchema = z.object({
-	created: z.number(),
-	email: z.string(),
-	reason: z.string(),
-	status: z.string(),
-});
-
 const SuppressionsGetBouncesOutputSchema = z.object({
-	bounces: z.array(BounceItemSchema),
+	bounces: z.array(SendGridBounce),
 });
 
 export type SuppressionsGetBouncesOutput = z.infer<
 	typeof SuppressionsGetBouncesOutputSchema
 >;
 
-const SendersGetAllInputSchema = z.object({});
+const SendersGetAllInputSchema = z.object({
+	limit: z.number().int().positive().optional(),
+	lastSeenID: z.number().int().optional(),
+	id: z.number().int().optional(),
+});
 
 export type SendersGetAllInput = z.infer<typeof SendersGetAllInputSchema>;
 
-const VerifiedSenderSchema = z.object({
-	id: z.number(),
-	nickname: z.string(),
-	from_email: z.string(),
-	verified: z.boolean(),
-});
-
 const SendersGetAllOutputSchema = z.object({
-	results: z.array(VerifiedSenderSchema),
+	results: z.array(SendGridVerifiedSender),
 });
 
 export type SendersGetAllOutput = z.infer<typeof SendersGetAllOutputSchema>;

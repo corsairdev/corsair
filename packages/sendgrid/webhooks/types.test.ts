@@ -87,4 +87,16 @@ describe('SendGrid Webhooks', () => {
 		const result = verifySendGridWebhookSignature(webhookReq, 'some_key');
 		expect(result.valid).toBe(false);
 	});
+
+	it('rejects unsigned payloads when the verification key is missing', () => {
+		const webhookReq: WebhookRequest<any> = {
+			headers: {},
+			payload: [
+				{ email: 'test@example.com', event: 'delivered', timestamp: 1 },
+			],
+			rawBody: '[]',
+		};
+		const result = verifySendGridWebhookSignature(webhookReq, '');
+		expect(result.valid).toBe(false);
+	});
 });

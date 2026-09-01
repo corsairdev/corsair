@@ -5,18 +5,9 @@ import type {
 	WebhookRequest,
 } from 'corsair/core';
 import { z } from 'zod';
+import { SendGridEmailEvent } from '../schema/database';
 
-export const SendGridEventSchema = z.object({
-	email: z.string(),
-	event: z.string(),
-	timestamp: z.number(),
-	sg_event_id: z.string().optional(),
-	sg_message_id: z.string().optional(),
-	reason: z.string().optional(),
-	status: z.string().optional(),
-	response: z.string().optional(),
-	tenant_external_id: z.string().optional(),
-});
+export const SendGridEventSchema = SendGridEmailEvent;
 
 export type SendGridEvent = z.infer<typeof SendGridEventSchema>;
 
@@ -66,7 +57,10 @@ export function verifySendGridWebhookSignature(
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
-		return { valid: true };
+		return {
+			valid: false,
+			error: 'SendGrid webhook verification key is missing',
+		};
 	}
 
 	const headers = request.headers;
