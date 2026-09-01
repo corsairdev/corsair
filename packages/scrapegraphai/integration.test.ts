@@ -9,7 +9,7 @@ import {
 const LIVE_KEY = process.env.SGAI_API_KEY;
 const describeIfKey = LIVE_KEY ? describe : describe.skip;
 
-describe('ScrapeGraphAI live v1', () => {
+describeIfKey('ScrapeGraphAI live v1 (authenticated)', () => {
 	it('rejects an invalid API key on GET /v1/credits', async () => {
 		const err = await makeScrapegraphAiRequest(
 			'v1/credits',
@@ -18,9 +18,7 @@ describe('ScrapeGraphAI live v1', () => {
 		expect(err).toBeInstanceOf(ScrapegraphAiAPIError);
 		expect([401, 403]).toContain((err as ScrapegraphAiAPIError).status);
 	});
-});
 
-describeIfKey('ScrapeGraphAI live v1 (authenticated)', () => {
 	it('returns CreditsResponse from GET /v1/credits', async () => {
 		const raw = await makeScrapegraphAiRequest(
 			'v1/credits',

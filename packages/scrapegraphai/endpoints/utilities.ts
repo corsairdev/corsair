@@ -18,7 +18,7 @@ export const toonify: ScrapegraphAiEndpoints['utilitiesToonify'] = async (
 	await logEventFromContext(
 		ctx,
 		'scrapegraphai.utilities.toonify',
-		{ ...input },
+		{ keys: input.data ? Object.keys(input.data).length : 0 },
 		'completed',
 	);
 	return response;

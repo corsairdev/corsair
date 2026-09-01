@@ -36,10 +36,11 @@ export const start: ScrapegraphAiEndpoints['searchScraperStart'] = async (
 	);
 
 	await saveJobSnapshot(ctx, response);
+	const { headers: _headers, output_schema: _schema, ...audit } = input;
 	await logEventFromContext(
 		ctx,
 		'scrapegraphai.searchScraper.start',
-		{ ...input },
+		audit,
 		'completed',
 	);
 	return response;

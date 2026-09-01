@@ -37,10 +37,11 @@ export const start: ScrapegraphAiEndpoints['markdownifyStart'] = async (
 	);
 
 	await saveJobSnapshot(ctx, response);
+	const { headers: _headers, ...audit } = input;
 	await logEventFromContext(
 		ctx,
 		'scrapegraphai.markdownify.start',
-		{ ...input },
+		audit,
 		'completed',
 	);
 	return response;

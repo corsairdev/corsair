@@ -38,10 +38,11 @@ export const start: ScrapegraphAiEndpoints['smartCrawlerStart'] = async (
 	);
 
 	await saveJobSnapshot(ctx, response.task_id ?? response.request_id, response);
+	const { schema: _schema, webhook_url: _hook, ...audit } = input;
 	await logEventFromContext(
 		ctx,
 		'scrapegraphai.smartCrawler.start',
-		{ ...input },
+		audit,
 		'completed',
 	);
 	return response;

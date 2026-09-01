@@ -40,7 +40,7 @@ export const ScrapegraphAiSearchScraper = z.object({
 	status: z.enum(['queued', 'processing', 'completed', 'failed']),
 	user_prompt: z.string(),
 	num_results: z.number().nullable().optional(),
-	result: jsonObject.nullable().optional(),
+	result: z.unknown().nullable().optional(),
 	reference_urls: z.array(z.string()).nullable().optional(),
 	markdown_content: z.string().nullable().optional(),
 	error: z.string().nullable().optional(),

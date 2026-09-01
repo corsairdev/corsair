@@ -57,6 +57,17 @@ describe('ScrapegraphAi schema', () => {
 		).toBe('req-2');
 	});
 
+	it('parses a top-level array SearchScraper result', () => {
+		expect(
+			ScrapegraphAiSearchScraper.parse({
+				request_id: 'req-2a',
+				status: 'completed',
+				user_prompt: 'list items',
+				result: [{ name: 'a' }],
+			}).result,
+		).toEqual([{ name: 'a' }]);
+	});
+
 	it('parses CompletedMarkdownifyResponse', () => {
 		expect(
 			ScrapegraphAiMarkdownify.parse({
