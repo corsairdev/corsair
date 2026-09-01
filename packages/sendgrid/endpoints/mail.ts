@@ -8,11 +8,21 @@ export const send: SendGridEndpoints['mailSend'] = async (ctx, input) => {
 		body: input as unknown as Record<string, unknown>,
 	});
 
+	const totalRecipients = input.personalizations.reduce(
+		(sum, p) => sum + p.to.length,
+		0,
+	);
+
 	await logEventFromContext(
 		ctx,
 		'sendgrid.mail.send',
-		{ ...input },
+		{
+			from_email: input.from.email,
+			recipient_count: totalRecipients,
+			template_id: input.template_id,
+		},
 		'completed',
 	);
+
 	return { success: true };
 };

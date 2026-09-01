@@ -1,10 +1,11 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class SendGridAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		public readonly status?: number,
 	) {
 		super(message);
 		this.name = 'SendGridAPIError';
@@ -23,7 +24,6 @@ export async function makeSendGridRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
-
 	const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
 
 	const config: OpenAPIConfig = {
@@ -52,6 +52,9 @@ export async function makeSendGridRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new SendGridAPIError(error.message);
 		}
