@@ -6,7 +6,7 @@ import {
 	CORSAIR_TUNNEL_PATH,
 	CORSAIR_TUNNEL_ZONE,
 } from '../hub/tunnel/constants';
-import { createMissingConfigProxy, resolveKekAtInit } from './auth/errors';
+import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
 import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
@@ -73,10 +73,10 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		? createCorsairDatabase(config.database)
 		: undefined;
 
-	const kek = resolveKekAtInit(config.kek, !!resolvedDatabase);
+	const kek = config.kek;
 
-	// Build integration-level keys when database + KEK are configured.
-	// Missing database still uses a lazy proxy; missing KEK with database throws above.
+	// Build integration-level keys when database + KEK are configured;
+	// otherwise a proxy throws a clear error on first key access.
 	type IntegrationKeysType = ReturnType<typeof buildIntegrationKeys<Plugins>>;
 
 	const integrationKeys: IntegrationKeysType =
