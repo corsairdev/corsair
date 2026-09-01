@@ -103,6 +103,39 @@ export async function retryAfterConnect<T>(
 	throw lastErr;
 }
 
+// Attempts to confirm the connection once the popup closes.
+export const POPUP_CLOSE_CONFIRM_RETRIES = 3;
+
+// The success page closes the popup only after the connection persisted, so a
+// closed popup nearly always means success. But the status endpoint can lag a
+// beat, and a single final poll can fail transiently — treating either as a
+// cancel discards a real connection. Poll a few times, returning connected as
+// soon as any attempt confirms it and cancelled only once every attempt is
+// exhausted (a thrown poll counts as "not yet", never an immediate cancel).
+export async function confirmConnected(
+	getStatus: () => Promise<ConnectionStatus | null | undefined>,
+	plugin: string,
+	opts?: {
+		retries?: number;
+		backoffMs?: number;
+		sleep?: (ms: number) => Promise<void>;
+	},
+): Promise<boolean> {
+	const retries = opts?.retries ?? POPUP_CLOSE_CONFIRM_RETRIES;
+	const backoffMs = opts?.backoffMs ?? POST_CONNECT_BACKOFF_MS;
+	const sleep =
+		opts?.sleep ?? ((ms) => new Promise<void>((r) => setTimeout(r, ms)));
+	for (let attempt = 0; attempt <= retries; attempt++) {
+		try {
+			if (isPluginConnected(await getStatus(), plugin)) return true;
+		} catch {
+			// Transient poll failure — fall through and retry, don't cancel.
+		}
+		if (attempt < retries) await sleep(backoffMs * (attempt + 1));
+	}
+	return false;
+}
+
 // Recognise a Corsair auth-missing / reconnect failure from an unhandled
 // rejection so the provider can auto-open the dialog without the call site
 // wrapping anything. Matches the error markers, which survive the server-action

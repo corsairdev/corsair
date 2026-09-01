@@ -15,10 +15,10 @@ import type { ConnectionStatus } from '../../core/management/types';
 import { createCorsairClient } from '../index';
 import type { CorsairManagementClient } from '../types';
 import {
+	confirmConnected,
 	connectReducer,
 	initialConnectState,
 	isConnectError,
-	isPluginConnected,
 	retryAfterConnect,
 	shouldSettleConnected,
 } from './connect-controller';
@@ -225,16 +225,17 @@ export function CorsairProvider({
 					stopWatch();
 					graceRef.current = setTimeout(() => {
 						if (!isCurrent()) return;
-						client.connectionStatus
-							.get(scope)
-							.then((status) => {
-								if (!isCurrent()) return;
-								if (isPluginConnected(status, plugin)) finishConnected();
-								else finishCancelled();
-							})
-							.catch(() => {
-								if (isCurrent()) finishCancelled();
-							});
+						// A slow or flaky final poll must not discard a real connection, so
+						// confirm across a few retries before reading a closed popup as a
+						// cancel (see confirmConnected).
+						confirmConnected(
+							() => client.connectionStatus.get(scope),
+							plugin,
+						).then((connected) => {
+							if (!isCurrent()) return;
+							if (connected) finishConnected();
+							else finishCancelled();
+						});
 					}, POPUP_CLOSE_GRACE_MS);
 				}
 			}, WATCH_INTERVAL_MS);

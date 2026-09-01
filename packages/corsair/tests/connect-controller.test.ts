@@ -1,4 +1,5 @@
 import {
+	confirmConnected,
 	connectReducer,
 	initialConnectState,
 	isConnectError,
@@ -158,6 +159,76 @@ describe('retryAfterConnect', () => {
 			return Promise.resolve('done');
 		};
 		await retryAfterConnect(fn, {
+			backoffMs: 100,
+			sleep: (ms) => {
+				waits.push(ms);
+				return Promise.resolve();
+			},
+		});
+		expect(waits).toEqual([100, 200]);
+	});
+});
+
+describe('confirmConnected', () => {
+	it('returns true on the first poll when already connected', async () => {
+		let calls = 0;
+		const getStatus = () => {
+			calls += 1;
+			return Promise.resolve({ github: 'connected' as const });
+		};
+		await expect(
+			confirmConnected(getStatus, 'github', { sleep: noSleep }),
+		).resolves.toBe(true);
+		expect(calls).toBe(1);
+	});
+
+	it('rides out status lag: not-connected then connected', async () => {
+		let calls = 0;
+		const getStatus = () => {
+			calls += 1;
+			return Promise.resolve(
+				calls < 3
+					? { github: 'not_connected' as const }
+					: { github: 'connected' as const },
+			);
+		};
+		await expect(
+			confirmConnected(getStatus, 'github', { sleep: noSleep }),
+		).resolves.toBe(true);
+		expect(calls).toBe(3);
+	});
+
+	it('does not discard success when an early poll throws (the Greptile case)', async () => {
+		let calls = 0;
+		const getStatus = () => {
+			calls += 1;
+			if (calls === 1) return Promise.reject(new Error('network blip'));
+			return Promise.resolve({ github: 'connected' as const });
+		};
+		await expect(
+			confirmConnected(getStatus, 'github', { sleep: noSleep }),
+		).resolves.toBe(true);
+		expect(calls).toBe(2);
+	});
+
+	it('returns false only after every attempt shows not-connected', async () => {
+		let calls = 0;
+		const getStatus = () => {
+			calls += 1;
+			return Promise.resolve({ github: 'not_connected' as const });
+		};
+		await expect(
+			confirmConnected(getStatus, 'github', { retries: 2, sleep: noSleep }),
+		).resolves.toBe(false);
+		expect(calls).toBe(3);
+	});
+
+	it('backs off between attempts using the injected sleeper', async () => {
+		const waits: number[] = [];
+		const getStatus = () =>
+			Promise.resolve({ github: 'not_connected' as const });
+		await confirmConnected(getStatus, 'github', {
+			retries: 2,
 			backoffMs: 100,
 			sleep: (ms) => {
 				waits.push(ms);
