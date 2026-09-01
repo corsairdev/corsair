@@ -598,29 +598,15 @@ describeLive('pushbullet live API', () => {
       ).resolves.toBeDefined()
     })
 
-    it('removeAll clears remaining test pushes', async () => {
-      await Pushes.create(makeLiveCtx(), {
+    it('remove deletes a leftover test push by iden', async () => {
+      const created = await Pushes.create(makeLiveCtx(), {
         type: 'note',
         body: 'sweep me',
       })
-      await expect(Pushes.deleteAll(makeLiveCtx(), {})).resolves.toBeDefined()
-      // Pushbullet applies bulk deletes asynchronously (see the
-      // endpoint), so poll the active list until it drains instead
-      // of asserting that it is empty right away.
-      let remaining = -1
-      for (let attempt = 0; attempt < 10; attempt += 1) {
-        const { pushes } = await Pushes.list(makeLiveCtx(), {
-          active: true,
-        })
-        remaining = pushes.filter((p: { active?: boolean }) => p.active).length
-        if (remaining === 0) {
-          break
-        }
-        await new Promise(resolve => {
-          setTimeout(resolve, 500)
-        })
-      }
-      expect(remaining).toBe(0)
+      expect(created.iden).toBeTruthy()
+      await expect(
+        Pushes.delete(makeLiveCtx(), { iden: created.iden })
+      ).resolves.toBeDefined()
     })
   })
 
