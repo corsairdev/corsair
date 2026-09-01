@@ -12,8 +12,8 @@ const TEST_API_KEY = process.env.REMOVE_BG_API_KEY;
 
 const ctx = { key: TEST_API_KEY } as unknown as RemovebgContext;
 
-// Sample image published by remove.bg in their own API documentation.
-const SAMPLE_IMAGE = 'https://www.remove.bg/api-docs-images/car.jpg';
+// Sample image published by remove.bg (their /example.jpg asset).
+const SAMPLE_IMAGE = 'https://www.remove.bg/example.jpg';
 
 const maybeDescribe = TEST_API_KEY ? describe : describe.skip;
 

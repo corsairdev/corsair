@@ -8,9 +8,9 @@ module.exports = {
 		'**/plugins/**/*.test.ts',
 		'**/setup/**/*.test.ts',
 	],
-	// api.test.ts hits the real remove.bg API and needs a key; `pnpm test:live`
-	// runs it explicitly.
-	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
+	// api.test.ts self-skips via maybeDescribe when REMOVE_BG_API_KEY is not
+	// set, so it is safe to include in the default `pnpm test` run.
+	testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',
