@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/sendgrid",
   "version": "0.1.0",
-  "description": "SendGrid plugin for Corsair",
+  "description": "SendGrid v3 plugin for Corsair (100 REST endpoints)",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

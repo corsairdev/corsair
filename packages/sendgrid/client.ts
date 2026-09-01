@@ -44,11 +44,17 @@ export async function makeSendGridRequest<T>(
 		method,
 		url: cleanEndpoint,
 		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
+			method === 'POST' ||
+			method === 'PUT' ||
+			method === 'PATCH' ||
+			method === 'DELETE'
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query:
+			method === 'GET' || method === 'DELETE' || method === 'PATCH'
+				? query
+				: undefined,
 		responseHeader,
 	};
 

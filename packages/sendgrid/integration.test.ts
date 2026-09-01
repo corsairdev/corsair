@@ -15,6 +15,9 @@ describe('SendGrid Plugin Integration', () => {
 		expect(plugin.endpoints?.lists?.create).toBeDefined();
 		expect(plugin.endpoints?.suppressions?.getBounces).toBeDefined();
 		expect(plugin.endpoints?.senders?.getAll).toBeDefined();
+		expect(plugin.endpoints?.segments?.refresh).toBeDefined();
+		expect(plugin.endpoints?.apiKeys?.create).toBeDefined();
+		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(100);
 	});
 
 	it('registers no webhooks', () => {

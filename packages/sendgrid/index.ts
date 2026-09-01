@@ -13,7 +13,21 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Contacts, Lists, Mail, Senders, Suppressions } from './endpoints';
+import { SENDGRID_OPS } from './endpoints/catalog';
+import {
+	apiKeys,
+	asm,
+	contacts,
+	fields,
+	lists,
+	mail,
+	segments,
+	senders,
+	stats,
+	suppressions,
+	templates,
+	user,
+} from './endpoints/handlers';
 import type {
 	SendGridEndpointInputs,
 	SendGridEndpointOutputs,
@@ -53,90 +67,48 @@ type SendGridEndpoint<K extends keyof SendGridEndpointOutputs> =
 	>;
 
 export type SendGridEndpoints = {
-	mailSend: SendGridEndpoint<'mailSend'>;
-	contactsAddOrUpdate: SendGridEndpoint<'contactsAddOrUpdate'>;
-	listsGetAll: SendGridEndpoint<'listsGetAll'>;
-	listsCreate: SendGridEndpoint<'listsCreate'>;
-	suppressionsGetBounces: SendGridEndpoint<'suppressionsGetBounces'>;
-	sendersGetAll: SendGridEndpoint<'sendersGetAll'>;
+	[K in keyof SendGridEndpointInputs]: SendGridEndpoint<K>;
 };
 
 const sendGridEndpointsNested = {
-	mail: {
-		send: Mail.send,
-	},
-	contacts: {
-		addOrUpdate: Contacts.addOrUpdate,
-	},
-	lists: {
-		getAll: Lists.getAll,
-		create: Lists.create,
-	},
-	suppressions: {
-		getBounces: Suppressions.getBounces,
-	},
-	senders: {
-		getAll: Senders.getAll,
-	},
+	mail,
+	contacts,
+	lists,
+	segments,
+	fields,
+	senders,
+	templates,
+	suppressions,
+	asm,
+	stats,
+	user,
+	apiKeys,
 } as const;
 
-export const sendGridEndpointSchemas = {
-	'mail.send': {
-		input: SendGridEndpointInputSchemas.mailSend,
-		output: SendGridEndpointOutputSchemas.mailSend,
-	},
-	'contacts.addOrUpdate': {
-		input: SendGridEndpointInputSchemas.contactsAddOrUpdate,
-		output: SendGridEndpointOutputSchemas.contactsAddOrUpdate,
-	},
-	'lists.getAll': {
-		input: SendGridEndpointInputSchemas.listsGetAll,
-		output: SendGridEndpointOutputSchemas.listsGetAll,
-	},
-	'lists.create': {
-		input: SendGridEndpointInputSchemas.listsCreate,
-		output: SendGridEndpointOutputSchemas.listsCreate,
-	},
-	'suppressions.getBounces': {
-		input: SendGridEndpointInputSchemas.suppressionsGetBounces,
-		output: SendGridEndpointOutputSchemas.suppressionsGetBounces,
-	},
-	'senders.getAll': {
-		input: SendGridEndpointInputSchemas.sendersGetAll,
-		output: SendGridEndpointOutputSchemas.sendersGetAll,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<
-	typeof sendGridEndpointsNested
->;
+export const sendGridEndpointSchemas = Object.fromEntries(
+	SENDGRID_OPS.map((op) => [
+		op.nested,
+		{
+			input:
+				SendGridEndpointInputSchemas[
+					op.key as keyof typeof SendGridEndpointInputSchemas
+				],
+			output:
+				SendGridEndpointOutputSchemas[
+					op.key as keyof typeof SendGridEndpointOutputSchemas
+				],
+		},
+	]),
+) as unknown as RequiredPluginEndpointSchemas<typeof sendGridEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const sendGridEndpointMeta = {
-	'mail.send': {
-		riskLevel: 'write',
-		description: 'Send an email via SendGrid Mail Send API v3',
-	},
-	'contacts.addOrUpdate': {
-		riskLevel: 'write',
-		description: 'Add or update contacts in SendGrid Marketing',
-	},
-	'lists.getAll': {
-		riskLevel: 'read',
-		description: 'Retrieve all marketing contact lists',
-	},
-	'lists.create': {
-		riskLevel: 'write',
-		description: 'Create a new marketing contact list',
-	},
-	'suppressions.getBounces': {
-		riskLevel: 'read',
-		description: 'Retrieve email bounce suppressions',
-	},
-	'senders.getAll': {
-		riskLevel: 'read',
-		description: 'Retrieve verified senders',
-	},
-} as const satisfies RequiredPluginEndpointMeta<typeof sendGridEndpointsNested>;
+const sendGridEndpointMeta = Object.fromEntries(
+	SENDGRID_OPS.map((op) => [
+		op.nested,
+		{ riskLevel: op.risk, description: op.description },
+	]),
+) as unknown as RequiredPluginEndpointMeta<typeof sendGridEndpointsNested>;
 
 export const sendGridAuthConfig = {
 	api_key: {

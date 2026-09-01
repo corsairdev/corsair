@@ -8,7 +8,7 @@ import { z } from 'zod';
 export const SendGridContact = z
 	.object({
 		id: z.string().optional(),
-		email: z.string().optional(),
+		email: z.string().email().optional(),
 		phone_number_id: z.string().optional(),
 		external_id: z.string().optional(),
 		anonymous_id: z.string().optional(),

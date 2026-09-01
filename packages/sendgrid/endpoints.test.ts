@@ -28,6 +28,24 @@ describe('SendGrid Endpoint Schemas', () => {
 		expect(parsedOutput.x_message_id).toBe('filter0001');
 	});
 
+	it('rejects mail.send without content or subject unless template_id is set', () => {
+		expect(() =>
+			SendGridEndpointInputSchemas.mailSend.parse({
+				personalizations: [{ to: [{ email: 'recipient@example.com' }] }],
+				from: { email: 'sender@example.com' },
+				content: [],
+			}),
+		).toThrow();
+
+		expect(
+			SendGridEndpointInputSchemas.mailSend.parse({
+				personalizations: [{ to: [{ email: 'recipient@example.com' }] }],
+				from: { email: 'sender@example.com' },
+				template_id: 'd-123',
+			}),
+		).toMatchObject({ template_id: 'd-123' });
+	});
+
 	it('validates contacts.addOrUpdate input and output schemas', () => {
 		const validInput = {
 			contacts: [
@@ -43,6 +61,14 @@ describe('SendGrid Endpoint Schemas', () => {
 		const parsedOutput =
 			SendGridEndpointOutputSchemas.contactsAddOrUpdate.parse(validOutput);
 		expect(parsedOutput.job_id).toBe('job-456');
+	});
+
+	it('rejects contacts.addOrUpdate without an identifier', () => {
+		expect(() =>
+			SendGridEndpointInputSchemas.contactsAddOrUpdate.parse({
+				contacts: [{ first_name: 'Jane' }],
+			}),
+		).toThrow();
 	});
 
 	it('validates lists.getAll input and output schemas', () => {

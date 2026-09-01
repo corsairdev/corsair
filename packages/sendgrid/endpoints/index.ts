@@ -1,5 +1,14 @@
-export * as Contacts from './contacts';
-export * as Lists from './lists';
-export * as Mail from './mail';
-export * as Senders from './senders';
-export * as Suppressions from './suppressions';
+export {
+	apiKeys,
+	asm,
+	contacts,
+	fields,
+	lists,
+	mail,
+	segments,
+	senders,
+	stats,
+	suppressions,
+	templates,
+	user,
+} from './handlers';
