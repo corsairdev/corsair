@@ -18,7 +18,7 @@ export const WorkiomDataType = z.number().int();
  * IsEmpty=7 IsNotEmpty=8 GreaterOrEqual=9 LessOrEqual=10
  * Between=11 In=12 NotIn=13
  */
-export const WorkiomFilterOperator = z.number().int();
+export const WorkiomFilterOperator = z.number().int().min(1).max(13);
 
 /**
  * App from GET /api/services/app/Apps/GetAll (ABP `result.items`).
@@ -93,6 +93,7 @@ export const WorkiomList = z
 		description: z.string().optional(),
 		fields: z.array(WorkiomField).optional(),
 		views: z.array(WorkiomView).optional(),
+		filters: z.array(WorkiomFilter).optional(),
 	})
 	.loose();
 

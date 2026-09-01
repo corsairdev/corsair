@@ -62,6 +62,7 @@ export type WorkiomEndpoints = {
 	listsGetAll: WorkiomEndpoint<'listsGetAll'>;
 	recordsGetAll: WorkiomEndpoint<'recordsGetAll'>;
 	recordsCreate: WorkiomEndpoint<'recordsCreate'>;
+	recordsUpdate: WorkiomEndpoint<'recordsUpdate'>;
 };
 
 const workiomEndpointsNested = {
@@ -75,6 +76,7 @@ const workiomEndpointsNested = {
 	records: {
 		getAll: Records.getAll,
 		create: Records.create,
+		update: Records.update,
 	},
 } as const;
 
@@ -98,6 +100,10 @@ export const workiomEndpointSchemas = {
 	'records.create': {
 		input: WorkiomEndpointInputSchemas.recordsCreate,
 		output: WorkiomEndpointOutputSchemas.recordsCreate,
+	},
+	'records.update': {
+		input: WorkiomEndpointInputSchemas.recordsUpdate,
+		output: WorkiomEndpointOutputSchemas.recordsUpdate,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof workiomEndpointsNested
@@ -129,6 +135,11 @@ const workiomEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Create a list record via POST /api/services/app/Data/Create?listId=',
+	},
+	'records.update': {
+		riskLevel: 'write',
+		description:
+			'Replace a list record via PUT /api/services/app/Data/Update?listId=&id=',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof workiomEndpointsNested>;
 
@@ -211,6 +222,8 @@ export type {
 	RecordsCreateOutput,
 	RecordsGetAllInput,
 	RecordsGetAllOutput,
+	RecordsUpdateInput,
+	RecordsUpdateOutput,
 	WorkiomEndpointInputs,
 	WorkiomEndpointOutputs,
 } from './endpoints/types';

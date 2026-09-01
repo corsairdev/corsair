@@ -138,7 +138,20 @@ export async function makeWorkiomRequest(
 		throw new WorkiomRateLimitError(undefined, retryAfterMs(res));
 	}
 
-	const parsed = await parseBody(res);
+	let parsed: unknown;
+	try {
+		parsed = await parseBody(res);
+	} catch (error) {
+		if (
+			error instanceof Error &&
+			(error.name === 'TimeoutError' || error.name === 'AbortError')
+		) {
+			throw new WorkiomAPIError('Workiom request timed out');
+		}
+		throw new WorkiomAPIError(
+			error instanceof Error ? error.message : 'Workiom request failed',
+		);
+	}
 	if (!res.ok) {
 		throw new WorkiomAPIError(
 			abpErrorMessage(parsed, res.status),

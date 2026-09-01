@@ -65,12 +65,25 @@ export type RecordsCreateInput = z.infer<typeof RecordsCreateInputSchema>;
 export const RecordsCreateOutputSchema = WorkiomRecord;
 export type RecordsCreateOutput = z.infer<typeof RecordsCreateOutputSchema>;
 
+export const RecordsUpdateInputSchema = z.object({
+	listId: z.string().min(1),
+	id: z.string().min(1),
+	record: z
+		.record(z.string(), z.unknown())
+		.describe('Full record body; PUT replaces the record'),
+});
+export type RecordsUpdateInput = z.infer<typeof RecordsUpdateInputSchema>;
+
+export const RecordsUpdateOutputSchema = WorkiomRecord;
+export type RecordsUpdateOutput = z.infer<typeof RecordsUpdateOutputSchema>;
+
 export const WorkiomEndpointInputSchemas = {
 	appsGetAll: AppsGetAllInputSchema,
 	listsGet: ListsGetInputSchema,
 	listsGetAll: ListsGetAllInputSchema,
 	recordsGetAll: RecordsGetAllInputSchema,
 	recordsCreate: RecordsCreateInputSchema,
+	recordsUpdate: RecordsUpdateInputSchema,
 } as const;
 
 export const WorkiomEndpointOutputSchemas = {
@@ -79,6 +92,7 @@ export const WorkiomEndpointOutputSchemas = {
 	listsGetAll: ListsGetAllOutputSchema,
 	recordsGetAll: RecordsGetAllOutputSchema,
 	recordsCreate: RecordsCreateOutputSchema,
+	recordsUpdate: RecordsUpdateOutputSchema,
 } as const;
 
 export type WorkiomEndpointInputs = {

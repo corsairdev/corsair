@@ -50,6 +50,9 @@ describe('Workiom schema', () => {
 			WorkiomFilter.parse({ fieldId: 1425, operator: 1, value: 'Ahmad Masa' })
 				.operator,
 		).toBe(1);
+		expect(WorkiomFilter.parse({ fieldId: 1, operator: 13 }).operator).toBe(13);
+		expect(() => WorkiomFilter.parse({ fieldId: 1, operator: 0 })).toThrow();
+		expect(() => WorkiomFilter.parse({ fieldId: 1, operator: 14 })).toThrow();
 	});
 
 	it('parses official create-record field payloads', () => {

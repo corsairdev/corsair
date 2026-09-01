@@ -9,6 +9,7 @@ import { get as listsGet, getAll as listsGetAll } from './endpoints/lists';
 import {
 	create as recordsCreate,
 	getAll as recordsGetAll,
+	update as recordsUpdate,
 } from './endpoints/records';
 import {
 	WorkiomEndpointInputSchemas,
@@ -105,6 +106,7 @@ describe('Workiom plugin', () => {
 		expect(plugin.endpoints?.lists.getAll).toBeDefined();
 		expect(plugin.endpoints?.records.getAll).toBeDefined();
 		expect(plugin.endpoints?.records.create).toBeDefined();
+		expect(plugin.endpoints?.records.update).toBeDefined();
 	});
 
 	it('throws AuthMissingError when no API key is stored', async () => {
@@ -243,6 +245,50 @@ describe('Workiom plugin', () => {
 		expect(req.url).toBe(
 			'https://api.workiom.com/api/services/app/Data/Create?listId=list-1',
 		);
+	});
+
+	it('updates a record via PUT Data/Update?listId=&id=', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				result: { _id: 'rec-2', '1425': 'Ahmad Lam' },
+				success: true,
+				__abp: true,
+			}),
+		);
+
+		const input = WorkiomEndpointInputSchemas.recordsUpdate.parse({
+			listId: 'list-1',
+			id: 'rec-2',
+			record: { '1425': 'Ahmad Lam' },
+		});
+		const result = await recordsUpdate(ctx, input);
+		expect(result._id).toBe('rec-2');
+		WorkiomEndpointOutputSchemas.recordsUpdate.parse(result);
+
+		const req = lastCall();
+		expect(req.method).toBe('PUT');
+		expect(req.url).toBe(
+			'https://api.workiom.com/api/services/app/Data/Update?listId=list-1&id=rec-2',
+		);
+	});
+
+	it('maps body-read timeouts to WorkiomAPIError', async () => {
+		mockFetch.mockResolvedValue({
+			ok: true,
+			status: 200,
+			headers: new Headers(),
+			text: async () => {
+				const error = new Error('The operation was aborted');
+				error.name = 'TimeoutError';
+				throw error;
+			},
+		});
+		await expect(
+			makeWorkiomRequest('/api/services/app/Apps/GetAll', 'k'),
+		).rejects.toMatchObject({
+			name: 'WorkiomAPIError',
+			message: 'Workiom request timed out',
+		});
 	});
 
 	it('maps 429 to WorkiomRateLimitError', async () => {

@@ -2,6 +2,7 @@ import { makeWorkiomRequest, WorkiomAPIError } from './client';
 import { WorkiomApp, WorkiomList, WorkiomRecordPage } from './schema';
 
 const LIVE_KEY = process.env.WORKIOM_API_KEY;
+const TEST_APP_ID = process.env.WORKIOM_TEST_APP_ID;
 const describeIfKey = LIVE_KEY ? describe : describe.skip;
 
 describe('Workiom live API (unauthenticated)', () => {
@@ -27,8 +28,14 @@ describeIfKey('Workiom live API (authenticated)', () => {
 				? (appsRaw as { items: unknown }).items
 				: appsRaw,
 		);
-		const appId = apps[0]?.id;
-		expect(appId).toBeTruthy();
+		const app = TEST_APP_ID
+			? apps.find((item) => item.id === TEST_APP_ID)
+			: apps[0];
+		expect(app?.id).toBeTruthy();
+		if (TEST_APP_ID) {
+			expect(app?.id).toBe(TEST_APP_ID);
+		}
+		const appId = app?.id;
 
 		const listsRaw = await makeWorkiomRequest(
 			'/api/services/app/Lists/GetAll',
