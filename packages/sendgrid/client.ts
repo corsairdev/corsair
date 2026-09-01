@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export class SendGridAPIError extends Error {
@@ -15,6 +19,17 @@ export class SendGridAPIError extends Error {
 }
 
 const SENDGRID_API_BASE = 'https://api.sendgrid.com/v3';
+
+/** Parse Retry-After on 429; do not retry here. Endpoint policy owns retries. */
+const SENDGRID_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
 
 export async function makeSendGridRequest<T>(
 	endpoint: string,
@@ -59,7 +74,9 @@ export async function makeSendGridRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: SENDGRID_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const bodyObj =

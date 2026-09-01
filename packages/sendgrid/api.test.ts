@@ -300,6 +300,25 @@ describe('SendGrid Endpoints Execution & Error Policies', () => {
 		expect(policy.maxRetries).toBe(3);
 		expect(policy.headersRetryAfterMs).toBe(45000);
 	});
+
+	it('does not retry 429 in the HTTP client', async () => {
+		(global.fetch as jest.Mock).mockResolvedValue(
+			mockResponse(
+				429,
+				{ errors: [{ message: 'Too Many Requests' }] },
+				{ 'Retry-After': '45' },
+			),
+		);
+
+		await expect(
+			makeSendGridRequest('mail/send', 'SG.key', { method: 'POST' }),
+		).rejects.toMatchObject({
+			name: 'SendGridAPIError',
+			status: 429,
+			retryAfter: 45000,
+		});
+		expect(global.fetch).toHaveBeenCalledTimes(1);
+	});
 });
 
 describeLive('SendGrid live API', () => {
