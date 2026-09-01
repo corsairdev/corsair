@@ -12,13 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
-import {
-	AccountEndpoints,
-	ScraperEndpoints,
-	SerpEndpoints,
-	WebUnlockerEndpoints,
-} from './endpoints';
+import { BrightDataEndpointsImpl as Endpoints } from './endpoints';
 import type {
 	BrightDataEndpointInputs,
 	BrightDataEndpointOutputs,
@@ -58,97 +52,71 @@ type BrightDataEndpoint<K extends keyof BrightDataEndpointOutputs> =
 	>;
 
 export type BrightDataEndpoints = {
-	webUnlockerUnlock: BrightDataEndpoint<'webUnlocker.unlock'>;
-	webUnlockerUnlockAsync: BrightDataEndpoint<'webUnlocker.unlockAsync'>;
-	webUnlockerGetAsyncResult: BrightDataEndpoint<'webUnlocker.getAsyncResult'>;
-	serpSearch: BrightDataEndpoint<'serp.search'>;
-	serpQuery: BrightDataEndpoint<'serp.query'>;
-	scraperTrigger: BrightDataEndpoint<'scraper.trigger'>;
-	scraperGetProgress: BrightDataEndpoint<'scraper.getProgress'>;
-	scraperGetSnapshot: BrightDataEndpoint<'scraper.getSnapshot'>;
-	scraperGetSnapshotMetadata: BrightDataEndpoint<'scraper.getSnapshotMetadata'>;
-	scraperDeliverSnapshot: BrightDataEndpoint<'scraper.deliverSnapshot'>;
-	scraperListDatasets: BrightDataEndpoint<'scraper.listDatasets'>;
-	accountGetBalance: BrightDataEndpoint<'account.getBalance'>;
-	accountListZones: BrightDataEndpoint<'account.listZones'>;
+	listDatasets: BrightDataEndpoint<'listDatasets'>;
+	getSnapshotStatus: BrightDataEndpoint<'getSnapshotStatus'>;
+	getSnapshotResults: BrightDataEndpoint<'getSnapshotResults'>;
+	filterDataset: BrightDataEndpoint<'filterDataset'>;
+	getAvailableCities: BrightDataEndpoint<'getAvailableCities'>;
+	getAvailableCountries: BrightDataEndpoint<'getAvailableCountries'>;
+	listWebUnlockerZones: BrightDataEndpoint<'listWebUnlockerZones'>;
+	serpSearch: BrightDataEndpoint<'serpSearch'>;
+	crawlApi: BrightDataEndpoint<'crawlApi'>;
+	webUnlocker: BrightDataEndpoint<'webUnlocker'>;
 };
 
 const brightDataEndpointsNested = {
-	webUnlocker: {
-		unlock: WebUnlockerEndpoints.unlock,
-		unlockAsync: WebUnlockerEndpoints.unlockAsync,
-		getAsyncResult: WebUnlockerEndpoints.getAsyncResult,
-	},
-	serp: {
-		search: SerpEndpoints.search,
-		query: SerpEndpoints.query,
-	},
-	scraper: {
-		trigger: ScraperEndpoints.trigger,
-		getProgress: ScraperEndpoints.getProgress,
-		getSnapshot: ScraperEndpoints.getSnapshot,
-		getSnapshotMetadata: ScraperEndpoints.getSnapshotMetadata,
-		deliverSnapshot: ScraperEndpoints.deliverSnapshot,
-		listDatasets: ScraperEndpoints.listDatasets,
-	},
-	account: {
-		getBalance: AccountEndpoints.getBalance,
-		listZones: AccountEndpoints.listZones,
-	},
+	listDatasets: Endpoints.listDatasets,
+	getSnapshotStatus: Endpoints.getSnapshotStatus,
+	getSnapshotResults: Endpoints.getSnapshotResults,
+	filterDataset: Endpoints.filterDataset,
+	getAvailableCities: Endpoints.getAvailableCities,
+	getAvailableCountries: Endpoints.getAvailableCountries,
+	listWebUnlockerZones: Endpoints.listWebUnlockerZones,
+	serpSearch: Endpoints.serpSearch,
+	crawlApi: Endpoints.crawlApi,
+	webUnlocker: Endpoints.webUnlocker,
 } as const;
 
 export const brightDataEndpointSchemas = {
-	'webUnlocker.unlock': {
-		input: BrightDataEndpointInputSchemas['webUnlocker.unlock'],
-		output: BrightDataEndpointOutputSchemas['webUnlocker.unlock'],
+	listDatasets: {
+		input: BrightDataEndpointInputSchemas.listDatasets,
+		output: BrightDataEndpointOutputSchemas.listDatasets,
 	},
-	'webUnlocker.unlockAsync': {
-		input: BrightDataEndpointInputSchemas['webUnlocker.unlockAsync'],
-		output: BrightDataEndpointOutputSchemas['webUnlocker.unlockAsync'],
+	getSnapshotStatus: {
+		input: BrightDataEndpointInputSchemas.getSnapshotStatus,
+		output: BrightDataEndpointOutputSchemas.getSnapshotStatus,
 	},
-	'webUnlocker.getAsyncResult': {
-		input: BrightDataEndpointInputSchemas['webUnlocker.getAsyncResult'],
-		output: BrightDataEndpointOutputSchemas['webUnlocker.getAsyncResult'],
+	getSnapshotResults: {
+		input: BrightDataEndpointInputSchemas.getSnapshotResults,
+		output: BrightDataEndpointOutputSchemas.getSnapshotResults,
 	},
-	'serp.search': {
-		input: BrightDataEndpointInputSchemas['serp.search'],
-		output: BrightDataEndpointOutputSchemas['serp.search'],
+	filterDataset: {
+		input: BrightDataEndpointInputSchemas.filterDataset,
+		output: BrightDataEndpointOutputSchemas.filterDataset,
 	},
-	'serp.query': {
-		input: BrightDataEndpointInputSchemas['serp.query'],
-		output: BrightDataEndpointOutputSchemas['serp.query'],
+	getAvailableCities: {
+		input: BrightDataEndpointInputSchemas.getAvailableCities,
+		output: BrightDataEndpointOutputSchemas.getAvailableCities,
 	},
-	'scraper.trigger': {
-		input: BrightDataEndpointInputSchemas['scraper.trigger'],
-		output: BrightDataEndpointOutputSchemas['scraper.trigger'],
+	getAvailableCountries: {
+		input: BrightDataEndpointInputSchemas.getAvailableCountries,
+		output: BrightDataEndpointOutputSchemas.getAvailableCountries,
 	},
-	'scraper.getProgress': {
-		input: BrightDataEndpointInputSchemas['scraper.getProgress'],
-		output: BrightDataEndpointOutputSchemas['scraper.getProgress'],
+	listWebUnlockerZones: {
+		input: BrightDataEndpointInputSchemas.listWebUnlockerZones,
+		output: BrightDataEndpointOutputSchemas.listWebUnlockerZones,
 	},
-	'scraper.getSnapshot': {
-		input: BrightDataEndpointInputSchemas['scraper.getSnapshot'],
-		output: BrightDataEndpointOutputSchemas['scraper.getSnapshot'],
+	serpSearch: {
+		input: BrightDataEndpointInputSchemas.serpSearch,
+		output: BrightDataEndpointOutputSchemas.serpSearch,
 	},
-	'scraper.getSnapshotMetadata': {
-		input: BrightDataEndpointInputSchemas['scraper.getSnapshotMetadata'],
-		output: BrightDataEndpointOutputSchemas['scraper.getSnapshotMetadata'],
+	crawlApi: {
+		input: BrightDataEndpointInputSchemas.crawlApi,
+		output: BrightDataEndpointOutputSchemas.crawlApi,
 	},
-	'scraper.deliverSnapshot': {
-		input: BrightDataEndpointInputSchemas['scraper.deliverSnapshot'],
-		output: BrightDataEndpointOutputSchemas['scraper.deliverSnapshot'],
-	},
-	'scraper.listDatasets': {
-		input: BrightDataEndpointInputSchemas['scraper.listDatasets'],
-		output: BrightDataEndpointOutputSchemas['scraper.listDatasets'],
-	},
-	'account.getBalance': {
-		input: BrightDataEndpointInputSchemas['account.getBalance'],
-		output: BrightDataEndpointOutputSchemas['account.getBalance'],
-	},
-	'account.listZones': {
-		input: BrightDataEndpointInputSchemas['account.listZones'],
-		output: BrightDataEndpointOutputSchemas['account.listZones'],
+	webUnlocker: {
+		input: BrightDataEndpointInputSchemas.webUnlocker,
+		output: BrightDataEndpointOutputSchemas.webUnlocker,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof brightDataEndpointsNested
@@ -157,68 +125,64 @@ export const brightDataEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const brightDataEndpointMeta = {
-	'webUnlocker.unlock': {
+	listDatasets: {
 		riskLevel: 'read',
 		description:
-			'Unlock and scrape target website with automated bot detection bypass',
+			'Tool to list all available pre-made scrapers (datasets) from Bright Data marketplace. Use when you need to browse available data sources for structured scraping.',
 	},
-	'webUnlocker.unlockAsync': {
-		riskLevel: 'write',
-		description: 'Submit an asynchronous unlocking request',
-	},
-	'webUnlocker.getAsyncResult': {
-		riskLevel: 'read',
-		description: 'Retrieve the results of an asynchronous unlock request',
-	},
-	'serp.search': {
-		riskLevel: 'read',
-		description: 'Search using Bright Data SERP API with full search URL',
-	},
-	'serp.query': {
+	getSnapshotStatus: {
 		riskLevel: 'read',
 		description:
-			'Execute structured search query across Google, Bing, Yandex, or DuckDuckGo',
+			'Tool to check the processing status of a crawl job using snapshot ID. Call before attempting to download results to ensure data collection is complete.',
 	},
-	'scraper.trigger': {
-		riskLevel: 'write',
-		description: 'Trigger data collection job for a Bright Data dataset',
-	},
-	'scraper.getProgress': {
-		riskLevel: 'read',
-		description: 'Get progress and status of a dataset snapshot collection',
-	},
-	'scraper.getSnapshot': {
+	getSnapshotResults: {
 		riskLevel: 'read',
 		description:
-			'Download collected records from a completed dataset snapshot',
+			'Tool to retrieve the scraped data from a completed crawl job by snapshot ID. Only call after confirming the job is complete via getSnapshotStatus.',
 	},
-	'scraper.getSnapshotMetadata': {
-		riskLevel: 'read',
-		description: 'Get metadata and status of a dataset snapshot',
-	},
-	'scraper.deliverSnapshot': {
+	filterDataset: {
 		riskLevel: 'write',
 		description:
-			'Deliver dataset snapshot results to webhook, S3, GCS, or Azure',
+			'Tool to apply custom filter criteria to a marketplace dataset (BETA). Use after selecting a dataset to generate a filtered snapshot.',
 	},
-	'scraper.listDatasets': {
+	getAvailableCities: {
 		riskLevel: 'read',
-		description: 'List available Bright Data datasets',
+		description:
+			'Tool to get available static network cities for a given country. Use when you need to configure static proxy endpoints after selecting a country.',
 	},
-	'account.getBalance': {
+	getAvailableCountries: {
 		riskLevel: 'read',
-		description: 'Get Bright Data customer account balance',
+		description:
+			'Tool to list available countries and their ISO 3166-1 alpha-2 codes. Use when you need to configure zones with valid country codes before provisioning proxies.',
 	},
-	'account.listZones': {
+	listWebUnlockerZones: {
 		riskLevel: 'read',
-		description: 'List configured Bright Data proxy and scraper zones',
+		description:
+			'Tool to list your configured Web Unlocker zones and proxy endpoints. Use to view available zones for web scraping and bot protection bypass.',
+	},
+	serpSearch: {
+		riskLevel: 'read',
+		description:
+			'Tool to perform SERP searches across search engines using Bright Data SERP API. Use when you need search results, trending topics, or competitive analysis data.',
+	},
+	crawlApi: {
+		riskLevel: 'write',
+		description:
+			'Tool to trigger an asynchronous site crawl for a dataset and list of URLs. Returns snapshot_id required by getSnapshotStatus and getSnapshotResults.',
+	},
+	webUnlocker: {
+		riskLevel: 'read',
+		description:
+			'Tool to bypass bot detection, captcha, and other anti-scraping measures to extract content from websites. Use when sites block automated access or require JavaScript rendering.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof brightDataEndpointsNested
 >;
 
 export const brightDataAuthConfig = {
-	api_key: {},
+	api_key: {
+		account: ['one'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseBrightDataPlugin<T extends BrightDataPluginOptions> =
@@ -255,7 +219,6 @@ export function brightdata<const T extends BrightDataPluginOptions>(
 		webhooks: {},
 		endpointMeta: brightDataEndpointMeta,
 		endpointSchemas: brightDataEndpointSchemas,
-		webhookSchemas: {},
 		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
@@ -267,48 +230,20 @@ export function brightdata<const T extends BrightDataPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+				return (await ctx.keys.get_api_key()) ?? '';
 			}
 
-			throw new AuthMissingError('brightdata', 'api_key');
+			return '';
 		},
 	} satisfies InternalBrightDataPlugin;
 }
 
+export {
+	BrightDataAPIError,
+	BrightDataRateLimitError,
+	makeBrightDataRequest,
+} from './client';
 export type {
-	AccountGetBalanceInput,
-	AccountGetBalanceOutput,
-	AccountListZonesInput,
-	AccountListZonesOutput,
 	BrightDataEndpointInputs,
 	BrightDataEndpointOutputs,
-	ScraperDeliverSnapshotInput,
-	ScraperDeliverSnapshotOutput,
-	ScraperGetProgressInput,
-	ScraperGetProgressOutput,
-	ScraperGetSnapshotInput,
-	ScraperGetSnapshotMetadataInput,
-	ScraperGetSnapshotMetadataOutput,
-	ScraperGetSnapshotOutput,
-	ScraperListDatasetsInput,
-	ScraperListDatasetsOutput,
-	ScraperTriggerInput,
-	ScraperTriggerOutput,
-	SerpOrganicResultSchema,
-	SerpQueryInput,
-	SerpQueryOutput,
-	SerpSearchInput,
-	SerpSearchOutput,
-	WebUnlockerGetAsyncResultInput,
-	WebUnlockerGetAsyncResultOutput,
-	WebUnlockerUnlockAsyncInput,
-	WebUnlockerUnlockAsyncOutput,
-	WebUnlockerUnlockInput,
-	WebUnlockerUnlockOutput,
-} from './endpoints/types';
-
-export {
-	BrightDataEndpointInputSchemas,
-	BrightDataEndpointOutputSchemas,
 } from './endpoints/types';

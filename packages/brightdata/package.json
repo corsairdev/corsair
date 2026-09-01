@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/brightdata",
   "version": "0.1.0",
-  "description": "BrightData plugin for Corsair — Web Unlocker, SERP API, datasets, and scraping",
+  "description": "Bright Data plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

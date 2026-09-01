@@ -1,344 +1,352 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import {
-	AccountEndpoints,
-	ScraperEndpoints,
-	SerpEndpoints,
-	WebUnlockerEndpoints,
-} from './endpoints';
+	BrightDataAPIError,
+	BrightDataRateLimitError,
+	makeBrightDataRequest,
+} from './client';
+import { crawlApi } from './endpoints/crawl-api';
+import { filterDataset } from './endpoints/filter-dataset';
+import { getAvailableCities } from './endpoints/get-available-cities';
+import { getAvailableCountries } from './endpoints/get-available-countries';
+import { getSnapshotResults } from './endpoints/get-snapshot-results';
+import { getSnapshotStatus } from './endpoints/get-snapshot-status';
+import { listDatasets } from './endpoints/list-datasets';
+import { listWebUnlockerZones } from './endpoints/list-web-unlocker-zones';
+import { serpSearch } from './endpoints/serp-search';
 import {
 	BrightDataEndpointInputSchemas,
 	BrightDataEndpointOutputSchemas,
 } from './endpoints/types';
-import { brightdata, type BrightDataContext } from './index';
+import { webUnlocker } from './endpoints/web-unlocker';
+import { errorHandlers } from './error-handlers';
+import { brightdata } from './index';
+import {
+	BrightDataCities,
+	BrightDataCountries,
+	BrightDataDataset,
+	BrightDataSnapshotProgress,
+	BrightDataSnapshotRef,
+	BrightDataZone,
+} from './schema';
 
-jest.mock('corsair/core', () => ({
-	...jest.requireActual('corsair/core'),
-	logEventFromContext: jest.fn(async () => undefined),
-}));
-
-const mockLogEvent = logEventFromContext as jest.MockedFunction<
-	typeof logEventFromContext
->;
-
-function makeCtx(key = 'test-brightdata-key'): BrightDataContext {
+jest.mock('corsair/core', () => {
+	class AuthMissingError extends Error {
+		constructor(plugin: string, authType: string) {
+			super(`Missing ${authType} for ${plugin}`);
+			this.name = 'AuthMissingError';
+		}
+	}
 	return {
-		key,
-		db: {},
-	} as unknown as BrightDataContext;
+		AuthMissingError,
+		logEventFromContext: jest.fn(),
+	};
+});
+
+const mockFetch = jest.fn();
+
+beforeAll(() => {
+	globalThis.fetch = mockFetch as typeof fetch;
+});
+
+beforeEach(() => {
+	mockFetch.mockReset();
+	jest.mocked(logEventFromContext).mockReset();
+});
+
+function jsonResponse(body: unknown, init?: ResponseInit): Response {
+	return new Response(JSON.stringify(body), {
+		status: 200,
+		...init,
+		headers: {
+			'Content-Type': 'application/json',
+			...(init?.headers as Record<string, string>),
+		},
+	});
 }
 
-describe('Bright Data Plugin', () => {
-	let lastUrl = '';
-	let lastMethod = '';
-	let lastHeaders: Record<string, string> = {};
-	let lastBody: unknown;
+function lastRequest(): {
+	url: string;
+	auth: string | null;
+	method: string;
+	body: unknown;
+} {
+	expect(mockFetch).toHaveBeenCalled();
+	const [input, init] = mockFetch.mock.calls[0] as [
+		string,
+		RequestInit | undefined,
+	];
+	const headers = new Headers(init?.headers);
+	return {
+		url: input,
+		auth: headers.get('Authorization'),
+		method: init?.method ?? 'GET',
+		body: init?.body ? JSON.parse(String(init.body)) : undefined,
+	};
+}
 
-	beforeEach(() => {
-		mockLogEvent.mockClear();
-		lastUrl = '';
-		lastMethod = '';
-		lastHeaders = {};
-		lastBody = undefined;
+const TEST_KEY = 'test-key';
+const ctx = {
+	key: TEST_KEY,
+	$getAccountId: async () => 'test-account',
+} as never;
 
-		global.fetch = (async (url: unknown, init?: RequestInit) => {
-			lastUrl = String(url);
-			lastMethod = init?.method ?? 'GET';
-			const headers: Record<string, string> = {};
-			if (init?.headers) {
-				const h = init.headers;
-				if (h instanceof Headers) {
-					h.forEach((v, k) => {
-						headers[k.toLowerCase()] = v;
-					});
-				} else {
-					for (const [k, v] of Object.entries(
-						h as Record<string, string>,
-					)) {
-						headers[k.toLowerCase()] = v;
-					}
-				}
-			}
-			lastHeaders = headers;
-			if (init?.body) {
-				try {
-					lastBody = JSON.parse(init.body as string);
-				} catch {
-					lastBody = init.body;
-				}
-			}
+const datasetFixture = {
+	id: 'gd_l1vijqt9jfj7olije',
+	name: 'Crunchbase companies information',
+	size: 2300000,
+};
 
-			return {
-				ok: true,
-				status: 200,
-				statusText: 'OK',
-				url: String(url),
-				headers: new Headers({ 'Content-Type': 'application/json' }),
-				json: async () => ({
-					status: 200,
-					body: '<html>mock</html>',
-					response_id: 'res_123',
-					snapshot_id: 's_123',
-					balance: 50.0,
-					currency: 'USD',
-					zones: [{ name: 'unblocker', type: 'unlocker' }],
-					datasets: [{ id: 'gd_123', name: 'Products' }],
-					general: { search_engine: 'google' },
-					organic: [{ link: 'https://example.com', title: 'Example' }],
-				}),
-				text: async () => JSON.stringify({ status: 200 }),
-			};
-		}) as unknown as typeof global.fetch;
+const progressFixture = {
+	snapshot_id: 's_m4x7enmven8djfqak',
+	dataset_id: 'ds_123456789',
+	status: 'running',
+};
+
+const snapshotRefFixture = { snapshot_id: 's_m4x7enmven8djfqak' };
+
+const zoneFixture = { name: 'web_unlocker1', type: 'unblocker' };
+
+const countriesFixture = {
+	zone_types: {
+		DC_shared: { country_codes: ['us', 'gb'] },
+	},
+};
+
+const citiesFixture = ['us-chicago', 'us-ashburn'];
+
+describe('Bright Data plugin', () => {
+	it('instantiates with api_key auth and ten endpoints', () => {
+		const plugin = brightdata();
+		expect(plugin.id).toBe('brightdata');
+		expect(plugin.authConfig?.api_key?.account).toEqual(['one']);
+		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(10);
+		expect(plugin.webhooks).toEqual({});
+		expect(plugin.pluginWebhookMatcher?.({ headers: {} } as never)).toBe(false);
 	});
 
-	describe('Plugin configuration', () => {
-		it('initializes with default options', () => {
-			const plugin = brightdata();
-			expect(plugin.id).toBe('brightdata');
-			expect(plugin.authConfig).toBeDefined();
-			expect(plugin.endpoints?.webUnlocker?.unlock).toBeDefined();
-			expect(plugin.endpoints?.serp?.search).toBeDefined();
-			expect(plugin.endpoints?.scraper?.trigger).toBeDefined();
-			expect(plugin.endpoints?.account?.getBalance).toBeDefined();
-		});
-
-		it('keyBuilder returns explicit key when provided', async () => {
-			const plugin = brightdata({ key: 'explicit-key' });
-			const keyBuilder = plugin.keyBuilder as any;
-			const key = await keyBuilder(
+	it('returns an explicit key from keyBuilder', async () => {
+		const plugin = brightdata({ key: TEST_KEY });
+		await expect(
+			plugin.keyBuilder?.(
 				{
 					authType: 'api_key',
-					keys: { get_api_key: async () => 'stored-key' },
-				},
+					keys: { get_api_key: async () => undefined },
+				} as never,
 				'endpoint',
-			);
-			expect(key).toBe('explicit-key');
-		});
+			),
+		).resolves.toBe(TEST_KEY);
+	});
 
-		it('keyBuilder retrieves key from context keys', async () => {
-			const plugin = brightdata();
-			const keyBuilder = plugin.keyBuilder as any;
-			const key = await keyBuilder(
-				{
-					authType: 'api_key',
-					keys: { get_api_key: async () => 'stored-key' },
-				},
-				'endpoint',
-			);
-			expect(key).toBe('stored-key');
-		});
+	it('listDatasets requires a key', async () => {
+		await expect(listDatasets({ key: '' } as never, {})).rejects.toThrow(
+			AuthMissingError,
+		);
+		expect(mockFetch).not.toHaveBeenCalled();
+	});
 
-		it('keyBuilder throws AuthMissingError when no key is found', async () => {
-			const plugin = brightdata();
-			const keyBuilder = plugin.keyBuilder as any;
-			await expect(
-				keyBuilder(
-					{
-						authType: 'api_key',
-						keys: { get_api_key: async () => undefined },
-					},
-					'endpoint',
-				),
-			).rejects.toThrow(AuthMissingError);
+	it('listDatasets hits GET /datasets/list', async () => {
+		mockFetch.mockResolvedValue(jsonResponse([datasetFixture]));
+		const input = BrightDataEndpointInputSchemas.listDatasets.parse({});
+		const result = await listDatasets(ctx, input);
+		expect(result[0]?.id).toBe(datasetFixture.id);
+		BrightDataEndpointOutputSchemas.listDatasets.parse(result);
+		const req = lastRequest();
+		expect(req.url).toBe('https://api.brightdata.com/datasets/list');
+		expect(req.method).toBe('GET');
+		expect(req.auth).toBe(`Bearer ${TEST_KEY}`);
+	});
+
+	it('getSnapshotStatus hits GET /datasets/v3/progress/{id}', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(progressFixture));
+		const input = BrightDataEndpointInputSchemas.getSnapshotStatus.parse({
+			snapshot_id: 's_m4x7enmven8djfqak',
+		});
+		const result = await getSnapshotStatus(ctx, input);
+		expect(result.status).toBe('running');
+		BrightDataEndpointOutputSchemas.getSnapshotStatus.parse(result);
+		expect(lastRequest().url).toBe(
+			'https://api.brightdata.com/datasets/v3/progress/s_m4x7enmven8djfqak',
+		);
+	});
+
+	it('getSnapshotResults pages official query params', async () => {
+		mockFetch.mockResolvedValue(jsonResponse([{ url: 'https://example.com' }]));
+		const input = BrightDataEndpointInputSchemas.getSnapshotResults.parse({
+			snapshot_id: 's_m4x7enmven8djfqak',
+			format: 'json',
+			batch_size: 1000,
+			part: 1,
+		});
+		const result = await getSnapshotResults(ctx, input);
+		BrightDataEndpointOutputSchemas.getSnapshotResults.parse(result);
+		expect(lastRequest().url).toBe(
+			'https://api.brightdata.com/datasets/v3/snapshot/s_m4x7enmven8djfqak?format=json&batch_size=1000&part=1',
+		);
+	});
+
+	it('filterDataset posts official JSON body', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(snapshotRefFixture));
+		const input = BrightDataEndpointInputSchemas.filterDataset.parse({
+			dataset_id: 'gd_l1viktl72bvl7bjuj0',
+			records_limit: 100,
+			filter: { name: 'name', operator: '=', value: 'John' },
+		});
+		const result = await filterDataset(ctx, input);
+		expect(result.snapshot_id).toBe(snapshotRefFixture.snapshot_id);
+		const req = lastRequest();
+		expect(req.url).toBe('https://api.brightdata.com/datasets/filter');
+		expect(req.method).toBe('POST');
+		expect(req.body).toEqual({
+			dataset_id: 'gd_l1viktl72bvl7bjuj0',
+			filter: { name: 'name', operator: '=', value: 'John' },
+			records_limit: 100,
 		});
 	});
 
-	describe('Web Unlocker Endpoints', () => {
-		it('webUnlocker.unlock sends POST to /request and logs event', async () => {
-			const ctx = makeCtx();
-			const input = {
-				zone: 'unblocker',
-				url: 'https://example.com/target',
-				format: 'raw' as const,
-			};
-
-			BrightDataEndpointInputSchemas['webUnlocker.unlock'].parse(input);
-			const result = await WebUnlockerEndpoints.unlock(ctx, input);
-
-			expect(lastUrl).toContain('/request');
-			expect(lastMethod).toBe('POST');
-			expect(lastHeaders.authorization).toBe('Bearer test-brightdata-key');
-			expect(lastBody).toEqual(input);
-			expect(mockLogEvent).toHaveBeenCalledWith(
-				ctx,
-				'brightdata.webUnlocker.unlock',
-				expect.objectContaining({ zone: 'unblocker' }),
-				'completed',
-			);
-			BrightDataEndpointOutputSchemas['webUnlocker.unlock'].parse(result);
+	it('getAvailableCities hits GET /zone/static/cities', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(citiesFixture));
+		const input = BrightDataEndpointInputSchemas.getAvailableCities.parse({
+			country: 'us',
+			pool_ip_type: 'dc',
 		});
+		const result = await getAvailableCities(ctx, input);
+		expect(result).toEqual(citiesFixture);
+		expect(lastRequest().url).toBe(
+			'https://api.brightdata.com/zone/static/cities?country=us&pool_ip_type=dc',
+		);
+	});
 
-		it('webUnlocker.unlockAsync sends POST to /unblocker/req', async () => {
-			const ctx = makeCtx();
-			const input = {
-				zone: 'unblocker',
-				url: 'https://example.com/target',
-			};
+	it('getAvailableCountries hits GET /countrieslist', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(countriesFixture));
+		const result = await getAvailableCountries(ctx, {});
+		expect(result.zone_types?.DC_shared?.country_codes).toContain('us');
+		expect(lastRequest().url).toBe('https://api.brightdata.com/countrieslist');
+	});
 
-			const result = await WebUnlockerEndpoints.unlockAsync(ctx, input);
-			expect(lastUrl).toContain('/unblocker/req');
-			expect(lastMethod).toBe('POST');
-			BrightDataEndpointOutputSchemas['webUnlocker.unlockAsync'].parse(result);
+	it('listWebUnlockerZones hits GET /zone/get_active_zones', async () => {
+		mockFetch.mockResolvedValue(jsonResponse([zoneFixture]));
+		const result = await listWebUnlockerZones(ctx, {});
+		expect(result[0]?.name).toBe('web_unlocker1');
+		expect(lastRequest().url).toBe(
+			'https://api.brightdata.com/zone/get_active_zones',
+		);
+	});
+
+	it('serpSearch posts /request with a search URL', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse({ general: { query: 'pizza' }, organic: [] }),
+		);
+		const input = BrightDataEndpointInputSchemas.serpSearch.parse({
+			zone: 'serp_api1',
+			q_keywords: 'pizza',
+			search_engine: 'google',
+			format: 'json',
 		});
-
-		it('webUnlocker.getAsyncResult sends GET to /unblocker/get_result', async () => {
-			const ctx = makeCtx();
-			const result = await WebUnlockerEndpoints.getAsyncResult(ctx, {
-				id: 'res_123',
-			});
-
-			expect(lastUrl).toContain('/unblocker/get_result');
-			expect(lastUrl).toContain('id=res_123');
-			expect(lastMethod).toBe('GET');
-			BrightDataEndpointOutputSchemas['webUnlocker.getAsyncResult'].parse(result);
+		const result = await serpSearch(ctx, input);
+		BrightDataEndpointOutputSchemas.serpSearch.parse(result);
+		const req = lastRequest();
+		expect(req.url).toBe('https://api.brightdata.com/request');
+		expect(req.method).toBe('POST');
+		expect(req.body).toMatchObject({
+			zone: 'serp_api1',
+			url: 'https://www.google.com/search?q=pizza',
+			format: 'json',
+			method: 'GET',
 		});
 	});
 
-	describe('SERP Endpoints', () => {
-		it('serp.search sends POST /request with formatted body', async () => {
-			const ctx = makeCtx();
-			const input = {
-				zone: 'serp_zone',
-				url: 'https://www.google.com/search?q=corsair',
-			};
-
-			const result = await SerpEndpoints.search(ctx, input);
-			expect(lastUrl).toContain('/request');
-			expect(lastMethod).toBe('POST');
-			BrightDataEndpointOutputSchemas['serp.search'].parse(result);
+	it('crawlApi posts items to /datasets/v3/trigger', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(snapshotRefFixture));
+		const input = BrightDataEndpointInputSchemas.crawlApi.parse({
+			dataset_id: 'gd_l1vikfnt1wgvvqz95w',
+			items: [{ url: 'https://www.airbnb.com/rooms/50122531' }],
+			include_errors: true,
 		});
-
-		it('serp.query builds engine URL correctly for google', async () => {
-			const ctx = makeCtx();
-			const input = {
-				zone: 'serp_zone',
-				query: 'test search',
-				engine: 'google' as const,
-				country: 'us',
-				language: 'en',
-			};
-
-			const result = await SerpEndpoints.query(ctx, input);
-			expect(lastUrl).toContain('/request');
-			expect(lastMethod).toBe('POST');
-			expect(lastBody).toEqual(
-				expect.objectContaining({
-					zone: 'serp_zone',
-					url: expect.stringContaining('google.com/search?q=test+search'),
-					search_engine: 'google',
-				}),
-			);
-			BrightDataEndpointOutputSchemas['serp.query'].parse(result);
-		});
-
-		it('serp.query builds engine URL correctly for bing', async () => {
-			const ctx = makeCtx();
-			const input = {
-				zone: 'serp_zone',
-				query: 'bing query',
-				engine: 'bing' as const,
-			};
-
-			const result = await SerpEndpoints.query(ctx, input);
-			expect(lastBody).toEqual(
-				expect.objectContaining({
-					url: expect.stringContaining('bing.com/search?q=bing+query'),
-				}),
-			);
-			BrightDataEndpointOutputSchemas['serp.query'].parse(result);
-		});
+		const result = await crawlApi(ctx, input);
+		expect(result.snapshot_id).toBe(snapshotRefFixture.snapshot_id);
+		const req = lastRequest();
+		expect(req.url).toBe(
+			'https://api.brightdata.com/datasets/v3/trigger?dataset_id=gd_l1vikfnt1wgvvqz95w&include_errors=true',
+		);
+		expect(req.body).toEqual([
+			{ url: 'https://www.airbnb.com/rooms/50122531' },
+		]);
 	});
 
-	describe('Scraper / Datasets Endpoints', () => {
-		it('scraper.trigger sends POST to /datasets/v3/trigger', async () => {
-			const ctx = makeCtx();
-			const input = {
-				dataset_id: 'gd_12345',
-				inputs: [{ url: 'https://example.com' }],
-			};
-
-			const result = await ScraperEndpoints.trigger(ctx, input);
-			expect(lastUrl).toContain('/datasets/v3/trigger');
-			expect(lastUrl).toContain('dataset_id=gd_12345');
-			expect(lastMethod).toBe('POST');
-			expect(lastBody).toEqual(input.inputs);
-			BrightDataEndpointOutputSchemas['scraper.trigger'].parse(result);
+	it('webUnlocker posts official /request body', async () => {
+		mockFetch.mockResolvedValue(
+			new Response('Welcome to Bright Data', { status: 200 }),
+		);
+		const input = BrightDataEndpointInputSchemas.webUnlocker.parse({
+			zone: 'web_unlocker1',
+			url: 'https://geo.brdtest.com/welcome.txt',
+			format: 'raw',
 		});
-
-		it('scraper.getProgress sends GET to /datasets/v3/progress/{snapshot_id}', async () => {
-			const ctx = makeCtx();
-			const result = await ScraperEndpoints.getProgress(ctx, {
-				snapshot_id: 's_123',
-			});
-
-			expect(lastUrl).toContain('/datasets/v3/progress/s_123');
-			expect(lastMethod).toBe('GET');
-			BrightDataEndpointOutputSchemas['scraper.getProgress'].parse(result);
-		});
-
-		it('scraper.getSnapshot sends GET to /datasets/v3/snapshot/{snapshot_id}', async () => {
-			const ctx = makeCtx();
-			const result = await ScraperEndpoints.getSnapshot(ctx, {
-				snapshot_id: 's_123',
-			});
-
-			expect(lastUrl).toContain('/datasets/v3/snapshot/s_123');
-			expect(lastMethod).toBe('GET');
-			BrightDataEndpointOutputSchemas['scraper.getSnapshot'].parse(result);
-		});
-
-		it('scraper.getSnapshotMetadata sends GET to /datasets/snapshots/{snapshot_id}', async () => {
-			const ctx = makeCtx();
-			const result = await ScraperEndpoints.getSnapshotMetadata(ctx, {
-				snapshot_id: 's_123',
-			});
-
-			expect(lastUrl).toContain('/datasets/snapshots/s_123');
-			expect(lastMethod).toBe('GET');
-			BrightDataEndpointOutputSchemas['scraper.getSnapshotMetadata'].parse(result);
-		});
-
-		it('scraper.deliverSnapshot sends POST to /datasets/snapshots/{snapshot_id}/deliver', async () => {
-			const ctx = makeCtx();
-			const result = await ScraperEndpoints.deliverSnapshot(ctx, {
-				snapshot_id: 's_123',
-				deliver: { target: 'webhook', url: 'https://my-webhook.com' },
-			});
-
-			expect(lastUrl).toContain('/datasets/snapshots/s_123/deliver');
-			expect(lastMethod).toBe('POST');
-			BrightDataEndpointOutputSchemas['scraper.deliverSnapshot'].parse(result);
-		});
-
-		it('scraper.listDatasets sends GET to /datasets/v3/datasets', async () => {
-			const ctx = makeCtx();
-			const result = await ScraperEndpoints.listDatasets(ctx, {
-				limit: 10,
-			});
-
-			expect(lastUrl).toContain('/datasets/v3/datasets');
-			expect(lastUrl).toContain('limit=10');
-			expect(lastMethod).toBe('GET');
-			BrightDataEndpointOutputSchemas['scraper.listDatasets'].parse(result);
+		const result = await webUnlocker(ctx, input);
+		expect(result).toBe('Welcome to Bright Data');
+		expect(lastRequest().body).toMatchObject({
+			zone: 'web_unlocker1',
+			url: 'https://geo.brdtest.com/welcome.txt',
+			format: 'raw',
 		});
 	});
+});
 
-	describe('Account Endpoints', () => {
-		it('account.getBalance sends GET to /customer/balance', async () => {
-			const ctx = makeCtx();
-			const result = await AccountEndpoints.getBalance(ctx, {});
+describe('Bright Data client errors', () => {
+	it('wraps 429 as BrightDataRateLimitError with retry metadata', async () => {
+		mockFetch.mockImplementation(() =>
+			jsonResponse(
+				{ error: 'Too Many Requests' },
+				{ status: 429, headers: { 'Retry-After': '42' } },
+			),
+		);
+		try {
+			await makeBrightDataRequest('/countrieslist', TEST_KEY);
+		} catch (error) {
+			expect(error).toBeInstanceOf(BrightDataRateLimitError);
+			expect((error as BrightDataRateLimitError).retryAfterMs).toBe(42000);
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(error as Error)).toBe(true);
+			const policy = await errorHandlers.RATE_LIMIT_ERROR.handler(
+				error as Error,
+			);
+			expect(policy.headersRetryAfterMs).toBe(42000);
+		}
+	});
 
-			expect(lastUrl).toContain('/customer/balance');
-			expect(lastMethod).toBe('GET');
-			BrightDataEndpointOutputSchemas['account.getBalance'].parse(result);
-		});
+	it('wraps 401 as BrightDataAPIError matched by AUTH_ERROR', async () => {
+		mockFetch.mockImplementation(() =>
+			jsonResponse({ error: 'Unauthorized' }, { status: 401 }),
+		);
+		try {
+			await makeBrightDataRequest('/countrieslist', TEST_KEY);
+		} catch (error) {
+			expect(error).toBeInstanceOf(BrightDataAPIError);
+			expect((error as BrightDataAPIError).status).toBe(401);
+			expect(errorHandlers.AUTH_ERROR.match(error as Error)).toBe(true);
+		}
+	});
+});
 
-		it('account.listZones sends GET to /zone', async () => {
-			const ctx = makeCtx();
-			const result = await AccountEndpoints.listZones(ctx, {});
-
-			expect(lastUrl).toContain('/zone');
-			expect(lastMethod).toBe('GET');
-			BrightDataEndpointOutputSchemas['account.listZones'].parse(result);
-		});
+describe('official docs fixtures', () => {
+	it('parses documented dataset, snapshot, zone, country, and city payloads', () => {
+		expect(BrightDataDataset.parse(datasetFixture).id).toBe(datasetFixture.id);
+		expect(BrightDataSnapshotProgress.parse(progressFixture).status).toBe(
+			'running',
+		);
+		expect(BrightDataSnapshotRef.parse(snapshotRefFixture).snapshot_id).toBe(
+			snapshotRefFixture.snapshot_id,
+		);
+		expect(BrightDataZone.parse(zoneFixture).name).toBe('web_unlocker1');
+		expect(
+			BrightDataCountries.parse(countriesFixture).zone_types?.DC_shared
+				?.country_codes,
+		).toEqual(['us', 'gb']);
+		expect(BrightDataCities.parse(citiesFixture)).toHaveLength(2);
+		expect(() =>
+			BrightDataSnapshotProgress.parse({
+				...progressFixture,
+				status: 'queued',
+			}),
+		).toThrow();
 	});
 });

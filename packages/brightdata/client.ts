@@ -1,10 +1,16 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+
+export function requireBrightDataKey(key: string | undefined): string {
+	if (!key) {
+		throw new AuthMissingError('brightdata', 'api_key');
+	}
+	return key;
+}
 
 export class BrightDataAPIError extends Error {
 	constructor(
 		message: string,
-		public readonly code?: string,
+		public readonly code?: string | number,
 		public readonly status?: number,
 		public readonly body?: unknown,
 	) {
@@ -13,67 +19,111 @@ export class BrightDataAPIError extends Error {
 	}
 }
 
+export class BrightDataRateLimitError extends BrightDataAPIError {
+	constructor(
+		message = 'Too Many Requests',
+		public readonly retryAfterMs?: number,
+		body?: unknown,
+	) {
+		super(message, 429, 429, body);
+		this.name = 'BrightDataRateLimitError';
+	}
+}
+
 const BRIGHTDATA_API_BASE = 'https://api.brightdata.com';
+const REQUEST_TIMEOUT_MS = 60_000;
+
+export type BrightDataRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	body?: unknown;
+	query?: Record<string, string | number | boolean | undefined>;
+};
+
+function queryString(
+	query?: Record<string, string | number | boolean | undefined>,
+): string {
+	if (!query) return '';
+	const params = new URLSearchParams();
+	for (const [key, value] of Object.entries(query)) {
+		if (value !== undefined) params.set(key, String(value));
+	}
+	const qs = params.toString();
+	return qs ? `?${qs}` : '';
+}
+
+function bodyMessage(body: unknown, fallback: string): string {
+	if (typeof body === 'string' && body) return body;
+	if (body && typeof body === 'object') {
+		if ('error' in body) return String((body as { error: unknown }).error);
+		if ('message' in body)
+			return String((body as { message: unknown }).message);
+	}
+	return fallback;
+}
+
+function retryAfterMs(res: Response): number | undefined {
+	const raw = res.headers.get('Retry-After');
+	if (!raw) return undefined;
+	const seconds = Number(raw);
+	if (Number.isFinite(seconds)) return seconds * 1000;
+	const at = Date.parse(raw);
+	return Number.isFinite(at) ? Math.max(0, at - Date.now()) : undefined;
+}
 
 export async function makeBrightDataRequest<T>(
 	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: unknown;
-		query?: Record<string, string | number | boolean | undefined>;
-		headers?: Record<string, string>;
-	} = {},
+	apiKey: string | undefined,
+	options: BrightDataRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, headers } = options;
-
-	const trimmedKey = apiKey?.trim();
-	if (!trimmedKey) {
-		throw new BrightDataAPIError('Bright Data API key is required');
-	}
-
-	const config: OpenAPIConfig = {
-		BASE: BRIGHTDATA_API_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: trimmedKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${trimmedKey}`,
-			...headers,
-		},
+	const key = requireBrightDataKey(apiKey);
+	const { method = 'GET', body, query } = options;
+	const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+	const url = `${BRIGHTDATA_API_BASE}${path}${queryString(query)}`;
+	const headers: Record<string, string> = {
+		Accept: 'application/json',
+		Authorization: `Bearer ${key}`,
 	};
+	const hasJsonBody =
+		method === 'POST' || method === 'PUT' || method === 'PATCH';
+	if (hasJsonBody) headers['Content-Type'] = 'application/json';
 
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint.startsWith('/') ? endpoint : `/${endpoint}`,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query,
-	};
-
+	let res: Response;
+	let parsed: unknown;
 	try {
-		return await request<T>(config, requestOptions);
+		res = await fetch(url, {
+			method,
+			headers,
+			body: hasJsonBody ? JSON.stringify(body) : undefined,
+			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+		});
+		const text = await res.text();
+		if (text) {
+			try {
+				parsed = JSON.parse(text);
+			} catch {
+				parsed = text;
+			}
+		}
 	} catch (error) {
-		if (error instanceof ApiError) {
-			const msg =
-				typeof error.body === 'object' && error.body && 'message' in error.body
-					? String((error.body as Record<string, unknown>).message)
-					: error.message;
-			throw new BrightDataAPIError(
-				msg || error.message,
-				(error.body as Record<string, unknown>)?.code as string | undefined,
-				error.status,
-				error.body,
-			);
-		}
-		if (error instanceof Error) {
-			throw new BrightDataAPIError(error.message);
-		}
-		throw new BrightDataAPIError('Unknown error');
+		throw new BrightDataAPIError(
+			error instanceof Error ? error.message : 'Bright Data request failed',
+		);
 	}
+
+	if (res.status === 429) {
+		throw new BrightDataRateLimitError(
+			bodyMessage(parsed, 'Too Many Requests'),
+			retryAfterMs(res),
+			parsed,
+		);
+	}
+	if (!res.ok) {
+		throw new BrightDataAPIError(
+			bodyMessage(parsed, `Bright Data API error ${res.status}`),
+			res.status,
+			res.status,
+			parsed,
+		);
+	}
+	return parsed as T;
 }

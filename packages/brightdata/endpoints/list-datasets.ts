@@ -3,29 +3,19 @@ import type { BrightDataEndpoints } from '..';
 import { makeBrightDataRequest, requireBrightDataKey } from '../client';
 import { BrightDataEndpointOutputSchemas } from './types';
 
-export const webUnlocker: BrightDataEndpoints['webUnlocker'] = async (
+export const listDatasets: BrightDataEndpoints['listDatasets'] = async (
 	ctx,
 	input,
 ) => {
 	const response = await makeBrightDataRequest<unknown>(
-		'/request',
+		'/datasets/list',
 		requireBrightDataKey(ctx.key),
-		{
-			method: 'POST',
-			body: {
-				zone: input.zone,
-				url: input.url,
-				format: input.format ?? 'raw',
-				country: input.country,
-				data_format: input.data_format,
-			},
-		},
 	);
-	const parsed = BrightDataEndpointOutputSchemas.webUnlocker.parse(response);
+	const parsed = BrightDataEndpointOutputSchemas.listDatasets.parse(response);
 	await logEventFromContext(
 		ctx,
-		'brightdata.web_unlocker',
-		{ zone: input.zone, url: input.url },
+		'brightdata.list_datasets',
+		{ ...input, count: parsed.length },
 		'completed',
 	);
 	return parsed;
