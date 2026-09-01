@@ -121,8 +121,6 @@ const GetFormResponsesResponseSchema = z.object({
 		after: z.nullable(z.string()),
 		before: z.nullable(z.string()),
 	}),
-	// The provider returns null (not []) when a form has no responses yet,
-	// so normalize to an empty array here.
 	data: z
 		.array(FormResponseItemSchema)
 		.nullable()

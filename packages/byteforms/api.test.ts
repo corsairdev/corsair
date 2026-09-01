@@ -1,14 +1,3 @@
-// Live API tests for the ByteForms plugin.
-//
-// These tests call the real ByteForms API. CI ignores api.test.ts files (see
-// pr-checks.yml testPathIgnorePatterns), so they only run when invoked
-// explicitly with a key:
-//
-//   BYTEFORMS_API_KEY=<your-key> pnpm --filter @corsair-dev/byteforms test
-//
-// Pattern follows packages/slack/api.test.ts: call the plugin's own client,
-// validate every live response through the plugin's zod output schemas, and
-// clean up created resources in afterAll.
 import { makeByteFormsRequest } from './client';
 import { ByteFormsEndpointOutputSchemas } from './endpoints/types';
 

@@ -68,8 +68,6 @@ export async function makeByteFormsRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
-			// ByteForms uses "basic" auth: the raw API key is sent in the
-			// Authorization header with no "Bearer" prefix.
 			Authorization: apiKey,
 			'Content-Type': 'application/json',
 		},

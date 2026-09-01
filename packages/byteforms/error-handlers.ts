@@ -6,9 +6,6 @@ export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
-			// makeByteFormsRequest wraps ApiError into ByteFormsAPIError, so
-			// match on the wrapped error's status too (its message is e.g.
-			// "Too Many Requests", which contains neither "429" nor "rate_limited").
 			if (error instanceof ByteFormsAPIError && error.status === 429) {
 				return true;
 			}
