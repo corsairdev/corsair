@@ -128,7 +128,10 @@ export function timelink<const T extends TimelinkPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new Error('Timelink API key is missing');
+				}
+				return res;
 			}
 
 			return '';
