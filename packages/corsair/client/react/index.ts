@@ -320,12 +320,10 @@ export {
 	type CorsairErrorBoundaryProps,
 } from './error-boundary';
 export {
-	type CorsairContextValue,
 	CorsairProvider,
 	type CorsairProviderProps,
 	type UseConnectResult,
 	useConnect,
-	useCorsair,
 } from './provider';
 
 // Re-export types that hook consumers need

@@ -9,7 +9,6 @@ import {
 	useMemo,
 	useReducer,
 	useRef,
-	useState,
 } from 'react';
 import { createCorsairClient } from '../index';
 import type { CorsairManagementClient } from '../types';
@@ -42,8 +41,6 @@ export type CorsairContextValue = {
 	/** Read the pending connect-request and open the overlay. Used by the boundary
 	 * and by `call` — returns 'none' when there's nothing to connect. */
 	requireConnect: () => Promise<RequireConnectOutcome>;
-	/** Bumped on each successful connect so boundaries can reset and retry. */
-	connectNonce: number;
 	status: ConnectState;
 };
 
@@ -107,7 +104,6 @@ export function CorsairProvider({
 		connectReducer,
 		initialConnectState,
 	);
-	const [connectNonce, setConnectNonce] = useState(0);
 
 	const resolveRef = useRef<((ok: boolean) => void) | null>(null);
 	const popupRef = useRef<Window | null>(null);
@@ -158,7 +154,6 @@ export function CorsairProvider({
 				dispatch({ type: 'SUCCESS' });
 				client.connectRequest.clear(scope).catch(() => {});
 				onConnectedRef.current?.();
-				setConnectNonce((n) => n + 1);
 				settle(true);
 			};
 			const finishCancelled = () => {
@@ -349,10 +344,9 @@ export function CorsairProvider({
 			connect,
 			call,
 			requireConnect,
-			connectNonce,
 			status: connectState,
 		}),
-		[client, connect, call, requireConnect, connectNonce, connectState],
+		[client, connect, call, requireConnect, connectState],
 	);
 
 	const overlayOpen =
