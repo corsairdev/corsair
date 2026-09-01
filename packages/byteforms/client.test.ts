@@ -115,7 +115,7 @@ describe('makeByteFormsRequest', () => {
 			| undefined;
 		expect(requestOptions?.rateLimitConfig).toMatchObject({
 			enabled: true,
-			maxRetries: 3,
+			maxRetries: 0,
 		});
 	});
 

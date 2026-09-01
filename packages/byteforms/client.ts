@@ -30,9 +30,12 @@ export class ByteFormsAPIError extends Error {
 
 export const BYTEFORMS_API_BASE = 'https://api.forms.bytesuite.io/api';
 
+// Transport-level retries are disabled entirely (matching the abuseipdb
+// convention): a 429 after the provider has processed a write would replay
+// non-idempotent POSTs. Rate-limit errors are classified by error-handlers.ts.
 const BYTEFORMS_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
+	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: {
