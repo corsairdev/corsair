@@ -142,6 +142,7 @@ function ConnectionsRoster({
 					style={{
 						fontFamily: MONO,
 						fontSize: 10.5,
+						fontWeight: 500,
 						letterSpacing: '0.06em',
 						textTransform: 'uppercase',
 						color: faint,
@@ -150,7 +151,7 @@ function ConnectionsRoster({
 					Your connections
 				</span>
 				<span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-					<span style={{ fontSize: 12, color: muted }}>
+					<span style={{ fontSize: 12, fontWeight: 500, color: muted }}>
 						{connectedCount}/{others.length}
 					</span>
 					<svg
@@ -260,8 +261,8 @@ export function ConnectOverlay({
 	const dark = useDark(resolveTheme(appearance));
 	const surface = dark ? '#141414' : '#fff';
 	const ink = dark ? '#f5f5f5' : INK;
-	const muted = dark ? '#f5f5f599' : `${INK}66`;
-	const faint = dark ? '#f5f5f566' : `${INK}40`;
+	const muted = dark ? '#f5f5f5cc' : `${INK}a6`;
+	const faint = dark ? '#f5f5f599' : `${INK}80`;
 	const border = dark ? '#ffffff1f' : `${INK}1a`;
 	const hair = dark ? '#ffffff12' : `${INK}0d`;
 	// CTA inverts with the theme so it reads against the surface: dark button on
@@ -387,9 +388,9 @@ export function ConnectOverlay({
 									style={{
 										position: 'relative',
 										margin: '18px 0 0',
-										fontSize: 18.5,
+										fontSize: 20,
 										fontWeight: 700,
-										letterSpacing: '-0.02em',
+										letterSpacing: '-0.03em',
 										color: ink,
 									}}
 								>
@@ -468,19 +469,21 @@ export function ConnectOverlay({
 							borderTop: `1px solid ${hair}`,
 						}}
 					>
-						<span style={{ fontSize: 11, color: faint }}>Secured by</span>
+						<span style={{ fontSize: 11, fontWeight: 500, color: faint }}>
+							Secured by
+						</span>
 						<img
 							src={CORSAIR_MARK}
 							alt=""
-							width={14}
-							height={14}
+							width={15}
+							height={15}
 							style={{ display: 'block' }}
 						/>
 						<span
 							style={{
-								fontSize: 12,
-								fontWeight: 700,
-								letterSpacing: '-0.01em',
+								fontSize: 12.5,
+								fontWeight: 600,
+								letterSpacing: '-0.02em',
 								color: muted,
 							}}
 						>
