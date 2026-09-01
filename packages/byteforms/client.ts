@@ -28,7 +28,7 @@ export class ByteFormsAPIError extends Error {
 	}
 }
 
-const BYTEFORMS_API_BASE = 'https://api.forms.bytesuite.io/api';
+export const BYTEFORMS_API_BASE = 'https://api.forms.bytesuite.io/api';
 
 const BYTEFORMS_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
