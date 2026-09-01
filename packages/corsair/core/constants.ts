@@ -95,6 +95,7 @@ export const BaseProviders = [
 	'browseai',
 	'browserless',
 	'bugsnag',
+	'byteforms',
 	'cal',
 	'calendly',
 	'canva',
@@ -329,6 +330,7 @@ export const ProviderDisplayNames = {
 	browseai: 'Browse AI',
 	browserless: 'Browserless',
 	bugsnag: 'BugSnag',
+	byteforms: 'ByteForms',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
@@ -571,6 +573,7 @@ export type AllProviders =
 	| 'browseai'
 	| 'browserless'
 	| 'bugsnag'
+	| 'byteforms'
 	| 'cal'
 	| 'calendly'
 	| 'canva'
