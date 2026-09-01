@@ -163,11 +163,18 @@ describe('SendGrid Endpoints Execution & Error Policies', () => {
 		});
 	});
 
-	it('classifies 429 as RATE_LIMIT_ERROR', async () => {
-		const error = new SendGridAPIError('Too Many Requests', undefined, 429);
+	it('classifies 429 as RATE_LIMIT_ERROR and honors Retry-After ms', async () => {
+		const error = new SendGridAPIError(
+			'Too Many Requests',
+			undefined,
+			429,
+			undefined,
+			45000,
+		);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		const policy = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
 		expect(policy.maxRetries).toBe(3);
+		expect(policy.headersRetryAfterMs).toBe(45000);
 	});
 });
 

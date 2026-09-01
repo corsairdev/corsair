@@ -16,11 +16,16 @@ export const errorHandlers = {
 			return msg.includes('rate limit') || msg.includes('too many requests');
 		},
 		handler: async (error) => {
-			let retryAfter = 1;
-			if (error instanceof ApiError && error.retryAfter) {
-				retryAfter = error.retryAfter;
-			}
-			return { maxRetries: 3, backoffMs: retryAfter * 1000 };
+			const retryAfterMs =
+				(error instanceof ApiError ? error.retryAfter : undefined) ??
+				(error instanceof SendGridAPIError ? error.retryAfter : undefined);
+			return {
+				maxRetries: 3,
+				headersRetryAfterMs: retryAfterMs,
+				retryStrategy: retryAfterMs
+					? undefined
+					: ('exponential_backoff' as const),
+			};
 		},
 	},
 	AUTH_ERROR: {
@@ -56,7 +61,10 @@ export const errorHandlers = {
 				msg.includes('service unavailable')
 			);
 		},
-		handler: async () => ({ maxRetries: 2, backoffMs: 1000 }),
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
+		}),
 	},
 	DEFAULT: {
 		match: () => true,

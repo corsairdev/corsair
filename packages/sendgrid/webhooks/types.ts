@@ -52,6 +52,8 @@ export function createSendGridMatch(eventType?: string): CorsairWebhookMatcher {
 	};
 }
 
+export const SENDGRID_WEBHOOK_MAX_AGE_SECONDS = 300;
+
 export function verifySendGridWebhookSignature(
 	request: WebhookRequest<SendGridEvent>,
 	secret: string,
@@ -75,6 +77,19 @@ export function verifySendGridWebhookSignature(
 		return {
 			valid: false,
 			error: 'Missing SendGrid signature or timestamp header',
+		};
+	}
+
+	const timestampSeconds = Number(timestamp);
+	if (!Number.isFinite(timestampSeconds)) {
+		return { valid: false, error: 'Invalid SendGrid webhook timestamp' };
+	}
+
+	const ageSeconds = Math.abs(Date.now() / 1000 - timestampSeconds);
+	if (ageSeconds > SENDGRID_WEBHOOK_MAX_AGE_SECONDS) {
+		return {
+			valid: false,
+			error: 'SendGrid webhook timestamp is stale',
 		};
 	}
 

@@ -7,6 +7,7 @@ export class SendGridAPIError extends Error {
 		public readonly code?: string,
 		public readonly status?: number,
 		public readonly body?: unknown,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'SendGridAPIError';
@@ -74,6 +75,7 @@ export async function makeSendGridRequest<T>(
 				typeof firstError?.field === 'string' ? firstError.field : undefined,
 				error.status,
 				error.body,
+				error.retryAfter,
 			);
 		}
 		if (error instanceof Error) {

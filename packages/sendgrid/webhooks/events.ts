@@ -5,6 +5,13 @@ export const emailEvent: SendGridWebhooks['emailEvent'] = {
 	match: createSendGridMatch(),
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
+		if (!webhookSecret) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: 'SendGrid webhook verification key is missing',
+			};
+		}
 		const verification = verifySendGridWebhookSignature(request, webhookSecret);
 		if (!verification.valid) {
 			return {

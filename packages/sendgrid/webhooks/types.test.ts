@@ -47,9 +47,13 @@ describe('SendGrid Webhooks', () => {
 			privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
 		});
 
-		const timestamp = '1600000000';
+		const timestamp = String(Math.floor(Date.now() / 1000));
 		const payload = [
-			{ email: 'test@example.com', event: 'delivered', timestamp: 1600000000 },
+			{
+				email: 'test@example.com',
+				event: 'delivered',
+				timestamp: Number(timestamp),
+			},
 		];
 		const rawBody = JSON.stringify(payload);
 		const payloadToSign = timestamp + rawBody;
@@ -72,6 +76,34 @@ describe('SendGrid Webhooks', () => {
 			keyPair.publicKey,
 		);
 		expect(result.valid).toBe(true);
+	});
+
+	it('rejects stale signed timestamps', () => {
+		const keyPair = crypto.generateKeyPairSync('ec', {
+			namedCurve: 'prime256v1',
+			publicKeyEncoding: { type: 'spki', format: 'pem' },
+			privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+		});
+
+		const timestamp = '1600000000';
+		const rawBody = '[]';
+		const signer = crypto.createSign('SHA256');
+		signer.update(timestamp + rawBody);
+		const signature = signer.sign(keyPair.privateKey, 'base64');
+
+		const result = verifySendGridWebhookSignature(
+			{
+				headers: {
+					'x-twilio-email-event-webhook-signature': signature,
+					'x-twilio-email-event-webhook-timestamp': timestamp,
+				},
+				payload: [],
+				rawBody,
+			} as WebhookRequest<any>,
+			keyPair.publicKey,
+		);
+		expect(result.valid).toBe(false);
+		expect(result.error).toMatch(/stale/);
 	});
 
 	it('rejects invalid signature when secret is provided', () => {

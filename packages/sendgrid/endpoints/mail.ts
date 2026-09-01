@@ -17,12 +17,11 @@ export const send: SendGridEndpoints['mailSend'] = async (ctx, input) => {
 		ctx,
 		'sendgrid.mail.send',
 		{
-			from_email: input.from.email,
 			recipient_count: input.personalizations.reduce(
 				(sum, p) => sum + p.to.length,
 				0,
 			),
-			template_id: input.template_id,
+			has_template: Boolean(input.template_id),
 		},
 		'completed',
 	);
