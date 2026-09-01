@@ -4,7 +4,8 @@ import {
 	WorkiomAPIError,
 	WorkiomRateLimitError,
 } from './client';
-import { getAll as listsGetAll } from './endpoints/lists';
+import { getAll as appsGetAll } from './endpoints/apps';
+import { get as listsGet, getAll as listsGetAll } from './endpoints/lists';
 import {
 	create as recordsCreate,
 	getAll as recordsGetAll,
@@ -95,10 +96,12 @@ const officialRecordPage = {
 };
 
 describe('Workiom plugin', () => {
-	it('exposes the three official ops and api_key auth', () => {
+	it('exposes apps, lists, and records ops with api_key auth', () => {
 		const plugin = workiom({ key: 'test-key' });
 		expect(plugin.id).toBe('workiom');
 		expect(plugin.authConfig?.api_key?.account).toEqual(['one']);
+		expect(plugin.endpoints?.apps.getAll).toBeDefined();
+		expect(plugin.endpoints?.lists.get).toBeDefined();
 		expect(plugin.endpoints?.lists.getAll).toBeDefined();
 		expect(plugin.endpoints?.records.getAll).toBeDefined();
 		expect(plugin.endpoints?.records.create).toBeDefined();
@@ -115,6 +118,41 @@ describe('Workiom plugin', () => {
 				'endpoint',
 			),
 		).rejects.toThrow(AuthMissingError);
+	});
+
+	it('lists apps from GET Apps/GetAll and unwraps ABP result.items', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				result: { items: [{ id: 'app-1', name: 'CRM' }] },
+				success: true,
+				__abp: true,
+			}),
+		);
+
+		const result = await appsGetAll(ctx, {});
+		expect(result.items[0]?.id).toBe('app-1');
+		WorkiomEndpointOutputSchemas.appsGetAll.parse(result);
+		expect(lastCall().url).toBe(
+			'https://api.workiom.com/api/services/app/Apps/GetAll',
+		);
+	});
+
+	it('gets list metadata from GET Lists/Get with Fields,Views,Filters', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				result: officialList,
+				success: true,
+				__abp: true,
+			}),
+		);
+
+		const input = WorkiomEndpointInputSchemas.listsGet.parse({ id: 'list-1' });
+		const result = await listsGet(ctx, input);
+		expect(result.fields?.[0]?.id).toBe(1425);
+		WorkiomEndpointOutputSchemas.listsGet.parse(result);
+		expect(lastCall().url).toBe(
+			'https://api.workiom.com/api/services/app/Lists/Get?id=list-1&expand=Fields%2CViews%2CFilters',
+		);
 	});
 
 	it('lists lists from GET Lists/GetAll and unwraps ABP result.items', async () => {

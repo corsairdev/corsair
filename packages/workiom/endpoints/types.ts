@@ -1,10 +1,29 @@
 import { z } from 'zod';
 import {
+	WorkiomApp,
 	WorkiomFilter,
 	WorkiomList,
 	WorkiomRecord,
 	WorkiomRecordPage,
 } from '../schema';
+
+export const AppsGetAllInputSchema = z.object({});
+export type AppsGetAllInput = z.infer<typeof AppsGetAllInputSchema>;
+
+export const AppsGetAllOutputSchema = z.object({
+	items: z.array(WorkiomApp),
+	totalCount: z.number().optional(),
+});
+export type AppsGetAllOutput = z.infer<typeof AppsGetAllOutputSchema>;
+
+export const ListsGetInputSchema = z.object({
+	id: z.string().min(1),
+	expand: z.array(z.enum(['Fields', 'Views', 'Filters'])).optional(),
+});
+export type ListsGetInput = z.infer<typeof ListsGetInputSchema>;
+
+export const ListsGetOutputSchema = WorkiomList;
+export type ListsGetOutput = z.infer<typeof ListsGetOutputSchema>;
 
 export const ListsGetAllInputSchema = z.object({
 	appId: z
@@ -47,12 +66,16 @@ export const RecordsCreateOutputSchema = WorkiomRecord;
 export type RecordsCreateOutput = z.infer<typeof RecordsCreateOutputSchema>;
 
 export const WorkiomEndpointInputSchemas = {
+	appsGetAll: AppsGetAllInputSchema,
+	listsGet: ListsGetInputSchema,
 	listsGetAll: ListsGetAllInputSchema,
 	recordsGetAll: RecordsGetAllInputSchema,
 	recordsCreate: RecordsCreateInputSchema,
 } as const;
 
 export const WorkiomEndpointOutputSchemas = {
+	appsGetAll: AppsGetAllOutputSchema,
+	listsGet: ListsGetOutputSchema,
 	listsGetAll: ListsGetAllOutputSchema,
 	recordsGetAll: RecordsGetAllOutputSchema,
 	recordsCreate: RecordsCreateOutputSchema,

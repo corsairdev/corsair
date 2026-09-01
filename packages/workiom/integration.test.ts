@@ -1,5 +1,5 @@
 import { makeWorkiomRequest, WorkiomAPIError } from './client';
-import { WorkiomList, WorkiomRecordPage } from './schema';
+import { WorkiomApp, WorkiomList, WorkiomRecordPage } from './schema';
 
 const LIVE_KEY = process.env.WORKIOM_API_KEY;
 const describeIfKey = LIVE_KEY ? describe : describe.skip;
@@ -18,11 +18,16 @@ describe('Workiom live API (unauthenticated)', () => {
 
 describeIfKey('Workiom live API (authenticated)', () => {
 	it('lists lists then records from the first app', async () => {
-		const apps = (await makeWorkiomRequest(
+		const appsRaw = await makeWorkiomRequest(
 			'/api/services/app/Apps/GetAll',
 			LIVE_KEY as string,
-		)) as { items?: Array<{ id: string }> };
-		const appId = apps.items?.[0]?.id;
+		);
+		const apps = WorkiomApp.array().parse(
+			appsRaw && typeof appsRaw === 'object' && 'items' in appsRaw
+				? (appsRaw as { items: unknown }).items
+				: appsRaw,
+		);
+		const appId = apps[0]?.id;
 		expect(appId).toBeTruthy();
 
 		const listsRaw = await makeWorkiomRequest(
@@ -37,6 +42,20 @@ describeIfKey('Workiom live API (authenticated)', () => {
 		);
 		expect(lists.length).toBeGreaterThan(0);
 		expect(lists[0]?.id.length).toBeGreaterThan(0);
+
+		const meta = WorkiomList.parse(
+			await makeWorkiomRequest(
+				'/api/services/app/Lists/Get',
+				LIVE_KEY as string,
+				{
+					query: {
+						id: lists[0]?.id,
+						expand: 'Fields,Views,Filters',
+					},
+				},
+			),
+		);
+		expect(meta.id).toBe(lists[0]?.id);
 
 		const page = WorkiomRecordPage.parse(
 			await makeWorkiomRequest(

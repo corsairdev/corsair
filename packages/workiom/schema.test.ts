@@ -1,4 +1,5 @@
 import {
+	WorkiomApp,
 	WorkiomField,
 	WorkiomFilter,
 	WorkiomList,
@@ -14,12 +15,17 @@ describe('Workiom schema', () => {
 	});
 
 	it('declares official API guide entities', () => {
+		expect(WorkiomSchema.entities.apps).toBe(WorkiomApp);
 		expect(WorkiomSchema.entities.lists).toBe(WorkiomList);
 		expect(WorkiomSchema.entities.fields).toBe(WorkiomField);
 		expect(WorkiomSchema.entities.views).toBe(WorkiomView);
 		expect(WorkiomSchema.entities.filters).toBe(WorkiomFilter);
 		expect(WorkiomSchema.entities.records).toBe(WorkiomRecord);
 		expect(WorkiomSchema.entities.recordPages).toBe(WorkiomRecordPage);
+	});
+
+	it('parses Apps/GetAll items', () => {
+		expect(WorkiomApp.parse({ id: 'app-1', name: 'CRM' }).id).toBe('app-1');
 	});
 
 	it('parses official Lists/Get field and list shapes', () => {

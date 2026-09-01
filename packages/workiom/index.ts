@@ -14,7 +14,7 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { tryGetStoredKey } from './client';
-import { Lists, Records } from './endpoints';
+import { Apps, Lists, Records } from './endpoints';
 import type {
 	WorkiomEndpointInputs,
 	WorkiomEndpointOutputs,
@@ -57,13 +57,19 @@ type WorkiomEndpoint<K extends keyof WorkiomEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type WorkiomEndpoints = {
+	appsGetAll: WorkiomEndpoint<'appsGetAll'>;
+	listsGet: WorkiomEndpoint<'listsGet'>;
 	listsGetAll: WorkiomEndpoint<'listsGetAll'>;
 	recordsGetAll: WorkiomEndpoint<'recordsGetAll'>;
 	recordsCreate: WorkiomEndpoint<'recordsCreate'>;
 };
 
 const workiomEndpointsNested = {
+	apps: {
+		getAll: Apps.getAll,
+	},
 	lists: {
+		get: Lists.get,
 		getAll: Lists.getAll,
 	},
 	records: {
@@ -73,6 +79,14 @@ const workiomEndpointsNested = {
 } as const;
 
 export const workiomEndpointSchemas = {
+	'apps.getAll': {
+		input: WorkiomEndpointInputSchemas.appsGetAll,
+		output: WorkiomEndpointOutputSchemas.appsGetAll,
+	},
+	'lists.get': {
+		input: WorkiomEndpointInputSchemas.listsGet,
+		output: WorkiomEndpointOutputSchemas.listsGet,
+	},
 	'lists.getAll': {
 		input: WorkiomEndpointInputSchemas.listsGetAll,
 		output: WorkiomEndpointOutputSchemas.listsGetAll,
@@ -92,6 +106,15 @@ export const workiomEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const workiomEndpointMeta = {
+	'apps.getAll': {
+		riskLevel: 'read',
+		description: 'List Workiom apps via GET /api/services/app/Apps/GetAll',
+	},
+	'lists.get': {
+		riskLevel: 'read',
+		description:
+			"Get a list's fields, views, and filters via GET /api/services/app/Lists/Get",
+	},
 	'lists.getAll': {
 		riskLevel: 'read',
 		description:
@@ -178,8 +201,12 @@ export {
 	WorkiomRateLimitError,
 } from './client';
 export type {
+	AppsGetAllInput,
+	AppsGetAllOutput,
 	ListsGetAllInput,
 	ListsGetAllOutput,
+	ListsGetInput,
+	ListsGetOutput,
 	RecordsCreateInput,
 	RecordsCreateOutput,
 	RecordsGetAllInput,

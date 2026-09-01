@@ -21,6 +21,20 @@ export const WorkiomDataType = z.number().int();
 export const WorkiomFilterOperator = z.number().int();
 
 /**
+ * App from GET /api/services/app/Apps/GetAll (ABP `result.items`).
+ * Official sample: https://help.workiom.com/article/workiom-api-guide
+ */
+export const WorkiomApp = z
+	.object({
+		id: z.string(),
+		name: z.string().optional(),
+		description: z.string().optional(),
+	})
+	.loose();
+
+export type WorkiomApp = z.infer<typeof WorkiomApp>;
+
+/**
  * List field from Lists/Get (expand Fields) / Lists/GetAll.
  * Official: https://help.workiom.com/article/workiom-api-guide
  */
