@@ -56,11 +56,10 @@ describe('createMissingConfigProxy', () => {
 describe('KEK byte-exactness', () => {
 	it('a trimmed KEK cannot decrypt DEKs wrapped with the original', async () => {
 		const kek = '  padded-kek  ';
-		const encryptedDek = await encryptDEK(generateDEK(), kek);
+		const dek = generateDEK();
+		const encryptedDek = await encryptDEK(dek, kek);
 
-		await expect(decryptDEK(encryptedDek, kek)).resolves.toEqual(
-			expect.any(String),
-		);
+		await expect(decryptDEK(encryptedDek, kek)).resolves.toBe(dek);
 		await expect(decryptDEK(encryptedDek, kek.trim())).rejects.toThrow();
 	});
 });
