@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -14,6 +15,7 @@ export const SendGridEventSchema = z.object({
 	reason: z.string().optional(),
 	status: z.string().optional(),
 	response: z.string().optional(),
+	tenant_external_id: z.string().optional(),
 });
 
 export type SendGridEvent = z.infer<typeof SendGridEventSchema>;
@@ -39,22 +41,74 @@ function parseBody(body: unknown): unknown {
 	return body;
 }
 
-export function createSendGridMatch(eventType: string): CorsairWebhookMatcher {
+export function createSendGridMatch(eventType?: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsed = parseBody(request.body);
-		if (Array.isArray(parsed)) {
+		if (Array.isArray(parsed) && parsed.length > 0) {
+			if (!eventType) return true;
 			return parsed.some(
 				(item) =>
-					typeof item === 'object' && item !== null && item.event === eventType,
+					typeof item === 'object' &&
+					item !== null &&
+					(item as Record<string, unknown>).event === eventType,
 			);
+		}
+		if (typeof parsed === 'object' && parsed !== null) {
+			if (!eventType) return true;
+			return (parsed as Record<string, unknown>).event === eventType;
 		}
 		return false;
 	};
 }
 
 export function verifySendGridWebhookSignature(
-	_request: WebhookRequest<SendGridEvent>,
-	_secret: string,
+	request: WebhookRequest<SendGridEvent>,
+	secret: string,
 ): { valid: boolean; error?: string } {
-	return { valid: true };
+	if (!secret) {
+		return { valid: true };
+	}
+
+	const headers = request.headers;
+	const signature =
+		(headers['x-twilio-email-event-webhook-signature'] as string | undefined) ||
+		(headers['X-Twilio-Email-Event-Webhook-Signature'] as string | undefined);
+	const timestamp =
+		(headers['x-twilio-email-event-webhook-timestamp'] as string | undefined) ||
+		(headers['X-Twilio-Email-Event-Webhook-Timestamp'] as string | undefined);
+
+	if (!signature || !timestamp) {
+		return {
+			valid: false,
+			error: 'Missing SendGrid signature or timestamp header',
+		};
+	}
+
+	try {
+		const rawBody =
+			typeof request.rawBody === 'string'
+				? request.rawBody
+				: JSON.stringify(request.payload);
+		const payloadToVerify = timestamp + rawBody;
+
+		const verifier = crypto.createVerify('SHA256');
+		verifier.update(payloadToVerify);
+
+		const formattedKey = secret.startsWith('-----BEGIN')
+			? secret
+			: `-----BEGIN PUBLIC KEY-----\n${secret}\n-----END PUBLIC KEY-----`;
+
+		const isValid = verifier.verify(formattedKey, signature, 'base64');
+		if (!isValid) {
+			return { valid: false, error: 'Invalid SendGrid webhook signature' };
+		}
+
+		return { valid: true };
+	} catch (err) {
+		return {
+			valid: false,
+			error:
+				err instanceof Error ? err.message : 'Signature verification failed',
+		};
+	}
 }
