@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export class TimelinkAPIError extends Error {
@@ -18,6 +22,20 @@ export class TimelinkAPIError extends Error {
 }
 
 export const TIMELINK_API_BASE = 'https://api.timelink.io/api/v1';
+
+// deletePerson is a non-idempotent DELETE; a transport-level retry on 429
+// could replay the request after the provider already processed it. Disable
+// nested retries entirely (matching the abuseipdb/byteforms convention); the
+// error-handlers.ts handler classifies rate-limit responses instead.
+const TIMELINK_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
 
 export async function makeTimelinkRequest<T>(
 	endpoint: string,
@@ -54,7 +72,9 @@ export async function makeTimelinkRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: TIMELINK_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new TimelinkAPIError(error.message, error);

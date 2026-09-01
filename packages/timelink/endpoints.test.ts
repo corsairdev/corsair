@@ -39,6 +39,9 @@ describe('Timelink deletePerson endpoint', () => {
 				method: 'DELETE',
 				url: 'clients/client-1',
 			}),
+			expect.objectContaining({
+				rateLimitConfig: expect.objectContaining({ maxRetries: 0 }),
+			}),
 		);
 		expect(logEventFromContext).toHaveBeenCalledWith(
 			ctx,
@@ -62,6 +65,9 @@ describe('Timelink deletePerson endpoint', () => {
 			expect.objectContaining({
 				method: 'DELETE',
 				url: 'clients/client%201',
+			}),
+			expect.objectContaining({
+				rateLimitConfig: expect.objectContaining({ maxRetries: 0 }),
 			}),
 		);
 	});
