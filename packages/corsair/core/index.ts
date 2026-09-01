@@ -1,12 +1,12 @@
 import type { CorsairDatabase } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
 import type { HubConfig } from '../hub';
-import { normalizeHubConfig } from '../hub';
+import { resolveHubConfigInput } from '../hub';
 import {
 	CORSAIR_TUNNEL_PATH,
 	CORSAIR_TUNNEL_ZONE,
 } from '../hub/tunnel/constants';
-import { createMissingConfigProxy } from './auth/errors';
+import { createMissingConfigProxy, resolveKekAtInit } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
 import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
@@ -73,16 +73,18 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		? createCorsairDatabase(config.database)
 		: undefined;
 
-	// Build integration-level keys if database and kek are configured
-	// Otherwise create a proxy that throws helpful errors
+	const kek = resolveKekAtInit(config.kek, !!resolvedDatabase);
+
+	// Build integration-level keys when database + KEK are configured.
+	// Missing database still uses a lazy proxy; missing KEK with database throws above.
 	type IntegrationKeysType = ReturnType<typeof buildIntegrationKeys<Plugins>>;
 
 	const integrationKeys: IntegrationKeysType =
-		resolvedDatabase && config.kek
-			? buildIntegrationKeys(config.plugins, resolvedDatabase, config.kek)
+		resolvedDatabase && kek
+			? buildIntegrationKeys(config.plugins, resolvedDatabase, kek)
 			: createMissingConfigProxy<IntegrationKeysType>(
 					!!resolvedDatabase,
-					!!config.kek,
+					!!kek,
 				);
 
 	const rootPermissions = resolveRootPermissionsConfig(config);
@@ -90,11 +92,11 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	const internalConfig: CorsairInternalConfig = {
 		plugins: config.plugins,
 		database: resolvedDatabase,
-		kek: config.kek,
+		kek,
 		multiTenancy: !!config.multiTenancy,
 		permissions: rootPermissions,
 		manual: config.manual,
-		hub: config.hub ? normalizeHubConfig(config.hub) : undefined,
+		hub: config.hub ? resolveHubConfigInput(config.hub) : undefined,
 	};
 
 	const permissions = buildPermissionsNamespace(resolvedDatabase);
@@ -112,7 +114,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 					const client = buildCorsairClient(config.plugins, {
 						database: resolvedDatabase,
 						tenantId,
-						kek: config.kek,
+						kek,
 						rootErrorHandlers: config.errorHandlers,
 						permissionsOptions: rootPermissions,
 						manualConfig: config.manual,
@@ -137,7 +139,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	const client = buildCorsairClient(config.plugins, {
 		database: resolvedDatabase,
 		tenantId: undefined,
-		kek: config.kek,
+		kek,
 		rootErrorHandlers: config.errorHandlers,
 		permissionsOptions: rootPermissions,
 		manualConfig: config.manual,
@@ -247,6 +249,7 @@ export type {
 export {
 	AuthMissingError,
 	BASE_AUTH_FIELDS,
+	CorsairKekMissingError,
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 	decryptConfig,
