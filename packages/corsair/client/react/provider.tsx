@@ -302,8 +302,17 @@ export function CorsairProvider({
 	const handleOpen = useCallback(() => {
 		const { connectUrl, plugin, tenantId } = connectState;
 		if (!connectUrl || !plugin) return;
+		// Mark the open as provider-initiated so the Hub connect page forwards
+		// straight to sign-in. Cold links (grid, email, pasted) lack it and land
+		// on the connect page instead.
+		let openUrl = connectUrl;
+		try {
+			const u = new URL(connectUrl);
+			u.searchParams.set('forward', '1');
+			openUrl = u.toString();
+		} catch {}
 		const popup = window.open(
-			connectUrl,
+			openUrl,
 			'corsair-connect',
 			'width=520,height=720',
 		);
