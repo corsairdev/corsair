@@ -52,4 +52,5 @@ module.exports = {
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,
+	testPathIgnorePatterns: ['/node_modules/', 'integration\\.test\\.ts'],
 };

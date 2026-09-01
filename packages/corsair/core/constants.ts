@@ -222,6 +222,7 @@ export const BaseProviders = [
 	'witai',
 	'wiza',
 	'workday',
+	'workiom',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -441,6 +442,7 @@ export const ProviderDisplayNames = {
 	witai: 'WitAi',
 	wiza: 'Wiza',
 	workday: 'Workday',
+	workiom: 'Workiom',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -667,6 +669,7 @@ export type AllProviders =
 	| 'witai'
 	| 'wiza'
 	| 'workday'
+	| 'workiom'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'

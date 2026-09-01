@@ -1,76 +1,36 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import type { WorkiomAPIError } from './client';
-
-function getStatus(error: Error): number | undefined {
-	return (error as Partial<WorkiomAPIError>).status;
-}
-
-function messageHasCode(message: string, ...codes: number[]): boolean {
-	return codes.some((code) => new RegExp(`\\b${code}\\b`).test(message));
-}
+import { WorkiomAPIError, WorkiomRateLimitError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			const status = getStatus(error);
-			if (status !== undefined) return status === 429;
-			return messageHasCode(error.message.toLowerCase(), 429);
+			if (error instanceof WorkiomRateLimitError) return true;
+			if (error instanceof WorkiomAPIError && error.status === 429) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('rate_limited') || msg.includes('rate limit');
 		},
-		handler: async () => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) => {
+			const retryAfterMs =
+				error instanceof WorkiomRateLimitError ? error.retryAfterMs : undefined;
+			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			const status = getStatus(error);
-			if (status !== undefined) return status === 401 || status === 403;
+			if (error instanceof WorkiomAPIError) {
+				if (error.status === 401 || error.status === 403) return true;
+			}
 			const msg = error.message.toLowerCase();
-			return messageHasCode(msg, 401, 403) || msg.includes('unauthorized');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('unauthenticated') ||
+				msg.includes('invalid api key')
+			);
 		},
-		handler: async () => {
-			console.error('[WORKIOM] Authentication failed — check the API key.');
-			return { maxRetries: 0 };
-		},
-	},
-	NOT_FOUND_ERROR: {
-		match: (error: Error) => {
-			const status = getStatus(error);
-			if (status !== undefined) return status === 404;
-			return messageHasCode(error.message.toLowerCase(), 404);
-		},
-		handler: async () => {
-			console.warn('[WORKIOM] Resource not found.');
-			return { maxRetries: 0 };
-		},
-	},
-	VALIDATION_ERROR: {
-		match: (error: Error) => {
-			const status = getStatus(error);
-			if (status !== undefined) return status === 400 || status === 422;
-			return messageHasCode(error.message.toLowerCase(), 400, 422);
-		},
-		handler: async () => {
-			console.warn('[WORKIOM] Request rejected — check required parameters.');
-			return { maxRetries: 0 };
-		},
-	},
-	SERVER_ERROR: {
-		match: (error: Error) => {
-			const status = getStatus(error);
-			if (status !== undefined) return status >= 500;
-			return messageHasCode(error.message.toLowerCase(), 500);
-		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
 		match: () => true,
-		handler: async (error: Error) => {
-			console.error(`[WORKIOM] Unhandled error: ${error.message}`);
-			return { maxRetries: 0 };
-		},
+		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

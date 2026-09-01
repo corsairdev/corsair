@@ -1,44 +1,39 @@
 import { logEventFromContext } from 'corsair/core';
 import type { WorkiomEndpoints } from '..';
 import { makeWorkiomRequest } from '../client';
-import type { RecordsCreateResponse, RecordsGetAllResponse } from './types';
+import { RecordsCreateOutputSchema, RecordsGetAllOutputSchema } from './types';
 
-/**
- * Get records from a list, with optional sorting, pagination, and filters.
- * API: POST /api/services/app/Data/All
- */
 export const getAll: WorkiomEndpoints['recordsGetAll'] = async (ctx, input) => {
-	const response = await makeWorkiomRequest<RecordsGetAllResponse>(
-		'api/services/app/Data/All',
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				listId: input.listId,
-				sorting: input.sorting,
-				maxResultCount: input.maxResultCount,
-				skipCount: input.skipCount,
-				filters: input.filters,
-			},
+	const raw = await makeWorkiomRequest('/api/services/app/Data/All', ctx.key, {
+		method: 'POST',
+		body: {
+			listId: input.listId,
+			sorting: input.sorting,
+			maxResultCount: input.maxResultCount,
+			skipCount: input.skipCount,
+			filters: input.filters,
 		},
-	);
-
+	});
+	const response = RecordsGetAllOutputSchema.parse(raw);
 	await logEventFromContext(
 		ctx,
 		'workiom.records.getAll',
-		{ ...input },
+		{
+			listId: input.listId,
+			filterCount: input.filters?.length ?? 0,
+			filterFieldIds: input.filters?.map((filter) => filter.fieldId) ?? [],
+			sorting: input.sorting,
+			maxResultCount: input.maxResultCount,
+			skipCount: input.skipCount,
+		},
 		'completed',
 	);
 	return response;
 };
 
-/**
- * Create a record in a list. The body is a map of fieldId -> value.
- * API: POST /api/services/app/Data/Create?listId=
- */
 export const create: WorkiomEndpoints['recordsCreate'] = async (ctx, input) => {
-	const response = await makeWorkiomRequest<RecordsCreateResponse>(
-		'api/services/app/Data/Create',
+	const raw = await makeWorkiomRequest(
+		'/api/services/app/Data/Create',
 		ctx.key,
 		{
 			method: 'POST',
@@ -46,7 +41,7 @@ export const create: WorkiomEndpoints['recordsCreate'] = async (ctx, input) => {
 			body: input.record,
 		},
 	);
-
+	const response = RecordsCreateOutputSchema.parse(raw);
 	await logEventFromContext(
 		ctx,
 		'workiom.records.create',

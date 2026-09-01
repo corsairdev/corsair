@@ -1,29 +1,23 @@
 import { logEventFromContext } from 'corsair/core';
 import type { WorkiomEndpoints } from '..';
 import { makeWorkiomRequest } from '../client';
-import type { ListsGetResponse } from './types';
+import { ListsGetAllOutputSchema } from './types';
 
-/**
- * Get a list's meta-data (fields, views, filters).
- * API: GET /api/services/app/Lists/Get
- */
-export const get: WorkiomEndpoints['listsGet'] = async (ctx, input) => {
-	const response = await makeWorkiomRequest<ListsGetResponse>(
-		'api/services/app/Lists/Get',
+export const getAll: WorkiomEndpoints['listsGetAll'] = async (ctx, input) => {
+	const raw = await makeWorkiomRequest(
+		'/api/services/app/Lists/GetAll',
 		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				id: input.id,
-				expand: input.expand ? input.expand.join(',') : undefined,
-			},
-		},
+		{ query: { appId: input.appId } },
 	);
-
+	const page =
+		raw && typeof raw === 'object' && 'items' in raw
+			? raw
+			: { items: Array.isArray(raw) ? raw : [] };
+	const response = ListsGetAllOutputSchema.parse(page);
 	await logEventFromContext(
 		ctx,
-		'workiom.lists.get',
-		{ ...input },
+		'workiom.lists.getAll',
+		{ appId: input.appId },
 		'completed',
 	);
 	return response;
