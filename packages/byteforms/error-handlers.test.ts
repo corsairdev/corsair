@@ -41,4 +41,18 @@ describe('ByteForms error handlers', () => {
 		const result = await errorHandlers.AUTH_ERROR.handler();
 		expect(result.maxRetries).toBe(0);
 	});
+
+	it('does not treat a 500 as a rate limit just because the message mentions 429', () => {
+		const wrapped = new ByteFormsAPIError('upstream 429', '500', {
+			cause: makeApiError(500),
+		});
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(wrapped)).toBe(false);
+	});
+
+	it('does not treat a 500 as auth failure just because the message mentions unauthorized', () => {
+		const wrapped = new ByteFormsAPIError('unauthorized backend', '500', {
+			cause: makeApiError(500),
+		});
+		expect(errorHandlers.AUTH_ERROR.match(wrapped)).toBe(false);
+	});
 });
