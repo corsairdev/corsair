@@ -18,6 +18,7 @@ import {
 	connectReducer,
 	initialConnectState,
 	isPluginConnected,
+	retryAfterConnect,
 	shouldSettleConnected,
 } from './connect-controller';
 import type { ConnectAppearance } from './connect-overlay';
@@ -73,8 +74,9 @@ export type CorsairProviderProps = {
  * the provider surfaces a connect dialog, waits for the user to finish, then
  * lets the failed work resume — no per-call code at any of the call sites.
  *
- * Pair it with {@link CorsairBoundary} around server-rendered read regions, and
- * with {@link useConnect}'s `call` to wrap mutations that should auto-resume.
+ * Pair it with {@link CorsairErrorBoundary} (a Next `error.tsx`) for server-read
+ * regions, and with {@link useConnect}'s `call` to wrap mutations that should
+ * auto-resume.
  */
 export function CorsairProvider({
 	baseURL,
@@ -247,7 +249,7 @@ export function CorsairProvider({
 				const outcome = await requireConnect();
 				if (outcome === 'none') throw err;
 				if (outcome === 'cancelled') return null;
-				return await fn();
+				return await retryAfterConnect(fn);
 			}
 		},
 		[requireConnect],
@@ -343,7 +345,7 @@ export function CorsairProvider({
 
 /**
  * Access the full Corsair Connect context — the management client plus the
- * connect/call/status API and the internals {@link CorsairBoundary} relies on.
+ * connect/call/status API and the internals {@link CorsairErrorBoundary} relies on.
  * Most components want {@link useConnect} instead; reach for this only when you
  * need the raw `client`. Throws if used outside {@link CorsairProvider}.
  */
@@ -372,7 +374,7 @@ export type UseConnectResult = {
 /**
  * The everyday hook into Corsair Connect. Use `connect` for a proactive connect
  * button and `call` to wrap a mutation so it auto-resumes after connect. Server
- * read regions don't need this — wrap them in {@link CorsairBoundary} instead.
+ * read regions gate through {@link CorsairErrorBoundary} (a Next `error.tsx`).
  */
 export function useConnect(): UseConnectResult {
 	const { connect, call, status } = useCorsair();

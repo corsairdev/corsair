@@ -8,6 +8,7 @@ import type {
 } from '../../core/management/types';
 import type { CorsairManagementClient } from '../types';
 import type { ConnectState } from './connect-controller';
+import { CORSAIR_MARK } from './corsair-mark';
 import { PluginIcon, pluginToDomain, titleCasePlugin } from './plugin-icon';
 
 export type ConnectTheme = 'light' | 'dark' | 'auto';
@@ -69,40 +70,6 @@ const STYLES = `
 }
 @media (prefers-reduced-motion: reduce) { .corsair-scrim, .corsair-card { animation: none } }
 `;
-
-// Blueprint dot-grid behind the hero — the same mark as the Hub connect canvas,
-// so the card reads as pinned onto Corsair's surface. Faint accent, radial-faded
-// so it never competes with the type.
-function heroGrid(dark: boolean): CSSProperties {
-	const dot = dark ? 'rgba(129,116,248,0.16)' : 'rgba(74,56,245,0.10)';
-	return {
-		position: 'absolute',
-		inset: 0,
-		backgroundImage: `radial-gradient(circle at 1px 1px, ${dot} 1px, transparent 0)`,
-		backgroundSize: '13px 13px',
-		maskImage:
-			'radial-gradient(ellipse 78% 70% at 50% 32%, #000 0%, transparent 78%)',
-		WebkitMaskImage:
-			'radial-gradient(ellipse 78% 70% at 50% 32%, #000 0%, transparent 78%)',
-		pointerEvents: 'none',
-	};
-}
-
-// Corner crop-marks framing the card.
-function PlusCorner({ style }: { style: CSSProperties }): ReactElement {
-	return (
-		<svg
-			width="16"
-			height="16"
-			viewBox="0 0 16 16"
-			fill="none"
-			aria-hidden
-			style={{ position: 'absolute', ...style }}
-		>
-			<path d="M8 0v16M0 8h16" stroke={ACCENT} strokeWidth="1.5" />
-		</svg>
-	);
-}
 
 function isConnected(state: PluginConnectionState): boolean {
 	return state === 'connected';
@@ -306,9 +273,6 @@ export function ConnectOverlay({
 	const pluginId = state.plugin ?? '';
 	const name = pluginId ? titleCasePlugin(pluginId) : 'your account';
 	const domain = pluginToDomain(pluginId);
-	// Faint violet wash behind the provider mark — the accent earning interior
-	// presence instead of living only in the corners.
-	const glow = dark ? 'rgba(129,116,248,0.22)' : 'rgba(74,56,245,0.14)';
 	const iconShadow = dark
 		? 'drop-shadow(0 8px 18px rgba(0,0,0,0.55))'
 		: 'drop-shadow(0 8px 16px rgba(20,18,40,0.22))';
@@ -337,17 +301,12 @@ export function ConnectOverlay({
 		>
 			<style>{STYLES}</style>
 			<div style={{ position: 'relative', width: 'min(94vw, 380px)' }}>
-				<PlusCorner style={{ left: -8, top: -8 }} />
-				<PlusCorner style={{ right: -8, top: -8 }} />
-				<PlusCorner style={{ left: -8, bottom: -8 }} />
-				<PlusCorner style={{ right: -8, bottom: -8 }} />
-
 				<div
 					className="corsair-card"
 					style={
 						{
 							overflow: 'hidden',
-							borderRadius: 0,
+							borderRadius: 18,
 							border: `1px solid ${border}`,
 							background: surface,
 							boxShadow:
@@ -401,36 +360,20 @@ export function ConnectOverlay({
 						</div>
 					) : (
 						<div style={{ padding: '32px 22px 18px' }}>
-							{/* Provider hero — a single mark on the blueprint grid */}
+							{/* Provider hero — the mark, then the title */}
 							<div
 								style={{
 									position: 'relative',
 									textAlign: 'center',
 								}}
 							>
-								<div style={heroGrid(dark)} />
 								<div
 									style={{
-										position: 'relative',
 										display: 'flex',
 										justifyContent: 'center',
 									}}
 								>
-									<span
-										aria-hidden
-										style={{
-											position: 'absolute',
-											left: '50%',
-											bottom: -8,
-											width: 62,
-											height: 22,
-											transform: 'translateX(-50%)',
-											borderRadius: 999,
-											background: glow,
-											filter: 'blur(12px)',
-										}}
-									/>
-									<span style={{ position: 'relative', filter: iconShadow }}>
+									<span style={{ filter: iconShadow }}>
 										<PluginIcon
 											domain={domain}
 											label={name}
@@ -517,17 +460,32 @@ export function ConnectOverlay({
 
 					<div
 						style={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							gap: 6,
 							padding: '11px 18px',
 							borderTop: `1px solid ${hair}`,
-							fontFamily: MONO,
-							fontSize: 10,
-							letterSpacing: '0.06em',
-							textTransform: 'uppercase',
-							color: faint,
-							textAlign: 'center',
 						}}
 					>
-						Secured by Corsair
+						<span style={{ fontSize: 11, color: faint }}>Secured by</span>
+						<img
+							src={CORSAIR_MARK}
+							alt=""
+							width={14}
+							height={14}
+							style={{ display: 'block' }}
+						/>
+						<span
+							style={{
+								fontSize: 12,
+								fontWeight: 700,
+								letterSpacing: '-0.01em',
+								color: muted,
+							}}
+						>
+							Corsair
+						</span>
 					</div>
 				</div>
 			</div>
