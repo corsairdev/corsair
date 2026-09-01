@@ -155,15 +155,30 @@ describe('RemoveBackground.remove', () => {
 
 		await RemoveBackground.remove(ctx, {
 			imageUrl: 'https://example.com/photo.jpg',
-			shadowType: 'natural',
+			shadowType: 'drop',
 			shadowOpacity: 80,
 		});
 
 		const [, options] = mockRequest.mock.calls[0] ?? [];
 		const body = options?.body as Record<string, unknown>;
-		expect(body.shadow_type).toBe('natural');
+		expect(body.shadow_type).toBe('drop');
 		expect(body.shadow_opacity).toBe(80);
 		expect(body).not.toHaveProperty('add_shadow');
+	});
+
+	it('accepts each documented shadowType', async () => {
+		for (const shadowType of ['auto', 'car', '3D', 'drop', 'none'] as const) {
+			mockRequest.mockResolvedValueOnce({ data: { result_b64: 'aGVsbG8=' } });
+
+			await RemoveBackground.remove(ctx, {
+				imageUrl: 'https://example.com/photo.jpg',
+				shadowType,
+			});
+
+			const [, options] = mockRequest.mock.calls.at(-1) ?? [];
+			const body = options?.body as Record<string, unknown>;
+			expect(body.shadow_type).toBe(shadowType);
+		}
 	});
 
 	it('rejects shadowOpacity without shadowType', async () => {
@@ -180,7 +195,7 @@ describe('RemoveBackground.remove', () => {
 		await expect(
 			RemoveBackground.remove(ctx, {
 				imageUrl: 'https://example.com/photo.jpg',
-				shadowType: 'glow',
+				shadowType: 'natural',
 			} as never),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();

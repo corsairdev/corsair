@@ -23,7 +23,7 @@ export const errorHandlers = {
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
 		handler: async (error: Error) => ({
-			maxRetries: 5,
+			maxRetries: 0,
 			headersRetryAfterMs: getRetryAfter(error),
 		}),
 	},

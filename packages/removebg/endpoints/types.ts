@@ -35,7 +35,13 @@ export type RemovebgFormat = (typeof REMOVEBG_FORMAT)[number];
 export const REMOVEBG_CHANNELS = ['rgba', 'alpha'] as const;
 export type RemovebgChannels = (typeof REMOVEBG_CHANNELS)[number];
 
-export const REMOVEBG_SHADOW_TYPE = ['natural', 'drop'] as const;
+export const REMOVEBG_SHADOW_TYPE = [
+	'auto',
+	'car',
+	'3D',
+	'drop',
+	'none',
+] as const;
 export type RemovebgShadowType = (typeof REMOVEBG_SHADOW_TYPE)[number];
 
 export const REMOVEBG_IMPROVEMENT_ERROR_TYPE = [
