@@ -88,7 +88,6 @@ export async function makeBrightDataRequest<T>(
 	if (hasJsonBody) headers['Content-Type'] = 'application/json';
 
 	let res: Response;
-	let parsed: unknown;
 	try {
 		res = await fetch(url, {
 			method,
@@ -96,6 +95,14 @@ export async function makeBrightDataRequest<T>(
 			body: hasJsonBody ? JSON.stringify(body) : undefined,
 			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 		});
+	} catch (error) {
+		throw new BrightDataAPIError(
+			error instanceof Error ? error.message : 'Bright Data request failed',
+		);
+	}
+
+	let parsed: unknown;
+	try {
 		const text = await res.text();
 		if (text) {
 			try {
@@ -105,8 +112,16 @@ export async function makeBrightDataRequest<T>(
 			}
 		}
 	} catch (error) {
+		if (res.status === 429) {
+			throw new BrightDataRateLimitError(
+				error instanceof Error ? error.message : 'Too Many Requests',
+				retryAfterMs(res),
+			);
+		}
 		throw new BrightDataAPIError(
 			error instanceof Error ? error.message : 'Bright Data request failed',
+			res.status,
+			res.status,
 		);
 	}
 

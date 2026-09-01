@@ -309,7 +309,25 @@ describe('Bright Data client errors', () => {
 			const policy = await errorHandlers.RATE_LIMIT_ERROR.handler(
 				error as Error,
 			);
+			expect(policy.maxRetries).toBe(0);
 			expect(policy.headersRetryAfterMs).toBe(42000);
+		}
+	});
+
+	it('keeps 429 status when the response body cannot be read', async () => {
+		mockFetch.mockResolvedValue({
+			status: 429,
+			ok: false,
+			headers: new Headers({ 'Retry-After': '12' }),
+			text: () => Promise.reject(new Error('The operation was aborted')),
+		});
+		try {
+			await makeBrightDataRequest('/countrieslist', TEST_KEY);
+		} catch (error) {
+			expect(error).toBeInstanceOf(BrightDataRateLimitError);
+			expect((error as BrightDataRateLimitError).status).toBe(429);
+			expect((error as BrightDataRateLimitError).retryAfterMs).toBe(12000);
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(error as Error)).toBe(true);
 		}
 	});
 

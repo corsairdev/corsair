@@ -21,7 +21,8 @@ export const errorHandlers = {
 				error instanceof BrightDataRateLimitError
 					? error.retryAfterMs
 					: undefined;
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			// crawl/filter POSTs create billed snapshots and are not idempotent
+			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
