@@ -44,9 +44,11 @@ export {
 export {
 	DEFAULT_HUB_API_URL,
 	getHubConfig,
+	HubCredentialsMissingError,
 	HubNotConfiguredError,
 	inferHubEnvironmentSlug,
 	normalizeHubConfig,
+	resolveHubConfigInput,
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
