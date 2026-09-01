@@ -9,9 +9,25 @@ import type { CapsuleCrmEndpoints } from '../index';
 type Input = Record<string, unknown>;
 
 function pathFrom(template: string, input: Input): string {
-	return template.replace(/\{(\w+)\}/g, (_, key: string) =>
-		encodeURIComponent(String(input[key])),
-	);
+	let out = '';
+	let i = 0;
+	while (i < template.length) {
+		const open = template.indexOf('{', i);
+		if (open === -1) {
+			out += template.slice(i);
+			break;
+		}
+		out += template.slice(i, open);
+		const close = template.indexOf('}', open + 1);
+		if (close === -1) {
+			out += template.slice(open);
+			break;
+		}
+		const key = template.slice(open + 1, close);
+		out += encodeURIComponent(String(input[key] ?? ''));
+		i = close + 1;
+	}
+	return out;
 }
 
 function pick(input: Input, keys: string[]) {

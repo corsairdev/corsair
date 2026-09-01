@@ -1,5 +1,4 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { ApiError, request } from 'corsair/http';
 import {
 	CapsuleCrmAPIError,
 	CapsuleCrmRateLimitError,
@@ -121,28 +120,45 @@ import { CapsuleCrmEndpointInputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { capsulecrm } from './index';
 import { CapsuleCrmSchema } from './schema';
+import {
+	isCapsuleCrmWebhookRequest,
+	matchCapsuleCrmTenantWebhook,
+	resolveCapsuleCrmOAuthWebhookTenantLink,
+} from './webhooks';
 
 jest.mock('corsair/core', () => {
-	class AuthMissingError extends Error {
-		constructor(plugin: string, authType: string) {
-			super(`Missing ${authType} for ${plugin}`);
-			this.name = 'AuthMissingError';
-		}
-	}
-	return { AuthMissingError, logEventFromContext: jest.fn() };
+	const actual = jest.requireActual('corsair/core');
+	return { ...actual, logEventFromContext: jest.fn() };
 });
 
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual('corsair/http');
-	return { ...actual, request: jest.fn() };
-});
+const originalFetch = globalThis.fetch;
 
-const mockRequest = request as jest.MockedFunction<typeof request>;
+function jsonResponse(
+	body: unknown,
+	status = 200,
+	headers: Record<string, string> = {},
+) {
+	return {
+		ok: status >= 200 && status < 300,
+		status,
+		statusText: status === 401 ? 'Unauthorized' : 'OK',
+		headers: {
+			get: (name: string) =>
+				headers[name] ?? headers[name.toLowerCase()] ?? null,
+		},
+		text: async () => (body === undefined ? '' : JSON.stringify(body)),
+		json: async () => body,
+		arrayBuffer: async () => new ArrayBuffer(0),
+	} as never;
+}
 
 beforeEach(() => {
-	mockRequest.mockReset();
 	jest.mocked(logEventFromContext).mockReset();
-	mockRequest.mockResolvedValue({ ok: true } as never);
+	globalThis.fetch = jest.fn(async () => jsonResponse({ ok: true }));
+});
+
+afterEach(() => {
+	globalThis.fetch = originalFetch;
 });
 
 const ctx = { key: 'test-token', $getAccountId: async () => 'test' } as never;
@@ -554,56 +570,33 @@ describe('official API v2 request mapping', () => {
 			ctx,
 			input as never,
 		);
-		expect(mockRequest).toHaveBeenCalled();
-		const opts = mockRequest.mock.calls[0]?.[1];
-		expect(opts?.method).toBe(method);
-		expect(opts?.url).toBe(url);
+		expect(globalThis.fetch).toHaveBeenCalled();
+		const [calledUrl, init] = (globalThis.fetch as jest.Mock).mock.calls[0] as [
+			string,
+			RequestInit,
+		];
+		expect(init.method).toBe(method);
+		expect(new URL(calledUrl).pathname).toBe(`/api/v2/${url}`);
 	});
 });
 
 describe('client errors', () => {
-	it('preserves 429 retryAfter on CapsuleCrmRateLimitError', async () => {
-		mockRequest.mockRejectedValue(
-			new ApiError(
-				{ method: 'GET', url: 'parties' } as never,
-				{
-					url: 'x',
-					ok: false,
-					status: 429,
-					statusText: 'Too Many Requests',
-					body: { error: 'rate limit reached' },
-				},
-				'Too Many Requests',
-				{ retryAfter: 1500 },
-			),
+	it('preserves 429 Retry-After on CapsuleCrmRateLimitError', async () => {
+		globalThis.fetch = jest.fn(async () =>
+			jsonResponse({ error: 'rate limit reached' }, 429, {
+				'Retry-After': '2',
+			}),
 		);
-		await expect(makeCapsuleCrmRequest('parties', 'k')).rejects.toBeInstanceOf(
-			CapsuleCrmRateLimitError,
-		);
-		try {
-			await makeCapsuleCrmRequest('parties', 'k');
-		} catch (error) {
-			expect(errorHandlers.RATE_LIMIT_ERROR.match(error as Error)).toBe(true);
-			const handled = await errorHandlers.RATE_LIMIT_ERROR.handler(
-				error as Error,
-			);
-			expect(handled.headersRetryAfterMs).toBe(1500);
-		}
+		const err = await makeCapsuleCrmRequest('parties', 'k').catch((e) => e);
+		expect(err).toBeInstanceOf(CapsuleCrmRateLimitError);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(err as Error)).toBe(true);
+		const handled = await errorHandlers.RATE_LIMIT_ERROR.handler(err as Error);
+		expect(handled.headersRetryAfterMs).toBe(2000);
 	});
 
 	it('maps 401 to CapsuleCrmAPIError for AUTH_ERROR', async () => {
-		mockRequest.mockRejectedValue(
-			new ApiError(
-				{ method: 'GET', url: 'parties' } as never,
-				{
-					url: 'x',
-					ok: false,
-					status: 401,
-					statusText: 'Unauthorized',
-					body: { message: 'Requires authentication' },
-				},
-				'Unauthorized',
-			),
+		globalThis.fetch = jest.fn(async () =>
+			jsonResponse({ message: 'Requires authentication' }, 401),
 		);
 		const err = await makeCapsuleCrmRequest('parties', 'bad').catch((e) => e);
 		expect(err).toBeInstanceOf(CapsuleCrmAPIError);
@@ -622,21 +615,42 @@ describe('input schemas', () => {
 	});
 });
 
-describe('attachments', () => {
-	const originalFetch = globalThis.fetch;
-
-	afterEach(() => {
-		globalThis.fetch = originalFetch;
+describe('webhooks', () => {
+	it('matches official REST hook events and tenant subdomain', () => {
+		const plugin = capsulecrm();
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				body: { event: 'party/created' },
+				headers: {},
+			}),
+		).toBe(true);
+		expect(
+			isCapsuleCrmWebhookRequest({ body: { ping: true }, headers: {} }),
+		).toBe(false);
+		expect(
+			matchCapsuleCrmTenantWebhook({
+				body: { event: 'party/created' },
+				headers: {},
+				query: { subdomain: 'exampleco' },
+			}),
+		).toEqual({ linkType: 'subdomain', externalId: 'exampleco' });
 	});
 
+	it('resolves OAuth tenant from token subdomain', async () => {
+		await expect(
+			resolveCapsuleCrmOAuthWebhookTenantLink({
+				access_token: 'tok',
+				subdomain: 'exampleco',
+			}),
+		).resolves.toEqual({ linkType: 'subdomain', externalId: 'exampleco' });
+	});
+});
+
+describe('attachments', () => {
 	it('uploads via POST /attachments/upload', async () => {
-		globalThis.fetch = jest.fn(async () => {
-			return {
-				ok: true,
-				status: 200,
-				json: async () => ({ upload: { token: 'tok' } }),
-			} as never;
-		});
+		globalThis.fetch = jest.fn(async () =>
+			jsonResponse({ upload: { token: 'tok' } }),
+		);
 		const result = await attachmentsUpload(ctx, {
 			filename: 'a.txt',
 			contentType: 'text/plain',
@@ -669,5 +683,33 @@ describe('attachments', () => {
 			'https://api.capsulecrm.com/api/v2/attachments/9',
 			expect.any(Object),
 		);
+	});
+
+	it('keeps Retry-After on attachment 429', async () => {
+		globalThis.fetch = jest.fn(async () =>
+			jsonResponse({ error: 'rate limit reached' }, 429, {
+				'Retry-After': '3',
+			}),
+		);
+		const uploadErr = await attachmentsUpload(ctx, {
+			filename: 'a.txt',
+			contentType: 'text/plain',
+			contentBase64: Buffer.from('hi').toString('base64'),
+		}).catch((e) => e);
+		expect(uploadErr).toBeInstanceOf(CapsuleCrmRateLimitError);
+		expect(
+			(await errorHandlers.RATE_LIMIT_ERROR.handler(uploadErr as Error))
+				.headersRetryAfterMs,
+		).toBe(3000);
+
+		globalThis.fetch = jest.fn(async () =>
+			jsonResponse(undefined, 429, { 'Retry-After': '4' }),
+		);
+		const downloadErr = await attachmentsGet(ctx, { id: 9 }).catch((e) => e);
+		expect(downloadErr).toBeInstanceOf(CapsuleCrmRateLimitError);
+		expect(
+			(await errorHandlers.RATE_LIMIT_ERROR.handler(downloadErr as Error))
+				.headersRetryAfterMs,
+		).toBe(4000);
 	});
 });

@@ -1,6 +1,3 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
 export class CapsuleCrmAPIError extends Error {
 	constructor(
 		message: string,
@@ -34,47 +31,90 @@ export type CapsuleCrmRequestOptions = {
 	query?: Record<string, string | number | boolean | undefined>;
 };
 
-function errorMessage(error: ApiError): string {
-	const body =
-		typeof error.body === 'object' && error.body !== null
-			? (error.body as Record<string, unknown>)
-			: undefined;
-	return (
-		(body && typeof body.message === 'string' ? body.message : undefined) ||
-		(body && typeof body.error === 'string' ? body.error : undefined) ||
-		error.message
-	);
+function errorMessage(body: unknown, fallback: string): string {
+	if (typeof body === 'object' && body !== null) {
+		const record = body as Record<string, unknown>;
+		if (typeof record.message === 'string') return record.message;
+		if (typeof record.error === 'string') return record.error;
+	}
+	return fallback;
 }
 
 function wrapUnknown(error: unknown): never {
-	if (error instanceof ApiError) {
-		if (error.status === 429) {
-			throw new CapsuleCrmRateLimitError(
-				errorMessage(error),
-				error.retryAfter,
-				error.body,
-			);
-		}
-		throw new CapsuleCrmAPIError(
-			errorMessage(error),
-			error.status,
-			error.status,
-			error.body,
-			error.retryAfter,
-		);
-	}
 	if (error instanceof Error) {
 		throw new CapsuleCrmAPIError(error.message);
 	}
 	throw new CapsuleCrmAPIError('Unknown Capsule CRM API error');
 }
 
-function compactQuery(
-	query: Record<string, string | number | boolean | undefined> = {},
-): Record<string, string | number | boolean | undefined> {
-	return Object.fromEntries(
-		Object.entries(query).filter(([, value]) => value !== undefined),
+export function retryAfterMsFromHeaders(headers: Headers): number | undefined {
+	const retryAfter = headers.get('Retry-After');
+	if (retryAfter) {
+		const seconds = Number.parseInt(retryAfter, 10);
+		if (!Number.isNaN(seconds)) return seconds * 1000;
+	}
+	const reset = headers.get('X-RateLimit-Reset');
+	if (reset) {
+		const timestamp = Number.parseInt(reset, 10);
+		if (!Number.isNaN(timestamp)) {
+			const resetMs =
+				timestamp > 1_000_000_000_000 ? timestamp : timestamp * 1000;
+			const wait = resetMs - Date.now();
+			if (wait > 0) return wait;
+		}
+	}
+	return undefined;
+}
+
+function throwIfLimited(res: Response, body: unknown): void {
+	if (res.status !== 429) return;
+	throw new CapsuleCrmRateLimitError(
+		errorMessage(body, 'Too Many Requests'),
+		retryAfterMsFromHeaders(res.headers),
+		body,
 	);
+}
+
+async function readJson(res: Response): Promise<unknown> {
+	const text = await res.text();
+	if (!text) return undefined;
+	try {
+		return JSON.parse(text) as unknown;
+	} catch {
+		return text;
+	}
+}
+
+function filenameFromDisposition(header: string | null): string | undefined {
+	if (!header) return undefined;
+	const lower = header.toLowerCase();
+	const star = "filename*=utf-8''";
+	const starAt = lower.indexOf(star);
+	if (starAt >= 0) {
+		const rest = header.slice(starAt + star.length);
+		const semi = rest.indexOf(';');
+		const value = (semi === -1 ? rest : rest.slice(0, semi)).trim();
+		if (value) return decodeURIComponent(value);
+	}
+	const quoted = 'filename="';
+	const quotedAt = lower.indexOf(quoted);
+	if (quotedAt >= 0) {
+		const start = quotedAt + quoted.length;
+		const end = header.indexOf('"', start);
+		if (end > start) return header.slice(start, end);
+	}
+	return undefined;
+}
+
+function requestUrl(
+	endpoint: string,
+	query: Record<string, string | number | boolean | undefined> = {},
+): string {
+	const url = new URL(`${CAPSULE_CRM_API_BASE}/${endpoint}`);
+	for (const [key, value] of Object.entries(query)) {
+		if (value !== undefined) url.searchParams.set(key, String(value));
+	}
+	return url.toString();
 }
 
 export async function makeCapsuleCrmRequest<T>(
@@ -85,39 +125,39 @@ export async function makeCapsuleCrmRequest<T>(
 	const { method = 'GET', body, query } = options;
 	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
-	const config: OpenAPIConfig = {
-		BASE: CAPSULE_CRM_API_BASE,
-		VERSION: '2.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		HEADERS: {
-			Accept: 'application/json',
-			Authorization: `Bearer ${apiKey}`,
-		},
-	};
-
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body: isWrite ? body : undefined,
-		mediaType: isWrite ? 'application/json; charset=utf-8' : undefined,
-		query: compactQuery(query),
-	};
-
 	try {
-		return await request<T>(config, requestOptions);
+		const res = await fetch(requestUrl(endpoint, query), {
+			method,
+			headers: {
+				Accept: 'application/json',
+				Authorization: `Bearer ${apiKey}`,
+				...(isWrite
+					? { 'Content-Type': 'application/json; charset=utf-8' }
+					: {}),
+			},
+			body: isWrite && body !== undefined ? JSON.stringify(body) : undefined,
+		});
+		const parsed = await readJson(res);
+		throwIfLimited(res, parsed);
+		if (!res.ok) {
+			throw new CapsuleCrmAPIError(
+				errorMessage(parsed, res.statusText || 'Capsule CRM API error'),
+				res.status,
+				res.status,
+				parsed,
+				retryAfterMsFromHeaders(res.headers),
+			);
+		}
+		return parsed as T | undefined;
 	} catch (error: unknown) {
+		if (
+			error instanceof CapsuleCrmAPIError ||
+			error instanceof CapsuleCrmRateLimitError
+		) {
+			throw error;
+		}
 		wrapUnknown(error);
 	}
-}
-
-function filenameFromDisposition(header: string | null): string | undefined {
-	if (!header) return undefined;
-	const utf = header.match(/filename\*=UTF-8''([^;]+)/i);
-	if (utf?.[1]) return decodeURIComponent(utf[1]);
-	const plain = header.match(/filename="([^"]+)"/i);
-	return plain?.[1];
 }
 
 /** Official: POST /api/v2/attachments/upload */
@@ -137,17 +177,13 @@ export async function uploadCapsuleCrmAttachment(
 			},
 			body: bytes,
 		});
-		const parsed = (await res.json().catch(() => undefined)) as
-			| { upload?: { token?: string }; message?: string; error?: string }
+		const parsed = (await readJson(res)) as
+			| { upload?: { token?: string } }
 			| undefined;
-		if (res.status === 429) {
-			throw new CapsuleCrmRateLimitError(
-				parsed?.error || parsed?.message || 'Too Many Requests',
-			);
-		}
+		throwIfLimited(res, parsed);
 		if (!res.ok) {
 			throw new CapsuleCrmAPIError(
-				parsed?.message || parsed?.error || `Upload failed (${res.status})`,
+				errorMessage(parsed, `Upload failed (${res.status})`),
 				res.status,
 				res.status,
 				parsed,
@@ -183,14 +219,15 @@ export async function downloadCapsuleCrmAttachment(
 			headers: { Authorization: `Bearer ${apiKey}` },
 		});
 		if (res.status === 429) {
-			throw new CapsuleCrmRateLimitError('Too Many Requests');
+			throw new CapsuleCrmRateLimitError(
+				'Too Many Requests',
+				retryAfterMsFromHeaders(res.headers),
+			);
 		}
 		if (!res.ok) {
-			const parsed = (await res.json().catch(() => undefined)) as
-				| { message?: string; error?: string }
-				| undefined;
+			const parsed = await readJson(res);
 			throw new CapsuleCrmAPIError(
-				parsed?.message || parsed?.error || `Download failed (${res.status})`,
+				errorMessage(parsed, `Download failed (${res.status})`),
 				res.status,
 				res.status,
 				parsed,
