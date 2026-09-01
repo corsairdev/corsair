@@ -108,6 +108,7 @@ export const BaseProviders = [
 	'cloudinary',
 	'collegefootballdata',
 	'confluence',
+	'connecteam',
 	'contentfulgraphql',
 	'contextsevenmcp',
 	'crowterminal',
@@ -342,6 +343,7 @@ export const ProviderDisplayNames = {
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
+	connecteam: 'Connecteam',
 	contentfulgraphql: 'Contentful GraphQL',
 	contextsevenmcp: 'Context7',
 	crowterminal: 'CrowTerminal',
@@ -584,6 +586,7 @@ export type AllProviders =
 	| 'cloudinary'
 	| 'collegefootballdata'
 	| 'confluence'
+	| 'connecteam'
 	| 'contentfulgraphql'
 	| 'contextsevenmcp'
 	| 'crowterminal'
