@@ -120,11 +120,6 @@ import { CapsuleCrmEndpointInputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { capsulecrm } from './index';
 import { CapsuleCrmSchema } from './schema';
-import {
-	isCapsuleCrmWebhookRequest,
-	matchCapsuleCrmTenantWebhook,
-	resolveCapsuleCrmOAuthWebhookTenantLink,
-} from './webhooks';
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
@@ -172,6 +167,8 @@ describe('Capsule CRM plugin', () => {
 		expect(plugin.oauthConfig?.authUrl).toBe(
 			'https://api.capsulecrm.com/oauth/authorise',
 		);
+		expect(plugin.pluginWebhookMatcher).toBeUndefined();
+		expect(plugin.webhooks).toEqual({});
 	});
 
 	it('declares labeled schema entities', () => {
@@ -612,37 +609,6 @@ describe('input schemas', () => {
 		expect(
 			CapsuleCrmEndpointInputSchemas.partiesGet.safeParse({ id: 12 }).success,
 		).toBe(true);
-	});
-});
-
-describe('webhooks', () => {
-	it('matches official REST hook events and tenant subdomain', () => {
-		const plugin = capsulecrm();
-		expect(
-			plugin.pluginWebhookMatcher?.({
-				body: { event: 'party/created' },
-				headers: {},
-			}),
-		).toBe(true);
-		expect(
-			isCapsuleCrmWebhookRequest({ body: { ping: true }, headers: {} }),
-		).toBe(false);
-		expect(
-			matchCapsuleCrmTenantWebhook({
-				body: { event: 'party/created' },
-				headers: {},
-				query: { subdomain: 'exampleco' },
-			}),
-		).toEqual({ linkType: 'subdomain', externalId: 'exampleco' });
-	});
-
-	it('resolves OAuth tenant from token subdomain', async () => {
-		await expect(
-			resolveCapsuleCrmOAuthWebhookTenantLink({
-				access_token: 'tok',
-				subdomain: 'exampleco',
-			}),
-		).resolves.toEqual({ linkType: 'subdomain', externalId: 'exampleco' });
 	});
 });
 

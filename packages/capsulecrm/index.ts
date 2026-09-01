@@ -9,7 +9,6 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
-	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
@@ -136,19 +135,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CapsuleCrmSchema } from './schema';
-import {
-	capsuleCrmWebhookSchemas,
-	capsuleCrmWebhooksNested,
-	isCapsuleCrmWebhookRequest,
-	matchCapsuleCrmTenantWebhook,
-	resolveCapsuleCrmOAuthWebhookTenantLink,
-} from './webhooks';
 
 export type CapsuleCrmPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
 	hooks?: InternalCapsuleCrmPlugin['hooks'];
-	webhookHooks?: InternalCapsuleCrmPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof capsuleCrmEndpointsNested>;
 };
@@ -449,6 +440,8 @@ const capsuleCrmEndpointsNested = {
 		run: filtersRun,
 	},
 } as const;
+
+const capsuleCrmWebhooksNested = {} as const;
 
 export const capsuleCrmEndpointSchemas = {
 	'parties.list': {
@@ -1397,22 +1390,16 @@ export function capsulecrm<const T extends CapsuleCrmPluginOptions>(
 		schema: CapsuleCrmSchema,
 		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: capsuleCrmEndpointsNested,
 		webhooks: capsuleCrmWebhooksNested,
 		endpointMeta: capsuleCrmEndpointMeta,
 		endpointSchemas: capsuleCrmEndpointSchemas,
-		webhookSchemas: capsuleCrmWebhookSchemas,
-		pluginWebhookMatcher: (request: RawWebhookRequest) =>
-			isCapsuleCrmWebhookRequest(request),
-		pluginTenantWebhookMatcher: matchCapsuleCrmTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveCapsuleCrmOAuthWebhookTenantLink,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CapsuleCrmKeyBuilderContext, source) => {
-			if (source === 'webhook') return options.key ?? 'capsulecrm';
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
