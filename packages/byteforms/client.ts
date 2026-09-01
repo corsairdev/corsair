@@ -9,6 +9,7 @@ export class ByteFormsAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
 	public readonly body?: unknown;
+	public readonly retryAfter?: number;
 
 	constructor(
 		message: string,
@@ -22,6 +23,7 @@ export class ByteFormsAPIError extends Error {
 			this.status = options.cause.status;
 			this.statusText = options.cause.statusText;
 			this.body = options.cause.body;
+			this.retryAfter = options.cause.retryAfter;
 		}
 	}
 }
