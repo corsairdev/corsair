@@ -1,17 +1,17 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class TimelinkAPIError extends Error {
 	constructor(
 		message: string,
-		public readonly code?: string,
+		public readonly status?: number,
 	) {
 		super(message);
 		this.name = 'TimelinkAPIError';
 	}
 }
 
-const TIMELINK_API_BASE = 'https://api.timelink.io/api/v1';
+export const TIMELINK_API_BASE = 'https://api.timelink.io/api/v1';
 
 export async function makeTimelinkRequest<T>(
 	endpoint: string,
@@ -50,6 +50,9 @@ export async function makeTimelinkRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw new TimelinkAPIError(error.message, error.status);
+		}
 		if (error instanceof Error) {
 			throw new TimelinkAPIError(error.message);
 		}

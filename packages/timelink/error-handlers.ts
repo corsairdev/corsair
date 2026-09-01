@@ -1,10 +1,17 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { TimelinkAPIError } from './client';
+
+const statusOf = (error: Error): number | undefined => {
+	if (error instanceof ApiError) return error.status;
+	if (error instanceof TimelinkAPIError) return error.status;
+	return undefined;
+};
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (statusOf(error) === 429) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
@@ -13,19 +20,20 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			// deletePerson is a non-idempotent write; avoid nested retries on 429
+			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (statusOf(error) === 401) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
-		match: () => true,
-		handler: async () => ({ maxRetries: 0 }),
+		match: (_error: Error) => true,
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

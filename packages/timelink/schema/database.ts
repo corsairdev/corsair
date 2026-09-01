@@ -1,9 +1,1 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const TimelinkExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type TimelinkExample = z.infer<typeof TimelinkExample>;
+// Database entities — no persistent entities yet for this deletePerson-only plugin.

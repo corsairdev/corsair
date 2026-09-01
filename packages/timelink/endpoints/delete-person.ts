@@ -9,7 +9,7 @@ export const deletePerson: TimelinkEndpoints['deletePerson'] = async (
 ) => {
 	const response = await makeTimelinkRequest<
 		TimelinkEndpointOutputs['deletePerson']
-	>(`clients/${input.id}`, ctx.key, {
+	>(`clients/${encodeURIComponent(input.id)}`, ctx.key, {
 		method: 'DELETE',
 	});
 
