@@ -13,7 +13,6 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'dropboxsign',
 	'ably',
 	'abstract',
 	'abuseipdb',
@@ -125,6 +124,7 @@ export const BaseProviders = [
 	'doppler',
 	'dreamstudio',
 	'dropbox',
+	'dropboxsign',
 	'epicgames',
 	'exa',
 	'facebook',
@@ -196,6 +196,7 @@ export const BaseProviders = [
 	'retailed',
 	'salesforce',
 	'securitytrails',
+	'sendgrid',
 	'sentry',
 	'serpapi',
 	'sharepoint',
@@ -215,8 +216,8 @@ export const BaseProviders = [
 	'telegram',
 	'textrazor',
 	'ticktick',
-	'tisane',
 	'timecamp',
+	'tisane',
 	'todoist',
 	'toggl',
 	'trello',
@@ -431,6 +432,7 @@ export const ProviderDisplayNames = {
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
 	securitytrails: 'SecurityTrails',
+	sendgrid: 'SendGrid',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
 	sharepoint: 'SharePoint',
@@ -450,8 +452,8 @@ export const ProviderDisplayNames = {
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
-	tisane: 'Tisane',
 	timecamp: 'TimeCamp',
+	tisane: 'Tisane',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -672,6 +674,7 @@ export type AllProviders =
 	| 'retailed'
 	| 'salesforce'
 	| 'securitytrails'
+	| 'sendgrid'
 	| 'sentry'
 	| 'serpapi'
 	| 'sharepoint'
@@ -691,8 +694,8 @@ export type AllProviders =
 	| 'telegram'
 	| 'textrazor'
 	| 'ticktick'
-	| 'tisane'
 	| 'timecamp'
+	| 'tisane'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
