@@ -1,3 +1,4 @@
+import { byteforms } from './index';
 import { ByteFormsSchema } from './schema';
 
 describe('ByteForms schema', () => {
@@ -13,6 +14,12 @@ describe('ByteForms schema', () => {
 		for (const entity of Object.values(ByteFormsSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
+	});
+
+	it('marks form delete as destructive', () => {
+		const plugin = byteforms({ key: 'test' });
+		const meta = plugin.endpointMeta as Record<string, { riskLevel: string }>;
+		expect(meta['forms.delete']?.riskLevel).toBe('destructive');
 	});
 });
 

@@ -116,7 +116,7 @@ const byteformsEndpointMeta = {
 		description: 'Create a new ByteForms form with custom fields and options',
 	},
 	'forms.delete': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete a ByteForms form by its numeric or public ID',
 	},
 	'forms.get': {
