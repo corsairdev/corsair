@@ -300,34 +300,29 @@ describe('Bright Data client errors', () => {
 				{ status: 429, headers: { 'Retry-After': '42' } },
 			),
 		);
-		try {
-			await makeBrightDataRequest('/countrieslist', TEST_KEY);
-		} catch (error) {
-			expect(error).toBeInstanceOf(BrightDataRateLimitError);
-			expect((error as BrightDataRateLimitError).retryAfterMs).toBe(42000);
-			expect(errorHandlers.RATE_LIMIT_ERROR.match(error as Error)).toBe(true);
-			const readPolicy = await errorHandlers.RATE_LIMIT_ERROR.handler(
-				error as Error,
-				{
-					pluginId: 'brightdata',
-					operation: 'listDatasets',
-					input: {},
-					originalError: error as Error,
-				},
-			);
-			expect(readPolicy.maxRetries).toBe(5);
-			expect(readPolicy.headersRetryAfterMs).toBe(42000);
-			const writePolicy = await errorHandlers.RATE_LIMIT_ERROR.handler(
-				error as Error,
-				{
-					pluginId: 'brightdata',
-					operation: 'crawlApi',
-					input: {},
-					originalError: error as Error,
-				},
-			);
-			expect(writePolicy.maxRetries).toBe(0);
-		}
+		await expect(
+			makeBrightDataRequest('/countrieslist', TEST_KEY),
+		).rejects.toMatchObject({
+			name: 'BrightDataRateLimitError',
+			retryAfterMs: 42000,
+		});
+		const error = new BrightDataRateLimitError('Too Many Requests', 42000);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		const readPolicy = await errorHandlers.RATE_LIMIT_ERROR.handler(error, {
+			pluginId: 'brightdata',
+			operation: 'listDatasets',
+			input: {},
+			originalError: error,
+		});
+		expect(readPolicy.maxRetries).toBe(5);
+		expect(readPolicy.headersRetryAfterMs).toBe(42000);
+		const writePolicy = await errorHandlers.RATE_LIMIT_ERROR.handler(error, {
+			pluginId: 'brightdata',
+			operation: 'crawlApi',
+			input: {},
+			originalError: error,
+		});
+		expect(writePolicy.maxRetries).toBe(0);
 	});
 
 	it('keeps 429 status when the response body cannot be read', async () => {
@@ -337,27 +332,35 @@ describe('Bright Data client errors', () => {
 			headers: new Headers({ 'Retry-After': '12' }),
 			text: () => Promise.reject(new Error('The operation was aborted')),
 		});
-		try {
-			await makeBrightDataRequest('/countrieslist', TEST_KEY);
-		} catch (error) {
-			expect(error).toBeInstanceOf(BrightDataRateLimitError);
-			expect((error as BrightDataRateLimitError).status).toBe(429);
-			expect((error as BrightDataRateLimitError).retryAfterMs).toBe(12000);
-			expect(errorHandlers.RATE_LIMIT_ERROR.match(error as Error)).toBe(true);
-		}
+		await expect(
+			makeBrightDataRequest('/countrieslist', TEST_KEY),
+		).rejects.toMatchObject({
+			name: 'BrightDataRateLimitError',
+			status: 429,
+			retryAfterMs: 12000,
+		});
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(
+				new BrightDataRateLimitError('The operation was aborted', 12000),
+			),
+		).toBe(true);
 	});
 
 	it('wraps 401 as BrightDataAPIError matched by AUTH_ERROR', async () => {
 		mockFetch.mockImplementation(() =>
 			jsonResponse({ error: 'Unauthorized' }, { status: 401 }),
 		);
-		try {
-			await makeBrightDataRequest('/countrieslist', TEST_KEY);
-		} catch (error) {
-			expect(error).toBeInstanceOf(BrightDataAPIError);
-			expect((error as BrightDataAPIError).status).toBe(401);
-			expect(errorHandlers.AUTH_ERROR.match(error as Error)).toBe(true);
-		}
+		await expect(
+			makeBrightDataRequest('/countrieslist', TEST_KEY),
+		).rejects.toMatchObject({
+			name: 'BrightDataAPIError',
+			status: 401,
+		});
+		expect(
+			errorHandlers.AUTH_ERROR.match(
+				new BrightDataAPIError('Unauthorized', 401, 401),
+			),
+		).toBe(true);
 	});
 });
 

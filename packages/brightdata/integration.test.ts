@@ -7,9 +7,9 @@ import {
 } from './schema';
 
 const LIVE_KEY = process.env.BRIGHTDATA_API_KEY;
-const describeIfKey = LIVE_KEY ? describe : describe.skip;
+const describeLive = LIVE_KEY ? describe : describe.skip;
 
-describe('Bright Data live REST API', () => {
+describeLive('Bright Data live REST API', () => {
 	it('rejects an invalid API key on GET /countrieslist', async () => {
 		const err = await makeBrightDataRequest(
 			'/countrieslist',
@@ -20,7 +20,7 @@ describe('Bright Data live REST API', () => {
 	});
 });
 
-describeIfKey('Bright Data live REST API (authenticated)', () => {
+describeLive('Bright Data live REST API (authenticated)', () => {
 	it('returns countries from GET /countrieslist', async () => {
 		const parsed = BrightDataCountries.parse(
 			await makeBrightDataRequest('/countrieslist', LIVE_KEY),
