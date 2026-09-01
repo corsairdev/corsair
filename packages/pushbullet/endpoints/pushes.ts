@@ -2,17 +2,21 @@ import { logEventFromContext } from 'corsair/core';
 import { makePushbulletRequest } from '../client';
 import type { PushbulletEndpoints } from '../index';
 import type { PushbulletEndpointOutputs } from './types';
-import { PushbulletEndpointOutputSchemas } from './types';
+import {
+	PushbulletEndpointInputSchemas,
+	PushbulletEndpointOutputSchemas,
+} from './types';
 
 export const create: PushbulletEndpoints['pushesCreate'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = PushbulletEndpointInputSchemas.pushesCreate.parse(input);
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['pushesCreate']
 	>('pushes', ctx.key, {
 		method: 'POST',
-		body: input,
+		body: { ...parsed },
 		schema: PushbulletEndpointOutputSchemas.pushesCreate,
 	});
 
@@ -47,29 +51,30 @@ export const create: PushbulletEndpoints['pushesCreate'] = async (
 };
 
 export const list: PushbulletEndpoints['pushesList'] = async (ctx, input) => {
+	const parsed = PushbulletEndpointInputSchemas.pushesList.parse(input);
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['pushesList']
 	>('pushes', ctx.key, {
 		method: 'GET',
-		query: input,
+		query: parsed,
 		schema: PushbulletEndpointOutputSchemas.pushesList,
 	});
 
 	await logEventFromContext(
 		ctx,
 		'pushbullet.pushes.list',
-		{ ...input },
+		{ ...parsed },
 		'completed',
 	);
 	return result;
 };
 
-/** Marks a push dismissed. Pushbullet exposes no other mutable push field. */
 export const update: PushbulletEndpoints['pushesUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const { iden, ...body } = input;
+	const parsed = PushbulletEndpointInputSchemas.pushesUpdate.parse(input);
+	const { iden, ...body } = parsed;
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['pushesUpdate']
 	>(`pushes/${encodeURIComponent(iden)}`, ctx.key, {
@@ -80,10 +85,6 @@ export const update: PushbulletEndpoints['pushesUpdate'] = async (
 
 	if (result.iden && ctx.db.pushes) {
 		try {
-			// upsertByEntityId replaces the stored record rather than merging
-			// into it, so writing only the mutable fields would wipe the
-			// cached type, title, body, url, direction and created. The
-			// update response is the full push, so cache it like create does.
 			await ctx.db.pushes.upsertByEntityId(result.iden, {
 				id: result.iden,
 				type: result.type,
@@ -103,7 +104,7 @@ export const update: PushbulletEndpoints['pushesUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'pushbullet.pushes.update',
-		{ ...input },
+		{ ...parsed },
 		'completed',
 	);
 	return result;
@@ -113,16 +114,17 @@ export const remove: PushbulletEndpoints['pushesDelete'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = PushbulletEndpointInputSchemas.pushesDelete.parse(input);
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['pushesDelete']
-	>(`pushes/${encodeURIComponent(input.iden)}`, ctx.key, {
+	>(`pushes/${encodeURIComponent(parsed.iden)}`, ctx.key, {
 		method: 'DELETE',
 		schema: PushbulletEndpointOutputSchemas.pushesDelete,
 	});
 
 	if (ctx.db.pushes) {
 		try {
-			await ctx.db.pushes.deleteByEntityId(input.iden);
+			await ctx.db.pushes.deleteByEntityId(parsed.iden);
 		} catch (error) {
 			console.warn('Failed to evict deleted push from cache:', error);
 		}
@@ -131,20 +133,17 @@ export const remove: PushbulletEndpoints['pushesDelete'] = async (
 	await logEventFromContext(
 		ctx,
 		'pushbullet.pushes.delete',
-		{ ...input },
+		{ ...parsed },
 		'completed',
 	);
 	return result;
 };
 
-/**
- * Deletes every push on the account. Pushbullet processes this asynchronously,
- * so pushes may still be returned by `list` briefly afterwards.
- */
 export const removeAll: PushbulletEndpoints['pushesDeleteAll'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = PushbulletEndpointInputSchemas.pushesDeleteAll.parse(input);
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['pushesDeleteAll']
 	>('pushes', ctx.key, {
@@ -152,19 +151,14 @@ export const removeAll: PushbulletEndpoints['pushesDeleteAll'] = async (
 		schema: PushbulletEndpointOutputSchemas.pushesDeleteAll,
 	});
 
-	// The remote pushes are gone, so every cached row is now stale. Leaving them
-	// would let local lookups keep returning pushes that no longer exist.
 	if (ctx.db.pushes) {
 		let cached: Awaited<ReturnType<typeof ctx.db.pushes.search>> = [];
 		try {
 			cached = await ctx.db.pushes.search({});
 		} catch (error) {
-			// Cache reads are best-effort; a broken cache must not fail the delete.
 			console.warn('Failed to read cached pushes after deleteAll:', error);
 			cached = [];
 		}
-		// Eviction is best-effort per row: one failed delete must not abort the
-		// loop, or later cached pushes would stay visible after deleteAll.
 		for (const entity of cached) {
 			try {
 				await ctx.db.pushes.deleteByEntityId(entity.entity_id);
@@ -177,7 +171,7 @@ export const removeAll: PushbulletEndpoints['pushesDeleteAll'] = async (
 	await logEventFromContext(
 		ctx,
 		'pushbullet.pushes.deleteAll',
-		{ ...input },
+		{ ...parsed },
 		'completed',
 	);
 	return result;

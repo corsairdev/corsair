@@ -2,17 +2,21 @@ import { logEventFromContext } from 'corsair/core';
 import { makePushbulletRequest } from '../client';
 import type { PushbulletEndpoints } from '../index';
 import type { PushbulletEndpointOutputs } from './types';
-import { PushbulletEndpointOutputSchemas } from './types';
+import {
+	PushbulletEndpointInputSchemas,
+	PushbulletEndpointOutputSchemas,
+} from './types';
 
 export const create: PushbulletEndpoints['chatsCreate'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = PushbulletEndpointInputSchemas.chatsCreate.parse(input);
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['chatsCreate']
 	>('chats', ctx.key, {
 		method: 'POST',
-		body: input,
+		body: { ...parsed },
 		schema: PushbulletEndpointOutputSchemas.chatsCreate,
 	});
 
@@ -28,29 +32,30 @@ export const create: PushbulletEndpoints['chatsCreate'] = async (
 };
 
 export const list: PushbulletEndpoints['chatsList'] = async (ctx, input) => {
+	const parsed = PushbulletEndpointInputSchemas.chatsList.parse(input);
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['chatsList']
 	>('chats', ctx.key, {
 		method: 'GET',
-		query: input,
+		query: parsed,
 		schema: PushbulletEndpointOutputSchemas.chatsList,
 	});
 
 	await logEventFromContext(
 		ctx,
 		'pushbullet.chats.list',
-		{ ...input },
+		{ ...parsed },
 		'completed',
 	);
 	return result;
 };
 
-/** Mutes or unmutes a chat — the only mutable field Pushbullet exposes. */
 export const setMuted: PushbulletEndpoints['chatsSetMuted'] = async (
 	ctx,
 	input,
 ) => {
-	const { iden, ...body } = input;
+	const parsed = PushbulletEndpointInputSchemas.chatsSetMuted.parse(input);
+	const { iden, ...body } = parsed;
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['chatsSetMuted']
 	>(`chats/${encodeURIComponent(iden)}`, ctx.key, {
@@ -62,7 +67,7 @@ export const setMuted: PushbulletEndpoints['chatsSetMuted'] = async (
 	await logEventFromContext(
 		ctx,
 		'pushbullet.chats.setMuted',
-		{ ...input },
+		{ ...parsed },
 		'completed',
 	);
 	return result;
@@ -72,9 +77,10 @@ export const remove: PushbulletEndpoints['chatsDelete'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = PushbulletEndpointInputSchemas.chatsDelete.parse(input);
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['chatsDelete']
-	>(`chats/${encodeURIComponent(input.iden)}`, ctx.key, {
+	>(`chats/${encodeURIComponent(parsed.iden)}`, ctx.key, {
 		method: 'DELETE',
 		schema: PushbulletEndpointOutputSchemas.chatsDelete,
 	});
@@ -82,7 +88,7 @@ export const remove: PushbulletEndpoints['chatsDelete'] = async (
 	await logEventFromContext(
 		ctx,
 		'pushbullet.chats.delete',
-		{ ...input },
+		{ ...parsed },
 		'completed',
 	);
 	return result;
