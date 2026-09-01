@@ -76,7 +76,7 @@ export const getResponses: ByteFormsEndpoints['formsResponses'] = async (
 		ByteFormsEndpointOutputs['formsResponses']
 	>(`form/responses/${encodeURIComponent(formId)}`, ctx.key, {
 		method: 'GET',
-		query: query as Record<string, never>,
+		query,
 	});
 
 	await logEventFromContext(

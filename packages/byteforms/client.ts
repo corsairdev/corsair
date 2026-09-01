@@ -78,10 +78,7 @@ export async function makeByteFormsRequest<T>(
 		url: endpoint,
 		body: isWriteMethod ? body : undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query:
-			method === 'GET'
-				? (query as Record<string, string | number | boolean>)
-				: undefined,
+		query: method === 'GET' ? query : undefined,
 	};
 
 	try {

@@ -20,7 +20,7 @@ import { makeByteFormsRequest } from './client';
 const mockRequest = makeByteFormsRequest as jest.Mock;
 const mockLog = logEventFromContext as jest.Mock;
 
-const ctx = { key: 'test-api-key' } as any;
+const ctx = { key: 'test-api-key' } as never;
 
 beforeEach(() => {
 	mockRequest.mockReset();
