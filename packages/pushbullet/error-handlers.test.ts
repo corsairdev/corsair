@@ -76,6 +76,14 @@ describe('RATE_LIMIT_ERROR', () => {
 		).toBe(true);
 	});
 
+	it('does not treat a 500 as a rate limit just because the message mentions 429', () => {
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(
+				makeError({ status: 500, message: 'upstream 429' }),
+			),
+		).toBe(false);
+	});
+
 	it('ignores unrelated errors', () => {
 		expect(
 			errorHandlers.RATE_LIMIT_ERROR.match(new Error('server exploded')),
@@ -109,6 +117,14 @@ describe('AUTH_ERROR', () => {
 		expect(errorHandlers.AUTH_ERROR.match(new Error('invalid input'))).toBe(
 			false,
 		);
+	});
+
+	it('does not treat a 500 as auth failure just because the message mentions unauthorized', () => {
+		expect(
+			errorHandlers.AUTH_ERROR.match(
+				makeError({ status: 500, message: 'unauthorized backend' }),
+			),
+		).toBe(false);
 	});
 });
 

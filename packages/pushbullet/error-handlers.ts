@@ -37,7 +37,8 @@ function isIdempotent(error: Error): boolean {
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (getStatus(error) === 429) return true;
+			const status = getStatus(error);
+			if (status !== undefined) return status === 429;
 			const msg = error.message.toLowerCase();
 			return msg.includes('429') || msg.includes('rate limit');
 		},
@@ -51,7 +52,7 @@ export const errorHandlers = {
 	AUTH_ERROR: {
 		match: (error: Error) => {
 			const status = getStatus(error);
-			if (status === 401 || status === 403) return true;
+			if (status !== undefined) return status === 401 || status === 403;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('invalid_access_token') || msg.includes('unauthorized')
