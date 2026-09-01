@@ -3,7 +3,11 @@
  * single-host base URL, method/body/query wiring, and error propagation.
  * Network access is mocked, so this runs in CI.
  */
-import { makeScrapegraphAiRequest, ScrapegraphAiAPIError } from './client';
+import {
+	makeScrapegraphAiRequest,
+	ScrapegraphAiAPIError,
+	ScrapegraphAiRateLimitError,
+} from './client';
 
 type Captured = {
 	url: string;
@@ -50,7 +54,10 @@ function mockFetch(response: MockResponse) {
 			status,
 			statusText: 'OK',
 			url: String(url),
-			headers: new Headers({ 'Content-Type': 'application/json' }),
+			headers: new Headers({
+				'Content-Type': 'application/json',
+				'Retry-After': '0',
+			}),
 			json: async () => payload,
 			text: async () => JSON.stringify(payload),
 		};
@@ -149,5 +156,20 @@ describe('makeScrapegraphAiRequest', () => {
 
 		expect(error).toBeInstanceOf(ScrapegraphAiAPIError);
 		expect((error as ScrapegraphAiAPIError).status).toBe(402);
+	});
+
+	it('throws ScrapegraphAiRateLimitError on HTTP 429', async () => {
+		mockFetch({
+			status: 429,
+			ok: false,
+			body: { detail: 'Too Many Requests' },
+		});
+
+		const error = await makeScrapegraphAiRequest('v1/credits', 'key').catch(
+			(e) => e,
+		);
+
+		expect(error).toBeInstanceOf(ScrapegraphAiRateLimitError);
+		expect((error as ScrapegraphAiRateLimitError).status).toBe(429);
 	});
 });

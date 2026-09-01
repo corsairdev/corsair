@@ -1,20 +1,70 @@
-import { ScrapegraphAiSchema } from './schema';
+import {
+	ScrapegraphAiCredits,
+	ScrapegraphAiMarkdownify,
+	ScrapegraphAiSchema,
+	ScrapegraphAiSearchScraper,
+	ScrapegraphAiSmartScraper,
+} from './schema';
 
 describe('ScrapegraphAi schema', () => {
 	it('declares a semver version', () => {
-		expect(ScrapegraphAiSchema.version).toBeDefined();
 		expect(ScrapegraphAiSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof ScrapegraphAiSchema.entities).toBe('object');
-		expect(ScrapegraphAiSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(ScrapegraphAiSchema.entities))).toBe(true);
-		for (const entity of Object.values(ScrapegraphAiSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares official OpenAPI v1 entities', () => {
+		expect(Object.keys(ScrapegraphAiSchema.entities).sort()).toEqual([
+			'crawls',
+			'credits',
+			'generatedSchemas',
+			'jobs',
+			'markdownifies',
+			'scheduledJobs',
+			'searchScrapers',
+			'smartScrapers',
+		]);
+	});
+
+	it('parses CreditsResponse', () => {
+		expect(
+			ScrapegraphAiCredits.parse({
+				remaining_credits: 500,
+				total_credits_used: 12,
+			}).remaining_credits,
+		).toBe(500);
+	});
+
+	it('parses CompletedSmartscraperResponse', () => {
+		expect(
+			ScrapegraphAiSmartScraper.parse({
+				request_id: 'req-1',
+				status: 'completed',
+				user_prompt: 'Extract the title',
+				website_url: 'https://example.com',
+				result: { title: 'Example' },
+			}).status,
+		).toBe('completed');
+	});
+
+	it('parses CompletedSearchScraperResponse', () => {
+		expect(
+			ScrapegraphAiSearchScraper.parse({
+				request_id: 'req-2',
+				status: 'queued',
+				user_prompt: 'What is Python?',
+				result: null,
+				reference_urls: null,
+			}).request_id,
+		).toBe('req-2');
+	});
+
+	it('parses CompletedMarkdownifyResponse', () => {
+		expect(
+			ScrapegraphAiMarkdownify.parse({
+				request_id: 'req-3',
+				status: 'completed',
+				website_url: 'https://example.com',
+				result: '# Example',
+			}).website_url,
+		).toBe('https://example.com');
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

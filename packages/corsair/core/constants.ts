@@ -431,7 +431,7 @@ export const ProviderDisplayNames = {
 	resend: 'Resend',
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
-	scrapegraphai: 'ScrapegraphAi',
+	scrapegraphai: 'ScrapeGraphAI',
 	securitytrails: 'SecurityTrails',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',

@@ -1,33 +1,50 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ApiError } from 'corsair/http';
+import { ScrapegraphAiAPIError, ScrapegraphAiRateLimitError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (error instanceof ScrapegraphAiRateLimitError) return true;
+			if (error instanceof ScrapegraphAiAPIError && error.status === 429) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return (
+				msg.includes('too many requests') ||
+				msg.includes('rate_limited') ||
+				msg.includes('rate limit') ||
+				msg.includes('429')
+			);
 		},
 		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
+			const retryAfterMs =
+				error instanceof ScrapegraphAiRateLimitError
+					? error.retryAfterMs
+					: undefined;
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (error instanceof ScrapegraphAiAPIError) {
+				if (error.status === 401 || error.status === 403) return true;
+			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid api key') ||
+				msg.includes('invalid_auth') ||
+				msg.includes('401')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	/** 402 = insufficient credits — retrying without topping up never helps. */
+	/** Official: HTTP 402 insufficient credits — retrying never helps. */
 	INSUFFICIENT_CREDITS_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 402) return true;
+			if (error instanceof ScrapegraphAiAPIError && error.status === 402) {
+				return true;
+			}
 			return error.message.toLowerCase().includes('insufficient credits');
 		},
 		handler: async () => ({ maxRetries: 0 }),
