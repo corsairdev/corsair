@@ -14,7 +14,7 @@ Corsair handles the parts of an integration you would rather not maintain: OAuth
 npm install @corsair-dev/mcp
 ```
 
-Install the framework you use alongside it, for example `npm install @mastra/core`. Each adapter treats its framework as an optional peer dependency.
+Install the framework you use alongside it. The Mastra quickstart below needs `npm install @mastra/core @ai-sdk/anthropic`. Each adapter treats its framework as an optional peer dependency.
 
 ## Quickstart
 
@@ -69,6 +69,8 @@ Every adapter exposes the same three tools, so the agent works the same way acro
 | `run_script` | Execute a call with `corsair` in scope |
 
 The agent calls `list_operations` to find what it can do, `get_schema` to learn the arguments, then `run_script` to run it. Add a plugin and its endpoints show up with no code change.
+
+`run_script` evaluates the model's JavaScript in your process with the `corsair` instance in scope. It is not a sandbox, so keep the caller trusted, the same as any code your agent runs. Build the tools with `runOptions: { readonly: true }` to block write and destructive Corsair endpoints; note this restricts Corsair calls only, not other side effects in the script.
 
 For coding agents over stdio (Claude Code, Cursor, Codex), see [Coding agents](https://docs.corsair.dev/mcp-adapters/claude-code).
 
