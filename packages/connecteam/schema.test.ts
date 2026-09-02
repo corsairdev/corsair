@@ -3,7 +3,12 @@ import {
 	ConnecteamEndpointOutputSchemas,
 } from './endpoints/types';
 import { ConnecteamSchema } from './schema';
-import { ConnecteamUserEntity } from './schema/database';
+import {
+	ConnecteamConversationEntity,
+	ConnecteamPolicyTypeEntity,
+	ConnecteamTaskBoardEntity,
+	ConnecteamUserEntity,
+} from './schema/database';
 
 describe('Connecteam schema', () => {
 	it('declares a semver version', () => {
@@ -98,6 +103,52 @@ describe('Endpoint input schemas', () => {
 		).toBe(true);
 	});
 
+	it('createUsers rejects manager, owner, and admin userType', () => {
+		const base = { firstName: 'Ada', phoneNumber: '+15550001' };
+		expect(
+			ConnecteamEndpointInputSchemas.createUsers.safeParse({
+				users: [{ ...base, userType: 'user' }],
+			}).success,
+		).toBe(true);
+		for (const userType of ['manager', 'owner', 'admin']) {
+			expect(
+				ConnecteamEndpointInputSchemas.createUsers.safeParse({
+					users: [{ ...base, userType }],
+				}).success,
+			).toBe(false);
+		}
+	});
+
+	it('getChat limit max is 100 and has no type filter', () => {
+		expect(
+			ConnecteamEndpointInputSchemas.getChat.safeParse({ limit: 100 }).success,
+		).toBe(true);
+		expect(
+			ConnecteamEndpointInputSchemas.getChat.safeParse({ limit: 101 }).success,
+		).toBe(false);
+		expect('type' in ConnecteamEndpointInputSchemas.getChat.shape).toBe(false);
+	});
+
+	it('getForms limit max is 300 and dates must be YYYY-MM-DD', () => {
+		expect(
+			ConnecteamEndpointInputSchemas.getForms.safeParse({ limit: 300 }).success,
+		).toBe(true);
+		expect(
+			ConnecteamEndpointInputSchemas.getForms.safeParse({ limit: 301 }).success,
+		).toBe(false);
+		expect(
+			ConnecteamEndpointInputSchemas.getForms.safeParse({
+				startDate: '2026-01-01',
+				endDate: '2026-01-31',
+			}).success,
+		).toBe(true);
+		expect(
+			ConnecteamEndpointInputSchemas.getForms.safeParse({
+				startDate: '01/01/2026',
+			}).success,
+		).toBe(false);
+	});
+
 	it('archiveUsers requires at least one userId and has no delete flag', () => {
 		expect(
 			ConnecteamEndpointInputSchemas.archiveUsers.safeParse({ userIds: [] })
@@ -169,5 +220,43 @@ describe('Endpoint output schemas', () => {
 			},
 		});
 		expect(result.success).toBe(true);
+	});
+
+	it('parses a task board with isArchived', () => {
+		const result = ConnecteamTaskBoardEntity.safeParse({
+			id: 10,
+			name: 'Ops',
+			isArchived: false,
+		});
+		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data.isArchived).toBe(false);
+		}
+	});
+
+	it('parses a conversation title', () => {
+		const result = ConnecteamConversationEntity.safeParse({
+			id: 1,
+			type: 'team',
+			title: 'Shift chat',
+		});
+		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data.title).toBe('Shift chat');
+		}
+	});
+
+	it('parses nested time-off policies', () => {
+		const result = ConnecteamPolicyTypeEntity.safeParse({
+			id: 'pto',
+			name: 'Time off',
+			policies: [
+				{ id: '1', name: 'Vacation', unit: 'days', accrualType: 'yearly' },
+			],
+		});
+		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data.policies?.[0]?.accrualType).toBe('yearly');
+		}
 	});
 });

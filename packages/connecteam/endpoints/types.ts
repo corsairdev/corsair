@@ -23,7 +23,10 @@ const Paging = z
 	.optional();
 
 const Limit = z.number().int().min(1).max(500).optional();
+const ChatLimit = z.number().int().min(1).max(100).optional();
+const FormsLimit = z.number().int().min(1).max(300).optional();
 const Offset = z.number().int().min(0).optional();
+const IsoDate = z.iso.date().optional();
 
 function envelope<T extends z.ZodType>(data: T) {
 	return z
@@ -62,7 +65,7 @@ const CreateUserSchema = z.object({
 	lastName: z.string().optional(),
 	phoneNumber: z.string().min(1),
 	email: z.string().optional(),
-	userType: z.enum(['user', 'manager', 'owner']).optional(),
+	userType: z.enum(['user']).optional(),
 	isArchived: z.boolean().optional(),
 	customFields: z.array(z.unknown()).optional(),
 });
@@ -79,9 +82,8 @@ const GenerateUploadUrlInputSchema = z.object({
 });
 
 const GetChatInputSchema = z.object({
-	limit: Limit,
+	limit: ChatLimit,
 	offset: Offset,
-	type: z.enum(['team', 'channel']).optional(),
 });
 
 const GetCustomFieldCategoriesInputSchema = z.object({
@@ -102,9 +104,9 @@ const GetCustomFieldsInputSchema = z.object({
 
 const GetFormsInputSchema = z.object({
 	name: z.string().optional(),
-	startDate: z.string().optional(),
-	endDate: z.string().optional(),
-	limit: Limit,
+	startDate: IsoDate,
+	endDate: IsoDate,
+	limit: FormsLimit,
 	offset: Offset,
 });
 

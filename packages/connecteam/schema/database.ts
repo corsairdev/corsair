@@ -225,6 +225,8 @@ export const ConnecteamTaskBoardEntity = z
 		/** Display name. */
 		name: S,
 		title: S,
+		/** Whether the task board is archived. */
+		isArchived: B,
 	})
 	.loose();
 export type ConnecteamTaskBoardEntity = z.infer<
@@ -259,8 +261,8 @@ export const ConnecteamConversationEntity = z
 		conversationId: z.union([z.number(), z.string()]).optional(),
 		/** team | channel. */
 		type: S,
-		/** Display name. */
-		name: S,
+		/** Conversation title. */
+		title: S,
 	})
 	.loose();
 export type ConnecteamConversationEntity = z.infer<
@@ -271,6 +273,19 @@ export type ConnecteamConversationEntity = z.infer<
  * Time-off policy type. Official: GET /time-off/v1/policy-types
  * Docs: https://developer.connecteam.com/docs/time-off-policies-balances
  */
+const ConnecteamTimeOffPolicy = z
+	.object({
+		/** Policy unique id. */
+		id: z.union([z.string(), z.number()]).optional(),
+		/** Policy display name. */
+		name: S,
+		/** Balance unit (hours/days). */
+		unit: S,
+		/** Accrual type for this policy. */
+		accrualType: S,
+	})
+	.loose();
+
 export const ConnecteamPolicyTypeEntity = z
 	.object({
 		/** Policy type id. */
@@ -278,10 +293,8 @@ export const ConnecteamPolicyTypeEntity = z
 		policyTypeId: z.union([z.string(), z.number()]).optional(),
 		/** Display name. */
 		name: S,
-		/** Accrual type (changelog). */
-		accrualType: S,
-		/** Policy id (changelog). */
-		policyId: z.union([z.string(), z.number()]).optional(),
+		/** Policies under this type. */
+		policies: z.array(ConnecteamTimeOffPolicy).optional(),
 	})
 	.loose();
 export type ConnecteamPolicyTypeEntity = z.infer<
