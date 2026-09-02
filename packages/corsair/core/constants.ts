@@ -475,7 +475,7 @@ export const ProviderDisplayNames = {
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
 	timecamp: 'TimeCamp',
-	tinyurl: 'Tinyurl',
+	tinyurl: 'TinyURL',
 	tisane: 'Tisane',
 	todoist: 'Todoist',
 	toggl: 'Toggl',

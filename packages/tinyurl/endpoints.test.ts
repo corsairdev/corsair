@@ -75,7 +75,7 @@ describe('Urls.create', () => {
 			ctx,
 			'tinyurl.urls.create',
 			{
-				url: 'https://example.com/some/very/long/article/path',
+				alias: 'abc123xyz',
 				tiny_url: 'https://tinyurl.com/abc123xyz',
 			},
 			'completed',
@@ -118,7 +118,7 @@ describe('Urls.create', () => {
 					url: 'https://example.com/promo',
 					domain: 'tiny.one',
 					alias: 'custom-launch',
-					tags: ['marketing', 'promo'],
+					tags: 'marketing,promo',
 					expires_at: '2026-12-31 23:59:59',
 					description: 'Campaign link',
 				},
@@ -190,6 +190,71 @@ describe('Urls.create', () => {
 			Urls.create(ctx, { url: 'https://example.com/page' }),
 		).rejects.toThrow('Unauthenticated.');
 	});
+
+	it('rejects expires_at that is not YYYY-MM-DD HH:MM:SS', async () => {
+		await expect(
+			Urls.create(ctx, {
+				url: 'https://example.com/page',
+				expires_at: 'tomorrow',
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+});
+
+describe('Urls.list', () => {
+	it('lists available TinyURLs with pagination', async () => {
+		mockRequest.mockResolvedValueOnce({
+			code: 0,
+			data: [
+				{
+					domain: 'tinyurl.com',
+					alias: 'abc123xyz',
+					deleted: false,
+					archived: false,
+					analytics: { enabled: true, public: false },
+					tags: [],
+					created_at: '2026-09-02T12:16:27+00:00',
+					expires_at: null,
+					tiny_url: 'https://tinyurl.com/abc123xyz',
+				},
+			],
+			errors: [],
+		});
+
+		const result = await Urls.list(ctx, {
+			type: 'available',
+			page: 1,
+			limit: 10,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://api.tinyurl.com',
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/urls/available',
+				query: expect.objectContaining({
+					page: 1,
+					limit: 10,
+				}),
+			}),
+		);
+		expect(result.data).toHaveLength(1);
+		expect(result.data[0]?.tiny_url).toBe('https://tinyurl.com/abc123xyz');
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'tinyurl.urls.list',
+			{ type: 'available', count: 1 },
+			'completed',
+		);
+	});
+
+	it('rejects an invalid list type', async () => {
+		await expect(Urls.list(ctx, { type: 'nope' as never })).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 });
 
 describe('tinyurl plugin initialization and keyBuilder', () => {
@@ -199,6 +264,7 @@ describe('tinyurl plugin initialization and keyBuilder', () => {
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.authConfig).toBeDefined();
 		expect(plugin.endpoints?.urls.create).toBeDefined();
+		expect(plugin.endpoints?.urls.list).toBeDefined();
 	});
 
 	it('keyBuilder returns static key when provided in options', async () => {

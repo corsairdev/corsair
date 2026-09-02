@@ -16,7 +16,9 @@ export const create: TinyurlEndpoints['createUrl'] = async (ctx, rawInput) => {
 	};
 	if (input.domain !== undefined) body.domain = input.domain;
 	if (input.alias !== undefined) body.alias = input.alias;
-	if (input.tags !== undefined) body.tags = input.tags;
+	if (input.tags !== undefined) {
+		body.tags = Array.isArray(input.tags) ? input.tags.join(',') : input.tags;
+	}
 	if (input.expires_at !== undefined) body.expires_at = input.expires_at;
 	if (input.description !== undefined) body.description = input.description;
 
@@ -38,7 +40,7 @@ export const create: TinyurlEndpoints['createUrl'] = async (ctx, rawInput) => {
 	await logEventFromContext(
 		ctx,
 		'tinyurl.urls.create',
-		{ url: input.url, tiny_url: response.tiny_url },
+		{ alias: response.alias, tiny_url: response.tiny_url },
 		'completed',
 	);
 

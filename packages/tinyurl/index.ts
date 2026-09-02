@@ -53,6 +53,7 @@ type TinyurlEndpoint<K extends keyof TinyurlEndpointOutputs> = CorsairEndpoint<
 
 export type TinyurlEndpoints = {
 	createUrl: TinyurlEndpoint<'createUrl'>;
+	listUrls: TinyurlEndpoint<'listUrls'>;
 };
 
 export type TinyurlWebhooks = {};
@@ -60,6 +61,7 @@ export type TinyurlWebhooks = {};
 const tinyurlEndpointsNested = {
 	urls: {
 		create: Urls.create,
+		list: Urls.list,
 	},
 } as const;
 
@@ -69,6 +71,10 @@ export const tinyurlEndpointSchemas = {
 	'urls.create': {
 		input: TinyurlEndpointInputSchemas.createUrl,
 		output: TinyurlEndpointOutputSchemas.createUrl,
+	},
+	'urls.list': {
+		input: TinyurlEndpointInputSchemas.listUrls,
+		output: TinyurlEndpointOutputSchemas.listUrls,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof tinyurlEndpointsNested
@@ -85,6 +91,10 @@ const tinyurlEndpointMeta = {
 	'urls.create': {
 		riskLevel: 'write',
 		description: 'Shorten a URL using TinyURL',
+	},
+	'urls.list': {
+		riskLevel: 'read',
+		description: 'List available or archived TinyURLs',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof tinyurlEndpointsNested>;
 
@@ -152,6 +162,8 @@ export function tinyurl<const T extends TinyurlPluginOptions>(
 export type {
 	CreateUrlInput,
 	CreateUrlResponse,
+	ListUrlsInput,
+	ListUrlsResponse,
 	TinyurlEndpointInputs,
 	TinyurlEndpointOutputs,
 	TinyurlLink,
@@ -160,6 +172,8 @@ export type {
 export {
 	CreateUrlInputSchema,
 	CreateUrlResponseSchema,
+	ListUrlsInputSchema,
+	ListUrlsResponseSchema,
 	TinyurlEndpointInputSchemas,
 	TinyurlEndpointOutputSchemas,
 } from './endpoints/types';
