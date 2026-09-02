@@ -12,7 +12,25 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { Users } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import {
+	archiveUsers,
+	createUsers,
+	generateUploadUrl,
+	getChat,
+	getCustomFieldCategories,
+	getCustomFields,
+	getForms,
+	getJobs,
+	getPerformanceIndicators,
+	getPolicyTypes,
+	getPublishers,
+	getSchedulers,
+	getSmartGroups,
+	getTaskBoards,
+	getUsers,
+	listMe,
+} from './endpoints';
 import type {
 	ConnecteamEndpointInputs,
 	ConnecteamEndpointOutputs,
@@ -25,7 +43,7 @@ import { errorHandlers } from './error-handlers';
 import { ConnecteamSchema } from './schema';
 
 export type ConnecteamPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	hooks?: InternalConnecteamPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -52,68 +70,178 @@ type ConnecteamEndpoint<K extends keyof ConnecteamEndpointOutputs> =
 	>;
 
 export type ConnecteamEndpoints = {
+	listMe: ConnecteamEndpoint<'listMe'>;
 	getUsers: ConnecteamEndpoint<'getUsers'>;
-	getUserById: ConnecteamEndpoint<'getUserById'>;
-	archiveUsers: ConnecteamEndpoint<'archiveUsers'>;
 	createUsers: ConnecteamEndpoint<'createUsers'>;
-	updateUsers: ConnecteamEndpoint<'updateUsers'>;
+	archiveUsers: ConnecteamEndpoint<'archiveUsers'>;
+	generateUploadUrl: ConnecteamEndpoint<'generateUploadUrl'>;
+	getChat: ConnecteamEndpoint<'getChat'>;
+	getCustomFieldCategories: ConnecteamEndpoint<'getCustomFieldCategories'>;
+	getCustomFields: ConnecteamEndpoint<'getCustomFields'>;
+	getForms: ConnecteamEndpoint<'getForms'>;
+	getJobs: ConnecteamEndpoint<'getJobs'>;
+	getPerformanceIndicators: ConnecteamEndpoint<'getPerformanceIndicators'>;
+	getPolicyTypes: ConnecteamEndpoint<'getPolicyTypes'>;
+	getPublishers: ConnecteamEndpoint<'getPublishers'>;
+	getSchedulers: ConnecteamEndpoint<'getSchedulers'>;
+	getSmartGroups: ConnecteamEndpoint<'getSmartGroups'>;
+	getTaskBoards: ConnecteamEndpoint<'getTaskBoards'>;
 };
 
 const connecteamEndpointsNested = {
+	me: { list: listMe },
 	users: {
-		get: Users.get,
-		getById: Users.getById,
-		archive: Users.archive,
-		create: Users.create,
-		update: Users.update,
+		get: getUsers,
+		create: createUsers,
+		archive: archiveUsers,
 	},
+	attachments: { generateUploadUrl },
+	chat: { get: getChat },
+	customFieldCategories: { get: getCustomFieldCategories },
+	customFields: { get: getCustomFields },
+	forms: { get: getForms },
+	jobs: { get: getJobs },
+	performanceIndicators: { get: getPerformanceIndicators },
+	policyTypes: { get: getPolicyTypes },
+	publishers: { get: getPublishers },
+	schedulers: { get: getSchedulers },
+	smartGroups: { get: getSmartGroups },
+	taskBoards: { get: getTaskBoards },
 } as const;
 
 export const connecteamEndpointSchemas = {
+	'me.list': {
+		input: ConnecteamEndpointInputSchemas.listMe,
+		output: ConnecteamEndpointOutputSchemas.listMe,
+	},
 	'users.get': {
 		input: ConnecteamEndpointInputSchemas.getUsers,
 		output: ConnecteamEndpointOutputSchemas.getUsers,
-	},
-	'users.getById': {
-		input: ConnecteamEndpointInputSchemas.getUserById,
-		output: ConnecteamEndpointOutputSchemas.getUserById,
-	},
-	'users.archive': {
-		input: ConnecteamEndpointInputSchemas.archiveUsers,
-		output: ConnecteamEndpointOutputSchemas.archiveUsers,
 	},
 	'users.create': {
 		input: ConnecteamEndpointInputSchemas.createUsers,
 		output: ConnecteamEndpointOutputSchemas.createUsers,
 	},
-	'users.update': {
-		input: ConnecteamEndpointInputSchemas.updateUsers,
-		output: ConnecteamEndpointOutputSchemas.updateUsers,
+	'users.archive': {
+		input: ConnecteamEndpointInputSchemas.archiveUsers,
+		output: ConnecteamEndpointOutputSchemas.archiveUsers,
+	},
+	'attachments.generateUploadUrl': {
+		input: ConnecteamEndpointInputSchemas.generateUploadUrl,
+		output: ConnecteamEndpointOutputSchemas.generateUploadUrl,
+	},
+	'chat.get': {
+		input: ConnecteamEndpointInputSchemas.getChat,
+		output: ConnecteamEndpointOutputSchemas.getChat,
+	},
+	'customFieldCategories.get': {
+		input: ConnecteamEndpointInputSchemas.getCustomFieldCategories,
+		output: ConnecteamEndpointOutputSchemas.getCustomFieldCategories,
+	},
+	'customFields.get': {
+		input: ConnecteamEndpointInputSchemas.getCustomFields,
+		output: ConnecteamEndpointOutputSchemas.getCustomFields,
+	},
+	'forms.get': {
+		input: ConnecteamEndpointInputSchemas.getForms,
+		output: ConnecteamEndpointOutputSchemas.getForms,
+	},
+	'jobs.get': {
+		input: ConnecteamEndpointInputSchemas.getJobs,
+		output: ConnecteamEndpointOutputSchemas.getJobs,
+	},
+	'performanceIndicators.get': {
+		input: ConnecteamEndpointInputSchemas.getPerformanceIndicators,
+		output: ConnecteamEndpointOutputSchemas.getPerformanceIndicators,
+	},
+	'policyTypes.get': {
+		input: ConnecteamEndpointInputSchemas.getPolicyTypes,
+		output: ConnecteamEndpointOutputSchemas.getPolicyTypes,
+	},
+	'publishers.get': {
+		input: ConnecteamEndpointInputSchemas.getPublishers,
+		output: ConnecteamEndpointOutputSchemas.getPublishers,
+	},
+	'schedulers.get': {
+		input: ConnecteamEndpointInputSchemas.getSchedulers,
+		output: ConnecteamEndpointOutputSchemas.getSchedulers,
+	},
+	'smartGroups.get': {
+		input: ConnecteamEndpointInputSchemas.getSmartGroups,
+		output: ConnecteamEndpointOutputSchemas.getSmartGroups,
+	},
+	'taskBoards.get': {
+		input: ConnecteamEndpointInputSchemas.getTaskBoards,
+		output: ConnecteamEndpointOutputSchemas.getTaskBoards,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof connecteamEndpointsNested
 >;
 
 const connecteamEndpointMeta = {
+	'me.list': {
+		riskLevel: 'read',
+		description: 'Get Connecteam account company name and company ID',
+	},
 	'users.get': {
 		riskLevel: 'read',
-		description: 'Get users from Connecteam',
-	},
-	'users.getById': {
-		riskLevel: 'read',
-		description: 'Get a Connecteam user by ID',
-	},
-	'users.archive': {
-		riskLevel: 'write',
-		description: 'Archive or delete users in Connecteam',
+		description: 'List Connecteam users with optional filters and pagination',
 	},
 	'users.create': {
 		riskLevel: 'write',
 		description: 'Create users in Connecteam',
 	},
-	'users.update': {
+	'users.archive': {
 		riskLevel: 'write',
-		description: 'Update users in Connecteam',
+		description: 'Archive Connecteam users by ID without deleting records',
+	},
+	'attachments.generateUploadUrl': {
+		riskLevel: 'write',
+		description: 'Generate a time-limited pre-signed file upload URL',
+	},
+	'chat.get': {
+		riskLevel: 'read',
+		description: 'List team chats and channels',
+	},
+	'customFieldCategories.get': {
+		riskLevel: 'read',
+		description: 'List custom field categories',
+	},
+	'customFields.get': {
+		riskLevel: 'read',
+		description: 'List custom fields with optional filters and pagination',
+	},
+	'forms.get': {
+		riskLevel: 'read',
+		description: 'List form definitions',
+	},
+	'jobs.get': {
+		riskLevel: 'read',
+		description: 'List jobs for a scheduler or time clock instance',
+	},
+	'performanceIndicators.get': {
+		riskLevel: 'read',
+		description: 'List performance metric indicators',
+	},
+	'policyTypes.get': {
+		riskLevel: 'read',
+		description: 'List time-off policy types',
+	},
+	'publishers.get': {
+		riskLevel: 'read',
+		description: 'List custom publishers',
+	},
+	'schedulers.get': {
+		riskLevel: 'read',
+		description: 'List job schedulers',
+	},
+	'smartGroups.get': {
+		riskLevel: 'read',
+		description: 'List smart groups',
+	},
+	'taskBoards.get': {
+		riskLevel: 'read',
+		description: 'List task boards',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof connecteamEndpointsNested
@@ -121,10 +249,7 @@ const connecteamEndpointMeta = {
 
 export const connecteamAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -165,12 +290,10 @@ export function connecteam<const T extends ConnecteamPluginOptions>(
 		webhooks: {},
 		endpointMeta: connecteamEndpointMeta,
 		endpointSchemas: connecteamEndpointSchemas,
-
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-
 		keyBuilder: async (ctx: ConnecteamKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
@@ -178,28 +301,15 @@ export function connecteam<const T extends ConnecteamPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('connecteam', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('connecteam', 'api_key');
 		},
 	} satisfies InternalConnecteamPlugin;
 }
 
-export type {
-	ArchiveUsersInput,
-	ArchiveUsersResponse,
-	CreateUsersInput,
-	CreateUsersResponse,
-	GetUserByIdInput,
-	GetUserByIdResponse,
-	GetUsersInput,
-	GetUsersResponse,
-	UpdateUsersInput,
-	UpdateUsersResponse,
-} from './endpoints/types';
+export type { ConnecteamEndpointInputs, ConnecteamEndpointOutputs };

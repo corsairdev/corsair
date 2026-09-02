@@ -1,28 +1,48 @@
 import { z } from 'zod';
+import {
+	ConnecteamAccountEntity,
+	ConnecteamConversationEntity,
+	ConnecteamCustomFieldCategoryEntity,
+	ConnecteamCustomFieldEntity,
+	ConnecteamFormEntity,
+	ConnecteamJobEntity,
+	ConnecteamPerformanceIndicatorEntity,
+	ConnecteamPolicyTypeEntity,
+	ConnecteamPublisherEntity,
+	ConnecteamSchedulerEntity,
+	ConnecteamSmartGroupEntity,
+	ConnecteamTaskBoardEntity,
+	ConnecteamUserEntity,
+} from '../schema/database';
 
-const ConnecteamUserSchema = z.object({
-	firstName: z.string().optional(),
-	lastName: z.string().optional(),
-	phoneNumber: z.string().optional(),
-	userType: z.string().optional(),
-	email: z.string().optional(),
-	customFields: z.array(z.unknown()).optional(),
-	isArchived: z.boolean().optional(),
-	userId: z.number(),
-	createdAt: z.number().optional(),
-	modifiedAt: z.number().optional(),
-	lastLogin: z.number().optional(),
-	smartGroupsIds: z.array(z.number()).optional(),
-});
+const Paging = z
+	.object({
+		offset: z.number().optional(),
+	})
+	.loose()
+	.optional();
 
-// ==================== GET USERS ====================
+const Limit = z.number().int().min(1).max(500).optional();
+const Offset = z.number().int().min(0).optional();
+
+function envelope<T extends z.ZodType>(data: T) {
+	return z
+		.object({
+			requestId: z.string().optional(),
+			data,
+			paging: Paging,
+		})
+		.loose();
+}
+
+const EmptyInput = z.object({});
 
 const GetUsersInputSchema = z.object({
-	limit: z.number().int().min(1).max(500).optional(),
-	offset: z.number().int().min(0).optional(),
+	limit: Limit,
+	offset: Offset,
 	sort: z.enum(['created_at']).optional(),
 	order: z.enum(['asc', 'desc']).optional(),
-	userIds: z.array(z.number()).optional(),
+	userIds: z.array(z.number().int().positive()).optional(),
 	userStatus: z.enum(['active', 'archived', 'all']).optional(),
 	fullNames: z.array(z.string()).optional(),
 	phoneNumbers: z.array(z.string()).optional(),
@@ -33,150 +53,260 @@ const GetUsersInputSchema = z.object({
 	archivedAt: z.number().int().min(1).optional(),
 });
 
-export type GetUsersInput = z.infer<typeof GetUsersInputSchema>;
-
-const GetUsersResponseSchema = z.object({
-	requestId: z.string().optional(),
-	data: z.object({
-		users: z.array(ConnecteamUserSchema),
-	}),
-	paging: z
-		.object({
-			offset: z.number().optional(),
-		})
-		.optional(),
-});
-
-export type GetUsersResponse = z.infer<typeof GetUsersResponseSchema>;
-
-// ==================== GET USER BY ID ====================
-
-const GetUserByIdInputSchema = z.object({
-	userId: z.number().int().positive(),
-});
-
-export type GetUserByIdInput = z.infer<typeof GetUserByIdInputSchema>;
-
-const GetUserByIdResponseSchema = z.object({
-	requestId: z.string().optional(),
-	data: z.object({
-		user: ConnecteamUserSchema,
-	}),
-});
-
-export type GetUserByIdResponse = z.infer<typeof GetUserByIdResponseSchema>;
-
-// ==================== ARCHIVE USERS ====================
-
 const ArchiveUsersInputSchema = z.object({
 	userIds: z.array(z.number().int().positive()).min(1),
-	deletionType: z.enum(['archive', 'delete']).optional(),
 });
-
-export type ArchiveUsersInput = z.infer<typeof ArchiveUsersInputSchema>;
-
-const ArchiveUsersResponseSchema = z.object({
-	requestId: z.string().optional(),
-});
-
-export type ArchiveUsersResponse = z.infer<typeof ArchiveUsersResponseSchema>;
-
-// ==================== CREATE USERS ====================
 
 const CreateUserSchema = z.object({
-	firstName: z.string(),
+	firstName: z.string().min(1),
 	lastName: z.string().optional(),
-	phoneNumber: z.string().optional(),
+	phoneNumber: z.string().min(1),
 	email: z.string().optional(),
-	userType: z.string().optional(),
+	userType: z.enum(['user', 'manager', 'owner']).optional(),
+	isArchived: z.boolean().optional(),
+	customFields: z.array(z.unknown()).optional(),
 });
 
 const CreateUsersInputSchema = z.object({
 	users: z.array(CreateUserSchema).min(1),
+	sendActivation: z.boolean().optional(),
 });
 
-export type CreateUsersInput = z.infer<typeof CreateUsersInputSchema>;
-
-const CreateUsersResponseSchema = z.object({
-	requestId: z.string().optional(),
-	data: z
-		.object({
-			results: z.array(ConnecteamUserSchema).optional(),
-		})
-		.optional(),
+const GenerateUploadUrlInputSchema = z.object({
+	fileName: z.string().min(1),
+	featureType: z.enum(['chat', 'shiftscheduler', 'users', 'quicktasks']),
+	fileTypeHint: z.string().optional(),
 });
 
-export type CreateUsersResponse = z.infer<typeof CreateUsersResponseSchema>;
-
-// ==================== UPDATE USERS ====================
-
-const UpdateUserSchema = z.object({
-	userId: z.number().int().positive().optional(),
-	firstName: z.string().optional(),
-	lastName: z.string().optional(),
-	phoneNumber: z.string().optional(),
-	userType: z.string().optional(),
-	email: z.string().optional(),
-	customFields: z.array(z.unknown()).optional(),
-	isArchived: z.boolean().optional(),
+const GetChatInputSchema = z.object({
+	limit: Limit,
+	offset: Offset,
+	type: z.enum(['team', 'channel']).optional(),
 });
 
-const UpdateUsersInputSchema = z.object({
-	users: z.array(UpdateUserSchema).min(1),
-	editUsersByPhone: z.boolean().optional(),
-	includeSmartGroupIds: z.boolean().optional(),
+const GetCustomFieldCategoriesInputSchema = z.object({
+	limit: Limit,
+	offset: Offset,
+	ids: z.array(z.number().int().positive()).optional(),
+	names: z.array(z.string()).optional(),
 });
 
-export type UpdateUsersInput = z.infer<typeof UpdateUsersInputSchema>;
-
-const UpdateUsersResponseSchema = z.object({
-	requestId: z.string().optional(),
-	data: z
-		.object({
-			count: z.number().optional(),
-			users: z.array(ConnecteamUserSchema).optional(),
-		})
-		.optional(),
+const GetCustomFieldsInputSchema = z.object({
+	limit: Limit,
+	offset: Offset,
+	customFieldTypes: z.array(z.string()).optional(),
+	customFieldIds: z.array(z.number().int().positive()).optional(),
+	names: z.array(z.string()).optional(),
+	categoryIds: z.array(z.number().int().positive()).optional(),
 });
 
-export type UpdateUsersResponse = z.infer<typeof UpdateUsersResponseSchema>;
+const GetFormsInputSchema = z.object({
+	name: z.string().optional(),
+	startDate: z.string().optional(),
+	endDate: z.string().optional(),
+	limit: Limit,
+	offset: Offset,
+});
 
-// ==================== ENDPOINT INPUTS ====================
+const GetJobsInputSchema = z.object({
+	instanceIds: z.array(z.number().int().positive()).optional(),
+	jobIds: z.array(z.string()).optional(),
+	jobNames: z.array(z.string()).optional(),
+	jobCodes: z.array(z.string()).optional(),
+	includeDeleted: z.boolean().optional(),
+	sort: z.enum(['title']).optional(),
+	order: z.enum(['asc', 'desc']).optional(),
+	limit: Limit,
+	offset: Offset,
+});
+
+const GetSmartGroupsInputSchema = z.object({
+	id: z.number().int().positive().optional(),
+	name: z.string().optional(),
+});
 
 export type ConnecteamEndpointInputs = {
-	getUsers: GetUsersInput;
-	getUserById: GetUserByIdInput;
-	archiveUsers: ArchiveUsersInput;
-	createUsers: CreateUsersInput;
-	updateUsers: UpdateUsersInput;
+	listMe: z.infer<typeof EmptyInput>;
+	getUsers: z.infer<typeof GetUsersInputSchema>;
+	createUsers: z.infer<typeof CreateUsersInputSchema>;
+	archiveUsers: z.infer<typeof ArchiveUsersInputSchema>;
+	generateUploadUrl: z.infer<typeof GenerateUploadUrlInputSchema>;
+	getChat: z.infer<typeof GetChatInputSchema>;
+	getCustomFieldCategories: z.infer<typeof GetCustomFieldCategoriesInputSchema>;
+	getCustomFields: z.infer<typeof GetCustomFieldsInputSchema>;
+	getForms: z.infer<typeof GetFormsInputSchema>;
+	getJobs: z.infer<typeof GetJobsInputSchema>;
+	getPerformanceIndicators: z.infer<typeof EmptyInput>;
+	getPolicyTypes: z.infer<typeof EmptyInput>;
+	getPublishers: z.infer<typeof EmptyInput>;
+	getSchedulers: z.infer<typeof EmptyInput>;
+	getSmartGroups: z.infer<typeof GetSmartGroupsInputSchema>;
+	getTaskBoards: z.infer<typeof EmptyInput>;
 };
 
-// ==================== ENDPOINT OUTPUTS ====================
+const ListMeResponseSchema = envelope(ConnecteamAccountEntity);
+const GetUsersResponseSchema = envelope(
+	z.object({ users: z.array(ConnecteamUserEntity) }).loose(),
+);
+const CreateUsersResponseSchema = envelope(
+	z
+		.object({
+			results: z.array(ConnecteamUserEntity).optional(),
+		})
+		.loose()
+		.optional(),
+);
+const ArchiveUsersResponseSchema = z
+	.object({
+		requestId: z.string().optional(),
+	})
+	.loose();
+const GenerateUploadUrlResponseSchema = envelope(
+	z
+		.object({
+			fileId: z.string(),
+			uploadFileUrl: z.string(),
+		})
+		.loose(),
+);
+const GetChatResponseSchema = envelope(
+	z
+		.object({
+			conversations: z.array(ConnecteamConversationEntity).optional(),
+		})
+		.loose(),
+);
+const GetCustomFieldCategoriesResponseSchema = envelope(
+	z
+		.object({
+			categories: z.array(ConnecteamCustomFieldCategoryEntity),
+		})
+		.loose(),
+);
+const GetCustomFieldsResponseSchema = envelope(
+	z
+		.object({
+			customFields: z.array(ConnecteamCustomFieldEntity),
+		})
+		.loose(),
+);
+const GetFormsResponseSchema = envelope(
+	z.object({ forms: z.array(ConnecteamFormEntity) }).loose(),
+);
+const GetJobsResponseSchema = envelope(
+	z
+		.object({
+			jobs: z.array(ConnecteamJobEntity),
+			paging: Paging,
+		})
+		.loose(),
+);
+const GetPerformanceIndicatorsResponseSchema = envelope(
+	z
+		.object({
+			indicators: z.array(ConnecteamPerformanceIndicatorEntity).optional(),
+			performanceIndicators: z
+				.array(ConnecteamPerformanceIndicatorEntity)
+				.optional(),
+		})
+		.loose(),
+);
+const GetPolicyTypesResponseSchema = envelope(
+	z
+		.object({
+			policyTypes: z.array(ConnecteamPolicyTypeEntity).optional(),
+			policies: z.array(ConnecteamPolicyTypeEntity).optional(),
+		})
+		.loose(),
+);
+const GetPublishersResponseSchema = envelope(
+	z
+		.object({
+			publishers: z.array(ConnecteamPublisherEntity).optional(),
+		})
+		.loose(),
+);
+const GetSchedulersResponseSchema = envelope(
+	z
+		.object({
+			schedulers: z.array(ConnecteamSchedulerEntity),
+		})
+		.loose(),
+);
+const GetSmartGroupsResponseSchema = envelope(
+	z
+		.object({
+			groups: z.array(ConnecteamSmartGroupEntity).optional(),
+			smartGroups: z.array(ConnecteamSmartGroupEntity).optional(),
+		})
+		.loose(),
+);
+const GetTaskBoardsResponseSchema = envelope(
+	z
+		.object({
+			taskBoards: z.array(ConnecteamTaskBoardEntity).optional(),
+			taskboards: z.array(ConnecteamTaskBoardEntity).optional(),
+		})
+		.loose(),
+);
 
 export type ConnecteamEndpointOutputs = {
-	getUsers: GetUsersResponse;
-	getUserById: GetUserByIdResponse;
-	archiveUsers: ArchiveUsersResponse;
-	createUsers: CreateUsersResponse;
-	updateUsers: UpdateUsersResponse;
+	listMe: z.infer<typeof ListMeResponseSchema>;
+	getUsers: z.infer<typeof GetUsersResponseSchema>;
+	createUsers: z.infer<typeof CreateUsersResponseSchema>;
+	archiveUsers: z.infer<typeof ArchiveUsersResponseSchema>;
+	generateUploadUrl: z.infer<typeof GenerateUploadUrlResponseSchema>;
+	getChat: z.infer<typeof GetChatResponseSchema>;
+	getCustomFieldCategories: z.infer<
+		typeof GetCustomFieldCategoriesResponseSchema
+	>;
+	getCustomFields: z.infer<typeof GetCustomFieldsResponseSchema>;
+	getForms: z.infer<typeof GetFormsResponseSchema>;
+	getJobs: z.infer<typeof GetJobsResponseSchema>;
+	getPerformanceIndicators: z.infer<
+		typeof GetPerformanceIndicatorsResponseSchema
+	>;
+	getPolicyTypes: z.infer<typeof GetPolicyTypesResponseSchema>;
+	getPublishers: z.infer<typeof GetPublishersResponseSchema>;
+	getSchedulers: z.infer<typeof GetSchedulersResponseSchema>;
+	getSmartGroups: z.infer<typeof GetSmartGroupsResponseSchema>;
+	getTaskBoards: z.infer<typeof GetTaskBoardsResponseSchema>;
 };
 
-// ==================== INPUT SCHEMAS ====================
-
 export const ConnecteamEndpointInputSchemas = {
+	listMe: EmptyInput,
 	getUsers: GetUsersInputSchema,
-	getUserById: GetUserByIdInputSchema,
-	archiveUsers: ArchiveUsersInputSchema,
 	createUsers: CreateUsersInputSchema,
-	updateUsers: UpdateUsersInputSchema,
+	archiveUsers: ArchiveUsersInputSchema,
+	generateUploadUrl: GenerateUploadUrlInputSchema,
+	getChat: GetChatInputSchema,
+	getCustomFieldCategories: GetCustomFieldCategoriesInputSchema,
+	getCustomFields: GetCustomFieldsInputSchema,
+	getForms: GetFormsInputSchema,
+	getJobs: GetJobsInputSchema,
+	getPerformanceIndicators: EmptyInput,
+	getPolicyTypes: EmptyInput,
+	getPublishers: EmptyInput,
+	getSchedulers: EmptyInput,
+	getSmartGroups: GetSmartGroupsInputSchema,
+	getTaskBoards: EmptyInput,
 } as const;
 
-// ==================== OUTPUT SCHEMAS ====================
-
 export const ConnecteamEndpointOutputSchemas = {
+	listMe: ListMeResponseSchema,
 	getUsers: GetUsersResponseSchema,
-	getUserById: GetUserByIdResponseSchema,
-	archiveUsers: ArchiveUsersResponseSchema,
 	createUsers: CreateUsersResponseSchema,
-	updateUsers: UpdateUsersResponseSchema,
+	archiveUsers: ArchiveUsersResponseSchema,
+	generateUploadUrl: GenerateUploadUrlResponseSchema,
+	getChat: GetChatResponseSchema,
+	getCustomFieldCategories: GetCustomFieldCategoriesResponseSchema,
+	getCustomFields: GetCustomFieldsResponseSchema,
+	getForms: GetFormsResponseSchema,
+	getJobs: GetJobsResponseSchema,
+	getPerformanceIndicators: GetPerformanceIndicatorsResponseSchema,
+	getPolicyTypes: GetPolicyTypesResponseSchema,
+	getPublishers: GetPublishersResponseSchema,
+	getSchedulers: GetSchedulersResponseSchema,
+	getSmartGroups: GetSmartGroupsResponseSchema,
+	getTaskBoards: GetTaskBoardsResponseSchema,
 } as const;
