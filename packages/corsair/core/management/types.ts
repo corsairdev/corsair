@@ -79,6 +79,8 @@ export type CreateConnectLinkInput = {
 export type ConnectLink = {
 	connectUrl: string;
 	expiresAt?: string;
+	/** The tenant the link connects, so the client scopes the flow to it. */
+	tenantId: string;
 };
 
 export type ResolvedConnectLink = {

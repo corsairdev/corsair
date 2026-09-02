@@ -272,11 +272,13 @@ export function CorsairProvider({
 
 	const connect = useCallback(
 		async (plugin: string, opts?: { tenantId?: string }): Promise<boolean> => {
-			const { connectUrl } = await client.connect.createLink({
+			// Scope to the tenant the link resolved (defaults to 'default'), not the
+			// raw opt — so it matches the reactive path and coalesces symmetrically.
+			const { connectUrl, tenantId } = await client.connect.createLink({
 				plugin,
 				tenantId: opts?.tenantId,
 			});
-			return openDialog(plugin, connectUrl, opts?.tenantId ?? null);
+			return openDialog(plugin, connectUrl, tenantId);
 		},
 		[client, openDialog],
 	);

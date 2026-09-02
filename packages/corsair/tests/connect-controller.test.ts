@@ -339,18 +339,22 @@ describe('shouldCoalesceConnect', () => {
 	});
 
 	it('joins a same-tenant reactive failure while a proactive flow is open', () => {
-		// The reactive path now supplies the resolved tenant, so it coalesces by it.
+		// Both paths resolve the tenant server-side, so a concurrent same-tenant
+		// failure coalesces onto the open flow instead of superseding it.
 		expect(
 			shouldCoalesceConnect(connecting('linear', 'acme'), 'linear', 'acme'),
 		).toBe(true);
 	});
 
-	it('supersedes when tenant scope differs — null (connect-all) vs concrete', () => {
+	it('supersedes across the default tenant regardless of null vs concrete', () => {
+		// The proactive path used to pass null while the reactive path passed the
+		// resolved id; both now carry the concrete tenant, but the pure check still
+		// treats null and a concrete id as distinct scopes.
 		expect(
-			shouldCoalesceConnect(connecting('linear', 'acme'), 'linear', null),
+			shouldCoalesceConnect(connecting('linear', 'default'), 'linear', null),
 		).toBe(false);
 		expect(
-			shouldCoalesceConnect(connecting('linear', null), 'linear', 'acme'),
+			shouldCoalesceConnect(connecting('linear', null), 'linear', 'default'),
 		).toBe(false);
 	});
 
