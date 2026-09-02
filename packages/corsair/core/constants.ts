@@ -70,6 +70,7 @@ export const BaseProviders = [
 	'beaconstac',
 	'beeminder',
 	'bettercontact',
+	'betterproposals',
 	'betterstack',
 	'bigdatacloud',
 	'bigmailer',
@@ -89,14 +90,20 @@ export const BaseProviders = [
 	'box',
 	'boxhero',
 	'brandfetch',
+	'brex',
+	'brightdata',
 	'browseai',
+	'browserless',
 	'bubble',
 	'bugsnag',
+	'buildkite',
 	'cal',
 	'calendly',
 	'canva',
 	'canvas',
+	'capsulecrm',
 	'chatbotkit',
+	'chatfai',
 	'circleci',
 	'clickhouse',
 	'clientary',
@@ -106,6 +113,7 @@ export const BaseProviders = [
 	'collegefootballdata',
 	'confluence',
 	'contentfulgraphql',
+	'contextsevenmcp',
 	'crowterminal',
 	'cursor',
 	'customgpt',
@@ -120,6 +128,7 @@ export const BaseProviders = [
 	'dodopayments',
 	'doppler',
 	'dreamstudio',
+	'dripcel',
 	'dropbox',
 	'dropboxsign',
 	'epicgames',
@@ -127,6 +136,7 @@ export const BaseProviders = [
 	'facebook',
 	'faraday',
 	'figma',
+	'filloutforms',
 	'firecrawl',
 	'fireflies',
 	'formbricks',
@@ -167,6 +177,7 @@ export const BaseProviders = [
 	'mailboxlayer',
 	'mailchimp',
 	'mailtrap',
+	'marketstack',
 	'merriamwebsterdict',
 	'monday',
 	'neon',
@@ -183,16 +194,20 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'parseur',
 	'pdfmonkey',
 	'perplexityai',
 	'pinecone',
 	'posthog',
 	'razorpay',
 	'reddit',
+	'removebg',
 	'resend',
 	'retailed',
 	'salesforce',
+	'scrapegraphai',
 	'securitytrails',
+	'sendgrid',
 	'sentry',
 	'serpapi',
 	'sharepoint',
@@ -213,6 +228,7 @@ export const BaseProviders = [
 	'textrazor',
 	'ticktick',
 	'tisane',
+	'timecamp',
 	'todoist',
 	'toggl',
 	'trello',
@@ -234,6 +250,7 @@ export const BaseProviders = [
 	'witai',
 	'wiza',
 	'workday',
+	'workiom',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -301,6 +318,7 @@ export const ProviderDisplayNames = {
 	beaconstac: 'Beaconstac',
 	beeminder: 'Beeminder',
 	bettercontact: 'BetterContact',
+	betterproposals: 'Better Proposals',
 	betterstack: 'Better Stack',
 	bigdatacloud: 'BigDataCloud',
 	bigmailer: 'BigMailer',
@@ -320,14 +338,20 @@ export const ProviderDisplayNames = {
 	box: 'Box',
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
+	brex: 'Brex',
+	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
+	browserless: 'Browserless',
 	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
+	buildkite: 'Buildkite',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
+	capsulecrm: 'Capsule CRM',
 	chatbotkit: 'ChatBotKit',
+	chatfai: 'ChatFAI',
 	circleci: 'CircleCI',
 	clickhouse: 'Clickhouse',
 	clientary: 'Clientary',
@@ -337,6 +361,7 @@ export const ProviderDisplayNames = {
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	contentfulgraphql: 'Contentful GraphQL',
+	contextsevenmcp: 'Context7',
 	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
 	customgpt: 'CustomGPT',
@@ -351,6 +376,7 @@ export const ProviderDisplayNames = {
 	dodopayments: 'Dodo Payments',
 	doppler: 'Doppler',
 	dreamstudio: 'DreamStudio',
+	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
 	dropboxsign: 'Dropbox Sign',
 	epicgames: 'Epic Games',
@@ -358,6 +384,7 @@ export const ProviderDisplayNames = {
 	facebook: 'Facebook',
 	faraday: 'Faraday',
 	figma: 'Figma',
+	filloutforms: 'FilloutForms',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	formbricks: 'Formbricks',
@@ -398,6 +425,7 @@ export const ProviderDisplayNames = {
 	mailboxlayer: 'MailboxLayer',
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
+	marketstack: 'Marketstack',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	monday: 'Monday',
 	neon: 'Neon',
@@ -414,16 +442,20 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	parseur: 'Parseur',
 	pdfmonkey: 'PDFMonkey',
 	perplexityai: 'Perplexity AI',
 	pinecone: 'Pinecone',
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
+	removebg: 'remove.bg',
 	resend: 'Resend',
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
+	scrapegraphai: 'ScrapeGraphAI',
 	securitytrails: 'SecurityTrails',
+	sendgrid: 'SendGrid',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
 	sharepoint: 'SharePoint',
@@ -444,6 +476,7 @@ export const ProviderDisplayNames = {
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
 	tisane: 'Tisane',
+	timecamp: 'TimeCamp',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -465,6 +498,7 @@ export const ProviderDisplayNames = {
 	witai: 'WitAi',
 	wiza: 'Wiza',
 	workday: 'Workday',
+	workiom: 'Workiom',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -539,6 +573,7 @@ export type AllProviders =
 	| 'beaconstac'
 	| 'beeminder'
 	| 'bettercontact'
+	| 'betterproposals'
 	| 'betterstack'
 	| 'bigdatacloud'
 	| 'bigmailer'
@@ -558,14 +593,20 @@ export type AllProviders =
 	| 'box'
 	| 'boxhero'
 	| 'brandfetch'
+	| 'brex'
+	| 'brightdata'
 	| 'browseai'
+	| 'browserless'
 	| 'bubble'
 	| 'bugsnag'
+	| 'buildkite'
 	| 'cal'
 	| 'calendly'
 	| 'canva'
 	| 'canvas'
+	| 'capsulecrm'
 	| 'chatbotkit'
+	| 'chatfai'
 	| 'circleci'
 	| 'clickhouse'
 	| 'clientary'
@@ -575,6 +616,7 @@ export type AllProviders =
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'contentfulgraphql'
+	| 'contextsevenmcp'
 	| 'crowterminal'
 	| 'cursor'
 	| 'customgpt'
@@ -589,12 +631,14 @@ export type AllProviders =
 	| 'dodopayments'
 	| 'doppler'
 	| 'dreamstudio'
+	| 'dripcel'
 	| 'dropbox'
 	| 'epicgames'
 	| 'exa'
 	| 'facebook'
 	| 'faraday'
 	| 'figma'
+	| 'filloutforms'
 	| 'firecrawl'
 	| 'fireflies'
 	| 'formbricks'
@@ -635,6 +679,7 @@ export type AllProviders =
 	| 'mailboxlayer'
 	| 'mailchimp'
 	| 'mailtrap'
+	| 'marketstack'
 	| 'merriamwebsterdict'
 	| 'monday'
 	| 'neon'
@@ -651,16 +696,20 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'parseur'
 	| 'pdfmonkey'
 	| 'perplexityai'
 	| 'pinecone'
 	| 'posthog'
 	| 'razorpay'
 	| 'reddit'
+	| 'removebg'
 	| 'resend'
 	| 'retailed'
 	| 'salesforce'
+	| 'scrapegraphai'
 	| 'securitytrails'
+	| 'sendgrid'
 	| 'sentry'
 	| 'serpapi'
 	| 'sharepoint'
@@ -681,6 +730,7 @@ export type AllProviders =
 	| 'textrazor'
 	| 'ticktick'
 	| 'tisane'
+	| 'timecamp'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
@@ -702,6 +752,7 @@ export type AllProviders =
 	| 'witai'
 	| 'wiza'
 	| 'workday'
+	| 'workiom'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'
