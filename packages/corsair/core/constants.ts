@@ -133,6 +133,7 @@ export const BaseProviders = [
 	'dripcel',
 	'dropbox',
 	'dropboxsign',
+	'dynapictures',
 	'epicgames',
 	'exa',
 	'facebook',
@@ -385,6 +386,7 @@ export const ProviderDisplayNames = {
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
 	dropboxsign: 'Dropbox Sign',
+	dynapictures: 'Dynapictures',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
@@ -643,6 +645,8 @@ export type AllProviders =
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
+	| 'dropboxsign'
+	| 'dynapictures'
 	| 'epicgames'
 	| 'exa'
 	| 'facebook'
