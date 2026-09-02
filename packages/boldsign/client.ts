@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class BoldsignAPIError extends Error {
@@ -11,50 +15,77 @@ export class BoldsignAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
-const BOLDSIGN_API_BASE = 'https://api.example.com';
+const BOLDSIGN_API_BASE = 'https://api.boldsign.com';
+
+const BOLDSIGN_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
+
+export type BoldsignRequestContext = {
+	key: string;
+	authType?: 'api_key' | 'oauth_2';
+};
+
+type QueryValue =
+	| string
+	| number
+	| boolean
+	| null
+	| undefined
+	| Array<string | number | boolean>;
 
 export async function makeBoldsignRequest<T>(
 	endpoint: string,
-	apiKey: string,
+	ctxOrKey: string | BoldsignRequestContext,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		body?: Record<string, unknown> | FormData;
+		query?: Record<string, QueryValue>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
+	const key = typeof ctxOrKey === 'string' ? ctxOrKey : ctxOrKey.key;
+	const authType =
+		typeof ctxOrKey === 'string' ? 'api_key' : (ctxOrKey.authType ?? 'api_key');
+
+	const headers: Record<string, string> =
+		authType === 'oauth_2'
+			? { Authorization: `Bearer ${key}` }
+			: { 'X-API-KEY': key };
+
+	if (!(typeof FormData !== 'undefined' && body instanceof FormData)) {
+		headers['Content-Type'] = 'application/json';
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: BOLDSIGN_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
-		},
+		HEADERS: headers,
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
-		url: endpoint,
+		url: endpoint.startsWith('/') ? endpoint : `/${endpoint}`,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body
 				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		mediaType:
+			typeof FormData !== 'undefined' && body instanceof FormData
+				? undefined
+				: 'application/json; charset=utf-8',
+		query: method === 'GET' ? (query as Record<string, unknown>) : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new BoldsignAPIError(error.message);
-		}
-		throw new BoldsignAPIError('Unknown error');
-	}
+	return request<T>(config, requestOptions, {
+		rateLimitConfig: BOLDSIGN_RATE_LIMIT_CONFIG,
+	});
 }

@@ -1,0 +1,775 @@
+---
+title: API
+description: "API reference for Boldsign: every `boldsign.api.*` operation with input and output types."
+---
+
+Every `boldsign.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Brands
+
+### get
+
+`brands.get`
+
+Get details of one brand by brandId.
+
+**Risk:** `read`
+
+```ts
+await corsair.boldsign.api.brands.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `brandName` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`brands.list`
+
+List all brands available to the account.
+
+**Risk:** `read`
+
+```ts
+await corsair.boldsign.api.brands.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  brandId: string,
+  brandName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Fields
+
+### create
+
+`customFields.create`
+
+Create a reusable custom field under a BoldSign brand.
+
+**Risk:** `write`
+
+```ts
+await corsair.boldsign.api.customFields.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fieldName` | `string` | Yes | — |
+| `formField` | `object` | Yes | — |
+| `fieldDescription` | `string` | No | — |
+| `fieldOrder` | `number` | No | — |
+| `brandId` | `string` | No | — |
+| `sharedField` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="formField full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  fieldType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customFieldId` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### edit
+
+`customFields.edit`
+
+Update a brand custom field by customFieldId.
+
+**Risk:** `write`
+
+```ts
+await corsair.boldsign.api.customFields.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fieldName` | `string` | Yes | — |
+| `formField` | `object` | Yes | — |
+| `fieldDescription` | `string` | No | — |
+| `fieldOrder` | `number` | No | — |
+| `brandId` | `string` | No | — |
+| `sharedField` | `boolean` | No | — |
+| `customFieldId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="formField full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  fieldType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customFieldId` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+## Documents
+
+### createEmbeddedRequestLink
+
+`documents.createEmbeddedRequestLink`
+
+Create an embedded document request URL for draft/send flows.
+
+**Risk:** `write`
+
+```ts
+await corsair.boldsign.api.documents.createEmbeddedRequestLink({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `message` | `string` | No | — |
+| `signers` | `object[]` | No | — |
+| `files` | `object[]` | No | — |
+| `fileUrls` | `string[]` | No | — |
+| `redirectUrl` | `string` | No | — |
+| `showToolbar` | `boolean` | No | — |
+| `showSendButton` | `boolean` | No | — |
+| `showSaveButton` | `boolean` | No | — |
+| `showPreviewButton` | `boolean` | No | — |
+| `showNavigationButtons` | `boolean` | No | — |
+| `sendViewOption` | `PreparePage \| FillingPage` | No | — |
+| `locale` | `string` | No | — |
+| `sendLinkValidTill` | `string` | No | — |
+| `embeddedSendLinkValidTill` | `string` | No | — |
+| `enableSigningOrder` | `boolean` | No | — |
+| `onBehalfOf` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="signers full type">
+
+```ts
+{
+  name?: string,
+  emailAddress?: string,
+  signerType?: string,
+  formFields?: {
+    id?: string,
+    name?: string,
+    fieldType?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+(
+  string | {
+    base64: string,
+    fileName: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `sendUrl` | `string` | Yes | — |
+
+
+
+---
+
+### editBeta
+
+`documents.editBeta`
+
+Edit an existing document request (beta endpoint).
+
+**Risk:** `write`
+
+```ts
+await corsair.boldsign.api.documents.editBeta({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `message` | `string` | No | — |
+| `signers` | `object[]` | No | — |
+| `cc` | `object[]` | No | — |
+| `files` | `object[]` | No | — |
+| `enableSigningOrder` | `boolean` | No | — |
+| `disableEmails` | `boolean` | No | — |
+| `disableSMS` | `boolean` | No | — |
+| `onBehalfOf` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="signers full type">
+
+```ts
+{
+  name?: string,
+  emailAddress?: string,
+  signerType?: string,
+  formFields?: {
+    id?: string,
+    name?: string,
+    fieldType?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="cc full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### extendExpiry
+
+`documents.extendExpiry`
+
+Extend document expiry window for pending signers.
+
+**Risk:** `write`
+
+```ts
+await corsair.boldsign.api.documents.extendExpiry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `newExpiryValue` | `string` | No | — |
+| `newExpiryDate` | `string` | No | — |
+| `warnPrior` | `boolean` | No | — |
+| `onBehalfOf` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`documents.list`
+
+List documents with filters and pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.boldsign.api.documents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `status` | `string[]` | No | — |
+| `sentBy` | `string[]` | No | — |
+| `recipients` | `string[]` | No | — |
+| `transmitType` | `string` | No | — |
+| `dateFilterType` | `string` | No | — |
+| `searchKey` | `string` | No | — |
+| `labels` | `string[]` | No | — |
+| `nextCursor` | `number` | No | — |
+| `brandIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageDetails` | `object` | Yes | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pageDetails full type">
+
+```ts
+{
+  page?: number,
+  pageSize?: number,
+  totalRecordsCount?: number,
+  totalPages?: number
+}
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+  documentId?: string,
+  status?: string,
+  title?: string,
+  nextCursor?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBehalf
+
+`documents.listBehalf`
+
+List documents sent on behalf of users.
+
+**Risk:** `read`
+
+```ts
+await corsair.boldsign.api.documents.listBehalf({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | — |
+| `pageType` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `emailAddress` | `string[]` | No | — |
+| `signers` | `string[]` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `status` | `string[]` | No | — |
+| `searchKey` | `string` | No | — |
+| `labels` | `string[]` | No | — |
+| `nextCursor` | `number` | No | — |
+| `brandIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageDetails` | `object` | Yes | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pageDetails full type">
+
+```ts
+{
+  page?: number,
+  pageSize?: number,
+  totalRecordsCount?: number,
+  totalPages?: number
+}
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+  documentId?: string,
+  status?: string,
+  title?: string,
+  nextCursor?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTeam
+
+`documents.listTeam`
+
+List documents across teams/users with filters.
+
+**Risk:** `read`
+
+```ts
+await corsair.boldsign.api.documents.listTeam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `userId` | `string[]` | No | — |
+| `teamId` | `string[]` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `status` | `string[]` | No | — |
+| `searchKey` | `string` | No | — |
+| `labels` | `string[]` | No | — |
+| `transmitType` | `string` | No | — |
+| `dateFilterType` | `string` | No | — |
+| `nextCursor` | `number` | No | — |
+| `brandIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageDetails` | `object` | Yes | — |
+| `result` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pageDetails full type">
+
+```ts
+{
+  page?: number,
+  pageSize?: number,
+  totalRecordsCount?: number,
+  totalPages?: number
+}
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+  documentId?: string,
+  status?: string,
+  title?: string,
+  nextCursor?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeAuthentication
+
+`documents.removeAuthentication`
+
+Remove signer authentication from a document recipient.
+
+**Risk:** `write`
+
+```ts
+await corsair.boldsign.api.documents.removeAuthentication({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `emailId` | `string` | Yes | — |
+| `zOrder` | `number` | No | — |
+| `phoneNumber` | `object` | No | — |
+| `onBehalfOf` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="phoneNumber full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### send
+
+`documents.send`
+
+Send a document for signature.
+
+**Risk:** `write`
+
+```ts
+await corsair.boldsign.api.documents.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `signers` | `object[]` | No | — |
+| `files` | `object[]` | No | — |
+| `fileUrls` | `string[]` | No | — |
+| `enableSigningOrder` | `boolean` | No | — |
+| `expiryValue` | `number` | No | — |
+| `expiryDateType` | `Days \| DateTime` | No | — |
+| `reminderSettings` | `object` | No | — |
+| `disableEmails` | `boolean` | No | — |
+| `disableSMS` | `boolean` | No | — |
+| `brandId` | `string` | No | — |
+| `labels` | `string[]` | No | — |
+| `sendLinkValidTill` | `string` | No | — |
+| `useTextTags` | `boolean` | No | — |
+| `onBehalfOf` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="signers full type">
+
+```ts
+{
+  name?: string,
+  emailAddress?: string,
+  signerType?: string,
+  formFields?: {
+    id?: string,
+    name?: string,
+    fieldType?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+(
+  string | {
+    base64: string,
+    fileName: string
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="reminderSettings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+
+
+
+---
+
+## Helpers
+
+### uploadFile
+
+`helpers.uploadFile`
+
+Prepare a file payload for BoldSign multipart/json send APIs using base64 data URI.
+
+**Risk:** `read`
+
+```ts
+await corsair.boldsign.api.helpers.uploadFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string` | Yes | — |
+| `mimeType` | `string` | Yes | — |
+| `base64Content` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  base64: string,
+  fileName: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Plan
+
+### getApiCreditsCount
+
+`plan.getApiCreditsCount`
+
+Get remaining API credits count.
+
+**Risk:** `read`
+
+```ts
+await corsair.boldsign.api.plan.getApiCreditsCount({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `BalanceCredits` | `number` | No | — |
+| `balanceCredits` | `number` | No | — |
+
+
+
+---
+

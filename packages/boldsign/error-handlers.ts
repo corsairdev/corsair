@@ -3,12 +3,14 @@ import { ApiError } from 'corsair/http';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+		match: (error) => {
+			if (error instanceof ApiError && error.status === 429) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return msg.includes('429') || msg.includes('rate limit');
 		},
-		handler: async (error: Error) => {
+		handler: async (error) => {
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
@@ -17,10 +19,26 @@ export const errorHandlers = {
 		},
 	},
 	AUTH_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+		match: (error) => {
+			if (error instanceof ApiError && error.status === 401) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid api key') ||
+				msg.includes('invalid token')
+			);
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	PERMISSION_ERROR: {
+		match: (error) => {
+			if (error instanceof ApiError && error.status === 403) {
+				return true;
+			}
+			const msg = error.message.toLowerCase();
+			return msg.includes('forbidden') || msg.includes('permission');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
