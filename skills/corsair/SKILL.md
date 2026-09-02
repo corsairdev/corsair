@@ -154,6 +154,18 @@ await tenant.github.api.repositories.list({});
 await tenant.github.db.repositories.search({}); // only this tenant's rows
 ```
 
+If you need to see what API and DB operations are available, install the Corsair CLI and use the introspection operations:
+
+```bash
+npm install @corsair-dev/cli
+
+npm corsair list # for api operations
+
+npm corsair list --type=db # for db operations
+
+npm corsair schema <endpoint> # to get input / output schema of any operation
+```
+
 ## Providers: managed vs bring-your-own
 
 `authType` is one of three values:
