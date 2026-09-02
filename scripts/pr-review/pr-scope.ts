@@ -1,6 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { ALLOWED_EXTRA, detectPlugin, pluginOf } from './gate.ts';
+import {
+	ALLOWED_EXTRA,
+	DOCS_NAV_FILE,
+	detectPlugin,
+	isPluginDocsManifestPr,
+	isSamePluginDocs,
+	pluginOf,
+} from './gate.ts';
 
 export type PrScope =
 	| { lane: 'plugin'; plugin: string }
@@ -81,11 +88,19 @@ export function classifyPrScope(changedFiles: string[]): PrScope {
 	);
 	const plugin = detectPlugin(changedFiles);
 
+	if (isPluginDocsManifestPr(changedFiles)) {
+		return { lane: 'skip-heavy' };
+	}
+
 	if (
 		plugin !== null &&
 		plugins.size === 1 &&
 		changedFiles.every(
-			(file) => pluginOf(file) === plugin || ALLOWED_EXTRA.includes(file),
+			(file) =>
+				pluginOf(file) === plugin ||
+				ALLOWED_EXTRA.includes(file) ||
+				file === DOCS_NAV_FILE ||
+				isSamePluginDocs(file, plugin),
 		)
 	) {
 		return { lane: 'plugin', plugin };
