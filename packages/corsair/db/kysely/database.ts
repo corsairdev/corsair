@@ -5,7 +5,7 @@ import type { Pool } from 'pg';
 import type { ReservedSql, Sql, UnsafeQueryOptions } from 'postgres';
 import type {
 	CorsairAccount,
-	CorsairConnectRequest,
+	CorsairConnect,
 	CorsairEntity,
 	CorsairEvent,
 	CorsairIntegration,
@@ -19,7 +19,7 @@ export type CorsairKyselyDatabase = {
 	corsair_entities: CorsairEntity;
 	corsair_events: CorsairEvent;
 	corsair_permissions: CorsairPermission;
-	corsair_connect_requests: CorsairConnectRequest;
+	corsair_connects: CorsairConnect;
 };
 
 export type CorsairDatabase = {

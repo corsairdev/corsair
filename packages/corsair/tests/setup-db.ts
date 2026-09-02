@@ -56,7 +56,7 @@ export function createTestDatabase(): {
 			status TEXT
 		);
 
-		CREATE TABLE IF NOT EXISTS corsair_connect_requests (
+		CREATE TABLE IF NOT EXISTS corsair_connects (
 			tenant_id TEXT PRIMARY KEY,
 			plugin TEXT NOT NULL,
 			connect_url TEXT NOT NULL,

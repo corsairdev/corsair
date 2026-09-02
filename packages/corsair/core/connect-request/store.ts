@@ -1,4 +1,4 @@
-import type { CorsairConnectRequest } from '../../db';
+import type { CorsairConnect } from '../../db';
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { ConnectRequest } from '../management/types';
 
@@ -23,7 +23,7 @@ export async function recordConnectRequest(
 	now: number = Date.now(),
 ): Promise<void> {
 	await database.db
-		.insertInto('corsair_connect_requests')
+		.insertInto('corsair_connects')
 		.values({
 			tenant_id: input.tenantId,
 			plugin: input.plugin,
@@ -48,10 +48,10 @@ export async function readConnectRequest(
 	ttlMs: number = CONNECT_REQUEST_TTL_MS,
 ): Promise<ConnectRequest | null> {
 	const row = (await database.db
-		.selectFrom('corsair_connect_requests')
+		.selectFrom('corsair_connects')
 		.selectAll()
 		.where('tenant_id', '=', tenantId)
-		.executeTakeFirst()) as CorsairConnectRequest | undefined;
+		.executeTakeFirst()) as CorsairConnect | undefined;
 
 	if (!row) return null;
 	if (now - Date.parse(row.requested_at) > ttlMs) return null;
@@ -67,7 +67,7 @@ export async function clearConnectRequest(
 	tenantId: string,
 ): Promise<void> {
 	await database.db
-		.deleteFrom('corsair_connect_requests')
+		.deleteFrom('corsair_connects')
 		.where('tenant_id', '=', tenantId)
 		.execute();
 }

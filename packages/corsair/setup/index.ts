@@ -33,7 +33,7 @@ import {
 	tryGetCorsairInternal,
 } from '../core/utils';
 import { getPluginAuthType } from '../core/utils/plugin-auth';
-import { CorsairConnectRequestsSchema } from '../db';
+import { CorsairConnectsSchema } from '../db';
 import type {
 	CorsairDatabase,
 	CorsairKyselyDatabase,
@@ -316,7 +316,7 @@ function isBackfillYaml(value: unknown): value is BackfillYaml {
 
 const REQUIRED_TABLES = {
 	...TABLE_SCHEMAS,
-	corsair_connect_requests: CorsairConnectRequestsSchema,
+	corsair_connects: CorsairConnectsSchema,
 };
 
 function describeZodSchema(schema: ZodTypeAny): unknown {
