@@ -125,6 +125,7 @@ export const BaseProviders = [
 	'dodopayments',
 	'doppler',
 	'dreamstudio',
+	'dripcel',
 	'dropbox',
 	'dropboxsign',
 	'epicgames',
@@ -368,6 +369,7 @@ export const ProviderDisplayNames = {
 	dodopayments: 'Dodo Payments',
 	doppler: 'Doppler',
 	dreamstudio: 'DreamStudio',
+	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
 	dropboxsign: 'Dropbox Sign',
 	epicgames: 'Epic Games',
@@ -618,6 +620,7 @@ export type AllProviders =
 	| 'dodopayments'
 	| 'doppler'
 	| 'dreamstudio'
+	| 'dripcel'
 	| 'dropbox'
 	| 'epicgames'
 	| 'exa'
