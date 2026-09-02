@@ -45,8 +45,8 @@ export const SapMetadataSchema = z.union([
 	SapEntitySchema,
 ]);
 
-/** DELETE may be 204 empty. */
-export const SapDeleteSchema = z.union([
+/** POST/PATCH/DELETE may be 204 empty. */
+export const SapWriteSchema = z.union([
 	z.undefined(),
 	z.null(),
 	z.object({}).strict(),
@@ -55,8 +55,7 @@ export const SapDeleteSchema = z.union([
 
 function outputSchemaFor(route: SapRoute) {
 	if (route.path.includes('$metadata')) return SapMetadataSchema;
-	if (route.method === 'DELETE') return SapDeleteSchema;
-	if (route.method !== 'GET') return SapEntitySchema;
+	if (route.method !== 'GET') return SapWriteSchema;
 	if (route.path.includes('({')) return SapEntitySchema;
 	return SapCollectionSchema;
 }

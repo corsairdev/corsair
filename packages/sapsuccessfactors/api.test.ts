@@ -189,6 +189,16 @@ describe('SAP SuccessFactors plugin', () => {
 		await expect(run('listUsers', { top: 1 })).rejects.toThrow();
 	});
 
+	it('treats 204 writes as success', async () => {
+		mockedRequest.mockResolvedValueOnce(undefined as never);
+		await expect(
+			run('updateCalibrationSubjectRatings', {
+				subject_id: 'sub1',
+				body: { rating: 3 },
+			}),
+		).resolves.toBeUndefined();
+	});
+
 	it('rejects User as a custom MDF entity', async () => {
 		await expect(
 			run('getCustomMdfObject', { custom_object: 'User' }),

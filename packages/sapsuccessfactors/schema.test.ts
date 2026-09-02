@@ -96,5 +96,14 @@ describe('sapsuccessfactors schemas', () => {
 				value: [{ id: '1' }],
 			}).success,
 		).toBe(false);
+		expect(
+			SapsuccessfactorsEndpointOutputSchemas.updateCalibrationSubjectRatings.safeParse(
+				undefined,
+			).success,
+		).toBe(true);
+		expect(
+			SapsuccessfactorsEndpointOutputSchemas.listUsers.safeParse(undefined)
+				.success,
+		).toBe(false);
 	});
 });
