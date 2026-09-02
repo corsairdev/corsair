@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { z } from 'zod';
 
 export class FixerAPIError extends Error {
 	public readonly status?: number;
@@ -24,6 +25,27 @@ export class FixerAPIError extends Error {
 	}
 }
 
+export interface FixerErrorPayload {
+	success: false;
+	error: {
+		code: number | string;
+		type?: string;
+		info?: string;
+	};
+}
+
+function isFixerErrorPayload(data: unknown): data is FixerErrorPayload {
+	return (
+		typeof data === 'object' &&
+		data !== null &&
+		'success' in data &&
+		(data as { success: unknown }).success === false &&
+		'error' in data &&
+		typeof (data as { error: unknown }).error === 'object' &&
+		(data as { error: unknown }).error !== null
+	);
+}
+
 const FIXER_API_BASE = 'https://api.apilayer.com/fixer';
 
 export async function makeFixerRequest<T>(
@@ -33,9 +55,10 @@ export async function makeFixerRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		schema?: z.ZodType<T>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, schema } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: FIXER_API_BASE,
@@ -61,10 +84,22 @@ export async function makeFixerRequest<T>(
 	};
 
 	try {
-		const response = await request<T>(config, requestOptions);
-		return response;
+		const rawResponse = await request<unknown>(config, requestOptions);
+
+		if (isFixerErrorPayload(rawResponse)) {
+			throw new FixerAPIError(
+				rawResponse.error.info || rawResponse.error.type || 'Fixer API error',
+				rawResponse.error.code,
+			);
+		}
+
+		if (schema) {
+			return schema.parse(rawResponse);
+		}
+
+		return rawResponse as T;
 	} catch (error) {
-		if (error instanceof ApiError) {
+		if (error instanceof ApiError || error instanceof FixerAPIError) {
 			throw error;
 		}
 		if (error instanceof Error) {

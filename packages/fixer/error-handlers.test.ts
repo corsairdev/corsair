@@ -1,8 +1,9 @@
 import { ApiError } from 'corsair/http';
+import { FixerAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 describe('Fixer Error Handlers', () => {
-	it('matches 429 rate limit error', async () => {
+	it('matches 429 rate limit error via ApiError and FixerAPIError', async () => {
 		const rateLimitError = new ApiError(
 			{ method: 'GET', url: '/latest' },
 			{
@@ -19,9 +20,12 @@ describe('Fixer Error Handlers', () => {
 		const handled =
 			await errorHandlers.RATE_LIMIT_ERROR.handler(rateLimitError);
 		expect(handled.maxRetries).toBe(5);
+
+		const fixerRateLimit = new FixerAPIError('usage limit reached', 104);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(fixerRateLimit)).toBe(true);
 	});
 
-	it('matches 401 and 403 auth errors', async () => {
+	it('matches 401 and 403 auth errors via ApiError and FixerAPIError', async () => {
 		const authError = new ApiError(
 			{ method: 'GET', url: '/latest' },
 			{
@@ -37,6 +41,9 @@ describe('Fixer Error Handlers', () => {
 		expect(errorHandlers.AUTH_ERROR.match(authError)).toBe(true);
 		const handled = await errorHandlers.AUTH_ERROR.handler(authError);
 		expect(handled.maxRetries).toBe(0);
+
+		const fixerAuthError = new FixerAPIError('invalid access key', 101);
+		expect(errorHandlers.AUTH_ERROR.match(fixerAuthError)).toBe(true);
 	});
 
 	it('matches 404 not found error', async () => {
@@ -74,5 +81,10 @@ describe('Fixer Error Handlers', () => {
 		const handled =
 			await errorHandlers.VALIDATION_ERROR.handler(validationError);
 		expect(handled.maxRetries).toBe(0);
+
+		const fixerValidationError = new FixerAPIError('invalid symbols', 202);
+		expect(errorHandlers.VALIDATION_ERROR.match(fixerValidationError)).toBe(
+			true,
+		);
 	});
 });
