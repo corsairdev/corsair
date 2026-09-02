@@ -12,7 +12,7 @@ examples:
     title: Create a record
     args:
       baseId: appXXXXXXXXXXXXXX
-      tableIdOrName: Contacts
+      tableIdOrName: tblXXXXXXXXXXXXXX
       fields:
         Name: Ada Lovelace
 
@@ -20,7 +20,7 @@ dbExample:
   entity: records
   note: "Search synced Airtable records without calling the API again."
   data:
-    tableId: Contacts
+    tableId: tblXXXXXXXXXXXXXX
   limit: 20
 
 exampleWebhook:
