@@ -318,23 +318,33 @@ describe('shouldCoalesceConnect', () => {
 	});
 
 	it('joins a second call for the same plugin and tenant', () => {
-		expect(shouldCoalesceConnect(connecting('linear'), 'linear', null)).toBe(
-			true,
-		);
 		expect(
-			shouldCoalesceConnect(connecting('linear', 'acme'), 'linear', 'acme'),
+			shouldCoalesceConnect(connecting('linear'), 'linear', null, true),
+		).toBe(true);
+		expect(
+			shouldCoalesceConnect(
+				connecting('linear', 'acme'),
+				'linear',
+				'acme',
+				true,
+			),
 		).toBe(true);
 	});
 
 	it('supersedes when a different plugin is requested', () => {
-		expect(shouldCoalesceConnect(connecting('linear'), 'slack', null)).toBe(
-			false,
-		);
+		expect(
+			shouldCoalesceConnect(connecting('linear'), 'slack', null, true),
+		).toBe(false);
 	});
 
 	it('supersedes the same plugin for a different tenant', () => {
 		expect(
-			shouldCoalesceConnect(connecting('linear', 'acme'), 'linear', 'globex'),
+			shouldCoalesceConnect(
+				connecting('linear', 'acme'),
+				'linear',
+				'globex',
+				true,
+			),
 		).toBe(false);
 	});
 
@@ -342,7 +352,12 @@ describe('shouldCoalesceConnect', () => {
 		// Both paths resolve the tenant server-side, so a concurrent same-tenant
 		// failure coalesces onto the open flow instead of superseding it.
 		expect(
-			shouldCoalesceConnect(connecting('linear', 'acme'), 'linear', 'acme'),
+			shouldCoalesceConnect(
+				connecting('linear', 'acme'),
+				'linear',
+				'acme',
+				true,
+			),
 		).toBe(true);
 	});
 
@@ -351,22 +366,48 @@ describe('shouldCoalesceConnect', () => {
 		// resolved id; both now carry the concrete tenant, but the pure check still
 		// treats null and a concrete id as distinct scopes.
 		expect(
-			shouldCoalesceConnect(connecting('linear', 'default'), 'linear', null),
+			shouldCoalesceConnect(
+				connecting('linear', 'default'),
+				'linear',
+				null,
+				true,
+			),
 		).toBe(false);
 		expect(
-			shouldCoalesceConnect(connecting('linear', null), 'linear', 'default'),
+			shouldCoalesceConnect(
+				connecting('linear', null),
+				'linear',
+				'default',
+				true,
+			),
+		).toBe(false);
+	});
+
+	it('does not join a settled flow whose waiters already cleared', () => {
+		// finishConnected empties the waiters and stops the watch before React
+		// commits the success state, so the state still reads connecting for a
+		// beat. Without the liveness gate a same-tenant call would join the dead
+		// flow and hang, since nothing settles waiters again.
+		expect(
+			shouldCoalesceConnect(
+				connecting('linear', 'acme'),
+				'linear',
+				'acme',
+				false,
+			),
 		).toBe(false);
 	});
 
 	it('does not coalesce when idle or already succeeded', () => {
-		expect(shouldCoalesceConnect(initialConnectState, 'linear', null)).toBe(
-			false,
-		);
+		expect(
+			shouldCoalesceConnect(initialConnectState, 'linear', null, true),
+		).toBe(false);
 		expect(
 			shouldCoalesceConnect(
 				{ ...connecting('linear'), phase: 'success' },
 				'linear',
 				null,
+				true,
 			),
 		).toBe(false);
 	});

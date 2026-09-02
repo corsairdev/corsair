@@ -259,7 +259,14 @@ export function CorsairProvider({
 			connectUrl: string,
 			tenantId: string | null,
 		): Promise<boolean> => {
-			if (shouldCoalesceConnect(connectStateRef.current, plugin, tenantId)) {
+			if (
+				shouldCoalesceConnect(
+					connectStateRef.current,
+					plugin,
+					tenantId,
+					waiters.size() > 0,
+				)
+			) {
 				return new Promise<boolean>((resolve) => waiters.add(resolve));
 			}
 			attemptRef.current += 1;

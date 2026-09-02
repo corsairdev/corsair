@@ -202,14 +202,23 @@ export function createConnectWaiters(): ConnectWaiters {
 	};
 }
 
-// A second call joins the open flow only when it targets the same plugin and
-// tenant. Both paths supply the resolved tenant (the reactive path reads it back
-// from the request), so a different tenant — or null-vs-concrete — supersedes.
+// A second call joins the open flow only when that flow is still live (a caller
+// is still waiting) and it targets the same plugin and tenant. Both paths supply
+// the resolved tenant (the reactive path reads it back from the request), so a
+// different tenant — or null-vs-concrete — supersedes.
+//
+// The liveness gate closes a race: finishConnected empties the waiters and stops
+// the watch before React commits the success state, so for a beat the state ref
+// still reads 'connecting'. `flowLive` (the waiter count) is the synchronous
+// truth — without it a same-tenant call would join the settled flow and hang,
+// since nothing settles waiters again.
 export function shouldCoalesceConnect(
 	state: ConnectState,
 	plugin: string,
 	tenantId: string | null,
+	flowLive: boolean,
 ): boolean {
+	if (!flowLive) return false;
 	if (state.phase !== 'connecting' || state.plugin !== plugin) return false;
 	return state.tenantId === tenantId;
 }
