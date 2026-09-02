@@ -3,6 +3,9 @@ import type { FixerEndpoints } from '..';
 import { makeFixerRequest } from '../client';
 import { FixerEndpointOutputSchemas } from './types';
 
+/**
+ * Retrieves real-time exchange rates for all or specified symbols relative to a base currency.
+ */
 export const latest: FixerEndpoints['ratesLatest'] = async (ctx, input) => {
 	const response = await makeFixerRequest('latest', ctx.key, {
 		method: 'GET',
@@ -22,6 +25,9 @@ export const latest: FixerEndpoints['ratesLatest'] = async (ctx, input) => {
 	return response;
 };
 
+/**
+ * Retrieves historical exchange rates for a given date formatted as YYYY-MM-DD.
+ */
 export const historical: FixerEndpoints['ratesHistorical'] = async (
 	ctx,
 	input,
@@ -44,6 +50,9 @@ export const historical: FixerEndpoints['ratesHistorical'] = async (
 	return response;
 };
 
+/**
+ * Converts a monetary amount from one currency to another using real-time or historical rates.
+ */
 export const convert: FixerEndpoints['ratesConvert'] = async (ctx, input) => {
 	const response = await makeFixerRequest('convert', ctx.key, {
 		method: 'GET',
@@ -65,6 +74,9 @@ export const convert: FixerEndpoints['ratesConvert'] = async (ctx, input) => {
 	return response;
 };
 
+/**
+ * Retrieves daily time-series exchange rates between two dates for specified currencies.
+ */
 export const timeseries: FixerEndpoints['ratesTimeseries'] = async (
 	ctx,
 	input,
@@ -94,6 +106,9 @@ export const timeseries: FixerEndpoints['ratesTimeseries'] = async (
 	return response;
 };
 
+/**
+ * Retrieves currency exchange rate fluctuation metrics (change and percentage change) over a date range.
+ */
 export const fluctuation: FixerEndpoints['ratesFluctuation'] = async (
 	ctx,
 	input,
