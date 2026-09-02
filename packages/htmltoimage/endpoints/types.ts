@@ -14,6 +14,15 @@ function isHtml2imgCdnUrl(url: string): boolean {
 	}
 }
 
+function isPublicHttpUrl(url: string): boolean {
+	try {
+		const protocol = new URL(url).protocol;
+		return protocol === 'http:' || protocol === 'https:';
+	} catch {
+		return false;
+	}
+}
+
 const CheckUsageInputSchema = z.object({});
 
 const CheckUsageResponseSchema = HtmlToImageAccount;
@@ -30,7 +39,7 @@ const RenderOptionsSchema = z.object({
 	webhook_url: z.string().url().optional(),
 	wait_for_selector: z.string().optional(),
 	html: z.string().min(1).optional(),
-	url: z.string().url().optional(),
+	url: z.string().url().refine(isPublicHttpUrl).optional(),
 	selector: z.string().max(255).optional(),
 });
 
@@ -47,6 +56,13 @@ const ConvertToImageInputSchema = RenderOptionsSchema.superRefine(
 				code: 'custom',
 				path: ['selector'],
 				message: 'selector is only valid with url',
+			});
+		}
+		if (value.selector !== undefined && value.format === 'pdf') {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['selector'],
+				message: 'selector is ignored for pdf output',
 			});
 		}
 	},

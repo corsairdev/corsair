@@ -306,6 +306,42 @@ describe('convertToImage', () => {
 		).toBe(false);
 	});
 
+	it('accepts http and https screenshot urls', () => {
+		expect(
+			HtmlToImageEndpointInputSchemas.convertToImage.safeParse({
+				url: 'https://example.com',
+			}).success,
+		).toBe(true);
+		expect(
+			HtmlToImageEndpointInputSchemas.convertToImage.safeParse({
+				url: 'http://example.com',
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects non-http screenshot urls', () => {
+		expect(
+			HtmlToImageEndpointInputSchemas.convertToImage.safeParse({
+				url: 'mailto:you@example.com',
+			}).success,
+		).toBe(false);
+		expect(
+			HtmlToImageEndpointInputSchemas.convertToImage.safeParse({
+				url: 'file:///tmp/page.html',
+			}).success,
+		).toBe(false);
+	});
+
+	it('rejects selector when format is pdf', () => {
+		expect(
+			HtmlToImageEndpointInputSchemas.convertToImage.safeParse({
+				url: 'https://example.com',
+				selector: '#hero',
+				format: 'pdf',
+			}).success,
+		).toBe(false);
+	});
+
 	it('accepts documented ms_delay and scale_to_fit', () => {
 		expect(
 			HtmlToImageEndpointInputSchemas.convertToImage.parse({
