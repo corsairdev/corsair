@@ -138,6 +138,7 @@ export const BaseProviders = [
 	'filloutforms',
 	'firecrawl',
 	'fireflies',
+	'fixer',
 	'formbricks',
 	'gemini',
 	'github',
@@ -226,8 +227,8 @@ export const BaseProviders = [
 	'telegram',
 	'textrazor',
 	'ticktick',
-	'tisane',
 	'timecamp',
+	'tisane',
 	'todoist',
 	'toggl',
 	'trello',
@@ -385,6 +386,7 @@ export const ProviderDisplayNames = {
 	filloutforms: 'FilloutForms',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
+	fixer: 'Fixer',
 	formbricks: 'Formbricks',
 	gemini: 'Gemini',
 	github: 'GitHub',
@@ -473,8 +475,8 @@ export const ProviderDisplayNames = {
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
-	tisane: 'Tisane',
 	timecamp: 'TimeCamp',
+	tisane: 'Tisane',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -638,6 +640,7 @@ export type AllProviders =
 	| 'filloutforms'
 	| 'firecrawl'
 	| 'fireflies'
+	| 'fixer'
 	| 'formbricks'
 	| 'gemini'
 	| 'github'
@@ -726,8 +729,8 @@ export type AllProviders =
 	| 'telegram'
 	| 'textrazor'
 	| 'ticktick'
-	| 'tisane'
 	| 'timecamp'
+	| 'tisane'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
