@@ -332,13 +332,16 @@ describe('shouldCoalesceConnect', () => {
 		);
 	});
 
-	it('supersedes the same plugin for a different tenant', () => {
+	it('supersedes the same plugin for a different explicit tenant', () => {
 		expect(
 			shouldCoalesceConnect(connecting('linear', 'acme'), 'linear', 'globex'),
 		).toBe(false);
+	});
+
+	it('joins from the reactive path (null tenant) whatever flow is open', () => {
 		expect(
-			shouldCoalesceConnect(connecting('linear', null), 'linear', 'acme'),
-		).toBe(false);
+			shouldCoalesceConnect(connecting('linear', 'acme'), 'linear', null),
+		).toBe(true);
 	});
 
 	it('does not coalesce when idle or already succeeded', () => {

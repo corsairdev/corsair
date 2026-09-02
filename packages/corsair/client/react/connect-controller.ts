@@ -202,16 +202,13 @@ export function createConnectWaiters(): ConnectWaiters {
 	};
 }
 
-// A call for the same plugin AND tenant joins the open flow; reopening would
-// cancel the first caller. A different tenant is a different connection.
+// Same plugin joins the open flow; a different explicit tenant must not. The
+// reactive path passes null (the handler resolves its tenant), so null joins.
 export function shouldCoalesceConnect(
 	state: ConnectState,
 	plugin: string,
 	tenantId: string | null,
 ): boolean {
-	return (
-		state.phase === 'connecting' &&
-		state.plugin === plugin &&
-		state.tenantId === tenantId
-	);
+	if (state.phase !== 'connecting' || state.plugin !== plugin) return false;
+	return tenantId === null || state.tenantId === tenantId;
 }
