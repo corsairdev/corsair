@@ -9,7 +9,25 @@ import { sapsuccessfactors } from './index';
 
 jest.mock('corsair/http', () => ({
 	request: jest.fn().mockResolvedValue({
-		d: { results: [{ userId: 'cgrant' }] },
+		d: {
+			results: [
+				{
+					userId: 'cgrant',
+					personIdExternal: 'p1',
+					jobReqId: 1,
+					candidateId: 1,
+					applicationId: 1,
+					code: 'POS-1',
+					sessionId: 's1',
+					subjectId: 'sub1',
+					externalCode: '1000',
+					id: '1',
+					nominationTargetId: 'nt-1',
+					picklistId: 'pk1',
+					formContentId: 'fc1',
+				},
+			],
+		},
 	}),
 	ApiError: class ApiError extends Error {
 		constructor(
@@ -212,6 +230,7 @@ describe('SAP SuccessFactors plugin', () => {
 	});
 
 	it('deletes NominationTarget with userId and isPoolNomination', async () => {
+		mockedRequest.mockResolvedValueOnce(undefined as never);
 		await run('deleteNominationPositionTalentPool', {
 			nominationTargetId: 'nt-1',
 			userId: 'cgrant',
@@ -271,6 +290,31 @@ describe('SAP SuccessFactors plugin', () => {
 			const input = fixtures[name];
 			expect(input).toBeDefined();
 			SapsuccessfactorsEndpointInputSchemas[name].parse(input);
+			const route = getSapRoute(name);
+			const record = {
+				userId: 'cgrant',
+				personIdExternal: 'p1',
+				jobReqId: 1,
+				candidateId: 1,
+				applicationId: 1,
+				code: 'CICO1',
+				sessionId: 's1',
+				subjectId: 'sub1',
+				externalCode: '1000',
+				id: '1',
+				nominationTargetId: 'nt-1',
+				picklistId: 'pk1',
+				formContentId: 'fc1',
+			};
+			mockedRequest.mockResolvedValueOnce(
+				(route.path.includes('$metadata')
+					? '<?xml version="1.0"?><edmx:Edmx/>'
+					: route.method === 'GET' && route.path.includes('({')
+						? { d: record }
+						: route.method === 'GET'
+							? { d: { results: [record] } }
+							: { d: record }) as never,
+			);
 			await run(name, input);
 			expect(lastCall().method).toBe(method);
 			expect(lastCall().url).toMatch(/^\//);

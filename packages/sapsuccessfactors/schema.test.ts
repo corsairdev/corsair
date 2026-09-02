@@ -92,8 +92,13 @@ describe('sapsuccessfactors schemas', () => {
 				.success,
 		).toBe(false);
 		expect(
+			SapsuccessfactorsEndpointOutputSchemas.listUsers.safeParse({
+				d: { results: [{ jobReqId: 1 }] },
+			}).success,
+		).toBe(false);
+		expect(
 			SapsuccessfactorsEndpointOutputSchemas.getPerPersonById.safeParse({
-				value: [{ id: '1' }],
+				d: { userId: 'cgrant' },
 			}).success,
 		).toBe(false);
 		expect(
