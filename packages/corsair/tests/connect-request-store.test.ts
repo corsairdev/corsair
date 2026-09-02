@@ -21,6 +21,7 @@ describe('connect-request store', () => {
 				plugin: 'linear',
 				connectUrl: 'https://hub.corsair.dev/connect/abc',
 				requestedAt: expect.any(String),
+				tenantId: 'acme',
 			});
 		} finally {
 			cleanup();

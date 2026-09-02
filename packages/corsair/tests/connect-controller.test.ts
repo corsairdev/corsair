@@ -332,16 +332,26 @@ describe('shouldCoalesceConnect', () => {
 		);
 	});
 
-	it('supersedes the same plugin for a different explicit tenant', () => {
+	it('supersedes the same plugin for a different tenant', () => {
 		expect(
 			shouldCoalesceConnect(connecting('linear', 'acme'), 'linear', 'globex'),
 		).toBe(false);
 	});
 
-	it('joins from the reactive path (null tenant) whatever flow is open', () => {
+	it('joins a same-tenant reactive failure while a proactive flow is open', () => {
+		// The reactive path now supplies the resolved tenant, so it coalesces by it.
+		expect(
+			shouldCoalesceConnect(connecting('linear', 'acme'), 'linear', 'acme'),
+		).toBe(true);
+	});
+
+	it('supersedes when tenant scope differs — null (connect-all) vs concrete', () => {
 		expect(
 			shouldCoalesceConnect(connecting('linear', 'acme'), 'linear', null),
-		).toBe(true);
+		).toBe(false);
+		expect(
+			shouldCoalesceConnect(connecting('linear', null), 'linear', 'acme'),
+		).toBe(false);
 	});
 
 	it('does not coalesce when idle or already succeeded', () => {

@@ -281,13 +281,17 @@ export function CorsairProvider({
 		[client, openDialog],
 	);
 
-	// Reactive path: the handler recorded the request under the resolved tenant,
-	// so leave scoping to it (null) rather than guess a tenant here.
+	// Reactive path: scope to the tenant the server resolved the request under, so
+	// a concurrent proactive flow coalesces only when it targets that same tenant.
 	const requireConnect =
 		useCallback(async (): Promise<RequireConnectOutcome> => {
 			const { request } = await client.connectRequest.get();
 			if (!request) return 'none';
-			const ok = await openDialog(request.plugin, request.connectUrl, null);
+			const ok = await openDialog(
+				request.plugin,
+				request.connectUrl,
+				request.tenantId,
+			);
 			return ok ? 'connected' : 'cancelled';
 		}, [client, openDialog]);
 

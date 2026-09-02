@@ -59,6 +59,7 @@ export async function readConnectRequest(
 		plugin: row.plugin,
 		connectUrl: row.connect_url,
 		requestedAt: row.requested_at,
+		tenantId: row.tenant_id,
 	};
 }
 

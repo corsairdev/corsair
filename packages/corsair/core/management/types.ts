@@ -51,6 +51,8 @@ export type ConnectRequest = {
 	plugin: string;
 	connectUrl: string;
 	requestedAt: string;
+	/** The tenant the server resolved this request under, so the client can scope. */
+	tenantId: string;
 };
 
 export type ManagementOk = { ok: true };
