@@ -122,6 +122,7 @@ export const BaseProviders = [
 	'customgpt',
 	'databricks',
 	'datadog',
+	'datarobot',
 	'deepseek',
 	'devinmcp',
 	'diffbot',
@@ -376,6 +377,7 @@ export const ProviderDisplayNames = {
 	customgpt: 'CustomGPT',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
+	datarobot: 'DataRobot',
 	deepseek: 'DeepSeek',
 	devinmcp: 'Devin MCP',
 	diffbot: 'Diffbot',
@@ -637,6 +639,7 @@ export type AllProviders =
 	| 'customgpt'
 	| 'databricks'
 	| 'datadog'
+	| 'datarobot'
 	| 'deepseek'
 	| 'devinmcp'
 	| 'diffbot'
