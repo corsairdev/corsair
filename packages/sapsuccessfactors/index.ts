@@ -108,7 +108,7 @@ const sapsuccessfactorsEndpointMeta = Object.fromEntries(
 	]),
 ) as unknown as RequiredPluginEndpointMeta<
 	typeof sapsuccessfactorsEndpointsNested
->;
+> satisfies RequiredPluginEndpointMeta<typeof sapsuccessfactorsEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'oauth_2';
 
