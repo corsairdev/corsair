@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     error TEXT
 );
 
-CREATE TABLE IF NOT EXISTS corsair_connect_requests (
+CREATE TABLE IF NOT EXISTS corsair_connects (
     tenant_id TEXT PRIMARY KEY,
     plugin TEXT NOT NULL,
     connect_url TEXT NOT NULL,
@@ -240,7 +240,7 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     error TEXT
 );
 
-CREATE TABLE IF NOT EXISTS corsair_connect_requests (
+CREATE TABLE IF NOT EXISTS corsair_connects (
     tenant_id TEXT PRIMARY KEY,
     plugin TEXT NOT NULL,
     connect_url TEXT NOT NULL,
@@ -333,7 +333,7 @@ export const corsairPermissions = pgTable('corsair_permissions', {
     error: text('error'),
 });
 
-export const corsairConnectRequests = pgTable('corsair_connect_requests', {
+export const corsairConnects = pgTable('corsair_connects', {
     tenantId: text('tenant_id').primaryKey(),
     plugin: text('plugin').notNull(),
     connectUrl: text('connect_url').notNull(),
@@ -427,13 +427,13 @@ model CorsairPermission {
   @@map("corsair_permissions")
 }
 
-model CorsairConnectRequest {
+model CorsairConnect {
   tenantId    String @id @map("tenant_id")
   plugin      String
   connectUrl  String @map("connect_url")
   requestedAt String @map("requested_at")
 
-  @@map("corsair_connect_requests")
+  @@map("corsair_connects")
 }
 ```
 
@@ -479,7 +479,7 @@ Use `*.api.*` to write or force a fresh read. Use `*.db.*` for lists, search, an
 
 ## Core tables
 
-Six tables. The first five are shared by every integration — Slack, GitHub, Linear, and the rest use the same schema. `corsair_connect_requests` records a tenant's pending connect prompt.
+Six tables. The first five are shared by every integration — Slack, GitHub, Linear, and the rest use the same schema. `corsair_connects` records a tenant's pending connect prompt.
 
 | Table | Purpose |
 |-------|---------|
@@ -488,7 +488,7 @@ Six tables. The first five are shared by every integration — Slack, GitHub, Li
 | `corsair_entities` | Synced resources like messages, channels, issues, repos (`entity_id`, `entity_type`, `data`) |
 | `corsair_events` | Audit log of API calls and webhooks |
 | `corsair_permissions` | Approval queue for gated [permissions](/concepts/permissions) (`token`, `tenant_id`, `endpoint`, `args`, `status`) |
-| `corsair_connect_requests` | A tenant's pending connect prompt, written when a call needs auth and read by the client to open the connect dialog (`tenant_id`, `plugin`, `connect_url`) |
+| `corsair_connects` | A tenant's pending connect prompt, written when a call needs auth and read by the client to open the connect dialog (`tenant_id`, `plugin`, `connect_url`) |
 
 ```sql
 -- corsair_entities example (a Slack message)
