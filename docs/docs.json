@@ -666,6 +666,14 @@
                 ]
               },
               {
+                "group": "Boldsign",
+                "pages": [
+                  "plugins/boldsign/overview",
+                  "plugins/boldsign/api",
+                  "plugins/boldsign/database"
+                ]
+              },
+              {
                 "group": "Boloforms",
                 "pages": [
                   "plugins/boloforms/overview",
