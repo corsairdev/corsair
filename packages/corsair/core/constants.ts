@@ -187,6 +187,7 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'parseur',
 	'pdfmonkey',
 	'perplexityai',
 	'pinecone',
@@ -424,6 +425,7 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	parseur: 'Parseur',
 	pdfmonkey: 'PDFMonkey',
 	perplexityai: 'Perplexity AI',
 	pinecone: 'Pinecone',
@@ -667,6 +669,7 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'parseur'
 	| 'pdfmonkey'
 	| 'perplexityai'
 	| 'pinecone'
