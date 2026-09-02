@@ -43,8 +43,12 @@ const publicRepositorySlug =
 const isV2Key = key.startsWith('v2.');
 
 function apiPath(path: string): string {
-	if (isV2Key && accountEnv) return `/account/${accountEnv}${path}`;
-	return path;
+	if (!isV2Key || !accountEnv) return path;
+	// Badge status is token-based, not account-scoped
+	if (path.startsWith('/projects/status')) return path;
+	// Detailed project paths already contain /projects/{account}/{slug} — don't double-prefix
+	if (path.startsWith('/projects/')) return path;
+	return `/account/${accountEnv}${path}`;
 }
 
 function isPermissionError(error: unknown): boolean {
