@@ -23,6 +23,7 @@ export const SapResponseSchema = z.union([
 	z.string(),
 	z.record(z.string(), z.unknown()),
 	z.null(),
+	z.undefined(),
 ]);
 
 const Body = z.record(z.string(), z.unknown()).optional();
