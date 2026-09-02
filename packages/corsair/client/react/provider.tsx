@@ -14,12 +14,15 @@ import {
 import type { ConnectionStatus } from '../../core/management/types';
 import { createCorsairClient } from '../index';
 import type { CorsairManagementClient } from '../types';
+import type { ConnectWaiters } from './connect-controller';
 import {
 	confirmConnected,
 	connectReducer,
+	createConnectWaiters,
 	initialConnectState,
 	isConnectError,
 	retryAfterConnect,
+	shouldCoalesceConnect,
 	shouldSettleConnected,
 } from './connect-controller';
 import type { ConnectAppearance } from './connect-overlay';
@@ -137,7 +140,9 @@ export function CorsairProvider({
 		refreshConnections();
 	}, [refreshConnections]);
 
-	const resolveRef = useRef<((ok: boolean) => void) | null>(null);
+	const waitersRef = useRef<ConnectWaiters | null>(null);
+	if (!waitersRef.current) waitersRef.current = createConnectWaiters();
+	const waiters = waitersRef.current;
 	const popupRef = useRef<Window | null>(null);
 	const watchRef = useRef<ReturnType<typeof setInterval> | null>(null);
 	const graceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -146,10 +151,9 @@ export function CorsairProvider({
 	const attemptRef = useRef(0);
 	const onConnectedRef = useRef(onConnected);
 	onConnectedRef.current = onConnected;
-	// Mirror the phase for the unhandled-rejection listener so it can skip when a
-	// dialog is already up (its closure would otherwise read a stale phase).
-	const phaseRef = useRef(connectState.phase);
-	phaseRef.current = connectState.phase;
+	// Synchronous mirror so callbacks don't read stale state.
+	const connectStateRef = useRef(connectState);
+	connectStateRef.current = connectState;
 
 	const stopWatch = useCallback(() => {
 		if (watchRef.current) {
@@ -161,10 +165,9 @@ export function CorsairProvider({
 	const settle = useCallback(
 		(ok: boolean) => {
 			stopWatch();
-			resolveRef.current?.(ok);
-			resolveRef.current = null;
+			waiters.settleAll(ok);
 		},
-		[stopWatch],
+		[stopWatch, waiters],
 	);
 
 	// Poll the app's own backend while the popup is open — the universal
@@ -178,7 +181,7 @@ export function CorsairProvider({
 			// Guard every settle: the poll must still belong to this attempt and a
 			// caller must still be waiting. Bumping the attempt makes it single-shot.
 			const isCurrent = () =>
-				attempt === attemptRef.current && !!resolveRef.current;
+				attempt === attemptRef.current && waiters.size() > 0;
 			const finishConnected = () => {
 				attemptRef.current += 1;
 				popupRef.current?.close();
@@ -249,14 +252,15 @@ export function CorsairProvider({
 			connectUrl: string,
 			tenantId: string | null,
 		): Promise<boolean> => {
+			if (shouldCoalesceConnect(connectStateRef.current, plugin)) {
+				return new Promise<boolean>((resolve) => waiters.add(resolve));
+			}
 			attemptRef.current += 1;
-			resolveRef.current?.(false);
+			waiters.settleAll(false);
 			dispatch({ type: 'OPEN', plugin, connectUrl, tenantId });
-			return new Promise<boolean>((resolve) => {
-				resolveRef.current = resolve;
-			});
+			return new Promise<boolean>((resolve) => waiters.add(resolve));
 		},
-		[],
+		[waiters],
 	);
 
 	const connect = useCallback(
@@ -351,10 +355,9 @@ export function CorsairProvider({
 			attemptRef.current += 1;
 			popupRef.current?.close();
 			popupRef.current = null;
-			resolveRef.current?.(false);
-			resolveRef.current = null;
+			waiters.settleAll(false);
 		},
-		[stopWatch],
+		[stopWatch, waiters],
 	);
 
 	// Hold the "connected" check briefly, then dismiss — the resolved call has
@@ -372,7 +375,7 @@ export function CorsairProvider({
 		if (captureUnhandled === false) return;
 		const onRejection = (event: PromiseRejectionEvent) => {
 			if (!isConnectError(event.reason)) return;
-			if (phaseRef.current !== 'idle') return;
+			if (connectStateRef.current.phase !== 'idle') return;
 			// Known connect error — take over from the framework's error overlay.
 			event.preventDefault();
 			void requireConnect();

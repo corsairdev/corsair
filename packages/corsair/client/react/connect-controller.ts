@@ -179,3 +179,33 @@ export function resolveBoundaryAction(
 			return 'dismissed';
 	}
 }
+
+// Several callers can await one dialog; a lone resolver would drop all but the last.
+export type ConnectWaiters = {
+	add: (resolve: (ok: boolean) => void) => void;
+	settleAll: (ok: boolean) => void;
+	size: () => number;
+};
+
+export function createConnectWaiters(): ConnectWaiters {
+	let waiters: Array<(ok: boolean) => void> = [];
+	return {
+		add: (resolve) => {
+			waiters.push(resolve);
+		},
+		settleAll: (ok) => {
+			const pending = waiters;
+			waiters = [];
+			for (const resolve of pending) resolve(ok);
+		},
+		size: () => waiters.length,
+	};
+}
+
+// A same-plugin call joins the open flow; reopening would cancel the first caller.
+export function shouldCoalesceConnect(
+	state: ConnectState,
+	plugin: string,
+): boolean {
+	return state.phase === 'connecting' && state.plugin === plugin;
+}

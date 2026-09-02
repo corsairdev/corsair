@@ -1,11 +1,14 @@
+import type { ConnectState } from '../client/react/connect-controller';
 import {
 	confirmConnected,
 	connectReducer,
+	createConnectWaiters,
 	initialConnectState,
 	isConnectError,
 	isPluginConnected,
 	resolveBoundaryAction,
 	retryAfterConnect,
+	shouldCoalesceConnect,
 	shouldSettleConnected,
 } from '../client/react/connect-controller';
 
@@ -266,5 +269,66 @@ describe('isConnectError', () => {
 		expect(isConnectError(null)).toBe(false);
 		expect(isConnectError(undefined)).toBe(false);
 		expect(isConnectError({})).toBe(false);
+	});
+});
+
+describe('createConnectWaiters', () => {
+	it('settles every waiter of an in-flight flow, not just the last', () => {
+		const waiters = createConnectWaiters();
+		const seen: boolean[] = [];
+		waiters.add((ok) => seen.push(ok));
+		waiters.add((ok) => seen.push(ok));
+		expect(waiters.size()).toBe(2);
+		waiters.settleAll(true);
+		expect(seen).toEqual([true, true]);
+		expect(waiters.size()).toBe(0);
+	});
+
+	it('clears after settling so a later settle is a no-op', () => {
+		const waiters = createConnectWaiters();
+		const seen: boolean[] = [];
+		waiters.add((ok) => seen.push(ok));
+		waiters.settleAll(false);
+		waiters.settleAll(true);
+		expect(seen).toEqual([false]);
+	});
+
+	it('a superseding settle only reaches waiters added since the last settle', () => {
+		const waiters = createConnectWaiters();
+		const first: boolean[] = [];
+		const second: boolean[] = [];
+		waiters.add((ok) => first.push(ok));
+		waiters.settleAll(false);
+		waiters.add((ok) => second.push(ok));
+		waiters.settleAll(true);
+		expect(first).toEqual([false]);
+		expect(second).toEqual([true]);
+	});
+});
+
+describe('shouldCoalesceConnect', () => {
+	const connecting = (plugin: string): ConnectState => ({
+		phase: 'connecting',
+		plugin,
+		connectUrl: 'https://hub/connect/tok',
+		tenantId: null,
+	});
+
+	it('joins a second call for the plugin already being connected', () => {
+		expect(shouldCoalesceConnect(connecting('linear'), 'linear')).toBe(true);
+	});
+
+	it('supersedes when a different plugin is requested', () => {
+		expect(shouldCoalesceConnect(connecting('linear'), 'slack')).toBe(false);
+	});
+
+	it('does not coalesce when idle or already succeeded', () => {
+		expect(shouldCoalesceConnect(initialConnectState, 'linear')).toBe(false);
+		expect(
+			shouldCoalesceConnect(
+				{ ...connecting('linear'), phase: 'success' },
+				'linear',
+			),
+		).toBe(false);
 	});
 });
