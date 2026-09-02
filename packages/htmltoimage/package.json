@@ -14,8 +14,8 @@
     }
   },
   "scripts": {
-    "build": "tsc --build --force && tsup",
-    "typecheck": "tsc --noEmit",
+    "build": "rm -rf dist && tsc --build --force && tsup",
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
     "test": "jest"
   },
   "peerDependencies": {

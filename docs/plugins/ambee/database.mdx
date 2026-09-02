@@ -1,0 +1,122 @@
+---
+title: Database
+description: "Ambee local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Ambee plugin syncs data locally. Use `corsair.ambee.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Air Quality Readings
+
+Path: `ambee.db.airQualityReadings.search`
+
+```ts
+const rows = await corsair.ambee.db.airQualityReadings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `locationKey` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `countryCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `postalCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `placeName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lat` | `number` | equals, gt, gte, lt, lte, in |
+| `lng` | `number` | equals, gt, gte, lt, lte, in |
+| `aqi` | `number` | equals, gt, gte, lt, lte, in |
+| `aqiCategory` | `string` | equals, contains, startsWith, endsWith, in |
+| `dominantPollutant` | `string` | equals, contains, startsWith, endsWith, in |
+| `pm25` | `number` | equals, gt, gte, lt, lte, in |
+| `pm10` | `number` | equals, gt, gte, lt, lte, in |
+| `no2` | `number` | equals, gt, gte, lt, lte, in |
+| `so2` | `number` | equals, gt, gte, lt, lte, in |
+| `co` | `number` | equals, gt, gte, lt, lte, in |
+| `ozone` | `number` | equals, gt, gte, lt, lte, in |
+| `observedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Geocoded Places
+
+Path: `ambee.db.geocodedPlaces.search`
+
+```ts
+const rows = await corsair.ambee.db.geocodedPlaces.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `query` | `string` | equals, contains, startsWith, endsWith, in |
+| `lat` | `number` | equals, gt, gte, lt, lte, in |
+| `lng` | `number` | equals, gt, gte, lt, lte, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `countryCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `postalCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `placeName` | `string` | equals, contains, startsWith, endsWith, in |
+| `formattedAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Weather Observations
+
+Path: `ambee.db.weatherObservations.search`
+
+```ts
+const rows = await corsair.ambee.db.weatherObservations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `locationKey` | `string` | equals, contains, startsWith, endsWith, in |
+| `lat` | `number` | equals, gt, gte, lt, lte, in |
+| `lng` | `number` | equals, gt, gte, lt, lte, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `summary` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon` | `string` | equals, contains, startsWith, endsWith, in |
+| `temperature` | `number` | equals, gt, gte, lt, lte, in |
+| `apparentTemperature` | `number` | equals, gt, gte, lt, lte, in |
+| `humidity` | `number` | equals, gt, gte, lt, lte, in |
+| `pressure` | `number` | equals, gt, gte, lt, lte, in |
+| `windSpeed` | `number` | equals, gt, gte, lt, lte, in |
+| `windGust` | `number` | equals, gt, gte, lt, lte, in |
+| `cloudCover` | `number` | equals, gt, gte, lt, lte, in |
+| `uvIndex` | `number` | equals, gt, gte, lt, lte, in |
+| `observedAt` | `number` | equals, gt, gte, lt, lte, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

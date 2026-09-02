@@ -1,33 +1,48 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HtmlToImageEndpoints } from '..';
 import { makeHtmlToImageRequest } from '../client';
-import type { HtmlToImageEndpointOutputs } from './types';
+import {
+	HtmlToImageEndpointInputSchemas,
+	HtmlToImageEndpointOutputSchemas,
+} from './types';
 
 export const convertToImage: HtmlToImageEndpoints['convertToImage'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeHtmlToImageRequest<
-		HtmlToImageEndpointOutputs['convertToImage']
-	>('/api/html', ctx.key, {
-		method: 'POST',
-		body: {
-			html: input.html,
-			...(input.css !== undefined && { css: input.css }),
-			...(input.width !== undefined && { width: input.width }),
-			...(input.height !== undefined && { height: input.height }),
-			...(input.fullpage !== undefined && {
-				fullpage: input.fullpage,
-			}),
-			...(input.dpi !== undefined && { dpi: input.dpi }),
-		},
-	});
+	const parsedInput =
+		HtmlToImageEndpointInputSchemas.convertToImage.parse(input);
+	const { html, url, selector, ...options } = parsedInput;
+	const raw = url
+		? await makeHtmlToImageRequest('api/screenshot', ctx.key, {
+				method: 'POST',
+				body: {
+					url,
+					...options,
+					...(selector !== undefined ? { selector } : {}),
+				},
+			})
+		: await makeHtmlToImageRequest('api/html', ctx.key, {
+				method: 'POST',
+				body: { html, ...options },
+			});
+	const response = HtmlToImageEndpointOutputSchemas.convertToImage.parse(raw);
 
 	await logEventFromContext(
 		ctx,
 		'htmltoimage.convert_to_image',
-		{ ...input },
-		'completed',
+		{
+			id: response.id,
+			...(url !== undefined ? { url } : {}),
+			...(parsedInput.format !== undefined
+				? { format: parsedInput.format }
+				: {}),
+			...(parsedInput.width !== undefined ? { width: parsedInput.width } : {}),
+			...(parsedInput.height !== undefined
+				? { height: parsedInput.height }
+				: {}),
+		},
+		response.status === 'processing' ? 'processing' : 'completed',
 	);
 
 	return response;

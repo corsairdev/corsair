@@ -1,41 +1,65 @@
 import { z } from 'zod';
+import { HtmlToImageAccount, HtmlToImageRender } from '../schema/database';
 
-const CheckUsageInputSchema = z.object({
-	return_defaults_on_error: z.boolean().optional().default(true),
-});
+const HTML2IMG_CDN_HOST = 'i.html2img.com';
 
-const CheckUsageResponseSchema = z.object({
-	hourly: z.number().optional(),
-	daily: z.number().optional(),
-	monthly: z.number().optional(),
-	credits_remaining: z.number().optional(),
-	plan: z.string().optional(),
-	plan_name: z.string().optional(),
-});
+function isHtml2imgCdnUrl(url: string): boolean {
+	try {
+		const parsed = new URL(url);
+		return (
+			parsed.protocol === 'https:' && parsed.hostname === HTML2IMG_CDN_HOST
+		);
+	} catch {
+		return false;
+	}
+}
 
-const ConvertToImageInputSchema = z.object({
-	html: z.string(),
+const CheckUsageInputSchema = z.object({});
+
+const CheckUsageResponseSchema = HtmlToImageAccount;
+
+const RenderOptionsSchema = z.object({
 	css: z.string().optional(),
-	width: z.number().int().min(1).optional(),
-	height: z.number().int().min(1).optional(),
+	width: z.number().int().min(1).max(5000).optional(),
+	height: z.number().int().min(1).max(5000).optional(),
 	fullpage: z.boolean().optional(),
-	dpi: z.number().int().min(1).optional(),
+	dpi: z.number().int().min(1).max(4).optional(),
+	format: z.enum(['png', 'pdf']).optional(),
+	scale_to_fit: z.boolean().optional(),
+	ms_delay: z.number().int().min(1).max(5000).optional(),
+	webhook_url: z.string().url().optional(),
+	wait_for_selector: z.string().optional(),
+	html: z.string().min(1).optional(),
+	url: z.string().url().optional(),
+	selector: z.string().max(255).optional(),
 });
 
-const ConvertToImageResponseSchema = z.object({
-	success: z.boolean().optional(),
-	id: z.string().nullable().optional(),
-	url: z.string().url().nullable().optional(),
-	expires_at: z.string().optional(),
-	credits_remaining: z.number().optional(),
-});
+const ConvertToImageInputSchema = RenderOptionsSchema.superRefine(
+	(value, ctx) => {
+		if (Boolean(value.html) === Boolean(value.url)) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'Provide exactly one of html or url',
+			});
+		}
+		if (value.selector !== undefined && !value.url) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['selector'],
+				message: 'selector is only valid with url',
+			});
+		}
+	},
+);
+
+const ConvertToImageResponseSchema = HtmlToImageRender;
 
 const GetImageInputSchema = z.object({
-	url: z.string().url(),
+	url: z.string().url().refine(isHtml2imgCdnUrl),
 });
 
 const GetImageResponseSchema = z.object({
-	url: z.string().url(),
+	url: z.string().url().refine(isHtml2imgCdnUrl),
 });
 
 export type CheckUsageInput = z.infer<typeof CheckUsageInputSchema>;

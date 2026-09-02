@@ -3,154 +3,151 @@ title: Overview
 description: "Supabase plugin for Corsair"
 ---
 
-Use **Supabase** through Corsair: one client, typed API calls, optional local DB sync.
+Use **Supabase** through Corsair: one client, typed API calls, local DB sync.
 
 Supabase exposes project, database, auth, functions, storage, and infrastructure workflows. Use Corsair permissions for destructive actions such as deleting projects, resetting branches, restoring backups, or changing network restrictions.
 
 **What you get:**
 
 - 121 typed API operations
-- 7 database entities synced for fast `.search()` / `.list()` queries
+- 7 synced entities (`apiKeys`, `branches`, `buckets`, `functions`, `migrations`, `organizations`, and 1 more) for fast `.search()` / `.list()`
 
 ## Setup
 
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/supabase
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/supabase
 ```
+```bash yarn
+yarn add corsair @corsair-dev/supabase
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/supabase
+```
+```bash bun
+bun add corsair @corsair-dev/supabase
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { supabase } from '@corsair-dev/supabase';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [supabase()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { supabase } from '@corsair-dev/supabase';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [supabase()],
+	plugins: [
+		supabase(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/supabase/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=supabase
-```
+<Tab title="API Key (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/supabase/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=supabase --tenant=<tenantId>
-```
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
+Provider walkthrough: [Get Credentials](/plugins/supabase/get-credentials).
 
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 supabase()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=supabase` (see [Get Credentials](/plugins/supabase/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 <Tab title="OAuth 2.0">
 
-```ts corsair.ts
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Supabase OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/supabase/get-credentials).
+
+```ts
 supabase({
-    authType: 'oauth_2',
+	authType: 'oauth_2',
 })
 ```
-
-Store credentials with `pnpm corsair setup --plugin=supabase` (see [Get Credentials](/plugins/supabase/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
 </Tabs>
 
+</Step>
 
-## Query synced data
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-Synced entities support `corsair.supabase.db.<entity>.search()` and `.list()`. See [Database](/plugins/supabase/database) for filters and operators.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'supabase',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
+
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `advisors.getPerformanceAdvisors`
+**`advisors.getPerformanceAdvisors`**
 
 ```ts
-await corsair.supabase.api.advisors.getPerformanceAdvisors({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.advisors.getPerformanceAdvisors({});
 ```
 
 
-**Write-style (write):** `auth.createProjectSigningKey`
+**`auth.createProjectSigningKey`**
 
 ```ts
-await corsair.supabase.api.auth.createProjectSigningKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.createProjectSigningKey({});
 ```
 
 
-See the full list on the [API](/plugins/supabase/api) page. Use `pnpm corsair list --plugin=supabase` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/supabase/api) page.
 
----
+## Query synced data
 
-## Hooks
+Synced entities support `tenant.supabase.db.<entity>.search()` and `.list()`: `apiKeys`, `branches`, `buckets`, `functions`, `migrations`, `organizations`, `projects`.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+See [Database](/plugins/supabase/database) for filters and operators.
 
----
+## What's next
 
-## Reference
-
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/supabase/api) |
-| Database | [Database](/plugins/supabase/database) |
-| Credentials | [Get credentials](/plugins/supabase/get-credentials) |
-
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/supabase/api">
+    Every `supabase.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/supabase/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/supabase/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

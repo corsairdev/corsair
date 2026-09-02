@@ -4,29 +4,32 @@ description: Open-source integration layer for agents and apps.
 mode: "wide"
 ---
 
-More integrations means more OAuth wiring. Corsair turns each service into a plugin. Install it, call `corsair.<plugin>.api.*`, expose the same endpoints to your agent.
+Corsair is an open-source integration layer for apps and agents. Connect to GitHub, Slack, Gmail, and 200+ other services through one syntax. Corsair handles OAuth, token refresh, webhooks, and rate limits.
 
-Under the hood it's REST, not MCP-only. Agents, your backend, and a customer dashboard all hit the same layer.
+You run it inside your own app. Credentials stay encrypted in your database. [Hub](/hub/overview) hosts connect pages and OAuth callbacks so you don't build those public URLs yourself.
 
-## Hub
+Install plugins, wire up Corsair once, then call any integration the same way:
 
-GitHub's OAuth redirect can't point at `localhost` in production. Your user isn't signed in yet when they need a connect page. Hub hosts those URLs. Add a `hub` block to `createCorsair`. Tokens still save to your database, encrypted under your KEK.
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+import { slack } from '@corsair-dev/slack';
 
-## Developer experience
+export const corsair = createCorsair({
+  plugins: [github(), slack()],
+  database: db,
+  kek: process.env.CORSAIR_KEK!,
+  hub: {
+    projectApiKey: process.env.CORSAIR_API_KEY!,
+    signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+  },
+});
+```
 
-The dev tunnel exposes only your Corsair handler on a public URL. OAuth and webhooks reach it the same way they will after deploy. You don't need ngrok.
-
-Going live: swap `ck_dev_…` for `ck_prod_…`, register your delivery URL, redeploy. [Development and Production](/hub/environments) walks through it.
-
-## For your users
-
-Action needs Gmail, user hasn't connected Gmail. Call `createLink()`, send them to Hub's connect page, retry the action. They sign in when they need to, not all at once on a settings page.
-
-See [Connect / OAuth](/management/connect).
-
-<Tip>
-[Set up with your agent](/getting-started/set-up-with-your-agent) if you'd rather paste one prompt and let your coding agent handle install, routing, and keys.
-</Tip>
+```ts route.ts
+await corsair.github.api.issues.create({ owner: 'acme', repo: 'app', title: 'Bug' });
+await corsair.slack.api.messages.post({ channel: 'C123', text: 'On it.' });
+```
 
 ## Get started
 

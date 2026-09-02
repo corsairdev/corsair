@@ -1,6 +1,7 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
+	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -11,16 +12,22 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+
 import { HtmlToImage } from './endpoints';
+
 import type {
 	HtmlToImageEndpointInputs,
 	HtmlToImageEndpointOutputs,
 } from './endpoints/types';
+
 import {
 	HtmlToImageEndpointInputSchemas,
 	HtmlToImageEndpointOutputSchemas,
 } from './endpoints/types';
+
 import { errorHandlers } from './error-handlers';
 import { HtmlToImageSchema } from './schema';
 
@@ -57,28 +64,34 @@ export type HtmlToImageEndpoints = {
 	getImage: HtmlToImageEndpoint<'getImage'>;
 };
 
+export type HtmlToImageWebhooks = {};
+
+export type HtmlToImageBoundWebhooks = BindWebhooks<HtmlToImageWebhooks>;
+
 const htmlToImageEndpointsNested = {
-	checkUsage: {
-		get: HtmlToImage.checkUsage,
+	account: {
+		checkUsage: HtmlToImage.checkUsage,
 	},
-	convertToImage: {
-		post: HtmlToImage.convertToImage,
+	html: {
+		convertToImage: HtmlToImage.convertToImage,
 	},
-	getImage: {
-		get: HtmlToImage.getImage,
+	image: {
+		getImage: HtmlToImage.getImage,
 	},
 } as const;
 
+const htmlToImageWebhooksNested = {};
+
 export const htmlToImageEndpointSchemas = {
-	'checkUsage.get': {
+	'account.checkUsage': {
 		input: HtmlToImageEndpointInputSchemas.checkUsage,
 		output: HtmlToImageEndpointOutputSchemas.checkUsage,
 	},
-	'convertToImage.post': {
+	'html.convertToImage': {
 		input: HtmlToImageEndpointInputSchemas.convertToImage,
 		output: HtmlToImageEndpointOutputSchemas.convertToImage,
 	},
-	'getImage.get': {
+	'image.getImage': {
 		input: HtmlToImageEndpointInputSchemas.getImage,
 		output: HtmlToImageEndpointOutputSchemas.getImage,
 	},
@@ -86,29 +99,32 @@ export const htmlToImageEndpointSchemas = {
 	typeof htmlToImageEndpointsNested
 >;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const htmlToImageWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof htmlToImageWebhooksNested
+	>;
+
+const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const htmlToImageEndpointMeta = {
-	'checkUsage.get': {
+	'account.checkUsage': {
 		riskLevel: 'read',
-		description: 'Check HTML-to-Image account usage',
+		description: 'Check account usage and remaining credits',
 	},
-	'convertToImage.post': {
+	'html.convertToImage': {
 		riskLevel: 'write',
-		description: 'Convert HTML content to an image',
+		description: 'Convert HTML or a public URL into an image',
 	},
-	'getImage.get': {
+	'image.getImage': {
 		riskLevel: 'read',
-		description: 'Get an HTML-to-Image result',
+		description: 'Retrieve a generated image',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof htmlToImageEndpointsNested
 >;
 
 export const htmlToImageAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseHtmlToImagePlugin<T extends HtmlToImagePluginOptions> =
@@ -116,7 +132,7 @@ export type BaseHtmlToImagePlugin<T extends HtmlToImagePluginOptions> =
 		'htmltoimage',
 		typeof HtmlToImageSchema,
 		typeof htmlToImageEndpointsNested,
-		{},
+		typeof htmlToImageWebhooksNested,
 		T,
 		typeof defaultAuthType
 	>;
@@ -142,14 +158,21 @@ export function htmltoimage<const T extends HtmlToImagePluginOptions>(
 		schema: HtmlToImageSchema,
 		options,
 		hooks: options.hooks,
+		webhookHooks: undefined,
 		endpoints: htmlToImageEndpointsNested,
-		webhooks: {},
+		webhooks: htmlToImageWebhooksNested,
 		endpointMeta: htmlToImageEndpointMeta,
 		endpointSchemas: htmlToImageEndpointSchemas,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		webhookSchemas: htmlToImageWebhookSchemas,
+		pluginWebhookMatcher: undefined,
+		errorHandlers: (() => {
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: HtmlToImageKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
@@ -157,15 +180,24 @@ export function htmltoimage<const T extends HtmlToImagePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('htmltoimage', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('htmltoimage', 'api_key');
 		},
 	} satisfies InternalHtmlToImagePlugin;
 }
 
 export type {
+	CheckUsageInput,
+	CheckUsageResponse,
+	ConvertToImageInput,
+	ConvertToImageResponse,
+	GetImageInput,
+	GetImageResponse,
 	HtmlToImageEndpointInputs,
 	HtmlToImageEndpointOutputs,
 } from './endpoints/types';

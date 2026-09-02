@@ -3,12 +3,12 @@ title: Overview
 description: "Stripe plugin for Corsair"
 ---
 
-Use **Stripe** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+Use **Stripe** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
 - 20 typed API operations
-- 7 database entities synced for fast `.search()` / `.list()` queries
+- 7 synced entities (`balance`, `charges`, `coupons`, `customers`, `paymentIntents`, `prices`, and 1 more) for fast `.search()` / `.list()`
 - 11 incoming webhook event types
 
 ## Setup
@@ -16,147 +16,146 @@ Use **Stripe** through Corsair: one client, typed API calls, optional local DB s
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/stripe
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/stripe
 ```
+```bash yarn
+yarn add corsair @corsair-dev/stripe
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/stripe
+```
+```bash bun
+bun add corsair @corsair-dev/stripe
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { stripe } from '@corsair-dev/stripe';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [stripe()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { stripe } from '@corsair-dev/stripe';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [stripe()],
+	plugins: [
+		stripe(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/stripe/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=stripe
-```
+<Tab title="API Key (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/stripe/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=stripe --tenant=<tenantId>
-```
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
+Provider walkthrough: [Get Credentials](/plugins/stripe/get-credentials).
 
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 stripe()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=stripe` (see [Get Credentials](/plugins/stripe/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 <Tab title="OAuth 2.0">
 
-```ts corsair.ts
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Stripe OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/stripe/get-credentials).
+
+```ts
 stripe({
-    authType: 'oauth_2',
+	authType: 'oauth_2',
 })
 ```
-
-Store credentials with `pnpm corsair setup --plugin=stripe` (see [Get Credentials](/plugins/stripe/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
 </Tabs>
 
-## Webhooks
+</Step>
 
-This plugin registers **11** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-See [Webhooks](/plugins/stripe/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'stripe',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
 
-## Query synced data
-
-Synced entities support `corsair.stripe.db.<entity>.search()` and `.list()`. See [Database](/plugins/stripe/database) for filters and operators.
-
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `balance.get`
+**`balance.get`**
 
 ```ts
-await corsair.stripe.api.balance.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.balance.get({});
 ```
 
 
-**Write-style (write):** `charges.create`
+**`charges.create`**
 
 ```ts
-await corsair.stripe.api.charges.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.charges.create({});
 ```
 
 
-See the full list on the [API](/plugins/stripe/api) page. Use `pnpm corsair list --plugin=stripe` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/stripe/api) page.
 
----
+## Query synced data
 
-## Hooks
+Synced entities support `tenant.stripe.db.<entity>.search()` and `.list()`: `balance`, `charges`, `coupons`, `customers`, `paymentIntents`, `prices`, `sources`.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/stripe/webhooks) page for payload types.
+See [Database](/plugins/stripe/database) for filters and operators.
 
----
+## Webhooks
 
-## Reference
+This plugin registers **11** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
 
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/stripe/api) |
-| Database | [Database](/plugins/stripe/database) |
-| Webhooks | [Webhooks](/plugins/stripe/webhooks) |
-| Credentials | [Get credentials](/plugins/stripe/get-credentials) |
+See [Webhooks](/plugins/stripe/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
 
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/stripe/api">
+    Every `stripe.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/stripe/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/stripe/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/stripe/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>
