@@ -13,7 +13,6 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'dropboxsign',
 	'ably',
 	'abstract',
 	'abuseipdb',
@@ -92,6 +91,7 @@ export const BaseProviders = [
 	'boxhero',
 	'brandfetch',
 	'brex',
+	'brightdata',
 	'browseai',
 	'browserless',
 	'bugsnag',
@@ -99,7 +99,9 @@ export const BaseProviders = [
 	'calendly',
 	'canva',
 	'canvas',
+	'capsulecrm',
 	'chatbotkit',
+	'chatfai',
 	'circleci',
 	'clickhouse',
 	'clientary',
@@ -124,12 +126,15 @@ export const BaseProviders = [
 	'dodopayments',
 	'doppler',
 	'dreamstudio',
+	'dripcel',
 	'dropbox',
+	'dropboxsign',
 	'epicgames',
 	'exa',
 	'facebook',
 	'faraday',
 	'figma',
+	'filloutforms',
 	'firecrawl',
 	'fireflies',
 	'formbricks',
@@ -170,6 +175,7 @@ export const BaseProviders = [
 	'mailboxlayer',
 	'mailchimp',
 	'mailtrap',
+	'marketstack',
 	'merriamwebsterdict',
 	'monday',
 	'neon',
@@ -186,16 +192,20 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'parseur',
 	'pdfmonkey',
 	'perplexityai',
 	'pinecone',
 	'posthog',
 	'razorpay',
 	'reddit',
+	'removebg',
 	'resend',
 	'retailed',
 	'salesforce',
+	'scrapegraphai',
 	'securitytrails',
+	'sendgrid',
 	'sentry',
 	'serpapi',
 	'sharepoint',
@@ -239,6 +249,7 @@ export const BaseProviders = [
 	'worldnewsapi',
 	'wiza',
 	'workday',
+	'workiom',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -327,6 +338,7 @@ export const ProviderDisplayNames = {
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
 	brex: 'Brex',
+	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
 	browserless: 'Browserless',
 	bugsnag: 'BugSnag',
@@ -334,7 +346,9 @@ export const ProviderDisplayNames = {
 	calendly: 'Calendly',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
+	capsulecrm: 'Capsule CRM',
 	chatbotkit: 'ChatBotKit',
+	chatfai: 'ChatFAI',
 	circleci: 'CircleCI',
 	clickhouse: 'Clickhouse',
 	clientary: 'Clientary',
@@ -359,6 +373,7 @@ export const ProviderDisplayNames = {
 	dodopayments: 'Dodo Payments',
 	doppler: 'Doppler',
 	dreamstudio: 'DreamStudio',
+	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
 	dropboxsign: 'Dropbox Sign',
 	epicgames: 'Epic Games',
@@ -366,6 +381,7 @@ export const ProviderDisplayNames = {
 	facebook: 'Facebook',
 	faraday: 'Faraday',
 	figma: 'Figma',
+	filloutforms: 'FilloutForms',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	formbricks: 'Formbricks',
@@ -406,6 +422,7 @@ export const ProviderDisplayNames = {
 	mailboxlayer: 'MailboxLayer',
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
+	marketstack: 'Marketstack',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	monday: 'Monday',
 	neon: 'Neon',
@@ -422,16 +439,20 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	parseur: 'Parseur',
 	pdfmonkey: 'PDFMonkey',
 	perplexityai: 'Perplexity AI',
 	pinecone: 'Pinecone',
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
+	removebg: 'remove.bg',
 	resend: 'Resend',
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
+	scrapegraphai: 'ScrapeGraphAI',
 	securitytrails: 'SecurityTrails',
+	sendgrid: 'SendGrid',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
 	sharepoint: 'SharePoint',
@@ -475,6 +496,7 @@ export const ProviderDisplayNames = {
 	worldnewsapi: 'World News API',
 	wiza: 'Wiza',
 	workday: 'Workday',
+	workiom: 'Workiom',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -570,6 +592,7 @@ export type AllProviders =
 	| 'boxhero'
 	| 'brandfetch'
 	| 'brex'
+	| 'brightdata'
 	| 'browseai'
 	| 'browserless'
 	| 'bugsnag'
@@ -577,7 +600,9 @@ export type AllProviders =
 	| 'calendly'
 	| 'canva'
 	| 'canvas'
+	| 'capsulecrm'
 	| 'chatbotkit'
+	| 'chatfai'
 	| 'circleci'
 	| 'clickhouse'
 	| 'clientary'
@@ -602,12 +627,14 @@ export type AllProviders =
 	| 'dodopayments'
 	| 'doppler'
 	| 'dreamstudio'
+	| 'dripcel'
 	| 'dropbox'
 	| 'epicgames'
 	| 'exa'
 	| 'facebook'
 	| 'faraday'
 	| 'figma'
+	| 'filloutforms'
 	| 'firecrawl'
 	| 'fireflies'
 	| 'formbricks'
@@ -648,6 +675,7 @@ export type AllProviders =
 	| 'mailboxlayer'
 	| 'mailchimp'
 	| 'mailtrap'
+	| 'marketstack'
 	| 'merriamwebsterdict'
 	| 'monday'
 	| 'neon'
@@ -664,16 +692,20 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'parseur'
 	| 'pdfmonkey'
 	| 'perplexityai'
 	| 'pinecone'
 	| 'posthog'
 	| 'razorpay'
 	| 'reddit'
+	| 'removebg'
 	| 'resend'
 	| 'retailed'
 	| 'salesforce'
+	| 'scrapegraphai'
 	| 'securitytrails'
+	| 'sendgrid'
 	| 'sentry'
 	| 'serpapi'
 	| 'sharepoint'
@@ -717,6 +749,7 @@ export type AllProviders =
 	| 'worldnewsapi'
 	| 'wiza'
 	| 'workday'
+	| 'workiom'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'
