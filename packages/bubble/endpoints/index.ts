@@ -1,3 +1,4 @@
+import { getSwagger } from './meta';
 import {
 	bulkCreate,
 	create,
@@ -7,7 +8,7 @@ import {
 	replace,
 	update,
 } from './things';
-import { run } from './workflows';
+import { run, runGet } from './workflows';
 
 /** Data API operations for Bubble things (database records). */
 export const Things = {
@@ -23,6 +24,12 @@ export const Things = {
 /** Workflow API operations. */
 export const Workflows = {
 	run,
+	runGet,
+};
+
+/** Auto-generated API metadata. */
+export const Meta = {
+	getSwagger,
 };
 
 export * from './types';

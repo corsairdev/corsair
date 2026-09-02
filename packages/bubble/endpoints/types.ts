@@ -20,8 +20,18 @@ const BubbleConstraintSchema = z.object({
 	key: z.string(),
 	/** e.g. `equals`, `greater than`, `text contains`, `is_empty`. */
 	constraint_type: z.string(),
-	/** Compare value. */
-	value: z.union([z.string(), z.number(), z.boolean()]),
+	/**
+	 * Compare value. Omitted for `is_empty` / `is_not_empty` / `empty` /
+	 * `not empty`. Objects are allowed for `geographic_search`.
+	 */
+	value: z
+		.union([
+			z.string(),
+			z.number(),
+			z.boolean(),
+			z.record(z.string(), z.unknown()),
+		])
+		.optional(),
 });
 
 /**
@@ -35,8 +45,11 @@ const ThingsListInputSchema = z.object({
 	typeName: z.string(),
 	/** Rank of the first item to return (Bubble's `cursor`). */
 	cursor: z.number().int().min(0).optional(),
-	/** Number of items to return per request. */
-	limit: z.number().int().min(1).max(100).optional(),
+	/**
+	 * Number of items to return per request. Data API GET is capped at
+	 * 50,000 items from the start of the list (10,000,000 on Enterprise).
+	 */
+	limit: z.number().int().min(1).max(50_000).optional(),
 	constraints: z.array(BubbleConstraintSchema).optional(),
 	/** Field key to sort by. Defaults to creation date. */
 	sortField: z.string().optional(),
@@ -111,6 +124,19 @@ const WorkflowsRunInputSchema = z.object({
 });
 export type WorkflowsRunInput = z.infer<typeof WorkflowsRunInputSchema>;
 
+const WorkflowsRunGetInputSchema = z.object({
+	/** API workflow name - it has no spaces and is also the URL endpoint. */
+	workflowName: z.string(),
+	/** Query-string parameters (GET workflows have no body). */
+	params: z
+		.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+		.optional(),
+});
+export type WorkflowsRunGetInput = z.infer<typeof WorkflowsRunGetInputSchema>;
+
+const MetaGetSwaggerInputSchema = z.object({});
+export type MetaGetSwaggerInput = z.infer<typeof MetaGetSwaggerInputSchema>;
+
 /* -------------------------------------------------------------------------- */
 /*                                   Outputs                                  */
 /* -------------------------------------------------------------------------- */
@@ -156,6 +182,10 @@ const WorkflowsRunOutputSchema = z
 	.loose();
 export type WorkflowsRunOutput = z.infer<typeof WorkflowsRunOutputSchema>;
 
+/** Swagger 2.0 JSON generated when “Swagger file” is enabled in Settings → API. */
+const MetaGetSwaggerOutputSchema = z.record(z.string(), z.unknown());
+export type MetaGetSwaggerOutput = z.infer<typeof MetaGetSwaggerOutputSchema>;
+
 export type BubbleEndpointInputs = {
 	thingsGet: ThingsGetInput;
 	thingsList: ThingsListInput;
@@ -165,6 +195,8 @@ export type BubbleEndpointInputs = {
 	thingsReplace: ThingsReplaceInput;
 	thingsDelete: ThingsDeleteInput;
 	workflowsRun: WorkflowsRunInput;
+	workflowsRunGet: WorkflowsRunGetInput;
+	metaGetSwagger: MetaGetSwaggerInput;
 };
 
 export type BubbleEndpointOutputs = {
@@ -176,6 +208,8 @@ export type BubbleEndpointOutputs = {
 	thingsReplace: void;
 	thingsDelete: void;
 	workflowsRun: WorkflowsRunOutput;
+	workflowsRunGet: WorkflowsRunOutput;
+	metaGetSwagger: MetaGetSwaggerOutput;
 };
 
 export const BubbleEndpointInputSchemas = {
@@ -187,6 +221,8 @@ export const BubbleEndpointInputSchemas = {
 	thingsReplace: ThingsReplaceInputSchema,
 	thingsDelete: ThingsDeleteInputSchema,
 	workflowsRun: WorkflowsRunInputSchema,
+	workflowsRunGet: WorkflowsRunGetInputSchema,
+	metaGetSwagger: MetaGetSwaggerInputSchema,
 } as const;
 
 export const BubbleEndpointOutputSchemas = {
@@ -198,4 +234,6 @@ export const BubbleEndpointOutputSchemas = {
 	thingsReplace: z.void(),
 	thingsDelete: z.void(),
 	workflowsRun: WorkflowsRunOutputSchema,
+	workflowsRunGet: WorkflowsRunOutputSchema,
+	metaGetSwagger: MetaGetSwaggerOutputSchema,
 } as const;

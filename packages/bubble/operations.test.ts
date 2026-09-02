@@ -5,7 +5,7 @@
  * access is mocked, so this runs in CI.
  */
 import { logEventFromContext } from 'corsair/core';
-import { Things, Workflows } from './endpoints';
+import { Meta, Things, Workflows } from './endpoints';
 import { BubbleEndpointInputSchemas } from './endpoints/types';
 import { bubbleEndpointSchemas } from './index';
 import { BubbleThingEntity } from './schema/database';
@@ -157,8 +157,11 @@ beforeEach(() => {
 		if (lastMethod === 'POST' && path.endsWith('/unit')) {
 			return jsonResponse({ status: 'success', id: 'created-id' });
 		}
-		if (lastMethod === 'POST' && path.startsWith('/wf/')) {
+		if (path.includes('/wf/')) {
 			return jsonResponse({ status: 'success' });
+		}
+		if (path.endsWith('/meta/swagger.json')) {
+			return jsonResponse({ swagger: '2.0', info: { title: 'app' } });
 		}
 		if (
 			lastMethod === 'PATCH' ||
@@ -302,32 +305,90 @@ describe('things.bulkCreate', () => {
 });
 
 describe('things.update / replace / delete', () => {
-	it.each([
-		['things.update', Things.update, 'PATCH', 'bubble.things.update'],
-		['things.replace', Things.replace, 'PUT', 'bubble.things.replace'],
-		['things.delete', Things.delete, 'DELETE', 'bubble.things.delete'],
-	] as const)(
-		'%s sends a %s and evicts the cached thing',
-		async (name, op, method, event) => {
-			const { ctx, db } = makeCtx();
+	it('PATCHes selected fields and evicts the cached thing', async () => {
+		const { ctx, db } = makeCtx();
 
-			await op(ctx, { typeName: 'unit', thingId: 'abc' } as never);
+		await Things.update(ctx, {
+			typeName: 'unit',
+			thingId: 'abc',
+			fields: { 'Unit name': 'Unit C' },
+		});
 
-			expect(lastMethod).toBe(method);
-			expect(lastUrl).toBe(
-				'https://rentalunits.bubbleapps.io/api/1.1/obj/unit/abc',
-			);
-			// update/replace/delete carry no payload
-			expect(lastBody).toBeUndefined();
-			expect(db.things.deleteByEntityId).toHaveBeenCalledWith('abc');
-			expect(mockLogEvent).toHaveBeenCalledWith(
-				ctx,
-				event,
-				expect.objectContaining({ typeName: 'unit', thingId: 'abc' }),
-				'completed',
-			);
-		},
-	);
+		expect(lastMethod).toBe('PATCH');
+		expect(lastUrl).toBe(
+			'https://rentalunits.bubbleapps.io/api/1.1/obj/unit/abc',
+		);
+		expect(lastBody).toBe('{"Unit name":"Unit C"}');
+		expect(db.things.deleteByEntityId).toHaveBeenCalledWith('abc');
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'bubble.things.update',
+			expect.objectContaining({ typeName: 'unit', thingId: 'abc' }),
+			'completed',
+		);
+	});
+
+	it('PUTs a full replace and evicts the cached thing', async () => {
+		const { ctx, db } = makeCtx();
+
+		await Things.replace(ctx, {
+			typeName: 'unit',
+			thingId: 'abc',
+			fields: { 'Unit name': 'Unit D' },
+		});
+
+		expect(lastMethod).toBe('PUT');
+		expect(lastBody).toBe('{"Unit name":"Unit D"}');
+		expect(db.things.deleteByEntityId).toHaveBeenCalledWith('abc');
+	});
+
+	it('DELETEs a thing and evicts the cached snapshot', async () => {
+		const { ctx, db } = makeCtx();
+
+		await Things.delete(ctx, { typeName: 'unit', thingId: 'abc' });
+
+		expect(lastMethod).toBe('DELETE');
+		expect(lastBody).toBeUndefined();
+		expect(db.things.deleteByEntityId).toHaveBeenCalledWith('abc');
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'bubble.things.delete',
+			expect.objectContaining({ typeName: 'unit', thingId: 'abc' }),
+			'completed',
+		);
+	});
+});
+
+describe('workflows.runGet', () => {
+	it('GETs wf/{workflowName} with query-string parameters', async () => {
+		const { ctx } = makeCtx();
+
+		const result = await Workflows.runGet(ctx, {
+			workflowName: 'notify_user',
+			params: { email: 'user@example.com' },
+		});
+
+		expect(lastMethod).toBe('GET');
+		expect(lastUrl).toBe(
+			'https://rentalunits.bubbleapps.io/api/1.1/wf/notify_user?email=user%40example.com',
+		);
+		expect(lastBody).toBeUndefined();
+		expect(result).toEqual({ status: 'success' });
+	});
+});
+
+describe('meta.getSwagger', () => {
+	it('GETs /api/1.1/meta/swagger.json', async () => {
+		const { ctx } = makeCtx();
+
+		const result = await Meta.getSwagger(ctx, {});
+
+		expect(lastMethod).toBe('GET');
+		expect(lastUrl).toBe(
+			'https://rentalunits.bubbleapps.io/api/1.1/meta/swagger.json',
+		);
+		expect(result).toEqual({ swagger: '2.0', info: { title: 'app' } });
+	});
 });
 
 describe('workflows.run', () => {
@@ -365,6 +426,8 @@ describe('bubbleEndpointSchemas', () => {
 			'things.replace',
 			'things.delete',
 			'workflows.run',
+			'workflows.runGet',
+			'meta.getSwagger',
 		]);
 		for (const [key, schemas] of Object.entries(bubbleEndpointSchemas)) {
 			expect(key).toContain('.');
@@ -375,6 +438,14 @@ describe('bubbleEndpointSchemas', () => {
 
 	it('parses a real Bubble GET record against the thing entity schema', () => {
 		expect(BubbleThingEntity.safeParse(THING).success).toBe(true);
+	});
+
+	it('parses is_empty constraints without a value', () => {
+		const parsed = BubbleEndpointInputSchemas.thingsList.safeParse({
+			typeName: 'rentalunit',
+			constraints: [{ key: 'Unit name', constraint_type: 'is_empty' }],
+		});
+		expect(parsed.success).toBe(true);
 	});
 
 	it('parses the manual constraints shape', () => {

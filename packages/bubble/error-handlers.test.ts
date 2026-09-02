@@ -3,19 +3,31 @@ import { BubbleAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 describe('errorHandlers', () => {
-	it('classifies a 429 without adding a second retry loop on top of the transport', async () => {
+	it('retries a 429 on idempotent reads only (transport does not retry)', async () => {
 		const error = new BubbleAPIError('rate limited', 429);
-		// Give the error a retry-after as the transport would via ApiError.
 		(error as { retryAfter?: number }).retryAfter = 2000;
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 
-		// The transport (`client.ts`'s BUBBLE_RATE_LIMIT_CONFIG) already
-		// bounds 429 handling and honours retry-after, so the interceptor
-		// must NOT re-run the endpoint: one retry policy only.
-		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
-		expect(result.maxRetries).toBe(0);
-		expect(result.headersRetryAfterMs).toBe(2000);
+		const noOp = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
+		expect(noOp.maxRetries).toBe(0);
+
+		const getRetry = await errorHandlers.RATE_LIMIT_ERROR.handler(error, {
+			pluginId: 'bubble',
+			operation: 'things.get',
+			input: {},
+			originalError: error,
+		});
+		expect(getRetry.maxRetries).toBeGreaterThan(0);
+		expect(getRetry.headersRetryAfterMs).toBe(2000);
+
+		const createRetry = await errorHandlers.RATE_LIMIT_ERROR.handler(error, {
+			pluginId: 'bubble',
+			operation: 'things.create',
+			input: {},
+			originalError: error,
+		});
+		expect(createRetry.maxRetries).toBe(0);
 	});
 
 	it('never retries a 401', async () => {
@@ -85,6 +97,7 @@ describe('errorHandlers', () => {
 			'things.create',
 			'things.bulkCreate',
 			'workflows.run',
+			'workflows.runGet',
 		]) {
 			expect(
 				errorHandlers.SERVER_ERROR.match(error, {

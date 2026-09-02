@@ -1,6 +1,28 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { BubbleAPIError } from './client';
 
+/** GET/PATCH/PUT/DELETE Data API reads and metadata. Workflow GET/POST are side-effecting. */
+function isIdempotent(operation: string | undefined): boolean {
+	return (
+		operation === 'things.get' ||
+		operation === 'things.list' ||
+		operation === 'things.update' ||
+		operation === 'things.replace' ||
+		operation === 'things.delete' ||
+		operation === 'meta.getSwagger'
+	);
+}
+
+function isUnsafeWrite(operation: string | undefined): boolean {
+	return (
+		!operation ||
+		operation.endsWith('.create') ||
+		operation.endsWith('.bulkCreate') ||
+		operation.endsWith('.run') ||
+		operation.endsWith('.runGet')
+	);
+}
+
 /**
  * Bubble's Data API errors are `{"statusCode": ..., "body": {...}}` and the
  * Workflow API's are `{"error_class": ..., "translation": ...}`, but every
@@ -14,19 +36,18 @@ export const errorHandlers = {
 			return error.message.toLowerCase().includes('429');
 		},
 		/**
-		 * No re-execution here: `request()` in `corsair/http` already bounds
-		 * 429 handling (see `client.ts`'s `BUBBLE_RATE_LIMIT_CONFIG` - up to 4
-		 * attempts honouring `retry-after`). Retrying the whole endpoint from
-		 * the interceptor on top of that would nest two retry loops (up to
-		 * ~4x6 provider requests per caller attempt). One policy: this is a
-		 * classification-only match. The `retry-after` value is still exposed
-		 * for instrumentation.
+		 * Single retry loop: transport `maxRetries` is 0. Replay only
+		 * idempotent Data API operations; never replay create/bulk/workflows.
 		 */
-		handler: async (error: Error) => ({
-			maxRetries: 0,
-			headersRetryAfterMs:
-				error instanceof BubbleAPIError ? error.retryAfter : undefined,
-		}),
+		handler: async (error: Error, context?: ErrorContext) => {
+			const retry = isIdempotent(context?.operation);
+			return {
+				maxRetries: retry ? 5 : 0,
+				retryStrategy: retry ? ('exponential_backoff' as const) : undefined,
+				headersRetryAfterMs:
+					error instanceof BubbleAPIError ? error.retryAfter : undefined,
+			};
+		},
 	},
 
 	AUTH_ERROR: {
@@ -57,28 +78,16 @@ export const errorHandlers = {
 	 * A 5xx is Bubble's own infrastructure failing, not a bad request - worth
 	 * a bounded retry, unlike every 4xx above.
 	 *
-	 * **Never for a non-idempotent POST.** `things.create`,
-	 * `things.bulkCreate`, and `workflows.run` are the three POST operations
-	 * here - a 5xx there can mean the request never reached Bubble, or that
-	 * it was processed and only the *response* was lost. Retrying the second
-	 * case creates a real duplicate resource. `context.operation` is the
-	 * exact `family.op` dot-path and is always supplied by the real dispatch
-	 * path; this fails closed (no retry) rather than open if that context is
-	 * ever missing, since "unknown operation" cannot be proven safe to replay
-	 * the way a confirmed GET/PATCH/PUT/DELETE can.
+	 * **Never for a non-idempotent write.** `things.create`,
+	 * `things.bulkCreate`, `workflows.run`, and `workflows.runGet` can mean
+	 * the request never reached Bubble, or that it was processed and only
+	 * the *response* was lost. Retrying the second case duplicates work.
 	 */
 	SERVER_ERROR: {
 		match: (error: Error, context?: ErrorContext) => {
 			if (!(error instanceof BubbleAPIError)) return false;
 			if (error.status === undefined || error.status < 500) return false;
-			if (
-				!context?.operation ||
-				context.operation.endsWith('.create') ||
-				context.operation.endsWith('.bulkCreate') ||
-				context.operation.endsWith('.run')
-			) {
-				return false;
-			}
+			if (isUnsafeWrite(context?.operation)) return false;
 			return true;
 		},
 		handler: async () => ({

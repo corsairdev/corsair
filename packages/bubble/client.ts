@@ -81,16 +81,13 @@ export async function tryGetStoredKey(
 /**
  * Bubble documents no fixed request-per-second cap for the Data API the way
  * e.g. BigMailer does; plan-tier capacity is enforced with 429 responses.
- * `retry-after` is the one HTTP-standard header safe to check for, and the
- * shared transport's default backoff covers the no-header case.
- *
- * Note: the 429 discipline retries any method (including the non-idempotent
- * POSTs below) because a 429 means "never processed" - this call follows
- * the same reasoning as bigml's `BIGML_RATE_LIMIT_CONFIG`.
+ * Transport does not retry 429s — that lives in error-handlers.ts so POST
+ * creates/workflows are never replayed. `retry-after` is still parsed from
+ * the response for the interceptor.
  */
 const BUBBLE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
+	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: {

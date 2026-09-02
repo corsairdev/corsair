@@ -15,4 +15,3 @@ export const BubbleSchema = {
 } as const;
 
 export * from './database';
-export * from './primitives';

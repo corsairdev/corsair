@@ -1,12 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BubbleEndpoints } from '../index';
-import { bubbleCall } from './shared';
+import { bubbleCall, compact } from './shared';
 import type { BubbleEndpointOutputs } from './types';
 
+function normalizeWorkflowResult(
+	raw: BubbleEndpointOutputs['workflowsRun'] | undefined,
+): BubbleEndpointOutputs['workflowsRun'] {
+	const status = raw && typeof raw.status === 'string' ? raw.status : 'success';
+	return { ...raw, status };
+}
+
 /**
- * Runs an API workflow. POSTs the workflow's parameters as JSON in the
- * request body (the standard webhook-style invocation), authenticated with
- * the app's admin token.
+ * Runs an API workflow via POST. Parameters go in the JSON body.
  * https://manual.bubble.io/core-resources/api/the-bubble-api/the-workflow-api.md
  */
 export const run: BubbleEndpoints['workflowsRun'] = async (ctx, input) => {
@@ -19,16 +24,39 @@ export const run: BubbleEndpoints['workflowsRun'] = async (ctx, input) => {
 		},
 	);
 
-	// The Workflow API answers with whatever the workflow's "Return data
-	// from API" action defines (default `{"status":"success"}`); a work-
-	// flow that returns nothing yields an empty body, normalised here.
-	const status = raw && typeof raw.status === 'string' ? raw.status : 'success';
-
+	const result = normalizeWorkflowResult(raw);
 	await logEventFromContext(
 		ctx,
 		'bubble.workflows.run',
 		{ workflowName: input.workflowName },
 		'completed',
 	);
-	return { ...raw, status };
+	return result;
+};
+
+/**
+ * Runs an API workflow via GET. Parameters go on the query string.
+ * GET workflows are still side-effecting — do not retry them.
+ */
+export const runGet: BubbleEndpoints['workflowsRunGet'] = async (
+	ctx,
+	input,
+) => {
+	const raw = await bubbleCall<BubbleEndpointOutputs['workflowsRunGet']>(
+		ctx,
+		`wf/${encodeURIComponent(input.workflowName)}`,
+		{
+			method: 'GET',
+			query: input.params ? compact(input.params) : undefined,
+		},
+	);
+
+	const result = normalizeWorkflowResult(raw);
+	await logEventFromContext(
+		ctx,
+		'bubble.workflows.runGet',
+		{ workflowName: input.workflowName },
+		'completed',
+	);
+	return result;
 };

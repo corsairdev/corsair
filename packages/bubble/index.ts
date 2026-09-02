@@ -14,7 +14,7 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { tryGetStoredKey } from './client';
-import { Things, Workflows } from './endpoints';
+import { Meta, Things, Workflows } from './endpoints';
 import type {
 	BubbleEndpointInputs,
 	BubbleEndpointOutputs,
@@ -94,6 +94,8 @@ export type BubbleEndpoints = {
 	thingsReplace: BubbleEndpoint<'thingsReplace'>;
 	thingsDelete: BubbleEndpoint<'thingsDelete'>;
 	workflowsRun: BubbleEndpoint<'workflowsRun'>;
+	workflowsRunGet: BubbleEndpoint<'workflowsRunGet'>;
+	metaGetSwagger: BubbleEndpoint<'metaGetSwagger'>;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -112,6 +114,10 @@ const bubbleEndpointsNested = {
 	},
 	workflows: {
 		run: Workflows.run,
+		runGet: Workflows.runGet,
+	},
+	meta: {
+		getSwagger: Meta.getSwagger,
 	},
 } as const;
 
@@ -156,6 +162,14 @@ export const bubbleEndpointSchemas = {
 		input: BubbleEndpointInputSchemas.workflowsRun,
 		output: BubbleEndpointOutputSchemas.workflowsRun,
 	},
+	'workflows.runGet': {
+		input: BubbleEndpointInputSchemas.workflowsRunGet,
+		output: BubbleEndpointOutputSchemas.workflowsRunGet,
+	},
+	'meta.getSwagger': {
+		input: BubbleEndpointInputSchemas.metaGetSwagger,
+		output: BubbleEndpointOutputSchemas.metaGetSwagger,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof bubbleEndpointsNested
 >;
@@ -199,7 +213,17 @@ const bubbleEndpointMeta = {
 	'workflows.run': {
 		riskLevel: 'write',
 		description:
-			'Run an API workflow with the supplied parameters (Workflow API)',
+			'Run an API workflow with the supplied parameters (Workflow API POST)',
+	},
+	'workflows.runGet': {
+		riskLevel: 'write',
+		description:
+			'Run an API workflow with query-string parameters (Workflow API GET)',
+	},
+	'meta.getSwagger': {
+		riskLevel: 'read',
+		description:
+			'Retrieve the auto-generated Swagger 2.0 JSON for enabled Bubble APIs',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof bubbleEndpointsNested>;
 
@@ -304,6 +328,7 @@ export type {
 	ThingsListInput,
 	ThingsReplaceInput,
 	ThingsUpdateInput,
+	WorkflowsRunGetInput,
 	WorkflowsRunInput,
 	WorkflowsRunOutput,
 } from './endpoints/types';
