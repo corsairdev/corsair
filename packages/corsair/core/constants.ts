@@ -362,7 +362,7 @@ export const ProviderDisplayNames = {
 	resend: 'Resend',
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
-	sapsuccessfactors: 'SapSuccessfactors',
+	sapsuccessfactors: 'SAP SuccessFactors',
 	securitytrails: 'SecurityTrails',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',

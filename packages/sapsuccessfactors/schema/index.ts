@@ -1,6 +1,7 @@
 import {
 	SapsuccessfactorsCalibrationSessionEntity,
 	SapsuccessfactorsCandidateEntity,
+	SapsuccessfactorsCompanyEntity,
 	SapsuccessfactorsEmploymentEntity,
 	SapsuccessfactorsGoalEntity,
 	SapsuccessfactorsGoalPlanEntity,
@@ -26,6 +27,7 @@ export const SapsuccessfactorsSchema = {
 		candidate: SapsuccessfactorsCandidateEntity,
 		jobApplication: SapsuccessfactorsJobApplicationEntity,
 		position: SapsuccessfactorsPositionEntity,
+		company: SapsuccessfactorsCompanyEntity,
 	},
 } as const;
 

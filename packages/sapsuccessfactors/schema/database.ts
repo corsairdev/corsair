@@ -1,199 +1,279 @@
 import { z } from 'zod';
 
+/**
+ * SAP SuccessFactors OData entity shapes for Corsair DB cache (`ctx.db.*`).
+ * Field names follow the labeled properties in the OData API Data Dictionary
+ * (Admin Center → API Center → OData API Data Dictionary) and the HCM OData
+ * API Reference: User, PerPerson, PerPersonal, EmpEmployment, JobRequisition,
+ * Candidate, JobApplication, Position, FO*.
+ *
+ * Loose + catchall — tenants add custom fields; OData also returns `__metadata`.
+ */
+
 const S = z.string().nullable().optional();
 const N = z.number().nullable().optional();
 const B = z.boolean().nullable().optional();
+const Deferred = z
+	.object({ __deferred: z.object({ uri: z.string().optional() }).optional() })
+	.catchall(z.unknown())
+	.optional();
 
-/**
- * SAP SuccessFactors User Entity
- */
+const ODataMeta = z
+	.object({
+		uri: z.string().optional(),
+		type: z.string().optional(),
+	})
+	.catchall(z.unknown())
+	.optional();
+
+/** User — business key `userId`. OData: GET /odata/v2/User */
 export const SapsuccessfactorsUserEntity = z
 	.object({
+		__metadata: ODataMeta,
 		userId: z.string(),
 		username: S,
+		defaultFullName: S,
 		firstName: S,
+		mi: S,
 		lastName: S,
 		email: S,
-		title: S,
+		status: S,
 		department: S,
 		division: S,
 		location: S,
-		status: S,
+		title: S,
+		managerId: S,
+		hrId: S,
 		hireDate: S,
 		lastModifiedDateTime: S,
+		lastModified: S,
+		timeZone: S,
+		country: S,
+		state: S,
+		city: S,
+		zipCode: S,
+		addressLine1: S,
+		businessPhone: S,
+		cellPhone: S,
+		empId: S,
+		totalTeamSize: N,
+		directReports: Deferred,
+		manager: Deferred,
+		hr: Deferred,
 	})
-	.passthrough();
+	.catchall(z.unknown());
 export type SapsuccessfactorsUserEntity = z.infer<
 	typeof SapsuccessfactorsUserEntity
 >;
 
-/**
- * SAP SuccessFactors PerPerson Entity
- */
+/** PerPerson — Employee Central person; business key `personIdExternal`. */
 export const SapsuccessfactorsPersonEntity = z
 	.object({
+		__metadata: ODataMeta,
 		personIdExternal: z.string(),
+		personId: S,
 		dateOfBirth: S,
 		countryOfBirth: S,
+		regionOfBirth: S,
 		placeOfBirth: S,
-		userId: S,
+		perPersonUuid: S,
+		lastModifiedDateTime: S,
+		personalInfoNav: Deferred,
+		employmentNav: Deferred,
+		emailNav: Deferred,
+		phoneNav: Deferred,
 	})
-	.passthrough();
+	.catchall(z.unknown());
 export type SapsuccessfactorsPersonEntity = z.infer<
 	typeof SapsuccessfactorsPersonEntity
 >;
 
-/**
- * SAP SuccessFactors PerPersonal Entity
- */
+/** PerPersonal — effective-dated biographical info. */
 export const SapsuccessfactorsPersonalEntity = z
 	.object({
+		__metadata: ODataMeta,
 		personIdExternal: z.string(),
 		startDate: S,
 		endDate: S,
 		firstName: S,
 		lastName: S,
+		middleName: S,
+		formalName: S,
+		birthName: S,
 		gender: S,
 		maritalStatus: S,
 		nationality: S,
+		preferredName: S,
+		salutation: S,
+		lastModifiedDateTime: S,
 	})
-	.passthrough();
+	.catchall(z.unknown());
 export type SapsuccessfactorsPersonalEntity = z.infer<
 	typeof SapsuccessfactorsPersonalEntity
 >;
 
-/**
- * SAP SuccessFactors EmpEmployment Entity
- */
+/** EmpEmployment — employment assignment. */
 export const SapsuccessfactorsEmploymentEntity = z
 	.object({
+		__metadata: ODataMeta,
 		userId: z.string(),
 		personIdExternal: S,
 		startDate: S,
 		endDate: S,
-		employmentStatus: S,
+		originalStartDate: S,
+		seniorityDate: S,
+		assignmentClass: S,
+		employmentType: S,
+		isContingentWorker: B,
+		lastModifiedDateTime: S,
+		jobInfoNav: Deferred,
+		compInfoNav: Deferred,
 	})
-	.passthrough();
+	.catchall(z.unknown());
 export type SapsuccessfactorsEmploymentEntity = z.infer<
 	typeof SapsuccessfactorsEmploymentEntity
 >;
 
-/**
- * SAP SuccessFactors CalibrationSession Entity
- */
+/** CalibrationSession — CalSession.svc OData V4. */
 export const SapsuccessfactorsCalibrationSessionEntity = z
 	.object({
-		sessionId: z.string(),
+		sessionId: z.string().optional(),
 		sessionName: S,
+		sessionOwnerId: S,
 		sessionType: S,
 		status: S,
 		startDate: S,
 		endDate: S,
 	})
-	.passthrough();
+	.catchall(z.unknown());
 export type SapsuccessfactorsCalibrationSessionEntity = z.infer<
 	typeof SapsuccessfactorsCalibrationSessionEntity
 >;
 
-/**
- * SAP SuccessFactors GoalPlanTemplate Entity
- */
+/** GoalPlanTemplate */
 export const SapsuccessfactorsGoalPlanEntity = z
 	.object({
-		id: z.string(),
+		id: z.union([z.string(), z.number()]).optional(),
 		name: S,
-		planType: S,
+		type: S,
 		dueDate: S,
 	})
-	.passthrough();
+	.catchall(z.unknown());
 export type SapsuccessfactorsGoalPlanEntity = z.infer<
 	typeof SapsuccessfactorsGoalPlanEntity
 >;
 
-/**
- * SAP SuccessFactors Goal Entity
- */
+/** Goal_<planId> */
 export const SapsuccessfactorsGoalEntity = z
 	.object({
-		id: z.string(),
+		id: z.union([z.string(), z.number()]).optional(),
 		userId: S,
 		name: S,
+		flag: S,
 		state: S,
+		type: S,
 		metric: S,
 		done: N,
 		start: S,
 		due: S,
 	})
-	.passthrough();
+	.catchall(z.unknown());
 export type SapsuccessfactorsGoalEntity = z.infer<
 	typeof SapsuccessfactorsGoalEntity
 >;
 
-/**
- * SAP SuccessFactors JobRequisition Entity
- */
+/** JobRequisition — business key `jobReqId`. */
 export const SapsuccessfactorsJobRequisitionEntity = z
 	.object({
-		jobReqId: z.string(),
+		__metadata: ODataMeta,
+		jobReqId: z.union([z.string(), z.number()]),
+		internalStatus: S,
 		jobTitle: S,
+		jobCode: S,
 		department: S,
 		division: S,
 		location: S,
-		status: S,
+		country: S,
+		statusSetId: S,
+		appStatusSetId: S,
+		lastModifiedDateTime: S,
 	})
-	.passthrough();
+	.catchall(z.unknown());
 export type SapsuccessfactorsJobRequisitionEntity = z.infer<
 	typeof SapsuccessfactorsJobRequisitionEntity
 >;
 
-/**
- * SAP SuccessFactors Candidate Entity
- */
+/** Candidate */
 export const SapsuccessfactorsCandidateEntity = z
 	.object({
-		candidateId: z.string(),
+		__metadata: ODataMeta,
+		candidateId: z.union([z.string(), z.number()]),
 		firstName: S,
 		lastName: S,
 		primaryEmail: S,
+		contactEmail: S,
 		cellPhone: S,
 		city: S,
 		country: S,
+		currentTitle: S,
+		lastModifiedDateTime: S,
 	})
-	.passthrough();
+	.catchall(z.unknown());
 export type SapsuccessfactorsCandidateEntity = z.infer<
 	typeof SapsuccessfactorsCandidateEntity
 >;
 
-/**
- * SAP SuccessFactors JobApplication Entity
- */
+/** JobApplication */
 export const SapsuccessfactorsJobApplicationEntity = z
 	.object({
-		applicationId: z.string(),
-		jobReqId: S,
-		candidateId: S,
-		appStatusId: S,
+		__metadata: ODataMeta,
+		applicationId: z.union([z.string(), z.number()]),
+		jobReqId: z.union([z.string(), z.number()]).nullable().optional(),
+		candidateId: z.union([z.string(), z.number()]).nullable().optional(),
+		status: S,
+		appStatusSetId: S,
 		applicationDate: S,
+		lastModifiedDateTime: S,
 	})
-	.passthrough();
+	.catchall(z.unknown());
 export type SapsuccessfactorsJobApplicationEntity = z.infer<
 	typeof SapsuccessfactorsJobApplicationEntity
 >;
 
-/**
- * SAP SuccessFactors Position Entity
- */
+/** Position — Employee Central Position Management. */
 export const SapsuccessfactorsPositionEntity = z
 	.object({
+		__metadata: ODataMeta,
 		code: z.string(),
-		externalName: S,
 		effectiveStartDate: S,
+		effectiveEndDate: S,
 		effectiveStatus: S,
+		externalName_defaultValue: S,
 		jobCode: S,
 		department: S,
+		division: S,
 		company: S,
+		location: S,
+		payGrade: S,
+		lastModifiedDateTime: S,
 	})
-	.passthrough();
+	.catchall(z.unknown());
 export type SapsuccessfactorsPositionEntity = z.infer<
 	typeof SapsuccessfactorsPositionEntity
+>;
+
+/** FOCompany — foundation object. */
+export const SapsuccessfactorsCompanyEntity = z
+	.object({
+		externalCode: z.string().optional(),
+		startDate: S,
+		name_defaultValue: S,
+		status: S,
+		country: S,
+		currency: S,
+		entityOID: S,
+	})
+	.catchall(z.unknown());
+export type SapsuccessfactorsCompanyEntity = z.infer<
+	typeof SapsuccessfactorsCompanyEntity
 >;
