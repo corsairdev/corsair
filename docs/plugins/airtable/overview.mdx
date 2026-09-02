@@ -3,12 +3,12 @@ title: Overview
 description: "Airtable plugin for Corsair"
 ---
 
-Use **Airtable** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+Use **Airtable** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
 - 9 typed API operations
-- 2 database entities synced for fast `.search()` / `.list()` queries
+- 2 synced entities (`bases`, `records`) for fast `.search()` / `.list()`
 - 1 incoming webhook event types
 
 ## Setup
@@ -16,134 +16,131 @@ Use **Airtable** through Corsair: one client, typed API calls, optional local DB
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/airtable
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/airtable
 ```
+```bash yarn
+yarn add corsair @corsair-dev/airtable
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/airtable
+```
+```bash bun
+bun add corsair @corsair-dev/airtable
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { airtable } from '@corsair-dev/airtable';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [airtable()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { airtable } from '@corsair-dev/airtable';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [airtable()],
+	plugins: [
+		airtable(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/airtable/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=airtable
-```
+<Tab title="API Key (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/airtable/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=airtable --tenant=<tenantId>
-```
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
+Provider walkthrough: [Get Credentials](/plugins/airtable/get-credentials).
 
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 airtable()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=airtable` (see [Get Credentials](/plugins/airtable/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 </Tabs>
 
-## Webhooks
+</Step>
 
-This plugin registers **1** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-See [Webhooks](/plugins/airtable/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'airtable',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
 
-## Query synced data
-
-Synced entities support `corsair.airtable.db.<entity>.search()` and `.list()`. See [Database](/plugins/airtable/database) for filters and operators.
-
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `bases.getMany`
+**`bases.getMany`**
 
 ```ts
-await corsair.airtable.api.bases.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.bases.getMany({});
 ```
 
 
-**Write-style (write):** `records.create`
+**`records.create`**
 
 ```ts
-await corsair.airtable.api.records.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.records.create({});
 ```
 
 
-See the full list on the [API](/plugins/airtable/api) page. Use `pnpm corsair list --plugin=airtable` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/airtable/api) page.
 
----
+## Query synced data
 
-## Hooks
+Synced entities support `tenant.airtable.db.<entity>.search()` and `.list()`: `bases`, `records`.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/airtable/webhooks) page for payload types.
+See [Database](/plugins/airtable/database) for filters and operators.
 
----
+## Webhooks
 
-## Reference
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
 
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/airtable/api) |
-| Database | [Database](/plugins/airtable/database) |
-| Webhooks | [Webhooks](/plugins/airtable/webhooks) |
-| Credentials | [Get credentials](/plugins/airtable/get-credentials) |
+See [Webhooks](/plugins/airtable/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
 
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/airtable/api">
+    Every `airtable.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/airtable/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/airtable/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/airtable/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

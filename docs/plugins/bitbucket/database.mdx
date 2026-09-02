@@ -1,0 +1,346 @@
+---
+title: Database
+description: "Bitbucket Cloud OAuth 2.0 local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Bitbucket Cloud OAuth 2.0 plugin syncs data locally. Use `corsair.bitbucket.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Branches
+
+Path: `bitbucket.db.branches.search`
+
+```ts
+const rows = await corsair.bitbucket.db.branches.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `default_merge_strategy` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Commits
+
+Path: `bitbucket.db.commits.search`
+
+```ts
+const rows = await corsair.bitbucket.db.commits.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `hash` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Issues
+
+Path: `bitbucket.db.issues.search`
+
+```ts
+const rows = await corsair.bitbucket.db.issues.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `kind` | `string` | equals, contains, startsWith, endsWith, in |
+| `priority` | `string` | equals, contains, startsWith, endsWith, in |
+| `votes` | `number` | equals, gt, gte, lt, lte, in |
+| `created_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `edited_on` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Pipelines
+
+Path: `bitbucket.db.pipelines.search`
+
+```ts
+const rows = await corsair.bitbucket.db.pipelines.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `build_number` | `number` | equals, gt, gte, lt, lte, in |
+| `created_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `completed_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `build_seconds_used` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `bitbucket.db.projects.search`
+
+```ts
+const rows = await corsair.bitbucket.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `key` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_private` | `boolean` | equals |
+| `created_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `has_publicly_visible_repos` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Pull Requests
+
+Path: `bitbucket.db.pullRequests.search`
+
+```ts
+const rows = await corsair.bitbucket.db.pullRequests.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `draft` | `boolean` | equals |
+| `queued` | `boolean` | equals |
+| `reason` | `string` | equals, contains, startsWith, endsWith, in |
+| `comment_count` | `number` | equals, gt, gte, lt, lte, in |
+| `task_count` | `number` | equals, gt, gte, lt, lte, in |
+| `close_source_branch` | `boolean` | equals |
+| `created_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_on` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Repositories
+
+Path: `bitbucket.db.repositories.search`
+
+```ts
+const rows = await corsair.bitbucket.db.repositories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `full_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `scm` | `string` | equals, contains, startsWith, endsWith, in |
+| `website` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `is_private` | `boolean` | equals |
+| `has_issues` | `boolean` | equals |
+| `has_wiki` | `boolean` | equals |
+| `fork_policy` | `string` | equals, contains, startsWith, endsWith, in |
+| `enforced_signed_commits` | `boolean` | equals |
+| `created_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_on` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Snippets
+
+Path: `bitbucket.db.snippets.search`
+
+```ts
+const rows = await corsair.bitbucket.db.snippets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `scm` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_private` | `boolean` | equals |
+| `created_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_on` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tags
+
+Path: `bitbucket.db.tags.search`
+
+```ts
+const rows = await corsair.bitbucket.db.tags.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `bitbucket.db.users.search`
+
+```ts
+const rows = await corsair.bitbucket.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `display_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `nickname` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `has_2fa_enabled` | `boolean` | equals |
+| `is_staff` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Workspaces
+
+Path: `bitbucket.db.workspaces.search`
+
+```ts
+const rows = await corsair.bitbucket.db.workspaces.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_private` | `boolean` | equals |
+| `is_personal` | `boolean` | equals |
+| `is_privacy_enforced` | `boolean` | equals |
+| `forking_mode` | `string` | equals, contains, startsWith, endsWith, in |
+| `sign_system_commits` | `boolean` | equals |
+| `created_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_on` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

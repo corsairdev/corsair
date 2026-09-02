@@ -1,17 +1,15 @@
 ---
 title: Database
-description: Four tables, always-fresh integration data, tenant-scoped by default.
+description: Six tables, always-fresh integration data, tenant-scoped by default.
 ---
 
 import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
 
-Every API call and webhook that flows through Corsair is stored in your database automatically. When something changes in Slack, GitHub, or Linear, Corsair updates the same row — so your UI can read from `*.db.*` instead of hitting third-party APIs on every page load. Third-party data becomes an extension of your own DB, always fresh.
-
----
+Every API call and webhook that flows through Corsair is stored in your database automatically. When something changes in Slack, GitHub, or Linear, Corsair updates the same row, so your UI can read from `*.db.*` instead of hitting third-party APIs on every page load. Third-party data becomes an extension of your own DB, always fresh.
 
 ## Get started
 
-Run the migration once, then pass your connection to `createCorsair({ database, ... })`. See [Quick Start](/getting-started/quick-start) for a full setup example.
+Run the migration once, then pass your connection to `createCorsair({ database, ... })`. See [Quick Start](/quick-start) for a full setup example.
 
 <Tabs>
   <Tab title="SQLite">
@@ -133,6 +131,27 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     status TEXT,
     FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
 );
+
+CREATE TABLE IF NOT EXISTS corsair_permissions (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    token TEXT NOT NULL,
+    plugin TEXT NOT NULL,
+    endpoint TEXT NOT NULL,
+    args TEXT NOT NULL,
+    tenant_id TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    expires_at TEXT NOT NULL,
+    error TEXT
+);
+
+CREATE TABLE IF NOT EXISTS corsair_connects (
+    tenant_id TEXT PRIMARY KEY,
+    plugin TEXT NOT NULL,
+    connect_url TEXT NOT NULL,
+    requested_at TEXT NOT NULL
+);
 ```
 
 </Accordion>
@@ -206,6 +225,27 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     payload JSONB NOT NULL DEFAULT '{}',
     status TEXT
 );
+
+CREATE TABLE IF NOT EXISTS corsair_permissions (
+    id TEXT PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    token TEXT NOT NULL,
+    plugin TEXT NOT NULL,
+    endpoint TEXT NOT NULL,
+    args TEXT NOT NULL,
+    tenant_id TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    expires_at TEXT NOT NULL,
+    error TEXT
+);
+
+CREATE TABLE IF NOT EXISTS corsair_connects (
+    tenant_id TEXT PRIMARY KEY,
+    plugin TEXT NOT NULL,
+    connect_url TEXT NOT NULL,
+    requested_at TEXT NOT NULL
+);
 ```
 
 </Accordion>
@@ -278,6 +318,27 @@ export const corsairEvents = pgTable('corsair_events', {
     payload: jsonb('payload').notNull().default({}),
     status: text('status'),
 });
+
+export const corsairPermissions = pgTable('corsair_permissions', {
+    id: text('id').primaryKey(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    token: text('token').notNull(),
+    plugin: text('plugin').notNull(),
+    endpoint: text('endpoint').notNull(),
+    args: text('args').notNull(),
+    tenantId: text('tenant_id').notNull(),
+    status: text('status').notNull().default('pending'),
+    expiresAt: text('expires_at').notNull(),
+    error: text('error'),
+});
+
+export const corsairConnects = pgTable('corsair_connects', {
+    tenantId: text('tenant_id').primaryKey(),
+    plugin: text('plugin').notNull(),
+    connectUrl: text('connect_url').notNull(),
+    requestedAt: text('requested_at').notNull(),
+});
 ```
 
 </Accordion>
@@ -349,6 +410,31 @@ model CorsairEvent {
 
   @@map("corsair_events")
 }
+
+model CorsairPermission {
+  id        String   @id
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  token     String
+  plugin    String
+  endpoint  String
+  args      String
+  tenantId  String   @map("tenant_id")
+  status    String   @default("pending")
+  expiresAt String   @map("expires_at")
+  error     String?
+
+  @@map("corsair_permissions")
+}
+
+model CorsairConnect {
+  tenantId    String @id @map("tenant_id")
+  plugin      String
+  connectUrl  String @map("connect_url")
+  requestedAt String @map("requested_at")
+
+  @@map("corsair_connects")
+}
 ```
 
 </Accordion>
@@ -366,11 +452,9 @@ npx prisma migrate dev
   </Tab>
 </Tabs>
 
----
-
 ## Example: Slack
 
-All data is scoped to tenants — `withTenant()` ensures you only read and write that tenant's rows, with no cross-contamination.
+All data is scoped to tenants. `withTenant()` ensures you only read and write that tenant's rows, with no cross-contamination.
 
 ```ts
 const tenant = corsair.withTenant('user_abc123');
@@ -393,18 +477,18 @@ console.log(message?.data.text);
 
 Use `*.api.*` to write or force a fresh read. Use `*.db.*` for lists, search, and detail pages. Plugin-specific filters are in each plugin's database reference (e.g. [Slack](/plugins/slack/database)).
 
----
-
 ## Core tables
 
-Four tables for every integration — Slack, GitHub, Linear, and the rest all share the same schema.
+Six tables. The first five are shared by every integration — Slack, GitHub, Linear, and the rest use the same schema. `corsair_connects` records a tenant's pending connect prompt.
 
 | Table | Purpose |
 |-------|---------|
 | `corsair_integrations` | One row per enabled plugin (`slack`, `github`, …) |
 | `corsair_accounts` | Per-tenant connection + encrypted credentials (`tenant_id`, `integration_id`) |
-| `corsair_entities` | Synced resources — messages, channels, issues, repos (`entity_id`, `entity_type`, `data`) |
+| `corsair_entities` | Synced resources like messages, channels, issues, repos (`entity_id`, `entity_type`, `data`) |
 | `corsair_events` | Audit log of API calls and webhooks |
+| `corsair_permissions` | Approval queue for gated [permissions](/concepts/permissions) (`token`, `tenant_id`, `endpoint`, `args`, `status`) |
+| `corsair_connects` | A tenant's pending connect prompt, written when a call needs auth and read by the client to open the connect dialog (`tenant_id`, `plugin`, `connect_url`) |
 
 ```sql
 -- corsair_entities example (a Slack message)
@@ -416,25 +500,21 @@ data: { text: "Hello!", channel: "C01234567", ts: "1234567890.123456" }
 
 Schema types: [`packages/corsair/db/index.ts`](https://github.com/corsairdev/corsair/blob/main/packages/corsair/db/index.ts).
 
----
-
 ## Keeping data fresh
 
 Corsair doesn't snapshot data once and forget it. Every write path keeps the same row current:
 
-1. **API calls** — when you call `tenant.slack.api.messages.post`, Corsair sends the request and upserts the response into `corsair_entities`.
-2. **Webhooks** — when Slack notifies you that a message changed, Corsair finds the row by `entity_id` and updates it in place.
-3. **Out-of-order events** — if an update arrives before you've seen the create, Corsair fetches from the API and backfills the row (see [Webhooks](/concepts/webhooks)).
+1. **API calls**: when you call `tenant.slack.api.messages.post`, Corsair sends the request and upserts the response into `corsair_entities`.
+2. **Webhooks**: when Slack notifies you that a message changed, Corsair finds the row by `entity_id` and updates it in place.
+3. **Out-of-order events**: if an update arrives before you've seen the create, Corsair fetches from the API and backfills the row (see [Webhooks](/concepts/webhooks)).
 
 You don't build a sync layer or poll for changes. Query `corsair_entities` (or `*.db.*`) and trust that Corsair is maintaining it.
-
----
 
 ## How to use it
 
 ### Query through Corsair
 
-Use the typed ORM on each plugin — no raw SQL required for most reads:
+Use the typed ORM on each plugin, no raw SQL required for most reads:
 
 ```ts
 const tenant = corsair.withTenant('user_abc123');
@@ -474,20 +554,18 @@ const rows = await db
 // rows[].corsair_entities.data.text stays fresh via webhooks
 ```
 
-Because Corsair updates `corsair_entities` on every API call and webhook, foreign keys to that table always point at current data — not a stale cache you wrote once.
+Because Corsair updates `corsair_entities` on every API call and webhook, foreign keys to that table always point at current data, not a stale cache you wrote once.
 
 ### When to use API vs DB
 
 | Use | When |
 |-----|------|
 | `*.api.*` | Writes, deletes, or you need the latest value right now from the source |
-| `*.db.*` | UI lists, search, detail pages — fast reads, no rate limits |
-
----
+| `*.db.*` | UI lists, search, detail pages; fast reads, no rate limits |
 
 ## SQLite, Postgres, and ORMs
 
-Corsair runs on **your** database. Pass a connection to `createCorsair` — it works alongside whatever ORM you already use for your own tables.
+Corsair runs on **your** database. Pass a connection to `createCorsair`, and it works alongside whatever ORM you already use for your own tables.
 
 <Tabs>
 <Tab title="SQLite">
@@ -522,7 +600,7 @@ export const corsair = createCorsair({
 </Tab>
 <Tab title="Drizzle / Prisma">
 
-Define the four Corsair tables in your ORM schema (see migration tabs above), run your normal migrations, and pass the **underlying connection** to Corsair — not the ORM client:
+Define the six Corsair tables in your ORM schema (see migration tabs above), run your normal migrations, and pass the **underlying connection** to Corsair, not the ORM client:
 
 ```ts
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -541,9 +619,7 @@ Corsair also accepts **postgres.js** and a typed **Kysely** instance if you want
 </Tab>
 </Tabs>
 
-Supported connection types: `pg` Pool, `better-sqlite3`, postgres.js `Sql`, and Kysely. Use the same database for Corsair tables and your app tables — one migration, one connection string.
-
----
+Supported connection types: `pg` Pool, `better-sqlite3`, postgres.js `Sql`, and Kysely. Use the same database for Corsair tables and your app tables: one migration, one connection string.
 
 ## What's next
 
