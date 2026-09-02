@@ -307,27 +307,49 @@ describe('createConnectWaiters', () => {
 });
 
 describe('shouldCoalesceConnect', () => {
-	const connecting = (plugin: string): ConnectState => ({
+	const connecting = (
+		plugin: string,
+		tenantId: string | null = null,
+	): ConnectState => ({
 		phase: 'connecting',
 		plugin,
 		connectUrl: 'https://hub/connect/tok',
-		tenantId: null,
+		tenantId,
 	});
 
-	it('joins a second call for the plugin already being connected', () => {
-		expect(shouldCoalesceConnect(connecting('linear'), 'linear')).toBe(true);
+	it('joins a second call for the same plugin and tenant', () => {
+		expect(shouldCoalesceConnect(connecting('linear'), 'linear', null)).toBe(
+			true,
+		);
+		expect(
+			shouldCoalesceConnect(connecting('linear', 'acme'), 'linear', 'acme'),
+		).toBe(true);
 	});
 
 	it('supersedes when a different plugin is requested', () => {
-		expect(shouldCoalesceConnect(connecting('linear'), 'slack')).toBe(false);
+		expect(shouldCoalesceConnect(connecting('linear'), 'slack', null)).toBe(
+			false,
+		);
+	});
+
+	it('supersedes the same plugin for a different tenant', () => {
+		expect(
+			shouldCoalesceConnect(connecting('linear', 'acme'), 'linear', 'globex'),
+		).toBe(false);
+		expect(
+			shouldCoalesceConnect(connecting('linear', null), 'linear', 'acme'),
+		).toBe(false);
 	});
 
 	it('does not coalesce when idle or already succeeded', () => {
-		expect(shouldCoalesceConnect(initialConnectState, 'linear')).toBe(false);
+		expect(shouldCoalesceConnect(initialConnectState, 'linear', null)).toBe(
+			false,
+		);
 		expect(
 			shouldCoalesceConnect(
 				{ ...connecting('linear'), phase: 'success' },
 				'linear',
+				null,
 			),
 		).toBe(false);
 	});

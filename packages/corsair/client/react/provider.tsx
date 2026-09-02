@@ -176,6 +176,13 @@ export function CorsairProvider({
 	const beginWatch = useCallback(
 		(plugin: string, tenantId: string | null) => {
 			stopWatch();
+			// A reopen must cancel the previous flow's pending grace + invalidate its
+			// in-flight polls, or that stale confirmation cancels the new popup.
+			if (graceRef.current) {
+				clearTimeout(graceRef.current);
+				graceRef.current = null;
+			}
+			attemptRef.current += 1;
 			const attempt = attemptRef.current;
 			const scope = tenantId ? { tenantId } : undefined;
 			// Guard every settle: the poll must still belong to this attempt and a
@@ -252,7 +259,7 @@ export function CorsairProvider({
 			connectUrl: string,
 			tenantId: string | null,
 		): Promise<boolean> => {
-			if (shouldCoalesceConnect(connectStateRef.current, plugin)) {
+			if (shouldCoalesceConnect(connectStateRef.current, plugin, tenantId)) {
 				return new Promise<boolean>((resolve) => waiters.add(resolve));
 			}
 			attemptRef.current += 1;
