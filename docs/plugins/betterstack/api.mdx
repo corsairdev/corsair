@@ -1,0 +1,6124 @@
+---
+title: API
+description: "API reference for Better Stack: every `betterstack.api.*` operation with input and output types."
+---
+
+Every `betterstack.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Catalog
+
+### relations
+
+`catalog.relations`
+
+List all catalog relations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.catalog.relations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Heartbeat Groups
+
+### create
+
+`heartbeatGroups.create`
+
+Create a new heartbeat group
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.heartbeatGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
+| `paused` | `boolean` | No | Set to true to pause monitoring for any existing heartbeats in the group — we won't notify you about downtime. Set to false to resume monitoring for any existing heartbeats in the  |
+| `name` | `string` | No | A name of the group that you can see in the dashboard. |
+| `sort_index` | `number` | No | Set sort_index to specify how to sort your heartbeat groups. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`heartbeatGroups.get`
+
+Get a single heartbeat group by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.heartbeatGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `heartbeat_group_id` | `string \| number` | Yes | heartbeat_group_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`heartbeatGroups.list`
+
+List all heartbeat groups
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.heartbeatGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter heartbeat groups belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`heartbeatGroups.remove`
+
+Permanently delete a heartbeat group by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.heartbeatGroups.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `heartbeat_group_id` | `string \| number` | Yes | heartbeat_group_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`heartbeatGroups.update`
+
+Updates an existing heartbeat group's properties
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.heartbeatGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `heartbeat_group_id` | `string \| number` | Yes | heartbeat_group_id (path parameter) |
+| `period` | `number` | No | How often should we expect this heartbeat? In seconds Minimum value: 30 seconds |
+| `paused` | `boolean` | No | Set to true to pause monitoring for any existing heartbeats in the group — we won't notify you about downtime. Set to false to resume monitoring for any existing heartbeats in the  |
+| `name` | `string` | No | A name of the group that you can see in the dashboard. |
+| `sort_index` | `number` | No | Set sort_index to specify how to sort your heartbeat groups. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Heartbeats
+
+### availability
+
+`heartbeats.availability`
+
+Retrieve availability summary for a specific heartbeat
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.heartbeats.availability({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `heartbeat_id` | `string \| number` | Yes | heartbeat_id (path parameter) |
+| `from` | `string` | No | Start date (e.g., 2021-01-26) |
+| `to` | `string` | No | End date (e.g., 2021-01-27) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`heartbeats.create`
+
+Create a new heartbeat monitor for cron jobs and scheduled tasks
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.heartbeats.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
+| `name` | `string` | No | The name of the service for this heartbeat. |
+| `period` | `number` | No | How often should we expect this heartbeat? In seconds Minimum value: 30 seconds |
+| `grace` | `number` | No | Heartbeats can fluctuate; specify this value to control what is still acceptable Minimum value: 0 seconds We recommend setting this to approx. 20% of period |
+| `call` | `boolean` | No | Should we call the on-call person? |
+| `sms` | `boolean` | No | Should we send an SMS to the on-call person? |
+| `email` | `boolean` | No | Should we send an email to the on-call person? |
+| `push` | `boolean` | No | Should we send a push notification to the on-call person? |
+| `critical_alert` | `boolean` | No | Should we send a critical push notification that ignores the mute switch and Do not Disturb mode? |
+| `team_wait` | `number` | No | How long should we wait before escalating the incident alert to the team? Leave blank to disable escalating to the entire team. |
+| `heartbeat_group_id` | `number` | No | Set this attribute if you want to add this heartbeat to a heartbeat group |
+| `sort_index` | `number` | No | An index controlling the position of a heartbeat in the heartbeat group. |
+| `paused` | `boolean` | No | Set to true to pause monitoring — we won't notify you about downtime. Set to false to resume monitoring |
+| `server_timezone` | `string` | No | Optional IANA timezone (e.g. Europe/Berlin) used for DST-aware missed-beat detection. Requires period >= 3600 (1 hour) |
+| `maintenance_days` | `string[]` | No | An array of maintenance days to set. If a maintenance window is overnight both affected days should be set. Allowed values are ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] or  |
+| `maintenance_from` | `string` | No | Start of the maintenance window each day. We won't check your website during this window. Example: '01:00:00' |
+| `maintenance_to` | `string` | No | End of the maintenance window each day. Example: '03:00:00' |
+| `maintenance_timezone` | `string` | No | The timezone to use for the maintenance window each day. Defaults to UTC. The accepted values can be found in the Rails TimeZone documentation. https://api.rubyonrails.org/classes/ |
+| `policy_id` | `number` | No | Set the escalation policy for the monitor. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`heartbeats.get`
+
+Get a single heartbeat by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.heartbeats.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `heartbeat_id` | `string \| number` | Yes | heartbeat_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`heartbeats.list`
+
+List all heartbeats
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.heartbeats.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter heartbeats belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`heartbeats.remove`
+
+Permanently delete a heartbeat by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.heartbeats.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `heartbeat_id` | `string \| number` | Yes | heartbeat_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`heartbeats.update`
+
+Update an existing heartbeat configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.heartbeats.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `heartbeat_id` | `string \| number` | Yes | heartbeat_id (path parameter) |
+| `name` | `string` | No | The name of the service for this heartbeat. |
+| `period` | `number` | No | How often should we expect this heartbeat? In seconds Minimum value: 30 seconds |
+| `grace` | `number` | No | Heartbeats can fluctuate; specify this value to control what is still acceptable Minimum value: 0 seconds We recommend setting this to approx. 20% of period |
+| `call` | `boolean` | No | Should we call the on-call person? |
+| `sms` | `boolean` | No | Should we send an SMS to the on-call person? |
+| `email` | `boolean` | No | Should we send an email to the on-call person? |
+| `push` | `boolean` | No | Should we send a push notification to the on-call person? |
+| `critical_alert` | `boolean` | No | Should we send a critical push notification that ignores the mute switch and Do not Disturb mode? |
+| `team_wait` | `number` | No | How long should we wait before escalating the incident alert to the team? Leave blank to disable escalating to the entire team. |
+| `heartbeat_group_id` | `number` | No | Set this attribute if you want to add this heartbeat to a heartbeat group |
+| `sort_index` | `number` | No | An index controlling the position of a heartbeat in the heartbeat group. |
+| `maintenance_days` | `string[]` | No | An array of maintenance days to set. If a maintenance window is overnight both affected days should be set. Allowed values are ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] or  |
+| `maintenance_from` | `string` | No | Start of the maintenance window each day. We won't check your website during this window. Example: '01:00:00' |
+| `maintenance_to` | `string` | No | End of the maintenance window each day. Example: '03:00:00' |
+| `maintenance_timezone` | `string` | No | The timezone to use for the maintenance window each day. Defaults to UTC. The accepted values can be found in the Rails TimeZone documentation. https://api.rubyonrails.org/classes/ |
+| `paused` | `boolean` | No | Set to true to pause monitoring — we won't notify you about downtime. Set to false to resume monitoring |
+| `server_timezone` | `string` | No | Optional IANA timezone (e.g. Europe/Berlin) used for DST-aware missed-beat detection. Requires period >= 3600 (1 hour). Pass an empty string or null to clear |
+| `policy_id` | `number` | No | Set the escalation policy for the monitor. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Incident Comments
+
+### create
+
+`incidentComments.create`
+
+Create a new comment on an incident
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.incidentComments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
+| `content` | `string` | Yes | The content of the comment. Markdown is supported for formatting. |
+| `user_email` | `string` | No | Email of a team member to tag in the comment. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`incidentComments.get`
+
+Get a single comment from an incident
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.incidentComments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
+| `comment_id` | `string \| number` | Yes | comment_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`incidentComments.list`
+
+List all comments on an incident
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.incidentComments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`incidentComments.remove`
+
+Delete an existing comment from an incident
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.incidentComments.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
+| `comment_id` | `string \| number` | Yes | comment_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`incidentComments.update`
+
+Update an existing comment on an incident
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.incidentComments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
+| `comment_id` | `string \| number` | Yes | comment_id (path parameter) |
+| `content` | `string` | No | The content of the comment. Markdown is supported for formatting. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Incidents
+
+### acknowledge
+
+`incidents.acknowledge`
+
+Acknowledge an ongoing incident
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.incidents.acknowledge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
+| `acknowledged_by` | `string` | No | User e-mail or a custom identifier of the entity that acknowledged the incident |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`incidents.create`
+
+Create a new incident and alert the on-call person
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.incidents.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
+| `requester_email` | `string` | Yes | E-mail of the user who requested the incident. Not required when authenticating with an OAuth token |
+| `name` | `string` | No | Short name of the incident |
+| `summary` | `string` | Yes | Brief summary of the incident |
+| `description` | `string` | No | Full description of the incident |
+| `call` | `boolean` | No | Should we call the on-call person? |
+| `sms` | `boolean` | No | Should we send an SMS to the on-call person? |
+| `email` | `boolean` | No | Should we send an e-mail to the on-call person? |
+| `push` | `boolean` | No | Should we send a push notification to the on-call person? Defaults to false. |
+| `critical_alert` | `boolean` | No | Should we send a critical push notification that ignores the mute switch and Do not Disturb mode? |
+| `team_wait` | `number` | No | How long to wait before escalating the incident alert to the team. Leave blank to disable escalating to the entire team. In seconds. |
+| `policy_id` | `string` | No | The ID of the escalation policy with which you'd like to escalate this incident |
+| `metadata` | `object` | No | An object with metadata keys as the object keys and arrays of metadata values as object values. See the metadata API response params page for details about metadata value attribute |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### escalate
+
+`incidents.escalate`
+
+Escalate an ongoing incident to a user, team, schedule, policy, or organization
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.incidents.escalate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
+| `escalation_type` | `string` | Yes | Who should we escalate this incident to? \\nPossible values: User, Team, Schedule, Policy, and Organization |
+| `user_email` | `string` | No | Define which team member to escalate to. \\nEither user_email or user_id required when escalating to User. |
+| `user_id` | `number` | No | Define which team member to escalate to. \\nEither user_email or user_id required when escalating to User. |
+| `team_name` | `string` | No | Define which team to escalate to. \\nEither team_name or team_id required when escalating to Team. |
+| `team_id` | `number` | No | Define which team to escalate to. \\nEither team_name or team_id required when escalating to Team. |
+| `schedule_id` | `number` | No | Define which on-call calendar to escalate to. Required when escalating to Schedule. |
+| `policy_id` | `number` | No | Define which escalation policy to escalate to. Required when escalating to Policy. |
+| `call` | `boolean` | No | Should we call? \\nCan be used when escalating to User, Team, Schedule, or Organization. |
+| `sms` | `boolean` | No | Should we send an SMS? \\nCan be used when escalating to User, Team, Schedule, or Organization. |
+| `email` | `boolean` | No | Should we send an email? \\nCan be used when escalating to User, Team, Schedule, or Organization. |
+| `push` | `boolean` | No | Should we send a push notification? \\nCan be used when escalating to User, Team, Schedule, or Organization. |
+| `critical_alert` | `boolean` | No | Should we send a critical push notification that ignores the mute switch and Do not Disturb mode? \\nCan be used when escalating to User, Team, Schedule, or Organization. |
+| `metadata` | `object` | No | An object with metadata keys as the object keys and arrays of metadata values as object values. See the metadata API response params page for details about metadata value attribute |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`incidents.get`
+
+Retrieve detailed information about a single incident by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.incidents.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`incidents.list`
+
+List all incidents with optional filtering by monitor, heartbeat, date range, or resolution status
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.incidents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter incidents belonging to a specified team when using global API token. |
+| `from` | `string` | No | Return only incidents from a certain date (format YYYY-MM-DD). |
+| `to` | `string` | No | Return incidents until a certain date (format YYYY-MM-DD). |
+| `monitor_id` | `number` | No | Filter incidents belonging to a specified monitor. |
+| `heartbeat_id` | `number` | No | Filter incidents belonging to a specified heartbeat. |
+| `resolved` | `boolean` | No | List only resolved or unresolved incidents. When omitted both resolved and unresolved incidents are listed. Example: Use ?resolved=false to list active incidents. |
+| `acknowledged` | `boolean` | No | List only acknowledged or unacknowledged incidents. When omitted both acknowledged or unacknowledged incidents are listed. |
+| `metadata` | `string` | No | List incidents with matching metadata. Pass the metadata as nested query parameter. Example: Use ?metadata[key][][value]=value or ?metadata[key][][type]=User&metadata[key][][email] |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`incidents.remove`
+
+Permanently delete an existing incident by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.incidents.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### resolve
+
+`incidents.resolve`
+
+Resolve an ongoing incident
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.incidents.resolve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
+| `resolved_by` | `string` | No | User e-mail or a custom identifier of the entity that resolved the incident |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### timeline
+
+`incidents.timeline`
+
+Retrieve all timeline events for an incident
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.incidents.timeline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `incident_id` | `string \| number` | Yes | incident_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Integrations
+
+### awsCloudWatch
+
+`integrations.awsCloudWatch`
+
+List all AWS CloudWatch integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.awsCloudWatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### azure
+
+`integrations.azure`
+
+List all Azure integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.azure({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter Azure integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### datadog
+
+`integrations.datadog`
+
+List all Datadog integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.datadog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter Datadog integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### elastic
+
+`integrations.elastic`
+
+List Elastic integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.elastic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter Elastic integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### email
+
+`integrations.email`
+
+List email integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.email({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter email integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### googleMonitoring
+
+`integrations.googleMonitoring`
+
+List all Google Monitoring integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.googleMonitoring({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### grafana
+
+`integrations.grafana`
+
+List all Grafana integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.grafana({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### jira
+
+`integrations.jira`
+
+List all Jira integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.jira({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter Jira integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### newRelic
+
+`integrations.newRelic`
+
+List New Relic integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.newRelic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pagerDuty
+
+`integrations.pagerDuty`
+
+List PagerDuty integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.pagerDuty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### prometheus
+
+`integrations.prometheus`
+
+List all Prometheus integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.prometheus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### slack
+
+`integrations.slack`
+
+List all Slack integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.slack({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter Slack integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### splunkOnCall
+
+`integrations.splunkOnCall`
+
+List all Splunk On-Call integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.integrations.splunkOnCall({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter integrations belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Metadata
+
+### create
+
+`metadata.create`
+
+Create or update a metadata record for a resource
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.metadata.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner_id` | `string` | Yes | Resource to update metadata for |
+| `owner_type` | `string` | Yes | Type of resource to update metadata for. Accepted values: Monitor, Heartbeat, Incident, WebhookIntegration, EmailIntegration, IncomingWebhook, or CallRouting |
+| `key` | `string` | Yes | Metadata key |
+| `values` | `object[]` | Yes | Array of metadata values. Existing values for the given key will be replaced. See the list of metadata API parameters for details. |
+| `mode` | `string` | No | How to apply the provided values. Accepted values: replace (default) replaces all existing values for the given key, merge adds the provided values to the existing ones. |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`metadata.list`
+
+List all existing metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.metadata.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter metadata belonging to a specified team when using global API token. |
+| `owner_id` | `string` | No | Resource to return metadata for. Metadata for all resources will be returned if omitted. |
+| `owner_type` | `string` | No | Type of resource to return metadata for. Accepted values: Monitor, Heartbeat, Incident, WebhookIntegration, EmailIntegration, IncomingWebhook, or CallRouting. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Monitor Groups
+
+### create
+
+`monitorGroups.create`
+
+Create a new monitor group
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.monitorGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
+| `paused` | `boolean` | No | Set to true to pause monitoring for any existing monitors in the group — we won't notify you about downtime. Set to false to resume monitoring for any existing monitors in the grou |
+| `name` | `string` | No | The name of the group that you can see in the dashboard. |
+| `sort_index` | `number` | No | Set sort_index to specify how to sort your monitor groups. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`monitorGroups.get`
+
+Get a single monitor group by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.monitorGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor_group_id` | `string \| number` | Yes | monitor_group_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`monitorGroups.list`
+
+List all monitor groups
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.monitorGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter monitor groups belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### monitors
+
+`monitorGroups.monitors`
+
+Get all monitors belonging to a monitor group
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.monitorGroups.monitors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `monitor_group_id` | `string \| number` | Yes | monitor_group_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`monitorGroups.remove`
+
+Permanently delete a monitor group by ID from Better Stack Uptime
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.monitorGroups.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor_group_id` | `string \| number` | Yes | monitor_group_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`monitorGroups.update`
+
+Updates an existing monitor group's properties
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.monitorGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor_group_id` | `string \| number` | Yes | monitor_group_id (path parameter) |
+| `paused` | `boolean` | No | Set to true to pause monitoring for any existing monitors in the group — we won't notify you about downtime. Set to false to resume monitoring for any existing monitors in the grou |
+| `name` | `string` | No | The name of the group that you can see in the dashboard. |
+| `sort_index` | `number` | No | Set sort_index to specify how to sort your monitor groups. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Monitors
+
+### availability
+
+`monitors.availability`
+
+Return an availability summary for a specific monitor
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.monitors.availability({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor_id` | `string \| number` | Yes | monitor_id (path parameter) |
+| `from` | `string` | No | Start date (e.g., 2021-01-26) |
+| `to` | `string` | No | End date (e.g., 2021-01-27) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`monitors.create`
+
+Create a new uptime monitor for a URL or service
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.monitors.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
+| `monitor_type` | `string` | No | — |
+| `url` | `string` | No | The URL of your website or the host you want to ping. See monitor_type below. |
+| `pronounceable_name` | `string` | No | The name of the monitor. |
+| `email` | `boolean` | No | Send e-mail alerts. |
+| `sms` | `boolean` | No | Send SMS alerts. |
+| `call` | `boolean` | No | Phone call alerts. |
+| `push` | `boolean` | No | Should we send a push notification to the on-call person? |
+| `critical_alert` | `boolean` | No | Should we send a critical alert to the on-call person? |
+| `check_frequency` | `number` | No | Check frequency (in seconds). Check frequency must be at least the timeout value. |
+| `request_headers` | `object[]` | No | The request headers that will be send with the check. |
+| `expected_status_codes` | `number[]` | No | An array of status codes you expect to receive from your website. These status codes are considered only if the monitor_type is expected_status_code. |
+| `domain_expiration` | `number` | No | How many days before the domain expires do you want to be alerted? Valid values are 1, 2, 3, 7, 14, 30, and 60. |
+| `ssl_expiration` | `number` | No | How many days before the SSL certificate expires do you want to be alerted? Valid values are 1, 2, 3, 7, 14, 30, and 60. |
+| `policy_id` | `string` | No | Set the escalation policy for the monitor. |
+| `expiration_policy_id` | `number` | No | Set the expiration escalation policy for the monitor. It is used for SSL certificate and domain expiration checks. When set to null, an e-mail is sent to the entire team. |
+| `follow_redirects` | `boolean` | No | Should we automatically follow redirects when sending the HTTP request? |
+| `required_keyword` | `string` | No | Required if monitor_type is set to keyword or udp. We will create a new incident if this keyword is missing on your page. |
+| `team_wait` | `number` | No | How long to wait before escalating the incident alert to the team. Leave blank to disable escalating to the entire team. In seconds. |
+| `paused` | `boolean` | No | Set to true to pause monitoring — we won't notify you about downtime. Set to false to resume monitoring. |
+| `port` | `string` | No | Required if monitor_type is set to tcp, udp, smtp, pop, or imap. tcp and udp monitors accept any ports, while smtp, pop, and imap accept only the specified ports corresponding with |
+| `ip_version` | `string` | No | Which Internet Protocol Version should we use for our requests. Valid options are: ipv4 - use IPv4 only, ipv6 - use IPv6 only. When not set or set to null, we use both IPv4 and IPv |
+| `regions` | `string[]` | No | An array of regions to set. Allowed values are ['us', 'eu', 'as', 'au'] or any subset of these regions. |
+| `monitor_group_id` | `string` | No | Set this attribute if you want to add this monitor to a monitor group. |
+| `recovery_period` | `number` | No | How long the monitor must be up to automatically mark an incident as resolved after being down. In seconds. |
+| `verify_ssl` | `boolean` | No | Should we verify SSL certificate validity? |
+| `confirmation_period` | `number` | No | How long should we wait after observing a failure before we start a new incident? In seconds. The maximum value is 86400. |
+| `http_method` | `string` | No | HTTP Method used to make a request. Valid options: GET, HEAD, POST, PUT, PATCH |
+| `request_timeout` | `number` | No | — |
+| `request_body` | `string` | No | Request body for POST, PUT, PATCH requests. Required if monitor_type is set to dns (domain to query the DNS server with). |
+| `auth_username` | `string` | No | Basic HTTP authentication username to include with the request. |
+| `auth_password` | `string` | No | Basic HTTP authentication password to include with the request. |
+| `maintenance_days` | `string[]` | No | An array of maintenance days to set. If a maintenance window is overnight both affected days should be set. Allowed values are ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] or  |
+| `maintenance_from` | `string` | No | Start of the maintenance window each day. We won't check your website during this window. Example: '01:00:00' |
+| `maintenance_to` | `string` | No | End of the maintenance window each day. Example: '03:00:00' |
+| `maintenance_timezone` | `string` | No | The timezone to use for the maintenance window each day. Defaults to UTC. The accepted values can be found in the Rails TimeZone documentation. https://api.rubyonrails.org/classes/ |
+| `remember_cookies` | `boolean` | No | Do you want to keep cookies when redirecting? |
+| `playwright_script` | `string` | No | For Playwright monitors, the JavaScript source code of the scenario. |
+| `scenario_name` | `string` | No | For Playwright monitors, the scenario name identifying the monitor in the UI. |
+| `environment_variables` | `object` | No | For Playwright monitors, the environment variables that can be used in the scenario. Example: { \\"PASSWORD\\": \\"passw0rd\\" }. |
+| `proxy_host` | `string` | No | The host of the proxy server to use for the monitor. Can include authentication credentials (e.g., user:pass@proxy.example.com). |
+| `proxy_port` | `string` | No | The port of the proxy server to use for the monitor. |
+
+<AccordionGroup>
+<Accordion title="request_headers full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="environment_variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`monitors.get`
+
+Get a single monitor
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.monitors.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor_id` | `string \| number` | Yes | monitor_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`monitors.list`
+
+List all monitors
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.monitors.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter monitors belonging to a specified team when using global API token. |
+| `url` | `string` | No | Filter monitors by their URL property. |
+| `pronounceable_name` | `string` | No | Filter monitors by their pronounceable name property. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`monitors.remove`
+
+Permanently delete a monitor by ID from Better Stack Uptime
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.monitors.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor_id` | `string \| number` | Yes | monitor_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### responseTimes
+
+`monitors.responseTimes`
+
+Retrieves response time performance metrics for a specific uptime monitor
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.monitors.responseTimes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor_id` | `string \| number` | Yes | monitor_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`monitors.update`
+
+Update an existing uptime monitor configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.monitors.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitor_id` | `string \| number` | Yes | monitor_id (path parameter) |
+| `monitor_type` | `string` | No | — |
+| `url` | `string` | No | The URL of your website or the host you want to ping. See monitor_type below. |
+| `pronounceable_name` | `string` | No | The name of the monitor. |
+| `email` | `boolean` | No | Send email alerts. |
+| `sms` | `boolean` | No | Send SMS alerts. |
+| `call` | `boolean` | No | Phone call alerts. |
+| `push` | `boolean` | No | Should we send a push notification to the on-call person? |
+| `critical_alert` | `boolean` | No | Should we send a critical push notification that ignores the mute switch and Do not Disturb mode? |
+| `check_frequency` | `number` | No | Check frequency (in seconds). Check frequency must be at least the timeout value. |
+| `request_headers` | `object[]` | No | The request headers that will be send with the check. |
+| `expected_status_codes` | `number[]` | No | An array of status codes you expect to receive from your website. These status codes are considered only if the monitor_type is expected_status_code. |
+| `domain_expiration` | `number` | No | How many days before the domain expires do you want to be alerted? Valid values are 1, 2, 3, 7, 14, 30, and 60. |
+| `ssl_expiration` | `number` | No | How many days before the SSL certificate expires do you want to be alerted? Valid values are 1, 2, 3, 7, 14, 30, and 60. |
+| `policy_id` | `string` | No | Set the escalation policy for the monitor. |
+| `expiration_policy_id` | `number` | No | Set the expiration escalation policy for the monitor. It is used for SSL certificate and domain expiration checks. When set to null, an e-mail is sent to the entire team. |
+| `follow_redirects` | `boolean` | No | Should we automatically follow redirects when sending the HTTP request? |
+| `required_keyword` | `string` | No | Required if monitor_type is set to keyword or udp. We will create a new incident if this keyword is missing on your page. |
+| `team_wait` | `number` | No | How long to wait before escalating the incident alert to the team. Leave blank to disable escalating to the entire team. In seconds. |
+| `paused` | `boolean` | No | Set to true to pause monitoring — we won't notify you about downtime. Set to false to resume monitoring. |
+| `port` | `string` | No | Required if monitor_type is set to tcp, udp, smtp, pop, or imap. tcp and udp monitors accept any ports, while smtp, pop, and imap accept only the specified ports corresponding with |
+| `ip_version` | `string` | No | Which Internet Protocol Version should we use for our requests. Valid options are: ipv4 - use IPv4 only, ipv6 - use IPv6 only. When not set or set to null, we use both IPv4 and IPv |
+| `regions` | `string[]` | No | An array of regions to set. Allowed values are ['us', 'eu', 'as', 'au'] or any subset of these regions. |
+| `monitor_group_id` | `string` | No | Set this attribute if you want to add this monitor to a monitor group. |
+| `recovery_period` | `number` | No | How long the monitor must be up to automatically mark an incident as resolved after being down. In seconds. |
+| `verify_ssl` | `boolean` | No | Should we verify SSL certificate validity? |
+| `confirmation_period` | `number` | No | How long should we wait after observing a failure before we start a new incident? In seconds. The maximum value is 86400. |
+| `http_method` | `string` | No | HTTP Method used to make a request. Valid options: GET, HEAD, POST, PUT, PATCH |
+| `request_timeout` | `number` | No | — |
+| `request_body` | `string` | No | Request body for POST, PUT, PATCH requests. Required if monitor_type is set to dns (domain to query the DNS server with). |
+| `auth_username` | `string` | No | Basic HTTP authentication username to include with the request. |
+| `auth_password` | `string` | No | Basic HTTP authentication password to include with the request. |
+| `maintenance_days` | `string[]` | No | An array of maintenance days to set. If a maintenance window is overnight both affected days should be set. Allowed values are ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] or  |
+| `maintenance_from` | `string` | No | Start of the maintenance window each day. We won't check your website during this window. Example: '01:00:00' |
+| `maintenance_to` | `string` | No | End of the maintenance window each day. Example: '03:00:00' |
+| `maintenance_timezone` | `string` | No | The timezone to use for the maintenance window each day. Defaults to UTC. The accepted values can be found in the Rails TimeZone documentation. https://api.rubyonrails.org/classes/ |
+| `remember_cookies` | `boolean` | No | Do you want to keep cookies when redirecting? |
+| `playwright_script` | `string` | No | For Playwright monitors, the JavaScript source code of the scenario. |
+| `scenario_name` | `string` | No | For Playwright monitors, the scenario name identifying the monitor in the UI. |
+| `environment_variables` | `object` | No | For Playwright monitors, the environment variables that can be used in the scenario. Example: { \\"PASSWORD\\": \\"passw0rd\\" }. |
+| `proxy_host` | `string` | No | The host of the proxy server to use for the monitor. Can include authentication credentials (e.g., user:pass@proxy.example.com). |
+| `proxy_port` | `string` | No | The port of the proxy server to use for the monitor. |
+
+<AccordionGroup>
+<Accordion title="request_headers full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="environment_variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## On Calls
+
+### create
+
+`onCalls.create`
+
+Create a new on-call schedule
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.onCalls.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the schedule |
+| `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### events
+
+`onCalls.events`
+
+List all events for a specific on-call schedule
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.onCalls.events({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `schedule_id` | `string \| number` | Yes | schedule_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`onCalls.get`
+
+Get a single on-call schedule by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.onCalls.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schedule_id` | `string \| number` | Yes | schedule_id (path parameter) |
+| `date` | `string` | No | Include an ISO-8601-formatted date or date-time if you want to look-up on-call at a specific date or time. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`onCalls.list`
+
+List all on-call schedules
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.onCalls.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter on-call schedules belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`onCalls.remove`
+
+Permanently delete an on-call schedule by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.onCalls.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schedule_id` | `string \| number` | Yes | schedule_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`onCalls.update`
+
+Update an on-call schedule's name
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.onCalls.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schedule_id` | `string \| number` | Yes | schedule_id (path parameter) |
+| `name` | `string` | No | The name of the schedule |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Outgoing Webhooks
+
+### create
+
+`outgoingWebhooks.create`
+
+Create a new outgoing webhook integration
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.outgoingWebhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource. |
+| `name` | `string` | No | The name of the Outgoing Webhook integration that you can see in the dashboard. |
+| `url` | `string` | Yes | The URL of the Outgoing Webhook integration. |
+| `trigger_type` | `string` | Yes | The type of trigger for the Outgoing Webhook integration. Possible values are on_call_change, incident_change and monitor_change. |
+| `notify_alongside_primary_responder` | `boolean` | No | Whether to notify this integration alongside the primary responder when no escalation policy is configured. Only applicable if trigger_type is incident_change. Defaults to true. |
+| `on_incident_started` | `boolean` | No | Whether to trigger the Outgoing Webhook integration when an incident starts. Only applicable if trigger_type is incident_change. |
+| `on_incident_acknowledged` | `boolean` | No | Whether to trigger the Outgoing Webhook integration when an incident is acknowledged. Only applicable if trigger_type is incident_change. |
+| `on_incident_resolved` | `boolean` | No | Whether to trigger the Outgoing Webhook integration when an incident is resolved. Only applicable if trigger_type is incident_change. |
+| `on_incident_reopened` | `boolean` | No | Whether to trigger the Outgoing Webhook integration when an incident is reopened. Only applicable if trigger_type is incident_change. |
+| `on_incident_comment` | `boolean` | No | Whether to trigger the Outgoing Webhook integration when a new comment is added to an incident. Only applicable if trigger_type is incident_change. |
+| `custom_webhook_template_attributes` | `object` | No | Use this to specify the custom webhook template attributes. See below. |
+
+<AccordionGroup>
+<Accordion title="custom_webhook_template_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`outgoingWebhooks.get`
+
+Get a single outgoing webhook integration by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.outgoingWebhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `outgoing_webhook_id` | `string \| number` | Yes | outgoing_webhook_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`outgoingWebhooks.list`
+
+List all outgoing webhook integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.outgoingWebhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter outgoing webhooks belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`outgoingWebhooks.remove`
+
+Delete an outgoing webhook integration by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.outgoingWebhooks.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `outgoing_webhook_id` | `string \| number` | Yes | outgoing_webhook_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`outgoingWebhooks.update`
+
+Update an existing outgoing webhook integration
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.outgoingWebhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `outgoing_webhook_id` | `string \| number` | Yes | outgoing_webhook_id (path parameter) |
+| `name` | `string` | No | The name of the Outgoing Webhook integration that you can see in the dashboard. |
+| `url` | `string` | No | The URL of the Outgoing Webhook integration. |
+| `notify_alongside_primary_responder` | `boolean` | No | Whether to notify this integration alongside the primary responder when no escalation policy is configured. Only applicable if trigger_type is incident_change. Defaults to true. |
+| `on_incident_started` | `boolean` | No | Whether to trigger the Outgoing Webhook integration when an incident starts. Only applicable if trigger_type is incident_change. |
+| `on_incident_acknowledged` | `boolean` | No | Whether to trigger the Outgoing Webhook integration when an incident is acknowledged. Only applicable if trigger_type is incident_change. |
+| `on_incident_resolved` | `boolean` | No | Whether to trigger the Outgoing Webhook integration when an incident is resolved. Only applicable if trigger_type is incident_change. |
+| `on_incident_reopened` | `boolean` | No | Whether to trigger the Outgoing Webhook integration when an incident is reopened. Only applicable if trigger_type is incident_change. |
+| `on_incident_comment` | `boolean` | No | Whether to trigger the Outgoing Webhook integration when a new comment is added to an incident. Only applicable if trigger_type is incident_change. |
+| `custom_webhook_template_attributes` | `object` | No | Use this to specify the custom webhook template attributes. See below. |
+
+<AccordionGroup>
+<Accordion title="custom_webhook_template_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Policies
+
+### create
+
+`policies.create`
+
+Creates a new escalation policy for incident management
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.policies.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
+| `name` | `string` | Yes | The name of this Policy. |
+| `repeat_count` | `number` | No | How many times should the entire policy be repeated if no one acknowledges the incident. |
+| `repeat_delay` | `number` | No | How long in seconds to wait before each repetition. |
+| `steps` | `object[]` | No | An array of escalation policy steps. See the list of escalation policy API parameters for details. |
+| `fallback_policy_id` | `number` | No | The ID of an escalation policy to escalate to once this policy has run all its steps and repeats without being acknowledged. Must belong to the same organization. Defaults to null  |
+
+<AccordionGroup>
+<Accordion title="steps full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`policies.get`
+
+Get a single escalation policy by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.policies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy_id` | `string \| number` | Yes | policy_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`policies.list`
+
+List all escalation policies
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.policies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter policies belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`policies.remove`
+
+Delete an escalation policy by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.policies.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy_id` | `string \| number` | Yes | policy_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`policies.update`
+
+Update an existing escalation policy
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.policies.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy_id` | `string \| number` | Yes | policy_id (path parameter) |
+| `name` | `string` | No | The name of this Policy. |
+| `repeat_count` | `number` | No | How many times should the entire policy be repeated if no one acknowledges the incident. |
+| `repeat_delay` | `number` | No | How long in seconds to wait before each repetition. |
+| `steps` | `object[]` | No | An array of escalation policy steps. See the list of escalation policy API parameters for details. |
+| `fallback_policy_id` | `number` | No | The ID of an escalation policy to escalate to once this policy has run all its steps and repeats without being acknowledged. Must belong to the same organization. Defaults to null  |
+
+<AccordionGroup>
+<Accordion title="steps full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Policy Groups
+
+### create
+
+`policyGroups.create`
+
+Create a new escalation policy group
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.policyGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
+| `name` | `string` | Yes | The name of the group that you can see in the dashboard. |
+| `sort_index` | `number` | No | Set sort_index to specify how to sort your escalation policy groups. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`policyGroups.get`
+
+Get a single escalation policy group
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.policyGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy_group_id` | `string \| number` | Yes | policy_group_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`policyGroups.list`
+
+List all escalation policy groups
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.policyGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter policy groups belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`policyGroups.remove`
+
+Delete an escalation policy group by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.policyGroups.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy_group_id` | `string \| number` | Yes | policy_group_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`policyGroups.update`
+
+Updates an existing escalation policy group's properties
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.policyGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy_group_id` | `string \| number` | Yes | policy_group_id (path parameter) |
+| `name` | `string` | No | The name of the group that you can see in the dashboard. |
+| `sort_index` | `number` | No | Set sort_index to specify how to sort your escalation policy. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Source Groups
+
+### create
+
+`sourceGroups.create`
+
+Create a new source group
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.sourceGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
+| `name` | `string` | No | The name of the group that you can see in the dashboard. |
+| `sort_index` | `number` | No | Set sort_index to specify how to sort your source groups. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`sourceGroups.remove`
+
+Permanently delete a source group by ID from Better Stack Telemetry (Logs)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.sourceGroups.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_group_id` | `string \| number` | Yes | source_group_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`sourceGroups.update`
+
+Update an existing source group in Better Stack Logs/Telemetry
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.sourceGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source_group_id` | `string \| number` | Yes | source_group_id (path parameter) |
+| `name` | `string` | No | The name of the group that you can see in the dashboard. |
+| `sort_index` | `number` | No | Set sort_index to specify how to sort your source groups. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Status Page Groups
+
+### create
+
+`statusPageGroups.create`
+
+Create a new status page group
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.statusPageGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | No | Required if using a global API token to specify the team which should own the resource. |
+| `name` | `string` | No | A name for the group that you can see in the dashboard. |
+| `sort_index` | `number` | No | Set sort_index to specify how to sort your status page groups. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`statusPageGroups.get`
+
+Get a single status page group by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusPageGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_group_id` | `string \| number` | Yes | status_page_group_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`statusPageGroups.list`
+
+List all status page groups
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusPageGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`statusPageGroups.remove`
+
+Delete a status page group by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.statusPageGroups.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_group_id` | `string \| number` | Yes | status_page_group_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### statusPages
+
+`statusPageGroups.statusPages`
+
+List status pages within a specific status page group
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusPageGroups.statusPages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `status_page_group_id` | `string \| number` | Yes | status_page_group_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`statusPageGroups.update`
+
+Update an existing status page group
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.statusPageGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_group_id` | `string \| number` | Yes | status_page_group_id (path parameter) |
+| `name` | `string` | No | A name for the group that you can see in the dashboard. |
+| `sort_index` | `number` | No | Set sort_index to specify how to sort your status page groups. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Status Page Reports
+
+### create
+
+`statusPageReports.create`
+
+Create a new status page report (incident or maintenance)
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.statusPageReports.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `title` | `string` | No | The title of your new status page report. |
+| `message` | `string` | No | The first status update message for this report. |
+| `report_type` | `string` | No | The type of the report to be created. Expects either manual or maintenance. Default: manual |
+| `notify_subscribers` | `boolean` | No | Whether or not to send a notification email to subscribers of the status page. Default: false |
+| `affected_resources` | `object[]` | No | An array of objects, where each object contains status_page_resource_id and status attributes. status_page_resource_id - The ID of the status page resource which you want to affect |
+| `published_at` | `string` | No | The time that will show as the time that the first status update was published at (formatted in ISO-8601). Default: current time |
+| `starts_at` | `string` | No | The time when the report comes into effect (formatted in ISO-8601). Default: current time |
+| `ends_at` | `string` | No | The time when the report ends (formatted in ISO-8601). Only required when report_type is set to maintenance. |
+
+<AccordionGroup>
+<Accordion title="affected_resources full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`statusPageReports.get`
+
+Get a single status page report by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusPageReports.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`statusPageReports.list`
+
+List all reports on a status page
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusPageReports.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`statusPageReports.remove`
+
+Permanently delete a status page report by ID from Better Stack Uptime
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.statusPageReports.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`statusPageReports.update`
+
+Update an existing status page report
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.statusPageReports.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
+| `title` | `string` | No | The title of your new status page report. |
+| `starts_at` | `string` | No | The time when the report comes into effect (formatted in ISO-8601). Default: current time |
+| `ends_at` | `string` | No | The time when the report ends (formatted in ISO-8601). Only required when report_type is set to maintenance. |
+| `affected_resources` | `object[]` | No | An array of objects, where each object contains status_page_resource_id and status attributes, only possible to change if report_type is set to maintenance. status_page_resource_id |
+
+<AccordionGroup>
+<Accordion title="affected_resources full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Status Page Resources
+
+### create
+
+`statusPageResources.create`
+
+Create a new status page resource
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.statusPageResources.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `status_page_section_id` | `number` | No | The ID of the section which should contain this resource. When omitted, defaults to the first section on the status page. |
+| `widget_type` | `string` | No | What widget to display for this resource. Available values:\\n\\n- plain - Only display status.\\n- history - Display historical status.\\n- intraday_history - Display detailed histori |
+| `resource_id` | `string` | No | The ID of the resource you are adding. Omit or set to null when resource_type is ManuallyTrackedItem. |
+| `resource_type` | `string` | No | The type of the resource you are adding. Available values: ManuallyTrackedItem, Monitor, MonitorGroup, Heartbeat, HeartbeatGroup, WebhookIntegration, EmailIntegration, IncomingWebh |
+| `public_name` | `string` | No | The resource name displayed publicly on your status page. |
+| `explanation` | `string` | No | A detailed text displayed as a help icon. |
+| `position` | `number` | No | The position of this resource on your status page, indexed from zero. If you don't specify a position, we add the resource to the end of the status page. When you specify a positio |
+| `mark_as_down_for` | `string` | No | How the resource status is affected when an incident occurs. Possible values: any_incident, no_incident, incident_matching_metadata. Defaults to any_incident. |
+| `mark_as_down_metadata_rule` | `object` | No | A rule to match incident metadata. Required when mark_as_down_for is incident_matching_metadata. The rule is a JSON object with key and values fields. See the metadata API response |
+| `mark_as_degraded_for` | `string` | No | How the resource status is affected when an incident occurs. Possible values: any_incident, no_incident, incident_matching_metadata. Defaults to no_incident. |
+| `mark_as_degraded_metadata_rule` | `object` | No | A rule to match incident metadata. Required when mark_as_degraded_for is incident_matching_metadata. The rule is a JSON object with key and values fields. See the metadata API resp |
+| `fixed_position` | `boolean` | No | If set to true, position reorders will be prevented. |
+
+<AccordionGroup>
+<Accordion title="mark_as_down_metadata_rule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="mark_as_degraded_metadata_rule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`statusPageResources.get`
+
+Get a single status page resource by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusPageResources.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `resource_id` | `string \| number` | Yes | resource_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`statusPageResources.list`
+
+List all resources on a status page
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusPageResources.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`statusPageResources.remove`
+
+Delete an existing resource from a status page
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.statusPageResources.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `resource_id` | `string \| number` | Yes | resource_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`statusPageResources.update`
+
+Update an existing status page resource
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.statusPageResources.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `resource_id` | `string \| number` | Yes | resource_id (path parameter) |
+| `status_page_section_id` | `number` | No | The ID of the section which should contain this resource. When omitted, defaults to the first section on the status page. |
+| `widget_type` | `string` | No | What widget to display for this resource. Available values:\\n\\n- plain - Only display status.\\n- history - Display historical status.\\n- intraday_history - Display detailed histori |
+| `resource_type` | `string` | No | The type of the resource you are adding. Available values: ManuallyTrackedItem, Monitor, MonitorGroup, Heartbeat, HeartbeatGroup, WebhookIntegration, EmailIntegration, IncomingWebh |
+| `public_name` | `string` | No | The resource name displayed publicly on your status page. |
+| `explanation` | `string` | No | A detailed text displayed as a help icon. |
+| `position` | `number` | No | The position of this resource on your status page, indexed from zero. If you don't specify a position, we add the resource to the end of the status page. When you specify a positio |
+| `mark_as_down_for` | `string` | No | How the resource status is affected when an incident occurs. Possible values: any_incident, no_incident, incident_matching_metadata. Defaults to any_incident. |
+| `mark_as_down_metadata_rule` | `object` | No | A rule to match incident metadata. Required when mark_as_down_for is incident_matching_metadata. The rule is a JSON object with key and values fields. See the metadata API response |
+| `mark_as_degraded_for` | `string` | No | How the resource status is affected when an incident occurs. Possible values: any_incident, no_incident, incident_matching_metadata. Defaults to no_incident. |
+| `mark_as_degraded_metadata_rule` | `object` | No | A rule to match incident metadata. Required when mark_as_degraded_for is incident_matching_metadata. The rule is a JSON object with key and values fields. See the metadata API resp |
+| `fixed_position` | `boolean` | No | If set to true, position reorders will be prevented. |
+
+<AccordionGroup>
+<Accordion title="mark_as_down_metadata_rule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="mark_as_degraded_metadata_rule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Status Pages
+
+### get
+
+`statusPages.get`
+
+Get a single status page by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusPages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`statusPages.list`
+
+List all your status pages
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusPages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`statusPages.update`
+
+Update an existing status page configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.statusPages.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `history` | `number` | No | Number of days to display on the status page. Between 7 and 365 days. |
+| `company_name` | `string` | No | Name of your company |
+| `company_url` | `string` | No | URL of your company's website |
+| `contact_url` | `string` | No | URL that should be used for contacting you in case of an emergency |
+| `logo_url` | `string` | No | A direct link to your company's logo. The image should be under 20MB in size |
+| `dark_logo_url` | `string` | No | A direct link to a dark version of your company's logo. The image should be under 20MB in size |
+| `whitelabeled` | `boolean` | No | — |
+| `timezone` | `string` | No | What timezone should we display your status page in? The accepted values can be found in the Rails TimeZone documentation. https://api.rubyonrails.org/classes/ActiveSupport/TimeZon |
+| `subdomain` | `string` | No | What subdomain should we use for your status page? This needs to be unique across our entire application, so choose carefully |
+| `custom_domain` | `string` | No | Do you want a custom domain on your status page? Add a CNAME record that points your domain to status.betteruptime.com Example: CNAME status.walmine.com statuspage.betteruptime.com |
+| `min_incident_length` | `number` | No | If you don't want to display short incidents on your status page, this attribute is for you. In seconds. |
+| `subscribable` | `boolean` | No | Do you want to allow users to subscribe to your status page changes? |
+| `hide_from_search_engines` | `boolean` | No | Hide your status page from search engines |
+| `custom_css` | `string` | No | Unleash your inner designer and tweak our status page design to fit your branding |
+| `custom_javascript` | `string` | No | Level up your status page by adding analytics, interactive features, or any other functionality you need |
+| `design` | `string` | No | Choose between classic and modern status page design. Possible values: v1, v2. |
+| `navigation_links` | `object[]` | No | — |
+| `theme` | `string` | No | Select a color theme of your status page. Possible values: light, dark, system. This only applies when the design is set to v2. |
+| `layout` | `string` | No | Pick your status page header layout. Possible values: vertical, horizontal. This only applies when the design is set to v2. |
+| `google_analytics_id` | `string` | No | Specify your own Google Analytics ID if you want to receive hits on your status page |
+| `announcement` | `string` | No | Add an announcement to your status page |
+| `announcement_embed_visible` | `boolean` | No | Toggle this field if you want to show an announcement in your embed You can embed the announcement using this snippet: !SNIPPET MISSING (quotes in the snippet break markdown/toml s |
+| `announcement_embed_link` | `string` | No | Point your embedded announcement to a specified URL |
+| `announcement_embed_custom_css` | `string` | No | Modify the design of the announcement embed |
+| `automatic_reports` | `boolean` | No | Automatically create status page updates for new incidents? |
+| `published` | `boolean` | No | Publish or unpublish your status page |
+| `password_enabled` | `boolean` | No | Do you want to enable password protection on your status page? |
+| `password` | `string` | No | Set a password of your status page (we won't store it as plaintext, promise) Required when password_enabled: true. We will set password_enabled: false automatically when you send u |
+| `require_sso` | `boolean` | No | Require SSO sign-in to access your status page. Requires SSO to be configured for your organization and is mutually exclusive with password protection. |
+| `ip_allowlist` | `string[]` | No | — |
+| `status_page_group_id` | `number` | No | The ID of the status page group to which this status page will belong. Can be null. |
+
+<AccordionGroup>
+<Accordion title="navigation_links full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Status Page Sections
+
+### create
+
+`statusPageSections.create`
+
+Create a new section on a status page
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.statusPageSections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `name` | `string` | No | The name of the section. Leave blank to hide the section header. |
+| `position` | `number` | No | The position of this resource on your status page, indexed from zero. If you don't specify a position, we add the resource to the end of the status page. When you specify a positio |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`statusPageSections.get`
+
+Get a single status page section
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusPageSections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `section_id` | `string \| number` | Yes | section_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`statusPageSections.list`
+
+List all sections of a specific status page
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusPageSections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`statusPageSections.remove`
+
+Permanently delete a status page section by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.statusPageSections.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `section_id` | `string \| number` | Yes | section_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`statusPageSections.update`
+
+Update an existing status page section
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.statusPageSections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `section_id` | `string \| number` | Yes | section_id (path parameter) |
+| `name` | `string` | No | The name of the section. Leave blank to hide the section header. |
+| `position` | `number` | No | The position of this resource on your status page, indexed from zero. If you don't specify a position, we add the resource to the end of the status page. When you specify a positio |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Status Updates
+
+### create
+
+`statusUpdates.create`
+
+Create a new status update for an existing status report
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.statusUpdates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
+| `message` | `string` | No | A message associated with the status update |
+| `notify_subscribers` | `boolean` | No | Whether or not to send a notification email to subscribers of the status page. Default: false |
+| `affected_resources` | `object[]` | Yes | An array of objects, where each object contains status_page_resource_id and status attributes. status_page_resource_id - The ID of the status page resource which you want to affect |
+| `published_at` | `string` | No | The time that will show as the time that the status update was published at (formatted in ISO-8601). Default: current time |
+
+<AccordionGroup>
+<Accordion title="affected_resources full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`statusUpdates.get`
+
+Get a single status update by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusUpdates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
+| `status_update_id` | `string \| number` | Yes | status_update_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`statusUpdates.list`
+
+List all status updates for a status page report
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.statusUpdates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`statusUpdates.remove`
+
+Delete an existing status update from a status report
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.statusUpdates.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
+| `status_update_id` | `string \| number` | Yes | status_update_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`statusUpdates.update`
+
+Update an existing status update for a status report
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.statusUpdates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_page_id` | `string \| number` | Yes | status_page_id (path parameter) |
+| `status_report_id` | `string \| number` | Yes | status_report_id (path parameter) |
+| `status_update_id` | `string \| number` | Yes | status_update_id (path parameter) |
+| `message` | `string` | No | A message associated with the status update |
+| `notify_subscribers` | `boolean` | No | Whether or not to send a notification email to subscribers of the status page. Default: false |
+| `affected_resources` | `object[]` | No | An array of objects, where each object contains status_page_resource_id and status attributes. status_page_resource_id - The ID of the status page resource which you want to affect |
+| `published_at` | `string` | No | The time that will show as the time that the status update was published at (formatted in ISO-8601). Default: current time |
+
+<AccordionGroup>
+<Accordion title="affected_resources full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Token
+
+### describe
+
+`token.describe`
+
+Retrieve the configured Uptime API token
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.token.describe({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configured` | `boolean` | Yes | — |
+| `token_length` | `number` | Yes | — |
+| `token_suffix` | `string` | Yes | — |
+| `scope` | `string` | Yes | — |
+
+
+
+---
+
+## Urgencies
+
+### create
+
+`urgencies.create`
+
+Create a new severity level (urgency) for incident management
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.urgencies.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
+| `name` | `string` | Yes | The name of this severity. |
+| `sms` | `boolean` | Yes | Whether to send SMS when a new incident is created. |
+| `call` | `boolean` | Yes | Whether to call when a new incident is created. |
+| `email` | `boolean` | Yes | Whether to send email when a new incident is created. |
+| `push` | `boolean` | Yes | Whether to send push notification when a new incident is created. |
+| `critical_alert` | `boolean` | No | Should we send a critical push notification that ignores the mute switch and Do not Disturb mode? |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`urgencies.get`
+
+Get a single severity level (urgency) by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.urgencies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urgency_id` | `string \| number` | Yes | urgency_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`urgencies.list`
+
+List all severity levels (urgencies)
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.urgencies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+| `team_name` | `string` | No | Filter severities belonging to a specified team when using global API token. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`urgencies.remove`
+
+Delete a severity (urgency) by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.urgencies.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urgency_id` | `string \| number` | Yes | urgency_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`urgencies.update`
+
+Update an existing severity level (urgency) configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.urgencies.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urgency_id` | `string \| number` | Yes | urgency_id (path parameter) |
+| `name` | `string` | No | The name of this severity. |
+| `sms` | `boolean` | No | Whether to send SMS when a new incident is created. |
+| `call` | `boolean` | No | Whether to call when a new incident is created. |
+| `email` | `boolean` | No | Whether to send email when a new incident is created. |
+| `push` | `boolean` | No | Whether to send push notification when a new incident is created. |
+| `critical_alert` | `boolean` | No | Should we send a critical push notification that ignores the mute switch and Do not Disturb mode? |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Urgency Groups
+
+### create
+
+`urgencyGroups.create`
+
+Create a new urgency group (severity group) for incident categorization
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.urgencyGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_name` | `string` | No | Required if using global API token to specify the team which should own the resource |
+| `name` | `string` | Yes | The name of the group that you can see in the dashboard. |
+| `sort_index` | `number` | No | Set sort_index to specify how to sort your severity groups. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`urgencyGroups.get`
+
+Get a single urgency group (severity group) by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.urgencyGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urgency_group_id` | `string \| number` | Yes | urgency_group_id (path parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`urgencyGroups.list`
+
+List all urgency groups (severity groups)
+
+**Risk:** `read`
+
+```ts
+await corsair.betterstack.api.urgencyGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page of results to return. Defaults to the first page. |
+| `per_page` | `number` | No | Records per page. Values above the provider maximum are silently clamped. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`urgencyGroups.remove`
+
+Permanently delete an urgency group (severity group) by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.betterstack.api.urgencyGroups.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urgency_group_id` | `string \| number` | Yes | urgency_group_id (path parameter) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`urgencyGroups.update`
+
+Update an existing urgency group (severity group)
+
+**Risk:** `write`
+
+```ts
+await corsair.betterstack.api.urgencyGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urgency_group_id` | `string \| number` | Yes | urgency_group_id (path parameter) |
+| `name` | `string` | No | The name of the group that you can see in the dashboard. |
+| `sort_index` | `number` | No | Set sort_index to specify how to sort your severity. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  attributes?: {
+  } | null,
+  relationships?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
