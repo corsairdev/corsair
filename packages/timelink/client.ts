@@ -56,7 +56,6 @@ export async function makeTimelinkRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 

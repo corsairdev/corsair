@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { DeletePerson } from './endpoints';
 import type {
 	TimelinkEndpointInputs,
@@ -74,7 +75,7 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const timelinkEndpointMeta = {
 	'deletePerson.delete': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete a person record by their unique identifier.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof timelinkEndpointsNested>;
@@ -129,12 +130,12 @@ export function timelink<const T extends TimelinkPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error('Timelink API key is missing');
+					throw new AuthMissingError('timelink', 'api_key');
 				}
 				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('timelink', 'api_key');
 		},
 	} satisfies InternalTimelinkPlugin;
 }

@@ -31,9 +31,7 @@ describe('Timelink deletePerson endpoint', () => {
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
-				HEADERS: expect.objectContaining({
-					Authorization: `Bearer ${apiKey}`,
-				}),
+				TOKEN: apiKey,
 			}),
 			expect.objectContaining({
 				method: 'DELETE',
@@ -72,15 +70,31 @@ describe('Timelink deletePerson endpoint', () => {
 		);
 	});
 
-	it('rejects ids containing path delimiters or dot segments', () => {
-		const schema = TimelinkEndpointInputSchemas.deletePerson;
+	it('rejects ids containing path delimiters or dot segments', async () => {
+		const badIds = [
+			'../accounts',
+			'..',
+			'.',
+			'123?target=other',
+			'123#fragment',
+			'',
+		];
 
-		expect(schema.safeParse({ id: '../accounts' }).success).toBe(false);
-		expect(schema.safeParse({ id: '..' }).success).toBe(false);
-		expect(schema.safeParse({ id: '.' }).success).toBe(false);
-		expect(schema.safeParse({ id: '123?target=other' }).success).toBe(false);
-		expect(schema.safeParse({ id: '123#fragment' }).success).toBe(false);
-		expect(schema.safeParse({ id: '' }).success).toBe(false);
-		expect(schema.safeParse({ id: 'valid-client-id' }).success).toBe(true);
+		for (const id of badIds) {
+			await expect(deletePerson(ctx, { id } as never)).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
+		}
+
+		expect(
+			TimelinkEndpointInputSchemas.deletePerson.safeParse({
+				id: 'valid-client-id',
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects a response that is not a delete envelope', async () => {
+		mockRequest.mockResolvedValueOnce({ ok: true });
+
+		await expect(deletePerson(ctx, { id: 'client-1' })).rejects.toThrow();
 	});
 });

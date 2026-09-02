@@ -42,8 +42,8 @@ describe('makeTimelinkRequest', () => {
 		const [config] = lastCall();
 		expect(config.BASE).toBe(TIMELINK_API_BASE);
 		expect(config.TOKEN).toBe('secret-key');
-		expect(config.HEADERS).toMatchObject({
-			Authorization: 'Bearer secret-key',
+		expect(config.HEADERS).toEqual({
+			'Content-Type': 'application/json',
 		});
 	});
 

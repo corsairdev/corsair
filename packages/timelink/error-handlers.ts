@@ -11,7 +11,8 @@ const statusOf = (error: Error): number | undefined => {
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (statusOf(error) === 429) return true;
+			const status = statusOf(error);
+			if (status !== undefined) return status === 429;
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
@@ -31,7 +32,8 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (statusOf(error) === 401) return true;
+			const status = statusOf(error);
+			if (status !== undefined) return status === 401;
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},

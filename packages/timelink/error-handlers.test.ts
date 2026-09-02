@@ -54,4 +54,17 @@ describe('Timelink error handlers', () => {
 		const result = await errorHandlers.DEFAULT.handler(wrapped);
 		expect(result.maxRetries).toBe(0);
 	});
+
+	it('does not treat a 500 as a rate limit just because the message mentions 429', () => {
+		const wrapped = new TimelinkAPIError('upstream 429', makeApiError(500));
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(wrapped)).toBe(false);
+	});
+
+	it('does not treat a 500 as auth failure just because the message mentions unauthorized', () => {
+		const wrapped = new TimelinkAPIError(
+			'unauthorized backend',
+			makeApiError(500),
+		);
+		expect(errorHandlers.AUTH_ERROR.match(wrapped)).toBe(false);
+	});
 });
