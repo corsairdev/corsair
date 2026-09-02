@@ -95,6 +95,7 @@ export const BaseProviders = [
 	'brightdata',
 	'browseai',
 	'browserless',
+	'bubble',
 	'bugsnag',
 	'buildkite',
 	'cal',
@@ -345,6 +346,7 @@ export const ProviderDisplayNames = {
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
 	browserless: 'Browserless',
+	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
 	cal: 'Cal',
@@ -602,6 +604,7 @@ export type AllProviders =
 	| 'brightdata'
 	| 'browseai'
 	| 'browserless'
+	| 'bubble'
 	| 'bugsnag'
 	| 'buildkite'
 	| 'cal'
