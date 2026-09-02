@@ -1,23 +1,7 @@
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export const APPVEYOR_API_BASE = 'https://ci.appveyor.com/api';
-
-// Disable the shared HTTP client's built-in 429 retry so the plugin's
-// error-handlers.ts RATE_LIMIT_ERROR (maxRetries:5 + Retry-After) is the
-// single source of retry truth. Otherwise each endpoint-level retry would
-// re-enter the client's 3-retry loop and compound to ~24 requests.
-const APPVEYOR_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 0,
-	backoffMultiplier: 1,
-	headerNames: { retryAfter: 'retry-after' },
-};
 
 export type AppVeyorRequestOptions = {
 	method?: ApiRequestOptions['method'];
@@ -57,21 +41,15 @@ export async function makeAppVeyorRequest<T>(
 			'Content-Type': 'application/json',
 		},
 	};
-	const result = await request<T>(
-		config,
-		{
-			method,
-			url: endpoint,
-			path: encodePath(options.path),
-			query: options.query,
-			body: method === 'GET' || method === 'DELETE' ? undefined : options.body,
-			mediaType:
-				method === 'GET' || method === 'DELETE'
-					? undefined
-					: 'application/json',
-		},
-		{ rateLimitConfig: APPVEYOR_RATE_LIMIT_CONFIG },
-	);
+	const result = await request<T>(config, {
+		method,
+		url: endpoint,
+		path: encodePath(options.path),
+		query: options.query,
+		body: method === 'GET' || method === 'DELETE' ? undefined : options.body,
+		mediaType:
+			method === 'GET' || method === 'DELETE' ? undefined : 'application/json',
+	});
 	return result;
 }
 

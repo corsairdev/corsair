@@ -7,11 +7,13 @@ export const errorHandlers = {
 			(error instanceof ApiError && error.status === 429) ||
 			error.message.toLowerCase().includes('rate limit') ||
 			error.message.toLowerCase().includes('too many requests'),
-		handler: async (error: Error) => ({
-			maxRetries: 5,
-			headersRetryAfterMs:
-				error instanceof ApiError ? error.retryAfter : undefined,
-		}),
+		handler: async () => {
+			// The shared corsair/http transport has already retried this 429
+			// (up to 3 times, honoring Retry-After when parseable). Re-running
+			// the endpoint here would multiply those attempts and replay
+			// requests before the rate-limit window resets.
+			return { maxRetries: 0 };
+		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) =>

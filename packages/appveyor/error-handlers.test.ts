@@ -11,12 +11,11 @@ function apiError(status: number, retryAfter?: number): ApiError {
 }
 
 describe('AppVeyor error handlers', () => {
-	it('routes 429 errors and preserves Retry-After', async () => {
+	it('routes 429 errors without endpoint-level retries', async () => {
 		const error = apiError(429, 1500);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
-		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toEqual({
-			maxRetries: 5,
-			headersRetryAfterMs: 1500,
+		expect(await errorHandlers.RATE_LIMIT_ERROR.handler()).toEqual({
+			maxRetries: 0,
 		});
 	});
 
