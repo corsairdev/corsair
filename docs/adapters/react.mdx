@@ -1,6 +1,6 @@
 ---
 title: React hooks
-description: createCorsairReactClient returns typed React hooks over the management API, including useTenants, useConnectionStatus, and useOAuthCallback.
+description: Typed React hooks over the management API (useTenants, useConnectionStatus, …), plus Corsair Connect — <CorsairProvider> opens a connect dialog when a tenant isn't connected, and resumes the call when you wrap it in call().
 ---
 
 `createCorsairReactClient({ baseURL })` returns a set of typed React hooks built on top of [`createCorsairClient`](/adapters/client). One factory call per app, then use the returned hooks anywhere in your component tree.
@@ -20,6 +20,97 @@ export const {
 ```
 
 React 18+ is a peer dependency. If you aren't on React, use the [vanilla client](/adapters/client).
+
+## Corsair Connect
+
+Wrap your app once. When a Corsair call fails because the tenant hasn't connected a plugin, a connect dialog opens on its own — there's no connect UI to build. Two levels of automatic, and you opt into the second only where you want it:
+
+- **The dialog always appears** — even for a call you didn't wrap in anything. The server records a connect-request on every auth-missing failure, and the provider opens the dialog from it.
+- **Wrap a mutation in `call`** when you also want it to *resume* — the action re-runs once connected, with no second click.
+
+Wrap the app at the root and point `onConnected` at a refresh so server reads that failed re-run against the now-connected account:
+
+```tsx app/providers.tsx
+"use client";
+import { CorsairProvider } from "corsair/client/react";
+import { useRouter } from "next/navigation";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  return (
+    <CorsairProvider onConnected={() => router.refresh()}>
+      {children}
+    </CorsairProvider>
+  );
+}
+```
+
+`baseURL` defaults to `/api/corsair` — set it if your handler is mounted elsewhere. `appearance` is `"light"`, `"dark"`, or `"auto"` (the default, which follows the OS color scheme).
+
+### Any client call — no wrapper
+
+With just the provider in place, a client-triggered call that fails opens the dialog automatically:
+
+```tsx count.tsx
+"use client";
+async function onClick() {
+  await countIssues(); // a server action; throws if Linear isn't connected
+}
+```
+
+The provider catches the rejection, reads the recorded connect-request, and opens the dialog. It can't re-run the original call, so the user clicks again after connecting. On by default — set `captureUnhandled={false}` to turn it off.
+
+<Note>
+In development, Next's error overlay catches the same rejection and shows on top of the dialog — dismiss it; it's gone in production. `call` and `error.tsx` (below) sidestep it entirely because they catch the error before it is ever unhandled.
+</Note>
+
+### Mutations that resume — `call`
+
+Wrap a mutation in `call` so the dialog opens **and** the action re-runs after connect — no second click. It resolves `null` if the user dismisses the dialog, and rethrows a genuine (non-connect) error:
+
+```tsx send.tsx
+"use client";
+import { useConnections } from "corsair/client/react";
+
+function SendButton() {
+  const { call } = useConnections();
+  return <button onClick={() => call(() => sendEmail())}>Send</button>;
+}
+```
+
+### Read regions — `error.tsx`
+
+A Server Component that reads Corsair data throws when the tenant isn't connected. Next routes that render error to the segment's `error.tsx` — the only boundary that catches a Server Component throw (a nested client boundary never sees it). Re-export `CorsairErrorBoundary` there; it opens the dialog and retries the segment once connected:
+
+```tsx app/inbox/error.tsx
+"use client";
+export { CorsairErrorBoundary as default } from "corsair/client/react";
+```
+
+### Proactive connect — `connect` + `isConnected`
+
+For a plain "Connect X" button, before anything has failed, `connect(plugin)` mints a fresh link and opens the same dialog; it resolves `true` once connected. The same hook reports this user's live connection status, so the button reflects reality and doesn't re-prompt an already-connected plugin — status refreshes itself after a successful connect, no manual refetch:
+
+```tsx connect-slack.tsx
+"use client";
+import { useConnections } from "corsair/client/react";
+
+function ConnectSlack() {
+  const { connect, isConnected, loading } = useConnections();
+  if (loading) return null; // status not in yet — don't flash "Connect"
+  return (
+    <button onClick={() => connect("slack")} disabled={isConnected("slack")}>
+      {isConnected("slack") ? "Slack connected" : "Connect Slack"}
+    </button>
+  );
+}
+```
+
+`useConnections()` returns `{ connect, call, isConnected, connections, loading }` for the app's own (default-scope) user. For a multi-tenant **admin dashboard** reading arbitrary tenants, use the factory's [`useConnectionStatus({ tenantId })`](#read-hooks) instead.
+
+<Note>
+Corsair Connect is React-only — the provider, boundary, and dialog are client components. A non-React frontend still gets the server side: the failed call records a connect-request that you read at `/api/corsair/connect/request`, so you can build your own prompt or redirect to the connect link. See the [vanilla client](/adapters/client).
+</Note>
 
 ## Read hooks
 
