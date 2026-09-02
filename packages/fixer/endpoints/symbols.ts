@@ -3,6 +3,9 @@ import type { FixerEndpoints } from '..';
 import { makeFixerRequest } from '../client';
 import { FixerEndpointOutputSchemas } from './types';
 
+/**
+ * Returns all available currency symbols along with their full names.
+ */
 export const list: FixerEndpoints['symbolsList'] = async (ctx, input) => {
 	const response = await makeFixerRequest('symbols', ctx.key, {
 		method: 'GET',

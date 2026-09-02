@@ -2,6 +2,9 @@ import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import type { z } from 'zod';
 
+/**
+ * Custom error class for Fixer API communication failures and error payloads.
+ */
 export class FixerAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
@@ -48,6 +51,15 @@ function isFixerErrorPayload(data: unknown): data is FixerErrorPayload {
 
 const FIXER_API_BASE = 'https://api.apilayer.com/fixer';
 
+/**
+ * Dispatches an HTTP request to the Fixer API with API key authentication,
+ * error payload interception, and schema validation.
+ *
+ * @param endpoint - The API route path (e.g. `latest`, `symbols`, `convert`)
+ * @param apiKey - The APILayer Fixer API key
+ * @param options - Request method, parameters, payload, and optional Zod schema
+ * @returns The parsed and validated response data
+ */
 export async function makeFixerRequest<T>(
 	endpoint: string,
 	apiKey: string,

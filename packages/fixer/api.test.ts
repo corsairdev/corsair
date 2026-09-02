@@ -10,12 +10,14 @@ jest.mock('./client', () => ({
 }));
 
 describe('Fixer API Endpoint Tests', () => {
+	// Cast required: Unit tests supply a minimal mock context providing authentication
+	// and event logging stubs rather than instantiating the full plugin database runner.
 	const mockCtx = {
 		key: 'test-api-key',
 		options: {},
 		authType: 'api_key' as const,
 		$getAccountId: jest.fn().mockResolvedValue('test-account-id'),
-	} as any;
+	} as unknown as Parameters<typeof Symbols.list>[0];
 
 	beforeEach(() => {
 		jest.clearAllMocks();

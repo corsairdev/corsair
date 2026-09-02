@@ -149,6 +149,12 @@ export type InternalFixerPlugin = BaseFixerPlugin<FixerPluginOptions>;
 export type ExternalFixerPlugin<T extends FixerPluginOptions> =
 	BaseFixerPlugin<T>;
 
+/**
+ * Creates and initializes the Fixer integration plugin for Corsair.
+ *
+ * @param incomingOptions - Optional configuration for API key and authentication
+ * @returns An initialized Fixer plugin instance
+ */
 export function fixer<const T extends FixerPluginOptions>(
 	// Cast required: `{}` cannot statically satisfy `FixerPluginOptions & T`
 	// because T is a generic const extension; all options have defaults so this is safe.
