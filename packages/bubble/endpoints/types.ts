@@ -2,12 +2,30 @@ import { z } from 'zod';
 import { BubbleListResponse, BubbleThingEntity } from '../schema/database';
 
 /**
- * A Bubble thing's editable fields. Bubble field names are set in the
- * app's Data Type editor and often contain spaces ("Unit name"), so the
- * keys are free-form. Values must match the field's type (string, number,
- * boolean, list, ...) - Bubble does the validation server-side.
+ * JSON values only. PUT/PATCH send this body as JSON; `undefined` is
+ * dropped by JSON.stringify (and by `z.record`), which on replace would
+ * reset omitted Bubble fields to default.
  */
-const ThingFieldsSchema = z.record(z.string(), z.unknown());
+function isJsonValue(value: unknown): boolean {
+	if (value === null) return true;
+	const type = typeof value;
+	if (type === 'string' || type === 'number' || type === 'boolean') return true;
+	if (type !== 'object') return false;
+	if (Array.isArray(value)) return value.every(isJsonValue);
+	return Object.values(value as Record<string, unknown>).every(isJsonValue);
+}
+
+const ThingFieldsSchema = z
+	.unknown()
+	.refine(
+		(value): value is Record<string, unknown> =>
+			typeof value === 'object' &&
+			value !== null &&
+			!Array.isArray(value) &&
+			isJsonValue(value),
+		{ error: 'Thing fields must be a JSON object with no undefined values' },
+	)
+	.pipe(z.record(z.string(), z.json()));
 
 /**
  * A single Data API list constraint - the same object a "Do a search for"
@@ -24,14 +42,7 @@ const BubbleConstraintSchema = z.object({
 	 * Compare value. Omitted for `is_empty` / `is_not_empty` / `empty` /
 	 * `not empty`. Objects are allowed for `geographic_search`.
 	 */
-	value: z
-		.union([
-			z.string(),
-			z.number(),
-			z.boolean(),
-			z.record(z.string(), z.unknown()),
-		])
-		.optional(),
+	value: z.union([z.string(), z.number(), z.boolean(), z.json()]).optional(),
 });
 
 /**
@@ -120,7 +131,7 @@ const WorkflowsRunInputSchema = z.object({
 	/** API workflow name - it has no spaces and is also the URL endpoint. */
 	workflowName: z.string(),
 	/** Parameters defined on the workflow, sent as JSON in the POST body. */
-	params: z.record(z.string(), z.unknown()).optional(),
+	params: z.record(z.string(), z.json()).optional(),
 });
 export type WorkflowsRunInput = z.infer<typeof WorkflowsRunInputSchema>;
 

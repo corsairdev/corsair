@@ -459,6 +459,23 @@ describe('bubbleEndpointSchemas', () => {
 		expect(parsed.success).toBe(true);
 	});
 
+	it('rejects nested undefined in create and replace field maps', () => {
+		const nested = { nested: { x: undefined as unknown as string } };
+		expect(
+			BubbleEndpointInputSchemas.thingsCreate.safeParse({
+				typeName: 'unit',
+				fields: nested,
+			}).success,
+		).toBe(false);
+		expect(
+			BubbleEndpointInputSchemas.thingsReplace.safeParse({
+				typeName: 'unit',
+				thingId: 'abc',
+				fields: nested,
+			}).success,
+		).toBe(false);
+	});
+
 	it('rejects a bulk-create batch over Bubble’s 1,000-record cap', () => {
 		const parsed = BubbleEndpointInputSchemas.thingsBulkCreate.safeParse({
 			typeName: 'unit',
