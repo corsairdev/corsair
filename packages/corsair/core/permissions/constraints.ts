@@ -357,7 +357,11 @@ export function constraintsSatisfied(
 	args: unknown,
 ): boolean {
 	try {
-		if (!isRecord(constraints)) return false;
+		// isRecord admits arrays. An array container would let Object.entries
+		// expose index keys as argument paths, so `[{ equals: 'x' }]` could be
+		// satisfied by an argument with a matching '0' property and activate the
+		// override. A constraints map is never an array.
+		if (!isRecord(constraints) || isUnknownArray(constraints)) return false;
 		const entries = tryOwnEntries(constraints);
 		if (entries === null) return false;
 		if (entries.length === 0) return false;

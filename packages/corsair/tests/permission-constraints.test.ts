@@ -1040,3 +1040,22 @@ describe('throwing accessors fail closed', () => {
 		).toBe('require_approval');
 	});
 });
+
+describe('an array cannot stand in for a constraints map', () => {
+	it('rejects an array container instead of exposing index keys as paths', () => {
+		// Regression: isRecord admits arrays, so Object.entries turned index '0'
+		// into an argument path and an argument with a matching '0' property
+		// activated the override.
+		expect(constraintsSatisfied([{ equals: 'x' }] as unknown, { 0: 'x' })).toBe(
+			false,
+		);
+		expect(
+			evaluatePermission(
+				'write',
+				'strict',
+				{ policy: 'allow', constraints: [{ equals: 'x' }] } as never,
+				{ 0: 'x' },
+			),
+		).toBe('require_approval');
+	});
+});
