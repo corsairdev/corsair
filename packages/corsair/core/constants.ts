@@ -198,6 +198,7 @@ export const BaseProviders = [
 	'resend',
 	'retailed',
 	'salesforce',
+	'scrapegraphai',
 	'securitytrails',
 	'sendgrid',
 	'sentry',
@@ -438,6 +439,7 @@ export const ProviderDisplayNames = {
 	resend: 'Resend',
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
+	scrapegraphai: 'ScrapeGraphAI',
 	securitytrails: 'SecurityTrails',
 	sendgrid: 'SendGrid',
 	sentry: 'Sentry',
@@ -684,6 +686,7 @@ export type AllProviders =
 	| 'resend'
 	| 'retailed'
 	| 'salesforce'
+	| 'scrapegraphai'
 	| 'securitytrails'
 	| 'sendgrid'
 	| 'sentry'
