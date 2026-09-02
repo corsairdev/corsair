@@ -1,4 +1,5 @@
 import { ApiError, request } from 'corsair/http';
+import { z } from 'zod';
 import { FixerAPIError, makeFixerRequest } from './client';
 
 jest.mock('corsair/http', () => {
@@ -42,6 +43,42 @@ describe('Fixer Client', () => {
 				query: { base: 'USD' },
 			}),
 		);
+	});
+
+	it('parses response with schema when provided', async () => {
+		const mockResponse = {
+			success: true,
+			symbols: { USD: 'United States Dollar' },
+		};
+		(request as jest.Mock).mockResolvedValueOnce(mockResponse);
+
+		const schema = z.object({
+			success: z.boolean(),
+			symbols: z.record(z.string(), z.string()),
+		});
+
+		const result = await makeFixerRequest('symbols', 'test-api-key', {
+			method: 'GET',
+			schema,
+		});
+
+		expect(result).toEqual(mockResponse);
+	});
+
+	it('throws FixerAPIError when API returns success: false payload', async () => {
+		const errorPayload = {
+			success: false,
+			error: {
+				code: 101,
+				type: 'invalid_access_key',
+				info: 'You have not supplied an API Key.',
+			},
+		};
+		(request as jest.Mock).mockResolvedValueOnce(errorPayload);
+
+		await expect(
+			makeFixerRequest('latest', 'invalid-key', { method: 'GET' }),
+		).rejects.toThrow(FixerAPIError);
 	});
 
 	it('re-throws ApiError as-is', async () => {
