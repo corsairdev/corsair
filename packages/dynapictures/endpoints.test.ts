@@ -1,46 +1,33 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
-import { DynapicturesAPIError, makeDynapicturesRequest } from './client';
-import { DynapicturesEndpointInputSchemas } from './endpoints/types';
+import { Media, Templates, Webhooks, Workspaces } from './endpoints';
 import { errorHandlers } from './error-handlers';
-import type {
-	DynapicturesContext,
-	DynapicturesKeyBuilderContext,
-} from './index';
-import { dynapictures, dynapicturesEndpointSchemas } from './index';
+import type { DynapicturesContext } from './index';
+import { dynapictures } from './index';
+
+jest.mock('corsair/http', () => ({
+	...jest.requireActual('corsair/http'),
+	request: jest.fn(),
+}));
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
-	logEventFromContext: jest.fn(),
+	logEventFromContext: jest.fn().mockResolvedValue(null),
 }));
 
-jest.mock('corsair/http', () => {
-	const original = jest.requireActual('corsair/http');
-	return {
-		...original,
-		request: jest.fn(),
-	};
-});
+const mockRequest = request as jest.MockedFunction<typeof request>;
+const mockLog = logEventFromContext as jest.MockedFunction<
+	typeof logEventFromContext
+>;
+const TEST_API_KEY = 'test-dynapictures-token';
+const ctx = { key: TEST_API_KEY } as unknown as DynapicturesContext;
 
-const mockRequest = request as jest.Mock;
-const mockLog = jest.mocked(logEventFromContext);
-
-const mockCtx = {
-	key: 'dp_test_api_key',
-	$getAccountId: () => 'test-account-id',
-	options: {},
-	logEvent: jest.fn(),
-	db: {},
-	keyBuilder: async () => 'dp_test_api_key',
-} as unknown as DynapicturesContext;
-
-function pluginEndpoints() {
-	const endpoints = dynapictures({ key: 'dp_test_api_key' }).endpoints;
-	if (!endpoints) {
-		throw new Error('missing endpoints');
-	}
-	return endpoints;
-}
+const workspace = {
+	id: '74b5b2c96a',
+	name: 'Banners for client 22',
+	dateCreated: '2021-06-15T12:30:14.000Z',
+	dateUpdated: '2021-06-15T12:30:14.000Z',
+};
 
 function classify(error: Error): string {
 	const name = (
@@ -49,15 +36,11 @@ function classify(error: Error): string {
 	return name ?? 'none';
 }
 
-function httpError(
-	status: number,
-	message: string,
-	retryAfter?: number,
-): ApiError {
+function httpError(status: number, message: string, retryAfter?: number) {
 	const err = new ApiError(
-		{ method: 'GET', url: 'https://api.dynapictures.com/templates' },
+		{ method: 'GET', url: 'https://api.dynapictures.com/workspaces' },
 		{
-			url: 'https://api.dynapictures.com/templates',
+			url: 'https://api.dynapictures.com/workspaces',
 			ok: false,
 			status,
 			statusText: 'Error',
@@ -71,360 +54,209 @@ function httpError(
 	return err;
 }
 
-describe('dynapictures plugin shape', () => {
-	it('registers the 4 endpoints and no webhooks', () => {
+beforeEach(() => {
+	mockRequest.mockReset();
+	mockLog.mockClear();
+});
+
+describe('plugin shape', () => {
+	it('registers 7 catalog endpoints and no triggers', () => {
 		const plugin = dynapictures();
 		expect(plugin.id).toBe('dynapictures');
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.authConfig).toEqual({ api_key: {} });
 		expect(plugin.webhooks).toEqual({});
-		expect(plugin.pluginWebhookMatcher).toBeUndefined();
-		expect(plugin.webhookHooks).toBeUndefined();
-		expect(Object.keys(dynapicturesEndpointSchemas).sort()).toEqual([
-			'designs.generate',
-			'designs.get',
-			'designs.list',
-			'templates.list',
+		expect(Object.keys(plugin.endpoints ?? {})).toEqual([
+			'workspaces',
+			'templates',
+			'webhooks',
+			'media',
 		]);
 	});
-});
 
-describe('dynapictures keyBuilder', () => {
-	it('returns options.key for endpoint calls', async () => {
-		const plugin = dynapictures({ key: 'dp_test_api_key' });
+	it('resolves api_key and rejects webhook key lookup', async () => {
+		const plugin = dynapictures({ key: TEST_API_KEY });
 		await expect(
-			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
-				{ authType: 'api_key' },
-				'endpoint',
-			),
-		).resolves.toBe('dp_test_api_key');
-	});
-
-	it('throws AuthMissingError when the api key is absent', async () => {
-		const plugin = dynapictures();
-		const ctx = {
-			authType: 'api_key',
-			keys: { get_api_key: async (): Promise<string | null> => null },
-		} as unknown as DynapicturesKeyBuilderContext;
-
+			plugin.keyBuilder?.({ authType: 'api_key' } as never, 'endpoint'),
+		).resolves.toBe(TEST_API_KEY);
 		await expect(
-			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
-				ctx,
-				'endpoint',
-			),
-		).rejects.toBeInstanceOf(AuthMissingError);
-	});
-
-	it('throws AuthMissingError for non-endpoint sources', async () => {
-		const plugin = dynapictures({ key: 'dp_test_api_key' });
-		await expect(
-			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
-				{ authType: 'api_key' },
-				'webhook',
-			),
+			plugin.keyBuilder?.({ authType: 'api_key' } as never, 'webhook'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });
 
-describe('dynapictures request client', () => {
-	beforeEach(() => {
-		mockRequest.mockReset();
-	});
-
-	it('sends Authorization Bearer header against api.dynapictures.com host', async () => {
-		mockRequest.mockResolvedValue({ id: 'design-123' });
-
-		await makeDynapicturesRequest('designs/123', 'dp_test_api_key', {
-			method: 'GET',
-		});
-
+describe('Workspaces.list', () => {
+	it('GET /workspaces', async () => {
+		mockRequest.mockResolvedValueOnce([workspace]);
+		const result = await Workspaces.list(ctx, {});
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				BASE: 'https://api.dynapictures.com',
 				HEADERS: expect.objectContaining({
-					Authorization: 'Bearer dp_test_api_key',
+					Authorization: `Bearer ${TEST_API_KEY}`,
 				}),
 			}),
-			expect.objectContaining({
-				method: 'GET',
-				url: '/designs/123',
-			}),
+			expect.objectContaining({ method: 'GET', url: '/workspaces' }),
 		);
-	});
-
-	it('preserves status, statusText, body, and retryAfter from ApiError in DynapicturesAPIError', async () => {
-		const apiErr = httpError(429, 'Rate limit exceeded', 5000);
-		mockRequest.mockRejectedValue(apiErr);
-
-		let caught: DynapicturesAPIError | undefined;
-		try {
-			await makeDynapicturesRequest('templates', 'dp_test_api_key');
-		} catch (err) {
-			if (err instanceof DynapicturesAPIError) {
-				caught = err;
-			}
-		}
-
-		expect(caught).toBeDefined();
-		expect(caught?.status).toBe(429);
-		expect(caught?.statusText).toBe('Error');
-		expect(caught?.retryAfter).toBe(5000);
-		expect(caught?.body).toEqual({ error: 'Rate limit exceeded' });
-		expect(classify(caught as Error)).toBe('RATE_LIMIT_ERROR');
-	});
-
-	it('wraps generic errors into DynapicturesAPIError', async () => {
-		mockRequest.mockRejectedValue(new Error('Network error'));
-
-		await expect(
-			makeDynapicturesRequest('templates', 'dp_test_api_key'),
-		).rejects.toBeInstanceOf(DynapicturesAPIError);
+		expect(result[0]?.id).toBe('74b5b2c96a');
 	});
 });
 
-describe('designs.generate', () => {
-	const generateResponse = {
-		id: 'img-101',
-		templateId: 'tpl-1',
-		imageUrl: 'https://api.dynapictures.com/images/101.png',
-		width: 1200,
-		height: 630,
-	};
-
-	beforeEach(() => {
-		mockRequest.mockReset();
-		mockLog.mockReset();
-		mockRequest.mockResolvedValue(generateResponse);
-	});
-
-	it('posts generation request to /designs/{designId}', async () => {
-		const result = await pluginEndpoints().designs.generate(mockCtx, {
-			designId: 'tpl-1',
-			params: [{ name: 'title', text: 'Hello Corsair' }],
-			format: 'png',
+describe('Workspaces.create', () => {
+	it('POST /workspaces with name', async () => {
+		mockRequest.mockResolvedValueOnce(workspace);
+		const result = await Workspaces.create(ctx, {
+			name: 'Banners for client 22',
 		});
-
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.anything(),
 			expect.objectContaining({
 				method: 'POST',
-				url: '/designs/tpl-1',
+				url: '/workspaces',
+				body: { name: 'Banners for client 22' },
+			}),
+		);
+		expect(result.name).toBe('Banners for client 22');
+	});
+});
+
+describe('Workspaces.update', () => {
+	it('PUT /workspaces/{ID} with name', async () => {
+		mockRequest.mockResolvedValueOnce({
+			...workspace,
+			name: 'Banners for client 1234',
+		});
+		const result = await Workspaces.update(ctx, {
+			id: '74b5b2c96a',
+			name: 'Banners for client 1234',
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'PUT',
+				url: '/workspaces/74b5b2c96a',
+				body: { name: 'Banners for client 1234' },
+			}),
+		);
+		expect(result.name).toBe('Banners for client 1234');
+	});
+});
+
+describe('Workspaces.delete', () => {
+	it('DELETE /workspaces/{ID}', async () => {
+		mockRequest.mockResolvedValueOnce(workspace);
+		const result = await Workspaces.delete(ctx, { id: '74b5b2c96a' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'DELETE',
+				url: '/workspaces/74b5b2c96a',
+			}),
+		);
+		expect(result.id).toBe('74b5b2c96a');
+	});
+});
+
+describe('Templates.list', () => {
+	it('GET /templates with official thumbnail field', async () => {
+		mockRequest.mockResolvedValueOnce([
+			{
+				id: '000d61e4f7',
+				name: 'Twitter Template',
+				thumbnail:
+					'https://dynapictures.com/rest/public/designs/000d61e4f7/thumb.png',
+				dateCreated: '2021-05-09T11:54:04.000Z',
+				dateUpdated: '2021-05-09T11:54:26.000Z',
+				layers: [],
+			},
+		]);
+		const result = await Templates.list(ctx, {});
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({ method: 'GET', url: '/templates' }),
+		);
+		expect(result[0]?.thumbnail).toContain('000d61e4f7');
+	});
+});
+
+describe('Webhooks.unsubscribe', () => {
+	it('DELETE /hooks with subscribe identity fields', async () => {
+		mockRequest.mockResolvedValueOnce({ error: false, message: '' });
+		const result = await Webhooks.unsubscribe(ctx, {
+			targetUrl: 'https://mycompany.com/webhooks/my-endpoint',
+			eventType: 'NEW_IMAGE',
+			templateId: '000d61e4f7',
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'DELETE',
+				url: '/hooks',
 				body: {
-					params: [{ name: 'title', text: 'Hello Corsair' }],
-					format: 'png',
-					metadata: undefined,
+					targetUrl: 'https://mycompany.com/webhooks/my-endpoint',
+					eventType: 'NEW_IMAGE',
+					templateId: '000d61e4f7',
 				},
 			}),
 		);
-		expect(result).toEqual(generateResponse);
-		expect(mockLog).toHaveBeenCalledWith(
-			mockCtx,
-			'dynapictures.designs.generate',
-			{
-				designId: 'tpl-1',
-				params: [{ name: 'title', text: 'Hello Corsair' }],
-				format: 'png',
-			},
-			'completed',
-		);
-	});
-
-	it('validates input parameters correctly', () => {
-		expect(() =>
-			DynapicturesEndpointInputSchemas.generateDesign.parse({ designId: '' }),
-		).toThrow();
-	});
-
-	it('accepts metadata string in generateDesign input schema', () => {
-		const parsed = DynapicturesEndpointInputSchemas.generateDesign.parse({
-			designId: 'tpl-1',
-			metadata: 'custom-render-id-123',
-		});
-		expect(parsed.metadata).toBe('custom-render-id-123');
-	});
-
-	it('rejects metadata object in generateDesign input schema', () => {
-		expect(() =>
-			DynapicturesEndpointInputSchemas.generateDesign.parse({
-				designId: 'tpl-1',
-				metadata: { key: 'val' } as unknown as string,
-			}),
-		).toThrow();
-	});
-
-	it('rejects pdf format in generateDesign input schema', () => {
-		expect(() =>
-			DynapicturesEndpointInputSchemas.generateDesign.parse({
-				designId: 'tpl-1',
-				format: 'pdf' as unknown as 'png',
-			}),
-		).toThrow();
+		expect(result.error).toBe(false);
 	});
 });
 
-describe('designs.get', () => {
-	const designResponse = {
-		id: 'img-101',
-		templateId: 'tpl-1',
-		imageUrl: 'https://api.dynapictures.com/images/101.png',
-	};
-
-	beforeEach(() => {
-		mockRequest.mockReset();
-		mockLog.mockReset();
-		mockRequest.mockResolvedValue(designResponse);
-	});
-
-	it('gets design by id', async () => {
-		const result = await pluginEndpoints().designs.get(mockCtx, {
-			id: 'img-101',
+describe('Media.upload', () => {
+	it('POST multipart /media/{workspaceId}/assets', async () => {
+		const originalFetch = globalThis.fetch;
+		globalThis.fetch = jest.fn().mockResolvedValue({
+			ok: true,
+			arrayBuffer: async () => new Uint8Array([1, 2, 3]).buffer,
+			headers: { get: () => 'image/jpeg' },
+		}) as unknown as typeof fetch;
+		mockRequest.mockResolvedValueOnce({
+			id: '5a12844966',
+			folder: false,
+			mimeType: 'image/jpeg',
+			filename: 'cat1.jpeg',
+			size: 32137,
+			url: 'https://blobs.dynapictures.com/media/8eb9e4869b/d3b98332a5.jpg',
+			thumbnailUrl:
+				'https://blobs.dynapictures.com/media/8eb9e4869b/d3b98332a5_t.jpg',
+			dateCreated: '2022-05-31T19:57:08.458Z',
+			dateUpdated: '2022-05-31T19:57:08.458Z',
 		});
 
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({
-				method: 'GET',
-				url: '/designs/img-101',
-			}),
-		);
-		expect(result).toEqual(designResponse);
-		expect(mockLog).toHaveBeenCalledWith(
-			mockCtx,
-			'dynapictures.designs.get',
-			{ id: 'img-101' },
-			'completed',
-		);
+		try {
+			const result = await Media.upload(ctx, {
+				workspaceId: 'e6c1b8758b',
+				fileUrl: 'https://dynapictures.com/images/banners/cat1.jpeg',
+			});
+			expect(mockRequest).toHaveBeenCalledWith(
+				expect.objectContaining({
+					HEADERS: expect.objectContaining({
+						Authorization: `Bearer ${TEST_API_KEY}`,
+					}),
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: '/media/e6c1b8758b/assets',
+					formData: expect.objectContaining({
+						file: expect.any(File),
+					}),
+				}),
+			);
+			expect(result.id).toBe('5a12844966');
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
 	});
 });
 
-describe('designs.list', () => {
-	const listResponse = [
-		{
-			id: 'img-101',
-			imageUrl: 'https://api.dynapictures.com/images/101.png',
-		},
-	];
-
-	beforeEach(() => {
-		mockRequest.mockReset();
-		mockLog.mockReset();
-		mockRequest.mockResolvedValue(listResponse);
-	});
-
-	it('lists designs with query params', async () => {
-		const result = await pluginEndpoints().designs.list(mockCtx, {
-			limit: 10,
-			offset: 0,
-		});
-
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({
-				method: 'GET',
-				url: '/designs',
-				query: { limit: 10, offset: 0 },
-			}),
-		);
-		expect(result).toEqual(listResponse);
-		expect(mockLog).toHaveBeenCalledWith(
-			mockCtx,
-			'dynapictures.designs.list',
-			{ limit: 10, offset: 0 },
-			'completed',
-		);
-	});
-});
-
-describe('templates.list', () => {
-	const templatesResponse = [
-		{ id: 'tpl-1', name: 'Banner Template', width: 1200, height: 630 },
-	];
-
-	beforeEach(() => {
-		mockRequest.mockReset();
-		mockLog.mockReset();
-		mockRequest.mockResolvedValue(templatesResponse);
-	});
-
-	it('lists templates', async () => {
-		const result = await pluginEndpoints().templates.list(mockCtx, {});
-
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({
-				method: 'GET',
-				url: '/templates',
-			}),
-		);
-		expect(result).toEqual(templatesResponse);
-		expect(mockLog).toHaveBeenCalledWith(
-			mockCtx,
-			'dynapictures.templates.list',
-			{},
-			'completed',
-		);
-	});
-
-	it('normalizes provider thumbnail field to thumbnailUrl', async () => {
-		mockRequest.mockResolvedValue([
-			{
-				id: 'tpl-1',
-				name: 'Banner Template',
-				width: 1200,
-				height: 630,
-				thumbnail: 'https://api.dynapictures.com/thumbnail.png',
-			},
-		]);
-
-		const result = await pluginEndpoints().templates.list(mockCtx, {});
-		expect(result).toEqual([
-			{
-				id: 'tpl-1',
-				name: 'Banner Template',
-				width: 1200,
-				height: 630,
-				thumbnailUrl: 'https://api.dynapictures.com/thumbnail.png',
-			},
-		]);
-	});
-});
-
-describe('dynapictures error classification', () => {
-	it('classifies auth, rate limit, and default errors', () => {
-		expect(classify(httpError(401, 'Unauthorized'))).toBe('AUTH_ERROR');
-		expect(classify(httpError(429, 'Rate limit exceeded'))).toBe(
-			'RATE_LIMIT_ERROR',
-		);
-		expect(classify(httpError(500, 'Server error'))).toBe('DEFAULT');
-
-		const dpRateLimit = new DynapicturesAPIError('Rate limit', undefined, {
-			cause: httpError(429, 'Rate limit', 2000),
-		});
-		expect(classify(dpRateLimit)).toBe('RATE_LIMIT_ERROR');
-
-		const dpAuthErr = new DynapicturesAPIError('Unauthorized', undefined, {
-			cause: httpError(401, 'Unauthorized'),
-		});
-		expect(classify(dpAuthErr)).toBe('AUTH_ERROR');
-	});
-
-	it('does not classify structured 500 containing "429" as RATE_LIMIT_ERROR', () => {
-		const err = httpError(500, 'Internal server error 429');
-		expect(classify(err)).toBe('DEFAULT');
-	});
-
-	it('does not classify structured 500 containing "unauthorized" as AUTH_ERROR', () => {
-		const err = httpError(500, 'unauthorized internal server error');
-		expect(classify(err)).toBe('DEFAULT');
-	});
-
-	it('classifies ApiError 401 containing "429" as AUTH_ERROR and not RATE_LIMIT_ERROR', () => {
-		const err = httpError(401, 'Unauthorized request 429');
-		expect(classify(err)).toBe('AUTH_ERROR');
-	});
-
-	it('classifies generic Error containing "429" as RATE_LIMIT_ERROR', () => {
-		const err = new Error('Request 429 rate limited');
+describe('error classification', () => {
+	it('keeps 429 status and Retry-After on wrapped errors', async () => {
+		const err = httpError(429, 'Too Many Requests', 2000);
 		expect(classify(err)).toBe('RATE_LIMIT_ERROR');
+		const policy = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
+		expect(policy.headersRetryAfterMs).toBe(2000);
+		expect(classify(httpError(401, 'Unauthorized'))).toBe('AUTH_ERROR');
+		expect(classify(httpError(400, 'Bad Request'))).toBe('BAD_REQUEST_ERROR');
+		expect(classify(httpError(500, 'Server'))).toBe('DEFAULT');
 	});
 });

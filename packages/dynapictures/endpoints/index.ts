@@ -1,16 +1,30 @@
-import { generateDesign, getDesign, listDesigns } from './designs';
+import { uploadMediaAsset } from './media';
 import { listTemplates } from './templates';
+import { unsubscribeWebhook } from './webhooks';
+import {
+	createWorkspace,
+	deleteWorkspace,
+	listWorkspaces,
+	updateWorkspace,
+} from './workspaces';
 
-/** Design operations module grouping for Dynapictures endpoints */
-export const Designs = {
-	generate: generateDesign,
-	get: getDesign,
-	list: listDesigns,
+export const Workspaces = {
+	list: listWorkspaces,
+	create: createWorkspace,
+	update: updateWorkspace,
+	delete: deleteWorkspace,
 };
 
-/** Template operations module grouping for Dynapictures endpoints */
 export const Templates = {
 	list: listTemplates,
+};
+
+export const Webhooks = {
+	unsubscribe: unsubscribeWebhook,
+};
+
+export const Media = {
+	upload: uploadMediaAsset,
 };
 
 export * from './types';

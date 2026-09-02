@@ -1,7 +1,6 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -12,9 +11,10 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Designs, Templates } from './endpoints';
+import { Media, Templates, Webhooks, Workspaces } from './endpoints';
 import type {
 	DynapicturesEndpointInputs,
 	DynapicturesEndpointOutputs,
@@ -26,36 +26,26 @@ import {
 import { errorHandlers } from './error-handlers';
 import { DynapicturesSchema } from './schema';
 
-/** Configuration options for initializing the Dynapictures Corsair plugin */
 export type DynapicturesPluginOptions = {
-	/** Picked authentication mechanism (defaults to 'api_key') */
 	authType?: PickAuth<'api_key'>;
-	/** Direct API key fallback for authentication */
 	key?: string;
-	/** Optional execution hooks for bound endpoints */
-	hooks?: Record<string, unknown>;
-	/** Custom error handlers for mapping or overriding API error behavior */
+	hooks?: InternalDynapicturesPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
-	/** Permission rules configuration for endpoint access control */
-	permissions?: PluginPermissionsConfig;
+	permissions?: PluginPermissionsConfig<typeof dynapicturesEndpointsNested>;
 };
 
-/** Corsair context object supplied to Dynapictures endpoints */
 export type DynapicturesContext = CorsairPluginContext<
 	typeof DynapicturesSchema,
 	DynapicturesPluginOptions
 >;
 
-/** Key builder context for Dynapictures authentication token retrieval */
 export type DynapicturesKeyBuilderContext =
 	KeyBuilderContext<DynapicturesPluginOptions>;
 
-/** Map of bound endpoint functions for Dynapictures operations */
 export type DynapicturesBoundEndpoints = BindEndpoints<
 	typeof dynapicturesEndpointsNested
 >;
 
-/** Utility type for individual Dynapictures endpoint function definitions */
 type DynapicturesEndpoint<K extends keyof DynapicturesEndpointOutputs> =
 	CorsairEndpoint<
 		DynapicturesContext,
@@ -63,91 +53,118 @@ type DynapicturesEndpoint<K extends keyof DynapicturesEndpointOutputs> =
 		DynapicturesEndpointOutputs[K]
 	>;
 
-/** Collection of typed Dynapictures API endpoint definitions */
 export type DynapicturesEndpoints = {
-	generateDesign: DynapicturesEndpoint<'generateDesign'>;
-	getDesign: DynapicturesEndpoint<'getDesign'>;
-	listDesigns: DynapicturesEndpoint<'listDesigns'>;
+	listWorkspaces: DynapicturesEndpoint<'listWorkspaces'>;
+	createWorkspace: DynapicturesEndpoint<'createWorkspace'>;
+	updateWorkspace: DynapicturesEndpoint<'updateWorkspace'>;
+	deleteWorkspace: DynapicturesEndpoint<'deleteWorkspace'>;
 	listTemplates: DynapicturesEndpoint<'listTemplates'>;
+	unsubscribeWebhook: DynapicturesEndpoint<'unsubscribeWebhook'>;
+	uploadMediaAsset: DynapicturesEndpoint<'uploadMediaAsset'>;
 };
 
-/** Webhooks definition map for Dynapictures (empty) */
 export type DynapicturesWebhooks = {};
 
-/** Bound webhooks map for Dynapictures */
-export type DynapicturesBoundWebhooks = BindWebhooks<DynapicturesWebhooks>;
-
-/** Nested endpoint tree hierarchy for internal router binding */
 const dynapicturesEndpointsNested = {
-	designs: {
-		generate: Designs.generate,
-		get: Designs.get,
-		list: Designs.list,
+	workspaces: {
+		list: Workspaces.list,
+		create: Workspaces.create,
+		update: Workspaces.update,
+		delete: Workspaces.delete,
 	},
 	templates: {
 		list: Templates.list,
 	},
+	webhooks: {
+		unsubscribe: Webhooks.unsubscribe,
+	},
+	media: {
+		upload: Media.upload,
+	},
 } as const;
 
-/** Nested webhooks map */
 const dynapicturesWebhooksNested = {} as const;
 
-/** Exported endpoint validation schemas mapping input/output Zod schemas */
 export const dynapicturesEndpointSchemas = {
-	'designs.generate': {
-		input: DynapicturesEndpointInputSchemas.generateDesign,
-		output: DynapicturesEndpointOutputSchemas.generateDesign,
+	'workspaces.list': {
+		input: DynapicturesEndpointInputSchemas.listWorkspaces,
+		output: DynapicturesEndpointOutputSchemas.listWorkspaces,
 	},
-	'designs.get': {
-		input: DynapicturesEndpointInputSchemas.getDesign,
-		output: DynapicturesEndpointOutputSchemas.getDesign,
+	'workspaces.create': {
+		input: DynapicturesEndpointInputSchemas.createWorkspace,
+		output: DynapicturesEndpointOutputSchemas.createWorkspace,
 	},
-	'designs.list': {
-		input: DynapicturesEndpointInputSchemas.listDesigns,
-		output: DynapicturesEndpointOutputSchemas.listDesigns,
+	'workspaces.update': {
+		input: DynapicturesEndpointInputSchemas.updateWorkspace,
+		output: DynapicturesEndpointOutputSchemas.updateWorkspace,
+	},
+	'workspaces.delete': {
+		input: DynapicturesEndpointInputSchemas.deleteWorkspace,
+		output: DynapicturesEndpointOutputSchemas.deleteWorkspace,
 	},
 	'templates.list': {
 		input: DynapicturesEndpointInputSchemas.listTemplates,
 		output: DynapicturesEndpointOutputSchemas.listTemplates,
 	},
+	'webhooks.unsubscribe': {
+		input: DynapicturesEndpointInputSchemas.unsubscribeWebhook,
+		output: DynapicturesEndpointOutputSchemas.unsubscribeWebhook,
+	},
+	'media.upload': {
+		input: DynapicturesEndpointInputSchemas.uploadMediaAsset,
+		output: DynapicturesEndpointOutputSchemas.uploadMediaAsset,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof dynapicturesEndpointsNested
 >;
 
-/** Exported webhook schemas mapping */
-const dynapicturesWebhookSchemas = {} as const;
+const dynapicturesWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof dynapicturesWebhooksNested
+	>;
 
-/** Default authentication mechanism for Dynapictures API */
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-/** Metadata definitions specifying description and risk levels for all Dynapictures endpoints */
 const dynapicturesEndpointMeta = {
-	'designs.generate': {
+	'workspaces.list': {
+		riskLevel: 'read',
+		description: 'Get all workspaces the authenticated user is a member of',
+	},
+	'workspaces.create': {
 		riskLevel: 'write',
-		description: 'Generate an image or document from a template design',
+		description: 'Create a new workspace for templates, images, and media',
 	},
-	'designs.get': {
-		riskLevel: 'read',
-		description: 'Retrieve details for a generated image or design',
+	'workspaces.update': {
+		riskLevel: 'write',
+		description: 'Update an existing workspace name by workspace ID',
 	},
-	'designs.list': {
-		riskLevel: 'read',
-		description: 'List generated images or designs',
+	'workspaces.delete': {
+		riskLevel: 'destructive',
+		description:
+			'Permanently delete a workspace and all associated templates, media, and images',
 	},
 	'templates.list': {
 		riskLevel: 'read',
-		description: 'List available design templates',
+		description:
+			'Get image templates that are ready and have Sync to Zapier enabled',
+	},
+	'webhooks.unsubscribe': {
+		riskLevel: 'write',
+		description:
+			'Unsubscribe from webhook notifications using the original subscribe fields',
+	},
+	'media.upload': {
+		riskLevel: 'write',
+		description: 'Upload an image and create a media asset in a workspace',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof dynapicturesEndpointsNested
 >;
 
-/** Authentication configuration specification for Dynapictures plugin */
 export const dynapicturesAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
 
-/** Base plugin type definition for Dynapictures */
 export type BaseDynapicturesPlugin<T extends DynapicturesPluginOptions> =
 	CorsairPlugin<
 		'dynapictures',
@@ -158,24 +175,12 @@ export type BaseDynapicturesPlugin<T extends DynapicturesPluginOptions> =
 		typeof defaultAuthType
 	>;
 
-/** Internal plugin instance type */
 export type InternalDynapicturesPlugin =
 	BaseDynapicturesPlugin<DynapicturesPluginOptions>;
 
-/** External user-facing plugin instance type */
 export type ExternalDynapicturesPlugin<T extends DynapicturesPluginOptions> =
 	BaseDynapicturesPlugin<T>;
 
-/**
- * Initializes and constructs the Dynapictures Corsair plugin instance.
- *
- * Configures authentication (`api_key`), database schemas, endpoint routes,
- * error handlers, and metadata for dynamic image generation using Dynapictures templates.
- *
- * @template T - Specific options passed by user
- * @param incomingOptions - Plugin configuration options
- * @returns Configured Dynapictures Corsair plugin instance
- */
 export function dynapictures<const T extends DynapicturesPluginOptions>(
 	incomingOptions: DynapicturesPluginOptions &
 		T = {} as DynapicturesPluginOptions & T,
@@ -184,51 +189,57 @@ export function dynapictures<const T extends DynapicturesPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'dynapictures',
 		authConfig: dynapicturesAuthConfig,
 		schema: DynapicturesSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
+		webhookHooks: undefined,
 		endpoints: dynapicturesEndpointsNested,
 		webhooks: dynapicturesWebhooksNested,
 		endpointMeta: dynapicturesEndpointMeta,
 		endpointSchemas: dynapicturesEndpointSchemas,
 		webhookSchemas: dynapicturesWebhookSchemas,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		keyBuilder: async (
-			ctx: DynapicturesKeyBuilderContext,
-			source: 'endpoint' | 'webhook',
-		) => {
-			if (source !== 'endpoint') {
-				throw new AuthMissingError('dynapictures', 'api_key');
+		keyBuilder: async (ctx: DynapicturesKeyBuilderContext, source) => {
+			if (source === 'endpoint' && options.key) {
+				return options.key;
 			}
 
-			if (options.key) return options.key;
-
-			const res = await ctx.keys?.get_api_key();
-			if (!res) {
-				throw new AuthMissingError('dynapictures', 'api_key');
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
+				const res = await ctx.keys.get_api_key();
+				if (!res) {
+					throw new AuthMissingError('dynapictures', 'api_key');
+				}
+				return res;
 			}
 
-			return res;
+			throw new AuthMissingError('dynapictures', 'api_key');
 		},
-	} as unknown as ExternalDynapicturesPlugin<T>;
+	} satisfies InternalDynapicturesPlugin;
 }
 
 export type {
+	CreateWorkspaceInput,
+	CreateWorkspaceResponse,
+	DeleteWorkspaceInput,
+	DeleteWorkspaceResponse,
 	DynapicturesEndpointInputs,
 	DynapicturesEndpointOutputs,
-	DynapicturesParam,
-	GenerateDesignInput,
-	GenerateDesignResponse,
-	GetDesignInput,
-	GetDesignResponse,
-	ListDesignsInput,
-	ListDesignsResponse,
 	ListTemplatesInput,
 	ListTemplatesResponse,
+	ListWorkspacesInput,
+	ListWorkspacesResponse,
+	UnsubscribeWebhookInput,
+	UnsubscribeWebhookResponse,
+	UpdateWorkspaceInput,
+	UpdateWorkspaceResponse,
+	UploadMediaAssetInput,
+	UploadMediaAssetResponse,
 } from './endpoints/types';

@@ -1,11 +1,17 @@
-import { DynapicturesDesign, DynapicturesTemplate } from './database';
+import {
+	DynapicturesMediaAsset,
+	DynapicturesTemplate,
+	DynapicturesWebhook,
+	DynapicturesWorkspace,
+} from './database';
 
-/** Plugin database schema registration for Dynapictures entities */
 export const DynapicturesSchema = {
 	version: '1.0.0',
 	entities: {
-		design: DynapicturesDesign,
-		template: DynapicturesTemplate,
+		workspaces: DynapicturesWorkspace,
+		templates: DynapicturesTemplate,
+		media: DynapicturesMediaAsset,
+		webhooks: DynapicturesWebhook,
 	},
 } as const;
 

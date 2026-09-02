@@ -1,173 +1,149 @@
 import { z } from 'zod';
+import {
+	DynapicturesMediaAsset,
+	DynapicturesTemplate,
+	DynapicturesWorkspace,
+} from '../schema/database';
 
-/** Schema for individual element parameter overrides in a Dynapictures design layer */
-export const DynapicturesParamSchema = z
-	.object({
-		/** Identifier of the layer in the template design */
-		name: z.string().min(1),
-		/** Optional replacement text for text layers */
-		text: z.string().optional(),
-		/** Optional replacement image URL for image layers */
-		imageUrl: z.string().optional(),
-		/** Optional text or foreground color */
-		color: z.string().optional(),
-		/** Optional background color */
-		backgroundColor: z.string().optional(),
-	})
-	.passthrough();
-
-/** Type definition for dynamic element layer parameters */
-export type DynapicturesParam = z.infer<typeof DynapicturesParamSchema>;
-
-/** Zod schema for design generation request input */
-const GenerateDesignInputSchema = z.object({
-	/** Unique design template ID */
-	designId: z.string().min(1),
-	/** Array of layer parameter overrides */
-	params: z.array(DynapicturesParamSchema).optional(),
-	/** Target output format */
-	format: z.enum(['png', 'jpeg', 'webp']).optional(),
-	/** Custom metadata associated with the render (string only) */
-	metadata: z.string().optional(),
-});
-
-/** Input parameters for generating a design image */
-export type GenerateDesignInput = z.infer<typeof GenerateDesignInputSchema>;
-
-/** Zod schema for design generation response output */
-const GenerateDesignResponseSchema = z
-	.object({
-		/** Unique generated design identifier */
-		id: z.string(),
-		/** Template ID used for rendering */
-		templateId: z.string().optional(),
-		/** URL of the generated image */
-		imageUrl: z.string().optional(),
-		/** URL of the image thumbnail */
-		thumbnailUrl: z.string().optional(),
-		/** Image width in pixels */
-		width: z.number().optional(),
-		/** Image height in pixels */
-		height: z.number().optional(),
-	})
-	.passthrough();
-
-/** Response payload returned after design image generation */
-export type GenerateDesignResponse = z.infer<
-	typeof GenerateDesignResponseSchema
+export const ListWorkspacesInputSchema = z.object({}).loose();
+export type ListWorkspacesInput = z.infer<typeof ListWorkspacesInputSchema>;
+export const ListWorkspacesResponseSchema = z.array(DynapicturesWorkspace);
+export type ListWorkspacesResponse = z.infer<
+	typeof ListWorkspacesResponseSchema
 >;
 
-/** Zod schema for retrieving a single design */
-const GetDesignInputSchema = z.object({
-	/** Unique design identifier */
-	id: z.string().min(1),
-});
-
-/** Input parameters for retrieving design details */
-export type GetDesignInput = z.infer<typeof GetDesignInputSchema>;
-
-/** Zod schema for get design response output */
-const GetDesignResponseSchema = z
+export const CreateWorkspaceInputSchema = z
 	.object({
-		/** Unique design identifier */
-		id: z.string(),
-		/** Template ID associated with the design */
-		templateId: z.string().optional(),
-		/** Direct image URL */
-		imageUrl: z.string().optional(),
-		/** Thumbnail URL */
-		thumbnailUrl: z.string().optional(),
-		/** Image width in pixels */
-		width: z.number().optional(),
-		/** Image height in pixels */
-		height: z.number().optional(),
+		name: z
+			.string()
+			.min(1)
+			.describe('Name of a new workspace. Required field.'),
 	})
-	.passthrough();
+	.loose();
+export type CreateWorkspaceInput = z.infer<typeof CreateWorkspaceInputSchema>;
+export const CreateWorkspaceResponseSchema = DynapicturesWorkspace;
+export type CreateWorkspaceResponse = z.infer<
+	typeof CreateWorkspaceResponseSchema
+>;
 
-/** Response payload for a get design query */
-export type GetDesignResponse = z.infer<typeof GetDesignResponseSchema>;
+export const UpdateWorkspaceInputSchema = z
+	.object({
+		id: z.string().min(1).describe('The ID of a workspace to be updated.'),
+		name: z
+			.string()
+			.min(1)
+			.describe('New name of a workspace. Required field.'),
+	})
+	.loose();
+export type UpdateWorkspaceInput = z.infer<typeof UpdateWorkspaceInputSchema>;
+export const UpdateWorkspaceResponseSchema = DynapicturesWorkspace;
+export type UpdateWorkspaceResponse = z.infer<
+	typeof UpdateWorkspaceResponseSchema
+>;
 
-/** Zod schema for listing generated designs input */
-const ListDesignsInputSchema = z.object({
-	/** Maximum number of records to return (1-100) */
-	limit: z.number().int().min(1).max(100).optional(),
-	/** Number of records to skip */
-	offset: z.number().int().min(0).optional(),
-});
+export const DeleteWorkspaceInputSchema = z
+	.object({
+		id: z.string().min(1).describe('The ID of a workspace to be deleted.'),
+	})
+	.loose();
+export type DeleteWorkspaceInput = z.infer<typeof DeleteWorkspaceInputSchema>;
+export const DeleteWorkspaceResponseSchema = DynapicturesWorkspace;
+export type DeleteWorkspaceResponse = z.infer<
+	typeof DeleteWorkspaceResponseSchema
+>;
 
-/** Input parameters for listing generated designs */
-export type ListDesignsInput = z.infer<typeof ListDesignsInputSchema>;
-
-/** Zod schema for listing generated designs response */
-const ListDesignsResponseSchema = z.array(
-	z
-		.object({
-			id: z.string(),
-			templateId: z.string().optional(),
-			imageUrl: z.string().optional(),
-			thumbnailUrl: z.string().optional(),
-		})
-		.passthrough(),
-);
-
-/** Response payload containing array of generated designs */
-export type ListDesignsResponse = z.infer<typeof ListDesignsResponseSchema>;
-
-/** Zod schema for listing templates input */
-const ListTemplatesInputSchema = z.object({
-	/** Maximum number of templates to return (1-100) */
-	limit: z.number().int().min(1).max(100).optional(),
-	/** Number of templates to skip */
-	offset: z.number().int().min(0).optional(),
-});
-
-/** Input parameters for listing available design templates */
+export const ListTemplatesInputSchema = z.object({}).loose();
 export type ListTemplatesInput = z.infer<typeof ListTemplatesInputSchema>;
-
-/** Zod schema for listing templates response */
-const ListTemplatesResponseSchema = z.array(
-	z
-		.object({
-			id: z.string(),
-			name: z.string(),
-			width: z.number().optional(),
-			height: z.number().optional(),
-			thumbnailUrl: z.string().optional(),
-		})
-		.passthrough(),
-);
-
-/** Response payload containing array of templates */
+export const ListTemplatesResponseSchema = z.array(DynapicturesTemplate);
 export type ListTemplatesResponse = z.infer<typeof ListTemplatesResponseSchema>;
 
-/** Map of all endpoint input parameter types */
+export const UnsubscribeWebhookInputSchema = z
+	.object({
+		targetUrl: z
+			.string()
+			.url()
+			.describe('The URL of the REST endpoint receiving notifications.'),
+		eventType: z
+			.literal('NEW_IMAGE')
+			.describe('Event type passed when subscribing this webhook.'),
+		templateId: z
+			.string()
+			.min(1)
+			.describe('The UID of the image template used when subscribing.'),
+	})
+	.loose();
+export type UnsubscribeWebhookInput = z.infer<
+	typeof UnsubscribeWebhookInputSchema
+>;
+export const UnsubscribeWebhookResponseSchema = z
+	.object({
+		error: z.boolean(),
+		message: z.string(),
+	})
+	.loose();
+export type UnsubscribeWebhookResponse = z.infer<
+	typeof UnsubscribeWebhookResponseSchema
+>;
+
+export const UploadMediaAssetInputSchema = z
+	.object({
+		workspaceId: z
+			.string()
+			.min(1)
+			.describe('The ID of a workspace to upload an image to.'),
+		fileUrl: z
+			.string()
+			.url()
+			.describe('Public URL of the image uploaded as the official file field.'),
+		filename: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Filename of uploaded image.'),
+	})
+	.loose();
+export type UploadMediaAssetInput = z.infer<typeof UploadMediaAssetInputSchema>;
+export const UploadMediaAssetResponseSchema = DynapicturesMediaAsset;
+export type UploadMediaAssetResponse = z.infer<
+	typeof UploadMediaAssetResponseSchema
+>;
+
 export type DynapicturesEndpointInputs = {
-	generateDesign: GenerateDesignInput;
-	getDesign: GetDesignInput;
-	listDesigns: ListDesignsInput;
+	listWorkspaces: ListWorkspacesInput;
+	createWorkspace: CreateWorkspaceInput;
+	updateWorkspace: UpdateWorkspaceInput;
+	deleteWorkspace: DeleteWorkspaceInput;
 	listTemplates: ListTemplatesInput;
+	unsubscribeWebhook: UnsubscribeWebhookInput;
+	uploadMediaAsset: UploadMediaAssetInput;
 };
 
-/** Map of all endpoint output response types */
 export type DynapicturesEndpointOutputs = {
-	generateDesign: GenerateDesignResponse;
-	getDesign: GetDesignResponse;
-	listDesigns: ListDesignsResponse;
+	listWorkspaces: ListWorkspacesResponse;
+	createWorkspace: CreateWorkspaceResponse;
+	updateWorkspace: UpdateWorkspaceResponse;
+	deleteWorkspace: DeleteWorkspaceResponse;
 	listTemplates: ListTemplatesResponse;
+	unsubscribeWebhook: UnsubscribeWebhookResponse;
+	uploadMediaAsset: UploadMediaAssetResponse;
 };
 
-/** Exported input validation schemas for all Dynapictures endpoints */
 export const DynapicturesEndpointInputSchemas = {
-	generateDesign: GenerateDesignInputSchema,
-	getDesign: GetDesignInputSchema,
-	listDesigns: ListDesignsInputSchema,
+	listWorkspaces: ListWorkspacesInputSchema,
+	createWorkspace: CreateWorkspaceInputSchema,
+	updateWorkspace: UpdateWorkspaceInputSchema,
+	deleteWorkspace: DeleteWorkspaceInputSchema,
 	listTemplates: ListTemplatesInputSchema,
+	unsubscribeWebhook: UnsubscribeWebhookInputSchema,
+	uploadMediaAsset: UploadMediaAssetInputSchema,
 } as const;
 
-/** Exported output validation schemas for all Dynapictures endpoints */
 export const DynapicturesEndpointOutputSchemas = {
-	generateDesign: GenerateDesignResponseSchema,
-	getDesign: GetDesignResponseSchema,
-	listDesigns: ListDesignsResponseSchema,
+	listWorkspaces: ListWorkspacesResponseSchema,
+	createWorkspace: CreateWorkspaceResponseSchema,
+	updateWorkspace: UpdateWorkspaceResponseSchema,
+	deleteWorkspace: DeleteWorkspaceResponseSchema,
 	listTemplates: ListTemplatesResponseSchema,
+	unsubscribeWebhook: UnsubscribeWebhookResponseSchema,
+	uploadMediaAsset: UploadMediaAssetResponseSchema,
 } as const;
