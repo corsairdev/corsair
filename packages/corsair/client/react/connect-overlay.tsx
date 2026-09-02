@@ -292,16 +292,26 @@ export function ConnectOverlay({
 				inset: 0,
 				zIndex: 2147483647,
 				display: 'flex',
-				alignItems: 'center',
+				// Top-anchored (not centered) so the card grows downward when the
+				// accordion opens — the top stays put. Scroll a tall card.
+				alignItems: 'flex-start',
 				justifyContent: 'center',
 				padding: 16,
+				overflowY: 'auto',
 				background: 'rgba(20,20,22,0.5)',
 				backdropFilter: 'blur(3px)',
 				fontFamily: SANS,
 			}}
 		>
 			<style>{STYLES}</style>
-			<div style={{ position: 'relative', width: 'min(94vw, 380px)' }}>
+			<div
+				style={{
+					position: 'relative',
+					width: 'min(94vw, 380px)',
+					marginTop: 'clamp(40px, 20vh, 180px)',
+					marginBottom: 16,
+				}}
+			>
 				<div
 					className="corsair-card"
 					style={
