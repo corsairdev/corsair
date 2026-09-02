@@ -229,6 +229,87 @@ github({
 
 Overrides take precedence over the mode matrix. An override of `deny` always wins, and no approval record is created.
 
+## Argument constraints
+
+An endpoint override answers "may the agent call `messages.post` at all?". A **constraint** narrows that to "may the agent call it with *these* arguments?" — so posting to `#general` runs immediately while any other channel still escalates.
+
+Give an override a `policy` plus `constraints` instead of a bare policy string:
+
+```ts corsair.ts
+slack({
+    permissions: {
+        mode: "strict",
+        overrides: {
+            "messages.post": {
+                policy: "allow",
+                constraints: {
+                    channel: { match: "^#(general|alerts)$" },
+                },
+            },
+        },
+    },
+})
+```
+
+Under `strict`, a write normally escalates to `require_approval`. With the constraint above, a post to `#general` or `#alerts` runs immediately, and a post to anything else falls back to the mode matrix — approval, as before.
+
+### Operators
+
+| Operator | Matches when |
+| --- | --- |
+| `match` | The argument is a string matching this regex |
+| `equals` | The argument equals this value |
+| `in` | The argument is one of these values |
+| `notIn` | The argument is none of these values |
+
+An empty `in: []` matches nothing. An empty `notIn: []` matches every defined argument — it excludes nothing, so it will apply the override policy to any call that supplies that field.
+
+Constraint keys are dot-notation paths into the endpoint's arguments, so nested fields work too:
+
+```ts
+"messages.send": {
+    policy: "allow",
+    constraints: { "message.to": { match: "@corsair\\.dev$" } },
+}
+```
+
+### Fallback
+
+When the constraints do not hold, the mode matrix decides — unless you set `otherwise`, which lets you tighten instead of loosen:
+
+```ts
+"messages.post": {
+    policy: "allow",
+    constraints: { channel: { in: ["#general", "#alerts"] } },
+    otherwise: "deny",   // any other channel is blocked outright
+}
+```
+
+### Rules fail closed
+
+A constraint that **is** satisfied applies the override's `policy`, replacing whatever the mode matrix said — including allowing an operation the matrix would have sent for approval. That is the point of the feature: under `strict`, the `#general` example above runs immediately even though `strict` escalates writes.
+
+The fail-closed behaviour applies to constraints that **cannot be evaluated or do not match**. A constraint is not satisfied when:
+
+- the argument is missing, or resolves only through an inherited property rather than one the agent passed
+- the argument is the wrong type for the operator (a number never matches a regex)
+- the regex is invalid, or the operand is the wrong type — `in` and `notIn` need an array
+- the constraint carries more than one operator, or none this version recognizes
+- the constraints object is empty
+- either side of the comparison is a cyclic object — possible only from hand-written JavaScript, since JSON cannot express cycles; cyclic structures are rejected outright rather than compared, which also means a cyclic argument never reads as "not in" a denylist
+- either side is an exotic object (`Map`, `Set`, `RegExp`, class instance, boxed primitive) — these also fail closed under `notIn`, so a value that cannot be compared never reads as "not in the denylist"
+- a getter on the constraint or argument throws — the check fails closed instead of rejecting the endpoint call, so a throwing accessor never bypasses `otherwise` or the mode matrix
+
+Deeply nested structures are safe too: the comparator and the cycle scan are iterative, so an unusually deep argument cannot overflow the call stack or crash the permission check — it simply compares by value like any other structure.
+
+In each of these cases the override contributes nothing and evaluation falls back to `otherwise` or the mode matrix. Note this includes `notIn`: an absent argument does **not** count as "not in the denylist", so omitting a field can never satisfy a constraint.
+
+<Note>
+Constraint patterns are authored by you in the corsair config, but the values they test come from the agent. Keep patterns anchored and simple — a pattern with catastrophic backtracking can be made slow by a hostile argument value.
+</Note>
+
+---
+
 ## Status lifecycle
 
 Each approval request moves through these states:
