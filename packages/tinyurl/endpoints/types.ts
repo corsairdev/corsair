@@ -38,6 +38,8 @@ export const TinyurlApiResponseEnvelopeSchema = z
 	.object({
 		data: TinyurlLink,
 		code: z.number().optional(),
+		// TinyURL API error responses may return errors as an array of string messages or structured objects;
+		// z.unknown() accommodates varying error payload shapes before client error extraction.
 		errors: z.array(z.unknown()).optional(),
 	})
 	.loose();

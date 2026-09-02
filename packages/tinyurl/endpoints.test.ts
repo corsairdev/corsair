@@ -20,6 +20,7 @@ const mockLogEvent = logEventFromContext as jest.MockedFunction<
 >;
 const TEST_API_KEY = 'test-tinyurl-token';
 
+// Unit test fixture providing only the required key property rather than full Corsair framework runtime context.
 const ctx = { key: TEST_API_KEY } as unknown as TinyurlContext;
 
 beforeEach(() => {

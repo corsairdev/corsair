@@ -15,6 +15,8 @@ export class TinyurlAPIError extends Error {
 
 const TINYURL_API_BASE = 'https://api.tinyurl.com';
 
+// API error response bodies vary by HTTP status and endpoint; typing as unknown
+// forces callers to narrow the payload at runtime before accessing properties.
 function extractErrorMessage(body: unknown): string | undefined {
 	if (typeof body !== 'object' || body === null) return undefined;
 	const bodyObj = body as { errors?: unknown; message?: unknown };
@@ -34,6 +36,7 @@ function extractErrorMessage(body: unknown): string | undefined {
 	return undefined;
 }
 
+// Extracts optional numeric or string error code from untyped error response bodies.
 function extractErrorCode(body: unknown): string | number | undefined {
 	if (typeof body !== 'object' || body === null) return undefined;
 	const code = (body as { code?: unknown }).code;
