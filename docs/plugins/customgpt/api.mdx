@@ -1,0 +1,3149 @@
+---
+title: API
+description: "API reference for CustomGPT: every `customgpt.api.*` operation with input and output types."
+---
+
+Every `customgpt.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Conversations
+
+### create
+
+`conversations.create`
+
+Tool to create a new conversation session for a CustomGPT agent. Use this when starting a new chat interaction - it returns a session ID that you'll use to send messages. Optionally provide a name to help identify the conversation later.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.conversations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  session_id: string,
+  name?: string | null,
+  project_id?: string | number,
+  created_by?: string | number | null,
+  created_at?: string,
+  updated_at?: string,
+  deleted_at?: string | null,
+  syncedAt?: Date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Licenses
+
+### delete
+
+`licenses.delete`
+
+Deletes a license from a CustomGPT project/agent. Requires numeric project ID and license ID. This action is idempotent - it succeeds even if the license doesn't exist (404). The project must have licenses enabled in its plan for this endpoint to work properly. [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.customgpt.api.licenses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `licenseId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  deleted?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`licenses.get`
+
+Tool to retrieve a license for a specific project. Use when you need to fetch license details by license ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.licenses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `licenseId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `license` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="license full type">
+
+```ts
+{
+  key: string,
+  name?: string,
+  project_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  syncedAt?: Date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`licenses.list`
+
+List all licenses for a CustomGPT project/agent. Returns an array of license objects with details like ID, type, status, and timestamps. Returns an empty array if the project has no licenses or if licenses are not enabled for the project. Use this when you need to check what licenses exist for a specific project/agent.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.licenses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  key: string,
+  name?: string,
+  project_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  syncedAt?: Date
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`licenses.update`
+
+Updates the name of an existing license for a CustomGPT project/agent. Prerequisites: - The project must have licenses enabled in its plan - Both project ID and license ID must be valid and exist - Use List Projects to get valid project IDs - Use List Project Licenses to get valid license IDs for a project This action only updates the license name. Other license properties cannot be modified through this endpoint.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.licenses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `licenseId` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `license` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="license full type">
+
+```ts
+{
+  key: string,
+  name?: string,
+  project_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  syncedAt?: Date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Limits
+
+### getUsage
+
+`limits.getUsage`
+
+Get account usage limits showing current usage vs. maximum allowed for projects, storage credits, and API queries. This returns how many projects, storage credits (characters indexed), and queries you've used compared to your account's maximum limits. Use this to monitor quota consumption.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.limits.getUsage({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  max_projects_num?: number,
+  current_projects_num?: number,
+  max_total_storage_credits?: number,
+  current_total_storage_credits?: number,
+  max_queries?: number,
+  current_queries?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### get
+
+`messages.get`
+
+Tool to get message details from a CustomGPT conversation. Returns the complete details for a single message, including the user's prompt, the agent's response, timestamps, citations, and any attached metadata.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `promptId` | `number` | Yes | — |
+| `includeInsights` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  conversation_id?: number,
+  user_id?: number | null,
+  user_query?: string | null,
+  openai_response?: string | null,
+  citations?: number[] | null,
+  tools?: string[] | null,
+  metadata?: {
+    user_ip?: string | null,
+    user_agent?: string | null,
+    external_id?: string | null,
+    request_source?: string | null
+  } | null,
+  response_feedback?: {
+    created_at?: string,
+    updated_at?: string,
+    user_id?: number | null,
+    reaction?: neutral | disliked | liked
+  } | null,
+  customer_intelligence?: {
+    prompt_id?: number,
+    conversation_id?: number,
+    project_id?: number,
+    user_query?: string | null,
+    ai_response?: string | null,
+    created_at?: string,
+    content_source?: string | null,
+    user_emotion?: string | null,
+    user_intent?: string | null,
+    language?: string | null,
+    human_request?: true | false | unclear | null,
+    user_id?: number | null,
+    feedback?: string | null,
+    user_location?: string | null,
+    chatbot_deployment?: string | null,
+    risk_fidelity?: string | null,
+    risk_jailbreak?: string | null,
+    risk_prompt_leakage?: string | null,
+    risk_profanity?: string | null,
+    accuracy?: string | null,
+    stakeholder_status?: string | null,
+    browser?: string | null
+  } | null,
+  created_at?: string,
+  updated_at?: string,
+  syncedAt?: Date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTrustScore
+
+`messages.getTrustScore`
+
+Tool to retrieve verification trust score for a message in a CustomGPT conversation. Returns a score calculated by checking how well the agent's claims are supported by source documents. Higher scores indicate better-grounded responses with stronger evidence.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.messages.getTrustScore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `promptId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  overall_status?: string,
+  stakeholder_analysis?: {
+    end_user?: {
+      flag?: string,
+      rationale?: string,
+      stakeholder?: string,
+      recommendations?: string[]
+    },
+    security_it?: {
+      flag?: string,
+      rationale?: string,
+      stakeholder?: string,
+      recommendations?: string[]
+    },
+    risk_compliance?: {
+      flag?: string,
+      rationale?: string,
+      stakeholder?: string,
+      recommendations?: string[]
+    },
+    legal_compliance?: {
+      flag?: string,
+      rationale?: string,
+      stakeholder?: string,
+      recommendations?: string[]
+    },
+    public_relations?: {
+      flag?: string,
+      rationale?: string,
+      stakeholder?: string,
+      recommendations?: string[]
+    },
+    executive_leadership?: {
+      flag?: string,
+      rationale?: string,
+      stakeholder?: string,
+      recommendations?: string[]
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+Retrieves all messages from a CustomGPT conversation, including both user queries and AI responses. Use this to view the complete chat history for a specific conversation session. Returns an empty list if the conversation doesn't exist or has no messages.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `includeInsights` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  conversation?: {
+    id?: number,
+    session_id: string,
+    name?: string | null,
+    project_id?: string | number,
+    created_by?: string | number | null,
+    created_at?: string,
+    updated_at?: string,
+    deleted_at?: string | null,
+    syncedAt?: Date
+  },
+  messages: {
+    current_page?: number,
+    data: {
+      id: number,
+      conversation_id?: number,
+      user_id?: number | null,
+      user_query?: string | null,
+      openai_response?: string | null,
+      citations?: number[] | null,
+      tools?: string[] | null,
+      metadata?: {
+        user_ip?: string | null,
+        user_agent?: string | null,
+        external_id?: string | null,
+        request_source?: string | null
+      } | null,
+      response_feedback?: {
+        created_at?: string,
+        updated_at?: string,
+        user_id?: number | null,
+        reaction?: neutral | disliked | liked
+      } | null,
+      customer_intelligence?: {
+        prompt_id?: number,
+        conversation_id?: number,
+        project_id?: number,
+        user_query?: string | null,
+        ai_response?: string | null,
+        created_at?: string,
+        content_source?: string | null,
+        user_emotion?: string | null,
+        user_intent?: string | null,
+        language?: string | null,
+        human_request?: true | false | unclear | null,
+        user_id?: number | null,
+        feedback?: string | null,
+        user_location?: string | null,
+        chatbot_deployment?: string | null,
+        risk_fidelity?: string | null,
+        risk_jailbreak?: string | null,
+        risk_prompt_leakage?: string | null,
+        risk_profanity?: string | null,
+        accuracy?: string | null,
+        stakeholder_status?: string | null,
+        browser?: string | null
+      } | null,
+      created_at?: string,
+      updated_at?: string,
+      syncedAt?: Date
+    }[],
+    first_page_url?: string | null,
+    from?: number | null,
+    last_page?: number,
+    last_page_url?: string | null,
+    next_page_url?: string | null,
+    path?: string,
+    per_page?: number | string,
+    prev_page_url?: string | null,
+    to?: number | null,
+    total?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### submitFeedback
+
+`messages.submitFeedback`
+
+Tool to submit feedback (thumbs up/down) for a message in a CustomGPT conversation. Use this to record user satisfaction signals that help identify which AI responses are helpful and which need improvement. Feedback can be changed by submitting a new reaction value.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.messages.submitFeedback({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `promptId` | `number` | Yes | — |
+| `reaction` | `neutral \| disliked \| liked` | Yes | — |
+| `includeInsights` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  conversation_id?: number,
+  user_id?: number | null,
+  user_query?: string | null,
+  openai_response?: string | null,
+  citations?: number[] | null,
+  tools?: string[] | null,
+  metadata?: {
+    user_ip?: string | null,
+    user_agent?: string | null,
+    external_id?: string | null,
+    request_source?: string | null
+  } | null,
+  response_feedback?: {
+    created_at?: string,
+    updated_at?: string,
+    user_id?: number | null,
+    reaction?: neutral | disliked | liked
+  } | null,
+  customer_intelligence?: {
+    prompt_id?: number,
+    conversation_id?: number,
+    project_id?: number,
+    user_query?: string | null,
+    ai_response?: string | null,
+    created_at?: string,
+    content_source?: string | null,
+    user_emotion?: string | null,
+    user_intent?: string | null,
+    language?: string | null,
+    human_request?: true | false | unclear | null,
+    user_id?: number | null,
+    feedback?: string | null,
+    user_location?: string | null,
+    chatbot_deployment?: string | null,
+    risk_fidelity?: string | null,
+    risk_jailbreak?: string | null,
+    risk_prompt_leakage?: string | null,
+    risk_profanity?: string | null,
+    accuracy?: string | null,
+    stakeholder_status?: string | null,
+    browser?: string | null
+  } | null,
+  created_at?: string,
+  updated_at?: string,
+  syncedAt?: Date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verify
+
+`messages.verify`
+
+Tool to verify message accuracy by triggering a fact-checking verification process. Use when you need to verify claims in a conversation message against source documents. The system compares each claim and reports which claims are supported, partially supported, or unsupported.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.messages.verify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `promptId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pages
+
+### delete
+
+`pages.delete`
+
+Tool to delete a document from a CustomGPT agent's knowledge base. Permanently removes a document and the agent will no longer reference this content when answering questions. Use this to remove outdated or incorrect information. Warning: This action cannot be undone. [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.customgpt.api.pages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `pageId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  deleted?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMetadata
+
+`pages.getMetadata`
+
+Tool to get document metadata including title, source URL, word count, and custom metadata fields. Use this to display document information or manage your knowledge base.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.pages.getMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `pageId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  url?: string | null,
+  title?: string | null,
+  description?: string | null,
+  image?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`pages.list`
+
+Lists all documents in a CustomGPT agent's knowledge base. Returns indexed content including webpages, PDFs, and uploaded files that the agent can reference. Supports filtering by crawl/index status and pagination. Use this to audit knowledge sources or verify successful document ingestion.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.pages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `search` | `string` | No | — |
+| `crawl_status` | `all \| ok \| failed \| n/a \| queued \| limited` | No | — |
+| `index_status` | `all \| ok \| failed \| n/a \| queued \| limited` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  project?: {
+    id: number,
+    project_name?: string,
+    sitemap_path?: string | null,
+    is_chat_active?: boolean,
+    is_master?: boolean,
+    user_id?: number,
+    team_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    deleted_at?: string | null,
+    type?: SITEMAP | URL,
+    is_shared?: boolean,
+    shareable_slug?: string | null,
+    shareable_link?: string | null,
+    embed_code?: string | null,
+    live_chat_code?: string | null,
+    are_licenses_allowed?: boolean,
+    subdomain_slug?: string | null,
+    syncedAt?: Date
+  },
+  pages: {
+    current_page?: number,
+    data: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[],
+    first_page_url?: string | null,
+    from?: number | null,
+    last_page?: number,
+    last_page_url?: string | null,
+    next_page_url?: string | null,
+    path?: string,
+    per_page?: number | string,
+    prev_page_url?: string | null,
+    to?: number | null,
+    total?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reindex
+
+`pages.reindex`
+
+Tool to reindex a document in CustomGPT knowledge base. Re-crawls and re-indexes a URL-based document to update its content. Use this when the source content has changed and you want the agent to use the updated version. Only works for URL-based documents.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.pages.reindex({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `pageId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  updated?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateMetadata
+
+`pages.updateMetadata`
+
+Update document metadata for a specific page in a CustomGPT project. Updates custom metadata fields such as title, description, URL, and image that help organize and manage your knowledge base. Use when you need to add tags, categories, or other organizational information to documents.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.pages.updateMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `pageId` | `number` | Yes | — |
+| `title` | `string` | No | — |
+| `url` | `string` | No | — |
+| `description` | `string` | No | — |
+| `image` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  url?: string | null,
+  title?: string | null,
+  description?: string | null,
+  image?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Personas
+
+### activate
+
+`personas.activate`
+
+Restore a previous persona version for a CustomGPT agent. Activates a previous persona version, making it the current active persona. This creates a new version entry in the history (it doesn't overwrite), preserving the full audit trail. Use this to roll back to a known-good configuration. Requires Custom plan.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.personas.activate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `version` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  updated?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`personas.list`
+
+Tool to list persona versions for a CustomGPT agent. Use when you need to view the version history of an agent's persona. Every time the persona is updated, a snapshot is automatically saved, allowing you to view changes over time or restore a previous version. Results are paginated. Requires Custom plan.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.personas.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  current_page?: number,
+  data: {
+    version?: number,
+    is_active?: boolean,
+    created_at?: string,
+    instructions?: string | null
+  }[],
+  first_page_url?: string | null,
+  from?: number | null,
+  last_page?: number,
+  last_page_url?: string | null,
+  next_page_url?: string | null,
+  path?: string,
+  per_page?: number | string,
+  prev_page_url?: string | null,
+  to?: number | null,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### clone
+
+`projects.clone`
+
+Tool to clone a CustomGPT agent (project). Creates a complete copy of an existing agent, including its knowledge base, persona, and settings. Use this to create variations of an agent for testing, or to use an existing agent as a template for a new one.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.projects.clone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  project_name?: string,
+  sitemap_path?: string | null,
+  is_chat_active?: boolean,
+  is_master?: boolean,
+  user_id?: number,
+  team_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  deleted_at?: string | null,
+  type?: SITEMAP | URL,
+  is_shared?: boolean,
+  shareable_slug?: string | null,
+  shareable_link?: string | null,
+  embed_code?: string | null,
+  live_chat_code?: string | null,
+  are_licenses_allowed?: boolean,
+  subdomain_slug?: string | null,
+  syncedAt?: Date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`projects.create`
+
+Tool to create a new CustomGPT agent from a sitemap URL or file upload. The agent immediately begins processing the content to build its knowledge base. Use when you need to create a new AI agent with custom knowledge from web content or documents. Either sitemap_path or file must be provided.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_name` | `string` | No | — |
+| `is_master` | `boolean` | No | — |
+| `use_planner_mode` | `boolean` | No | — |
+| `sitemap_path` | `string` | No | — |
+| `file_data_retension` | `boolean` | No | — |
+| `is_ocr_enabled` | `0 \| 1 \| 2` | No | — |
+| `is_anonymized` | `boolean` | No | — |
+| `is_vision_enabled` | `boolean` | No | — |
+| `is_vision_compress_image` | `boolean` | No | — |
+| `is_low_performance_mode_enabled` | `boolean` | No | — |
+| `allow_extra_timeout` | `boolean` | No | — |
+| `use_full_url_crawl` | `boolean` | No | — |
+| `image_extraction_type` | `none \| sync_from_sitemap` | No | — |
+| `file` | `object` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  filename: string,
+  content_base64: string,
+  content_type?: string
+}
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  filename: string,
+  content_base64: string,
+  content_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  project_name?: string,
+  sitemap_path?: string | null,
+  is_chat_active?: boolean,
+  is_master?: boolean,
+  user_id?: number,
+  team_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  deleted_at?: string | null,
+  type?: SITEMAP | URL,
+  is_shared?: boolean,
+  shareable_slug?: string | null,
+  shareable_link?: string | null,
+  embed_code?: string | null,
+  live_chat_code?: string | null,
+  are_licenses_allowed?: boolean,
+  subdomain_slug?: string | null,
+  syncedAt?: Date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Tool to delete a CustomGPT project by ID. Use when you need to permanently remove an existing agent after confirming the ID. [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.customgpt.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  deleted?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Tool to get agent details. Returns the full configuration and current status for a specific agent. Use this to check processing status, view settings, or retrieve metadata about the agent.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `width` | `string` | No | — |
+| `height` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  project_name?: string,
+  sitemap_path?: string | null,
+  is_chat_active?: boolean,
+  is_master?: boolean,
+  user_id?: number,
+  team_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  deleted_at?: string | null,
+  type?: SITEMAP | URL,
+  is_shared?: boolean,
+  shareable_slug?: string | null,
+  shareable_link?: string | null,
+  embed_code?: string | null,
+  live_chat_code?: string | null,
+  are_licenses_allowed?: boolean,
+  subdomain_slug?: string | null,
+  syncedAt?: Date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+Lists all CustomGPT projects (agents) for the authenticated user. Returns projects with full details including ID, name, type, chat status, and timestamps. Supports pagination via the 'page' parameter. Use this to discover available projects or iterate through all projects.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `duration` | `number` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `orderBy` | `id \| created_at` | No | — |
+| `name` | `string` | No | — |
+| `width` | `string` | No | — |
+| `height` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  current_page?: number,
+  data: {
+    id: number,
+    project_name?: string,
+    sitemap_path?: string | null,
+    is_chat_active?: boolean,
+    is_master?: boolean,
+    user_id?: number,
+    team_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    deleted_at?: string | null,
+    type?: SITEMAP | URL,
+    is_shared?: boolean,
+    shareable_slug?: string | null,
+    shareable_link?: string | null,
+    embed_code?: string | null,
+    live_chat_code?: string | null,
+    are_licenses_allowed?: boolean,
+    subdomain_slug?: string | null,
+    syncedAt?: Date
+  }[],
+  first_page_url?: string | null,
+  from?: number | null,
+  last_page?: number,
+  last_page_url?: string | null,
+  next_page_url?: string | null,
+  path?: string,
+  per_page?: number | string,
+  prev_page_url?: string | null,
+  to?: number | null,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### plugins
+
+`projects.plugins`
+
+Tool to retrieve plugin details for a specific CustomGPT agent (project). Use when you need to inspect plugin configuration, status, and metadata for an agent.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.projects.plugins({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tools?: {
+    key?: string,
+    name?: string,
+    is_enabled?: boolean,
+    settings?: {
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`projects.stats`
+
+Tool to get agent statistics. Returns usage metrics and performance statistics for an agent, including total conversations, query counts, document statistics, and processing information. Use when you need to monitor agent performance or generate usage reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.projects.stats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  pages_found?: number,
+  pages_crawled?: number,
+  pages_indexed?: number,
+  crawl_credits_used?: number,
+  query_credits_used?: number,
+  total_queries?: number,
+  total_words_indexed?: number,
+  total_storage_credits_used?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Updates an existing CustomGPT agent's name or configuration settings. Use this to rename an agent or modify its basic properties without affecting its knowledge base. Returns the complete updated project details including all metadata.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `project_name` | `string` | No | — |
+| `is_shared` | `boolean` | No | — |
+| `are_licenses_allowed` | `boolean` | No | — |
+| `sitemap_path` | `string` | No | — |
+| `file_data_retension` | `boolean` | No | — |
+| `is_ocr_enabled` | `0 \| 1 \| 2` | No | — |
+| `is_anonymized` | `boolean` | No | — |
+| `is_vision_enabled` | `boolean` | No | — |
+| `is_vision_compress_image` | `boolean` | No | — |
+| `is_low_performance_mode_enabled` | `boolean` | No | — |
+| `allow_extra_timeout` | `boolean` | No | — |
+| `use_full_url_crawl` | `boolean` | No | — |
+| `image_extraction_type` | `none \| sync_from_sitemap` | No | — |
+| `file` | `object` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  filename: string,
+  content_base64: string,
+  content_type?: string
+}
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  filename: string,
+  content_base64: string,
+  content_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  project_name?: string,
+  sitemap_path?: string | null,
+  is_chat_active?: boolean,
+  is_master?: boolean,
+  user_id?: number,
+  team_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  deleted_at?: string | null,
+  type?: SITEMAP | URL,
+  is_shared?: boolean,
+  shareable_slug?: string | null,
+  shareable_link?: string | null,
+  embed_code?: string | null,
+  live_chat_code?: string | null,
+  are_licenses_allowed?: boolean,
+  subdomain_slug?: string | null,
+  syncedAt?: Date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### exportLeads
+
+`reports.exportLeads`
+
+Export leads from a CustomGPT project. Returns lead information captured from conversations including email addresses, names, phone numbers, and custom fields. Supports pagination and date range filtering. Use this to sync leads with CRM or marketing tools.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.reports.exportLeads({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `session_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  current_page?: number,
+  data: {
+    project_id?: number,
+    session_id?: string,
+    query_id?: number,
+    name?: string | null,
+    email?: string | null,
+    phone_number?: string | null,
+    company?: string | null,
+    captured_at?: string | null,
+    other_data?: {
+    } | null,
+    user_defined?: {
+    } | null,
+    tags?: string[] | null,
+    syncedAt?: Date
+  }[],
+  first_page_url?: string | null,
+  from?: number | null,
+  last_page?: number,
+  last_page_url?: string | null,
+  next_page_url?: string | null,
+  path?: string,
+  per_page?: number | string,
+  prev_page_url?: string | null,
+  to?: number | null,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAnalysis
+
+`reports.getAnalysis`
+
+Tool to retrieve analytics chart data for a CustomGPT project. Returns time-series data formatted for charts, with daily or weekly breakdowns of key metrics including conversation counts, query counts, and queries-per-conversation ratios. Use this to generate usage reports, track project engagement over time, or visualize chatbot performance trends.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.reports.getAnalysis({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `filters` | `queries \| conversations \| queries_per_conversation[]` | Yes | — |
+| `interval` | `daily \| weekly` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  queries?: {
+    queries_number?: number,
+    created_at_interval?: string
+  }[],
+  conversations?: {
+    queries_number?: number,
+    created_at_interval?: string
+  }[],
+  queries_per_conversation?: {
+    queries_number?: number,
+    created_at_interval?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getConversations
+
+`reports.getConversations`
+
+Tool to get conversation analytics for a CustomGPT project. Returns conversation metrics including total conversations, average queries per conversation, and other engagement statistics. Use this to understand how users engage with your agent and analyze conversation patterns over time.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.reports.getConversations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `filters` | `total \| average_queries_per_conversation[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  total?: number,
+  average_queries_per_conversation?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getIntelligence
+
+`reports.getIntelligence`
+
+Tool to get customer intelligence for a CustomGPT project. Returns AI-analyzed insights about users including common intents, emotional sentiment, frequently discussed topics, and emerging trends. Use this to understand what users are asking about and identify patterns in user behavior.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.reports.getIntelligence({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `content_source` | `in-context \| out-of-context \| not-used[]` | No | — |
+| `accuracy` | `string` | No | — |
+| `stakeholder_status` | `APPROVED \| FLAGGED \| BLOCKED[]` | No | — |
+| `user_emotion` | `positive \| neutral \| frustration \| dissatisfaction \| confusion \| unclear[]` | No | — |
+| `user_intent` | `informational \| troubleshooting \| instructional \| greetings \| transactional \| navigational \| follow-up \| unclear[]` | No | — |
+| `human_request` | `true \| false \| unclear[]` | No | — |
+| `language` | `string[]` | No | — |
+| `external_id` | `string[]` | No | — |
+| `country` | `string[]` | No | — |
+| `tools` | `string[]` | No | — |
+| `leads` | `(0 \| 1)[]` | No | — |
+| `request_source` | `string[]` | No | — |
+| `risk_fidelity` | `string[]` | No | — |
+| `risk_jailbreak` | `string[]` | No | — |
+| `risk_prompt_leakage` | `string[]` | No | — |
+| `risk_profanity` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `total_queries` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  current_page?: number,
+  data: {
+    prompt_id?: number,
+    conversation_id?: number,
+    project_id?: number,
+    user_query?: string | null,
+    ai_response?: string | null,
+    created_at?: string,
+    content_source?: string | null,
+    user_emotion?: string | null,
+    user_intent?: string | null,
+    language?: string | null,
+    human_request?: true | false | unclear | null,
+    user_id?: number | null,
+    feedback?: string | null,
+    user_location?: string | null,
+    chatbot_deployment?: string | null,
+    risk_fidelity?: string | null,
+    risk_jailbreak?: string | null,
+    risk_prompt_leakage?: string | null,
+    risk_profanity?: string | null,
+    accuracy?: string | null,
+    stakeholder_status?: string | null,
+    browser?: string | null
+  }[],
+  first_page_url?: string | null,
+  from?: number | null,
+  last_page?: number,
+  last_page_url?: string | null,
+  next_page_url?: string | null,
+  path?: string,
+  per_page?: number | string,
+  prev_page_url?: string | null,
+  to?: number | null,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTraffic
+
+`reports.getTraffic`
+
+Tool to retrieve traffic analytics for a CustomGPT agent/project. Returns user traffic metrics including unique visitors, session counts, geographic distribution, and device types. Use this to understand who's using your agent and how they're accessing it.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.reports.getTraffic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `filters` | `sources[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sources?: {
+    request_source?: string,
+    request_source_number?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Settings
+
+### get
+
+`settings.get`
+
+Retrieve configuration settings for a specific CustomGPT agent/project. Returns settings including: chatbot avatar, background, default prompt, example questions, response source, language, and branding preferences. Use this to inspect agent configuration, audit settings, or retrieve values before making updates. Note: Some newly created projects may not have settings initialized yet and will return a 404.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.settings.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  chatbot_avatar?: string,
+  chatbot_background_type?: image | color,
+  radius_styling?: sharp | soft | round | legacy,
+  font_family?: inter | public-sans,
+  chatbot_background?: string,
+  chatbot_background_color?: string,
+  chatbot_color_scheme?: fresh | legacy,
+  default_prompt?: string,
+  example_questions?: string[],
+  response_source?: default | own_content | openai_content,
+  chatbot_msg_lang?: string,
+  chatbot_color?: string,
+  chatbot_toolbar_color?: string,
+  persona_instructions?: string | null,
+  citations_answer_source_label_msg?: string | null,
+  citations_sources_label_msg?: string | null,
+  hang_in_there_msg?: string | null,
+  chatbot_siesta_msg?: string | null,
+  chatbot_failed_moderation_msg?: string | null,
+  account_out_of_queries_msg?: string | null,
+  is_loading_indicator_enabled?: boolean | null,
+  enable_citations?: 0 | 1 | 2 | 3 | null,
+  enable_feedbacks?: boolean | null,
+  enable_copy_button?: boolean | null,
+  citations_view_type?: user | show | hide | null,
+  image_citation_display?: default | first_only | null,
+  limit_image_citation_height?: boolean,
+  use_opengraph_image_citation?: boolean,
+  no_answer_message?: string | null,
+  ending_message?: string | null,
+  try_asking_questions_msg?: string | null,
+  view_more_msg?: string | null,
+  view_less_msg?: string | null,
+  remove_branding?: boolean | null,
+  private_deployment?: 0 | 1 | 2 | null,
+  enable_recaptcha_for_public_chatbots?: boolean | null,
+  chatbot_model?: gpt-4-1 | gpt-4-o | gpt-5.1-none | gpt-5.1-low | gpt-5.2-none | gpt-5.2-low | gpt-5.4-low | gpt-4-1-mini | gpt-4o-mini | claude-4.8-opus | claude-4.6-opus | claude-4.5-opus | claude-4.6-sonnet | claude-4.6-sonnet-thinking | claude-4.5-sonnet | claude-4.5-haiku | gpt-o4-mini-low | gpt-o4-mini-medium | gpt-o4-mini-high | gemini-3.1-pro | gemini-3-pro | gemini-3.5-flash | null,
+  is_selling_enabled?: boolean | null,
+  license_slug?: boolean | null,
+  selling_url?: string | null,
+  can_share_conversation?: boolean | null,
+  can_export_conversation?: boolean | null,
+  hide_sources_from_responses?: boolean | null,
+  input_field_addendum?: string | null,
+  ai_disclaimer?: string | null,
+  user_avatar_enabled?: boolean,
+  user_avatar?: string,
+  title_avatar_enabled?: boolean,
+  spotlight_avatar_enabled?: boolean,
+  spotlight_avatar?: string,
+  spotlight_avatar_shape?: circle | rectangle,
+  spotlight_avatar_type?: default | image,
+  user_avatar_orientation?: string,
+  agent_title_avatar_alignment?: left | center | right,
+  chatbot_title?: string | null,
+  chatbot_title_color?: string | null,
+  enable_inline_citations_api?: boolean | null,
+  conversation_time_window?: 0 | 1 | 2 | null,
+  conversation_retention_period?: custom | year | never,
+  conversation_retention_days?: number,
+  use_context_aware_starter_question?: boolean | null,
+  enable_agent_knowledge_base_awareness?: boolean,
+  markdown_enabled?: boolean,
+  is_hybrid_search?: boolean,
+  user_awareness?: boolean,
+  agent_capability?: fastest-responses | optimal-choice | advanced-reasoning | complex-tasks,
+  context_depth?: compact | balanced | extended | rich | max | custom,
+  use_planner_mode?: boolean,
+  master_project_smart_routing_mode?: off | start-only | every-message,
+  master_project_user_agent_switching_enabled?: boolean,
+  max_actions_per_query?: number,
+  is_in_chat_agent_avatar_enabled?: boolean,
+  is_in_chat_user_avatar_enabled?: boolean,
+  conversation_history?: hidden | team_members | everyone,
+  is_pdf_viewer?: boolean,
+  is_pdf_viewer_autoopen?: boolean,
+  is_anonymize_pdfs?: boolean,
+  is_pdf_page_visibility_limited?: boolean,
+  pdf_limited_page_label?: string,
+  is_pdf_limited_label_linked?: boolean,
+  allowed_domains_for_embedding?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`settings.update`
+
+Update CustomGPT agent configuration settings. Updates persona instructions, response format, citation style, branding, and deployment settings. Only include fields you want to change - omitted fields retain their current values. Use this to configure agent behavior, customize appearance, or adjust user experience settings.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.settings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chat_bot_avatar` | `string` | No | — |
+| `chat_bot_bg` | `string` | No | — |
+| `chat_bot_bg_type` | `image \| color` | No | — |
+| `chat_bot_bg_color` | `string` | No | — |
+| `chat_bot_color_scheme` | `fresh \| legacy` | No | — |
+| `radius_styling` | `sharp \| soft \| round \| legacy` | No | — |
+| `font_family` | `inter \| public-sans` | No | — |
+| `default_prompt` | `string` | No | — |
+| `example_questions[]` | `string[]` | No | — |
+| `response_source` | `default \| own_content \| openai_content` | No | — |
+| `chatbot_msg_lang` | `sq \| ar \| hy \| az \| ba \| eu \| be \| bn \| bh \| bs \| pt-BR \| bg \| yue \| ca \| hne \| hr \| cs \| da \| doi \| nl \| en \| et \| fo \| fi \| fr \| gl \| ka \| de \| el \| gu \| hry \| he \| hi \| hu \| id \| ga \| it \| ja \| jv \| kn \| ks \| kk \| kok \| ko \| ky \| lv \| lt \| mk \| mai \| ms \| mt \| cmn \| mr \| mwr \| nan \| mo \| mn \| me \| ne \| no \| or \| ps \| fa \| pl \| pt \| pa \| raj \| ro \| ru \| sa \| sat \| sr \| sd \| si \| sk \| sl \| es \| sw \| sv \| tg \| ta \| tt \| te \| th \| tr \| tk \| uk \| ur \| uz \| vi \| cy \| wuu` | No | — |
+| `chatbot_color` | `string` | No | — |
+| `chatbot_toolbar_color` | `string` | No | — |
+| `persona_instructions` | `string` | No | — |
+| `citations_answer_source_label_msg` | `string` | No | — |
+| `citations_sources_label_msg` | `string` | No | — |
+| `hang_in_there_msg` | `string` | No | — |
+| `chatbot_siesta_msg` | `string` | No | — |
+| `chatbot_failed_moderation_msg` | `string` | No | — |
+| `account_out_of_queries_msg` | `string` | No | — |
+| `is_loading_indicator_enabled` | `boolean` | No | — |
+| `enable_citations` | `0 \| 1 \| 2 \| 3` | No | — |
+| `enable_feedbacks` | `boolean` | No | — |
+| `enable_copy_button` | `boolean` | No | — |
+| `citations_view_type` | `user \| show \| hide` | No | — |
+| `image_citation_display` | `default \| first_only` | No | — |
+| `limit_image_citation_height` | `boolean` | No | — |
+| `use_opengraph_image_citation` | `boolean` | No | — |
+| `max_inline_images_per_response` | `0 \| 1 \| 2 \| 3` | No | — |
+| `no_answer_message` | `string` | No | — |
+| `ending_message` | `string` | No | — |
+| `try_asking_questions_msg` | `string` | No | — |
+| `view_more_msg` | `string` | No | — |
+| `view_less_msg` | `string` | No | — |
+| `remove_branding` | `boolean` | No | — |
+| `enable_recaptcha_for_public_chatbots` | `boolean` | No | — |
+| `chatbot_model` | `gpt-4-1 \| gpt-4-o \| gpt-5.1-none \| gpt-5.1-low \| gpt-5.2-none \| gpt-5.2-low \| gpt-5.4-low \| gpt-4-1-mini \| gpt-4o-mini \| claude-4.8-opus \| claude-4.6-opus \| claude-4.5-opus \| claude-4.6-sonnet \| claude-4.6-sonnet-thinking \| claude-4.5-sonnet \| claude-4.5-haiku \| gpt-o4-mini-low \| gpt-o4-mini-medium \| gpt-o4-mini-high \| gemini-3.1-pro \| gemini-3-pro \| gemini-3.5-flash` | No | — |
+| `is_selling_enabled` | `boolean` | No | — |
+| `can_share_conversation` | `boolean` | No | — |
+| `can_export_conversation` | `boolean` | No | — |
+| `hide_sources_from_responses` | `boolean` | No | — |
+| `agent_capability` | `fastest-responses \| optimal-choice \| advanced-reasoning \| complex-tasks` | No | — |
+| `input_field_addendum` | `string` | No | — |
+| `ai_disclaimer` | `string` | No | — |
+| `user_avatar_enabled` | `boolean` | No | — |
+| `user_avatar` | `string` | No | — |
+| `title_avatar_enabled` | `boolean` | No | — |
+| `spotlight_avatar_enabled` | `boolean` | No | — |
+| `spotlight_avatar` | `string` | No | — |
+| `spotlight_avatar_shape` | `circle \| rectangle` | No | — |
+| `spotlight_avatar_type` | `default \| image` | No | — |
+| `user_avatar_orientation` | `agent-left-user-right \| agent-right-user-right \| agent-right-user-left \| agent-left-user-left` | No | — |
+| `agent_title_avatar_alignment` | `left \| center \| right` | No | — |
+| `chatbot_title` | `string` | No | — |
+| `chatbot_title_color` | `string` | No | — |
+| `enable_inline_citations_api` | `boolean` | No | — |
+| `conversation_time_window` | `0 \| 1 \| 2` | No | — |
+| `conversation_retention_period` | `custom \| year \| never` | No | — |
+| `conversation_retention_days` | `number` | No | — |
+| `use_context_aware_starter_question` | `boolean` | No | — |
+| `enable_agent_knowledge_base_awareness` | `boolean` | No | — |
+| `markdown_enabled` | `boolean` | No | — |
+| `is_hybrid_search` | `boolean` | No | — |
+| `user_awareness` | `boolean` | No | — |
+| `context_depth` | `compact \| balanced \| extended \| rich \| max \| custom` | No | — |
+| `use_planner_mode` | `boolean` | No | — |
+| `master_project_smart_routing_mode` | `off \| start-only \| every-message` | No | — |
+| `master_project_user_agent_switching_enabled` | `boolean` | No | — |
+| `max_actions_per_query` | `number` | No | — |
+| `is_in_chat_agent_avatar_enabled` | `boolean` | No | — |
+| `is_in_chat_user_avatar_enabled` | `boolean` | No | — |
+| `conversation_history` | `hidden \| team_members \| everyone` | No | — |
+| `is_pdf_viewer` | `boolean` | No | — |
+| `is_pdf_viewer_autoopen` | `boolean` | No | — |
+| `is_anonymize_pdfs` | `boolean` | No | — |
+| `is_pdf_page_visibility_limited` | `boolean` | No | — |
+| `pdf_limited_page_label` | `string` | No | — |
+| `is_pdf_limited_label_linked` | `boolean` | No | — |
+| `allowed_domains_for_embedding` | `string[]` | No | — |
+| `projectId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  updated?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sources
+
+### add
+
+`sources.add`
+
+Add a data source to a CustomGPT agent's knowledge base. Connects content via sitemap URL, file upload, or integration. The system begins indexing immediately after creation. Use when adding documentation, FAQs, or knowledge content to an agent.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.sources.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `sync_all_images` | `boolean` | No | — |
+| `sitemap_path` | `string` | No | — |
+| `file_data_retension` | `boolean` | No | — |
+| `is_ocr_enabled` | `0 \| 1 \| 2` | No | — |
+| `is_anonymized` | `boolean` | No | — |
+| `is_vision_enabled` | `boolean` | No | — |
+| `is_vision_compress_image` | `boolean` | No | — |
+| `is_low_performance_mode_enabled` | `boolean` | No | — |
+| `allow_extra_timeout` | `boolean` | No | — |
+| `use_full_url_crawl` | `boolean` | No | — |
+| `image_extraction_type` | `none \| sync_from_sitemap` | No | — |
+| `file` | `object` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  filename: string,
+  content_base64: string,
+  content_type?: string
+}
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  filename: string,
+  content_base64: string,
+  content_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  project_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  type?: sitemap | upload,
+  settings?: {
+    executive_js?: boolean,
+    data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+    create_new_pages?: boolean,
+    remove_unexist_pages?: boolean,
+    refresh_existing_pages?: never | always | if_updated,
+    sitemap_path?: string | null,
+    image_extraction_type?: none | sync_from_sitemap,
+    update_existing_images?: boolean,
+    sync_all_images?: boolean
+  },
+  pages?: {
+    id: number,
+    page_url?: string,
+    page_url_hash?: string,
+    project_id?: number,
+    s3_path?: string | null,
+    crawl_status?: ok | queued | failed | n/a | limited,
+    index_status?: ok | queued | failed | n/a | limited,
+    is_file?: boolean,
+    is_refreshable?: boolean,
+    is_file_kept?: boolean,
+    filename?: string | null,
+    filesize?: number | null,
+    created_at?: string,
+    updated_at?: string,
+    deleted_at?: string | null,
+    syncedAt?: Date
+  }[] | null,
+  syncedAt?: Date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sources.delete`
+
+Tool to delete a data source from a CustomGPT agent. Removes the source and all its documents from the agent's knowledge base. Use this to disconnect content that's no longer relevant or to clean up after testing. [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.customgpt.api.sources.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `sourceId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  deleted?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sources.list`
+
+Tool to list all data sources connected to an agent. Returns sources from various origins like sitemaps, Google Drive folders, SharePoint sites, or uploaded files. Use this to manage what content feeds into an agent's knowledge base.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.sources.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uploads?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  } | null,
+  sitemaps?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  }[],
+  zapiers?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  }[],
+  confluences?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  }[],
+  youtubes?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  }[],
+  vimeos?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  }[],
+  sharepoints?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  }[],
+  sharepoint_sites?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  }[],
+  one_drives?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  }[],
+  google_drives?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  }[],
+  notions?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  }[],
+  zendesks?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  }[],
+  hubspots?: {
+    id: number,
+    project_id?: number,
+    created_at?: string,
+    updated_at?: string,
+    type?: sitemap | upload,
+    settings?: {
+      executive_js?: boolean,
+      data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+      create_new_pages?: boolean,
+      remove_unexist_pages?: boolean,
+      refresh_existing_pages?: never | always | if_updated,
+      sitemap_path?: string | null,
+      image_extraction_type?: none | sync_from_sitemap,
+      update_existing_images?: boolean,
+      sync_all_images?: boolean
+    },
+    pages?: {
+      id: number,
+      page_url?: string,
+      page_url_hash?: string,
+      project_id?: number,
+      s3_path?: string | null,
+      crawl_status?: ok | queued | failed | n/a | limited,
+      index_status?: ok | queued | failed | n/a | limited,
+      is_file?: boolean,
+      is_refreshable?: boolean,
+      is_file_kept?: boolean,
+      filename?: string | null,
+      filesize?: number | null,
+      created_at?: string,
+      updated_at?: string,
+      deleted_at?: string | null,
+      syncedAt?: Date
+    }[] | null,
+    syncedAt?: Date
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sources.update`
+
+Update source settings for a CustomGPT agent data source. Configure how the source is indexed and kept up to date by adjusting auto-sync frequency, crawl depth, file filters, and refresh behavior. Use this to fine-tune sitemap crawling (JavaScript execution, image extraction), control which pages are added or removed during syncs, and set up custom refresh schedules.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.sources.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `sourceId` | `number` | Yes | — |
+| `executive_js` | `boolean` | No | — |
+| `data_refresh_frequency` | `never \| daily \| weekly \| monthly \| advanced` | No | — |
+| `create_new_pages` | `boolean` | No | — |
+| `remove_unexist_pages` | `boolean` | No | — |
+| `refresh_existing_pages` | `never \| always \| if_updated` | No | — |
+| `refresh_schedule` | `object` | No | — |
+| `allow_extra_timeout` | `boolean` | No | — |
+| `image_extraction_type` | `none \| sync_from_sitemap` | No | — |
+| `update_existing_images` | `boolean` | No | — |
+| `sync_all_images` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="refresh_schedule full type">
+
+```ts
+{
+  days?: number[],
+  hours?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  project_id?: number,
+  created_at?: string,
+  updated_at?: string,
+  type?: sitemap | upload,
+  settings?: {
+    executive_js?: boolean,
+    data_refresh_frequency?: never | daily | weekly | monthly | advanced,
+    create_new_pages?: boolean,
+    remove_unexist_pages?: boolean,
+    refresh_existing_pages?: never | always | if_updated,
+    sitemap_path?: string | null,
+    image_extraction_type?: none | sync_from_sitemap,
+    update_existing_images?: boolean,
+    sync_all_images?: boolean
+  },
+  pages?: {
+    id: number,
+    page_url?: string,
+    page_url_hash?: string,
+    project_id?: number,
+    s3_path?: string | null,
+    crawl_status?: ok | queued | failed | n/a | limited,
+    index_status?: ok | queued | failed | n/a | limited,
+    is_file?: boolean,
+    is_refreshable?: boolean,
+    is_file_kept?: boolean,
+    filename?: string | null,
+    filesize?: number | null,
+    created_at?: string,
+    updated_at?: string,
+    deleted_at?: string | null,
+    syncedAt?: Date
+  }[] | null,
+  syncedAt?: Date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### getProfile
+
+`user.getProfile`
+
+Tool to retrieve the current user's profile information. Use when you need to display or verify authenticated user details after login.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.user.getProfile({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  email?: string,
+  name?: string | null,
+  current_team_id?: number | null,
+  profile_photo_url?: string | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchTeamMembers
+
+`user.searchTeamMembers`
+
+Tool to search for team members by email address or user ID. Use this to find users when assigning permissions or managing team access. Requires Owner or Admin role to execute.
+
+**Risk:** `read`
+
+```ts
+await corsair.customgpt.api.user.searchTeamMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `user_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  email?: string,
+  name?: string | null,
+  current_team_id?: number | null,
+  profile_photo_url?: string | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateProfile
+
+`user.updateProfile`
+
+Updates the authenticated user's profile information in CustomGPT. Use this action to modify profile details such as the user's display name, email address, or profile photo URL. All fields are optional - only the fields you provide will be updated. The action returns the complete updated user profile.
+
+**Risk:** `write`
+
+```ts
+await corsair.customgpt.api.user.updateProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `profile_photo` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="profile_photo full type">
+
+```ts
+{
+  filename: string,
+  content_base64: string,
+  content_type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  email?: string,
+  name?: string | null,
+  current_team_id?: number | null,
+  profile_photo_url?: string | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
