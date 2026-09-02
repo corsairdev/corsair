@@ -1,4 +1,3 @@
-import type { CorsairConnect } from '../../db';
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { ConnectRequest } from '../management/types';
 
@@ -47,11 +46,11 @@ export async function readConnectRequest(
 	now: number = Date.now(),
 	ttlMs: number = CONNECT_REQUEST_TTL_MS,
 ): Promise<ConnectRequest | null> {
-	const row = (await database.db
+	const row = await database.db
 		.selectFrom('corsair_connects')
 		.selectAll()
 		.where('tenant_id', '=', tenantId)
-		.executeTakeFirst()) as CorsairConnect | undefined;
+		.executeTakeFirst();
 
 	if (!row) return null;
 	if (now - Date.parse(row.requested_at) > ttlMs) return null;
