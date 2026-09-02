@@ -1,9 +1,5 @@
 import { request } from 'corsair/http';
-import {
-	makeAppVeyorRequest,
-	makeAppVeyorTextRequest,
-	parseRetryAfter,
-} from './client';
+import { makeAppVeyorRequest, makeAppVeyorTextRequest } from './client';
 
 jest.mock('corsair/http', () => ({
 	...jest.requireActual('corsair/http'),
@@ -34,10 +30,5 @@ describe('AppVeyor client', () => {
 		expect(mockRequest.mock.calls[0]?.[0].HEADERS).toEqual(
 			expect.objectContaining({ Accept: 'text/plain' }),
 		);
-	});
-
-	it('parses seconds and HTTP-date Retry-After values', () => {
-		expect(parseRetryAfter('3')).toBe(3000);
-		expect(parseRetryAfter(null)).toBeUndefined();
 	});
 });

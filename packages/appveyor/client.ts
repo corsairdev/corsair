@@ -3,8 +3,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-import type { z } from 'zod';
+import { request } from 'corsair/http';
 
 export const APPVEYOR_API_BASE = 'https://ci.appveyor.com/api';
 
@@ -83,20 +82,4 @@ export async function makeAppVeyorTextRequest(
 	return makeAppVeyorRequest<string>(endpoint, apiKey, {
 		responseType: 'text',
 	});
-}
-
-export function parseRetryAfter(header: string | null): number | undefined {
-	if (!header) return undefined;
-	const seconds = Number(header);
-	if (Number.isFinite(seconds)) return Math.max(0, seconds) * 1000;
-	const when = Date.parse(header);
-	return Number.isNaN(when) ? undefined : Math.max(0, when - Date.now());
-}
-
-export function parseJson<T>(schema: z.ZodType<T>, value: unknown): T {
-	return schema.parse(value);
-}
-
-export function isAppVeyorApiError(error: unknown): error is ApiError {
-	return error instanceof ApiError;
 }
