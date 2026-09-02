@@ -292,24 +292,16 @@ export function ConnectOverlay({
 				inset: 0,
 				zIndex: 2147483647,
 				display: 'flex',
-				// margin:auto centers; a taller card then scrolls from the top, not clips.
-				alignItems: 'flex-start',
+				alignItems: 'center',
 				justifyContent: 'center',
 				padding: 16,
-				overflowY: 'auto',
 				background: 'rgba(20,20,22,0.5)',
 				backdropFilter: 'blur(3px)',
 				fontFamily: SANS,
 			}}
 		>
 			<style>{STYLES}</style>
-			<div
-				style={{
-					position: 'relative',
-					width: 'min(94vw, 380px)',
-					margin: 'auto',
-				}}
-			>
+			<div style={{ position: 'relative', width: 'min(94vw, 380px)' }}>
 				<div
 					className="corsair-card"
 					style={
