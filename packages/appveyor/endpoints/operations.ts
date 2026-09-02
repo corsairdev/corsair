@@ -48,10 +48,13 @@ export const getBuildByVersion: AppVeyorEndpoint<'buildsGetByVersion'> = async (
 
 export const listEnvironments: AppVeyorEndpoint<'environmentsList'> = async (
 	ctx,
-) =>
-	EndpointOutputSchemas.environmentsList.parse(
+	input,
+) => {
+	EndpointInputSchemas.environmentsList.parse(input);
+	return EndpointOutputSchemas.environmentsList.parse(
 		await makeAppVeyorRequest('/environments', ctx.key),
 	);
+};
 
 export const getProjectBranchBadge: AppVeyorEndpoint<
 	'projectsGetBranchBadge'
@@ -71,10 +74,15 @@ export const getProjectBadge: AppVeyorEndpoint<'projectsGetBadge'> = async (
 	return makeAppVeyorTextRequest(`/projects/status/${parsed.token}`, ctx.key);
 };
 
-export const listProjects: AppVeyorEndpoint<'projectsList'> = async (ctx) =>
-	EndpointOutputSchemas.projectsList.parse(
+export const listProjects: AppVeyorEndpoint<'projectsList'> = async (
+	ctx,
+	input,
+) => {
+	EndpointInputSchemas.projectsList.parse(input);
+	return EndpointOutputSchemas.projectsList.parse(
 		await makeAppVeyorRequest('/projects', ctx.key),
 	);
+};
 
 export const getPublicProjectBadge: AppVeyorEndpoint<
 	'projectsGetPublicBadge'
@@ -93,28 +101,37 @@ export const getRole: AppVeyorEndpoint<'rolesGet'> = async (ctx, input) => {
 	);
 };
 
-export const listRoles: AppVeyorEndpoint<'rolesList'> = async (ctx) =>
-	EndpointOutputSchemas.rolesList.parse(
+export const listRoles: AppVeyorEndpoint<'rolesList'> = async (ctx, input) => {
+	EndpointInputSchemas.rolesList.parse(input);
+	return EndpointOutputSchemas.rolesList.parse(
 		await makeAppVeyorRequest('/roles', ctx.key),
 	);
+};
 
 export const listUserInvitations: AppVeyorEndpoint<
 	'usersInvitationsList'
-> = async (ctx) =>
-	EndpointOutputSchemas.usersInvitationsList.parse(
+> = async (ctx, input) => {
+	EndpointInputSchemas.usersInvitationsList.parse(input);
+	return EndpointOutputSchemas.usersInvitationsList.parse(
 		await makeAppVeyorRequest('/users/invitations', ctx.key),
 	);
+};
 
-export const listUsers: AppVeyorEndpoint<'usersList'> = async (ctx) =>
-	EndpointOutputSchemas.usersList.parse(
+export const listUsers: AppVeyorEndpoint<'usersList'> = async (ctx, input) => {
+	EndpointInputSchemas.usersList.parse(input);
+	return EndpointOutputSchemas.usersList.parse(
 		await makeAppVeyorRequest('/users', ctx.key),
 	);
+};
 
 export const listCollaborators: AppVeyorEndpoint<'collaboratorsList'> = async (
 	ctx,
-) =>
-	EndpointOutputSchemas.collaboratorsList.parse(
+	input,
+) => {
+	EndpointInputSchemas.collaboratorsList.parse(input);
+	return EndpointOutputSchemas.collaboratorsList.parse(
 		await makeAppVeyorRequest('/collaborators', ctx.key),
 	);
+};
 
 export const endpointInputSchemas = EndpointInputSchemas;
