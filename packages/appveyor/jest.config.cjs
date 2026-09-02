@@ -20,6 +20,16 @@ module.exports = {
 				},
 			},
 		],
+		'.*\\.js$': [
+			'ts-jest',
+			{
+				useESM: true,
+				tsconfig: {
+					esModuleInterop: true,
+					allowSyntheticDefaultImports: true,
+				},
+			},
+		],
 	},
 	moduleNameMapper: {
 		'^corsair$': '<rootDir>/../corsair/index.ts',

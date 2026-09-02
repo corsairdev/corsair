@@ -1,9 +1,9 @@
-import { AppVeyorBuild, AppVeyorProject } from './database';
+import { z } from 'zod';
 
 export const AppVeyorSchema = {
 	version: '1.0.0',
 	entities: {
-		projects: AppVeyorProject,
-		builds: AppVeyorBuild,
+		projects: z.object({}).passthrough(),
+		builds: z.object({}).passthrough(),
 	},
 } as const;

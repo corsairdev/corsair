@@ -1,12 +1,17 @@
-import { getLast as getLastBuild } from './builds';
-import { list as listProjects } from './projects';
-
-export const Projects = {
-	list: listProjects,
-};
-
-export const Builds = {
-	getLast: getLastBuild,
-};
-
+export {
+	deleteBuild,
+	downloadBuildLog,
+	getBuildArtifacts,
+	getBuildByVersion,
+	getProjectBadge,
+	getProjectBranchBadge,
+	getPublicProjectBadge,
+	getRole,
+	listCollaborators,
+	listEnvironments,
+	listProjects,
+	listRoles,
+	listUserInvitations,
+	listUsers,
+} from './operations';
 export * from './types';
