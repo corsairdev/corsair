@@ -179,6 +179,16 @@ describe('SAP SuccessFactors plugin', () => {
 		expect(opts).toEqual(expect.objectContaining({ url: '/odata/v2/User' }));
 	});
 
+	it('rejects non-numeric paging before the HTTP call', async () => {
+		await expect(run('listUsers', { top: 'nope' })).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a response that is not an OData envelope', async () => {
+		mockedRequest.mockResolvedValueOnce({ garbage: true } as never);
+		await expect(run('listUsers', { top: 1 })).rejects.toThrow();
+	});
+
 	it('rejects User as a custom MDF entity', async () => {
 		await expect(
 			run('getCustomMdfObject', { custom_object: 'User' }),

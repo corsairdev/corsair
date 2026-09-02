@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import type { SapRoute, SapRouteName } from './routes';
+import { sapRoutes } from './routes';
 
 const odataQuery = {
 	filter: z.string().optional(),
@@ -12,19 +14,52 @@ const odataQuery = {
 const ODataQuery = z.object(odataQuery);
 const Empty = z.object({}).optional();
 
-/** OData V2 `{ d }` and V4 `{ value }` plus metadata XML/JSON. */
-export const SapResponseSchema = z.union([
+const ODataRecord = z.record(z.string(), z.unknown());
+
+/** OData V2 `{ d: { results } }` or V4 `{ value }`. */
+export const SapCollectionSchema = z.union([
 	z
 		.object({
-			d: z.unknown().optional(),
-			value: z.array(z.unknown()).optional(),
+			d: z.object({ results: z.array(ODataRecord) }).passthrough(),
 		})
 		.passthrough(),
-	z.string(),
-	z.record(z.string(), z.unknown()),
-	z.null(),
-	z.undefined(),
+	z.object({ value: z.array(ODataRecord) }).passthrough(),
 ]);
+
+/** OData V2 `{ d: entity }` or V4 entity with `@odata.context`. */
+export const SapEntitySchema = z.union([
+	z.object({ d: ODataRecord }).passthrough(),
+	z
+		.object({ '@odata.context': z.string().min(1) })
+		.passthrough()
+		.refine((v) => !Array.isArray(v.value), {
+			message: 'V4 entity must not be a collection',
+		}),
+]);
+
+export const SapMetadataSchema = z.union([
+	z.string().refine((s) => s.includes('<?xml') || s.includes('edmx'), {
+		message: 'OData metadata must be EDMX XML',
+	}),
+	SapCollectionSchema,
+	SapEntitySchema,
+]);
+
+/** DELETE may be 204 empty. */
+export const SapDeleteSchema = z.union([
+	z.undefined(),
+	z.null(),
+	z.object({}).strict(),
+	SapEntitySchema,
+]);
+
+function outputSchemaFor(route: SapRoute) {
+	if (route.path.includes('$metadata')) return SapMetadataSchema;
+	if (route.method === 'DELETE') return SapDeleteSchema;
+	if (route.method !== 'GET') return SapEntitySchema;
+	if (route.path.includes('({')) return SapEntitySchema;
+	return SapCollectionSchema;
+}
 
 const Body = z.record(z.string(), z.unknown()).optional();
 
@@ -174,13 +209,8 @@ export type SapsuccessfactorsEndpointInputs = {
 };
 
 export const SapsuccessfactorsEndpointOutputSchemas = Object.fromEntries(
-	Object.keys(SapsuccessfactorsEndpointInputSchemas).map((key) => [
-		key,
-		SapResponseSchema,
-	]),
-) as {
-	[K in keyof typeof SapsuccessfactorsEndpointInputSchemas]: typeof SapResponseSchema;
-};
+	sapRoutes.map((route) => [route.name, outputSchemaFor(route)]),
+) as { [K in SapRouteName]: ReturnType<typeof outputSchemaFor> };
 
 export type SapsuccessfactorsEndpointOutputs = {
 	[K in keyof typeof SapsuccessfactorsEndpointOutputSchemas]: z.infer<

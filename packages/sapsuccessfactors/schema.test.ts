@@ -80,5 +80,21 @@ describe('sapsuccessfactors schemas', () => {
 				'<?xml version="1.0"?>',
 			),
 		).toBeDefined();
+		expect(
+			SapsuccessfactorsEndpointOutputSchemas.listUsers.safeParse(null).success,
+		).toBe(false);
+		expect(
+			SapsuccessfactorsEndpointOutputSchemas.listUsers.safeParse('oops')
+				.success,
+		).toBe(false);
+		expect(
+			SapsuccessfactorsEndpointOutputSchemas.listUsers.safeParse({ foo: 1 })
+				.success,
+		).toBe(false);
+		expect(
+			SapsuccessfactorsEndpointOutputSchemas.getPerPersonById.safeParse({
+				value: [{ id: '1' }],
+			}).success,
+		).toBe(false);
 	});
 });
