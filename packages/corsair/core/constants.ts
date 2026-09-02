@@ -90,6 +90,7 @@ export const BaseProviders = [
 	'box',
 	'boxhero',
 	'brandfetch',
+	'breathehr',
 	'brex',
 	'brightdata',
 	'browseai',
@@ -339,6 +340,7 @@ export const ProviderDisplayNames = {
 	box: 'Box',
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
+	breathehr: 'Breathe HR',
 	brex: 'Brex',
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
@@ -595,6 +597,7 @@ export type AllProviders =
 	| 'box'
 	| 'boxhero'
 	| 'brandfetch'
+	| 'breathehr'
 	| 'brex'
 	| 'brightdata'
 	| 'browseai'
