@@ -46,13 +46,30 @@ describe('official docs fixtures', () => {
 		expect(parsed.expires_at).toBe('2028-12-30 00:00:00');
 	});
 
-	it('rejects expires_at values that are not YYYY-MM-DD HH:MM:SS', () => {
+	it('rejects expires_at values that are not a real YYYY-MM-DD HH:MM:SS', () => {
+		const invalid = [
+			'tomorrow',
+			'2026-04-31 00:00:00',
+			'2023-02-29 00:00:00',
+			'2026-13-01 00:00:00',
+			'2026-01-01 24:00:00',
+			'2026-01-01 00:60:00',
+			'2026-01-01 00:00:60',
+		];
+		for (const expires_at of invalid) {
+			expect(
+				CreateUrlInputSchema.safeParse({
+					url: 'https://example.com',
+					expires_at,
+				}).success,
+			).toBe(false);
+		}
 		expect(
 			CreateUrlInputSchema.safeParse({
 				url: 'https://example.com',
-				expires_at: 'tomorrow',
+				expires_at: '2024-02-29 23:59:59',
 			}).success,
-		).toBe(false);
+		).toBe(true);
 	});
 
 	it('rejects malformed create response URLs', () => {
