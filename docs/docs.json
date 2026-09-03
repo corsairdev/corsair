@@ -1478,7 +1478,7 @@
                 ]
               },
               {
-                "group": "Posthog",
+                "group": "PostHog",
                 "pages": [
                   "plugins/posthog/overview",
                   "plugins/posthog/get-credentials",
