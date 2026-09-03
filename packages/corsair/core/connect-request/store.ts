@@ -1,3 +1,4 @@
+import { sql } from 'kysely';
 import { generateUUID } from '../../core/utils';
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { ConnectRequest } from '../management/types';
@@ -98,27 +99,36 @@ export async function recordConnectRequest(
 	);
 }
 
-/** The tenant's live connect-request, or null when there is none, it expired, or it was cleared. */
-export async function readConnectRequest(
-	database: CorsairDatabase,
-	tenantId: string,
-	now: number = Date.now(),
-	ttlMs: number = CONNECT_REQUEST_TTL_MS,
-): Promise<ConnectRequest | null> {
-	const accountIds = await tenantAccountIds(database, tenantId);
-	if (accountIds.length === 0) return null;
+type LiveRequest = ConnectRequest & {
+	requestedAtMs: number;
+	accountId: string;
+};
 
+// The most recent connect event for one account. The CASE tiebreak makes a
+// `connect.cleared` win a same-timestamp tie against a `connect.request` (the
+// safe default: prompt stays suppressed). Bounded to `limit 1` on
+// (account_id, event_type, created_at) — an index seek per plugin, so it never
+// scans the growing event log.
+async function latestConnectEventForAccount(
+	database: CorsairDatabase,
+	accountId: string,
+	tenantId: string,
+	now: number,
+	ttlMs: number,
+): Promise<LiveRequest | null> {
 	const latest = await database.db
 		.selectFrom('corsair_events')
 		.select(['event_type', 'payload', 'created_at'])
-		.where('account_id', 'in', accountIds)
+		.where('account_id', '=', accountId)
 		.where('event_type', 'in', [CONNECT_REQUEST_EVENT, CONNECT_CLEARED_EVENT])
 		.orderBy('created_at', 'desc')
+		.orderBy(
+			sql`case when event_type = ${CONNECT_CLEARED_EVENT} then 0 else 1 end`,
+			'asc',
+		)
 		.limit(1)
 		.executeTakeFirst();
 
-	// A cleared tombstone (or nothing) means no live request. Only the newest
-	// event wins, so a clear that arrives after a request suppresses it.
 	if (!latest || latest.event_type !== CONNECT_REQUEST_EVENT) return null;
 
 	const requestedAtMs =
@@ -140,24 +150,68 @@ export async function readConnectRequest(
 		connectUrl,
 		requestedAt: new Date(requestedAtMs).toISOString(),
 		tenantId,
+		requestedAtMs,
+		accountId,
 	};
 }
 
+/**
+ * The tenant's live connect-request, or null when there is none. Per-plugin and
+ * one-at-a-time: among all plugins whose latest event is a live request, the one
+ * with the oldest created_at wins (FIFO — the first modal doesn't drift to a
+ * later failure), tiebroken by account_id so it never flaps. N = plugins the
+ * tenant uses (small), one index seek each.
+ */
+export async function readConnectRequest(
+	database: CorsairDatabase,
+	tenantId: string,
+	now: number = Date.now(),
+	ttlMs: number = CONNECT_REQUEST_TTL_MS,
+): Promise<ConnectRequest | null> {
+	const accountIds = await tenantAccountIds(database, tenantId);
+	if (accountIds.length === 0) return null;
+
+	const live = (
+		await Promise.all(
+			accountIds.map((id) =>
+				latestConnectEventForAccount(database, id, tenantId, now, ttlMs),
+			),
+		)
+	).filter((r): r is LiveRequest => r !== null);
+	if (live.length === 0) return null;
+
+	live.sort(
+		(a, b) =>
+			a.requestedAtMs - b.requestedAtMs ||
+			a.accountId.localeCompare(b.accountId),
+	);
+	const { requestedAtMs: _ms, accountId: _acct, ...request } = live[0]!;
+	return request;
+}
+
+/**
+ * Suppress a live request by appending a tombstone to the plugin's account.
+ * With `plugin`, clears only that plugin. Without it (back-compat), resolves the
+ * current live request and clears that plugin; no-op when nothing is live.
+ * Append-only: a tombstone supersedes the request, rows are never deleted.
+ */
 export async function clearConnectRequest(
 	database: CorsairDatabase,
 	tenantId: string,
 	now: number = Date.now(),
+	plugin?: string,
 ): Promise<void> {
-	const accountIds = await tenantAccountIds(database, tenantId);
-	if (accountIds.length === 0) return;
-	// Append-only log: a tombstone supersedes the request rather than deleting it.
-	await appendConnectEvent(
-		database,
-		accountIds[0]!,
-		CONNECT_CLEARED_EVENT,
-		{},
-		now,
-	);
+	let accountId: string | null;
+	if (plugin) {
+		accountId = await resolveAccountId(database, tenantId, plugin);
+	} else {
+		const live = await readConnectRequest(database, tenantId, now);
+		accountId = live
+			? await resolveAccountId(database, tenantId, live.plugin)
+			: null;
+	}
+	if (!accountId) return;
+	await appendConnectEvent(database, accountId, CONNECT_CLEARED_EVENT, {}, now);
 }
 
 // Called from the failing tool-call path, so it must never throw or block: a
