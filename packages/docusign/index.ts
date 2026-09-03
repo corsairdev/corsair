@@ -4,13 +4,11 @@ import { DocusignClient } from './client';
 import * as endpoints from './endpoints';
 import * as errorHandlers from './error-handlers';
 import * as schema from './schema';
-import * as webhooks from './webhooks';
 
 export * from './client';
 export * from './endpoints';
 export * from './error-handlers';
 export * from './schema';
-export * from './webhooks';
 
 export const docusignEndpointsNested = {
 	createEnvelope: endpoints.createEnvelope,
@@ -19,10 +17,9 @@ export const docusignEndpointsNested = {
 	createRecipientViewUrl: endpoints.createRecipientViewUrl,
 	listTemplates: endpoints.listTemplates,
 	getTemplate: endpoints.getTemplate,
-};
-
-export const docusignWebhooksNested = {
-	handleWebhook: webhooks.handleWebhook,
+	listOAuthUserInfo: endpoints.listOAuthUserInfo,
+	fetchRecipientNamesForEmail: endpoints.fetchRecipientNamesForEmail,
+	...endpoints.generatedEndpointsNested,
 };
 
 export const docusignEndpointMeta = {
@@ -53,6 +50,17 @@ export const docusignEndpointMeta = {
 		description: 'Gets a template definition from the specified account.',
 		riskLevel: 'read',
 	},
+	listOAuthUserInfo: {
+		description:
+			"Retrieves the authenticated user's account information from DocuSign OAuth, including user ID, name, email, accounts, base URIs, and account IDs.",
+		riskLevel: 'read',
+	},
+	fetchRecipientNamesForEmail: {
+		description:
+			'Retrieves the names associated with an email address from the recipients of an envelope.',
+		riskLevel: 'read',
+	},
+	...endpoints.generatedEndpointMeta,
 } satisfies RequiredPluginEndpointMeta<typeof docusignEndpointsNested>;
 
 export const endpointMeta = docusignEndpointMeta;
@@ -71,7 +79,6 @@ export const docusignPlugin = {
 	endpoints: docusignEndpointsNested,
 	endpointMeta: docusignEndpointMeta,
 	endpointSchemas: endpoints.docusignEndpointSchemas,
-	webhooks: docusignWebhooksNested,
 	errorHandlers: errorHandlers.docusignErrorHandlers,
 	schema,
 };

@@ -8,24 +8,12 @@ export function resolveClient(
 		return contextOrClient;
 	}
 	if (
-		contextOrClient &&
 		typeof contextOrClient === 'object' &&
+		contextOrClient !== null &&
 		'client' in contextOrClient &&
-		(contextOrClient as { client: unknown }).client
+		contextOrClient.client instanceof DocusignClient
 	) {
-		const candidate = (contextOrClient as { client: unknown }).client;
-		if (
-			candidate instanceof DocusignClient ||
-			typeof (candidate as { request?: unknown }).request === 'function'
-		) {
-			return candidate as DocusignClient;
-		}
-	}
-	if (
-		contextOrClient &&
-		typeof (contextOrClient as { request?: unknown }).request === 'function'
-	) {
-		return contextOrClient as DocusignClient;
+		return contextOrClient.client;
 	}
 	throw new Error(
 		'Invalid execution context: DocuSign client is not initialized or accessible.',

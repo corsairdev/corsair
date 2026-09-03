@@ -1,17 +1,21 @@
-/// <reference types="jest" />
 import { DocusignClient } from './client';
 import {
+	CreateRecipientViewUrlInputSchema,
 	createEnvelope,
 	createRecipientViewUrl,
 	docusignEndpointSchemas,
+	FetchRecipientNamesForEmailInputSchema,
+	GetEnvelopeInputSchema,
+	GetEnvelopeOutputSchema,
+	GetTemplateInputSchema,
 	getEnvelope,
 	getTemplate,
+	ListOAuthUserInfoInputSchema,
+	ListTemplatesInputSchema,
 	listTemplates,
 	sendEnvelope,
 } from './endpoints';
-import { docusignErrorHandlers } from './error-handlers';
 import { DocusignSchema } from './schema';
-import { handleWebhook } from './webhooks';
 
 describe('DocuSign Plugin Conformance & Tests', () => {
 	const mockClient = new DocusignClient({
@@ -21,8 +25,14 @@ describe('DocuSign Plugin Conformance & Tests', () => {
 	});
 
 	beforeEach(() => {
-		jest.spyOn(mockClient, 'request').mockImplementation(async (path, opts) => {
-			return { mockPath: path, mockOptions: opts };
+		jest.spyOn(mockClient, 'request').mockImplementation(async () => {
+			return {
+				envelopeId: 'env_1',
+				status: 'sent',
+				url: 'https://example.com/callback',
+				templateId: 'tpl_1',
+				name: 'Template',
+			};
 		});
 	});
 
@@ -106,37 +116,63 @@ describe('DocuSign Plugin Conformance & Tests', () => {
 		});
 	});
 
-	describe('Webhooks', () => {
-		it('should match and extract payload from request.payload', async () => {
-			const sampleRequest = {
-				payload: {
-					event: 'envelope-completed',
-					data: { envelopeId: 'env_999' },
-				},
-			};
+	describe('Input schema validation', () => {
+		it('should reject a missing envelopeId', () => {
+			expect(GetEnvelopeInputSchema.safeParse({}).success).toBe(false);
+			expect(
+				GetEnvelopeInputSchema.safeParse({ envelopeId: 'env_1' }).success,
+			).toBe(true);
+		});
 
-			const matched = handleWebhook.match({}, sampleRequest);
-			expect(matched).toBe(true);
+		it('should reject incomplete recipient view input', () => {
+			expect(
+				CreateRecipientViewUrlInputSchema.safeParse({
+					envelopeId: 'env_1',
+				}).success,
+			).toBe(false);
+		});
 
-			const result = await handleWebhook.handler({}, sampleRequest);
-			expect(result.event).toBe('envelope-completed');
-			expect(result.envelopeId).toBe('env_999');
+		it('should reject incomplete template input', () => {
+			expect(GetTemplateInputSchema.safeParse({}).success).toBe(false);
+		});
+
+		it('should reject non-numeric template pagination', () => {
+			expect(ListTemplatesInputSchema.safeParse({ count: 'ten' }).success).toBe(
+				false,
+			);
+			expect(ListTemplatesInputSchema.safeParse({ count: 10 }).success).toBe(
+				true,
+			);
+		});
+
+		it('should reject incomplete email lookup input', () => {
+			expect(
+				FetchRecipientNamesForEmailInputSchema.safeParse({
+					envelopeId: 'env_1',
+				}).success,
+			).toBe(false);
+		});
+
+		it('should accept empty userinfo input', () => {
+			expect(ListOAuthUserInfoInputSchema.safeParse({}).success).toBe(true);
+			expect(ListOAuthUserInfoInputSchema.safeParse(undefined).success).toBe(
+				true,
+			);
 		});
 	});
 
-	describe('Error Handlers', () => {
-		it('should classify rate-limiting errors (429)', () => {
-			const rateLimitErr = { status: 429, headers: { 'retry-after': '30' } };
-			expect(docusignErrorHandlers.rateLimit.match(rateLimitErr)).toBe(true);
-			const handled = docusignErrorHandlers.rateLimit.handler(rateLimitErr);
-			expect(handled.action).toBe('retry');
+	describe('Output schema validation', () => {
+		it('should preserve unknown response fields', () => {
+			const result = GetEnvelopeOutputSchema.parse({
+				envelopeId: 'env_1',
+				status: 'sent',
+				customField: 'kept',
+			});
+			expect(result).toEqual(expect.objectContaining({ customField: 'kept' }));
 		});
 
-		it('should classify authentication errors (401)', () => {
-			const authErr = { status: 401 };
-			expect(docusignErrorHandlers.auth.match(authErr)).toBe(true);
-			const handled = docusignErrorHandlers.auth.handler(authErr);
-			expect(handled.action).toBe('reauthenticate');
+		it('should require envelope fields in storage schemas', () => {
+			expect(DocusignSchema.envelope.safeParse({}).success).toBe(false);
 		});
 	});
 });

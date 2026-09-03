@@ -1,11 +1,14 @@
 import { z } from 'zod';
 import type { DocusignClient } from '../client';
+import {
+	generatedEndpointSchemas,
+	generatedInputSchemas,
+	generatedOutputSchemas,
+} from './generated';
 
 export type DocusignExecutionContext =
 	| DocusignClient
-	| { client: DocusignClient }
-	| { client: unknown }
-	| Record<string, unknown>;
+	| { client: DocusignClient };
 
 export const CreateEnvelopeInputSchema = z.object({
 	templateId: z.string().optional(),
@@ -75,6 +78,35 @@ export const GetTemplateInputSchema = z.object({
 	templateId: z.string(),
 });
 
+export const ListOAuthUserInfoInputSchema = z
+	.object({
+		authServer: z.string().optional(),
+	})
+	.optional();
+
+export const ListOAuthUserInfoOutputSchema = z.object({}).passthrough();
+
+export type ListOAuthUserInfoParams = z.infer<
+	typeof ListOAuthUserInfoInputSchema
+>;
+
+export const FetchRecipientNamesForEmailInputSchema = z.object({
+	envelopeId: z.string(),
+	email: z.string(),
+});
+
+export const FetchRecipientNamesForEmailOutputSchema = z
+	.object({
+		email: z.string(),
+		names: z.array(z.string()),
+		count: z.number(),
+	})
+	.passthrough();
+
+export type FetchRecipientNamesForEmailParams = z.infer<
+	typeof FetchRecipientNamesForEmailInputSchema
+>;
+
 export const CreateEnvelopeOutputSchema = z
 	.object({
 		envelopeId: z.string(),
@@ -124,6 +156,9 @@ export const EndpointInputSchemas = {
 	createRecipientViewUrl: CreateRecipientViewUrlInputSchema,
 	listTemplates: ListTemplatesInputSchema,
 	getTemplate: GetTemplateInputSchema,
+	listOAuthUserInfo: ListOAuthUserInfoInputSchema,
+	fetchRecipientNamesForEmail: FetchRecipientNamesForEmailInputSchema,
+	...generatedInputSchemas,
 };
 
 export const EndpointOutputSchemas = {
@@ -133,6 +168,9 @@ export const EndpointOutputSchemas = {
 	createRecipientViewUrl: CreateRecipientViewUrlOutputSchema,
 	listTemplates: ListTemplatesOutputSchema,
 	getTemplate: GetTemplateOutputSchema,
+	listOAuthUserInfo: ListOAuthUserInfoOutputSchema,
+	fetchRecipientNamesForEmail: FetchRecipientNamesForEmailOutputSchema,
+	...generatedOutputSchemas,
 };
 
 export const docusignEndpointSchemas = {
@@ -160,6 +198,15 @@ export const docusignEndpointSchemas = {
 		input: GetTemplateInputSchema,
 		output: GetTemplateOutputSchema,
 	},
+	listOAuthUserInfo: {
+		input: ListOAuthUserInfoInputSchema,
+		output: ListOAuthUserInfoOutputSchema,
+	},
+	fetchRecipientNamesForEmail: {
+		input: FetchRecipientNamesForEmailInputSchema,
+		output: FetchRecipientNamesForEmailOutputSchema,
+	},
+	...generatedEndpointSchemas,
 };
 
 export const endpointSchemas = docusignEndpointSchemas;
@@ -186,7 +233,11 @@ export type DocusignEndpointInputs = {
 	createRecipientViewUrl: z.infer<typeof CreateRecipientViewUrlInputSchema>;
 	listTemplates: z.infer<typeof ListTemplatesInputSchema>;
 	getTemplate: z.infer<typeof GetTemplateInputSchema>;
-};
+	listOAuthUserInfo: z.infer<typeof ListOAuthUserInfoInputSchema>;
+	fetchRecipientNamesForEmail: z.infer<
+		typeof FetchRecipientNamesForEmailInputSchema
+	>;
+} & Record<string, unknown>;
 
 export type DocusignEndpointOutputs = {
 	createEnvelope: z.infer<typeof CreateEnvelopeOutputSchema>;
@@ -195,7 +246,11 @@ export type DocusignEndpointOutputs = {
 	createRecipientViewUrl: z.infer<typeof CreateRecipientViewUrlOutputSchema>;
 	listTemplates: z.infer<typeof ListTemplatesOutputSchema>;
 	getTemplate: z.infer<typeof GetTemplateOutputSchema>;
-};
+	listOAuthUserInfo: z.infer<typeof ListOAuthUserInfoOutputSchema>;
+	fetchRecipientNamesForEmail: z.infer<
+		typeof FetchRecipientNamesForEmailOutputSchema
+	>;
+} & Record<string, unknown>;
 
 export type EndpointInputs = DocusignEndpointInputs;
 export type EndpointOutputs = DocusignEndpointOutputs;
