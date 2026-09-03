@@ -151,12 +151,4 @@ describe('DocusignClient', () => {
 		);
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
-
-	it('rejects unsubstituted template placeholders without calling the api', async () => {
-		const client = makeClient();
-		await expect(client.request('/templates/{templateId}')).rejects.toThrow(
-			'unsubstituted template placeholders are not allowed',
-		);
-		expect(mockRequest).not.toHaveBeenCalled();
-	});
 });

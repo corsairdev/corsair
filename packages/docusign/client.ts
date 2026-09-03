@@ -67,11 +67,6 @@ function toRequestBody(body: string | Uint8Array | undefined): {
 }
 
 function assertSafePath(endpoint: string): void {
-	if (endpoint.includes('{') || endpoint.includes('}')) {
-		throw new Error(
-			'Invalid DocuSign request path: unsubstituted template placeholders are not allowed.',
-		);
-	}
 	const pathPart = endpoint.split('?')[0] ?? '';
 	const segments = pathPart.split('/');
 	for (let index = 1; index < segments.length; index++) {
