@@ -1078,7 +1078,7 @@
                 ]
               },
               {
-                "group": "Google calendar",
+                "group": "Google Calendar",
                 "pages": [
                   "plugins/googlecalendar/overview",
                   "plugins/googlecalendar/get-credentials",
