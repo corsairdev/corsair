@@ -105,6 +105,7 @@ export const BaseProviders = [
 	'canva',
 	'canvas',
 	'capsulecrm',
+	'certifier',
 	'chatbotkit',
 	'chatfai',
 	'circleci',
@@ -363,6 +364,7 @@ export const ProviderDisplayNames = {
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
 	capsulecrm: 'Capsule CRM',
+	certifier: 'Certifier',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
 	circleci: 'CircleCI',
@@ -628,6 +630,7 @@ export type AllProviders =
 	| 'canva'
 	| 'canvas'
 	| 'capsulecrm'
+	| 'certifier'
 	| 'chatbotkit'
 	| 'chatfai'
 	| 'circleci'
