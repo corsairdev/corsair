@@ -1,4 +1,3 @@
-import { sql } from 'kysely';
 import { generateUUID } from '../../core/utils';
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { ConnectRequest } from '../management/types';
@@ -21,10 +20,13 @@ export type RecordConnectRequestInput = {
 	connectUrl: string;
 };
 
-// Resolves the account row that owns a connect event. corsair_events.account_id
-// is a foreign key into corsair_accounts, and setup/ensurePluginRows provisions
-// one (tenant, integration) account before any connect link is minted — so the
-// target exists by the time a request is recorded.
+/**
+ * The account row that owns a connect event, resolved from (tenant, plugin).
+ * corsair_events.account_id is a foreign key into corsair_accounts, and
+ * setup/ensurePluginRows provisions one (tenant, integration) account before any
+ * connect link is minted — so the target exists by the time a request is
+ * recorded. Null when the plugin or account is unknown.
+ */
 async function resolveAccountId(
 	database: CorsairDatabase,
 	tenantId: string,
@@ -46,6 +48,7 @@ async function resolveAccountId(
 	return account?.id ?? null;
 }
 
+/** Every account id belonging to a tenant — the fan-out set readConnectRequest scans. */
 async function tenantAccountIds(
 	database: CorsairDatabase,
 	tenantId: string,
@@ -58,6 +61,44 @@ async function tenantAccountIds(
 	return rows.map((r) => r.id);
 }
 
+/**
+ * The created_at to stamp on the next connect event for an account: `now`, or one
+ * past the account's latest connect event when `now` isn't strictly greater. This
+ * forces a strict per-account total order over connect.request/connect.cleared,
+ * so append order — not event_type — decides which is newest (a re-request after
+ * a same-ms clear correctly wins). One indexed lookup on the composite index.
+ *
+ * The read-then-write isn't atomic, so two truly concurrent writes to the same
+ * account could still land the same stamp; that's unreachable for the clear-vs-
+ * request case (separate round-trips) and harmless for two concurrent requests
+ * (same plugin, same prompt).
+ */
+async function nextConnectEventCreatedAt(
+	database: CorsairDatabase,
+	accountId: string,
+	now: number,
+): Promise<number> {
+	const latest = await database.db
+		.selectFrom('corsair_events')
+		.select('created_at')
+		.where('account_id', '=', accountId)
+		.where('event_type', 'in', [CONNECT_REQUEST_EVENT, CONNECT_CLEARED_EVENT])
+		.orderBy('created_at', 'desc')
+		.limit(1)
+		.executeTakeFirst();
+	if (!latest) return now;
+	const latestMs =
+		latest.created_at instanceof Date
+			? latest.created_at.getTime()
+			: Date.parse(String(latest.created_at));
+	return Math.max(now, latestMs + 1);
+}
+
+/**
+ * Append one connect event, stamping created_at with a strictly-increasing value
+ * per account (see nextConnectEventCreatedAt) so the read side can rely on
+ * created_at alone as a total order.
+ */
 async function appendConnectEvent(
 	database: CorsairDatabase,
 	accountId: string,
@@ -65,7 +106,8 @@ async function appendConnectEvent(
 	payload: Record<string, unknown>,
 	now: number,
 ): Promise<void> {
-	const at = new Date(now);
+	const stamp = await nextConnectEventCreatedAt(database, accountId, now);
+	const at = new Date(stamp);
 	await database.db
 		.insertInto('corsair_events')
 		.values({
@@ -104,11 +146,13 @@ type LiveRequest = ConnectRequest & {
 	accountId: string;
 };
 
-// The most recent connect event for one account. The CASE tiebreak makes a
-// `connect.cleared` win a same-timestamp tie against a `connect.request` (the
-// safe default: prompt stays suppressed). Bounded to `limit 1` on
-// (account_id, event_type, created_at) — an index seek per plugin, so it never
-// scans the growing event log.
+/**
+ * The account's live connect-request, or null when its newest connect event is a
+ * clear or the request has aged past ttlMs. created_at is a strict per-account
+ * total order (writes are monotonic), so `desc limit 1` alone picks the newest —
+ * no tiebreak. Bounded to one index seek on (account_id, event_type, created_at),
+ * so it never scans the growing event log.
+ */
 async function latestConnectEventForAccount(
 	database: CorsairDatabase,
 	accountId: string,
@@ -122,10 +166,6 @@ async function latestConnectEventForAccount(
 		.where('account_id', '=', accountId)
 		.where('event_type', 'in', [CONNECT_REQUEST_EVENT, CONNECT_CLEARED_EVENT])
 		.orderBy('created_at', 'desc')
-		.orderBy(
-			sql`case when event_type = ${CONNECT_CLEARED_EVENT} then 0 else 1 end`,
-			'asc',
-		)
 		.limit(1)
 		.executeTakeFirst();
 

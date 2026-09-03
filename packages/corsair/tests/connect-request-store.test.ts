@@ -270,7 +270,9 @@ describe('connect-request store', () => {
 		}
 	});
 
-	it('same-ms tie: clear then request at equal timestamp → still suppressed', async () => {
+	// Append order — not event_type — decides a same-ms tie. A re-request landing
+	// after a clear at the same millisecond must restore the live prompt.
+	it('same-ms tie: clear then request at equal timestamp → request is live again', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {
 			await seedAccount(database, 'acme', 'linear');
@@ -281,7 +283,32 @@ describe('connect-request store', () => {
 				{ tenantId: 'acme', plugin: 'linear', connectUrl: 'https://x/one' },
 				t0,
 			);
-			expect(await readConnectRequest(database, 'acme', t0 + 1)).toBeNull();
+			const req = await readConnectRequest(database, 'acme', t0 + 1);
+			expect(req?.plugin).toBe('linear');
+			expect(req?.connectUrl).toBe('https://x/one');
+		} finally {
+			cleanup();
+		}
+	});
+
+	// Two requests to one plugin at the same millisecond — the later append wins.
+	it('same-ms tie: two requests at equal timestamp → the second is live', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database, 'acme', 'linear');
+			const t0 = 1_000_000_000_000;
+			await recordConnectRequest(
+				database,
+				{ tenantId: 'acme', plugin: 'linear', connectUrl: 'https://x/first' },
+				t0,
+			);
+			await recordConnectRequest(
+				database,
+				{ tenantId: 'acme', plugin: 'linear', connectUrl: 'https://x/second' },
+				t0,
+			);
+			const req = await readConnectRequest(database, 'acme', t0 + 1);
+			expect(req?.connectUrl).toBe('https://x/second');
 		} finally {
 			cleanup();
 		}
