@@ -233,9 +233,10 @@ export const BaseProviders = [
 	'telegram',
 	'textrazor',
 	'ticktick',
-	'timelink',
-	'tisane',
 	'timecamp',
+	'timelink',
+	'tinyurl',
+	'tisane',
 	'todoist',
 	'toggl',
 	'trello',
@@ -489,9 +490,10 @@ export const ProviderDisplayNames = {
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
-	timelink: 'Timelink',
-	tisane: 'Tisane',
 	timecamp: 'TimeCamp',
+	timelink: 'Timelink',
+	tinyurl: 'TinyURL',
+	tisane: 'Tisane',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -752,9 +754,10 @@ export type AllProviders =
 	| 'telegram'
 	| 'textrazor'
 	| 'ticktick'
-	| 'timelink'
-	| 'tisane'
 	| 'timecamp'
+	| 'timelink'
+	| 'tinyurl'
+	| 'tisane'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
