@@ -12,7 +12,7 @@ export class BrowserToolAPIError extends Error {
 }
 
 // TODO: Update with your API base URL
-const BROWSERTOOL_API_BASE = 'https://api.example.com';
+const BROWSERTOOL_API_BASE = 'https://backend.composio.dev';
 
 export async function makeBrowserToolRequest<T>(
 	endpoint: string,
@@ -33,8 +33,7 @@ export async function makeBrowserToolRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			'x-api-key': apiKey,
 		},
 	};
 

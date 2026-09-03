@@ -1,7 +1,17 @@
-import { get as exampleGet } from './example';
+import {
+	downloadTaskFile,
+	getSessionLiveUrl,
+	runBrowserTask,
+	stopBrowserTask,
+	watchBrowserTask,
+} from './example';
 
-export const Example = {
-	get: exampleGet,
+export const BrowserTool = {
+	runBrowserTask,
+	downloadTaskFile,
+	getSessionLiveUrl,
+	stopBrowserTask,
+	watchBrowserTask,
 };
 
 export * from './types';

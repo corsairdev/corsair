@@ -15,21 +15,30 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+
+import { BrowserTool } from './endpoints';
+
 import type {
 	BrowserToolEndpointInputs,
 	BrowserToolEndpointOutputs,
 } from './endpoints/types';
+
 import {
 	BrowserToolEndpointInputSchemas,
 	BrowserToolEndpointOutputSchemas,
 } from './endpoints/types';
+
 import { errorHandlers } from './error-handlers';
 import { BrowserToolSchema } from './schema';
+
 import { ExampleWebhooks } from './webhooks';
+
 import { resolveBrowserToolOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+
 import { matchBrowserToolTenantWebhook } from './webhooks/tenant-matcher';
+
 import type { BrowserToolWebhookOutputs, ExampleEvent } from './webhooks/types';
+
 import { ExampleEventSchema } from './webhooks/types';
 
 export type BrowserToolPluginOptions = {
@@ -62,7 +71,11 @@ type BrowserToolEndpoint<K extends keyof BrowserToolEndpointOutputs> =
 	>;
 
 export type BrowserToolEndpoints = {
-	exampleGet: BrowserToolEndpoint<'exampleGet'>;
+	runBrowserTask: BrowserToolEndpoint<'runBrowserTask'>;
+	downloadTaskFile: BrowserToolEndpoint<'downloadTaskFile'>;
+	getSessionLiveUrl: BrowserToolEndpoint<'getSessionLiveUrl'>;
+	stopBrowserTask: BrowserToolEndpoint<'stopBrowserTask'>;
+	watchBrowserTask: BrowserToolEndpoint<'watchBrowserTask'>;
 };
 
 type BrowserToolWebhook<
@@ -76,29 +89,64 @@ export type BrowserToolWebhooks = {
 
 export type BrowserToolBoundWebhooks = BindWebhooks<BrowserToolWebhooks>;
 
+/* =========================
+   ENDPOINTS
+   ========================= */
+
 const browserToolEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
+	runBrowserTask: BrowserTool.runBrowserTask,
+	downloadTaskFile: BrowserTool.downloadTaskFile,
+	getSessionLiveUrl: BrowserTool.getSessionLiveUrl,
+	stopBrowserTask: BrowserTool.stopBrowserTask,
+	watchBrowserTask: BrowserTool.watchBrowserTask,
 } as const;
 
-const browserToolWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+/* =========================
+   ENDPOINT SCHEMAS
+   ========================= */
 
 export const browserToolEndpointSchemas = {
-	'example.get': {
-		input: BrowserToolEndpointInputSchemas.exampleGet,
-		output: BrowserToolEndpointOutputSchemas.exampleGet,
+	runBrowserTask: {
+		input: BrowserToolEndpointInputSchemas.runBrowserTask,
+		output: BrowserToolEndpointOutputSchemas.runBrowserTask,
+	},
+
+	downloadTaskFile: {
+		input: BrowserToolEndpointInputSchemas.downloadTaskFile,
+		output: BrowserToolEndpointOutputSchemas.downloadTaskFile,
+	},
+
+	getSessionLiveUrl: {
+		input: BrowserToolEndpointInputSchemas.getSessionLiveUrl,
+		output: BrowserToolEndpointOutputSchemas.getSessionLiveUrl,
+	},
+
+	stopBrowserTask: {
+		input: BrowserToolEndpointInputSchemas.stopBrowserTask,
+		output: BrowserToolEndpointOutputSchemas.stopBrowserTask,
+	},
+
+	watchBrowserTask: {
+		input: BrowserToolEndpointInputSchemas.watchBrowserTask,
+		output: BrowserToolEndpointOutputSchemas.watchBrowserTask,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof browserToolEndpointsNested
 >;
 
+/* =========================
+   WEBHOOKS
+   ========================= */
+
+const browserToolWebhooksNested = {
+	example: ExampleWebhooks.example,
+} as const;
+
+/* =========================
+   WEBHOOK SCHEMAS
+   ========================= */
 const browserToolWebhookSchemas = {
-	'example.example': {
+	example: {
 		description: 'An example webhook event',
 		payload: ExampleEventSchema,
 		response: ExampleEventSchema,
@@ -107,25 +155,62 @@ const browserToolWebhookSchemas = {
 	typeof browserToolWebhooksNested
 >;
 
+/* =========================
+   AUTH
+   ========================= */
+
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+/* =========================
+   ENDPOINT META
+   ========================= */
+
 const browserToolEndpointMeta = {
-	'example.get': {
+	runBrowserTask: {
+		riskLevel: 'write',
+		description: 'Run an AI-powered browser automation task',
+	},
+
+	downloadTaskFile: {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Get download URL for a task output file',
+	},
+
+	getSessionLiveUrl: {
+		riskLevel: 'read',
+		description: 'Get live URL of a browser session',
+	},
+
+	stopBrowserTask: {
+		riskLevel: 'write',
+		description: 'Stop a running browser task',
+	},
+
+	watchBrowserTask: {
+		riskLevel: 'read',
+		description: 'Watch progress of a browser task',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof browserToolEndpointsNested
 >;
 
+/* =========================
+   AUTH CONFIG
+   ========================= */
+
 export const browserToolAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
+
 	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
+
+/* =========================
+   PLUGIN TYPES
+   ========================= */
 
 export type BaseBrowserToolPlugin<T extends BrowserToolPluginOptions> =
 	CorsairPlugin<
@@ -143,6 +228,10 @@ export type InternalBrowserToolPlugin =
 export type ExternalBrowserToolPlugin<T extends BrowserToolPluginOptions> =
 	BaseBrowserToolPlugin<T>;
 
+/* =========================
+   PLUGIN
+   ========================= */
+
 export function browsertool<const T extends BrowserToolPluginOptions>(
 	incomingOptions: BrowserToolPluginOptions &
 		T = {} as BrowserToolPluginOptions & T,
@@ -151,29 +240,46 @@ export function browsertool<const T extends BrowserToolPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'browsertool',
+
 		authConfig: browserToolAuthConfig,
+
 		schema: BrowserToolSchema,
-		options: options,
+
+		options,
+
 		hooks: options.hooks,
+
 		webhookHooks: options.webhookHooks,
+
 		endpoints: browserToolEndpointsNested,
+
 		webhooks: browserToolWebhooksNested,
+
 		endpointMeta: browserToolEndpointMeta,
+
 		endpointSchemas: browserToolEndpointSchemas,
+
 		webhookSchemas: browserToolWebhookSchemas,
+
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
+
 			// TODO: Update to match your webhook signature headers
 			return 'x-browsertool-signature' in headers;
 		},
+
 		pluginTenantWebhookMatcher: matchBrowserToolTenantWebhook,
+
 		oauthWebhookTenantLinkResolver: resolveBrowserToolOAuthWebhookTenantLink,
+
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+
 		keyBuilder: async (ctx: BrowserToolKeyBuilderContext, source) => {
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
@@ -181,6 +287,7 @@ export function browsertool<const T extends BrowserToolPluginOptions>(
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
+
 				return res ?? '';
 			}
 
@@ -190,11 +297,13 @@ export function browsertool<const T extends BrowserToolPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
+
 				return res ?? '';
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
+
 				return res ?? '';
 			}
 
@@ -203,12 +312,15 @@ export function browsertool<const T extends BrowserToolPluginOptions>(
 	} satisfies InternalBrowserToolPlugin;
 }
 
+/* =========================
+   EXPORTS
+   ========================= */
+
 export type {
 	BrowserToolEndpointInputs,
 	BrowserToolEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
 } from './endpoints/types';
+
 export type {
 	BrowserToolWebhookOutputs,
 	ExampleEvent,
