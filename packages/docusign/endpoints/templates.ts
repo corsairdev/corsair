@@ -4,24 +4,34 @@ import type {
 	GetTemplateParams,
 	ListTemplatesParams,
 } from './types';
+import {
+	GetTemplateInputSchema,
+	GetTemplateOutputSchema,
+	ListTemplatesInputSchema,
+	ListTemplatesOutputSchema,
+} from './types';
 
 export const listTemplates = async (
 	ctxOrClient: DocusignExecutionContext,
 	params?: ListTemplatesParams,
 ) => {
+	const input = ListTemplatesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const query = new URLSearchParams();
-	if (params?.count) query.append('count', String(params.count));
-	if (params?.startPosition)
-		query.append('start_position', String(params.startPosition));
+	if (input?.count) query.append('count', String(input.count));
+	if (input?.startPosition)
+		query.append('start_position', String(input.startPosition));
 	const qs = query.toString() ? `?${query.toString()}` : '';
-	return client.request(`/templates${qs}`);
+	const data = await client.request(`/templates${qs}`);
+	return ListTemplatesOutputSchema.parse(data);
 };
 
 export const getTemplate = async (
 	ctxOrClient: DocusignExecutionContext,
 	params: GetTemplateParams,
 ) => {
+	const input = GetTemplateInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	return client.request(`/templates/${params.templateId}`);
+	const data = await client.request(`/templates/${input.templateId}`);
+	return GetTemplateOutputSchema.parse(data);
 };

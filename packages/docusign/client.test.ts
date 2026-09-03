@@ -140,4 +140,15 @@ describe('DocusignClient', () => {
 		);
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
+
+	it('rejects path traversal segments without calling the api', async () => {
+		const client = makeClient();
+		await expect(client.request('/templates/../accounts')).rejects.toThrow(
+			'path traversal segments are not allowed',
+		);
+		await expect(client.request('/templates/%2e%2e/accounts')).rejects.toThrow(
+			'path traversal segments are not allowed',
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 });

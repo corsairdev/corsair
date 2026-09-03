@@ -63,6 +63,24 @@ function toRequestBody(body: string | undefined): {
 	return { body };
 }
 
+function assertSafePath(endpoint: string): void {
+	const segments = endpoint.split('?')[0]?.split('/') ?? [];
+	for (const segment of segments) {
+		const decoded = (() => {
+			try {
+				return decodeURIComponent(segment);
+			} catch {
+				return segment;
+			}
+		})();
+		if (decoded === '.' || decoded === '..') {
+			throw new Error(
+				'Invalid DocuSign request path: path traversal segments are not allowed.',
+			);
+		}
+	}
+}
+
 function toMethod(method: string | undefined): ApiRequestOptions['method'] {
 	const upper = typeof method === 'string' ? method.toUpperCase() : 'GET';
 	if (
@@ -87,11 +105,16 @@ export class DocusignClient {
 	private accessToken: string;
 	private accountId: string;
 	private baseUri: string;
+	private isDemoEnvironment: boolean;
 
 	constructor(options: DocusignAuthOptions) {
 		this.accessToken = options.accessToken;
 		this.accountId = options.accountId;
-		this.baseUri = this.resolveAndValidateBaseUri(options.baseUri);
+		const { baseUri, isDemoEnvironment } = this.resolveAndValidateBaseUri(
+			options.baseUri,
+		);
+		this.baseUri = baseUri;
+		this.isDemoEnvironment = isDemoEnvironment;
 	}
 
 	private openApiConfig(base: string): OpenAPIConfig {
@@ -111,7 +134,7 @@ export class DocusignClient {
 	private resolveAuthServer(authServer?: string): string {
 		const raw =
 			authServer ||
-			(this.baseUri.includes('.docusign.net')
+			(this.isDemoEnvironment
 				? 'https://account-d.docusign.com'
 				: 'https://account.docusign.com');
 		const url = new URL(raw.startsWith('http') ? raw : `https://${raw}`);
@@ -140,7 +163,10 @@ export class DocusignClient {
 		}
 	}
 
-	private resolveAndValidateBaseUri(baseUri?: string): string {
+	private resolveAndValidateBaseUri(baseUri?: string): {
+		baseUri: string;
+		isDemoEnvironment: boolean;
+	} {
 		const raw = baseUri || 'https://demo.docusign.net/restapi/v2.1';
 		const url = new URL(raw.startsWith('http') ? raw : `https://${raw}`);
 
@@ -149,11 +175,12 @@ export class DocusignClient {
 		}
 
 		const host = url.hostname.toLowerCase();
+		const isDemoEnvironment =
+			host === 'docusign.net' || host.endsWith('.docusign.net');
 		const isAllowedHost =
 			host === 'docusign.com' ||
 			host.endsWith('.docusign.com') ||
-			host === 'docusign.net' ||
-			host.endsWith('.docusign.net');
+			isDemoEnvironment;
 
 		if (!isAllowedHost) {
 			throw new Error(
@@ -161,7 +188,10 @@ export class DocusignClient {
 			);
 		}
 
-		let path = url.pathname.replace(/\/+$/, '');
+		let path = url.pathname;
+		while (path.endsWith('/')) {
+			path = path.slice(0, -1);
+		}
 		if (!path.includes('/restapi/v2.1')) {
 			path = `${path}/restapi/v2.1`;
 		}
@@ -169,13 +199,14 @@ export class DocusignClient {
 			path = `${path}/accounts/${this.accountId}`;
 		}
 
-		return `${url.origin}${path}`;
+		return { baseUri: `${url.origin}${path}`, isDemoEnvironment };
 	}
 
 	async request(
 		endpoint: string,
 		options: DocusignRequestOptions = {},
 	): Promise<unknown> {
+		assertSafePath(endpoint);
 		const { body, mediaType } = toRequestBody(options.body);
 		const requestOptions: ApiRequestOptions = {
 			method: toMethod(options.method),

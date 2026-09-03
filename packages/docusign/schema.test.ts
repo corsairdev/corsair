@@ -1,3 +1,4 @@
+import { request } from 'corsair/http';
 import { DocusignClient } from './client';
 import {
 	CreateRecipientViewUrlInputSchema,
@@ -17,6 +18,13 @@ import {
 } from './endpoints';
 import { DocusignSchema } from './schema';
 
+jest.mock('corsair/http', () => {
+	const actual = jest.requireActual('corsair/http');
+	return { ...actual, request: jest.fn() };
+});
+
+const mockRequest = request as jest.MockedFunction<typeof request>;
+
 describe('DocuSign Plugin Conformance & Tests', () => {
 	const mockClient = new DocusignClient({
 		accessToken: 'mock_token',
@@ -25,19 +33,14 @@ describe('DocuSign Plugin Conformance & Tests', () => {
 	});
 
 	beforeEach(() => {
-		jest.spyOn(mockClient, 'request').mockImplementation(async () => {
-			return {
-				envelopeId: 'env_1',
-				status: 'sent',
-				url: 'https://example.com/callback',
-				templateId: 'tpl_1',
-				name: 'Template',
-			};
+		mockRequest.mockReset();
+		mockRequest.mockResolvedValue({
+			envelopeId: 'env_1',
+			status: 'sent',
+			url: 'https://example.com/callback',
+			templateId: 'tpl_1',
+			name: 'Template',
 		});
-	});
-
-	afterEach(() => {
-		jest.restoreAllMocks();
 	});
 
 	describe('DocusignSchema', () => {

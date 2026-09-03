@@ -1,9 +1,16 @@
-import type { DocusignRequestOptions } from './client';
+import { request } from 'corsair/http';
 import { DocusignClient } from './client';
 import type { EndpointContractCase } from './endpoint-contract-cases';
 import { endpointContractCases } from './endpoint-contract-cases';
 import * as endpoints from './endpoints';
 import { docusignEndpointMeta, docusignEndpointsNested } from './index';
+
+jest.mock('corsair/http', () => {
+	const actual = jest.requireActual('corsair/http');
+	return { ...actual, request: jest.fn() };
+});
+
+const mockRequest = request as jest.MockedFunction<typeof request>;
 
 function sampleValue(type: string): unknown {
 	if (type === 'integer' || type === 'number') return 7;
@@ -18,26 +25,16 @@ function expectedQueryString(value: unknown): string {
 }
 
 describe('DocuSign generated endpoints', () => {
-	const makeClient = () => {
-		const client = new DocusignClient({
+	const makeClient = () =>
+		new DocusignClient({
 			accessToken: 'mock_token',
 			accountId: '12345',
 			baseUri: 'https://demo.docusign.net/restapi/v2.1',
 		});
-		const calls: Array<{ url: string; options: DocusignRequestOptions }> = [];
-		jest
-			.spyOn(client, 'request')
-			.mockImplementation(
-				async (url: string, options: DocusignRequestOptions = {}) => {
-					calls.push({ url, options });
-					return {};
-				},
-			);
-		return { client, calls };
-	};
 
-	afterEach(() => {
-		jest.restoreAllMocks();
+	beforeEach(() => {
+		mockRequest.mockReset();
+		mockRequest.mockResolvedValue({});
 	});
 
 	it.each(endpointContractCases)(
@@ -50,7 +47,7 @@ describe('DocuSign generated endpoints', () => {
 			queryParams,
 			hasBody,
 		}: EndpointContractCase) => {
-			const { client, calls } = makeClient();
+			const client = makeClient();
 			const params: Record<string, unknown> = {};
 			for (const p of pathParams) params[p] = 'test-id';
 			for (const q of queryParams) params[q.name] = sampleValue(q.type);
@@ -64,54 +61,54 @@ describe('DocuSign generated endpoints', () => {
 			if (typeof fn !== 'function')
 				throw new Error(`missing endpoint: ${name}`);
 			await fn({ client }, params);
-			expect(calls.length).toBe(1);
-			const call = calls[0] as { url: string; options: DocusignRequestOptions };
-			expect(call.options.method).toBe(method);
+			expect(mockRequest).toHaveBeenCalledTimes(1);
+			const call = mockRequest.mock.calls[0];
+			if (!call) throw new Error('expected corsair/http request to be called');
+			const [config, options] = call;
+			expect(config.BASE).toBe(
+				'https://demo.docusign.net/restapi/v2.1/accounts/12345',
+			);
+			expect(config.HEADERS).toEqual(
+				expect.objectContaining({ Authorization: 'Bearer mock_token' }),
+			);
+			expect(options.method).toBe(method);
 			let expected = path;
 			for (const p of pathParams)
 				expected = expected.split(`{${p}}`).join('test-id');
-			const base = 'https://demo.docusign.net/restapi/v2.1/accounts/12345';
-			const parts = call.url.split('?');
-			const rawUrl = parts[0] ?? '';
-			const rawQuery = parts[1] ?? '';
-			const receivedPath = rawUrl.startsWith(base)
-				? rawUrl.slice(base.length)
-				: rawUrl;
+			const urlParts = options.url.split('?');
+			const receivedPath = urlParts[0] ?? '';
+			const receivedQuery = new URLSearchParams(urlParts[1] ?? '');
 			const norm = (s: string) => s.replace(/\/+$/, '');
 			expect(norm(receivedPath)).toBe(norm(expected));
-			const receivedQuery = new URLSearchParams(rawQuery);
 			for (const q of queryParams) {
 				expect(receivedQuery.get(q.name)).toBe(
 					expectedQueryString(sampleValue(q.type)),
 				);
 			}
 			if (hasBody) {
-				expect(call.options.body).toBe(JSON.stringify({ hello: 'world' }));
+				expect(options.body).toEqual({ hello: 'world' });
 			} else {
-				expect(call.options.body).toBeUndefined();
+				expect(options.body).toBeUndefined();
 			}
 		},
 	);
 
 	it('listOAuthUserInfo calls the OAuth userinfo endpoint', async () => {
-		const client = new DocusignClient({
-			accessToken: 'mock_token',
-			accountId: '12345',
-		});
-		const spy = jest
-			.spyOn(client, 'userInfo')
-			.mockResolvedValue({ sub: 'user-1' });
+		const client = makeClient();
+		mockRequest.mockResolvedValue({ sub: 'user-1' });
 		const res = await endpoints.listOAuthUserInfo({ client }, {});
-		expect(spy).toHaveBeenCalledTimes(1);
+		const call = mockRequest.mock.calls[0];
+		if (!call) throw new Error('expected corsair/http request to be called');
+		expect(call[0].BASE).toBe('https://account-d.docusign.com');
+		expect(call[1]).toEqual(
+			expect.objectContaining({ method: 'GET', url: '/oauth/userinfo' }),
+		);
 		expect(res).toEqual({ sub: 'user-1' });
 	});
 
 	it('fetchRecipientNamesForEmail filters recipients by email', async () => {
-		const client = new DocusignClient({
-			accessToken: 'mock_token',
-			accountId: '12345',
-		});
-		jest.spyOn(client, 'request').mockResolvedValue({
+		const client = makeClient();
+		mockRequest.mockResolvedValue({
 			recipients: {
 				signers: [
 					{ email: 'jane@example.com', name: 'Jane Doe' },
