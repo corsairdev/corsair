@@ -418,6 +418,7 @@ describe('corsair.manage.connect — hub mode', () => {
 			expect(link).toEqual({
 				connectUrl: 'https://auth.corsair.dev/connect/signed-token',
 				expiresAt: '2026-06-24T12:00:00.000Z',
+				tenantId: 'default',
 			});
 			expect(global.fetch).toHaveBeenCalledWith(
 				expect.stringContaining('/connect/sessions'),
