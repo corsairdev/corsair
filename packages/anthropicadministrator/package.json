@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/anthropicadministrator",
-  "version": "0.1.0",
-  "description": "Anthropic Admin API plugin for Corsair \u2014 organization members, invites, workspaces and API keys",
+  "version": "0.1.1",
+  "description": "Anthropic Admin API plugin for Corsair — organization members, invites, workspaces and API keys",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -37,9 +37,15 @@
     "admin-api",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/anthropicadministrator"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/anthropicadministrator"
 }
