@@ -33,7 +33,7 @@ const SHOPIFY_HEADER_ALIASES: Array<[string, string[]]> = [
 		'X-Shopify-Triggered-At',
 		['X-Shopify-Triggered-At', 'x_shopify_triggered_at'],
 	],
-	['X-Shopify-Event-Id', ['X-Shopify-Event-Id']],
+	['X-Shopify-Event-Id', ['X-Shopify-Event-Id', 'x_shopify_event_id']],
 ];
 
 export function shopifyHeaders(
