@@ -55,6 +55,13 @@ export function createTestDatabase(): {
 			payload TEXT NOT NULL,
 			status TEXT
 		);
+
+		CREATE TABLE IF NOT EXISTS corsair_connects (
+			tenant_id TEXT PRIMARY KEY,
+			plugin TEXT NOT NULL,
+			connect_url TEXT NOT NULL,
+			requested_at TEXT NOT NULL
+		);
 	`);
 
 	const db = new Kysely<CorsairKyselyDatabase>({
