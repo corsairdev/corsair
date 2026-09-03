@@ -1,7 +1,6 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -12,7 +11,6 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { Handlers } from './endpoints';
@@ -26,7 +24,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BotbabaSchema } from './schema';
-import { matchBotbabaTenantWebhook } from './webhooks/tenant-matcher';
 
 export type BotbabaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -60,9 +57,6 @@ type BotbabaEndpoint<K extends keyof BotbabaEndpointOutputs> = CorsairEndpoint<
 export type BotbabaEndpoints = {
 	[K in keyof BotbabaEndpointOutputs]: BotbabaEndpoint<K>;
 };
-
-export type BotbabaWebhooks = Record<string, never>;
-export type BotbabaBoundWebhooks = BindWebhooks<BotbabaWebhooks>;
 
 const botbabaEndpointsNested = {
 	contacts: {
@@ -133,8 +127,6 @@ const botbabaEndpointsNested = {
 		gupshup: Handlers.waGupshupEventSimulator,
 	},
 } as const;
-
-const botbabaWebhooksNested = {} as const;
 
 export const botbabaEndpointSchemas = {
 	'contacts.get': {
@@ -313,11 +305,6 @@ export const botbabaEndpointSchemas = {
 	typeof botbabaEndpointsNested
 >;
 
-const botbabaWebhookSchemas =
-	{} as const satisfies RequiredPluginWebhookSchemas<
-		typeof botbabaWebhooksNested
-	>;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const botbabaEndpointMeta = {
@@ -463,7 +450,7 @@ export type BaseBotbabaPlugin<T extends BotbabaPluginOptions> = CorsairPlugin<
 	'botbaba',
 	typeof BotbabaSchema,
 	typeof botbabaEndpointsNested,
-	typeof botbabaWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
@@ -487,12 +474,9 @@ export function botbaba<const T extends BotbabaPluginOptions>(
 		options,
 		hooks: options.hooks,
 		endpoints: botbabaEndpointsNested,
-		webhooks: botbabaWebhooksNested,
+		webhooks: {},
 		endpointMeta: botbabaEndpointMeta,
 		endpointSchemas: botbabaEndpointSchemas,
-		webhookSchemas: botbabaWebhookSchemas,
-		pluginWebhookMatcher: () => false,
-		pluginTenantWebhookMatcher: matchBotbabaTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -516,4 +500,3 @@ export type {
 	BotbabaEndpointInputs,
 	BotbabaEndpointOutputs,
 } from './endpoints/types';
-export type { BotbabaWebhookOutputs } from './webhooks/types';
