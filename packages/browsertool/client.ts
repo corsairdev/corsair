@@ -46,6 +46,7 @@ export async function makeBrowserToolRequest<T>(
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query: method === 'GET' ? query : undefined,
+		redirect: 'error',
 	};
 
 	try {

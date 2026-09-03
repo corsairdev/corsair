@@ -231,6 +231,7 @@ const sendRequest = async (
 		headers,
 		body: body ?? formData,
 		method: options.method,
+		redirect: options.redirect,
 		signal: AbortSignal.any([controller.signal, AbortSignal.timeout(timeout)]),
 	};
 
