@@ -122,7 +122,8 @@
                 "pages": [
                   "adapters/handlers",
                   "adapters/client",
-                  "adapters/react"
+                  "adapters/react",
+                  "adapters/corsair-connect"
                 ]
               },
               "concepts/api",

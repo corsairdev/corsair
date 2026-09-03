@@ -1,0 +1,120 @@
+---
+title: Corsair Connect
+description: An in-app connect dialog for your end users. Wrap the app in <CorsairProvider>; a Corsair call that fails because a tenant hasn't connected a plugin opens the dialog and resumes the work once they're done.
+---
+
+Your users connect their own accounts. Someone signs into your app, hits a feature that needs their GitHub, and a dialog opens right there to connect it. They never leave the page, and once they're back the action they tried finishes on its own.
+
+That's Corsair Connect. It's the same OAuth flow as the [hosted connect link](/management/connect), moved inside your app: a React provider owns a connect dialog, and any Corsair call that fails for a missing credential opens it. The [React hooks](/adapters/react) give you the raw pieces (read status, mint a link, route the user); Corsair Connect wires them together so you write no per-call code.
+
+<Note>
+Corsair Connect is React-only. The provider and dialog are client components. A non-React frontend still gets the server half: a failed call records a connect-request you read at `/api/corsair/connect/request`, so you can build your own prompt or redirect to the link. See the [vanilla client](/adapters/client).
+</Note>
+
+## When to reach for it
+
+Use the plain [connect link](/management/connect) when *you* are wiring up a tenant ahead of time, from a settings screen or an onboarding step, and can redirect the browser to Hub's page.
+
+Use Corsair Connect when your end users connect their own accounts, on demand, mid-task, without leaving your app. It shines when a credential can go missing at any point: a token gets revoked, a new user hasn't connected yet, a feature touches a plugin they've never used. Instead of guarding every call site, you wrap the app once and let the failure drive the prompt.
+
+## Wrap the app
+
+Put `<CorsairProvider>` at the root, once. Point `onConnected` at your framework's refresh so a server read that failed with a missing credential re-runs against the now-connected account.
+
+```tsx app/providers.tsx
+"use client";
+import { CorsairProvider } from "corsair/client/react";
+import { useRouter } from "next/navigation";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  return (
+    <CorsairProvider onConnected={() => router.refresh()}>
+      {children}
+    </CorsairProvider>
+  );
+}
+```
+
+### Props
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `baseURL` | `string` | `/api/corsair` | Where your Corsair handler is mounted. Set it if the handler lives on another path or origin. |
+| `appearance` | `"light" \| "dark" \| "auto"` | `"auto"` | Dialog theme. `"auto"` follows the OS color scheme. Also accepts `{ theme }`. |
+| `onConnected` | `() => void` | — | Runs once after a successful connect. Wire it to `router.refresh()` (Next), `revalidate()` (Remix), or `router.invalidate()` (TanStack) so failed server reads re-run. Mutations resume on their own. |
+| `captureUnhandled` | `boolean` | `true` | Open the dialog when any unwrapped client call rejects with a missing-credential error, no `call` wrapper needed. Set `false` to drive the dialog only through `connect`, `call`, and the error boundary. |
+
+With `captureUnhandled` on (the default), a client call that fails because the tenant isn't connected opens the dialog by itself. It can't resume the original work, though, so reach for `call` when you want the failed action to re-run.
+
+## The hook
+
+`useConnections()` reads this user's connection status and drives the flow. It must be called under `<CorsairProvider>`, or it throws.
+
+```tsx
+import { useConnections } from "corsair/client/react";
+
+const { connections, isConnected, loading, connect, call } = useConnections();
+```
+
+| Field | Type | What it does |
+| --- | --- | --- |
+| `connections` | `Record<string, 'connected' \| 'missing_credentials' \| 'not_connected'> \| null` | Per-plugin status, `null` until the first fetch lands. Refreshes itself after every successful connect. |
+| `isConnected` | `(plugin: string) => boolean` | `connections?.[plugin] === 'connected'`, and `false` while status is loading. |
+| `loading` | `boolean` | `true` while the first status fetch is in flight. Render a placeholder rather than flash a "Connect" button that may already be done. |
+| `connect` | `(plugin, opts?) => Promise<boolean>` | Open the dialog for a plugin proactively. Resolves `true` once connected. |
+| `call` | `<T>(fn: () => Promise<T>) => Promise<T \| null>` | Run a mutation; if it fails while a connect-request is pending, open the dialog and re-run once connected. |
+
+### A "Connect X" button
+
+For a button the user clicks before anything has failed, `connect(plugin)` mints a fresh link and opens the dialog. Gate the label on `isConnected` so it doesn't flash while status loads.
+
+```tsx connect-slack.tsx
+"use client";
+import { useConnections } from "corsair/client/react";
+
+export function ConnectSlack() {
+  const { connect, isConnected, loading } = useConnections();
+
+  if (loading) return null;
+  if (isConnected("slack")) return <span>Slack connected</span>;
+
+  return <button onClick={() => connect("slack")}>Connect Slack</button>;
+}
+```
+
+### Wrap a mutation
+
+`call` runs the action, and if it fails while a connect-request is pending it opens the dialog and re-runs the action once connected. It resolves `null` when the user closes the dialog, and rethrows any error that isn't a pending connect. Wrap only connect-gated or retry-safe mutations, since it may run `fn` twice.
+
+```tsx send.tsx
+"use client";
+import { useConnections } from "corsair/client/react";
+
+export function SendButton() {
+  const { call } = useConnections();
+  return <button onClick={() => call(() => sendEmail())}>Send</button>;
+}
+```
+
+## Server reads (Next.js)
+
+A Server Component that reads Corsair data can't be wrapped in a client component, so when its render throws for a missing credential, Next routes the error to the segment's `error.tsx`. `CorsairErrorBoundary` is a drop-in for that file: it asks the provider whether a connect-request is pending, opens the dialog if so, and calls Next's `reset()` once connected to re-run the read. A genuine error is rethrown so your own handling still sees it.
+
+```tsx app/inbox/error.tsx
+"use client";
+export { CorsairErrorBoundary as default } from "corsair/client/react";
+```
+
+It renders under the provider, so keep `<CorsairProvider>` in your root layout where it wraps every segment's `error.tsx`. If the user closes the dialog without connecting, the boundary shows a "Try again" button that re-runs the read.
+
+Remix and TanStack read in loaders, not Server Components, so this boundary is Next-only. There, a failed loader read surfaces the same typed error; open the dialog from your route's error element with `connect(plugin)`.
+
+## What the user sees
+
+1. A call fails because the tenant has no usable credential for the plugin. Corsair throws a typed error carrying a scoped connect link (see [error handling](/concepts/error-handling)).
+2. The provider opens the dialog and, on click, opens Hub's connect page in a popup.
+3. The user signs in and grants access. Hub runs the OAuth handshake and writes the encrypted tokens to your own database. Neither you nor Hub sees them in the clear.
+4. The popup closes, the provider confirms the connection, fires `onConnected`, and resumes any `call` that was waiting.
+
+A stale connection, like a revoked refresh token, throws `ReconnectRequiredError` instead. The provider treats it the same way: same dialog, same reconnect, same resume.

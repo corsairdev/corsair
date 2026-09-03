@@ -34,7 +34,8 @@
 
 - [Handlers](https://docs.corsair.dev/adapters/handlers.md): Mount the /api/corsair route — Next.js, Express, Hono, or any Web-standard runtime.
 - [Vanilla client](https://docs.corsair.dev/adapters/client.md): createCorsairClient — typed fetch wrapper for the management API, any JS runtime.
-- [React hooks & Corsair Connect](https://docs.corsair.dev/adapters/react.md): createCorsairReactClient hooks (useTenants, useConnectionStatus, …) plus `<CorsairProvider>` / `<CorsairBoundary>` / useConnect, which open a connect dialog and resume the failed work when a tenant isn't connected.
+- [React hooks](https://docs.corsair.dev/adapters/react.md): createCorsairReactClient hooks (useTenants, useConnectionStatus, …) over the management API.
+- [Corsair Connect](https://docs.corsair.dev/adapters/corsair-connect.md): `<CorsairProvider>` + `useConnections` + `CorsairErrorBoundary` — an in-app connect dialog for end users that opens on a missing credential and resumes the failed work once connected.
 
 ## Core concepts
 

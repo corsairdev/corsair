@@ -140,7 +140,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 }
 ```
 
-Use `<Providers>` in `app/layout.tsx`. Then a `<CorsairBoundary>` around a Server Component read, `useConnect().call` around a mutation, or `useConnect().connect` for a button each open the dialog on their own. Full API: [React hooks → Corsair Connect](/adapters/react#corsair-connect).
+Use `<Providers>` in `app/layout.tsx`. Then a `CorsairErrorBoundary` in a segment's `error.tsx` for a Server Component read, `useConnections().call` around a mutation, or `useConnections().connect` for a button each open the dialog on their own. Full API: [Corsair Connect](/adapters/corsair-connect).
 
 ## Start the server
 

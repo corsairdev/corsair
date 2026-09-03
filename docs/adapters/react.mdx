@@ -44,19 +44,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 `baseURL` defaults to `/api/corsair` — set it if your handler is mounted elsewhere. `appearance` is `"light"`, `"dark"`, or `"auto"` (the default, which follows the OS color scheme).
 
-### Read regions
+### Read regions (Next.js)
 
-Wrap a server-rendered region that reads Corsair data in `<CorsairBoundary>`. When the render fails because the tenant must connect, the boundary opens the dialog and — once connected — retries the region instead of crashing the tree:
+A Server Component that reads Corsair data can't sit inside a client wrapper, so when its render fails for a missing credential, Next routes the error to the segment's `error.tsx`. `CorsairErrorBoundary` is a drop-in for that file: it opens the dialog and, once connected, re-runs the read.
 
-```tsx inbox.tsx
-import { CorsairBoundary } from "corsair/client/react";
-
-<CorsairBoundary fallback={<p>Couldn't load Gmail.</p>}>
-  <Inbox />   {/* a Server Component that reads Gmail */}
-</CorsairBoundary>
+```tsx app/inbox/error.tsx
+"use client";
+export { CorsairErrorBoundary as default } from "corsair/client/react";
 ```
 
-`fallback` renders only for a genuine error or when the user dismisses the dialog; it defaults to `null`. Like `useConnect`, `<CorsairBoundary>` reads the provider context — it must sit inside the `<CorsairProvider>` from the step above, or it throws.
+It reads the provider context, so keep `<CorsairProvider>` in your root layout where it wraps every segment's `error.tsx`. A genuine error is rethrown to the next boundary up; if the user closes the dialog without connecting, it shows a "Try again" button.
 
 ### Mutations
 
@@ -64,10 +61,10 @@ Wrap a mutation in `call` so it re-runs after connect. It resolves `null` if the
 
 ```tsx send.tsx
 "use client";
-import { useConnect } from "corsair/client/react";
+import { useConnections } from "corsair/client/react";
 
 function SendButton() {
-  const { call } = useConnect();
+  const { call } = useConnections();
   return <button onClick={() => call(() => sendEmail())}>Send</button>;
 }
 ```
@@ -78,10 +75,10 @@ For a plain "Connect X" button, before anything has failed, `connect(plugin)` mi
 
 ```tsx connect-slack.tsx
 "use client";
-import { useConnect } from "corsair/client/react";
+import { useConnections } from "corsair/client/react";
 
 function ConnectSlack() {
-  const { connect } = useConnect();
+  const { connect } = useConnections();
   return <button onClick={() => connect("slack")}>Connect Slack</button>;
 }
 ```
@@ -89,6 +86,8 @@ function ConnectSlack() {
 <Note>
 Corsair Connect is React-only — the provider, boundary, and dialog are client components. A non-React frontend still gets the server side: the failed call records a connect-request that you read at `/api/corsair/connect/request`, so you can build your own prompt or redirect to the connect link. See the [vanilla client](/adapters/client).
 </Note>
+
+The full walkthrough, props, and hook shape are on the [Corsair Connect](/adapters/corsair-connect) page.
 
 ## Read hooks
 
