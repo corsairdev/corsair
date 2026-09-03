@@ -21,7 +21,7 @@ export const addPartToChunkedUpload = async (
 	const input = AddPartToChunkedUploadInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/chunked_uploads/${input.chunkedUploadId}/${input.chunkedUploadPartSeq}`,
+		`/chunked_uploads/${encodeURIComponent(input.chunkedUploadId)}/${encodeURIComponent(input.chunkedUploadPartSeq)}`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -54,7 +54,7 @@ export const commitChunkedUploadForEnvelopes = async (
 	if (input.action !== undefined) query.append('action', String(input.action));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/chunked_uploads/${input.chunkedUploadId}` + qs,
+		`/chunked_uploads/${encodeURIComponent(input.chunkedUploadId)}` + qs,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -80,7 +80,7 @@ export const deleteChunkedUpload = async (
 	const input = DeleteChunkedUploadInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/chunked_uploads/${input.chunkedUploadId}`,
+		`/chunked_uploads/${encodeURIComponent(input.chunkedUploadId)}`,
 		{
 			method: 'DELETE',
 		},
@@ -135,7 +135,7 @@ export const retrieveChunkedUploadMetadata = async (
 		query.append('include', String(input.include));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/chunked_uploads/${input.chunkedUploadId}` + qs,
+		`/chunked_uploads/${encodeURIComponent(input.chunkedUploadId)}` + qs,
 		{
 			method: 'GET',
 		},

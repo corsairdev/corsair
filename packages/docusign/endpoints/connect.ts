@@ -45,9 +45,12 @@ export const deleteConnectConfiguration = async (
 ) => {
 	const input = DeleteConnectConfigurationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/connect/${input.connectId}`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/connect/${encodeURIComponent(input.connectId)}`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteConnectConfigurationOutputSchema.parse(data);
 };
 
@@ -69,9 +72,12 @@ export const deleteConnectFailureLogEntry = async (
 ) => {
 	const input = DeleteConnectFailureLogEntryInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/connect/failures/${input.failureId}`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/connect/failures/${encodeURIComponent(input.failureId)}`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteConnectFailureLogEntryOutputSchema.parse(data);
 };
 
@@ -135,9 +141,12 @@ export const deleteSpecificConnectLogEntry = async (
 ) => {
 	const input = DeleteSpecificConnectLogEntryInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/connect/logs/${input.logId}`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/connect/logs/${encodeURIComponent(input.logId)}`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteSpecificConnectLogEntryOutputSchema.parse(data);
 };
 
@@ -161,7 +170,7 @@ export const republishConnectDataForEnvelope = async (
 	const input = RepublishConnectDataForEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/connect/envelopes/${input.envelopeId}/retry_queue`,
+		`/connect/envelopes/${encodeURIComponent(input.envelopeId)}/retry_queue`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -213,9 +222,12 @@ export const retrieveConnectConfigurationDetails = async (
 ) => {
 	const input = RetrieveConnectConfigurationDetailsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/connect/${input.connectId}`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/connect/${encodeURIComponent(input.connectId)}`,
+		{
+			method: 'GET',
+		},
+	);
 	return RetrieveConnectConfigurationDetailsOutputSchema.parse(data);
 };
 
@@ -293,9 +305,12 @@ export const retrieveConnectLogEntry = async (
 	if (input.additional_info !== undefined)
 		query.append('additional_info', String(input.additional_info));
 	const qs = query.toString() ? `?${query.toString()}` : '';
-	const data = await client.request(`/connect/logs/${input.logId}` + qs, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/connect/logs/${encodeURIComponent(input.logId)}` + qs,
+		{
+			method: 'GET',
+		},
+	);
 	return RetrieveConnectLogEntryOutputSchema.parse(data);
 };
 
@@ -387,7 +402,7 @@ export const returnAllConnectServiceUsers = async (
 		query.append('user_name_substring', String(input.user_name_substring));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/connect/${input.connectId}/all/users` + qs,
+		`/connect/${encodeURIComponent(input.connectId)}/all/users` + qs,
 		{
 			method: 'GET',
 		},
@@ -431,9 +446,12 @@ export const returnUsersFromConnectService = async (
 	if (input.user_name_substring !== undefined)
 		query.append('user_name_substring', String(input.user_name_substring));
 	const qs = query.toString() ? `?${query.toString()}` : '';
-	const data = await client.request(`/connect/${input.connectId}/users` + qs, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/connect/${encodeURIComponent(input.connectId)}/users` + qs,
+		{
+			method: 'GET',
+		},
+	);
 	return ReturnUsersFromConnectServiceOutputSchema.parse(data);
 };
 

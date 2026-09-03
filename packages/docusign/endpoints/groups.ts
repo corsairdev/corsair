@@ -19,10 +19,13 @@ export const addExistingBrandToGroup = async (
 ) => {
 	const input = AddExistingBrandToGroupInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/groups/${input.groupId}/brands`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/groups/${encodeURIComponent(input.groupId)}/brands`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return AddExistingBrandToGroupOutputSchema.parse(data);
 };
 
@@ -44,7 +47,7 @@ export const addMembersToSigningGroup = async (
 	const input = AddMembersToSigningGroupInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/signing_groups/${input.signingGroupId}/users`,
+		`/signing_groups/${encodeURIComponent(input.signingGroupId)}/users`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -70,10 +73,13 @@ export const addUsersToExistingGroup = async (
 ) => {
 	const input = AddUsersToExistingGroupInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/groups/${input.groupId}/users`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/groups/${encodeURIComponent(input.groupId)}/users`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return AddUsersToExistingGroupOutputSchema.parse(data);
 };
 
@@ -177,7 +183,8 @@ export const deleteAccountPermissionProfile = async (
 		query.append('move_users_to', String(input.move_users_to));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/permission_profiles/${input.permissionProfileId}` + qs,
+		`/permission_profiles/${encodeURIComponent(input.permissionProfileId)}` +
+			qs,
 		{
 			method: 'DELETE',
 		},
@@ -201,14 +208,27 @@ export const deleteBrandFromGroup = async (
 ) => {
 	const input = DeleteBrandFromGroupInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/groups/${input.groupId}/brands`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/groups/${encodeURIComponent(input.groupId)}/brands`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteBrandFromGroupOutputSchema.parse(data);
 };
 
+const SigningGroupUserSchema = z
+	.object({
+		userName: z.string().optional(),
+		email: z.string().optional(),
+	})
+	.passthrough();
+
 export const DeleteMembersFromSigningGroupInputSchema = z.object({
 	signingGroupId: z.string(),
+	body: z.object({
+		users: z.array(SigningGroupUserSchema).min(1),
+	}),
 });
 
 export const DeleteMembersFromSigningGroupOutputSchema = z
@@ -226,15 +246,22 @@ export const deleteMembersFromSigningGroup = async (
 	const input = DeleteMembersFromSigningGroupInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/signing_groups/${input.signingGroupId}/users`,
+		`/signing_groups/${encodeURIComponent(input.signingGroupId)}/users`,
 		{
 			method: 'DELETE',
+			body: JSON.stringify(input.body),
 		},
 	);
 	return DeleteMembersFromSigningGroupOutputSchema.parse(data);
 };
 
-export const DeleteOneOrMoreSigningGroupsInputSchema = z.object({});
+export const DeleteOneOrMoreSigningGroupsInputSchema = z.object({
+	body: z.object({
+		groups: z
+			.array(z.object({ signingGroupId: z.string().optional() }).passthrough())
+			.min(1),
+	}),
+});
 
 export const DeleteOneOrMoreSigningGroupsOutputSchema = z
 	.object({})
@@ -252,11 +279,18 @@ export const deleteOneOrMoreSigningGroups = async (
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(`/signing_groups`, {
 		method: 'DELETE',
+		body: JSON.stringify(input.body),
 	});
 	return DeleteOneOrMoreSigningGroupsOutputSchema.parse(data);
 };
 
-export const DeleteUserGroupInputSchema = z.object({});
+export const DeleteUserGroupInputSchema = z.object({
+	body: z.object({
+		groups: z
+			.array(z.object({ groupId: z.string().optional() }).passthrough())
+			.min(1),
+	}),
+});
 
 export const DeleteUserGroupOutputSchema = z.object({}).passthrough();
 
@@ -270,12 +304,26 @@ export const deleteUserGroup = async (
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(`/groups`, {
 		method: 'DELETE',
+		body: JSON.stringify(input.body),
 	});
 	return DeleteUserGroupOutputSchema.parse(data);
 };
 
 export const DeleteUsersFromGroupInputSchema = z.object({
 	groupId: z.string(),
+	body: z.object({
+		users: z
+			.array(
+				z
+					.object({
+						userId: z.string().optional(),
+						userName: z.string().optional(),
+						email: z.string().optional(),
+					})
+					.passthrough(),
+			)
+			.min(1),
+	}),
 });
 
 export const DeleteUsersFromGroupOutputSchema = z.object({}).passthrough();
@@ -290,9 +338,13 @@ export const deleteUsersFromGroup = async (
 ) => {
 	const input = DeleteUsersFromGroupInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/groups/${input.groupId}/users`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/groups/${encodeURIComponent(input.groupId)}/users`,
+		{
+			method: 'DELETE',
+			body: JSON.stringify(input.body),
+		},
+	);
 	return DeleteUsersFromGroupOutputSchema.parse(data);
 };
 
@@ -314,9 +366,12 @@ export const getBrandsInformationForGroup = async (
 ) => {
 	const input = GetBrandsInformationForGroupInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/groups/${input.groupId}/brands`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/groups/${encodeURIComponent(input.groupId)}/brands`,
+		{
+			method: 'GET',
+		},
+	);
 	return GetBrandsInformationForGroupOutputSchema.parse(data);
 };
 
@@ -404,7 +459,7 @@ export const getMembersOfASigningGroup = async (
 	const input = GetMembersOfASigningGroupInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/signing_groups/${input.signingGroupId}/users`,
+		`/signing_groups/${encodeURIComponent(input.signingGroupId)}/users`,
 		{
 			method: 'GET',
 		},
@@ -436,7 +491,8 @@ export const getPermissionProfileForAccount = async (
 		query.append('include', String(input.include));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/permission_profiles/${input.permissionProfileId}` + qs,
+		`/permission_profiles/${encodeURIComponent(input.permissionProfileId)}` +
+			qs,
 		{
 			method: 'GET',
 		},
@@ -462,9 +518,12 @@ export const getSigningGroupInformation = async (
 ) => {
 	const input = GetSigningGroupInformationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/signing_groups/${input.signingGroupId}`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/signing_groups/${encodeURIComponent(input.signingGroupId)}`,
+		{
+			method: 'GET',
+		},
+	);
 	return GetSigningGroupInformationOutputSchema.parse(data);
 };
 
@@ -489,9 +548,12 @@ export const getUsersInGroup = async (
 	if (input.start_position !== undefined)
 		query.append('start_position', String(input.start_position));
 	const qs = query.toString() ? `?${query.toString()}` : '';
-	const data = await client.request(`/groups/${input.groupId}/users` + qs, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/groups/${encodeURIComponent(input.groupId)}/users` + qs,
+		{
+			method: 'GET',
+		},
+	);
 	return GetUsersInGroupOutputSchema.parse(data);
 };
 
@@ -574,7 +636,8 @@ export const updatePermissionProfileSettings = async (
 		query.append('include', String(input.include));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/permission_profiles/${input.permissionProfileId}` + qs,
+		`/permission_profiles/${encodeURIComponent(input.permissionProfileId)}` +
+			qs,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -600,10 +663,13 @@ export const updateSigningGroupDetails = async (
 ) => {
 	const input = UpdateSigningGroupDetailsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/signing_groups/${input.signingGroupId}`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/signing_groups/${encodeURIComponent(input.signingGroupId)}`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateSigningGroupDetailsOutputSchema.parse(data);
 };
 

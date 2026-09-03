@@ -113,6 +113,13 @@ describe('DocuSign Plugin Conformance & Tests', () => {
 			expect(res).toBeDefined();
 		});
 
+		it('should serialize zero pagination values', async () => {
+			await listTemplates({ client: mockClient }, { count: 0 });
+			const call = mockRequest.mock.calls[0];
+			if (!call) throw new Error('expected corsair/http request to be called');
+			expect(call[1].url).toContain('count=0');
+		});
+
 		it('should invoke getTemplate', async () => {
 			const res = await getTemplate(mockClient, { templateId: 'tpl_1' });
 			expect(res).toBeDefined();

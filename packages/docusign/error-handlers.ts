@@ -17,7 +17,8 @@ function retryAfterOf(error: Error): number | undefined {
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (statusOf(error) === 429) return true;
+			const status = statusOf(error);
+			if (status !== undefined) return status === 429;
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limit_exceeded') || msg.includes('429');
 		},

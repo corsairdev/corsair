@@ -4,7 +4,7 @@ import type { DocusignExecutionContext } from './types';
 
 export const ApplyActionToBulkSendEnvelopesInputSchema = z.object({
 	bulkSendBatchId: z.string(),
-	bulkAction: z.string(),
+	bulkAction: z.enum(['resend', 'correct', 'void']),
 	body: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -23,7 +23,7 @@ export const applyActionToBulkSendEnvelopes = async (
 	const input = ApplyActionToBulkSendEnvelopesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/bulk_send_batch/${input.bulkSendBatchId}/${input.bulkAction}`,
+		`/bulk_send_batch/${encodeURIComponent(input.bulkSendBatchId)}/${encodeURIComponent(input.bulkAction)}`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -50,7 +50,7 @@ export const createBulkSendRequest = async (
 	const input = CreateBulkSendRequestInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/bulk_send_lists/${input.bulkSendListId}/send`,
+		`/bulk_send_lists/${encodeURIComponent(input.bulkSendListId)}/send`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -77,7 +77,7 @@ export const createBulkSendTestRequest = async (
 	const input = CreateBulkSendTestRequestInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/bulk_send_lists/${input.bulkSendListId}/test`,
+		`/bulk_send_lists/${encodeURIComponent(input.bulkSendListId)}/test`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -103,7 +103,7 @@ export const getBulkSendBatchStatus = async (
 	const input = GetBulkSendBatchStatusInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/bulk_send_batch/${input.bulkSendBatchId}`,
+		`/bulk_send_batch/${encodeURIComponent(input.bulkSendBatchId)}`,
 		{
 			method: 'GET',
 		},
@@ -197,7 +197,7 @@ export const removeBulkSendList = async (
 	const input = RemoveBulkSendListInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/bulk_send_lists/${input.bulkSendListId}`,
+		`/bulk_send_lists/${encodeURIComponent(input.bulkSendListId)}`,
 		{
 			method: 'DELETE',
 		},
@@ -223,7 +223,7 @@ export const updateBulkSendBatchName = async (
 	const input = UpdateBulkSendBatchNameInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/bulk_send_batch/${input.bulkSendBatchId}`,
+		`/bulk_send_batch/${encodeURIComponent(input.bulkSendBatchId)}`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),

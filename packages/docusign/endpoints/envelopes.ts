@@ -40,7 +40,9 @@ export const getEnvelope = async (
 ) => {
 	const input = GetEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/envelopes/${input.envelopeId}`);
+	const data = await client.request(
+		`/envelopes/${encodeURIComponent(input.envelopeId)}`,
+	);
 	return GetEnvelopeOutputSchema.parse(data);
 };
 
@@ -50,10 +52,13 @@ export const sendEnvelope = async (
 ) => {
 	const input = SendEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/envelopes/${input.envelopeId}`, {
-		method: 'PUT',
-		body: JSON.stringify({ status: 'sent' }),
-	});
+	const data = await client.request(
+		`/envelopes/${encodeURIComponent(input.envelopeId)}`,
+		{
+			method: 'PUT',
+			body: JSON.stringify({ status: 'sent' }),
+		},
+	);
 	return SendEnvelopeOutputSchema.parse(data);
 };
 
@@ -71,7 +76,7 @@ export const createRecipientViewUrl = async (
 	} = input;
 
 	const data = await client.request(
-		`/envelopes/${envelopeId}/views/recipient`,
+		`/envelopes/${encodeURIComponent(envelopeId)}/views/recipient`,
 		{
 			method: 'POST',
 			body: JSON.stringify({
@@ -111,7 +116,9 @@ export const fetchRecipientNamesForEmail = async (
 	const input = FetchRecipientNamesForEmailInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = EnvelopeRecipientsResponseSchema.parse(
-		await client.request(`/envelopes/${input.envelopeId}/recipients`),
+		await client.request(
+			`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients`,
+		),
 	);
 	const target = input.email.toLowerCase();
 	const candidates = [

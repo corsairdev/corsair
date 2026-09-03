@@ -4,7 +4,19 @@ import type { DocusignExecutionContext } from './types';
 
 export const CreateCustomFieldsInTemplateDocumentInputSchema = z.object({
 	templateId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	documentId: z.string(),
+	body: z.object({
+		documentFields: z
+			.array(
+				z
+					.object({
+						name: z.string().optional(),
+						value: z.string().optional(),
+					})
+					.passthrough(),
+			)
+			.min(1),
+	}),
 });
 
 export const CreateCustomFieldsInTemplateDocumentOutputSchema = z
@@ -22,10 +34,10 @@ export const createCustomFieldsInTemplateDocument = async (
 	const input = CreateCustomFieldsInTemplateDocumentInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/custom_fields`,
+		`/templates/${encodeURIComponent(input.templateId)}/documents/${encodeURIComponent(input.documentId)}/fields`,
 		{
 			method: 'POST',
-			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+			body: JSON.stringify(input.body),
 		},
 	);
 	return CreateCustomFieldsInTemplateDocumentOutputSchema.parse(data);
@@ -52,7 +64,7 @@ export const createPreviewOfResponsiveHtml = async (
 	const input = CreatePreviewOfResponsiveHtmlInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/documents/${input.documentId}/responsive_html_preview`,
+		`/templates/${encodeURIComponent(input.templateId)}/documents/${encodeURIComponent(input.documentId)}/responsive_html_preview`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -81,7 +93,7 @@ export const createTemplateDocumentCustomFields = async (
 	const input = CreateTemplateDocumentCustomFieldsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/custom_fields`,
+		`/templates/${encodeURIComponent(input.templateId)}/custom_fields`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -110,7 +122,7 @@ export const createTemplateRecipientPreviewUrl = async (
 	const input = CreateTemplateRecipientPreviewUrlInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/views/recipient_preview`,
+		`/templates/${encodeURIComponent(input.templateId)}/views/recipient_preview`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -139,7 +151,7 @@ export const createTemplateResponsiveHtmlPreview = async (
 	const input = CreateTemplateResponsiveHtmlPreviewInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/responsive_html_preview`,
+		`/templates/${encodeURIComponent(input.templateId)}/responsive_html_preview`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -168,7 +180,7 @@ export const createUrlforTemplateEditView = async (
 	const input = CreateUrlforTemplateEditViewInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/views/edit`,
+		`/templates/${encodeURIComponent(input.templateId)}/views/edit`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -197,7 +209,7 @@ export const deleteCustomDocumentFieldsFromTemplate = async (
 	const input = DeleteCustomDocumentFieldsFromTemplateInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/documents/${input.documentId}/fields`,
+		`/templates/${encodeURIComponent(input.templateId)}/documents/${encodeURIComponent(input.documentId)}/fields`,
 		{
 			method: 'DELETE',
 		},
@@ -224,7 +236,7 @@ export const deleteCustomFieldsInTemplate = async (
 	const input = DeleteCustomFieldsInTemplateInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/custom_fields`,
+		`/templates/${encodeURIComponent(input.templateId)}/custom_fields`,
 		{
 			method: 'DELETE',
 		},
@@ -253,7 +265,7 @@ export const deletePageFromTemplateDocument = async (
 	const input = DeletePageFromTemplateDocumentInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/documents/${input.documentId}/pages/${input.pageNumber}`,
+		`/templates/${encodeURIComponent(input.templateId)}/documents/${encodeURIComponent(input.documentId)}/pages/${encodeURIComponent(input.pageNumber)}`,
 		{
 			method: 'DELETE',
 		},
@@ -277,9 +289,12 @@ export const deleteTemplateLock = async (
 ) => {
 	const input = DeleteTemplateLockInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/templates/${input.templateId}/lock`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/templates/${encodeURIComponent(input.templateId)}/lock`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteTemplateLockOutputSchema.parse(data);
 };
 
@@ -302,7 +317,7 @@ export const getOriginalHtmlDefinitionForTemplate = async (
 	const input = GetOriginalHtmlDefinitionForTemplateInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/html_definitions`,
+		`/templates/${encodeURIComponent(input.templateId)}/html_definitions`,
 		{
 			method: 'GET',
 		},
@@ -330,7 +345,7 @@ export const getTemplateDocumentHtmlDefinition = async (
 	const input = GetTemplateDocumentHtmlDefinitionInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/documents/${input.documentId}/html_definitions`,
+		`/templates/${encodeURIComponent(input.templateId)}/documents/${encodeURIComponent(input.documentId)}/html_definitions`,
 		{
 			method: 'GET',
 		},
@@ -356,9 +371,12 @@ export const getTemplateLockInformation = async (
 ) => {
 	const input = GetTemplateLockInformationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/templates/${input.templateId}/lock`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/templates/${encodeURIComponent(input.templateId)}/lock`,
+		{
+			method: 'GET',
+		},
+	);
 	return GetTemplateLockInformationOutputSchema.parse(data);
 };
 
@@ -381,7 +399,7 @@ export const getTemplateNotificationInformation = async (
 	const input = GetTemplateNotificationInformationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/notification`,
+		`/templates/${encodeURIComponent(input.templateId)}/notification`,
 		{
 			method: 'GET',
 		},
@@ -409,7 +427,7 @@ export const getTemplateRecipientDocumentVisibility = async (
 	const input = GetTemplateRecipientDocumentVisibilityInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/recipients/${input.recipientId}/document_visibility`,
+		`/templates/${encodeURIComponent(input.templateId)}/recipients/${encodeURIComponent(input.recipientId)}/document_visibility`,
 		{
 			method: 'GET',
 		},
@@ -434,10 +452,13 @@ export const lockTemplateForEditing = async (
 ) => {
 	const input = LockTemplateForEditingInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/templates/${input.templateId}/lock`, {
-		method: 'POST',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/templates/${encodeURIComponent(input.templateId)}/lock`,
+		{
+			method: 'POST',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return LockTemplateForEditingOutputSchema.parse(data);
 };
 
@@ -462,7 +483,7 @@ export const removeGroupSharingPermissionsForTemplate = async (
 		RemoveGroupSharingPermissionsForTemplateInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/${input.templatePart}`,
+		`/templates/${encodeURIComponent(input.templateId)}/${encodeURIComponent(input.templatePart)}`,
 		{
 			method: 'DELETE',
 		},
@@ -533,7 +554,7 @@ export const retrieveCustomFieldsForTemplate = async (
 	const input = RetrieveCustomFieldsForTemplateInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/custom_fields`,
+		`/templates/${encodeURIComponent(input.templateId)}/custom_fields`,
 		{
 			method: 'GET',
 		},
@@ -570,7 +591,8 @@ export const retrievePdfFromSpecifiedTemplate = async (
 		query.append('show_changes', String(input.show_changes));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/templates/${input.templateId}/documents/${input.documentId}` + qs,
+		`/templates/${encodeURIComponent(input.templateId)}/documents/${encodeURIComponent(input.documentId)}` +
+			qs,
 		{
 			method: 'GET',
 		},
@@ -597,7 +619,7 @@ export const retrieveTemplateCustomFields = async (
 	const input = RetrieveTemplateCustomFieldsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/custom_fields`,
+		`/templates/${encodeURIComponent(input.templateId)}/custom_fields`,
 		{
 			method: 'GET',
 		},
@@ -637,7 +659,7 @@ export const retrieveTemplateDocumentPageImages = async (
 		query.append('show_changes', String(input.show_changes));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/templates/${input.templateId}/documents/${input.documentId}/pages/${input.pageNumber}/page_image` +
+		`/templates/${encodeURIComponent(input.templateId)}/documents/${encodeURIComponent(input.documentId)}/pages/${encodeURIComponent(input.pageNumber)}/page_image` +
 			qs,
 		{
 			method: 'GET',
@@ -685,7 +707,8 @@ export const retrieveTemplatePageImage = async (
 		query.append('start_position', String(input.start_position));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/templates/${input.templateId}/documents/${input.documentId}/pages` + qs,
+		`/templates/${encodeURIComponent(input.templateId)}/documents/${encodeURIComponent(input.documentId)}/pages` +
+			qs,
 		{
 			method: 'GET',
 		},
@@ -713,7 +736,7 @@ export const rotateTemplatePageImage = async (
 	const input = RotateTemplatePageImageInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/documents/${input.documentId}/pages/${input.pageNumber}/page_image`,
+		`/templates/${encodeURIComponent(input.templateId)}/documents/${encodeURIComponent(input.documentId)}/pages/${encodeURIComponent(input.pageNumber)}/page_image`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -766,7 +789,7 @@ export const shareTemplateWithGroup = async (
 	const input = ShareTemplateWithGroupInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/${input.templatePart}`,
+		`/templates/${encodeURIComponent(input.templateId)}/${encodeURIComponent(input.templatePart)}`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -795,7 +818,7 @@ export const updateTemplateCustomFields = async (
 	const input = UpdateTemplateCustomFieldsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/custom_fields`,
+		`/templates/${encodeURIComponent(input.templateId)}/custom_fields`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -825,7 +848,7 @@ export const updateTemplateDocumentCustomFields = async (
 	const input = UpdateTemplateDocumentCustomFieldsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/documents/${input.documentId}/fields`,
+		`/templates/${encodeURIComponent(input.templateId)}/documents/${encodeURIComponent(input.documentId)}/fields`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -854,7 +877,7 @@ export const updateTemplateDocVisibility = async (
 	const input = UpdateTemplateDocVisibilityInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/recipients/document_visibility`,
+		`/templates/${encodeURIComponent(input.templateId)}/recipients/document_visibility`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -882,10 +905,13 @@ export const updateTemplateLockInformation = async (
 ) => {
 	const input = UpdateTemplateLockInformationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/templates/${input.templateId}/lock`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/templates/${encodeURIComponent(input.templateId)}/lock`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateTemplateLockInformationOutputSchema.parse(data);
 };
 
@@ -909,7 +935,7 @@ export const updateTemplateNotificationSettings = async (
 	const input = UpdateTemplateNotificationSettingsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/notification`,
+		`/templates/${encodeURIComponent(input.templateId)}/notification`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -940,7 +966,7 @@ export const updateTemplateRecipientDocumentVisibility = async (
 		UpdateTemplateRecipientDocumentVisibilityInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/recipients/${input.recipientId}/document_visibility`,
+		`/templates/${encodeURIComponent(input.templateId)}/recipients/${encodeURIComponent(input.recipientId)}/document_visibility`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),

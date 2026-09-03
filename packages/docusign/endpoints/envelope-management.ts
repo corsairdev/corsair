@@ -2,6 +2,10 @@ import { z } from 'zod';
 import { resolveClient } from './context';
 import type { DocusignExecutionContext } from './types';
 
+function base64ToBytes(imageBase64: string): Uint8Array {
+	return Buffer.from(imageBase64, 'base64');
+}
+
 export const DeletePageFromDocumentInEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
 	documentId: z.string(),
@@ -23,7 +27,7 @@ export const deletePageFromDocumentInEnvelope = async (
 	const input = DeletePageFromDocumentInEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents/${input.documentId}/pages/${input.pageNumber}`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents/${encodeURIComponent(input.documentId)}/pages/${encodeURIComponent(input.pageNumber)}`,
 		{
 			method: 'DELETE',
 		},
@@ -50,7 +54,7 @@ export const getEnvelopeNotificationDefaults = async (
 	const input = GetEnvelopeNotificationDefaultsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/notification`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/notification`,
 		{
 			method: 'GET',
 		},
@@ -90,7 +94,7 @@ export const getPageImageFromEnvelope = async (
 		query.append('show_changes', String(input.show_changes));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents/${input.documentId}/pages/${input.pageNumber}/page_image` +
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents/${encodeURIComponent(input.documentId)}/pages/${encodeURIComponent(input.pageNumber)}/page_image` +
 			qs,
 		{
 			method: 'GET',
@@ -119,7 +123,7 @@ export const getSignatureInformationForRecipient = async (
 	const input = GetSignatureInformationForRecipientInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/recipients/${input.recipientId}/signature`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients/${encodeURIComponent(input.recipientId)}/signature`,
 		{
 			method: 'GET',
 		},
@@ -150,7 +154,7 @@ export const retrieveEnvelopeAuditEvents = async (
 	if (input.locale !== undefined) query.append('locale', String(input.locale));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/audit_events` + qs,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/audit_events` + qs,
 		{
 			method: 'GET',
 		},
@@ -177,7 +181,7 @@ export const retrieveEnvelopeNotificationDetails = async (
 	const input = RetrieveEnvelopeNotificationDetailsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/notification`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/notification`,
 		{
 			method: 'GET',
 		},
@@ -209,7 +213,7 @@ export const retrieveSignerSignatureImageInformation = async (
 		query.append('include_chrome', String(input.include_chrome));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/recipients/${input.recipientId}/signature_image` +
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients/${encodeURIComponent(input.recipientId)}/signature_image` +
 			qs,
 		{
 			method: 'GET',
@@ -241,7 +245,7 @@ export const retrieveUserInitialsImageForEnvelopes = async (
 		query.append('include_chrome', String(input.include_chrome));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/recipients/${input.recipientId}/initials_image` +
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients/${encodeURIComponent(input.recipientId)}/initials_image` +
 			qs,
 		{
 			method: 'GET',
@@ -291,7 +295,8 @@ export const returnsDocumentPageImagesBasedOnInput = async (
 		query.append('start_position', String(input.start_position));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents/${input.documentId}/pages` + qs,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents/${encodeURIComponent(input.documentId)}/pages` +
+			qs,
 		{
 			method: 'GET',
 		},
@@ -321,7 +326,7 @@ export const rotatePageImageForEnvelope = async (
 	const input = RotatePageImageForEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents/${input.documentId}/pages/${input.pageNumber}/page_image`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents/${encodeURIComponent(input.documentId)}/pages/${encodeURIComponent(input.pageNumber)}/page_image`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -330,10 +335,18 @@ export const rotatePageImageForEnvelope = async (
 	return RotatePageImageForEnvelopeOutputSchema.parse(data);
 };
 
+export const SignatureImageContentTypeSchema = z.enum([
+	'image/gif',
+	'image/png',
+	'image/jpeg',
+	'image/bmp',
+]);
+
 export const SetInitialsImageForAccountlessSignerInputSchema = z.object({
 	envelopeId: z.string(),
 	recipientId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	imageBase64: z.string().min(1),
+	contentType: SignatureImageContentTypeSchema.default('image/png'),
 });
 
 export const SetInitialsImageForAccountlessSignerOutputSchema = z
@@ -351,10 +364,11 @@ export const setInitialsImageForAccountlessSigner = async (
 	const input = SetInitialsImageForAccountlessSignerInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/recipients/${input.recipientId}/initials_image`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients/${encodeURIComponent(input.recipientId)}/initials_image`,
 		{
 			method: 'PUT',
-			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+			body: base64ToBytes(input.imageBase64),
+			contentType: input.contentType,
 		},
 	);
 	return SetInitialsImageForAccountlessSignerOutputSchema.parse(data);
@@ -363,7 +377,8 @@ export const setInitialsImageForAccountlessSigner = async (
 export const SetSignatureImageForNoAccountSignerInputSchema = z.object({
 	envelopeId: z.string(),
 	recipientId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	imageBase64: z.string().min(1),
+	contentType: SignatureImageContentTypeSchema.default('image/png'),
 });
 
 export const SetSignatureImageForNoAccountSignerOutputSchema = z
@@ -381,10 +396,11 @@ export const setSignatureImageForNoAccountSigner = async (
 	const input = SetSignatureImageForNoAccountSignerInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/recipients/${input.recipientId}/signature_image`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients/${encodeURIComponent(input.recipientId)}/signature_image`,
 		{
 			method: 'PUT',
-			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+			body: base64ToBytes(input.imageBase64),
+			contentType: input.contentType,
 		},
 	);
 	return SetSignatureImageForNoAccountSignerOutputSchema.parse(data);
@@ -410,7 +426,7 @@ export const updateEnvelopeNotificationSettings = async (
 	const input = UpdateEnvelopeNotificationSettingsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/notification`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/notification`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),

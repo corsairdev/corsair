@@ -18,8 +18,8 @@ export const listTemplates = async (
 	const input = ListTemplatesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const query = new URLSearchParams();
-	if (input?.count) query.append('count', String(input.count));
-	if (input?.startPosition)
+	if (input?.count !== undefined) query.append('count', String(input.count));
+	if (input?.startPosition !== undefined)
 		query.append('start_position', String(input.startPosition));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(`/templates${qs}`);
@@ -32,6 +32,8 @@ export const getTemplate = async (
 ) => {
 	const input = GetTemplateInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/templates/${input.templateId}`);
+	const data = await client.request(
+		`/templates/${encodeURIComponent(input.templateId)}`,
+	);
 	return GetTemplateOutputSchema.parse(data);
 };

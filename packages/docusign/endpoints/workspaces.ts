@@ -21,7 +21,7 @@ export const addFileToWorkspace = async (
 	const input = AddFileToWorkspaceInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/workspaces/${input.workspaceId}/folders/${input.folderId}/files`,
+		`/workspaces/${encodeURIComponent(input.workspaceId)}/folders/${encodeURIComponent(input.folderId)}/files`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -73,9 +73,12 @@ export const deleteExistingWorkspaceLogically = async (
 ) => {
 	const input = DeleteExistingWorkspaceLogicallyInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/workspaces/${input.workspaceId}`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/workspaces/${encodeURIComponent(input.workspaceId)}`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteExistingWorkspaceLogicallyOutputSchema.parse(data);
 };
 
@@ -99,7 +102,7 @@ export const deleteWorkspaceFilesOrFolders = async (
 	const input = DeleteWorkspaceFilesOrFoldersInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/workspaces/${input.workspaceId}/folders/${input.folderId}`,
+		`/workspaces/${encodeURIComponent(input.workspaceId)}/folders/${encodeURIComponent(input.folderId)}`,
 		{
 			method: 'DELETE',
 		},
@@ -115,7 +118,7 @@ export const GetWorkspaceFileInputSchema = z.object({
 	pdf_version: z.string().optional(),
 });
 
-export const GetWorkspaceFileOutputSchema = z.object({}).passthrough();
+export const GetWorkspaceFileOutputSchema = z.unknown();
 
 export type GetWorkspaceFileParams = z.infer<
 	typeof GetWorkspaceFileInputSchema
@@ -134,7 +137,7 @@ export const getWorkspaceFile = async (
 		query.append('pdf_version', String(input.pdf_version));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/workspaces/${input.workspaceId}/folders/${input.folderId}/files/${input.fileId}` +
+		`/workspaces/${encodeURIComponent(input.workspaceId)}/folders/${encodeURIComponent(input.folderId)}/files/${encodeURIComponent(input.fileId)}` +
 			qs,
 		{
 			method: 'GET',
@@ -185,7 +188,8 @@ export const getWorkspaceFolderContents = async (
 		query.append('workspace_user_id', String(input.workspace_user_id));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/workspaces/${input.workspaceId}/folders/${input.folderId}` + qs,
+		`/workspaces/${encodeURIComponent(input.workspaceId)}/folders/${encodeURIComponent(input.folderId)}` +
+			qs,
 		{
 			method: 'GET',
 		},
@@ -227,7 +231,7 @@ export const listWorkspaceFilePages = async (
 		query.append('start_position', String(input.start_position));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/workspaces/${input.workspaceId}/folders/${input.folderId}/files/${input.fileId}/pages` +
+		`/workspaces/${encodeURIComponent(input.workspaceId)}/folders/${encodeURIComponent(input.folderId)}/files/${encodeURIComponent(input.fileId)}/pages` +
 			qs,
 		{
 			method: 'GET',
@@ -272,9 +276,12 @@ export const retrievePropertiesAboutWorkspace = async (
 ) => {
 	const input = RetrievePropertiesAboutWorkspaceInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/workspaces/${input.workspaceId}`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/workspaces/${encodeURIComponent(input.workspaceId)}`,
+		{
+			method: 'GET',
+		},
+	);
 	return RetrievePropertiesAboutWorkspaceOutputSchema.parse(data);
 };
 
@@ -297,10 +304,13 @@ export const updateWorkspaceInformation = async (
 ) => {
 	const input = UpdateWorkspaceInformationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/workspaces/${input.workspaceId}`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/workspaces/${encodeURIComponent(input.workspaceId)}`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateWorkspaceInformationOutputSchema.parse(data);
 };
 
@@ -326,7 +336,7 @@ export const updateWorkspaceItemMetadata = async (
 	const input = UpdateWorkspaceItemMetadataInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/workspaces/${input.workspaceId}/folders/${input.folderId}/files/${input.fileId}`,
+		`/workspaces/${encodeURIComponent(input.workspaceId)}/folders/${encodeURIComponent(input.folderId)}/files/${encodeURIComponent(input.fileId)}`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),

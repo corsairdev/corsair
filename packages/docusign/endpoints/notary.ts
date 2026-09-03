@@ -44,7 +44,7 @@ export const deleteNotaryJurisdiction = async (
 	const input = DeleteNotaryJurisdictionInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/v2.1/current_user/notary/jurisdictions/${input.jurisdictionId}`,
+		`/v2.1/current_user/notary/jurisdictions/${encodeURIComponent(input.jurisdictionId)}`,
 		{
 			method: 'DELETE',
 		},
@@ -102,7 +102,7 @@ export const getNotaryJurisdictionObject = async (
 	const input = GetNotaryJurisdictionObjectInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/v2.1/current_user/notary/jurisdictions/${input.jurisdictionId}`,
+		`/v2.1/current_user/notary/jurisdictions/${encodeURIComponent(input.jurisdictionId)}`,
 		{
 			method: 'GET',
 		},
@@ -234,7 +234,7 @@ export const updateNotaryJurisdictionInfo = async (
 	const input = UpdateNotaryJurisdictionInfoInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/v2.1/current_user/notary/jurisdictions/${input.jurisdictionId}`,
+		`/v2.1/current_user/notary/jurisdictions/${encodeURIComponent(input.jurisdictionId)}`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),

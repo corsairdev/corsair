@@ -28,7 +28,7 @@ export const createIdproofResourceTokenForRecipient = async (
 		query.append('token_scopes', String(input.token_scopes));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/recipients/${input.recipientId}/identity_proof_token` +
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients/${encodeURIComponent(input.recipientId)}/identity_proof_token` +
 			qs,
 		{
 			method: 'POST',
@@ -59,7 +59,7 @@ export const createRecipientManualReviewLink = async (
 	const input = CreateRecipientManualReviewLinkInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/recipients/${input.recipientId}/views/identity_manual_review`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients/${encodeURIComponent(input.recipientId)}/views/identity_manual_review`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -88,7 +88,7 @@ export const createRecipientPreviewForEnvelope = async (
 	const input = CreateRecipientPreviewForEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/views/recipient_preview`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/views/recipient_preview`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -117,7 +117,7 @@ export const createSenderViewUrlForEnvelope = async (
 	const input = CreateSenderViewUrlForEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/views/sender`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/views/sender`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -146,7 +146,7 @@ export const generateEditViewUrlforEnvelope = async (
 	const input = GenerateEditViewUrlforEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/views/edit`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/views/edit`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -175,7 +175,7 @@ export const generateEnvelopeCorrectionUrl = async (
 	const input = GenerateEnvelopeCorrectionUrlInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/views/correct`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/views/correct`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -204,7 +204,7 @@ export const generateRecipientSharedViewUrl = async (
 	const input = GenerateRecipientSharedViewUrlInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/views/shared`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/views/shared`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -234,7 +234,7 @@ export const getElectronicDisclosureForRecipient = async (
 	const input = GetElectronicDisclosureForRecipientInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/recipients/${input.recipientId}/consumer_disclosure/${input.langCode}`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients/${encodeURIComponent(input.recipientId)}/consumer_disclosure/${encodeURIComponent(input.langCode)}`,
 		{
 			method: 'GET',
 		},
@@ -323,7 +323,7 @@ export const retrieveDefaultDisclosureForEnvelope = async (
 		query.append('langCode', String(input.langCode));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/recipients/${input.recipientId}/consumer_disclosure` +
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients/${encodeURIComponent(input.recipientId)}/consumer_disclosure` +
 			qs,
 		{
 			method: 'GET',
@@ -351,7 +351,7 @@ export const revokeEnvelopeCorrectionUrl = async (
 	const input = RevokeEnvelopeCorrectionUrlInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/views/correct`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/views/correct`,
 		{
 			method: 'DELETE',
 		},

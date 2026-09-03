@@ -45,9 +45,12 @@ export const deleteCustomTabInformation = async (
 ) => {
 	const input = DeleteCustomTabInformationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/tab_definitions/${input.customTabId}`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/tab_definitions/${encodeURIComponent(input.customTabId)}`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteCustomTabInformationOutputSchema.parse(data);
 };
 
@@ -95,9 +98,12 @@ export const retrieveCustomTabInformation = async (
 ) => {
 	const input = RetrieveCustomTabInformationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/tab_definitions/${input.customTabId}`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/tab_definitions/${encodeURIComponent(input.customTabId)}`,
+		{
+			method: 'GET',
+		},
+	);
 	return RetrieveCustomTabInformationOutputSchema.parse(data);
 };
 
@@ -120,10 +126,13 @@ export const updateCustomTabInformationForAccount = async (
 ) => {
 	const input = UpdateCustomTabInformationForAccountInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/tab_definitions/${input.customTabId}`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/tab_definitions/${encodeURIComponent(input.customTabId)}`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateCustomTabInformationForAccountOutputSchema.parse(data);
 };
 

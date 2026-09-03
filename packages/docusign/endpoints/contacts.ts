@@ -41,9 +41,12 @@ export const deleteContactFromAccount = async (
 ) => {
 	const input = DeleteContactFromAccountInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/contacts/${input.contactId}`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/contacts/${encodeURIComponent(input.contactId)}`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteContactFromAccountOutputSchema.parse(data);
 };
 
@@ -92,9 +95,12 @@ export const getDocusignAccountContacts = async (
 	if (input.cloud_provider !== undefined)
 		query.append('cloud_provider', String(input.cloud_provider));
 	const qs = query.toString() ? `?${query.toString()}` : '';
-	const data = await client.request(`/contacts/${input.contactId}` + qs, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/contacts/${encodeURIComponent(input.contactId)}` + qs,
+		{
+			method: 'GET',
+		},
+	);
 	return GetDocusignAccountContactsOutputSchema.parse(data);
 };
 

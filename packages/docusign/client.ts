@@ -45,10 +45,13 @@ export class DocusignApiError extends ApiError {
 	}
 }
 
-function toRequestBody(body: string | undefined): {
+function toRequestBody(body: string | Uint8Array | undefined): {
 	body?: unknown;
 	mediaType?: string;
 } {
+	if (body instanceof Uint8Array) {
+		return { body: new Blob([body]), mediaType: 'application/octet-stream' };
+	}
 	if (typeof body !== 'string') {
 		return {};
 	}
@@ -64,8 +67,16 @@ function toRequestBody(body: string | undefined): {
 }
 
 function assertSafePath(endpoint: string): void {
-	const segments = endpoint.split('?')[0]?.split('/') ?? [];
-	for (const segment of segments) {
+	const pathPart = endpoint.split('?')[0] ?? '';
+	const segments = pathPart.split('/');
+	for (let index = 1; index < segments.length; index++) {
+		const segment = segments[index];
+		const isTrailingSlash = index === segments.length - 1 && segment === '';
+		if (segment === undefined || (segment.length === 0 && !isTrailingSlash)) {
+			throw new Error(
+				'Invalid DocuSign request path: empty path segments are not allowed.',
+			);
+		}
 		const decoded = (() => {
 			try {
 				return decodeURIComponent(segment);
@@ -98,13 +109,17 @@ function toMethod(method: string | undefined): ApiRequestOptions['method'] {
 
 export interface DocusignRequestOptions {
 	method?: string;
-	body?: string;
+	body?: string | Uint8Array;
+	contentType?: string;
+	headers?: Record<string, string>;
 }
 
 export class DocusignClient {
 	private accessToken: string;
 	private accountId: string;
 	private baseUri: string;
+	private versionRoot: string;
+	private apiRoot: string;
 	private isDemoEnvironment: boolean;
 
 	constructor(options: DocusignAuthOptions) {
@@ -115,6 +130,11 @@ export class DocusignClient {
 		);
 		this.baseUri = baseUri;
 		this.isDemoEnvironment = isDemoEnvironment;
+		const versionIndex = baseUri.indexOf('/restapi/v2.1');
+		this.versionRoot =
+			versionIndex === -1 ? baseUri : baseUri.slice(0, versionIndex + 13);
+		const apiIndex = baseUri.indexOf('/restapi');
+		this.apiRoot = apiIndex === -1 ? baseUri : baseUri.slice(0, apiIndex + 8);
 	}
 
 	private openApiConfig(base: string): OpenAPIConfig {
@@ -192,11 +212,23 @@ export class DocusignClient {
 		while (path.endsWith('/')) {
 			path = path.slice(0, -1);
 		}
-		if (!path.includes('/restapi/v2.1')) {
+		const segments = path.split('/').filter((segment) => segment.length > 0);
+		const restApiIndex = segments.findIndex(
+			(segment, index) =>
+				segment === 'restapi' && segments[index + 1] === 'v2.1',
+		);
+		if (restApiIndex === -1) {
 			path = `${path}/restapi/v2.1`;
 		}
-		if (!path.includes(`/accounts/${this.accountId}`)) {
+		const accountsIndex = segments.findIndex(
+			(segment, index) => segment === 'accounts' && index + 1 < segments.length,
+		);
+		if (accountsIndex === -1) {
 			path = `${path}/accounts/${this.accountId}`;
+		} else if (segments[accountsIndex + 1] !== this.accountId) {
+			throw new Error(
+				`DocuSign baseUri is scoped to account "${segments[accountsIndex + 1]}" but credentials are for account "${this.accountId}". Configure a matching baseUri.`,
+			);
 		}
 
 		return { baseUri: `${url.origin}${path}`, isDemoEnvironment };
@@ -207,21 +239,39 @@ export class DocusignClient {
 		options: DocusignRequestOptions = {},
 	): Promise<unknown> {
 		assertSafePath(endpoint);
+		const { base, url } = this.resolveBase(endpoint);
 		const { body, mediaType } = toRequestBody(options.body);
 		const requestOptions: ApiRequestOptions = {
 			method: toMethod(options.method),
-			url: endpoint,
+			url,
 			...(body === undefined ? {} : { body, mediaType }),
+			...(options.contentType === undefined
+				? {}
+				: {
+						mediaType: options.contentType,
+						headers: { 'Content-Type': options.contentType },
+					}),
+			...(options.headers === undefined ? {} : { headers: options.headers }),
 		};
 		try {
 			const data: unknown = await request<unknown>(
-				this.openApiConfig(this.baseUri),
+				this.openApiConfig(base),
 				requestOptions,
 			);
 			return data;
 		} catch (error) {
 			throw toDocusignApiError(error, requestOptions.method, endpoint);
 		}
+	}
+
+	private resolveBase(endpoint: string): { base: string; url: string } {
+		if (endpoint === '/service_information') {
+			return { base: this.apiRoot, url: endpoint };
+		}
+		if (endpoint.startsWith('/v2.1/') || endpoint === '/v2.1') {
+			return { base: this.versionRoot, url: endpoint.slice('/v2.1'.length) };
+		}
+		return { base: this.baseUri, url: endpoint };
 	}
 }
 

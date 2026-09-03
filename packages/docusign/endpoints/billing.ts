@@ -233,9 +233,12 @@ export const retrieveBillingInvoice = async (
 ) => {
 	const input = RetrieveBillingInvoiceInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/billing_invoices/${input.invoiceId}`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/billing_invoices/${encodeURIComponent(input.invoiceId)}`,
+		{
+			method: 'GET',
+		},
+	);
 	return RetrieveBillingInvoiceOutputSchema.parse(data);
 };
 
@@ -257,9 +260,12 @@ export const retrieveBillingPaymentInfo = async (
 ) => {
 	const input = RetrieveBillingPaymentInfoInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/billing_payments/${input.paymentId}`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/billing_payments/${encodeURIComponent(input.paymentId)}`,
+		{
+			method: 'GET',
+		},
+	);
 	return RetrieveBillingPaymentInfoOutputSchema.parse(data);
 };
 

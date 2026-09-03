@@ -53,6 +53,11 @@ describe('docusignErrorHandlers', () => {
 			expect(docusignErrorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		});
 
+		it('does not retry when status exists without rate limiting', () => {
+			const error = docusignError(400, 'field value 429 is invalid');
+			expect(docusignErrorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+		});
+
 		it('does not match unrelated errors', () => {
 			expect(
 				docusignErrorHandlers.RATE_LIMIT_ERROR.match(

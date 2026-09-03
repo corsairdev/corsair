@@ -85,7 +85,10 @@ export const docusignPlugin = {
 
 export const docusign = (config?: Record<string, unknown>) => ({
 	...docusignPlugin,
-	...(config && { config }),
+	// Core forwards `plugin.options` into the runtime context (`ctx.options`),
+	// so credentials must live under `options` — not only `config` — for
+	// bound endpoints to resolve their client at runtime.
+	...(config && { config, options: config }),
 });
 
 export default docusign;

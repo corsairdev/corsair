@@ -43,9 +43,12 @@ export const deleteAccountBrand = async (
 ) => {
 	const input = DeleteAccountBrandInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/brands/${input.brandId}`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/brands/${encodeURIComponent(input.brandId)}`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteAccountBrandOutputSchema.parse(data);
 };
 
@@ -67,7 +70,7 @@ export const deleteBrandLogoByType = async (
 	const input = DeleteBrandLogoByTypeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/brands/${input.brandId}/logos/${input.logoType}`,
+		`/brands/${encodeURIComponent(input.brandId)}/logos/${encodeURIComponent(input.logoType)}`,
 		{
 			method: 'DELETE',
 		},
@@ -111,9 +114,12 @@ export const exportBrandToXmlfile = async (
 ) => {
 	const input = ExportBrandToXmlfileInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/brands/${input.brandId}/file`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/brands/${encodeURIComponent(input.brandId)}/file`,
+		{
+			method: 'GET',
+		},
+	);
 	return ExportBrandToXmlfileOutputSchema.parse(data);
 };
 
@@ -135,7 +141,7 @@ export const getBrandLogoByType = async (
 	const input = GetBrandLogoByTypeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/brands/${input.brandId}/logos/${input.logoType}`,
+		`/brands/${encodeURIComponent(input.brandId)}/logos/${encodeURIComponent(input.logoType)}`,
 		{
 			method: 'GET',
 		},
@@ -169,7 +175,8 @@ export const getSpecificBrandResourceFile = async (
 		query.append('return_master', String(input.return_master));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/brands/${input.brandId}/resources/${input.resourceContentType}` + qs,
+		`/brands/${encodeURIComponent(input.brandId)}/resources/${encodeURIComponent(input.resourceContentType)}` +
+			qs,
 		{
 			method: 'GET',
 		},
@@ -238,9 +245,12 @@ export const retrieveAccountBrandInformation = async (
 	if (input.include_logos !== undefined)
 		query.append('include_logos', String(input.include_logos));
 	const qs = query.toString() ? `?${query.toString()}` : '';
-	const data = await client.request(`/brands/${input.brandId}` + qs, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/brands/${encodeURIComponent(input.brandId)}` + qs,
+		{
+			method: 'GET',
+		},
+	);
 	return RetrieveAccountBrandInformationOutputSchema.parse(data);
 };
 
@@ -262,9 +272,12 @@ export const returnBrandResourceMetadataForAccount = async (
 ) => {
 	const input = ReturnBrandResourceMetadataForAccountInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/brands/${input.brandId}/resources`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/brands/${encodeURIComponent(input.brandId)}/resources`,
+		{
+			method: 'GET',
+		},
+	);
 	return ReturnBrandResourceMetadataForAccountOutputSchema.parse(data);
 };
 
@@ -292,10 +305,13 @@ export const updateAccountBrandSettings = async (
 	if (input.replace_brand !== undefined)
 		query.append('replace_brand', String(input.replace_brand));
 	const qs = query.toString() ? `?${query.toString()}` : '';
-	const data = await client.request(`/brands/${input.brandId}` + qs, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/brands/${encodeURIComponent(input.brandId)}` + qs,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateAccountBrandSettingsOutputSchema.parse(data);
 };
 

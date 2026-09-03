@@ -21,10 +21,13 @@ export const configureCloudStorageRedirectUrl = async (
 ) => {
 	const input = ConfigureCloudStorageRedirectUrlInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/cloud_storage`, {
-		method: 'POST',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/cloud_storage`,
+		{
+			method: 'POST',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return ConfigureCloudStorageRedirectUrlOutputSchema.parse(data);
 };
 
@@ -48,7 +51,7 @@ export const deleteUserAuthForCloudStorageProviders = async (
 	const input = DeleteUserAuthForCloudStorageProvidersInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/users/${input.userId}/cloud_storage/${input.serviceId}`,
+		`/users/${encodeURIComponent(input.userId)}/cloud_storage/${encodeURIComponent(input.serviceId)}`,
 		{
 			method: 'DELETE',
 		},
@@ -74,9 +77,12 @@ export const deleteUserCloudStorageAuthentication = async (
 ) => {
 	const input = DeleteUserCloudStorageAuthenticationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/cloud_storage`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/cloud_storage`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteUserCloudStorageAuthenticationOutputSchema.parse(data);
 };
 
@@ -106,7 +112,8 @@ export const getUserCloudStorageProviderConfiguration = async (
 		query.append('redirectUrl', String(input.redirectUrl));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/users/${input.userId}/cloud_storage/${input.serviceId}` + qs,
+		`/users/${encodeURIComponent(input.userId)}/cloud_storage/${encodeURIComponent(input.serviceId)}` +
+			qs,
 		{
 			method: 'GET',
 		},
@@ -153,7 +160,8 @@ export const listCloudStorageItems = async (
 		query.append('start_position', String(input.start_position));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/users/${input.userId}/cloud_storage/${input.serviceId}/folders` + qs,
+		`/users/${encodeURIComponent(input.userId)}/cloud_storage/${encodeURIComponent(input.serviceId)}/folders` +
+			qs,
 		{
 			method: 'GET',
 		},
@@ -186,7 +194,7 @@ export const retrieveCloudStorageProviderConfiguration = async (
 		query.append('redirectUrl', String(input.redirectUrl));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/users/${input.userId}/cloud_storage` + qs,
+		`/users/${encodeURIComponent(input.userId)}/cloud_storage` + qs,
 		{
 			method: 'GET',
 		},
@@ -245,7 +253,7 @@ export const retrieveItemsInCloudStorageFolder = async (
 		query.append('start_position', String(input.start_position));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/users/${input.userId}/cloud_storage/${input.serviceId}/folders/${input.folderId}` +
+		`/users/${encodeURIComponent(input.userId)}/cloud_storage/${encodeURIComponent(input.serviceId)}/folders/${encodeURIComponent(input.folderId)}` +
 			qs,
 		{
 			method: 'GET',

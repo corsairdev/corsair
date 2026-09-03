@@ -3,6 +3,7 @@ import { DocusignClient } from './client';
 import type { EndpointContractCase } from './endpoint-contract-cases';
 import { endpointContractCases } from './endpoint-contract-cases';
 import * as endpoints from './endpoints';
+import { resolveClient } from './endpoints/context';
 import { docusignEndpointMeta, docusignEndpointsNested } from './index';
 
 jest.mock('corsair/http', () => {
@@ -22,6 +23,38 @@ function sampleValue(type: string): unknown {
 function expectedQueryString(value: unknown): string {
 	if (Array.isArray(value)) return value.map(String).join(',');
 	return String(value);
+}
+
+const IMAGE_ENDPOINTS = new Set([
+	'setInitialsImageForAccountlessSigner',
+	'setSignatureImageForNoAccountSigner',
+]);
+
+const specialBodies: Record<string, unknown> = {
+	deleteDraftEnvelopeAttachments: {
+		attachments: [{ attachmentId: 'test-id' }],
+	},
+	deleteMembersFromSigningGroup: { users: [{ email: 'a@b.c' }] },
+	deleteOneOrMoreSigningGroups: { groups: [{}] },
+	deleteUserGroup: { groups: [{}] },
+	deleteUsersFromGroup: { users: [{ email: 'a@b.c' }] },
+	closeUsersInAccount: { users: [{ email: 'a@b.c' }] },
+	updateRecipientDocumentVisibility: {
+		documentVisibility: [{ documentId: 'test-id' }],
+	},
+	createCustomFieldsInTemplateDocument: {
+		documentFields: [{ name: 'n', value: 'v' }],
+	},
+};
+
+function expectedBase(path: string): string {
+	if (path === '/service_information') {
+		return 'https://demo.docusign.net/restapi';
+	}
+	if (path === '/v2.1' || path.startsWith('/v2.1/')) {
+		return 'https://demo.docusign.net/restapi/v2.1';
+	}
+	return 'https://demo.docusign.net/restapi/v2.1/accounts/12345';
 }
 
 describe('DocuSign generated endpoints', () => {
@@ -49,9 +82,18 @@ describe('DocuSign generated endpoints', () => {
 		}: EndpointContractCase) => {
 			const client = makeClient();
 			const params: Record<string, unknown> = {};
-			for (const p of pathParams) params[p] = 'test-id';
+			for (const p of pathParams)
+				params[p] = p === 'bulkAction' ? 'void' : 'test-id';
 			for (const q of queryParams) params[q.name] = sampleValue(q.type);
-			if (hasBody) params.body = { hello: 'world' };
+			if (IMAGE_ENDPOINTS.has(name)) {
+				params.imageBase64 = 'aGVsbG8=';
+				params.contentType = 'image/png';
+			} else if (hasBody) {
+				params.body = specialBodies[name] ?? { hello: 'world' };
+			}
+			if (name === 'getRequestLoggingLogFile') {
+				mockRequest.mockResolvedValueOnce('request log content');
+			}
 			const fn = (
 				endpoints as unknown as Record<
 					string,
@@ -65,16 +107,19 @@ describe('DocuSign generated endpoints', () => {
 			const call = mockRequest.mock.calls[0];
 			if (!call) throw new Error('expected corsair/http request to be called');
 			const [config, options] = call;
-			expect(config.BASE).toBe(
-				'https://demo.docusign.net/restapi/v2.1/accounts/12345',
-			);
+			expect(config.BASE).toBe(expectedBase(path));
 			expect(config.HEADERS).toEqual(
 				expect.objectContaining({ Authorization: 'Bearer mock_token' }),
 			);
 			expect(options.method).toBe(method);
 			let expected = path;
+			if (expected === '/v2.1' || expected.startsWith('/v2.1/')) {
+				expected = expected.slice('/v2.1'.length);
+			}
 			for (const p of pathParams)
-				expected = expected.split(`{${p}}`).join('test-id');
+				expected = expected
+					.split(`{${p}}`)
+					.join(p === 'bulkAction' ? 'void' : 'test-id');
 			const urlParts = options.url.split('?');
 			const receivedPath = urlParts[0] ?? '';
 			const receivedQuery = new URLSearchParams(urlParts[1] ?? '');
@@ -85,8 +130,11 @@ describe('DocuSign generated endpoints', () => {
 					expectedQueryString(sampleValue(q.type)),
 				);
 			}
-			if (hasBody) {
-				expect(options.body).toEqual({ hello: 'world' });
+			if (IMAGE_ENDPOINTS.has(name)) {
+				expect(options.body).toBeInstanceOf(Blob);
+				expect(options.mediaType).toBe('image/png');
+			} else if (hasBody) {
+				expect(options.body).toEqual(specialBodies[name] ?? { hello: 'world' });
 			} else {
 				expect(options.body).toBeUndefined();
 			}
@@ -122,6 +170,50 @@ describe('DocuSign generated endpoints', () => {
 		);
 		expect(res.names).toEqual(['Jane Doe']);
 		expect(res.count).toBe(1);
+	});
+
+	it('getWorkspaceFile preserves binary response data', async () => {
+		const client = makeClient();
+		mockRequest.mockResolvedValue('binary-file-bytes');
+		const res = await endpoints.getWorkspaceFile(
+			{ client },
+			{ workspaceId: 'w1', folderId: 'f1', fileId: 'file1' },
+		);
+		expect(res).toBe('binary-file-bytes');
+	});
+
+	it('resolves the client from the Corsair runtime context shape', async () => {
+		mockRequest.mockResolvedValue({ envelopeId: 'env_9', status: 'sent' });
+		const runtimeCtx = {
+			db: {},
+			tenantId: 'default',
+			options: {
+				accessToken: 'mock_token',
+				accountId: '12345',
+				baseUri: 'https://demo.docusign.net/restapi/v2.1',
+			},
+			key: undefined,
+		};
+		const res = await endpoints.getEnvelope(runtimeCtx, {
+			envelopeId: 'env_9',
+		});
+		expect(res).toEqual(
+			expect.objectContaining({ envelopeId: 'env_9', status: 'sent' }),
+		);
+		const call = mockRequest.mock.calls[0];
+		if (!call) throw new Error('expected corsair/http request to be called');
+		expect(call[0].BASE).toBe(
+			'https://demo.docusign.net/restapi/v2.1/accounts/12345',
+		);
+		expect(call[0].HEADERS).toEqual(
+			expect.objectContaining({ Authorization: 'Bearer mock_token' }),
+		);
+	});
+
+	it('rejects a runtime context without credentials', () => {
+		expect(() => resolveClient({ db: {}, tenantId: 'default' })).toThrow(
+			'Invalid execution context',
+		);
 	});
 });
 

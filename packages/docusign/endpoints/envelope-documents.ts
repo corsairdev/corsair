@@ -20,7 +20,7 @@ export const addEnvelopeAttachments = async (
 	const input = AddEnvelopeAttachmentsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/attachments`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/attachments`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -50,7 +50,7 @@ export const createCustomDocumentFieldsInEnvelope = async (
 	const input = CreateCustomDocumentFieldsInEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents/${input.documentId}/fields`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents/${encodeURIComponent(input.documentId)}/fields`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -80,7 +80,7 @@ export const createDocumentResponsiveHtmlPreview = async (
 	const input = CreateDocumentResponsiveHtmlPreviewInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents/${input.documentId}/responsive_html_preview`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents/${encodeURIComponent(input.documentId)}/responsive_html_preview`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -110,7 +110,7 @@ export const createPreviewOfResponsiveHtmlInEnvelope = async (
 		CreatePreviewOfResponsiveHtmlInEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/responsive_html_preview`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/responsive_html_preview`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -139,7 +139,7 @@ export const deleteCustomDocumentFields = async (
 	const input = DeleteCustomDocumentFieldsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents/${input.documentId}/fields`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents/${encodeURIComponent(input.documentId)}/fields`,
 		{
 			method: 'DELETE',
 		},
@@ -149,6 +149,11 @@ export const deleteCustomDocumentFields = async (
 
 export const DeleteDraftEnvelopeAttachmentsInputSchema = z.object({
 	envelopeId: z.string(),
+	body: z.object({
+		attachments: z
+			.array(z.object({ attachmentId: z.string() }).passthrough())
+			.min(1),
+	}),
 });
 
 export const DeleteDraftEnvelopeAttachmentsOutputSchema = z
@@ -166,9 +171,10 @@ export const deleteDraftEnvelopeAttachments = async (
 	const input = DeleteDraftEnvelopeAttachmentsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/attachments`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/attachments`,
 		{
 			method: 'DELETE',
+			body: JSON.stringify(input.body),
 		},
 	);
 	return DeleteDraftEnvelopeAttachmentsOutputSchema.parse(data);
@@ -193,7 +199,7 @@ export const deprecatedEndpointForTabBlob = async (
 	const input = DeprecatedEndpointForTabBlobInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/tabs_blob`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/tabs_blob`,
 		{
 			method: 'GET',
 		},
@@ -220,7 +226,7 @@ export const getEnvelopeDocGenFormFields = async (
 	const input = GetEnvelopeDocGenFormFieldsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/docGenFormFields`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/docGenFormFields`,
 		{
 			method: 'GET',
 		},
@@ -246,7 +252,7 @@ export const getEnvelopeDocumentFields = async (
 	const input = GetEnvelopeDocumentFieldsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents/${input.documentId}/fields`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents/${encodeURIComponent(input.documentId)}/fields`,
 		{
 			method: 'GET',
 		},
@@ -276,7 +282,8 @@ export const getPdftranscriptOfEnvelopeComments = async (
 		query.append('encoding', String(input.encoding));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/comments/transcript` + qs,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/comments/transcript` +
+			qs,
 		{
 			method: 'GET',
 		},
@@ -304,7 +311,7 @@ export const getRecipientDocumentVisibility = async (
 	const input = GetRecipientDocumentVisibilityInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/recipients/${input.recipientId}/document_visibility`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients/${encodeURIComponent(input.recipientId)}/document_visibility`,
 		{
 			method: 'GET',
 		},
@@ -329,7 +336,7 @@ export const getTabsBlobForEnvelope = async (
 	const input = GetTabsBlobForEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/tabs_blob`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/tabs_blob`,
 		{
 			method: 'GET',
 		},
@@ -356,7 +363,7 @@ export const listEnvelopeAttachmentsByEnvelopeId = async (
 	const input = ListEnvelopeAttachmentsByEnvelopeIdInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/attachments`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/attachments`,
 		{
 			method: 'GET',
 		},
@@ -382,7 +389,7 @@ export const retrieveEnvelopeAttachment = async (
 	const input = RetrieveEnvelopeAttachmentInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/attachments/${input.attachmentId}`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/attachments/${encodeURIComponent(input.attachmentId)}`,
 		{
 			method: 'GET',
 		},
@@ -439,7 +446,7 @@ export const retrieveEnvelopeDocuments = async (
 		query.append('shared_user_id', String(input.shared_user_id));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents` + qs,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents` + qs,
 		{
 			method: 'GET',
 		},
@@ -466,7 +473,7 @@ export const retrieveEnvelopeHtmlDefinition = async (
 	const input = RetrieveEnvelopeHtmlDefinitionInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/html_definitions`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/html_definitions`,
 		{
 			method: 'GET',
 		},
@@ -494,7 +501,7 @@ export const returnEnvelopeTabDataForExistingEnvelope = async (
 		ReturnEnvelopeTabDataForExistingEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/form_data`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/form_data`,
 		{
 			method: 'GET',
 		},
@@ -523,7 +530,7 @@ export const updateCustomFieldsInEnvelopeDocument = async (
 	const input = UpdateCustomFieldsInEnvelopeDocumentInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents/${input.documentId}/fields`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents/${encodeURIComponent(input.documentId)}/fields`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -552,7 +559,7 @@ export const updateDocumentVisibilityRecipients = async (
 	const input = UpdateDocumentVisibilityRecipientsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/recipients/document_visibility`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients/document_visibility`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -580,7 +587,7 @@ export const updateEnvelopeAttachment = async (
 	const input = UpdateEnvelopeAttachmentInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/attachments/${input.attachmentId}`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/attachments/${encodeURIComponent(input.attachmentId)}`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -617,7 +624,7 @@ export const updateEnvelopeDocGenFormFields = async (
 		);
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/docGenFormFields` + qs,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/docGenFormFields` + qs,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -628,7 +635,20 @@ export const updateEnvelopeDocGenFormFields = async (
 
 export const UpdateRecipientDocumentVisibilityInputSchema = z.object({
 	envelopeId: z.string(),
-	body: z.record(z.string(), z.unknown()).optional(),
+	recipientId: z.string(),
+	body: z.object({
+		documentVisibility: z
+			.array(
+				z
+					.object({
+						recipientId: z.string().optional(),
+						documentId: z.string().optional(),
+						visible: z.string().optional(),
+					})
+					.passthrough(),
+			)
+			.min(1),
+	}),
 });
 
 export const UpdateRecipientDocumentVisibilityOutputSchema = z
@@ -646,10 +666,10 @@ export const updateRecipientDocumentVisibility = async (
 	const input = UpdateRecipientDocumentVisibilityInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/recipients/document_visibility`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/recipients/${encodeURIComponent(input.recipientId)}/document_visibility`,
 		{
 			method: 'PUT',
-			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+			body: JSON.stringify(input.body),
 		},
 	);
 	return UpdateRecipientDocumentVisibilityOutputSchema.parse(data);

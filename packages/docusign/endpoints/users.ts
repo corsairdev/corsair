@@ -46,10 +46,13 @@ export const addOrUpdateUserCustomSettings = async (
 ) => {
 	const input = AddOrUpdateUserCustomSettingsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/custom_settings`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/custom_settings`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return AddOrUpdateUserCustomSettingsOutputSchema.parse(data);
 };
 
@@ -70,10 +73,13 @@ export const addOrUpdateUserSignature = async (
 ) => {
 	const input = AddOrUpdateUserSignatureInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/signatures`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/signatures`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return AddOrUpdateUserSignatureOutputSchema.parse(data);
 };
 
@@ -96,10 +102,13 @@ export const addUserSignatureAndInitialsImages = async (
 ) => {
 	const input = AddUserSignatureAndInitialsImagesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/signatures`, {
-		method: 'POST',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/signatures`,
+		{
+			method: 'POST',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return AddUserSignatureAndInitialsImagesOutputSchema.parse(data);
 };
 
@@ -133,6 +142,19 @@ export const changeUsersInAccount = async (
 
 export const CloseUsersInAccountInputSchema = z.object({
 	delete: z.string().optional(),
+	body: z.object({
+		users: z
+			.array(
+				z
+					.object({
+						userId: z.string().optional(),
+						userName: z.string().optional(),
+						email: z.string().optional(),
+					})
+					.passthrough(),
+			)
+			.min(1),
+	}),
 });
 
 export const CloseUsersInAccountOutputSchema = z.object({}).passthrough();
@@ -152,6 +174,7 @@ export const closeUsersInAccount = async (
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(`/users` + qs, {
 		method: 'DELETE',
+		body: JSON.stringify(input.body),
 	});
 	return CloseUsersInAccountOutputSchema.parse(data);
 };
@@ -175,10 +198,13 @@ export const createOrUpdateUserAuthorizations = async (
 ) => {
 	const input = CreateOrUpdateUserAuthorizationsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/authorizations`, {
-		method: 'POST',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/authorizations`,
+		{
+			method: 'POST',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return CreateOrUpdateUserAuthorizationsOutputSchema.parse(data);
 };
 
@@ -201,10 +227,13 @@ export const createUserAuthorizationForAgentUser = async (
 ) => {
 	const input = CreateUserAuthorizationForAgentUserInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/authorization`, {
-		method: 'POST',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/authorization`,
+		{
+			method: 'POST',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return CreateUserAuthorizationForAgentUserOutputSchema.parse(data);
 };
 
@@ -224,9 +253,12 @@ export const deleteCustomUserSettings = async (
 ) => {
 	const input = DeleteCustomUserSettingsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/custom_settings`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/custom_settings`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteCustomUserSettingsOutputSchema.parse(data);
 };
 
@@ -248,7 +280,7 @@ export const deleteUserAuthorization = async (
 	const input = DeleteUserAuthorizationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/users/${input.userId}/authorization/${input.authorizationId}`,
+		`/users/${encodeURIComponent(input.userId)}/authorization/${encodeURIComponent(input.authorizationId)}`,
 		{
 			method: 'DELETE',
 		},
@@ -272,9 +304,12 @@ export const deleteUserAuthorizations = async (
 ) => {
 	const input = DeleteUserAuthorizationsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/authorizations`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/authorizations`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteUserAuthorizationsOutputSchema.parse(data);
 };
 
@@ -299,7 +334,7 @@ export const deleteUserInitialsOrSignatureImage = async (
 	const input = DeleteUserInitialsOrSignatureImageInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/users/${input.userId}/signatures/${input.signatureId}/${input.imageType}`,
+		`/users/${encodeURIComponent(input.userId)}/signatures/${encodeURIComponent(input.signatureId)}/${encodeURIComponent(input.imageType)}`,
 		{
 			method: 'DELETE',
 		},
@@ -323,9 +358,12 @@ export const deleteUserProfileImage = async (
 ) => {
 	const input = DeleteUserProfileImageInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/profile/image`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/profile/image`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteUserProfileImageOutputSchema.parse(data);
 };
 
@@ -376,7 +414,7 @@ export const getAgentUserAuthorizations = async (
 		query.append('user_name_substring', String(input.user_name_substring));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/users/${input.userId}/authorizations/agent` + qs,
+		`/users/${encodeURIComponent(input.userId)}/authorizations/agent` + qs,
 		{
 			method: 'GET',
 		},
@@ -404,7 +442,7 @@ export const getUserAuthorizationDetails = async (
 	const input = GetUserAuthorizationDetailsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/users/${input.userId}/authorization/${input.authorizationId}`,
+		`/users/${encodeURIComponent(input.userId)}/authorization/${encodeURIComponent(input.authorizationId)}`,
 		{
 			method: 'GET',
 		},
@@ -459,7 +497,7 @@ export const getUserAuthorizationsForPrincipal = async (
 		query.append('user_name_substring', String(input.user_name_substring));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/users/${input.userId}/authorizations` + qs,
+		`/users/${encodeURIComponent(input.userId)}/authorizations` + qs,
 		{
 			method: 'GET',
 		},
@@ -493,9 +531,12 @@ export const getUserInformationById = async (
 	if (input.include_license !== undefined)
 		query.append('include_license', String(input.include_license));
 	const qs = query.toString() ? `?${query.toString()}` : '';
-	const data = await client.request(`/users/${input.userId}` + qs, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}` + qs,
+		{
+			method: 'GET',
+		},
+	);
 	return GetUserInformationByIdOutputSchema.parse(data);
 };
 
@@ -584,7 +625,7 @@ export const removeUserSignatureInformation = async (
 	const input = RemoveUserSignatureInformationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/users/${input.userId}/signatures/${input.signatureId}`,
+		`/users/${encodeURIComponent(input.userId)}/signatures/${encodeURIComponent(input.signatureId)}`,
 		{
 			method: 'DELETE',
 		},
@@ -610,9 +651,12 @@ export const retrieveCustomUserSettings = async (
 ) => {
 	const input = RetrieveCustomUserSettingsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/custom_settings`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/custom_settings`,
+		{
+			method: 'GET',
+		},
+	);
 	return RetrieveCustomUserSettingsOutputSchema.parse(data);
 };
 
@@ -634,9 +678,12 @@ export const retrieveUserAccountSettings = async (
 ) => {
 	const input = RetrieveUserAccountSettingsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/settings`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/settings`,
+		{
+			method: 'GET',
+		},
+	);
 	return RetrieveUserAccountSettingsOutputSchema.parse(data);
 };
 
@@ -662,7 +709,7 @@ export const retrieveUserProfileImage = async (
 		query.append('encoding', String(input.encoding));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/users/${input.userId}/profile/image` + qs,
+		`/users/${encodeURIComponent(input.userId)}/profile/image` + qs,
 		{
 			method: 'GET',
 		},
@@ -688,9 +735,12 @@ export const retrieveUserProfileInformation = async (
 ) => {
 	const input = RetrieveUserProfileInformationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/profile`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/profile`,
+		{
+			method: 'GET',
+		},
+	);
 	return RetrieveUserProfileInformationOutputSchema.parse(data);
 };
 
@@ -717,9 +767,12 @@ export const retrieveUserSignatureDefinitions = async (
 	if (input.stamp_type !== undefined)
 		query.append('stamp_type', String(input.stamp_type));
 	const qs = query.toString() ? `?${query.toString()}` : '';
-	const data = await client.request(`/users/${input.userId}/signatures` + qs, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/signatures` + qs,
+		{
+			method: 'GET',
+		},
+	);
 	return RetrieveUserSignatureDefinitionsOutputSchema.parse(data);
 };
 
@@ -747,7 +800,7 @@ export const retrieveUserSignatureImage = async (
 		query.append('include_chrome', String(input.include_chrome));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/users/${input.userId}/signatures/${input.signatureId}/${input.imageType}` +
+		`/users/${encodeURIComponent(input.userId)}/signatures/${encodeURIComponent(input.signatureId)}/${encodeURIComponent(input.imageType)}` +
 			qs,
 		{
 			method: 'GET',
@@ -776,7 +829,7 @@ export const retrieveUserSignatureInformation = async (
 	const input = RetrieveUserSignatureInformationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/users/${input.userId}/signatures/${input.signatureId}`,
+		`/users/${encodeURIComponent(input.userId)}/signatures/${encodeURIComponent(input.signatureId)}`,
 		{
 			method: 'GET',
 		},
@@ -809,7 +862,7 @@ export const setUserSignatureImage = async (
 		query.append('transparent_png', String(input.transparent_png));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/users/${input.userId}/signatures/${input.signatureId}/${input.imageType}` +
+		`/users/${encodeURIComponent(input.userId)}/signatures/${encodeURIComponent(input.signatureId)}/${encodeURIComponent(input.imageType)}` +
 			qs,
 		{
 			method: 'PUT',
@@ -841,10 +894,13 @@ export const updateUserAccountSettings = async (
 	if (input.allow_all_languages !== undefined)
 		query.append('allow_all_languages', String(input.allow_all_languages));
 	const qs = query.toString() ? `?${query.toString()}` : '';
-	const data = await client.request(`/users/${input.userId}/settings` + qs, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/settings` + qs,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateUserAccountSettingsOutputSchema.parse(data);
 };
 
@@ -869,7 +925,7 @@ export const updateUserAuthorizationDates = async (
 	const input = UpdateUserAuthorizationDatesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/users/${input.userId}/authorization/${input.authorizationId}`,
+		`/users/${encodeURIComponent(input.userId)}/authorization/${encodeURIComponent(input.authorizationId)}`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -902,10 +958,13 @@ export const updateUserInformationForSpecifiedUser = async (
 	if (input.allow_all_languages !== undefined)
 		query.append('allow_all_languages', String(input.allow_all_languages));
 	const qs = query.toString() ? `?${query.toString()}` : '';
-	const data = await client.request(`/users/${input.userId}` + qs, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}` + qs,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateUserInformationForSpecifiedUserOutputSchema.parse(data);
 };
 
@@ -926,10 +985,13 @@ export const updateUserProfileImage = async (
 ) => {
 	const input = UpdateUserProfileImageInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/profile/image`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/profile/image`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateUserProfileImageOutputSchema.parse(data);
 };
 
@@ -952,10 +1014,13 @@ export const updateUserProfileInformation = async (
 ) => {
 	const input = UpdateUserProfileInformationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/users/${input.userId}/profile`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/users/${encodeURIComponent(input.userId)}/profile`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateUserProfileInformationOutputSchema.parse(data);
 };
 
@@ -986,7 +1051,8 @@ export const updateUserSignatureById = async (
 		);
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/users/${input.userId}/signatures/${input.signatureId}` + qs,
+		`/users/${encodeURIComponent(input.userId)}/signatures/${encodeURIComponent(input.signatureId)}` +
+			qs,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),

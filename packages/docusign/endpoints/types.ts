@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { DocusignClient } from '../client';
+import type { DocusignAuthOptions, DocusignClient } from '../client';
 import {
 	generatedEndpointSchemas,
 	generatedInputSchemas,
@@ -8,7 +8,9 @@ import {
 
 export type DocusignExecutionContext =
 	| DocusignClient
-	| { client: DocusignClient };
+	| { client: DocusignClient }
+	| DocusignAuthOptions
+	| { options: DocusignAuthOptions };
 
 export const CreateEnvelopeInputSchema = z.object({
 	templateId: z.string().optional(),

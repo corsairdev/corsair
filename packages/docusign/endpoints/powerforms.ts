@@ -18,9 +18,12 @@ export const deletePowerFormById = async (
 ) => {
 	const input = DeletePowerFormByIdInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/powerforms/${input.powerFormId}`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/powerforms/${encodeURIComponent(input.powerFormId)}`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeletePowerFormByIdOutputSchema.parse(data);
 };
 
@@ -80,7 +83,7 @@ export const retrievePowerFormDataEntries = async (
 		query.append('to_date', String(input.to_date));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/powerforms/${input.powerFormId}/form_data` + qs,
+		`/powerforms/${encodeURIComponent(input.powerFormId)}/form_data` + qs,
 		{
 			method: 'GET',
 		},

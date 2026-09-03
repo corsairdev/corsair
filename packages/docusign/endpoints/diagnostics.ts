@@ -26,7 +26,7 @@ export const GetRequestLoggingLogFileInputSchema = z.object({
 	requestLogId: z.string(),
 });
 
-export const GetRequestLoggingLogFileOutputSchema = z.object({}).passthrough();
+export const GetRequestLoggingLogFileOutputSchema = z.string();
 
 export type GetRequestLoggingLogFileParams = z.infer<
 	typeof GetRequestLoggingLogFileInputSchema
@@ -39,7 +39,7 @@ export const getRequestLoggingLogFile = async (
 	const input = GetRequestLoggingLogFileInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/v2.1/diagnostics/request_logs/${input.requestLogId}`,
+		`/v2.1/diagnostics/request_logs/${encodeURIComponent(input.requestLogId)}`,
 		{
 			method: 'GET',
 		},

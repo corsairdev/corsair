@@ -22,7 +22,7 @@ export const addEmailOverridesToEnvelope = async (
 	const input = AddEmailOverridesToEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/email_settings`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/email_settings`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -49,7 +49,7 @@ export const addStepToEnvelopeWorkflow = async (
 	const input = AddStepToEnvelopeWorkflowInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/workflow/steps`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow/steps`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -87,7 +87,7 @@ export const addTemplatesToDocumentInEnvelope = async (
 		);
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents/${input.documentId}/templates` +
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents/${encodeURIComponent(input.documentId)}/templates` +
 			qs,
 		{
 			method: 'POST',
@@ -123,7 +123,7 @@ export const addTemplatesToEnvelope = async (
 		);
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/templates` + qs,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/templates` + qs,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -152,7 +152,7 @@ export const createCustomFieldsForEnvelope = async (
 	const input = CreateCustomFieldsForEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/custom_fields`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/custom_fields`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -181,7 +181,7 @@ export const createTemplateWorkflowStep = async (
 	const input = CreateTemplateWorkflowStepInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/workflow/steps`,
+		`/templates/${encodeURIComponent(input.templateId)}/workflow/steps`,
 		{
 			method: 'POST',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -211,7 +211,7 @@ export const deleteDelayedRoutingRuleForEnvelopeStep = async (
 		DeleteDelayedRoutingRuleForEnvelopeStepInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/workflow/steps/${input.workflowStepId}/delayedRouting`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow/steps/${encodeURIComponent(input.workflowStepId)}/delayedRouting`,
 		{
 			method: 'DELETE',
 		},
@@ -239,7 +239,7 @@ export const deleteDelayedRoutingRulesForTemplate = async (
 	const input = DeleteDelayedRoutingRulesForTemplateInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/workflow/steps/${input.workflowStepId}/delayedRouting`,
+		`/templates/${encodeURIComponent(input.templateId)}/workflow/steps/${encodeURIComponent(input.workflowStepId)}/delayedRouting`,
 		{
 			method: 'DELETE',
 		},
@@ -266,7 +266,7 @@ export const deleteEnvelopeCustomFields = async (
 	const input = DeleteEnvelopeCustomFieldsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/custom_fields`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/custom_fields`,
 		{
 			method: 'DELETE',
 		},
@@ -293,7 +293,7 @@ export const deleteEnvelopeEmailSettings = async (
 	const input = DeleteEnvelopeEmailSettingsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/email_settings`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/email_settings`,
 		{
 			method: 'DELETE',
 		},
@@ -317,9 +317,12 @@ export const deleteEnvelopeLock = async (
 ) => {
 	const input = DeleteEnvelopeLockInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/envelopes/${input.envelopeId}/lock`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/lock`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteEnvelopeLockOutputSchema.parse(data);
 };
 
@@ -342,7 +345,7 @@ export const deleteEnvelopeScheduledSendingRules = async (
 	const input = DeleteEnvelopeScheduledSendingRulesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/workflow/scheduledSending`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow/scheduledSending`,
 		{
 			method: 'DELETE',
 		},
@@ -369,7 +372,7 @@ export const deleteEnvelopeTransferRule = async (
 	const input = DeleteEnvelopeTransferRuleInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/transfer_rules/${input.envelopeTransferRuleId}`,
+		`/envelopes/transfer_rules/${encodeURIComponent(input.envelopeTransferRuleId)}`,
 		{
 			method: 'DELETE',
 		},
@@ -395,9 +398,12 @@ export const deleteEnvelopeWorkflowDefinition = async (
 ) => {
 	const input = DeleteEnvelopeWorkflowDefinitionInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/envelopes/${input.envelopeId}/workflow`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteEnvelopeWorkflowDefinitionOutputSchema.parse(data);
 };
 
@@ -421,7 +427,7 @@ export const deleteEnvelopeWorkflowStep = async (
 	const input = DeleteEnvelopeWorkflowStepInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/workflow/steps/${input.workflowStepId}`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow/steps/${encodeURIComponent(input.workflowStepId)}`,
 		{
 			method: 'DELETE',
 		},
@@ -448,7 +454,7 @@ export const deleteScheduledSendingRules = async (
 	const input = DeleteScheduledSendingRulesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/workflow/scheduledSending`,
+		`/templates/${encodeURIComponent(input.templateId)}/workflow/scheduledSending`,
 		{
 			method: 'DELETE',
 		},
@@ -477,7 +483,7 @@ export const deleteTemplateFromEnvelopeDocument = async (
 	const input = DeleteTemplateFromEnvelopeDocumentInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents/${input.documentId}/templates/${input.templateId}`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents/${encodeURIComponent(input.documentId)}/templates/${encodeURIComponent(input.templateId)}`,
 		{
 			method: 'DELETE',
 		},
@@ -505,7 +511,7 @@ export const deleteTemplateWorkflowStep = async (
 	const input = DeleteTemplateWorkflowStepInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/workflow/steps/${input.workflowStepId}`,
+		`/templates/${encodeURIComponent(input.templateId)}/workflow/steps/${encodeURIComponent(input.workflowStepId)}`,
 		{
 			method: 'DELETE',
 		},
@@ -531,9 +537,12 @@ export const deleteWorkflowDefinitionForTemplate = async (
 ) => {
 	const input = DeleteWorkflowDefinitionForTemplateInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/templates/${input.templateId}/workflow`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/templates/${encodeURIComponent(input.templateId)}/workflow`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteWorkflowDefinitionForTemplateOutputSchema.parse(data);
 };
 
@@ -555,9 +564,12 @@ export const getEnvelopeLockInformation = async (
 ) => {
 	const input = GetEnvelopeLockInformationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/envelopes/${input.envelopeId}/lock`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/lock`,
+		{
+			method: 'GET',
+		},
+	);
 	return GetEnvelopeLockInformationOutputSchema.parse(data);
 };
 
@@ -579,9 +591,12 @@ export const getEnvelopeWorkflowDefinition = async (
 ) => {
 	const input = GetEnvelopeWorkflowDefinitionInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/envelopes/${input.envelopeId}/workflow`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow`,
+		{
+			method: 'GET',
+		},
+	);
 	return GetEnvelopeWorkflowDefinitionOutputSchema.parse(data);
 };
 
@@ -606,7 +621,7 @@ export const getEnvelopeWorkflowDelayedRoutingDefinition = async (
 		GetEnvelopeWorkflowDelayedRoutingDefinitionInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/workflow/steps/${input.workflowStepId}/delayedRouting`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow/steps/${encodeURIComponent(input.workflowStepId)}/delayedRouting`,
 		{
 			method: 'GET',
 		},
@@ -634,7 +649,7 @@ export const getTemplateDelayedRoutingRules = async (
 	const input = GetTemplateDelayedRoutingRulesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/workflow/steps/${input.workflowStepId}/delayedRouting`,
+		`/templates/${encodeURIComponent(input.templateId)}/workflow/steps/${encodeURIComponent(input.workflowStepId)}/delayedRouting`,
 		{
 			method: 'GET',
 		},
@@ -661,7 +676,7 @@ export const getTemplateScheduledSendingSettings = async (
 	const input = GetTemplateScheduledSendingSettingsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/workflow/scheduledSending`,
+		`/templates/${encodeURIComponent(input.templateId)}/workflow/scheduledSending`,
 		{
 			method: 'GET',
 		},
@@ -694,7 +709,7 @@ export const getTemplatesForEnvelopeDocument = async (
 		query.append('include', String(input.include));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/documents/${input.documentId}/templates` +
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/documents/${encodeURIComponent(input.documentId)}/templates` +
 			qs,
 		{
 			method: 'GET',
@@ -727,7 +742,7 @@ export const getTemplatesUsedInEnvelope = async (
 		query.append('include', String(input.include));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/templates` + qs,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/templates` + qs,
 		{
 			method: 'GET',
 		},
@@ -755,7 +770,7 @@ export const getWorkflowStepForEnvelope = async (
 	const input = GetWorkflowStepForEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/workflow/steps/${input.workflowStepId}`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow/steps/${encodeURIComponent(input.workflowStepId)}`,
 		{
 			method: 'GET',
 		},
@@ -782,7 +797,7 @@ export const listEnvelopeAndDocumentCustomFields = async (
 	const input = ListEnvelopeAndDocumentCustomFieldsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/custom_fields`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/custom_fields`,
 		{
 			method: 'GET',
 		},
@@ -807,10 +822,13 @@ export const lockAnEnvelopeForEditing = async (
 ) => {
 	const input = LockAnEnvelopeForEditingInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/envelopes/${input.envelopeId}/lock`, {
-		method: 'POST',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/lock`,
+		{
+			method: 'POST',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return LockAnEnvelopeForEditingOutputSchema.parse(data);
 };
 
@@ -833,7 +851,7 @@ export const retrieveCustomFieldsForEnvelope = async (
 	const input = RetrieveCustomFieldsForEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/custom_fields`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/custom_fields`,
 		{
 			method: 'GET',
 		},
@@ -860,7 +878,7 @@ export const retrieveEnvelopeEmailOverrides = async (
 	const input = RetrieveEnvelopeEmailOverridesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/email_settings`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/email_settings`,
 		{
 			method: 'GET',
 		},
@@ -888,7 +906,7 @@ export const retrieveWorkflowStepForTemplate = async (
 	const input = RetrieveWorkflowStepForTemplateInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/workflow/steps/${input.workflowStepId}`,
+		`/templates/${encodeURIComponent(input.templateId)}/workflow/steps/${encodeURIComponent(input.workflowStepId)}`,
 		{
 			method: 'GET',
 		},
@@ -915,7 +933,7 @@ export const returnScheduledSendingRulesForEnvelope = async (
 	const input = ReturnScheduledSendingRulesForEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/workflow/scheduledSending`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow/scheduledSending`,
 		{
 			method: 'GET',
 		},
@@ -941,9 +959,12 @@ export const returnTemplateWorkflowDefinition = async (
 ) => {
 	const input = ReturnTemplateWorkflowDefinitionInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/templates/${input.templateId}/workflow`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/templates/${encodeURIComponent(input.templateId)}/workflow`,
+		{
+			method: 'GET',
+		},
+	);
 	return ReturnTemplateWorkflowDefinitionOutputSchema.parse(data);
 };
 
@@ -993,7 +1014,7 @@ export const updateEnvelopeCustomFields = async (
 	const input = UpdateEnvelopeCustomFieldsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/custom_fields`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/custom_fields`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -1023,7 +1044,7 @@ export const updateEnvelopeDelayedRoutingRules = async (
 	const input = UpdateEnvelopeDelayedRoutingRulesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/workflow/steps/${input.workflowStepId}/delayedRouting`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow/steps/${encodeURIComponent(input.workflowStepId)}/delayedRouting`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -1052,7 +1073,7 @@ export const updateEnvelopeEmailSettings = async (
 	const input = UpdateEnvelopeEmailSettingsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/email_settings`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/email_settings`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -1081,7 +1102,7 @@ export const updateEnvelopeScheduledSendingRules = async (
 	const input = UpdateEnvelopeScheduledSendingRulesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/workflow/scheduledSending`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow/scheduledSending`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -1109,10 +1130,13 @@ export const updateEnvelopeWorkflowDefinition = async (
 ) => {
 	const input = UpdateEnvelopeWorkflowDefinitionInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/envelopes/${input.envelopeId}/workflow`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateEnvelopeWorkflowDefinitionOutputSchema.parse(data);
 };
 
@@ -1137,7 +1161,7 @@ export const updateEnvelopeWorkflowStep = async (
 	const input = UpdateEnvelopeWorkflowStepInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/envelopes/${input.envelopeId}/workflow/steps/${input.workflowStepId}`,
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/workflow/steps/${encodeURIComponent(input.workflowStepId)}`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -1163,10 +1187,13 @@ export const updateLockForEnvelope = async (
 ) => {
 	const input = UpdateLockForEnvelopeInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/envelopes/${input.envelopeId}/lock`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/envelopes/${encodeURIComponent(input.envelopeId)}/lock`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateLockForEnvelopeOutputSchema.parse(data);
 };
 
@@ -1191,7 +1218,7 @@ export const updateTemplateDelayedRoutingRules = async (
 	const input = UpdateTemplateDelayedRoutingRulesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/workflow/steps/${input.workflowStepId}/delayedRouting`,
+		`/templates/${encodeURIComponent(input.templateId)}/workflow/steps/${encodeURIComponent(input.workflowStepId)}/delayedRouting`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -1220,7 +1247,7 @@ export const updateTemplateScheduledSendingRules = async (
 	const input = UpdateTemplateScheduledSendingRulesInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/workflow/scheduledSending`,
+		`/templates/${encodeURIComponent(input.templateId)}/workflow/scheduledSending`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -1248,10 +1275,13 @@ export const updateTemplateWorkflowDefinition = async (
 ) => {
 	const input = UpdateTemplateWorkflowDefinitionInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/templates/${input.templateId}/workflow`, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/templates/${encodeURIComponent(input.templateId)}/workflow`,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateTemplateWorkflowDefinitionOutputSchema.parse(data);
 };
 
@@ -1276,7 +1306,7 @@ export const updateWorkflowStepForTemplate = async (
 	const input = UpdateWorkflowStepForTemplateInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/templates/${input.templateId}/workflow/steps/${input.workflowStepId}`,
+		`/templates/${encodeURIComponent(input.templateId)}/workflow/steps/${encodeURIComponent(input.workflowStepId)}`,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),

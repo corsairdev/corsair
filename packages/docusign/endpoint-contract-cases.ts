@@ -1550,7 +1550,7 @@ export const endpointContractCases: EndpointContractCase[] = [
 		path: '/envelopes/{envelopeId}/attachments',
 		pathParams: ['envelopeId'],
 		queryParams: [],
-		hasBody: false,
+		hasBody: true,
 	},
 	{
 		name: 'deprecatedEndpointForTabBlob',
@@ -1728,8 +1728,8 @@ export const endpointContractCases: EndpointContractCase[] = [
 	{
 		name: 'updateRecipientDocumentVisibility',
 		method: 'PUT',
-		path: '/envelopes/{envelopeId}/recipients/document_visibility',
-		pathParams: ['envelopeId'],
+		path: '/envelopes/{envelopeId}/recipients/{recipientId}/document_visibility',
+		pathParams: ['envelopeId', 'recipientId'],
 		queryParams: [],
 		hasBody: true,
 	},
@@ -2500,7 +2500,7 @@ export const endpointContractCases: EndpointContractCase[] = [
 		path: '/signing_groups/{signingGroupId}/users',
 		pathParams: ['signingGroupId'],
 		queryParams: [],
-		hasBody: false,
+		hasBody: true,
 	},
 	{
 		name: 'deleteOneOrMoreSigningGroups',
@@ -2508,7 +2508,7 @@ export const endpointContractCases: EndpointContractCase[] = [
 		path: '/signing_groups',
 		pathParams: [],
 		queryParams: [],
-		hasBody: false,
+		hasBody: true,
 	},
 	{
 		name: 'deleteUserGroup',
@@ -2516,7 +2516,7 @@ export const endpointContractCases: EndpointContractCase[] = [
 		path: '/groups',
 		pathParams: [],
 		queryParams: [],
-		hasBody: false,
+		hasBody: true,
 	},
 	{
 		name: 'deleteUsersFromGroup',
@@ -2524,7 +2524,7 @@ export const endpointContractCases: EndpointContractCase[] = [
 		path: '/groups/{groupId}/users',
 		pathParams: ['groupId'],
 		queryParams: [],
-		hasBody: false,
+		hasBody: true,
 	},
 	{
 		name: 'getBrandsInformationForGroup',
@@ -2855,8 +2855,8 @@ export const endpointContractCases: EndpointContractCase[] = [
 	{
 		name: 'createCustomFieldsInTemplateDocument',
 		method: 'POST',
-		path: '/templates/{templateId}/custom_fields',
-		pathParams: ['templateId'],
+		path: '/templates/{templateId}/documents/{documentId}/fields',
+		pathParams: ['templateId', 'documentId'],
 		queryParams: [],
 		hasBody: true,
 	},
@@ -3247,7 +3247,7 @@ export const endpointContractCases: EndpointContractCase[] = [
 				required: false,
 			},
 		],
-		hasBody: false,
+		hasBody: true,
 	},
 	{
 		name: 'createOrUpdateUserAuthorizations',

@@ -105,7 +105,7 @@ export const deleteAccountCustomField = async (
 		query.append('apply_to_templates', String(input.apply_to_templates));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/custom_fields/${input.customFieldId}` + qs,
+		`/custom_fields/${encodeURIComponent(input.customFieldId)}` + qs,
 		{
 			method: 'DELETE',
 		},
@@ -129,9 +129,12 @@ export const deleteAccountStamp = async (
 ) => {
 	const input = DeleteAccountStampInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/signatures/${input.signatureId}`, {
-		method: 'DELETE',
-	});
+	const data = await client.request(
+		`/signatures/${encodeURIComponent(input.signatureId)}`,
+		{
+			method: 'DELETE',
+		},
+	);
 	return DeleteAccountStampOutputSchema.parse(data);
 };
 
@@ -154,7 +157,7 @@ export const deleteBccEmailArchiveConfiguration = async (
 	const input = DeleteBccEmailArchiveConfigurationInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/settings/bcc_email_archives/${input.bccEmailArchiveId}`,
+		`/settings/bcc_email_archives/${encodeURIComponent(input.bccEmailArchiveId)}`,
 		{
 			method: 'DELETE',
 		},
@@ -201,7 +204,7 @@ export const deleteSignatureForCaptiveRecipients = async (
 	const input = DeleteSignatureForCaptiveRecipientsInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/captive_recipients/${input.recipientPart}`,
+		`/captive_recipients/${encodeURIComponent(input.recipientPart)}`,
 		{
 			method: 'DELETE',
 		},
@@ -255,7 +258,7 @@ export const deleteStampImageForAccount = async (
 	const input = DeleteStampImageForAccountInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
 	const data = await client.request(
-		`/signatures/${input.signatureId}/${input.imageType}`,
+		`/signatures/${encodeURIComponent(input.signatureId)}/${encodeURIComponent(input.imageType)}`,
 		{
 			method: 'DELETE',
 		},
@@ -334,7 +337,8 @@ export const getAccountStampImage = async (
 		query.append('include_chrome', String(input.include_chrome));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/signatures/${input.signatureId}/${input.imageType}` + qs,
+		`/signatures/${encodeURIComponent(input.signatureId)}/${encodeURIComponent(input.imageType)}` +
+			qs,
 		{
 			method: 'GET',
 		},
@@ -396,7 +400,8 @@ export const getBccemailArchiveHistory = async (
 		query.append('start_position', String(input.start_position));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/settings/bcc_email_archives/${input.bccEmailArchiveId}` + qs,
+		`/settings/bcc_email_archives/${encodeURIComponent(input.bccEmailArchiveId)}` +
+			qs,
 		{
 			method: 'GET',
 		},
@@ -473,9 +478,12 @@ export const getSpecifiedAccountStampInfo = async (
 ) => {
 	const input = GetSpecifiedAccountStampInfoInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const data = await client.request(`/signatures/${input.signatureId}`, {
-		method: 'GET',
-	});
+	const data = await client.request(
+		`/signatures/${encodeURIComponent(input.signatureId)}`,
+		{
+			method: 'GET',
+		},
+	);
 	return GetSpecifiedAccountStampInfoOutputSchema.parse(data);
 };
 
@@ -935,7 +943,7 @@ export const updateAccountCustomField = async (
 		query.append('apply_to_templates', String(input.apply_to_templates));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/custom_fields/${input.customFieldId}` + qs,
+		`/custom_fields/${encodeURIComponent(input.customFieldId)}` + qs,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
@@ -1017,10 +1025,13 @@ export const updateAccountStampById = async (
 			String(input.close_existing_signature),
 		);
 	const qs = query.toString() ? `?${query.toString()}` : '';
-	const data = await client.request(`/signatures/${input.signatureId}` + qs, {
-		method: 'PUT',
-		body: input.body === undefined ? undefined : JSON.stringify(input.body),
-	});
+	const data = await client.request(
+		`/signatures/${encodeURIComponent(input.signatureId)}` + qs,
+		{
+			method: 'PUT',
+			body: input.body === undefined ? undefined : JSON.stringify(input.body),
+		},
+	);
 	return UpdateAccountStampByIdOutputSchema.parse(data);
 };
 
@@ -1122,7 +1133,7 @@ export const updateElectronicRecordDisclosure = async (
 		query.append('include_metadata', String(input.include_metadata));
 	const qs = query.toString() ? `?${query.toString()}` : '';
 	const data = await client.request(
-		`/consumer_disclosure/${input.langCode}` + qs,
+		`/consumer_disclosure/${encodeURIComponent(input.langCode)}` + qs,
 		{
 			method: 'PUT',
 			body: input.body === undefined ? undefined : JSON.stringify(input.body),
