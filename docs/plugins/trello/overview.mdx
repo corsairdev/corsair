@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Trello plugin for Corsair"
+description: "Trello plugin for Corsair — cards, boards, and card events."
 ---
 
 Use **Trello** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -92,19 +92,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`boards.get`**
+**List cards**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.trello.api.boards.get({});
+await tenant.trello.api.cards.list({ listId: '64a1b2c3d4e5f6a7b8c9d0e1' });
 ```
 
 
-**`boards.create`**
+**Create a card**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.trello.api.boards.create({});
+await tenant.trello.api.cards.create({ name: 'Follow up from Corsair', idList: '64a1b2c3d4e5f6a7b8c9d0e1' });
 ```
 
 
@@ -112,15 +112,37 @@ See the full list on the [API](/plugins/trello/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.trello.db.<entity>.search()` and `.list()`: `boards`, `cards`, `labels`, `lists`, `members`.
+Search synced cards without hitting Trello.
 
-See [Database](/plugins/trello/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.trello.db.cards.search({
+	data: { closed: false },
+	limit: 50,
+});
+```
+
+Synced entities: `boards`, `cards`, `labels`, `lists`, `members`. See [Database](/plugins/trello/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **6** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a Trello card is created.
 
-See [Webhooks](/plugins/trello/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+trello({
+    webhookHooks: {
+        cards: {
+            cardCreated: {
+                after: async (ctx, result) => {
+                    console.log('Trello card created:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/trello/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
