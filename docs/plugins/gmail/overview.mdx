@@ -104,7 +104,7 @@ await tenant.gmail.api.messages.list({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.gmail.api.messages.send({});
+await tenant.gmail.api.messages.send({ raw: 'RnJvbTogbWVAZXhhbXBsZS5jb20NClRvOiB0ZWFtbWF0ZUBleGFtcGxlLmNvbQ0KU3ViamVjdDogSGVsbG8gZnJvbSBDb3JzYWlyDQpDb250ZW50LVR5cGU6IHRleHQvcGxhaW47IGNoYXJzZXQ9dXRmLTgNCg0KSGVsbG8gZnJvbSBDb3JzYWly' });
 ```
 
 
