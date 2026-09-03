@@ -96,7 +96,11 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.googlecalendar.api.calendar.getAvailability({ timeMin: '2026-01-01T00:00:00Z', timeMax: '2026-01-07T23:59:59Z' });
+await tenant.googlecalendar.api.calendar.getAvailability({
+	timeMin: '2026-01-01T00:00:00Z',
+	timeMax: '2026-01-07T23:59:59Z',
+	items: [{ id: 'primary' }],
+});
 ```
 
 

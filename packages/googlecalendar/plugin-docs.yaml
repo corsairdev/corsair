@@ -7,6 +7,8 @@ examples:
     args:
       timeMin: "2026-01-01T00:00:00Z"
       timeMax: "2026-01-07T23:59:59Z"
+      items:
+        - id: primary
   write:
     path: events.create
     title: Create an event
