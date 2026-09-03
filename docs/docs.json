@@ -1033,7 +1033,7 @@
                 ]
               },
               {
-                "group": "Github",
+                "group": "GitHub",
                 "pages": [
                   "plugins/github/overview",
                   "plugins/github/get-credentials",
