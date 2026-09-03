@@ -1,19 +1,28 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
+
+/**
+ * Official host and version from the Certifier quickstart.
+ * https://developers.certifier.io/docs/api-reference/quickstart
+ */
+export const CERTIFIER_API_BASE = 'https://api.certifier.io/v1';
+export const CERTIFIER_VERSION = '2022-10-26';
 
 export class CertifierAPIError extends Error {
+	readonly status?: number;
+	readonly retryAfter?: number;
+
 	constructor(
 		message: string,
-		public readonly code?: string,
+		options: { status?: number; retryAfter?: number } = {},
 	) {
 		super(message);
 		this.name = 'CertifierAPIError';
+		this.status = options.status;
+		this.retryAfter = options.retryAfter;
 	}
 }
-
-// TODO: Update with your API base URL
-const CERTIFIER_API_BASE = 'https://api.example.com';
 
 export async function makeCertifierRequest<T>(
 	endpoint: string,
@@ -24,35 +33,42 @@ export async function makeCertifierRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
+	const token = apiKey.trim();
+	if (!token) {
+		throw new AuthMissingError('certifier', 'api_key');
+	}
+
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: CERTIFIER_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: CERTIFIER_VERSION,
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: token,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			'Certifier-Version': CERTIFIER_VERSION,
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		body,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
+		if (error instanceof CertifierAPIError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new CertifierAPIError(error.message);
 		}

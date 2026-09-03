@@ -1,11 +1,11 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -14,27 +14,23 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { CertifierEndpointInputs, CertifierEndpointOutputs } from './endpoints/types';
-import { CertifierEndpointInputSchemas, CertifierEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
+import { Handlers } from './endpoints';
 import type {
-	CertifierWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { CertifierSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	CertifierEndpointInputs,
+	CertifierEndpointOutputs,
+} from './endpoints/types';
+import {
+	CertifierEndpointInputSchemas,
+	CertifierEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchCertifierTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveCertifierOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { CertifierSchema } from './schema';
 
 export type CertifierPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalCertifierPlugin['hooks'];
-	webhookHooks?: InternalCertifierPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof certifierEndpointsNested>;
 };
@@ -44,159 +40,233 @@ export type CertifierContext = CorsairPluginContext<
 	CertifierPluginOptions
 >;
 
-export type CertifierKeyBuilderContext = KeyBuilderContext<CertifierPluginOptions>;
+export type CertifierKeyBuilderContext =
+	KeyBuilderContext<CertifierPluginOptions>;
 
-export type CertifierBoundEndpoints = BindEndpoints<typeof certifierEndpointsNested>;
-
-type CertifierEndpoint<
-	K extends keyof CertifierEndpointOutputs,
-> = CorsairEndpoint<
-	CertifierContext,
-	CertifierEndpointInputs[K],
-	CertifierEndpointOutputs[K]
+export type CertifierBoundEndpoints = BindEndpoints<
+	typeof certifierEndpointsNested
 >;
 
+type CertifierEndpoint<K extends keyof CertifierEndpointOutputs> =
+	CorsairEndpoint<
+		CertifierContext,
+		CertifierEndpointInputs[K],
+		CertifierEndpointOutputs[K]
+	>;
+
 export type CertifierEndpoints = {
-	exampleGet: CertifierEndpoint<'exampleGet'>;
+	[K in keyof CertifierEndpointOutputs]: CertifierEndpoint<K>;
 };
 
-type CertifierWebhook<
-	K extends keyof CertifierWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<CertifierContext, TEvent, CertifierWebhookOutputs[K]>;
-
-export type CertifierWebhooks = {
-	example: CertifierWebhook<'example', ExampleEvent>;
-};
+export type CertifierWebhooks = {};
 
 export type CertifierBoundWebhooks = BindWebhooks<CertifierWebhooks>;
 
 const certifierEndpointsNested = {
-	example: {
-		get: Example.get,
+	attributes: {
+		list: Handlers.listAttributes,
+	},
+	credentials: {
+		createIssueSend: Handlers.createIssueSend,
+		list: Handlers.listCredentials,
+		search: Handlers.searchCredentials,
+		send: Handlers.sendCredential,
+	},
+	credentialInteractions: {
+		list: Handlers.listCredentialInteractions,
+	},
+	designs: {
+		list: Handlers.listDesigns,
+	},
+	emailTemplates: {
+		list: Handlers.listEmailTemplates,
+	},
+	groups: {
+		list: Handlers.listGroups,
 	},
 } as const;
 
-const certifierWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const certifierWebhooksNested = {};
 
 export const certifierEndpointSchemas = {
-	'example.get': {
-		input: CertifierEndpointInputSchemas.exampleGet,
-		output: CertifierEndpointOutputSchemas.exampleGet,
+	'attributes.list': {
+		input: CertifierEndpointInputSchemas.listAttributes,
+		output: CertifierEndpointOutputSchemas.listAttributes,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof certifierEndpointsNested>;
+	'credentials.createIssueSend': {
+		input: CertifierEndpointInputSchemas.createIssueSend,
+		output: CertifierEndpointOutputSchemas.createIssueSend,
+	},
+	'credentials.list': {
+		input: CertifierEndpointInputSchemas.listCredentials,
+		output: CertifierEndpointOutputSchemas.listCredentials,
+	},
+	'credentials.search': {
+		input: CertifierEndpointInputSchemas.searchCredentials,
+		output: CertifierEndpointOutputSchemas.searchCredentials,
+	},
+	'credentials.send': {
+		input: CertifierEndpointInputSchemas.sendCredential,
+		output: CertifierEndpointOutputSchemas.sendCredential,
+	},
+	'credentialInteractions.list': {
+		input: CertifierEndpointInputSchemas.listCredentialInteractions,
+		output: CertifierEndpointOutputSchemas.listCredentialInteractions,
+	},
+	'designs.list': {
+		input: CertifierEndpointInputSchemas.listDesigns,
+		output: CertifierEndpointOutputSchemas.listDesigns,
+	},
+	'emailTemplates.list': {
+		input: CertifierEndpointInputSchemas.listEmailTemplates,
+		output: CertifierEndpointOutputSchemas.listEmailTemplates,
+	},
+	'groups.list': {
+		input: CertifierEndpointInputSchemas.listGroups,
+		output: CertifierEndpointOutputSchemas.listGroups,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof certifierEndpointsNested
+>;
 
-const certifierWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof certifierWebhooksNested>;
+const certifierWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof certifierWebhooksNested
+	>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const certifierEndpointMeta = {
-	'example.get': {
+	'attributes.list': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description:
+			'List attribute definitions available for credentials, with pagination.',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof certifierEndpointsNested>;
-
-export const certifierAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
+	'credentials.createIssueSend': {
+		riskLevel: 'write',
+		description: 'Create, issue, and send a credential in a single request.',
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+	'credentials.list': {
+		riskLevel: 'read',
+		description: 'List credentials with cursor pagination.',
 	},
-} as const satisfies PluginAuthConfig;
-
-export type BaseCertifierPlugin<T extends CertifierPluginOptions> = CorsairPlugin<
-	'certifier',
-	typeof CertifierSchema,
-	typeof certifierEndpointsNested,
-	typeof certifierWebhooksNested,
-	T,
-	typeof defaultAuthType
+	'credentials.search': {
+		riskLevel: 'read',
+		description:
+			'Search credentials with AND/OR/NOT filters, sort, and pagination.',
+	},
+	'credentials.send': {
+		riskLevel: 'write',
+		description: 'Send an issued credential by email.',
+	},
+	'credentialInteractions.list': {
+		riskLevel: 'read',
+		description:
+			'List credential interaction events, optionally filtered by credential.',
+	},
+	'designs.list': {
+		riskLevel: 'read',
+		description: 'List certificate and badge design templates.',
+	},
+	'emailTemplates.list': {
+		riskLevel: 'read',
+		description: 'List email templates used for credential delivery.',
+	},
+	'groups.list': {
+		riskLevel: 'read',
+		description: 'List credential templates (groups) with pagination.',
+	},
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof certifierEndpointsNested
 >;
 
-export type InternalCertifierPlugin = BaseCertifierPlugin<CertifierPluginOptions>;
+export const certifierAuthConfig = {
+	api_key: {},
+} as const satisfies PluginAuthConfig;
+
+export type BaseCertifierPlugin<T extends CertifierPluginOptions> =
+	CorsairPlugin<
+		'certifier',
+		typeof CertifierSchema,
+		typeof certifierEndpointsNested,
+		typeof certifierWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
+
+export type InternalCertifierPlugin =
+	BaseCertifierPlugin<CertifierPluginOptions>;
 
 export type ExternalCertifierPlugin<T extends CertifierPluginOptions> =
 	BaseCertifierPlugin<T>;
 
 export function certifier<const T extends CertifierPluginOptions>(
-	incomingOptions: CertifierPluginOptions & T = {} as CertifierPluginOptions & T,
+	incomingOptions: CertifierPluginOptions & T = {} as CertifierPluginOptions &
+		T,
 ): ExternalCertifierPlugin<T> {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'certifier',
 		authConfig: certifierAuthConfig,
 		schema: CertifierSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: certifierEndpointsNested,
 		webhooks: certifierWebhooksNested,
 		endpointMeta: certifierEndpointMeta,
 		endpointSchemas: certifierEndpointSchemas,
 		webhookSchemas: certifierWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-certifier-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchCertifierTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveCertifierOAuthWebhookTenantLink,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		pluginWebhookMatcher: undefined,
+		errorHandlers: (() => {
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: CertifierKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('certifier', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('certifier', 'api_key');
 		},
 	} satisfies InternalCertifierPlugin;
 }
 
 export type {
-	ExampleEvent,
-	CertifierWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	CertifierEndpointInputs,
 	CertifierEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	CreateIssueSendInput,
+	CreateIssueSendResponse,
+	ListAttributesInput,
+	ListAttributesResponse,
+	ListCredentialInteractionsInput,
+	ListCredentialInteractionsResponse,
+	ListCredentialsInput,
+	ListCredentialsResponse,
+	ListDesignsInput,
+	ListDesignsResponse,
+	ListEmailTemplatesInput,
+	ListEmailTemplatesResponse,
+	ListGroupsInput,
+	ListGroupsResponse,
+	SearchCredentialsInput,
+	SearchCredentialsResponse,
+	SendCredentialInput,
+	SendCredentialResponse,
 } from './endpoints/types';

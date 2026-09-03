@@ -1,7 +1,25 @@
-import { get as exampleGet } from './example';
+import {
+	createIssueSend,
+	listAttributes,
+	listCredentialInteractions,
+	listCredentials,
+	listDesigns,
+	listEmailTemplates,
+	listGroups,
+	searchCredentials,
+	sendCredential,
+} from './handlers';
 
-export const Example = {
-	get: exampleGet,
+export const Handlers = {
+	createIssueSend,
+	listAttributes,
+	listCredentialInteractions,
+	listCredentials,
+	listDesigns,
+	listEmailTemplates,
+	listGroups,
+	searchCredentials,
+	sendCredential,
 };
 
 export * from './types';
