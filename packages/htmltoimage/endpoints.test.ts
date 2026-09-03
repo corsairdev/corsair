@@ -213,6 +213,19 @@ describe('checkUsage', () => {
 			}),
 		).toThrow();
 	});
+
+	it('accepts a documented account with a null plan', () => {
+		expect(
+			HtmlToImageEndpointOutputSchemas.checkUsage.parse({
+				email: 'you@example.com',
+				plan: null,
+				active: true,
+				free_plan: true,
+				credits_remaining: 0,
+				credits_reset_at: null,
+			}),
+		).toMatchObject({ credits_remaining: 0, plan: null });
+	});
 });
 
 describe('convertToImage', () => {
@@ -251,6 +264,82 @@ describe('convertToImage', () => {
 			pluginEndpoints().html.convertToImage(mockCtx, { html: '' }),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('POSTs a public url to /api/screenshot', async () => {
+		const result = await pluginEndpoints().html.convertToImage(mockCtx, {
+			url: 'https://example.com',
+			selector: '#hero',
+			width: 1200,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'POST',
+				url: 'api/screenshot',
+				body: expect.objectContaining({
+					url: 'https://example.com',
+					selector: '#hero',
+					width: 1200,
+				}),
+			}),
+		);
+		expect(result).toEqual(convertPayload);
+	});
+
+	it('rejects html and url together', () => {
+		expect(
+			HtmlToImageEndpointInputSchemas.convertToImage.safeParse({
+				html: '<h1>x</h1>',
+				url: 'https://example.com',
+			}).success,
+		).toBe(false);
+	});
+
+	it('rejects selector without url', () => {
+		expect(
+			HtmlToImageEndpointInputSchemas.convertToImage.safeParse({
+				html: '<h1>x</h1>',
+				selector: '#hero',
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts http and https screenshot urls', () => {
+		expect(
+			HtmlToImageEndpointInputSchemas.convertToImage.safeParse({
+				url: 'https://example.com',
+			}).success,
+		).toBe(true);
+		expect(
+			HtmlToImageEndpointInputSchemas.convertToImage.safeParse({
+				url: 'http://example.com',
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects non-http screenshot urls', () => {
+		expect(
+			HtmlToImageEndpointInputSchemas.convertToImage.safeParse({
+				url: 'mailto:you@example.com',
+			}).success,
+		).toBe(false);
+		expect(
+			HtmlToImageEndpointInputSchemas.convertToImage.safeParse({
+				url: 'file:///tmp/page.html',
+			}).success,
+		).toBe(false);
+	});
+
+	it('rejects selector when format is pdf', () => {
+		expect(
+			HtmlToImageEndpointInputSchemas.convertToImage.safeParse({
+				url: 'https://example.com',
+				selector: '#hero',
+				format: 'pdf',
+			}).success,
+		).toBe(false);
 	});
 
 	it('accepts documented ms_delay and scale_to_fit', () => {

@@ -12,10 +12,20 @@ export const convertToImage: HtmlToImageEndpoints['convertToImage'] = async (
 ) => {
 	const parsedInput =
 		HtmlToImageEndpointInputSchemas.convertToImage.parse(input);
-	const raw = await makeHtmlToImageRequest('api/html', ctx.key, {
-		method: 'POST',
-		body: parsedInput,
-	});
+	const { html, url, selector, ...options } = parsedInput;
+	const raw = url
+		? await makeHtmlToImageRequest('api/screenshot', ctx.key, {
+				method: 'POST',
+				body: {
+					url,
+					...options,
+					...(selector !== undefined ? { selector } : {}),
+				},
+			})
+		: await makeHtmlToImageRequest('api/html', ctx.key, {
+				method: 'POST',
+				body: { html, ...options },
+			});
 	const response = HtmlToImageEndpointOutputSchemas.convertToImage.parse(raw);
 
 	await logEventFromContext(
@@ -23,6 +33,7 @@ export const convertToImage: HtmlToImageEndpoints['convertToImage'] = async (
 		'htmltoimage.convert_to_image',
 		{
 			id: response.id,
+			...(url !== undefined ? { url } : {}),
 			...(parsedInput.format !== undefined
 				? { format: parsedInput.format }
 				: {}),
