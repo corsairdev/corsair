@@ -12,6 +12,43 @@ export const ALLOWED_EXTRA = [
 ];
 export const ASSERTION_WARN_FLOOR = 5;
 
+/** Mintlify sidebar; `generate:docs` rewrites this with the plugin pages. */
+export const DOCS_NAV_FILE = 'docs/docs.json';
+
+/** Generated plugin docs for the same plugin (plugin-docs.yaml PRs). */
+export function isSamePluginDocs(file: string, plugin: string): boolean {
+	const prefix = `docs/plugins/${plugin}/`;
+	return file.startsWith(prefix);
+}
+
+function pluginDocsYamlOf(file: string): string | null {
+	const name = file.match(/^packages\/([^/]+)\/plugin-docs\.yaml$/)?.[1];
+	if (!name) return null;
+	if (IGNORED_PACKAGES.includes(name) || name.startsWith('frpc-')) return null;
+	return name;
+}
+
+function pluginDocsDirOf(file: string): string | null {
+	const name = file.match(/^docs\/plugins\/([^/]+)\//)?.[1];
+	if (!name) return null;
+	if (IGNORED_PACKAGES.includes(name) || name.startsWith('frpc-')) return null;
+	return name;
+}
+
+/** yaml +/or generated docs for one plugin, nothing else. Not a plugin-code PR. */
+export function isPluginDocsManifestPr(changedFiles: string[]): boolean {
+	if (changedFiles.length === 0) return false;
+	let plugin: string | null = null;
+	for (const file of changedFiles) {
+		if (file === DOCS_NAV_FILE) continue;
+		const id = pluginDocsYamlOf(file) ?? pluginDocsDirOf(file);
+		if (!id) return false;
+		if (plugin === null) plugin = id;
+		else if (plugin !== id) return false;
+	}
+	return plugin !== null;
+}
+
 export interface GateInput {
 	changedFiles: string[];
 	prBody: string;
@@ -78,7 +115,11 @@ export function runGate(input: GateInput): GateResult {
 	const plugins = new Set(
 		input.changedFiles.map(pluginOf).filter((p): p is string => p !== null),
 	);
-	if (plugins.size === 0 || input.isDraft) {
+	if (
+		isPluginDocsManifestPr(input.changedFiles) ||
+		plugins.size === 0 ||
+		input.isDraft
+	) {
 		return { isPluginPr: false, plugin: null, checks: [], failures: [] };
 	}
 
@@ -87,7 +128,11 @@ export function runGate(input: GateInput): GateResult {
 
 	// R1 — scope confinement
 	const outOfScope = input.changedFiles.filter(
-		(f) => pluginOf(f) === null && !ALLOWED_EXTRA.includes(f),
+		(f) =>
+			pluginOf(f) === null &&
+			!ALLOWED_EXTRA.includes(f) &&
+			f !== DOCS_NAV_FILE &&
+			!(plugin && isSamePluginDocs(f, plugin)),
 	);
 	if (plugins.size > 1) {
 		checks.push({
