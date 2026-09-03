@@ -1,5 +1,2 @@
-/**
- * Botbaba does not publish webhook triggers in the Composio catalog, and
- * this plugin registers no webhook handlers.
- */
+/** This plugin registers no inbound webhook handlers. */
 export type BotbabaWebhookOutputs = Record<string, never>;

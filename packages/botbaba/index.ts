@@ -15,13 +15,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import {
-	Analytics,
-	Bots,
-	Conversations,
-	Deployments,
-	Messages,
-} from './endpoints';
+import { Handlers } from './endpoints';
 import type {
 	BotbabaEndpointInputs,
 	BotbabaEndpointOutputs,
@@ -32,143 +26,288 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BotbabaSchema } from './schema';
-import { resolveBotbabaOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchBotbabaTenantWebhook } from './webhooks/tenant-matcher';
 
 export type BotbabaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
 	hooks?: InternalBotbabaPlugin['hooks'];
-	webhookHooks?: InternalBotbabaPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof botbabaEndpointsNested>;
 };
 
 export const botbabaAuthConfig = {
-	api_key: {
-		account: [] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BotbabaContext = CorsairPluginContext<
 	typeof BotbabaSchema,
-	BotbabaPluginOptions,
-	undefined,
-	typeof botbabaAuthConfig
+	BotbabaPluginOptions
 >;
 
-export type BotbabaKeyBuilderContext =
-	KeyBuilderContext<BotbabaPluginOptions>;
+export type BotbabaKeyBuilderContext = KeyBuilderContext<BotbabaPluginOptions>;
 
 export type BotbabaBoundEndpoints = BindEndpoints<
 	typeof botbabaEndpointsNested
 >;
 
-type BotbabaEndpoint<K extends keyof BotbabaEndpointOutputs> =
-	CorsairEndpoint<
-		BotbabaContext,
-		BotbabaEndpointInputs[K],
-		BotbabaEndpointOutputs[K]
-	>;
+type BotbabaEndpoint<K extends keyof BotbabaEndpointOutputs> = CorsairEndpoint<
+	BotbabaContext,
+	BotbabaEndpointInputs[K],
+	BotbabaEndpointOutputs[K]
+>;
 
 export type BotbabaEndpoints = {
-	botsCreate: BotbabaEndpoint<'botsCreate'>;
-	botsGet: BotbabaEndpoint<'botsGet'>;
-	botsList: BotbabaEndpoint<'botsList'>;
-	botsUpdate: BotbabaEndpoint<'botsUpdate'>;
-	botsDelete: BotbabaEndpoint<'botsDelete'>;
-	conversationsList: BotbabaEndpoint<'conversationsList'>;
-	conversationsGet: BotbabaEndpoint<'conversationsGet'>;
-	messagesSend: BotbabaEndpoint<'messagesSend'>;
-	messagesList: BotbabaEndpoint<'messagesList'>;
-	deploymentsDeploy: BotbabaEndpoint<'deploymentsDeploy'>;
-	deploymentsGetStatus: BotbabaEndpoint<'deploymentsGetStatus'>;
-	analyticsGetSummary: BotbabaEndpoint<'analyticsGetSummary'>;
+	[K in keyof BotbabaEndpointOutputs]: BotbabaEndpoint<K>;
 };
 
 export type BotbabaWebhooks = Record<string, never>;
-
 export type BotbabaBoundWebhooks = BindWebhooks<BotbabaWebhooks>;
 
 const botbabaEndpointsNested = {
-	bots: {
-		create: Bots.create,
-		get: Bots.get,
-		list: Bots.list,
-		update: Bots.update,
-		delete: Bots.delete,
+	contacts: {
+		get: Handlers.getContact,
+		update: Handlers.updateContact,
+		delete: Handlers.deleteContact,
+		getAnalytics: Handlers.getContactAnalytics,
 	},
-	conversations: {
-		list: Conversations.list,
-		get: Conversations.get,
+	tags: {
+		list: Handlers.listTags,
+		update: Handlers.updateTag,
+		delete: Handlers.deleteTag,
+	},
+	templates: {
+		get: Handlers.getTemplate,
+		list: Handlers.listTemplates,
+		update: Handlers.updateTemplate,
+		delete: Handlers.deleteTemplate,
+	},
+	broadcasts: {
+		get: Handlers.getBroadcast,
+		list: Handlers.listBroadcasts,
+		delete: Handlers.deleteBroadcast,
+	},
+	flows: {
+		get: Handlers.getFlow,
+		list: Handlers.listFlows,
+		delete: Handlers.deleteFlow,
+	},
+	webhooks: {
+		get: Handlers.getWebhook,
+		list: Handlers.listWebhooks,
+		update: Handlers.updateWebhook,
+		delete: Handlers.deleteWebhook,
+		listEventTypes: Handlers.listWebhookEventTypes,
 	},
 	messages: {
-		send: Messages.send,
-		list: Messages.list,
+		get: Handlers.getMessage,
+		list: Handlers.listMessages,
+		getAnalytics: Handlers.getMessageAnalytics,
+		sendWhatsappTemplate: Handlers.sendWhatsappTemplateMessages,
 	},
-	deployments: {
-		deploy: Deployments.deploy,
-		getStatus: Deployments.getStatus,
+	actions: {
+		execute: Handlers.executeBotAction,
+		executeByUser: Handlers.executeBotActionByUser,
+		getWidgetSettings: Handlers.getBotWidgetSettings,
 	},
-	analytics: {
-		getSummary: Analytics.getSummary,
+	shopify: {
+		cartCreation: Handlers.cartCreationShopifyWebhook,
+		cartUpdate: Handlers.cartUpdateShopifyWebhook,
+		checkoutCreation: Handlers.checkoutCreationShopifyWebhook,
+		checkoutUpdate: Handlers.checkoutUpdateShopifyWebhook,
+		orderCancellation: Handlers.orderCancellationShopifyWebhook,
+		orderFulfillment: Handlers.orderFulfillmentShopifyWebhook,
+		orderPayment: Handlers.orderPaymentShopifyWebhook,
+	},
+	gupshup: {
+		forwardMessage: Handlers.waGupshupMessage,
+	},
+	utils: {
+		getFilename: Handlers.getFilename,
+	},
+	simulators: {
+		cartCreation: Handlers.cartCreationEventSimulator,
+		checkoutCreation: Handlers.shopifyCheckoutCreationEventSimulator,
+		checkoutUpdate: Handlers.shopifyCheckoutUpdateEventSimulator,
+		orderFulfillment: Handlers.orderFulfillmentEventSimulator,
+		gupshup: Handlers.waGupshupEventSimulator,
 	},
 } as const;
 
-/**
- * Botbaba has no known webhook/trigger surface — every operation covered
- * here is a direct REST call, not a webhook subscription.
- */
 const botbabaWebhooksNested = {} as const;
 
 export const botbabaEndpointSchemas = {
-	'bots.create': {
-		input: BotbabaEndpointInputSchemas.botsCreate,
-		output: BotbabaEndpointOutputSchemas.botsCreate,
+	'contacts.get': {
+		input: BotbabaEndpointInputSchemas.getContact,
+		output: BotbabaEndpointOutputSchemas.getContact,
 	},
-	'bots.get': {
-		input: BotbabaEndpointInputSchemas.botsGet,
-		output: BotbabaEndpointOutputSchemas.botsGet,
+	'contacts.update': {
+		input: BotbabaEndpointInputSchemas.updateContact,
+		output: BotbabaEndpointOutputSchemas.updateContact,
 	},
-	'bots.list': {
-		input: BotbabaEndpointInputSchemas.botsList,
-		output: BotbabaEndpointOutputSchemas.botsList,
+	'contacts.delete': {
+		input: BotbabaEndpointInputSchemas.deleteContact,
+		output: BotbabaEndpointOutputSchemas.deleteContact,
 	},
-	'bots.update': {
-		input: BotbabaEndpointInputSchemas.botsUpdate,
-		output: BotbabaEndpointOutputSchemas.botsUpdate,
+	'contacts.getAnalytics': {
+		input: BotbabaEndpointInputSchemas.getContactAnalytics,
+		output: BotbabaEndpointOutputSchemas.getContactAnalytics,
 	},
-	'bots.delete': {
-		input: BotbabaEndpointInputSchemas.botsDelete,
-		output: BotbabaEndpointOutputSchemas.botsDelete,
+	'tags.list': {
+		input: BotbabaEndpointInputSchemas.listTags,
+		output: BotbabaEndpointOutputSchemas.listTags,
 	},
-	'conversations.list': {
-		input: BotbabaEndpointInputSchemas.conversationsList,
-		output: BotbabaEndpointOutputSchemas.conversationsList,
+	'tags.update': {
+		input: BotbabaEndpointInputSchemas.updateTag,
+		output: BotbabaEndpointOutputSchemas.updateTag,
 	},
-	'conversations.get': {
-		input: BotbabaEndpointInputSchemas.conversationsGet,
-		output: BotbabaEndpointOutputSchemas.conversationsGet,
+	'tags.delete': {
+		input: BotbabaEndpointInputSchemas.deleteTag,
+		output: BotbabaEndpointOutputSchemas.deleteTag,
 	},
-	'messages.send': {
-		input: BotbabaEndpointInputSchemas.messagesSend,
-		output: BotbabaEndpointOutputSchemas.messagesSend,
+	'templates.get': {
+		input: BotbabaEndpointInputSchemas.getTemplate,
+		output: BotbabaEndpointOutputSchemas.getTemplate,
+	},
+	'templates.list': {
+		input: BotbabaEndpointInputSchemas.listTemplates,
+		output: BotbabaEndpointOutputSchemas.listTemplates,
+	},
+	'templates.update': {
+		input: BotbabaEndpointInputSchemas.updateTemplate,
+		output: BotbabaEndpointOutputSchemas.updateTemplate,
+	},
+	'templates.delete': {
+		input: BotbabaEndpointInputSchemas.deleteTemplate,
+		output: BotbabaEndpointOutputSchemas.deleteTemplate,
+	},
+	'broadcasts.get': {
+		input: BotbabaEndpointInputSchemas.getBroadcast,
+		output: BotbabaEndpointOutputSchemas.getBroadcast,
+	},
+	'broadcasts.list': {
+		input: BotbabaEndpointInputSchemas.listBroadcasts,
+		output: BotbabaEndpointOutputSchemas.listBroadcasts,
+	},
+	'broadcasts.delete': {
+		input: BotbabaEndpointInputSchemas.deleteBroadcast,
+		output: BotbabaEndpointOutputSchemas.deleteBroadcast,
+	},
+	'flows.get': {
+		input: BotbabaEndpointInputSchemas.getFlow,
+		output: BotbabaEndpointOutputSchemas.getFlow,
+	},
+	'flows.list': {
+		input: BotbabaEndpointInputSchemas.listFlows,
+		output: BotbabaEndpointOutputSchemas.listFlows,
+	},
+	'flows.delete': {
+		input: BotbabaEndpointInputSchemas.deleteFlow,
+		output: BotbabaEndpointOutputSchemas.deleteFlow,
+	},
+	'webhooks.get': {
+		input: BotbabaEndpointInputSchemas.getWebhook,
+		output: BotbabaEndpointOutputSchemas.getWebhook,
+	},
+	'webhooks.list': {
+		input: BotbabaEndpointInputSchemas.listWebhooks,
+		output: BotbabaEndpointOutputSchemas.listWebhooks,
+	},
+	'webhooks.update': {
+		input: BotbabaEndpointInputSchemas.updateWebhook,
+		output: BotbabaEndpointOutputSchemas.updateWebhook,
+	},
+	'webhooks.delete': {
+		input: BotbabaEndpointInputSchemas.deleteWebhook,
+		output: BotbabaEndpointOutputSchemas.deleteWebhook,
+	},
+	'webhooks.listEventTypes': {
+		input: BotbabaEndpointInputSchemas.listWebhookEventTypes,
+		output: BotbabaEndpointOutputSchemas.listWebhookEventTypes,
+	},
+	'messages.get': {
+		input: BotbabaEndpointInputSchemas.getMessage,
+		output: BotbabaEndpointOutputSchemas.getMessage,
 	},
 	'messages.list': {
-		input: BotbabaEndpointInputSchemas.messagesList,
-		output: BotbabaEndpointOutputSchemas.messagesList,
+		input: BotbabaEndpointInputSchemas.listMessages,
+		output: BotbabaEndpointOutputSchemas.listMessages,
 	},
-	'deployments.deploy': {
-		input: BotbabaEndpointInputSchemas.deploymentsDeploy,
-		output: BotbabaEndpointOutputSchemas.deploymentsDeploy,
+	'messages.getAnalytics': {
+		input: BotbabaEndpointInputSchemas.getMessageAnalytics,
+		output: BotbabaEndpointOutputSchemas.getMessageAnalytics,
 	},
-	'deployments.getStatus': {
-		input: BotbabaEndpointInputSchemas.deploymentsGetStatus,
-		output: BotbabaEndpointOutputSchemas.deploymentsGetStatus,
+	'messages.sendWhatsappTemplate': {
+		input: BotbabaEndpointInputSchemas.sendWhatsappTemplateMessages,
+		output: BotbabaEndpointOutputSchemas.sendWhatsappTemplateMessages,
 	},
-	'analytics.getSummary': {
-		input: BotbabaEndpointInputSchemas.analyticsGetSummary,
-		output: BotbabaEndpointOutputSchemas.analyticsGetSummary,
+	'actions.execute': {
+		input: BotbabaEndpointInputSchemas.executeBotAction,
+		output: BotbabaEndpointOutputSchemas.executeBotAction,
+	},
+	'actions.executeByUser': {
+		input: BotbabaEndpointInputSchemas.executeBotActionByUser,
+		output: BotbabaEndpointOutputSchemas.executeBotActionByUser,
+	},
+	'actions.getWidgetSettings': {
+		input: BotbabaEndpointInputSchemas.getBotWidgetSettings,
+		output: BotbabaEndpointOutputSchemas.getBotWidgetSettings,
+	},
+	'shopify.cartCreation': {
+		input: BotbabaEndpointInputSchemas.cartCreationShopifyWebhook,
+		output: BotbabaEndpointOutputSchemas.cartCreationShopifyWebhook,
+	},
+	'shopify.cartUpdate': {
+		input: BotbabaEndpointInputSchemas.cartUpdateShopifyWebhook,
+		output: BotbabaEndpointOutputSchemas.cartUpdateShopifyWebhook,
+	},
+	'shopify.checkoutCreation': {
+		input: BotbabaEndpointInputSchemas.checkoutCreationShopifyWebhook,
+		output: BotbabaEndpointOutputSchemas.checkoutCreationShopifyWebhook,
+	},
+	'shopify.checkoutUpdate': {
+		input: BotbabaEndpointInputSchemas.checkoutUpdateShopifyWebhook,
+		output: BotbabaEndpointOutputSchemas.checkoutUpdateShopifyWebhook,
+	},
+	'shopify.orderCancellation': {
+		input: BotbabaEndpointInputSchemas.orderCancellationShopifyWebhook,
+		output: BotbabaEndpointOutputSchemas.orderCancellationShopifyWebhook,
+	},
+	'shopify.orderFulfillment': {
+		input: BotbabaEndpointInputSchemas.orderFulfillmentShopifyWebhook,
+		output: BotbabaEndpointOutputSchemas.orderFulfillmentShopifyWebhook,
+	},
+	'shopify.orderPayment': {
+		input: BotbabaEndpointInputSchemas.orderPaymentShopifyWebhook,
+		output: BotbabaEndpointOutputSchemas.orderPaymentShopifyWebhook,
+	},
+	'gupshup.forwardMessage': {
+		input: BotbabaEndpointInputSchemas.waGupshupMessage,
+		output: BotbabaEndpointOutputSchemas.waGupshupMessage,
+	},
+	'utils.getFilename': {
+		input: BotbabaEndpointInputSchemas.getFilename,
+		output: BotbabaEndpointOutputSchemas.getFilename,
+	},
+	'simulators.cartCreation': {
+		input: BotbabaEndpointInputSchemas.cartCreationEventSimulator,
+		output: BotbabaEndpointOutputSchemas.cartCreationEventSimulator,
+	},
+	'simulators.checkoutCreation': {
+		input: BotbabaEndpointInputSchemas.shopifyCheckoutCreationEventSimulator,
+		output: BotbabaEndpointOutputSchemas.shopifyCheckoutCreationEventSimulator,
+	},
+	'simulators.checkoutUpdate': {
+		input: BotbabaEndpointInputSchemas.shopifyCheckoutUpdateEventSimulator,
+		output: BotbabaEndpointOutputSchemas.shopifyCheckoutUpdateEventSimulator,
+	},
+	'simulators.orderFulfillment': {
+		input: BotbabaEndpointInputSchemas.orderFulfillmentEventSimulator,
+		output: BotbabaEndpointOutputSchemas.orderFulfillmentEventSimulator,
+	},
+	'simulators.gupshup': {
+		input: BotbabaEndpointInputSchemas.waGupshupEventSimulator,
+		output: BotbabaEndpointOutputSchemas.waGupshupEventSimulator,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof botbabaEndpointsNested
@@ -182,53 +321,141 @@ const botbabaWebhookSchemas =
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const botbabaEndpointMeta = {
-	'bots.create': {
-		riskLevel: 'write',
-		description: 'Create a new chatbot',
-	},
-	'bots.get': {
+	'contacts.get': {
 		riskLevel: 'read',
-		description: 'Get a chatbot by id',
+		description: 'Fetch a Botbaba contact by ID',
 	},
-	'bots.list': {
-		riskLevel: 'read',
-		description: 'List all chatbots',
-	},
-	'bots.update': {
+	'contacts.update': {
 		riskLevel: 'write',
-		description: 'Update a chatbot\'s settings',
+		description: 'Update an existing Botbaba contact',
 	},
-	'bots.delete': {
+	'contacts.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a chatbot [DESTRUCTIVE]',
+		description: 'Delete a Botbaba contact [DESTRUCTIVE]',
 	},
-	'conversations.list': {
+	'contacts.getAnalytics': {
 		riskLevel: 'read',
-		description: 'List conversations for a bot',
+		description: 'Retrieve contact analytics over a date range',
 	},
-	'conversations.get': {
+	'tags.list': { riskLevel: 'read', description: 'List all tags' },
+	'tags.update': { riskLevel: 'write', description: 'Rename a tag' },
+	'tags.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a tag [DESTRUCTIVE]',
+	},
+	'templates.get': { riskLevel: 'read', description: 'Get a message template' },
+	'templates.list': {
 		riskLevel: 'read',
-		description: 'Get a single conversation by id',
+		description: 'List message templates',
 	},
-	'messages.send': {
+	'templates.update': {
 		riskLevel: 'write',
-		description: 'Send a message into a conversation',
+		description: 'Update a message template',
 	},
-	'messages.list': {
+	'templates.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a message template [DESTRUCTIVE]',
+	},
+	'broadcasts.get': { riskLevel: 'read', description: 'Get a broadcast' },
+	'broadcasts.list': { riskLevel: 'read', description: 'List broadcasts' },
+	'broadcasts.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a broadcast [DESTRUCTIVE]',
+	},
+	'flows.get': { riskLevel: 'read', description: 'Get a conversation flow' },
+	'flows.list': { riskLevel: 'read', description: 'List conversation flows' },
+	'flows.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a conversation flow [DESTRUCTIVE]',
+	},
+	'webhooks.get': { riskLevel: 'read', description: 'Get a webhook' },
+	'webhooks.list': { riskLevel: 'read', description: 'List webhooks' },
+	'webhooks.update': { riskLevel: 'write', description: 'Update a webhook' },
+	'webhooks.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a webhook [DESTRUCTIVE]',
+	},
+	'webhooks.listEventTypes': {
 		riskLevel: 'read',
-		description: 'List messages in a conversation',
+		description: 'List webhook event types',
 	},
-	'deployments.deploy': {
+	'messages.get': { riskLevel: 'read', description: 'Get a message' },
+	'messages.list': { riskLevel: 'read', description: 'List messages' },
+	'messages.getAnalytics': {
+		riskLevel: 'read',
+		description: 'Get message analytics',
+	},
+	'messages.sendWhatsappTemplate': {
 		riskLevel: 'write',
-		description: 'Deploy a bot to a channel (e.g. WhatsApp)',
+		description: 'Send a WhatsApp template via Botbaba',
 	},
-	'deployments.getStatus': {
-		riskLevel: 'read',
-		description: 'Get deployment status for a bot',
+	'actions.execute': {
+		riskLevel: 'write',
+		description: 'Execute a bot action for a conversation',
 	},
-	'analytics.getSummary': {
+	'actions.executeByUser': {
+		riskLevel: 'write',
+		description: 'Execute a bot action for users',
+	},
+	'actions.getWidgetSettings': {
 		riskLevel: 'read',
-		description: 'Fetch analytics summary for a bot',
+		description: 'Get bot widget settings',
+	},
+	'shopify.cartCreation': {
+		riskLevel: 'write',
+		description: 'Forward Shopify cart creation to Botbaba',
+	},
+	'shopify.cartUpdate': {
+		riskLevel: 'write',
+		description: 'Forward Shopify cart update to Botbaba',
+	},
+	'shopify.checkoutCreation': {
+		riskLevel: 'write',
+		description: 'Forward Shopify checkout creation to Botbaba',
+	},
+	'shopify.checkoutUpdate': {
+		riskLevel: 'write',
+		description: 'Forward Shopify checkout update to Botbaba',
+	},
+	'shopify.orderCancellation': {
+		riskLevel: 'write',
+		description: 'Forward Shopify order cancellation to Botbaba',
+	},
+	'shopify.orderFulfillment': {
+		riskLevel: 'write',
+		description: 'Forward Shopify order fulfillment to Botbaba',
+	},
+	'shopify.orderPayment': {
+		riskLevel: 'write',
+		description: 'Forward Shopify order payment to Botbaba',
+	},
+	'gupshup.forwardMessage': {
+		riskLevel: 'write',
+		description: 'Forward a Gupshup WhatsApp webhook to Botbaba',
+	},
+	'utils.getFilename': {
+		riskLevel: 'read',
+		description: 'Extract a filename from a path',
+	},
+	'simulators.cartCreation': {
+		riskLevel: 'read',
+		description: 'Simulate a Shopify cart creation payload',
+	},
+	'simulators.checkoutCreation': {
+		riskLevel: 'read',
+		description: 'Simulate a Shopify checkout creation payload',
+	},
+	'simulators.checkoutUpdate': {
+		riskLevel: 'read',
+		description: 'Simulate a Shopify checkout update payload',
+	},
+	'simulators.orderFulfillment': {
+		riskLevel: 'read',
+		description: 'Simulate a Shopify order fulfillment payload',
+	},
+	'simulators.gupshup': {
+		riskLevel: 'read',
+		description: 'Simulate a Gupshup WhatsApp webhook payload',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof botbabaEndpointsNested>;
 
@@ -246,12 +473,6 @@ export type InternalBotbabaPlugin = BaseBotbabaPlugin<BotbabaPluginOptions>;
 export type ExternalBotbabaPlugin<T extends BotbabaPluginOptions> =
 	BaseBotbabaPlugin<T>;
 
-/**
- * Builds the Botbaba plugin.
- *
- * Botbaba authenticates with an API key (Bearer token from the dashboard).
- * No OAuth flow is available, so only `api_key` auth is offered.
- */
 export function botbaba<const T extends BotbabaPluginOptions>(
 	incomingOptions: BotbabaPluginOptions & T = {} as BotbabaPluginOptions & T,
 ): ExternalBotbabaPlugin<T> {
@@ -263,9 +484,8 @@ export function botbaba<const T extends BotbabaPluginOptions>(
 		id: 'botbaba',
 		authConfig: botbabaAuthConfig,
 		schema: BotbabaSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: botbabaEndpointsNested,
 		webhooks: botbabaWebhooksNested,
 		endpointMeta: botbabaEndpointMeta,
@@ -273,7 +493,6 @@ export function botbaba<const T extends BotbabaPluginOptions>(
 		webhookSchemas: botbabaWebhookSchemas,
 		pluginWebhookMatcher: () => false,
 		pluginTenantWebhookMatcher: matchBotbabaTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveBotbabaOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -294,11 +513,6 @@ export function botbaba<const T extends BotbabaPluginOptions>(
 }
 
 export type {
-	BotbabaBot,
-	BotbabaConversation,
-	BotbabaMessage,
-	BotbabaDeployment,
-	BotbabaAnalyticsSummary,
 	BotbabaEndpointInputs,
 	BotbabaEndpointOutputs,
 } from './endpoints/types';

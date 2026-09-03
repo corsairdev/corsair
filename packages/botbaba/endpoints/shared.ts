@@ -1,18 +1,10 @@
 import type { BotbabaRequestOptions } from '../client';
 import { makeBotbabaRequest } from '../client';
 
-/**
- * Minimal structural view of the plugin context the endpoints need.
- *
- * Declaring only the members used here keeps the helpers testable without
- * constructing a full Corsair context.
- */
 type BotbabaCallContext = {
 	key: string;
-	options: Record<string, unknown>;
 };
 
-/** Issues a Botbaba request under the plugin's API key. */
 export async function botbabaCall<T>(
 	ctx: BotbabaCallContext,
 	path: string,
@@ -21,14 +13,6 @@ export async function botbabaCall<T>(
 	return await makeBotbabaRequest<T>(path, ctx.key, options);
 }
 
-/**
- * Drops keys whose value is `undefined`.
- *
- * Botbaba (like most REST APIs) distinguishes an absent field from an
- * explicit `null` on update bodies: omitting a field leaves it alone,
- * `null` clears it. Serialising `undefined` would produce neither, so
- * unset fields are removed before the body is built.
- */
 export function compactBody(
 	body: Record<string, unknown>,
 ): Record<string, unknown> {
@@ -39,17 +23,31 @@ export function compactBody(
 	return compacted;
 }
 
-/** Same as {@link compactBody}, for query strings. */
-export function compactQuery<
-	T extends Record<
-		string,
-		string | number | boolean | string[] | Record<string, string> | undefined
-	>,
->(query: T): T {
-	const compacted = {} as T;
-	for (const [key, value] of Object.entries(query)) {
-		if (value !== undefined)
-			(compacted as Record<string, unknown>)[key] = value;
+const SHOPIFY_HEADER_ALIASES: Array<[string, string[]]> = [
+	['X-Shopify-Topic', ['X-Shopify-Topic', 'x_shopify_topic']],
+	['X-Shopify-Webhook-Id', ['X-Shopify-Webhook-Id', 'x_shopify_webhook_id']],
+	['X-Shopify-API-Version', ['X-Shopify-API-Version', 'x_shopify_api_version']],
+	['X-Shopify-Hmac-SHA256', ['X-Shopify-Hmac-SHA256', 'x_shopify_hmac_sha256']],
+	['X-Shopify-Shop-Domain', ['X-Shopify-Shop-Domain', 'x_shopify_shop_domain']],
+	[
+		'X-Shopify-Triggered-At',
+		['X-Shopify-Triggered-At', 'x_shopify_triggered_at'],
+	],
+	['X-Shopify-Event-Id', ['X-Shopify-Event-Id']],
+];
+
+export function shopifyHeaders(
+	input: Record<string, unknown>,
+): Record<string, string> | undefined {
+	const headers: Record<string, string> = {};
+	for (const [header, keys] of SHOPIFY_HEADER_ALIASES) {
+		for (const key of keys) {
+			const value = input[key];
+			if (typeof value === 'string' && value.length > 0) {
+				headers[header] = value;
+				break;
+			}
+		}
 	}
-	return compacted;
+	return Object.keys(headers).length > 0 ? headers : undefined;
 }

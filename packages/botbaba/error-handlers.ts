@@ -5,20 +5,26 @@ function safeStatus(error: Error): number | 'unknown' {
 	return error instanceof ApiError ? error.status : 'unknown';
 }
 
-/**
- * Whether replaying an operation could duplicate a record.
- *
- * Corsair re-invokes the whole endpoint when a handler asks for a retry, so a
- * network failure raised *after* Botbaba committed a POST would create a
- * second bot, conversation, message or deployment. Without an idempotency
- * key on these routes, the only safe answer is not to retry at all.
- */
+const NON_IDEMPOTENT = new Set([
+	'messages.sendWhatsappTemplate',
+	'actions.execute',
+	'actions.executeByUser',
+	'gupshup.forwardMessage',
+	'shopify.cartCreation',
+	'shopify.cartUpdate',
+	'shopify.checkoutCreation',
+	'shopify.checkoutUpdate',
+	'shopify.orderCancellation',
+	'shopify.orderFulfillment',
+	'shopify.orderPayment',
+	'contacts.update',
+	'tags.update',
+	'templates.update',
+	'webhooks.update',
+]);
+
 export const isNonIdempotent = (operation: string): boolean =>
-	[
-		'bots.create',
-		'messages.send',
-		'deployments.deploy',
-	].includes(operation);
+	NON_IDEMPOTENT.has(operation);
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {

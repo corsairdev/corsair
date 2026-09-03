@@ -6,12 +6,13 @@ import type {
 } from 'corsair/http';
 import { request } from 'corsair/http';
 
-const BOTBABA_API_BASE = 'https://api.botsbaba.com';
-
 /**
- * Botbaba does not publish rate-limit budgets. The retry loop reacts to 429
- * responses rather than pacing proactively.
+ * Official host from Botbaba KB:
+ * https://kb.botbaba.io/docs/how-to-connect-your-shopify-store-with-botbaba/
+ * https://kb.botbaba.io/docs/how-to-forward-a-template-message-with-custom-data-using-botbabas-api-and-postman-runner/
  */
+export const BOTBABA_API_BASE = 'https://app.botbaba.io';
+
 const BOTBABA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 3,
@@ -29,13 +30,13 @@ export type BotbabaRequestOptions = {
 		string,
 		string | number | boolean | string[] | Record<string, string> | undefined
 	>;
+	headers?: Record<string, string>;
 };
 
 /**
- * Issues a Botbaba API request with Bearer auth and rate-limit retries.
- *
- * All operations live on the single `api.botsbaba.com` host. Authentication
- * uses a Bearer token obtained from the Botbaba dashboard.
+ * Official auth is the profile auth token sent as the Authorization value
+ * (Postman: header key Authorization, value = token from Edit Profile).
+ * https://kb.botbaba.io/docs/how-to-obtain-auth-token-or-api-key/
  */
 export async function makeBotbabaRequest<T>(
 	path: string,
@@ -47,12 +48,7 @@ export async function makeBotbabaRequest<T>(
 		throw new AuthMissingError('botbaba', 'api_key');
 	}
 
-	const { method = 'GET', body, query } = options;
-
-	const headers: Record<string, string> = {
-		'Content-Type': 'application/json',
-		Authorization: `Bearer ${token}`,
-	};
+	const { method = 'POST', body, query, headers } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: BOTBABA_API_BASE,
@@ -60,7 +56,11 @@ export async function makeBotbabaRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
-		HEADERS: headers,
+		HEADERS: {
+			'Content-Type': 'application/json',
+			Authorization: token,
+			...headers,
+		},
 	};
 
 	const requestOptions: ApiRequestOptions = {

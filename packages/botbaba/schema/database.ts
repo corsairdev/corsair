@@ -1,42 +1,84 @@
 import { z } from 'zod';
 
 /**
- * Locally persisted Botbaba entities.
- *
- * Only slow-changing structural records are mirrored: bots and conversations.
- * Messages and analytics are high-volume / always-live, so they are not
- * cached locally.
+ * Contact fields from Composio BOTBABA_UPDATE_CONTACT / BOTBABA_GET_CONTACT.
+ * Official catalog: https://docs.composio.dev/toolkits/botbaba
  */
-
-const S = z.string().nullable().optional();
-const B = z.boolean().nullable().optional();
-
-export const BotbabaBotEntity = z
+export const BotbabaContactEntity = z
 	.object({
-		id: z.string(),
+		contact_id: z.string(),
+		email: z.string().nullable().optional(),
+		phone: z.string().nullable().optional(),
+		first_name: z.string().nullable().optional(),
+		last_name: z.string().nullable().optional(),
+		tags: z.array(z.string()).nullable().optional(),
+		custom_fields: z.record(z.string(), z.unknown()).nullable().optional(),
+	})
+	.loose();
+export type BotbabaContactEntity = z.infer<typeof BotbabaContactEntity>;
+
+/**
+ * Tag fields from Composio BOTBABA_UPDATE_TAG / BOTBABA_LIST_TAGS.
+ * Official catalog: https://docs.composio.dev/toolkits/botbaba
+ */
+export const BotbabaTagEntity = z
+	.object({
+		tag_id: z.string(),
 		name: z.string(),
-		description: S,
-		status: S,
-		channel: S,
-		welcomeMessage: S,
-		createdAt: z.coerce.date().nullable().optional(),
-		updatedAt: z.coerce.date().nullable().optional(),
-		isActive: B,
 	})
 	.loose();
-export type BotbabaBotEntity = z.infer<typeof BotbabaBotEntity>;
+export type BotbabaTagEntity = z.infer<typeof BotbabaTagEntity>;
 
-export const BotbabaConversationEntity = z
+/**
+ * Template fields from Composio BOTBABA_GET_TEMPLATE / BOTBABA_UPDATE_TEMPLATE.
+ * Official catalog: https://docs.composio.dev/toolkits/botbaba
+ */
+export const BotbabaTemplateEntity = z
 	.object({
-		id: z.string(),
-		botId: z.string(),
-		userId: S,
-		channel: S,
-		status: S,
-		createdAt: z.coerce.date().nullable().optional(),
-		updatedAt: z.coerce.date().nullable().optional(),
+		template_id: z.string(),
+		name: z.string().nullable().optional(),
+		type: z.string().nullable().optional(),
+		content: z.string().nullable().optional(),
+		parameters: z.array(z.unknown()).nullable().optional(),
 	})
 	.loose();
-export type BotbabaConversationEntity = z.infer<
-	typeof BotbabaConversationEntity
->;
+export type BotbabaTemplateEntity = z.infer<typeof BotbabaTemplateEntity>;
+
+/**
+ * Broadcast / flow / webhook ids from Composio BOTBABA_GET_* tools.
+ * Official catalog: https://docs.composio.dev/toolkits/botbaba
+ */
+export const BotbabaBroadcastEntity = z
+	.object({
+		broadcast_id: z.string(),
+	})
+	.loose();
+export type BotbabaBroadcastEntity = z.infer<typeof BotbabaBroadcastEntity>;
+
+export const BotbabaFlowEntity = z
+	.object({
+		flow_id: z.string(),
+	})
+	.loose();
+export type BotbabaFlowEntity = z.infer<typeof BotbabaFlowEntity>;
+
+export const BotbabaWebhookEntity = z
+	.object({
+		webhook_id: z.string(),
+		url: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		events: z.array(z.string()).nullable().optional(),
+	})
+	.loose();
+export type BotbabaWebhookEntity = z.infer<typeof BotbabaWebhookEntity>;
+
+/**
+ * Message id from Composio BOTBABA_GET_MESSAGE.
+ * Official catalog: https://docs.composio.dev/toolkits/botbaba
+ */
+export const BotbabaMessageEntity = z
+	.object({
+		message_id: z.string(),
+	})
+	.loose();
+export type BotbabaMessageEntity = z.infer<typeof BotbabaMessageEntity>;
