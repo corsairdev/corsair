@@ -100,6 +100,8 @@ asana({
 })
 ```
 
+Store credentials with `pnpm corsair Setup --plugin=asana` (see [Get Credentials](/plugins/asana/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
 More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
@@ -124,19 +126,21 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`projects.get`**
+**Read-style (read):** `tasks.list`
 
 ```ts
-const tenant = corsair.withTenant('acme');
-await tenant.asana.api.projects.get({});
+await corsair.asana.api.tasks.list({});
 ```
 
 
-**`projects.addFollowers`**
+**Write-style (write):** `tasks.create`
 
 ```ts
-const tenant = corsair.withTenant('acme');
-await tenant.asana.api.projects.addFollowers({});
+await corsair.asana.api.tasks.create({
+  data: {
+    name: "Follow up from Corsair",
+  },
+});
 ```
 
 

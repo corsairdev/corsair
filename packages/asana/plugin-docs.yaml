@@ -1,0 +1,12 @@
+displayName: Asana
+description: "Asana plugin for Corsair - tasks, projects, and task events."
+examples:
+  read:
+    path: tasks.list
+    title: List tasks
+  write:
+    path: tasks.create
+    title: Create a task
+    args:
+      data:
+        name: Follow up from Corsair
