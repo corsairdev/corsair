@@ -55,6 +55,7 @@ export const BaseProviders = [
 	'apipie',
 	'apisports',
 	'asana',
+	'ascora',
 	'asindataapi',
 	'asticaai',
 	'asyncinterview',
@@ -91,10 +92,12 @@ export const BaseProviders = [
 	'box',
 	'boxhero',
 	'brandfetch',
+	'breathehr',
 	'brex',
 	'brightdata',
 	'browseai',
 	'browserless',
+	'bubble',
 	'bugsnag',
 	'buildkite',
 	'cal',
@@ -112,6 +115,7 @@ export const BaseProviders = [
 	'cloudinary',
 	'collegefootballdata',
 	'confluence',
+	'connecteam',
 	'contentfulgraphql',
 	'contextsevenmcp',
 	'crowterminal',
@@ -119,6 +123,7 @@ export const BaseProviders = [
 	'customgpt',
 	'databricks',
 	'datadog',
+	'datarobot',
 	'deepseek',
 	'devinmcp',
 	'diffbot',
@@ -131,6 +136,7 @@ export const BaseProviders = [
 	'dripcel',
 	'dropbox',
 	'dropboxsign',
+	'dynapictures',
 	'epicgames',
 	'exa',
 	'facebook',
@@ -205,6 +211,7 @@ export const BaseProviders = [
 	'resend',
 	'retailed',
 	'salesforce',
+	'sapsuccessfactors',
 	'scrapegraphai',
 	'securitytrails',
 	'sendgrid',
@@ -227,6 +234,7 @@ export const BaseProviders = [
 	'telegram',
 	'textrazor',
 	'ticktick',
+	'timelink',
 	'tisane',
 	'timecamp',
 	'todoist',
@@ -248,6 +256,7 @@ export const BaseProviders = [
 	'webvizio',
 	'whatsapp',
 	'witai',
+	'worldnewsapi',
 	'wiza',
 	'workday',
 	'workiom',
@@ -303,6 +312,7 @@ export const ProviderDisplayNames = {
 	apipie: 'APIpie AI',
 	apisports: 'API-Sports',
 	asana: 'Asana',
+	ascora: 'Ascora',
 	asindataapi: 'ASIN Data API',
 	asticaai: 'Astica AI',
 	asyncinterview: 'Async Interview',
@@ -339,10 +349,12 @@ export const ProviderDisplayNames = {
 	box: 'Box',
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
+	breathehr: 'Breathe HR',
 	brex: 'Brex',
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
 	browserless: 'Browserless',
+	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
 	cal: 'Cal',
@@ -360,6 +372,7 @@ export const ProviderDisplayNames = {
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
+	connecteam: 'Connecteam',
 	contentfulgraphql: 'Contentful GraphQL',
 	contextsevenmcp: 'Context7',
 	crowterminal: 'CrowTerminal',
@@ -367,6 +380,7 @@ export const ProviderDisplayNames = {
 	customgpt: 'CustomGPT',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
+	datarobot: 'DataRobot',
 	deepseek: 'DeepSeek',
 	devinmcp: 'Devin MCP',
 	diffbot: 'Diffbot',
@@ -379,6 +393,7 @@ export const ProviderDisplayNames = {
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
 	dropboxsign: 'Dropbox Sign',
+	dynapictures: 'Dynapictures',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
@@ -453,6 +468,7 @@ export const ProviderDisplayNames = {
 	resend: 'Resend',
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
+	sapsuccessfactors: 'SAP SuccessFactors',
 	scrapegraphai: 'ScrapeGraphAI',
 	securitytrails: 'SecurityTrails',
 	sendgrid: 'SendGrid',
@@ -475,6 +491,7 @@ export const ProviderDisplayNames = {
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
+	timelink: 'Timelink',
 	tisane: 'Tisane',
 	timecamp: 'TimeCamp',
 	todoist: 'Todoist',
@@ -496,6 +513,7 @@ export const ProviderDisplayNames = {
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
+	worldnewsapi: 'World News API',
 	wiza: 'Wiza',
 	workday: 'Workday',
 	workiom: 'Workiom',
@@ -558,6 +576,7 @@ export type AllProviders =
 	| 'apipie'
 	| 'apisports'
 	| 'asana'
+	| 'ascora'
 	| 'asindataapi'
 	| 'asticaai'
 	| 'asyncinterview'
@@ -594,10 +613,12 @@ export type AllProviders =
 	| 'box'
 	| 'boxhero'
 	| 'brandfetch'
+	| 'breathehr'
 	| 'brex'
 	| 'brightdata'
 	| 'browseai'
 	| 'browserless'
+	| 'bubble'
 	| 'bugsnag'
 	| 'buildkite'
 	| 'cal'
@@ -615,6 +636,7 @@ export type AllProviders =
 	| 'cloudinary'
 	| 'collegefootballdata'
 	| 'confluence'
+	| 'connecteam'
 	| 'contentfulgraphql'
 	| 'contextsevenmcp'
 	| 'crowterminal'
@@ -622,6 +644,7 @@ export type AllProviders =
 	| 'customgpt'
 	| 'databricks'
 	| 'datadog'
+	| 'datarobot'
 	| 'deepseek'
 	| 'devinmcp'
 	| 'diffbot'
@@ -633,6 +656,8 @@ export type AllProviders =
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
+	| 'dropboxsign'
+	| 'dynapictures'
 	| 'epicgames'
 	| 'exa'
 	| 'facebook'
@@ -707,6 +732,7 @@ export type AllProviders =
 	| 'resend'
 	| 'retailed'
 	| 'salesforce'
+	| 'sapsuccessfactors'
 	| 'scrapegraphai'
 	| 'securitytrails'
 	| 'sendgrid'
@@ -729,6 +755,7 @@ export type AllProviders =
 	| 'telegram'
 	| 'textrazor'
 	| 'ticktick'
+	| 'timelink'
 	| 'tisane'
 	| 'timecamp'
 	| 'todoist'
@@ -750,6 +777,7 @@ export type AllProviders =
 	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
+	| 'worldnewsapi'
 	| 'wiza'
 	| 'workday'
 	| 'workiom'
