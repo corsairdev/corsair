@@ -1,0 +1,29 @@
+displayName: Outlook
+description: "Outlook plugin for Corsair"
+recommendedAuth: managed
+
+examples:
+  read:
+    path: messages.list
+    title: List messages
+  write:
+    path: messages.send
+    title: Send a message
+    args:
+      subject: "Hello from Corsair"
+      body: "This is a test email."
+      to: "hello@example.com"
+
+dbExample:
+  entity: messages
+  note: "Search synced messages without hitting the Outlook API."
+  data:
+    isRead: false
+  limit: 50
+
+exampleWebhook:
+  path: messages.newMessage
+  note: "React when a new email is received."
+  after: |
+    const subject = result.data?.subject;
+    console.log('New Outlook message:', subject);
