@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/mcp",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "description": "MCP server and framework adapters for Corsair. Expose 200+ integrations to any agent framework (Mastra, OpenAI, Vercel AI, Claude) as tools.",
   "keywords": [
     "mcp",
