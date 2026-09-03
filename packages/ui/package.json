@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/ui",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Plain-HTML UI helpers for Corsair permissions and related flows",
   "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
