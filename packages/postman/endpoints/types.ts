@@ -498,6 +498,236 @@ export const ApisUpdateCommentOutputSchema = z.object({
 		.optional(),
 });
 
+export const ApisCreateRelationsInputSchema = z.object({
+	apiId: z.string().min(1, 'ApiId is required'),
+	apiVersionId: z.string().min(1, 'ApiVersionId is required'),
+	contracttest: z.array(z.string()).optional(),
+	testsuite: z.array(z.string()).optional(),
+	documentation: z.array(z.string()).optional(),
+	mock: z.array(z.string()).optional(),
+	monitor: z.array(z.string()).optional(),
+	environment: z.array(z.string()).optional(),
+	unclassified: z.array(z.string()).optional(),
+});
+
+export const ApisCreateRelationsOutputSchema = z.object({
+	contracttest: z.array(z.string()).optional(),
+	testsuite: z.array(z.string()).optional(),
+	documentation: z.array(z.string()).optional(),
+	mock: z.array(z.string()).optional(),
+	unclassified: z.array(z.string()).optional(),
+});
+
+export const ApisGetLinkedRelationsInputSchema = z.object({
+	apiId: z.string().min(1, 'ApiId is required'),
+	apiVersionId: z.string().min(1, 'ApiVersionId is required'),
+});
+
+export const ApisGetLinkedRelationsOutputSchema = z.object({
+	relations: z
+		.object({
+			contracttest: z
+				.record(
+					z.string(),
+					z.object({
+						id: z.string().optional(),
+						name: z.string().optional(),
+						updatedAt: z.string().optional(),
+					}),
+				)
+				.optional(),
+			integrationtest: z
+				.record(
+					z.string(),
+					z.object({
+						id: z.string().optional(),
+						name: z.string().optional(),
+						updatedAt: z.string().optional(),
+					}),
+				)
+				.optional(),
+			testsuite: z
+				.record(
+					z.string(),
+					z.object({
+						id: z.string().optional(),
+						name: z.string().optional(),
+						updatedAt: z.string().optional(),
+					}),
+				)
+				.optional(),
+			documentation: z
+				.record(
+					z.string(),
+					z.object({
+						id: z.string().optional(),
+						name: z.string().optional(),
+						updatedAt: z.string().optional(),
+					}),
+				)
+				.optional(),
+			mock: z
+				.record(
+					z.string(),
+					z.object({
+						id: z.string().optional(),
+						name: z.string().optional(),
+						updatedAt: z.string().optional(),
+					}),
+				)
+				.optional(),
+			monitor: z
+				.record(
+					z.string(),
+					z.object({
+						id: z.string().optional(),
+						name: z.string().optional(),
+						updatedAt: z.string().optional(),
+					}),
+				)
+				.optional(),
+			environment: z
+				.record(
+					z.string(),
+					z.object({
+						id: z.string().optional(),
+						name: z.string().optional(),
+						updatedAt: z.string().optional(),
+					}),
+				)
+				.optional(),
+		})
+		.optional(),
+});
+
+export const ApisGetTestRelationsInputSchema = z.object({
+	apiId: z.string().min(1, 'ApiId is required'),
+	apiVersionId: z.string().min(1, 'ApiVersionId is required'),
+});
+
+export const ApisGetTestRelationsOutputSchema = z.object({
+	test: z
+		.array(
+			z.object({
+				id: z.string().optional(),
+				name: z.string().optional(),
+				updatedAt: z.string().optional(),
+			}),
+		)
+		.optional(),
+});
+
+export const ApisGetContractTestRelationsInputSchema = z.object({
+	apiId: z.string().min(1, 'ApiId is required'),
+	apiVersionId: z.string().min(1, 'ApiVersionId is required'),
+});
+
+export const ApisGetContractTestRelationsOutputSchema = z.object({
+	contracttest: z
+		.array(
+			z.object({
+				id: z.string().optional(),
+				name: z.string().optional(),
+				updatedAt: z.string().optional(),
+			}),
+		)
+		.optional(),
+});
+
+export const ApisGetIntegrationTestRelationsInputSchema = z.object({
+	apiId: z.string().min(1, 'ApiId is required'),
+	apiVersionId: z.string().min(1, 'ApiVersionId is required'),
+});
+
+export const ApisGetIntegrationTestRelationsOutputSchema = z.object({
+	integrationtest: z
+		.array(
+			z.object({
+				id: z.string().optional(),
+				name: z.string().optional(),
+				updatedAt: z.string().optional(),
+			}),
+		)
+		.optional(),
+});
+
+export const ApisGetTestSuiteRelationsInputSchema = z.object({
+	apiId: z.string().min(1, 'ApiId is required'),
+	apiVersionId: z.string().min(1, 'ApiVersionId is required'),
+});
+
+export const ApisGetTestSuiteRelationsOutputSchema = z.object({
+	testsuite: z
+		.array(
+			z.object({
+				id: z.string().optional(),
+				name: z.string().optional(),
+				updatedAt: z.string().optional(),
+			}),
+		)
+		.optional(),
+});
+
+export const ApisGetDocumentationRelationsInputSchema = z.object({
+	apiId: z.string().min(1, 'ApiId is required'),
+	apiVersionId: z.string().min(1, 'ApiVersionId is required'),
+});
+
+export const ApisGetDocumentationRelationsOutputSchema = z.object({
+	documentation: z
+		.array(
+			z.object({
+				id: z.string().optional(),
+				name: z.string().optional(),
+				updatedAt: z.string().optional(),
+			}),
+		)
+		.optional(),
+});
+
+export const ApisGetEnvironmentRelationsInputSchema = z.object({
+	apiId: z.string().min(1, 'ApiId is required'),
+	apiVersionId: z.string().min(1, 'ApiVersionId is required'),
+});
+
+export const ApisGetEnvironmentRelationsOutputSchema = z.object({
+	environment: z
+		.array(
+			z.object({
+				id: z.string().optional(),
+				name: z.string().optional(),
+				updatedAt: z.string().optional(),
+			}),
+		)
+		.optional(),
+});
+
+export const ApisListReleasesInputSchema = z.object({
+	apiId: z.string().min(1, 'ApiId is required'),
+	apiVersionId: z.string().min(1, 'ApiVersionId is required'),
+});
+
+export const ApisListReleasesOutputSchema = z.object({
+	releases: z.array(z.record(z.string(), z.unknown())).optional(),
+});
+
+export const ApisGetUnclassifiedRelationsInputSchema = z.object({
+	apiId: z.string().min(1, 'ApiId is required'),
+	apiVersionId: z.string().min(1, 'ApiVersionId is required'),
+});
+
+export const ApisGetUnclassifiedRelationsOutputSchema = z.object({
+	unclassified: z
+		.array(
+			z.object({
+				id: z.string().optional(),
+				name: z.string().optional(),
+				updatedAt: z.string().optional(),
+			}),
+		)
+		.optional(),
+});
+
 // Specs
 export const SpecsGetInputSchema = z.object({
 	specId: z.string().min(1, 'SpecId is required'),
@@ -3813,7 +4043,6 @@ export const WorkspacesGetOutputSchema = z.object({
 			type: z
 				.enum(['personal', 'team', 'private', 'public', 'partner'])
 				.optional(),
-			// Live-verified: the API returns null when no description is set.
 			description: z.string().nullable().optional(),
 			visibility: z
 				.enum(['personal', 'team', 'private', 'public', 'partner'])
@@ -4503,30 +4732,6 @@ export const ScimGetServiceConfigOutputSchema = z.object({
 		.optional(),
 });
 
-// Webhooks
-export const WebhooksCreateInputSchema = z.object({
-	workspace: z.string(),
-	webhook: z
-		.object({
-			collection: z.string(),
-			environment: z.string().optional(),
-			name: z.string(),
-		})
-		.optional(),
-});
-
-export const WebhooksCreateOutputSchema = z.object({
-	webhook: z
-		.object({
-			id: z.string().optional(),
-			name: z.string().optional(),
-			collection: z.string().optional(),
-			webhookUrl: z.string().optional(),
-			uid: z.string().optional(),
-		})
-		.optional(),
-});
-
 // Tools
 export const ToolsImportOpenapiInputSchema = z.object({
 	workspace: z.string(),
@@ -4694,7 +4899,6 @@ export const PostmanEndpointInputSchemas = {
 	collectionsCreateResponse: CollectionsCreateResponseInputSchema,
 	collectionsCreateResponseComment: CollectionsCreateResponseCommentInputSchema,
 	specsCreate: SpecsCreateInputSchema,
-	webhooksCreate: WebhooksCreateInputSchema,
 	workspacesCreate: WorkspacesCreateInputSchema,
 	apisCreate: ApisCreateInputSchema,
 	environmentsCreate: EnvironmentsCreateInputSchema,
@@ -4758,6 +4962,16 @@ export const PostmanEndpointInputSchemas = {
 	apisUpdateComment: ApisUpdateCommentInputSchema,
 	environmentsUpdate: EnvironmentsUpdateInputSchema,
 	environmentsList: EnvironmentsListInputSchema,
+	apisCreateRelations: ApisCreateRelationsInputSchema,
+	apisGetLinkedRelations: ApisGetLinkedRelationsInputSchema,
+	apisGetTestRelations: ApisGetTestRelationsInputSchema,
+	apisGetContractTestRelations: ApisGetContractTestRelationsInputSchema,
+	apisGetIntegrationTestRelations: ApisGetIntegrationTestRelationsInputSchema,
+	apisGetTestSuiteRelations: ApisGetTestSuiteRelationsInputSchema,
+	apisGetDocumentationRelations: ApisGetDocumentationRelationsInputSchema,
+	apisGetEnvironmentRelations: ApisGetEnvironmentRelationsInputSchema,
+	apisListReleases: ApisListReleasesInputSchema,
+	apisGetUnclassifiedRelations: ApisGetUnclassifiedRelationsInputSchema,
 } as const;
 
 export const PostmanEndpointOutputSchemas = {
@@ -4823,7 +5037,6 @@ export const PostmanEndpointOutputSchemas = {
 	collectionsCreateResponseComment:
 		CollectionsCreateResponseCommentOutputSchema,
 	specsCreate: SpecsCreateOutputSchema,
-	webhooksCreate: WebhooksCreateOutputSchema,
 	workspacesCreate: WorkspacesCreateOutputSchema,
 	apisCreate: ApisCreateOutputSchema,
 	environmentsCreate: EnvironmentsCreateOutputSchema,
@@ -4889,6 +5102,16 @@ export const PostmanEndpointOutputSchemas = {
 	apisUpdateComment: ApisUpdateCommentOutputSchema,
 	environmentsUpdate: EnvironmentsUpdateOutputSchema,
 	environmentsList: EnvironmentsListOutputSchema,
+	apisCreateRelations: ApisCreateRelationsOutputSchema,
+	apisGetLinkedRelations: ApisGetLinkedRelationsOutputSchema,
+	apisGetTestRelations: ApisGetTestRelationsOutputSchema,
+	apisGetContractTestRelations: ApisGetContractTestRelationsOutputSchema,
+	apisGetIntegrationTestRelations: ApisGetIntegrationTestRelationsOutputSchema,
+	apisGetTestSuiteRelations: ApisGetTestSuiteRelationsOutputSchema,
+	apisGetDocumentationRelations: ApisGetDocumentationRelationsOutputSchema,
+	apisGetEnvironmentRelations: ApisGetEnvironmentRelationsOutputSchema,
+	apisListReleases: ApisListReleasesOutputSchema,
+	apisGetUnclassifiedRelations: ApisGetUnclassifiedRelationsOutputSchema,
 } as const;
 
 export type PostmanEndpointInputs = {
@@ -5027,7 +5250,6 @@ export type PostmanEndpointInputs = {
 		typeof PostmanEndpointInputSchemas.collectionsCreateResponseComment
 	>;
 	specsCreate: z.infer<typeof PostmanEndpointInputSchemas.specsCreate>;
-	webhooksCreate: z.infer<typeof PostmanEndpointInputSchemas.webhooksCreate>;
 	workspacesCreate: z.infer<
 		typeof PostmanEndpointInputSchemas.workspacesCreate
 	>;
@@ -5187,6 +5409,36 @@ export type PostmanEndpointInputs = {
 	environmentsList: z.infer<
 		typeof PostmanEndpointInputSchemas.environmentsList
 	>;
+	apisCreateRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisCreateRelations
+	>;
+	apisGetLinkedRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetLinkedRelations
+	>;
+	apisGetTestRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetTestRelations
+	>;
+	apisGetContractTestRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetContractTestRelations
+	>;
+	apisGetIntegrationTestRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetIntegrationTestRelations
+	>;
+	apisGetTestSuiteRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetTestSuiteRelations
+	>;
+	apisGetDocumentationRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetDocumentationRelations
+	>;
+	apisGetEnvironmentRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetEnvironmentRelations
+	>;
+	apisListReleases: z.infer<
+		typeof PostmanEndpointInputSchemas.apisListReleases
+	>;
+	apisGetUnclassifiedRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetUnclassifiedRelations
+	>;
 };
 
 export type PostmanEndpointOutputs = {
@@ -5325,7 +5577,6 @@ export type PostmanEndpointOutputs = {
 		typeof PostmanEndpointOutputSchemas.collectionsCreateResponseComment
 	>;
 	specsCreate: z.infer<typeof PostmanEndpointOutputSchemas.specsCreate>;
-	webhooksCreate: z.infer<typeof PostmanEndpointOutputSchemas.webhooksCreate>;
 	workspacesCreate: z.infer<
 		typeof PostmanEndpointOutputSchemas.workspacesCreate
 	>;
@@ -5484,5 +5735,35 @@ export type PostmanEndpointOutputs = {
 	>;
 	environmentsList: z.infer<
 		typeof PostmanEndpointOutputSchemas.environmentsList
+	>;
+	apisCreateRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisCreateRelations
+	>;
+	apisGetLinkedRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetLinkedRelations
+	>;
+	apisGetTestRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetTestRelations
+	>;
+	apisGetContractTestRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetContractTestRelations
+	>;
+	apisGetIntegrationTestRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetIntegrationTestRelations
+	>;
+	apisGetTestSuiteRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetTestSuiteRelations
+	>;
+	apisGetDocumentationRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetDocumentationRelations
+	>;
+	apisGetEnvironmentRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetEnvironmentRelations
+	>;
+	apisListReleases: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisListReleases
+	>;
+	apisGetUnclassifiedRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetUnclassifiedRelations
 	>;
 };

@@ -17,7 +17,13 @@ describe('Postman schema', () => {
 	it('declares an entities map', () => {
 		expect(typeof PostmanSchema.entities).toBe('object');
 		expect(PostmanSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(PostmanSchema.entities))).toBe(true);
+		expect(Object.keys(PostmanSchema.entities).sort()).toEqual([
+			'collection',
+			'environment',
+			'mock',
+			'monitor',
+			'workspace',
+		]);
 		for (const entity of Object.values(PostmanSchema.entities)) {
 			expect(entity).toBeDefined();
 		}

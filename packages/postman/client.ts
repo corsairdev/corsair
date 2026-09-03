@@ -110,6 +110,29 @@ export async function makePostmanRequest<T>(
 const NO_DEK_ERROR_PATTERN = /no dek found/i;
 
 /**
+ * Rejects API resource paths that could escape their route segment.
+ * The transport preserves `/` separators (encodeURI), so `.` / `..` /
+ * empty segments would address unintended API routes. Nested paths such
+ * as `components/schemas.json` remain valid.
+ */
+export function assertSafePathParam(field: string, value: string): void {
+	for (const segment of value.split('/')) {
+		let decoded = segment;
+		try {
+			decoded = decodeURIComponent(segment);
+		} catch {
+			// Keep the raw segment: undecodable input is still rejected
+			// below if empty, and otherwise passed through opaquely.
+		}
+		if (decoded === '' || decoded === '.' || decoded === '..') {
+			throw new PostmanAPIError(
+				`Invalid ${field}: path traversal segments are not allowed`,
+			);
+		}
+	}
+}
+
+/**
  * Safely reads the stored API key from the account key manager.
  * Anything other than the no-DEK state (decryption failure, database
  * error, ...) is a real operational problem and must propagate.

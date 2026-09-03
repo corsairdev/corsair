@@ -13,5 +13,4 @@ export * as Scim from './scim';
 export * as Specs from './specs';
 export * as Tools from './tools';
 export * as Users from './users';
-export * as Webhooks from './webhooks';
 export * as Workspaces from './workspaces';

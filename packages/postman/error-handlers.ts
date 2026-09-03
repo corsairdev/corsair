@@ -27,7 +27,10 @@ export const errorHandlers = {
 				// which corsair/http normalizes to ms (async-core/rate-limit.ts).
 				retryAfterMs = error.retryAfter;
 			}
-			return { maxRetries: 3, headersRetryAfterMs: retryAfterMs };
+			// Transport owns 429 retries (POSTMAN_RATE_LIMIT_CONFIG); the
+			// framework must not replay requests on top, especially
+			// non-idempotent POST/PUT/PATCH bodies.
+			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {

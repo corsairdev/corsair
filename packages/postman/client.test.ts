@@ -1,5 +1,6 @@
 import { ApiError, request } from 'corsair/http';
 import {
+	assertSafePathParam,
 	makePostmanRequest,
 	POSTMAN_API_BASE,
 	PostmanAPIError,
@@ -129,6 +130,30 @@ describe('Postman client', () => {
 				name: 'PostmanAPIError',
 				message: 'Unknown error',
 			});
+		});
+	});
+
+	describe('assertSafePathParam', () => {
+		it('accepts plain ids and nested paths', () => {
+			expect(() => assertSafePathParam('filePath', 'spec.json')).not.toThrow();
+			expect(() =>
+				assertSafePathParam('filePath', 'components/schemas.json'),
+			).not.toThrow();
+		});
+
+		it('rejects dot, dot-dot, empty, and encoded traversal segments', () => {
+			for (const unsafe of [
+				'..',
+				'.',
+				'../secret',
+				'a/../../b',
+				'%2e%2e/secret',
+				'a//b',
+			]) {
+				expect(() => assertSafePathParam('filePath', unsafe)).toThrow(
+					PostmanAPIError,
+				);
+			}
 		});
 	});
 

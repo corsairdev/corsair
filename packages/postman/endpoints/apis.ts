@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { PostmanEndpoints } from '..';
-import { makePostmanRequest } from '../client';
+import { assertSafePathParam, makePostmanRequest } from '../client';
 import type { PostmanEndpointOutputs } from './types';
 
 export const createSchema: PostmanEndpoints['apisCreateSchema'] = async (
@@ -44,7 +44,7 @@ export const createCollectionFromSchema: PostmanEndpoints['apisCreateCollectionF
 		await logEventFromContext(
 			ctx,
 			'postman.apis.createCollectionFromSchema',
-			{ ...input },
+			{ apiId: input.apiId },
 			'completed',
 		);
 		return response;
@@ -194,6 +194,7 @@ export const list: PostmanEndpoints['apisList'] = async (ctx, input) => {
 
 export const getSchemaFileContents: PostmanEndpoints['apisGetSchemaFileContents'] =
 	async (ctx, input) => {
+		assertSafePathParam('filePath', input.filePath);
 		const response = await makePostmanRequest<
 			PostmanEndpointOutputs['apisGetSchemaFileContents']
 		>('/apis/{apiId}/schemas/{schemaId}/files/{file-path}', ctx.key, {
@@ -271,6 +272,7 @@ export const create: PostmanEndpoints['apisCreate'] = async (ctx, input) => {
 
 export const createOrUpdateSchemaFile: PostmanEndpoints['apisCreateOrUpdateSchemaFile'] =
 	async (ctx, input) => {
+		assertSafePathParam('filePath', input.filePath);
 		const response = await makePostmanRequest<
 			PostmanEndpointOutputs['apisCreateOrUpdateSchemaFile']
 		>('/apis/{apiId}/schemas/{schemaId}/files/{file-path}', ctx.key, {
@@ -290,7 +292,7 @@ export const createOrUpdateSchemaFile: PostmanEndpoints['apisCreateOrUpdateSchem
 		await logEventFromContext(
 			ctx,
 			'postman.apis.createOrUpdateSchemaFile',
-			{ ...input },
+			{ apiId: input.apiId, filePath: input.filePath },
 			'completed',
 		);
 		return response;
@@ -298,6 +300,7 @@ export const createOrUpdateSchemaFile: PostmanEndpoints['apisCreateOrUpdateSchem
 
 export const deleteSchemaFile: PostmanEndpoints['apisDeleteSchemaFile'] =
 	async (ctx, input) => {
+		assertSafePathParam('filePath', input.filePath);
 		const response = await makePostmanRequest<
 			PostmanEndpointOutputs['apisDeleteSchemaFile']
 		>('/apis/{apiId}/schemas/{schemaId}/files/{file-path}', ctx.key, {
@@ -410,3 +413,256 @@ export const updateComment: PostmanEndpoints['apisUpdateComment'] = async (
 	);
 	return response;
 };
+
+// v9-only endpoint, absent from the official v10 OpenAPI spec.
+// Verified against: https://www.postman.com/postman/postman-public-workspace/request/p741q4m/create-relations
+
+export const createRelations: PostmanEndpoints['apisCreateRelations'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makePostmanRequest<
+		PostmanEndpointOutputs['apisCreateRelations']
+	>('/apis/{apiId}/versions/{apiVersionId}/relations', ctx.key, {
+		method: 'POST',
+		path: {
+			apiId: input.apiId,
+			apiVersionId: input.apiVersionId,
+		},
+		body: {
+			contracttest: input.contracttest,
+			testsuite: input.testsuite,
+			documentation: input.documentation,
+			mock: input.mock,
+			monitor: input.monitor,
+			environment: input.environment,
+			unclassified: input.unclassified,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'postman.apis.createRelations',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+// v9-only endpoint, absent from the official v10 OpenAPI spec.
+// Verified against: https://postman.apidog.io/api-3545666
+
+export const getLinkedRelations: PostmanEndpoints['apisGetLinkedRelations'] =
+	async (ctx, input) => {
+		const response = await makePostmanRequest<
+			PostmanEndpointOutputs['apisGetLinkedRelations']
+		>('/apis/{apiId}/versions/{apiVersionId}/relations', ctx.key, {
+			method: 'GET',
+			path: {
+				apiId: input.apiId,
+				apiVersionId: input.apiVersionId,
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'postman.apis.getLinkedRelations',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+// v9-only endpoint, absent from the official v10 OpenAPI spec.
+// Verified against: https://developers.zeorouteplanner.com/30daysofpostman/postman-api-9/f/api-relations-6
+
+export const getTestRelations: PostmanEndpoints['apisGetTestRelations'] =
+	async (ctx, input) => {
+		const response = await makePostmanRequest<
+			PostmanEndpointOutputs['apisGetTestRelations']
+		>('/apis/{apiId}/versions/{apiVersionId}/test', ctx.key, {
+			method: 'GET',
+			path: {
+				apiId: input.apiId,
+				apiVersionId: input.apiVersionId,
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'postman.apis.getTestRelations',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+// v9-only endpoint, absent from the official v10 OpenAPI spec.
+// Verified against: https://www.postman.com/api-evangelist/design/documentation/7t5dxjl/postman-api-openapi
+
+export const getContractTestRelations: PostmanEndpoints['apisGetContractTestRelations'] =
+	async (ctx, input) => {
+		const response = await makePostmanRequest<
+			PostmanEndpointOutputs['apisGetContractTestRelations']
+		>('/apis/{apiId}/versions/{apiVersionId}/contracttest', ctx.key, {
+			method: 'GET',
+			path: {
+				apiId: input.apiId,
+				apiVersionId: input.apiVersionId,
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'postman.apis.getContractTestRelations',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+// v9-only endpoint, absent from the official v10 OpenAPI spec.
+// Verified against: https://developers.zeorouteplanner.com/30daysofpostman/postman-api-9/f/api-relations-6
+
+export const getIntegrationTestRelations: PostmanEndpoints['apisGetIntegrationTestRelations'] =
+	async (ctx, input) => {
+		const response = await makePostmanRequest<
+			PostmanEndpointOutputs['apisGetIntegrationTestRelations']
+		>('/apis/{apiId}/versions/{apiVersionId}/integrationtest', ctx.key, {
+			method: 'GET',
+			path: {
+				apiId: input.apiId,
+				apiVersionId: input.apiVersionId,
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'postman.apis.getIntegrationTestRelations',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+// v9-only endpoint, absent from the official v10 OpenAPI spec.
+// Verified against: https://developers.zeorouteplanner.com/30daysofpostman/postman-api-9/f/api-relations-6
+
+export const getTestSuiteRelations: PostmanEndpoints['apisGetTestSuiteRelations'] =
+	async (ctx, input) => {
+		const response = await makePostmanRequest<
+			PostmanEndpointOutputs['apisGetTestSuiteRelations']
+		>('/apis/{apiId}/versions/{apiVersionId}/testsuite', ctx.key, {
+			method: 'GET',
+			path: {
+				apiId: input.apiId,
+				apiVersionId: input.apiVersionId,
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'postman.apis.getTestSuiteRelations',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+// v9-only endpoint, absent from the official v10 OpenAPI spec.
+// Verified against: https://www.postman.com/postman/postman-blog/request/ok83pe5/get-documentation-relations
+
+export const getDocumentationRelations: PostmanEndpoints['apisGetDocumentationRelations'] =
+	async (ctx, input) => {
+		const response = await makePostmanRequest<
+			PostmanEndpointOutputs['apisGetDocumentationRelations']
+		>('/apis/{apiId}/versions/{apiVersionId}/documentation', ctx.key, {
+			method: 'GET',
+			path: {
+				apiId: input.apiId,
+				apiVersionId: input.apiVersionId,
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'postman.apis.getDocumentationRelations',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+// v9-only endpoint, absent from the official v10 OpenAPI spec.
+// Verified against: https://www.postman.com/cs-demo/john-s-public-workspace/request/c1w17ec/get-environment-relations
+
+export const getEnvironmentRelations: PostmanEndpoints['apisGetEnvironmentRelations'] =
+	async (ctx, input) => {
+		const response = await makePostmanRequest<
+			PostmanEndpointOutputs['apisGetEnvironmentRelations']
+		>('/apis/{apiId}/versions/{apiVersionId}/environment', ctx.key, {
+			method: 'GET',
+			path: {
+				apiId: input.apiId,
+				apiVersionId: input.apiVersionId,
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'postman.apis.getEnvironmentRelations',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+// v9-only endpoint, absent from the official v10 OpenAPI spec.
+// Verified against: INFERRED: singleton GET .../releases/:releaseId and PATCH .../releases/:releaseId are documented (postman-public-workspace); the collection form follows standard REST convention. Response shape kept tolerant.
+
+export const listReleases: PostmanEndpoints['apisListReleases'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makePostmanRequest<
+		PostmanEndpointOutputs['apisListReleases']
+	>('/apis/{apiId}/versions/{apiVersionId}/releases', ctx.key, {
+		method: 'GET',
+		path: {
+			apiId: input.apiId,
+			apiVersionId: input.apiVersionId,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'postman.apis.listReleases',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+// v9-only endpoint, absent from the official v10 OpenAPI spec.
+// Verified against: INFERRED: every other documented v9 relation type is served at GET .../relations/<type> (test, testsuite, contracttest, integrationtest, documentation, environment); unclassified follows the same pattern. Response follows the documented array-with-key convention.
+
+export const getUnclassifiedRelations: PostmanEndpoints['apisGetUnclassifiedRelations'] =
+	async (ctx, input) => {
+		const response = await makePostmanRequest<
+			PostmanEndpointOutputs['apisGetUnclassifiedRelations']
+		>('/apis/{apiId}/versions/{apiVersionId}/unclassified', ctx.key, {
+			method: 'GET',
+			path: {
+				apiId: input.apiId,
+				apiVersionId: input.apiVersionId,
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'postman.apis.getUnclassifiedRelations',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};

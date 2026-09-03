@@ -20,7 +20,7 @@ export const importOpenapi: PostmanEndpoints['toolsImportOpenapi'] = async (
 	await logEventFromContext(
 		ctx,
 		'postman.tools.importOpenapi',
-		{ ...input },
+		{ workspace: input.workspace },
 		'completed',
 	);
 	return response;

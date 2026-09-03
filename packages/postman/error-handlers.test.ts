@@ -23,14 +23,16 @@ function apiError(
 
 describe('Postman error handlers', () => {
 	describe('RATE_LIMIT_ERROR', () => {
-		it('matches ApiError 429s and forwards Retry-After unchanged', async () => {
+		it('matches ApiError 429s and forwards Retry-After without framework replays', async () => {
 			const error = apiError('Too Many Requests', 429, 2500);
 
 			expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+			// The transport owns 429 retries; the framework must not replay,
+			// especially non-idempotent write bodies.
 			await expect(
 				errorHandlers.RATE_LIMIT_ERROR.handler(error),
 			).resolves.toEqual({
-				maxRetries: 3,
+				maxRetries: 0,
 				headersRetryAfterMs: 2500,
 			});
 		});
@@ -44,7 +46,7 @@ describe('Postman error handlers', () => {
 			await expect(
 				errorHandlers.RATE_LIMIT_ERROR.handler(error),
 			).resolves.toEqual({
-				maxRetries: 3,
+				maxRetries: 0,
 				headersRetryAfterMs: 1500,
 			});
 		});
@@ -56,7 +58,7 @@ describe('Postman error handlers', () => {
 			await expect(
 				errorHandlers.RATE_LIMIT_ERROR.handler(error),
 			).resolves.toEqual({
-				maxRetries: 3,
+				maxRetries: 0,
 				headersRetryAfterMs: undefined,
 			});
 		});

@@ -184,7 +184,7 @@ export const updateGlobalVariables: PostmanEndpoints['workspacesUpdateGlobalVari
 		await logEventFromContext(
 			ctx,
 			'postman.workspaces.updateGlobalVariables',
-			{ ...input },
+			{ workspaceId: input.workspaceId },
 			'completed',
 		);
 		return response;

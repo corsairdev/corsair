@@ -54,9 +54,9 @@ describe('Postman Plugin Structure', () => {
 		expect(plugin.id).toBe('postman');
 		expect(plugin.schema).toBeDefined();
 		expect(plugin.endpoints).toBeDefined();
-		expect(Object.keys(PostmanEndpointInputSchemas)).toHaveLength(125);
-		expect(Object.keys(PostmanEndpointOutputSchemas)).toHaveLength(125);
-		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(125);
+		expect(Object.keys(PostmanEndpointInputSchemas)).toHaveLength(134);
+		expect(Object.keys(PostmanEndpointOutputSchemas)).toHaveLength(134);
+		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(134);
 		expect(typeof plugin.endpoints!.apis.createSchema).toBe('function');
 		expect(typeof plugin.endpoints!.apis.createCollectionFromSchema).toBe(
 			'function',
@@ -80,6 +80,28 @@ describe('Postman Plugin Structure', () => {
 		expect(typeof plugin.endpoints!.apis.deleteComment).toBe('function');
 		expect(typeof plugin.endpoints!.apis.update).toBe('function');
 		expect(typeof plugin.endpoints!.apis.updateComment).toBe('function');
+		expect(typeof plugin.endpoints!.apis.createRelations).toBe('function');
+		expect(typeof plugin.endpoints!.apis.getLinkedRelations).toBe('function');
+		expect(typeof plugin.endpoints!.apis.getTestRelations).toBe('function');
+		expect(typeof plugin.endpoints!.apis.getContractTestRelations).toBe(
+			'function',
+		);
+		expect(typeof plugin.endpoints!.apis.getIntegrationTestRelations).toBe(
+			'function',
+		);
+		expect(typeof plugin.endpoints!.apis.getTestSuiteRelations).toBe(
+			'function',
+		);
+		expect(typeof plugin.endpoints!.apis.getDocumentationRelations).toBe(
+			'function',
+		);
+		expect(typeof plugin.endpoints!.apis.getEnvironmentRelations).toBe(
+			'function',
+		);
+		expect(typeof plugin.endpoints!.apis.listReleases).toBe('function');
+		expect(typeof plugin.endpoints!.apis.getUnclassifiedRelations).toBe(
+			'function',
+		);
 		expect(typeof plugin.endpoints!.specs.get).toBe('function');
 		expect(typeof plugin.endpoints!.specs.list).toBe('function');
 		expect(typeof plugin.endpoints!.specs.getDefinition).toBe('function');
@@ -243,7 +265,6 @@ describe('Postman Plugin Structure', () => {
 		expect(typeof plugin.endpoints!.environments.list).toBe('function');
 		expect(typeof plugin.endpoints!.scim.getResourceTypes).toBe('function');
 		expect(typeof plugin.endpoints!.scim.getServiceConfig).toBe('function');
-		expect(typeof plugin.endpoints!.webhooks.create).toBe('function');
 		expect(typeof plugin.endpoints!.tools.importOpenapi).toBe('function');
 		expect(typeof plugin.endpoints!.comments.resolve).toBe('function');
 		expect(typeof plugin.endpoints!.pullRequests.review).toBe('function');
@@ -307,7 +328,7 @@ describe('Postman apis', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.apis.createCollectionFromSchema(
 			mockCtx,
-			{ apiId: 'test-apiId' },
+			{ apiId: 'test-apiId', body: {} },
 		);
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -315,7 +336,7 @@ describe('Postman apis', () => {
 		expect(captured?.url).toBe('/apis/{apiId}/collections');
 		expect(captured?.path).toMatchObject({ apiId: 'test-apiId' });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeUndefined();
+		expect(captured?.body).toMatchObject({});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.apisCreateCollectionFromSchema.safeParse(
@@ -325,6 +346,7 @@ describe('Postman apis', () => {
 		expect(
 			PostmanEndpointInputSchemas.apisCreateCollectionFromSchema.safeParse({
 				apiId: 'test-apiId',
+				body: {},
 			}).success,
 		).toBe(true);
 	});
@@ -376,21 +398,24 @@ describe('Postman apis', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.apis.get(mockCtx, {
 			apiId: 'test-apiId',
+			include: ['collections'],
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/apis/{apiId}');
 		expect(captured?.path).toMatchObject({ apiId: 'test-apiId' });
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({ include: ['collections'] });
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(PostmanEndpointOutputSchemas.apisGet.safeParse(result).success).toBe(
 			true,
 		);
 		expect(
-			PostmanEndpointInputSchemas.apisGet.safeParse({ apiId: 'test-apiId' })
-				.success,
+			PostmanEndpointInputSchemas.apisGet.safeParse({
+				apiId: 'test-apiId',
+				include: ['collections'],
+			}).success,
 		).toBe(true);
 	});
 
@@ -409,6 +434,8 @@ describe('Postman apis', () => {
 		const result = await plugin.endpoints!.apis.getSchema(mockCtx, {
 			apiId: 'test-apiId',
 			schemaId: 'test-schemaId',
+			versionId: 'test-versionId',
+			bundled: true,
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -418,7 +445,10 @@ describe('Postman apis', () => {
 			apiId: 'test-apiId',
 			schemaId: 'test-schemaId',
 		});
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			versionId: 'test-versionId',
+			bundled: true,
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -428,6 +458,8 @@ describe('Postman apis', () => {
 			PostmanEndpointInputSchemas.apisGetSchema.safeParse({
 				apiId: 'test-apiId',
 				schemaId: 'test-schemaId',
+				versionId: 'test-versionId',
+				bundled: true,
 			}).success,
 		).toBe(true);
 	});
@@ -484,13 +516,15 @@ describe('Postman apis', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.apis.listVersions(mockCtx, {
 			apiId: 'test-apiId',
+			cursor: 'test-cursor',
+			limit: 1,
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/apis/{apiId}/versions');
 		expect(captured?.path).toMatchObject({ apiId: 'test-apiId' });
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({ cursor: 'test-cursor', limit: 1 });
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -499,6 +533,8 @@ describe('Postman apis', () => {
 		expect(
 			PostmanEndpointInputSchemas.apisListVersions.safeParse({
 				apiId: 'test-apiId',
+				cursor: 'test-cursor',
+				limit: 1,
 			}).success,
 		).toBe(true);
 	});
@@ -517,13 +553,23 @@ describe('Postman apis', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.apis.list(mockCtx, {
 			workspaceId: 'test-workspaceId',
+			createdBy: 1,
+			cursor: 'test-cursor',
+			description: 'test-description',
+			limit: 1,
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/apis');
 		expect(captured?.path).toBeUndefined();
-		expect(captured?.query).toMatchObject({ workspaceId: 'test-workspaceId' });
+		expect(captured?.query).toMatchObject({
+			workspaceId: 'test-workspaceId',
+			createdBy: 1,
+			cursor: 'test-cursor',
+			description: 'test-description',
+			limit: 1,
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -532,6 +578,10 @@ describe('Postman apis', () => {
 		expect(
 			PostmanEndpointInputSchemas.apisList.safeParse({
 				workspaceId: 'test-workspaceId',
+				createdBy: 1,
+				cursor: 'test-cursor',
+				description: 'test-description',
+				limit: 1,
 			}).success,
 		).toBe(true);
 	});
@@ -552,6 +602,7 @@ describe('Postman apis', () => {
 			apiId: 'test-apiId',
 			schemaId: 'test-schemaId',
 			filePath: 'test-filePath',
+			versionId: 'test-versionId',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -564,7 +615,7 @@ describe('Postman apis', () => {
 			schemaId: 'test-schemaId',
 			'file-path': 'test-filePath',
 		});
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({ versionId: 'test-versionId' });
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -576,6 +627,7 @@ describe('Postman apis', () => {
 				apiId: 'test-apiId',
 				schemaId: 'test-schemaId',
 				filePath: 'test-filePath',
+				versionId: 'test-versionId',
 			}).success,
 		).toBe(true);
 	});
@@ -595,6 +647,9 @@ describe('Postman apis', () => {
 		const result = await plugin.endpoints!.apis.getSchemaFiles(mockCtx, {
 			apiId: 'test-apiId',
 			schemaId: 'test-schemaId',
+			versionId: 'test-versionId',
+			limit: 1,
+			cursor: 'test-cursor',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -604,7 +659,11 @@ describe('Postman apis', () => {
 			apiId: 'test-apiId',
 			schemaId: 'test-schemaId',
 		});
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			versionId: 'test-versionId',
+			limit: 1,
+			cursor: 'test-cursor',
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -614,6 +673,9 @@ describe('Postman apis', () => {
 			PostmanEndpointInputSchemas.apisGetSchemaFiles.safeParse({
 				apiId: 'test-apiId',
 				schemaId: 'test-schemaId',
+				versionId: 'test-versionId',
+				limit: 1,
+				cursor: 'test-cursor',
 			}).success,
 		).toBe(true);
 	});
@@ -633,6 +695,8 @@ describe('Postman apis', () => {
 		const result = await plugin.endpoints!.apis.create(mockCtx, {
 			workspaceId: 'test-workspaceId',
 			name: 'test-name',
+			summary: 'test-summary',
+			description: 'test-description',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -640,7 +704,11 @@ describe('Postman apis', () => {
 		expect(captured?.url).toBe('/apis');
 		expect(captured?.path).toBeUndefined();
 		expect(captured?.query).toMatchObject({ workspaceId: 'test-workspaceId' });
-		expect(captured?.body).toMatchObject({ name: 'test-name' });
+		expect(captured?.body).toMatchObject({
+			name: 'test-name',
+			summary: 'test-summary',
+			description: 'test-description',
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.apisCreate.safeParse(result).success,
@@ -649,6 +717,8 @@ describe('Postman apis', () => {
 			PostmanEndpointInputSchemas.apisCreate.safeParse({
 				workspaceId: 'test-workspaceId',
 				name: 'test-name',
+				summary: 'test-summary',
+				description: 'test-description',
 			}).success,
 		).toBe(true);
 	});
@@ -671,6 +741,9 @@ describe('Postman apis', () => {
 				apiId: 'test-apiId',
 				schemaId: 'test-schemaId',
 				filePath: 'test-filePath',
+				name: 'test-name',
+				root: {},
+				content: 'test-content',
 			},
 		);
 
@@ -685,7 +758,11 @@ describe('Postman apis', () => {
 			'file-path': 'test-filePath',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			name: 'test-name',
+			root: {},
+			content: 'test-content',
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.apisCreateOrUpdateSchemaFile.safeParse(
@@ -697,6 +774,9 @@ describe('Postman apis', () => {
 				apiId: 'test-apiId',
 				schemaId: 'test-schemaId',
 				filePath: 'test-filePath',
+				name: 'test-name',
+				root: {},
+				content: 'test-content',
 			}).success,
 		).toBe(true);
 	});
@@ -827,6 +907,8 @@ describe('Postman apis', () => {
 		const result = await plugin.endpoints!.apis.update(mockCtx, {
 			apiId: 'test-apiId',
 			name: 'test-name',
+			summary: 'test-summary',
+			description: 'test-description',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -834,7 +916,11 @@ describe('Postman apis', () => {
 		expect(captured?.url).toBe('/apis/{apiId}');
 		expect(captured?.path).toMatchObject({ apiId: 'test-apiId' });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ name: 'test-name' });
+		expect(captured?.body).toMatchObject({
+			name: 'test-name',
+			summary: 'test-summary',
+			description: 'test-description',
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.apisUpdate.safeParse(result).success,
@@ -843,6 +929,8 @@ describe('Postman apis', () => {
 			PostmanEndpointInputSchemas.apisUpdate.safeParse({
 				apiId: 'test-apiId',
 				name: 'test-name',
+				summary: 'test-summary',
+				description: 'test-description',
 			}).success,
 		).toBe(true);
 	});
@@ -863,6 +951,7 @@ describe('Postman apis', () => {
 			apiId: 'test-apiId',
 			commentId: 1,
 			body: 'test-body',
+			tags: {},
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -870,7 +959,7 @@ describe('Postman apis', () => {
 		expect(captured?.url).toBe('/apis/{apiId}/comments/{commentId}');
 		expect(captured?.path).toMatchObject({ apiId: 'test-apiId', commentId: 1 });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ body: 'test-body' });
+		expect(captured?.body).toMatchObject({ body: 'test-body', tags: {} });
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.apisUpdateComment.safeParse(result).success,
@@ -880,6 +969,440 @@ describe('Postman apis', () => {
 				apiId: 'test-apiId',
 				commentId: 1,
 				body: 'test-body',
+				tags: {},
+			}).success,
+		).toBe(true);
+	});
+
+	it('apis.createRelations Create new relations for an API version', async () => {
+		const canned = {};
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (config: OpenAPIConfig, options: ApiRequestOptions) => {
+				expect(config.BASE).toBe('https://api.getpostman.com');
+				captured = options;
+				return canned;
+			},
+		);
+
+		const plugin = postman();
+		const result = await plugin.endpoints!.apis.createRelations(mockCtx, {
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+			contracttest: ['test-contracttestItem'],
+			testsuite: ['test-testsuiteItem'],
+			documentation: ['test-documentationItem'],
+			mock: ['test-mockItem'],
+			monitor: ['test-monitorItem'],
+			environment: ['test-environmentItem'],
+			unclassified: ['test-unclassifiedItem'],
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(captured?.method).toBe('POST');
+		expect(captured?.url).toBe(
+			'/apis/{apiId}/versions/{apiVersionId}/relations',
+		);
+		expect(captured?.path).toMatchObject({
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+		expect(captured?.query).toBeUndefined();
+		expect(captured?.body).toMatchObject({
+			contracttest: ['test-contracttestItem'],
+			testsuite: ['test-testsuiteItem'],
+			documentation: ['test-documentationItem'],
+			mock: ['test-mockItem'],
+			monitor: ['test-monitorItem'],
+			environment: ['test-environmentItem'],
+			unclassified: ['test-unclassifiedItem'],
+		});
+		expect(result).toEqual(canned);
+		expect(
+			PostmanEndpointOutputSchemas.apisCreateRelations.safeParse(result)
+				.success,
+		).toBe(true);
+		expect(
+			PostmanEndpointInputSchemas.apisCreateRelations.safeParse({
+				apiId: 'test-apiId',
+				apiVersionId: 'test-apiVersionId',
+				contracttest: ['test-contracttestItem'],
+				testsuite: ['test-testsuiteItem'],
+				documentation: ['test-documentationItem'],
+				mock: ['test-mockItem'],
+				monitor: ['test-monitorItem'],
+				environment: ['test-environmentItem'],
+				unclassified: ['test-unclassifiedItem'],
+			}).success,
+		).toBe(true);
+	});
+
+	it('apis.getLinkedRelations Retrieve all linked relations for a specific API version', async () => {
+		const canned = {};
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (config: OpenAPIConfig, options: ApiRequestOptions) => {
+				expect(config.BASE).toBe('https://api.getpostman.com');
+				captured = options;
+				return canned;
+			},
+		);
+
+		const plugin = postman();
+		const result = await plugin.endpoints!.apis.getLinkedRelations(mockCtx, {
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(captured?.method).toBe('GET');
+		expect(captured?.url).toBe(
+			'/apis/{apiId}/versions/{apiVersionId}/relations',
+		);
+		expect(captured?.path).toMatchObject({
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+		expect(captured?.query).toBeUndefined();
+		expect(captured?.body).toBeUndefined();
+		expect(result).toEqual(canned);
+		expect(
+			PostmanEndpointOutputSchemas.apisGetLinkedRelations.safeParse(result)
+				.success,
+		).toBe(true);
+		expect(
+			PostmanEndpointInputSchemas.apisGetLinkedRelations.safeParse({
+				apiId: 'test-apiId',
+				apiVersionId: 'test-apiVersionId',
+			}).success,
+		).toBe(true);
+	});
+
+	it('apis.getTestRelations Retrieve all test relations for a specific API version (deprecated in Postman v1', async () => {
+		const canned = {};
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (config: OpenAPIConfig, options: ApiRequestOptions) => {
+				expect(config.BASE).toBe('https://api.getpostman.com');
+				captured = options;
+				return canned;
+			},
+		);
+
+		const plugin = postman();
+		const result = await plugin.endpoints!.apis.getTestRelations(mockCtx, {
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(captured?.method).toBe('GET');
+		expect(captured?.url).toBe('/apis/{apiId}/versions/{apiVersionId}/test');
+		expect(captured?.path).toMatchObject({
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+		expect(captured?.query).toBeUndefined();
+		expect(captured?.body).toBeUndefined();
+		expect(result).toEqual(canned);
+		expect(
+			PostmanEndpointOutputSchemas.apisGetTestRelations.safeParse(result)
+				.success,
+		).toBe(true);
+		expect(
+			PostmanEndpointInputSchemas.apisGetTestRelations.safeParse({
+				apiId: 'test-apiId',
+				apiVersionId: 'test-apiVersionId',
+			}).success,
+		).toBe(true);
+	});
+
+	it('apis.getContractTestRelations Retrieve contract test relations for a specific API version (Deprecated by Postm', async () => {
+		const canned = {};
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (config: OpenAPIConfig, options: ApiRequestOptions) => {
+				expect(config.BASE).toBe('https://api.getpostman.com');
+				captured = options;
+				return canned;
+			},
+		);
+
+		const plugin = postman();
+		const result = await plugin.endpoints!.apis.getContractTestRelations(
+			mockCtx,
+			{ apiId: 'test-apiId', apiVersionId: 'test-apiVersionId' },
+		);
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(captured?.method).toBe('GET');
+		expect(captured?.url).toBe(
+			'/apis/{apiId}/versions/{apiVersionId}/contracttest',
+		);
+		expect(captured?.path).toMatchObject({
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+		expect(captured?.query).toBeUndefined();
+		expect(captured?.body).toBeUndefined();
+		expect(result).toEqual(canned);
+		expect(
+			PostmanEndpointOutputSchemas.apisGetContractTestRelations.safeParse(
+				result,
+			).success,
+		).toBe(true);
+		expect(
+			PostmanEndpointInputSchemas.apisGetContractTestRelations.safeParse({
+				apiId: 'test-apiId',
+				apiVersionId: 'test-apiVersionId',
+			}).success,
+		).toBe(true);
+	});
+
+	it('apis.getIntegrationTestRelations Retrieve integration test relations for a specific API version (Deprecated by Po', async () => {
+		const canned = {};
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (config: OpenAPIConfig, options: ApiRequestOptions) => {
+				expect(config.BASE).toBe('https://api.getpostman.com');
+				captured = options;
+				return canned;
+			},
+		);
+
+		const plugin = postman();
+		const result = await plugin.endpoints!.apis.getIntegrationTestRelations(
+			mockCtx,
+			{ apiId: 'test-apiId', apiVersionId: 'test-apiVersionId' },
+		);
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(captured?.method).toBe('GET');
+		expect(captured?.url).toBe(
+			'/apis/{apiId}/versions/{apiVersionId}/integrationtest',
+		);
+		expect(captured?.path).toMatchObject({
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+		expect(captured?.query).toBeUndefined();
+		expect(captured?.body).toBeUndefined();
+		expect(result).toEqual(canned);
+		expect(
+			PostmanEndpointOutputSchemas.apisGetIntegrationTestRelations.safeParse(
+				result,
+			).success,
+		).toBe(true);
+		expect(
+			PostmanEndpointInputSchemas.apisGetIntegrationTestRelations.safeParse({
+				apiId: 'test-apiId',
+				apiVersionId: 'test-apiVersionId',
+			}).success,
+		).toBe(true);
+	});
+
+	it('apis.getTestSuiteRelations Retrieve the test suites associated with an API version (deprecated, legacy v9 A', async () => {
+		const canned = {};
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (config: OpenAPIConfig, options: ApiRequestOptions) => {
+				expect(config.BASE).toBe('https://api.getpostman.com');
+				captured = options;
+				return canned;
+			},
+		);
+
+		const plugin = postman();
+		const result = await plugin.endpoints!.apis.getTestSuiteRelations(mockCtx, {
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(captured?.method).toBe('GET');
+		expect(captured?.url).toBe(
+			'/apis/{apiId}/versions/{apiVersionId}/testsuite',
+		);
+		expect(captured?.path).toMatchObject({
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+		expect(captured?.query).toBeUndefined();
+		expect(captured?.body).toBeUndefined();
+		expect(result).toEqual(canned);
+		expect(
+			PostmanEndpointOutputSchemas.apisGetTestSuiteRelations.safeParse(result)
+				.success,
+		).toBe(true);
+		expect(
+			PostmanEndpointInputSchemas.apisGetTestSuiteRelations.safeParse({
+				apiId: 'test-apiId',
+				apiVersionId: 'test-apiVersionId',
+			}).success,
+		).toBe(true);
+	});
+
+	it('apis.getDocumentationRelations Get documentation relations for a specific API version (deprecated in Postman v1', async () => {
+		const canned = {};
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (config: OpenAPIConfig, options: ApiRequestOptions) => {
+				expect(config.BASE).toBe('https://api.getpostman.com');
+				captured = options;
+				return canned;
+			},
+		);
+
+		const plugin = postman();
+		const result = await plugin.endpoints!.apis.getDocumentationRelations(
+			mockCtx,
+			{ apiId: 'test-apiId', apiVersionId: 'test-apiVersionId' },
+		);
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(captured?.method).toBe('GET');
+		expect(captured?.url).toBe(
+			'/apis/{apiId}/versions/{apiVersionId}/documentation',
+		);
+		expect(captured?.path).toMatchObject({
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+		expect(captured?.query).toBeUndefined();
+		expect(captured?.body).toBeUndefined();
+		expect(result).toEqual(canned);
+		expect(
+			PostmanEndpointOutputSchemas.apisGetDocumentationRelations.safeParse(
+				result,
+			).success,
+		).toBe(true);
+		expect(
+			PostmanEndpointInputSchemas.apisGetDocumentationRelations.safeParse({
+				apiId: 'test-apiId',
+				apiVersionId: 'test-apiVersionId',
+			}).success,
+		).toBe(true);
+	});
+
+	it('apis.getEnvironmentRelations Get environment relations for a specific API version (deprecated in Postman v10 ', async () => {
+		const canned = {};
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (config: OpenAPIConfig, options: ApiRequestOptions) => {
+				expect(config.BASE).toBe('https://api.getpostman.com');
+				captured = options;
+				return canned;
+			},
+		);
+
+		const plugin = postman();
+		const result = await plugin.endpoints!.apis.getEnvironmentRelations(
+			mockCtx,
+			{ apiId: 'test-apiId', apiVersionId: 'test-apiVersionId' },
+		);
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(captured?.method).toBe('GET');
+		expect(captured?.url).toBe(
+			'/apis/{apiId}/versions/{apiVersionId}/environment',
+		);
+		expect(captured?.path).toMatchObject({
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+		expect(captured?.query).toBeUndefined();
+		expect(captured?.body).toBeUndefined();
+		expect(result).toEqual(canned);
+		expect(
+			PostmanEndpointOutputSchemas.apisGetEnvironmentRelations.safeParse(result)
+				.success,
+		).toBe(true);
+		expect(
+			PostmanEndpointInputSchemas.apisGetEnvironmentRelations.safeParse({
+				apiId: 'test-apiId',
+				apiVersionId: 'test-apiVersionId',
+			}).success,
+		).toBe(true);
+	});
+
+	it('apis.listReleases List releases for an API version (deprecated in Postman v10 and higher) (Depreca', async () => {
+		const canned = {};
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (config: OpenAPIConfig, options: ApiRequestOptions) => {
+				expect(config.BASE).toBe('https://api.getpostman.com');
+				captured = options;
+				return canned;
+			},
+		);
+
+		const plugin = postman();
+		const result = await plugin.endpoints!.apis.listReleases(mockCtx, {
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(captured?.method).toBe('GET');
+		expect(captured?.url).toBe(
+			'/apis/{apiId}/versions/{apiVersionId}/releases',
+		);
+		expect(captured?.path).toMatchObject({
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+		expect(captured?.query).toBeUndefined();
+		expect(captured?.body).toBeUndefined();
+		expect(result).toEqual(canned);
+		expect(
+			PostmanEndpointOutputSchemas.apisListReleases.safeParse(result).success,
+		).toBe(true);
+		expect(
+			PostmanEndpointInputSchemas.apisListReleases.safeParse({
+				apiId: 'test-apiId',
+				apiVersionId: 'test-apiVersionId',
+			}).success,
+		).toBe(true);
+	});
+
+	it('apis.getUnclassifiedRelations Get unclassified relations for a specific API version', async () => {
+		const canned = {};
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (config: OpenAPIConfig, options: ApiRequestOptions) => {
+				expect(config.BASE).toBe('https://api.getpostman.com');
+				captured = options;
+				return canned;
+			},
+		);
+
+		const plugin = postman();
+		const result = await plugin.endpoints!.apis.getUnclassifiedRelations(
+			mockCtx,
+			{ apiId: 'test-apiId', apiVersionId: 'test-apiVersionId' },
+		);
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(captured?.method).toBe('GET');
+		expect(captured?.url).toBe(
+			'/apis/{apiId}/versions/{apiVersionId}/unclassified',
+		);
+		expect(captured?.path).toMatchObject({
+			apiId: 'test-apiId',
+			apiVersionId: 'test-apiVersionId',
+		});
+		expect(captured?.query).toBeUndefined();
+		expect(captured?.body).toBeUndefined();
+		expect(result).toEqual(canned);
+		expect(
+			PostmanEndpointOutputSchemas.apisGetUnclassifiedRelations.safeParse(
+				result,
+			).success,
+		).toBe(true);
+		expect(
+			PostmanEndpointInputSchemas.apisGetUnclassifiedRelations.safeParse({
+				apiId: 'test-apiId',
+				apiVersionId: 'test-apiVersionId',
 			}).success,
 		).toBe(true);
 	});
@@ -935,13 +1458,19 @@ describe('Postman specs', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.specs.list(mockCtx, {
 			workspaceId: 'test-workspaceId',
+			cursor: 'test-cursor',
+			limit: 1,
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/specs');
 		expect(captured?.path).toBeUndefined();
-		expect(captured?.query).toMatchObject({ workspaceId: 'test-workspaceId' });
+		expect(captured?.query).toMatchObject({
+			workspaceId: 'test-workspaceId',
+			cursor: 'test-cursor',
+			limit: 1,
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -950,12 +1479,14 @@ describe('Postman specs', () => {
 		expect(
 			PostmanEndpointInputSchemas.specsList.safeParse({
 				workspaceId: 'test-workspaceId',
+				cursor: 'test-cursor',
+				limit: 1,
 			}).success,
 		).toBe(true);
 	});
 
 	it("specs.getDefinition Get a spec's definition", async () => {
-		const canned = {};
+		const canned = { 'test-key': 'test-value' };
 		let captured: ApiRequestOptions | undefined;
 		mockRequest.mockImplementationOnce(
 			async (config: OpenAPIConfig, options: ApiRequestOptions) => {
@@ -1039,7 +1570,12 @@ describe('Postman specs', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.specs.getGeneratedCollections(
 			mockCtx,
-			{ specId: 'test-specId', elementType: 'collection' },
+			{
+				specId: 'test-specId',
+				elementType: 'collection',
+				limit: 1,
+				cursor: 'test-cursor',
+			},
 		);
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -1049,7 +1585,7 @@ describe('Postman specs', () => {
 			specId: 'test-specId',
 			elementType: 'collection',
 		});
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({ limit: 1, cursor: 'test-cursor' });
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -1061,6 +1597,8 @@ describe('Postman specs', () => {
 			PostmanEndpointInputSchemas.specsGetGeneratedCollections.safeParse({
 				specId: 'test-specId',
 				elementType: 'collection',
+				limit: 1,
+				cursor: 'test-cursor',
 			}).success,
 		).toBe(true);
 	});
@@ -1350,6 +1888,9 @@ describe('Postman specs', () => {
 		const result = await plugin.endpoints!.specs.updateFile(mockCtx, {
 			specId: 'test-specId',
 			filePath: 'test-filePath',
+			name: 'test-name',
+			type: 'DEFAULT',
+			content: 'test-content',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -1360,7 +1901,11 @@ describe('Postman specs', () => {
 			filePath: 'test-filePath',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			name: 'test-name',
+			type: 'DEFAULT',
+			content: 'test-content',
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.specsUpdateFile.safeParse(result).success,
@@ -1369,6 +1914,9 @@ describe('Postman specs', () => {
 			PostmanEndpointInputSchemas.specsUpdateFile.safeParse({
 				specId: 'test-specId',
 				filePath: 'test-filePath',
+				name: 'test-name',
+				type: 'DEFAULT',
+				content: 'test-content',
 			}).success,
 		).toBe(true);
 	});
@@ -1425,20 +1973,35 @@ describe('Postman collections', () => {
 		);
 
 		const plugin = postman();
-		const result = await plugin.endpoints!.collections.list(mockCtx, {});
+		const result = await plugin.endpoints!.collections.list(mockCtx, {
+			workspace: 'test-workspace',
+			name: 'test-name',
+			limit: 1,
+			offset: 1,
+		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/collections');
 		expect(captured?.path).toBeUndefined();
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			workspace: 'test-workspace',
+			name: 'test-name',
+			limit: 1,
+			offset: 1,
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsList.safeParse(result).success,
 		).toBe(true);
 		expect(
-			PostmanEndpointInputSchemas.collectionsList.safeParse({}).success,
+			PostmanEndpointInputSchemas.collectionsList.safeParse({
+				workspace: 'test-workspace',
+				name: 'test-name',
+				limit: 1,
+				offset: 1,
+			}).success,
 		).toBe(true);
 	});
 
@@ -1454,13 +2017,21 @@ describe('Postman collections', () => {
 		);
 
 		const plugin = postman();
-		const result = await plugin.endpoints!.collections.listForked(mockCtx, {});
+		const result = await plugin.endpoints!.collections.listForked(mockCtx, {
+			cursor: 'test-cursor',
+			limit: 1,
+			direction: 'asc',
+		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/collections/collection-forks');
 		expect(captured?.path).toBeUndefined();
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			cursor: 'test-cursor',
+			limit: 1,
+			direction: 'asc',
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -1468,7 +2039,11 @@ describe('Postman collections', () => {
 				.success,
 		).toBe(true);
 		expect(
-			PostmanEndpointInputSchemas.collectionsListForked.safeParse({}).success,
+			PostmanEndpointInputSchemas.collectionsListForked.safeParse({
+				cursor: 'test-cursor',
+				limit: 1,
+				direction: 'asc',
+			}).success,
 		).toBe(true);
 	});
 
@@ -1624,13 +2199,20 @@ describe('Postman collections', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.collections.getForks(mockCtx, {
 			collectionId: 'test-collectionId',
+			cursor: 'test-cursor',
+			limit: 1,
+			direction: 'asc',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/collections/{collectionId}/forks');
 		expect(captured?.path).toMatchObject({ collectionId: 'test-collectionId' });
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			cursor: 'test-cursor',
+			limit: 1,
+			direction: 'asc',
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -1640,6 +2222,9 @@ describe('Postman collections', () => {
 		expect(
 			PostmanEndpointInputSchemas.collectionsGetForks.safeParse({
 				collectionId: 'test-collectionId',
+				cursor: 'test-cursor',
+				limit: 1,
+				direction: 'asc',
 			}).success,
 		).toBe(true);
 	});
@@ -1737,6 +2322,9 @@ describe('Postman collections', () => {
 		const result = await plugin.endpoints!.collections.getFolder(mockCtx, {
 			folderId: 'test-folderId',
 			collectionId: 'test-collectionId',
+			ids: true,
+			uid: true,
+			populate: true,
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -1748,7 +2336,11 @@ describe('Postman collections', () => {
 			folderId: 'test-folderId',
 			collectionId: 'test-collectionId',
 		});
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			ids: true,
+			uid: true,
+			populate: true,
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -1759,6 +2351,9 @@ describe('Postman collections', () => {
 			PostmanEndpointInputSchemas.collectionsGetFolder.safeParse({
 				folderId: 'test-folderId',
 				collectionId: 'test-collectionId',
+				ids: true,
+				uid: true,
+				populate: true,
 			}).success,
 		).toBe(true);
 	});
@@ -1862,6 +2457,9 @@ describe('Postman collections', () => {
 		const result = await plugin.endpoints!.collections.getRequest(mockCtx, {
 			requestId: 'test-requestId',
 			collectionId: 'test-collectionId',
+			ids: true,
+			uid: true,
+			populate: true,
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -1873,7 +2471,11 @@ describe('Postman collections', () => {
 			requestId: 'test-requestId',
 			collectionId: 'test-collectionId',
 		});
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			ids: true,
+			uid: true,
+			populate: true,
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -1884,6 +2486,9 @@ describe('Postman collections', () => {
 			PostmanEndpointInputSchemas.collectionsGetRequest.safeParse({
 				requestId: 'test-requestId',
 				collectionId: 'test-collectionId',
+				ids: true,
+				uid: true,
+				populate: true,
 			}).success,
 		).toBe(true);
 	});
@@ -1945,6 +2550,9 @@ describe('Postman collections', () => {
 		const result = await plugin.endpoints!.collections.getResponse(mockCtx, {
 			responseId: 'test-responseId',
 			collectionId: 'test-collectionId',
+			ids: true,
+			uid: true,
+			populate: true,
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -1956,7 +2564,11 @@ describe('Postman collections', () => {
 			responseId: 'test-responseId',
 			collectionId: 'test-collectionId',
 		});
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			ids: true,
+			uid: true,
+			populate: true,
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -1967,6 +2579,9 @@ describe('Postman collections', () => {
 			PostmanEndpointInputSchemas.collectionsGetResponse.safeParse({
 				responseId: 'test-responseId',
 				collectionId: 'test-collectionId',
+				ids: true,
+				uid: true,
+				populate: true,
 			}).success,
 		).toBe(true);
 	});
@@ -2020,6 +2635,14 @@ describe('Postman collections', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.collections.create(mockCtx, {
 			workspace: 'test-workspace',
+			collection: {
+				info: {
+					name: 'test-name',
+					schema:
+						'https://schema.postman.com/json/collection/v2.1.0/collection.json',
+				},
+				item: [{}],
+			},
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -2027,7 +2650,16 @@ describe('Postman collections', () => {
 		expect(captured?.url).toBe('/collections');
 		expect(captured?.path).toBeUndefined();
 		expect(captured?.query).toMatchObject({ workspace: 'test-workspace' });
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			collection: {
+				info: {
+					name: 'test-name',
+					schema:
+						'https://schema.postman.com/json/collection/v2.1.0/collection.json',
+				},
+				item: [{}],
+			},
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsCreate.safeParse(result).success,
@@ -2035,6 +2667,14 @@ describe('Postman collections', () => {
 		expect(
 			PostmanEndpointInputSchemas.collectionsCreate.safeParse({
 				workspace: 'test-workspace',
+				collection: {
+					info: {
+						name: 'test-name',
+						schema:
+							'https://schema.postman.com/json/collection/v2.1.0/collection.json',
+					},
+					item: [{}],
+				},
 			}).success,
 		).toBe(true);
 	});
@@ -2054,6 +2694,8 @@ describe('Postman collections', () => {
 		const result = await plugin.endpoints!.collections.createComment(mockCtx, {
 			collectionId: 'test-collectionId',
 			body: 'test-body',
+			threadId: 1,
+			tags: {},
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -2061,7 +2703,11 @@ describe('Postman collections', () => {
 		expect(captured?.url).toBe('/collections/{collectionId}/comments');
 		expect(captured?.path).toMatchObject({ collectionId: 'test-collectionId' });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ body: 'test-body' });
+		expect(captured?.body).toMatchObject({
+			body: 'test-body',
+			threadId: 1,
+			tags: {},
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsCreateComment.safeParse(result)
@@ -2071,6 +2717,8 @@ describe('Postman collections', () => {
 			PostmanEndpointInputSchemas.collectionsCreateComment.safeParse({
 				collectionId: 'test-collectionId',
 				body: 'test-body',
+				threadId: 1,
+				tags: {},
 			}).success,
 		).toBe(true);
 	});
@@ -2089,6 +2737,8 @@ describe('Postman collections', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.collections.createFolder(mockCtx, {
 			collectionId: 'test-collectionId',
+			name: 'test-name',
+			folder: 'test-folder',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -2096,7 +2746,10 @@ describe('Postman collections', () => {
 		expect(captured?.url).toBe('/collections/{collectionId}/folders');
 		expect(captured?.path).toMatchObject({ collectionId: 'test-collectionId' });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			name: 'test-name',
+			folder: 'test-folder',
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsCreateFolder.safeParse(result)
@@ -2105,6 +2758,8 @@ describe('Postman collections', () => {
 		expect(
 			PostmanEndpointInputSchemas.collectionsCreateFolder.safeParse({
 				collectionId: 'test-collectionId',
+				name: 'test-name',
+				folder: 'test-folder',
 			}).success,
 		).toBe(true);
 	});
@@ -2127,6 +2782,8 @@ describe('Postman collections', () => {
 				collectionId: 'test-collectionId',
 				folderId: 'test-folderId',
 				body: 'test-body',
+				threadId: 1,
+				tags: {},
 			},
 		);
 
@@ -2140,7 +2797,11 @@ describe('Postman collections', () => {
 			folderId: 'test-folderId',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ body: 'test-body' });
+		expect(captured?.body).toMatchObject({
+			body: 'test-body',
+			threadId: 1,
+			tags: {},
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsCreateFolderComment.safeParse(
@@ -2152,6 +2813,8 @@ describe('Postman collections', () => {
 				collectionId: 'test-collectionId',
 				folderId: 'test-folderId',
 				body: 'test-body',
+				threadId: 1,
+				tags: {},
 			}).success,
 		).toBe(true);
 	});
@@ -2173,6 +2836,7 @@ describe('Postman collections', () => {
 			{
 				collectionId: 'test-collectionId',
 				title: 'test-title',
+				description: 'test-description',
 				reviewers: ['test-reviewersItem'],
 				destinationId: 'test-destinationId',
 			},
@@ -2185,6 +2849,7 @@ describe('Postman collections', () => {
 		expect(captured?.query).toBeUndefined();
 		expect(captured?.body).toMatchObject({
 			title: 'test-title',
+			description: 'test-description',
 			reviewers: ['test-reviewersItem'],
 			destinationId: 'test-destinationId',
 		});
@@ -2198,6 +2863,7 @@ describe('Postman collections', () => {
 			PostmanEndpointInputSchemas.collectionsCreatePullRequest.safeParse({
 				collectionId: 'test-collectionId',
 				title: 'test-title',
+				description: 'test-description',
 				reviewers: ['test-reviewersItem'],
 				destinationId: 'test-destinationId',
 			}).success,
@@ -2222,6 +2888,8 @@ describe('Postman collections', () => {
 				collectionId: 'test-collectionId',
 				requestId: 'test-requestId',
 				body: 'test-body',
+				threadId: 1,
+				tags: {},
 			},
 		);
 
@@ -2235,7 +2903,11 @@ describe('Postman collections', () => {
 			requestId: 'test-requestId',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ body: 'test-body' });
+		expect(captured?.body).toMatchObject({
+			body: 'test-body',
+			threadId: 1,
+			tags: {},
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsCreateRequestComment.safeParse(
@@ -2247,6 +2919,8 @@ describe('Postman collections', () => {
 				collectionId: 'test-collectionId',
 				requestId: 'test-requestId',
 				body: 'test-body',
+				threadId: 1,
+				tags: {},
 			}).success,
 		).toBe(true);
 	});
@@ -2266,6 +2940,23 @@ describe('Postman collections', () => {
 		const result = await plugin.endpoints!.collections.createResponse(mockCtx, {
 			collectionId: 'test-collectionId',
 			request: 'test-request',
+			name: 'test-name',
+			description: 'test-description',
+			url: 'test-url',
+			method: 'GET',
+			headers: [{ key: 'test-key', value: 'test-value' }],
+			dataMode: 'raw',
+			rawModeData: 'test-rawModeData',
+			dataOptions: {},
+			responseCode: {},
+			status: 'test-status',
+			time: 'test-time',
+			cookies: 'test-cookies',
+			mime: 'test-mime',
+			text: 'test-text',
+			language: 'test-language',
+			rawDataType: 'test-rawDataType',
+			requestObject: 'test-requestObject',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -2273,7 +2964,25 @@ describe('Postman collections', () => {
 		expect(captured?.url).toBe('/collections/{collectionId}/responses');
 		expect(captured?.path).toMatchObject({ collectionId: 'test-collectionId' });
 		expect(captured?.query).toMatchObject({ request: 'test-request' });
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			name: 'test-name',
+			description: 'test-description',
+			url: 'test-url',
+			method: 'GET',
+			headers: [{ key: 'test-key', value: 'test-value' }],
+			dataMode: 'raw',
+			rawModeData: 'test-rawModeData',
+			dataOptions: {},
+			responseCode: {},
+			status: 'test-status',
+			time: 'test-time',
+			cookies: 'test-cookies',
+			mime: 'test-mime',
+			text: 'test-text',
+			language: 'test-language',
+			rawDataType: 'test-rawDataType',
+			requestObject: 'test-requestObject',
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsCreateResponse.safeParse(result)
@@ -2283,6 +2992,23 @@ describe('Postman collections', () => {
 			PostmanEndpointInputSchemas.collectionsCreateResponse.safeParse({
 				collectionId: 'test-collectionId',
 				request: 'test-request',
+				name: 'test-name',
+				description: 'test-description',
+				url: 'test-url',
+				method: 'GET',
+				headers: [{ key: 'test-key', value: 'test-value' }],
+				dataMode: 'raw',
+				rawModeData: 'test-rawModeData',
+				dataOptions: {},
+				responseCode: {},
+				status: 'test-status',
+				time: 'test-time',
+				cookies: 'test-cookies',
+				mime: 'test-mime',
+				text: 'test-text',
+				language: 'test-language',
+				rawDataType: 'test-rawDataType',
+				requestObject: 'test-requestObject',
 			}).success,
 		).toBe(true);
 	});
@@ -2305,6 +3031,8 @@ describe('Postman collections', () => {
 				collectionId: 'test-collectionId',
 				responseId: 'test-responseId',
 				body: 'test-body',
+				threadId: 1,
+				tags: {},
 			},
 		);
 
@@ -2318,7 +3046,11 @@ describe('Postman collections', () => {
 			responseId: 'test-responseId',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ body: 'test-body' });
+		expect(captured?.body).toMatchObject({
+			body: 'test-body',
+			threadId: 1,
+			tags: {},
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsCreateResponseComment.safeParse(
@@ -2330,6 +3062,8 @@ describe('Postman collections', () => {
 				collectionId: 'test-collectionId',
 				responseId: 'test-responseId',
 				body: 'test-body',
+				threadId: 1,
+				tags: {},
 			}).success,
 		).toBe(true);
 	});
@@ -2649,6 +3383,7 @@ describe('Postman collections', () => {
 		const result = await plugin.endpoints!.collections.duplicate(mockCtx, {
 			collectionId: 'test-collectionId',
 			workspace: 'test-workspace',
+			suffix: 'test-suffix',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -2656,7 +3391,10 @@ describe('Postman collections', () => {
 		expect(captured?.url).toBe('/collections/{collectionId}/duplicates');
 		expect(captured?.path).toMatchObject({ collectionId: 'test-collectionId' });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ workspace: 'test-workspace' });
+		expect(captured?.body).toMatchObject({
+			workspace: 'test-workspace',
+			suffix: 'test-suffix',
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsDuplicate.safeParse(result)
@@ -2666,6 +3404,7 @@ describe('Postman collections', () => {
 			PostmanEndpointInputSchemas.collectionsDuplicate.safeParse({
 				collectionId: 'test-collectionId',
 				workspace: 'test-workspace',
+				suffix: 'test-suffix',
 			}).success,
 		).toBe(true);
 	});
@@ -2723,6 +3462,8 @@ describe('Postman collections', () => {
 			collectionUid: 'test-collectionUid',
 			elementType: 'spec',
 			name: 'test-name',
+			type: 'OPENAPI:2.0',
+			format: 'JSON',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -2735,7 +3476,11 @@ describe('Postman collections', () => {
 			elementType: 'spec',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ name: 'test-name' });
+		expect(captured?.body).toMatchObject({
+			name: 'test-name',
+			type: 'OPENAPI:2.0',
+			format: 'JSON',
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsGenerateSpec.safeParse(result)
@@ -2746,6 +3491,8 @@ describe('Postman collections', () => {
 				collectionUid: 'test-collectionUid',
 				elementType: 'spec',
 				name: 'test-name',
+				type: 'OPENAPI:2.0',
+				format: 'JSON',
 			}).success,
 		).toBe(true);
 	});
@@ -2764,14 +3511,42 @@ describe('Postman collections', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.collections.createRequest(mockCtx, {
 			collectionId: 'test-collectionId',
+			folder: 'test-folder',
+			name: 'test-name',
+			description: 'test-description',
+			method: 'GET',
+			url: 'test-url',
+			headerData: [{}],
+			queryParams: [{}],
+			dataMode: 'raw',
+			data: [{}],
+			rawModeData: 'test-rawModeData',
+			graphqlModeData: {},
+			dataOptions: {},
+			auth: { type: 'basic' },
+			events: [{}],
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('POST');
 		expect(captured?.url).toBe('/collections/{collectionId}/requests');
 		expect(captured?.path).toMatchObject({ collectionId: 'test-collectionId' });
-		expect(captured?.query).toMatchObject({});
-		expect(captured?.body).toBeDefined();
+		expect(captured?.query).toMatchObject({ folder: 'test-folder' });
+		expect(captured?.body).toMatchObject({
+			name: 'test-name',
+			description: 'test-description',
+			method: 'GET',
+			url: 'test-url',
+			headerData: [{}],
+			queryParams: [{}],
+			dataMode: 'raw',
+			data: [{}],
+			rawModeData: 'test-rawModeData',
+			graphqlModeData: {},
+			dataOptions: {},
+			auth: { type: 'basic' },
+			events: [{}],
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsCreateRequest.safeParse(result)
@@ -2780,6 +3555,20 @@ describe('Postman collections', () => {
 		expect(
 			PostmanEndpointInputSchemas.collectionsCreateRequest.safeParse({
 				collectionId: 'test-collectionId',
+				folder: 'test-folder',
+				name: 'test-name',
+				description: 'test-description',
+				method: 'GET',
+				url: 'test-url',
+				headerData: [{}],
+				queryParams: [{}],
+				dataMode: 'raw',
+				data: [{}],
+				rawModeData: 'test-rawModeData',
+				graphqlModeData: {},
+				dataOptions: {},
+				auth: { type: 'basic' },
+				events: [{}],
 			}).success,
 		).toBe(true);
 	});
@@ -2799,6 +3588,7 @@ describe('Postman collections', () => {
 		const result = await plugin.endpoints!.collections.mergeFork(mockCtx, {
 			destination: 'test-destination',
 			source: 'test-source',
+			strategy: 'deleteSource',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -2809,6 +3599,7 @@ describe('Postman collections', () => {
 		expect(captured?.body).toMatchObject({
 			destination: 'test-destination',
 			source: 'test-source',
+			strategy: 'deleteSource',
 		});
 		expect(result).toEqual(canned);
 		expect(
@@ -2819,6 +3610,7 @@ describe('Postman collections', () => {
 			PostmanEndpointInputSchemas.collectionsMergeFork.safeParse({
 				destination: 'test-destination',
 				source: 'test-source',
+				strategy: 'deleteSource',
 			}).success,
 		).toBe(true);
 	});
@@ -2871,6 +3663,14 @@ describe('Postman collections', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.collections.replace(mockCtx, {
 			collectionId: 'test-collectionId',
+			collection: {
+				info: {
+					name: 'test-name',
+					schema:
+						'https://schema.postman.com/json/collection/v2.1.0/collection.json',
+				},
+				item: [{ id: 'test-id' }],
+			},
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -2878,7 +3678,16 @@ describe('Postman collections', () => {
 		expect(captured?.url).toBe('/collections/{collectionId}');
 		expect(captured?.path).toMatchObject({ collectionId: 'test-collectionId' });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			collection: {
+				info: {
+					name: 'test-name',
+					schema:
+						'https://schema.postman.com/json/collection/v2.1.0/collection.json',
+				},
+				item: [{ id: 'test-id' }],
+			},
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsReplace.safeParse(result).success,
@@ -2886,6 +3695,14 @@ describe('Postman collections', () => {
 		expect(
 			PostmanEndpointInputSchemas.collectionsReplace.safeParse({
 				collectionId: 'test-collectionId',
+				collection: {
+					info: {
+						name: 'test-name',
+						schema:
+							'https://schema.postman.com/json/collection/v2.1.0/collection.json',
+					},
+					item: [{ id: 'test-id' }],
+				},
 			}).success,
 		).toBe(true);
 	});
@@ -3031,14 +3848,14 @@ describe('Postman collections', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.collections.transformToOpenapi(
 			mockCtx,
-			{ collectionId: 'test-collectionId' },
+			{ collectionId: 'test-collectionId', format: 'json' },
 		);
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/collections/{collectionId}/transformations');
 		expect(captured?.path).toMatchObject({ collectionId: 'test-collectionId' });
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({ format: 'json' });
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -3049,6 +3866,7 @@ describe('Postman collections', () => {
 		expect(
 			PostmanEndpointInputSchemas.collectionsTransformToOpenapi.safeParse({
 				collectionId: 'test-collectionId',
+				format: 'json',
 			}).success,
 		).toBe(true);
 	});
@@ -3067,6 +3885,7 @@ describe('Postman collections', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.collections.update(mockCtx, {
 			collectionId: 'test-collectionId',
+			collection: 'test-value',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -3074,7 +3893,7 @@ describe('Postman collections', () => {
 		expect(captured?.url).toBe('/collections/{collectionId}');
 		expect(captured?.path).toMatchObject({ collectionId: 'test-collectionId' });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({ collection: 'test-value' });
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsUpdate.safeParse(result).success,
@@ -3082,6 +3901,7 @@ describe('Postman collections', () => {
 		expect(
 			PostmanEndpointInputSchemas.collectionsUpdate.safeParse({
 				collectionId: 'test-collectionId',
+				collection: 'test-value',
 			}).success,
 		).toBe(true);
 	});
@@ -3101,6 +3921,19 @@ describe('Postman collections', () => {
 		const result = await plugin.endpoints!.collections.updateRequest(mockCtx, {
 			requestId: 'test-requestId',
 			collectionId: 'test-collectionId',
+			name: 'test-name',
+			description: 'test-description',
+			method: 'GET',
+			url: 'test-url',
+			headerData: [{}],
+			queryParams: [{}],
+			dataMode: 'raw',
+			data: [{}],
+			rawModeData: 'test-rawModeData',
+			graphqlModeData: {},
+			dataOptions: {},
+			auth: { type: 'basic' },
+			events: [{}],
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -3113,7 +3946,21 @@ describe('Postman collections', () => {
 			collectionId: 'test-collectionId',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			name: 'test-name',
+			description: 'test-description',
+			method: 'GET',
+			url: 'test-url',
+			headerData: [{}],
+			queryParams: [{}],
+			dataMode: 'raw',
+			data: [{}],
+			rawModeData: 'test-rawModeData',
+			graphqlModeData: {},
+			dataOptions: {},
+			auth: { type: 'basic' },
+			events: [{}],
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsUpdateRequest.safeParse(result)
@@ -3123,6 +3970,19 @@ describe('Postman collections', () => {
 			PostmanEndpointInputSchemas.collectionsUpdateRequest.safeParse({
 				requestId: 'test-requestId',
 				collectionId: 'test-collectionId',
+				name: 'test-name',
+				description: 'test-description',
+				method: 'GET',
+				url: 'test-url',
+				headerData: [{}],
+				queryParams: [{}],
+				dataMode: 'raw',
+				data: [{}],
+				rawModeData: 'test-rawModeData',
+				graphqlModeData: {},
+				dataOptions: {},
+				auth: { type: 'basic' },
+				events: [{}],
 			}).success,
 		).toBe(true);
 	});
@@ -3142,6 +4002,8 @@ describe('Postman collections', () => {
 		const result = await plugin.endpoints!.collections.updateFolder(mockCtx, {
 			folderId: 'test-folderId',
 			collectionId: 'test-collectionId',
+			name: 'test-name',
+			description: 'test-description',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -3154,7 +4016,10 @@ describe('Postman collections', () => {
 			collectionId: 'test-collectionId',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			name: 'test-name',
+			description: 'test-description',
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsUpdateFolder.safeParse(result)
@@ -3164,6 +4029,8 @@ describe('Postman collections', () => {
 			PostmanEndpointInputSchemas.collectionsUpdateFolder.safeParse({
 				folderId: 'test-folderId',
 				collectionId: 'test-collectionId',
+				name: 'test-name',
+				description: 'test-description',
 			}).success,
 		).toBe(true);
 	});
@@ -3187,6 +4054,7 @@ describe('Postman collections', () => {
 				folderId: 'test-folderId',
 				commentId: 1,
 				body: 'test-body',
+				tags: {},
 			},
 		);
 
@@ -3201,7 +4069,7 @@ describe('Postman collections', () => {
 			commentId: 1,
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ body: 'test-body' });
+		expect(captured?.body).toMatchObject({ body: 'test-body', tags: {} });
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsUpdateFolderComment.safeParse(
@@ -3214,6 +4082,7 @@ describe('Postman collections', () => {
 				folderId: 'test-folderId',
 				commentId: 1,
 				body: 'test-body',
+				tags: {},
 			}).success,
 		).toBe(true);
 	});
@@ -3237,6 +4106,7 @@ describe('Postman collections', () => {
 				requestId: 'test-requestId',
 				commentId: 1,
 				body: 'test-body',
+				tags: {},
 			},
 		);
 
@@ -3251,7 +4121,7 @@ describe('Postman collections', () => {
 			commentId: 1,
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ body: 'test-body' });
+		expect(captured?.body).toMatchObject({ body: 'test-body', tags: {} });
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsUpdateRequestComment.safeParse(
@@ -3264,6 +4134,7 @@ describe('Postman collections', () => {
 				requestId: 'test-requestId',
 				commentId: 1,
 				body: 'test-body',
+				tags: {},
 			}).success,
 		).toBe(true);
 	});
@@ -3283,6 +4154,23 @@ describe('Postman collections', () => {
 		const result = await plugin.endpoints!.collections.updateResponse(mockCtx, {
 			responseId: 'test-responseId',
 			collectionId: 'test-collectionId',
+			name: 'test-name',
+			description: 'test-description',
+			url: 'test-url',
+			method: 'GET',
+			headers: [{ key: 'test-key', value: 'test-value' }],
+			dataMode: 'raw',
+			rawModeData: 'test-rawModeData',
+			dataOptions: {},
+			responseCode: {},
+			status: 'test-status',
+			time: 'test-time',
+			cookies: 'test-cookies',
+			mime: 'test-mime',
+			text: 'test-text',
+			language: 'test-language',
+			rawDataType: 'test-rawDataType',
+			requestObject: 'test-requestObject',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -3295,7 +4183,25 @@ describe('Postman collections', () => {
 			collectionId: 'test-collectionId',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			name: 'test-name',
+			description: 'test-description',
+			url: 'test-url',
+			method: 'GET',
+			headers: [{ key: 'test-key', value: 'test-value' }],
+			dataMode: 'raw',
+			rawModeData: 'test-rawModeData',
+			dataOptions: {},
+			responseCode: {},
+			status: 'test-status',
+			time: 'test-time',
+			cookies: 'test-cookies',
+			mime: 'test-mime',
+			text: 'test-text',
+			language: 'test-language',
+			rawDataType: 'test-rawDataType',
+			requestObject: 'test-requestObject',
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsUpdateResponse.safeParse(result)
@@ -3305,6 +4211,23 @@ describe('Postman collections', () => {
 			PostmanEndpointInputSchemas.collectionsUpdateResponse.safeParse({
 				responseId: 'test-responseId',
 				collectionId: 'test-collectionId',
+				name: 'test-name',
+				description: 'test-description',
+				url: 'test-url',
+				method: 'GET',
+				headers: [{ key: 'test-key', value: 'test-value' }],
+				dataMode: 'raw',
+				rawModeData: 'test-rawModeData',
+				dataOptions: {},
+				responseCode: {},
+				status: 'test-status',
+				time: 'test-time',
+				cookies: 'test-cookies',
+				mime: 'test-mime',
+				text: 'test-text',
+				language: 'test-language',
+				rawDataType: 'test-rawDataType',
+				requestObject: 'test-requestObject',
 			}).success,
 		).toBe(true);
 	});
@@ -3328,6 +4251,7 @@ describe('Postman collections', () => {
 				responseId: 'test-responseId',
 				commentId: 1,
 				body: 'test-body',
+				tags: {},
 			},
 		);
 
@@ -3342,7 +4266,7 @@ describe('Postman collections', () => {
 			commentId: 1,
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ body: 'test-body' });
+		expect(captured?.body).toMatchObject({ body: 'test-body', tags: {} });
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.collectionsUpdateResponseComment.safeParse(
@@ -3355,6 +4279,7 @@ describe('Postman collections', () => {
 				responseId: 'test-responseId',
 				commentId: 1,
 				body: 'test-body',
+				tags: {},
 			}).success,
 		).toBe(true);
 	});
@@ -3410,21 +4335,30 @@ describe('Postman mocks', () => {
 		);
 
 		const plugin = postman();
-		const result = await plugin.endpoints!.mocks.list(mockCtx, {});
+		const result = await plugin.endpoints!.mocks.list(mockCtx, {
+			teamId: 'test-teamId',
+			workspace: 'test-workspace',
+		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/mocks');
 		expect(captured?.path).toBeUndefined();
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			teamId: 'test-teamId',
+			workspace: 'test-workspace',
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.mocksList.safeParse(result).success,
 		).toBe(true);
-		expect(PostmanEndpointInputSchemas.mocksList.safeParse({}).success).toBe(
-			true,
-		);
+		expect(
+			PostmanEndpointInputSchemas.mocksList.safeParse({
+				teamId: 'test-teamId',
+				workspace: 'test-workspace',
+			}).success,
+		).toBe(true);
 	});
 
 	it('mocks.create Create a mock server', async () => {
@@ -3441,6 +4375,7 @@ describe('Postman mocks', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.mocks.create(mockCtx, {
 			workspace: 'test-workspace',
+			mock: { collection: 'test-collection' },
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -3448,7 +4383,9 @@ describe('Postman mocks', () => {
 		expect(captured?.url).toBe('/mocks');
 		expect(captured?.path).toBeUndefined();
 		expect(captured?.query).toMatchObject({ workspace: 'test-workspace' });
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			mock: { collection: 'test-collection' },
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.mocksCreate.safeParse(result).success,
@@ -3456,6 +4393,7 @@ describe('Postman mocks', () => {
 		expect(
 			PostmanEndpointInputSchemas.mocksCreate.safeParse({
 				workspace: 'test-workspace',
+				mock: { collection: 'test-collection' },
 			}).success,
 		).toBe(true);
 	});
@@ -3515,6 +4453,7 @@ describe('Postman mocks', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.mocks.createServerResponse(mockCtx, {
 			mockId: 'test-mockId',
+			serverResponse: { name: 'test-name', statusCode: 1 },
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -3522,7 +4461,9 @@ describe('Postman mocks', () => {
 		expect(captured?.url).toBe('/mocks/{mockId}/server-responses');
 		expect(captured?.path).toMatchObject({ mockId: 'test-mockId' });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			serverResponse: { name: 'test-name', statusCode: 1 },
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.mocksCreateServerResponse.safeParse(result)
@@ -3531,6 +4472,7 @@ describe('Postman mocks', () => {
 		expect(
 			PostmanEndpointInputSchemas.mocksCreateServerResponse.safeParse({
 				mockId: 'test-mockId',
+				serverResponse: { name: 'test-name', statusCode: 1 },
 			}).success,
 		).toBe(true);
 	});
@@ -3582,6 +4524,7 @@ describe('Postman mocks', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.mocks.update(mockCtx, {
 			mockId: 'test-mockId',
+			mock: {},
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -3589,7 +4532,7 @@ describe('Postman mocks', () => {
 		expect(captured?.url).toBe('/mocks/{mockId}');
 		expect(captured?.path).toMatchObject({ mockId: 'test-mockId' });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({ mock: {} });
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.mocksUpdate.safeParse(result).success,
@@ -3597,6 +4540,7 @@ describe('Postman mocks', () => {
 		expect(
 			PostmanEndpointInputSchemas.mocksUpdate.safeParse({
 				mockId: 'test-mockId',
+				mock: {},
 			}).success,
 		).toBe(true);
 	});
@@ -3616,6 +4560,7 @@ describe('Postman mocks', () => {
 		const result = await plugin.endpoints!.mocks.updateServerResponse(mockCtx, {
 			mockId: 'test-mockId',
 			serverResponseId: 'test-serverResponseId',
+			serverResponse: {},
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -3628,7 +4573,7 @@ describe('Postman mocks', () => {
 			serverResponseId: 'test-serverResponseId',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({ serverResponse: {} });
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.mocksUpdateServerResponse.safeParse(result)
@@ -3638,6 +4583,7 @@ describe('Postman mocks', () => {
 			PostmanEndpointInputSchemas.mocksUpdateServerResponse.safeParse({
 				mockId: 'test-mockId',
 				serverResponseId: 'test-serverResponseId',
+				serverResponse: {},
 			}).success,
 		).toBe(true);
 	});
@@ -3659,21 +4605,45 @@ describe('Postman monitors', () => {
 		);
 
 		const plugin = postman();
-		const result = await plugin.endpoints!.monitors.list(mockCtx, {});
+		const result = await plugin.endpoints!.monitors.list(mockCtx, {
+			workspace: 'test-workspace',
+			active: true,
+			owner: 1,
+			collectionUid: 'test-collectionUid',
+			environmentUid: 'test-environmentUid',
+			cursor: 'test-cursor',
+			limit: 1,
+		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/monitors');
 		expect(captured?.path).toBeUndefined();
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			workspace: 'test-workspace',
+			active: true,
+			owner: 1,
+			collectionUid: 'test-collectionUid',
+			environmentUid: 'test-environmentUid',
+			cursor: 'test-cursor',
+			limit: 1,
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.monitorsList.safeParse(result).success,
 		).toBe(true);
-		expect(PostmanEndpointInputSchemas.monitorsList.safeParse({}).success).toBe(
-			true,
-		);
+		expect(
+			PostmanEndpointInputSchemas.monitorsList.safeParse({
+				workspace: 'test-workspace',
+				active: true,
+				owner: 1,
+				collectionUid: 'test-collectionUid',
+				environmentUid: 'test-environmentUid',
+				cursor: 'test-cursor',
+				limit: 1,
+			}).success,
+		).toBe(true);
 	});
 
 	it('monitors.get Get a monitor', async () => {
@@ -3723,6 +4693,11 @@ describe('Postman monitors', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.monitors.create(mockCtx, {
 			workspace: 'test-workspace',
+			monitor: {
+				name: 'test-name',
+				collection: 'test-collection',
+				schedule: {},
+			},
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -3730,7 +4705,13 @@ describe('Postman monitors', () => {
 		expect(captured?.url).toBe('/monitors');
 		expect(captured?.path).toBeUndefined();
 		expect(captured?.query).toMatchObject({ workspace: 'test-workspace' });
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			monitor: {
+				name: 'test-name',
+				collection: 'test-collection',
+				schedule: {},
+			},
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.monitorsCreate.safeParse(result).success,
@@ -3738,6 +4719,11 @@ describe('Postman monitors', () => {
 		expect(
 			PostmanEndpointInputSchemas.monitorsCreate.safeParse({
 				workspace: 'test-workspace',
+				monitor: {
+					name: 'test-name',
+					collection: 'test-collection',
+					schedule: {},
+				},
 			}).success,
 		).toBe(true);
 	});
@@ -3789,13 +4775,14 @@ describe('Postman monitors', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.monitors.run(mockCtx, {
 			monitorId: 'test-monitorId',
+			async: true,
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('POST');
 		expect(captured?.url).toBe('/monitors/{monitorId}/run');
 		expect(captured?.path).toMatchObject({ monitorId: 'test-monitorId' });
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({ async: true });
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -3804,6 +4791,7 @@ describe('Postman monitors', () => {
 		expect(
 			PostmanEndpointInputSchemas.monitorsRun.safeParse({
 				monitorId: 'test-monitorId',
+				async: true,
 			}).success,
 		).toBe(true);
 	});
@@ -3822,6 +4810,7 @@ describe('Postman monitors', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.monitors.update(mockCtx, {
 			monitorId: 'test-monitorId',
+			monitor: {},
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -3829,7 +4818,7 @@ describe('Postman monitors', () => {
 		expect(captured?.url).toBe('/monitors/{monitorId}');
 		expect(captured?.path).toMatchObject({ monitorId: 'test-monitorId' });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({ monitor: {} });
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.monitorsUpdate.safeParse(result).success,
@@ -3837,6 +4826,7 @@ describe('Postman monitors', () => {
 		expect(
 			PostmanEndpointInputSchemas.monitorsUpdate.safeParse({
 				monitorId: 'test-monitorId',
+				monitor: {},
 			}).success,
 		).toBe(true);
 	});
@@ -3858,21 +4848,21 @@ describe('Postman users', () => {
 		);
 
 		const plugin = postman();
-		const result = await plugin.endpoints!.users.list(mockCtx, {});
+		const result = await plugin.endpoints!.users.list(mockCtx, { groupId: 1 });
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/users');
 		expect(captured?.path).toBeUndefined();
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({ groupId: 1 });
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.usersList.safeParse(result).success,
 		).toBe(true);
-		expect(PostmanEndpointInputSchemas.usersList.safeParse({}).success).toBe(
-			true,
-		);
+		expect(
+			PostmanEndpointInputSchemas.usersList.safeParse({ groupId: 1 }).success,
+		).toBe(true);
 	});
 
 	it('users.get Get a team user', async () => {
@@ -3921,20 +4911,44 @@ describe('Postman workspaces', () => {
 		);
 
 		const plugin = postman();
-		const result = await plugin.endpoints!.workspaces.list(mockCtx, {});
+		const result = await plugin.endpoints!.workspaces.list(mockCtx, {
+			type: 'personal',
+			createdBy: 1,
+			include: 'mocks:deactivated',
+			elementType: 'collection',
+			elementId: 'test-elementId',
+			cursor: 'test-cursor',
+			limit: 1,
+		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/workspaces');
 		expect(captured?.path).toBeUndefined();
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			type: 'personal',
+			createdBy: 1,
+			include: 'mocks:deactivated',
+			elementType: 'collection',
+			elementId: 'test-elementId',
+			cursor: 'test-cursor',
+			limit: 1,
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.workspacesList.safeParse(result).success,
 		).toBe(true);
 		expect(
-			PostmanEndpointInputSchemas.workspacesList.safeParse({}).success,
+			PostmanEndpointInputSchemas.workspacesList.safeParse({
+				type: 'personal',
+				createdBy: 1,
+				include: 'mocks:deactivated',
+				elementType: 'collection',
+				elementId: 'test-elementId',
+				cursor: 'test-cursor',
+				limit: 1,
+			}).success,
 		).toBe(true);
 	});
 
@@ -3952,13 +4966,22 @@ describe('Postman workspaces', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.workspaces.getActivity(mockCtx, {
 			workspaceId: 'test-workspaceId',
+			userId: 1,
+			elementType: 'collection',
+			limit: 1,
+			cursor: 'test-cursor',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/workspaces/{workspaceId}/activities');
 		expect(captured?.path).toMatchObject({ workspaceId: 'test-workspaceId' });
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			userId: 1,
+			elementType: 'collection',
+			limit: 1,
+			cursor: 'test-cursor',
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -3968,6 +4991,10 @@ describe('Postman workspaces', () => {
 		expect(
 			PostmanEndpointInputSchemas.workspacesGetActivity.safeParse({
 				workspaceId: 'test-workspaceId',
+				userId: 1,
+				elementType: 'collection',
+				limit: 1,
+				cursor: 'test-cursor',
 			}).success,
 		).toBe(true);
 	});
@@ -3986,13 +5013,14 @@ describe('Postman workspaces', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.workspaces.get(mockCtx, {
 			workspaceId: 'test-workspaceId',
+			include: 'test-include',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/workspaces/{workspaceId}');
 		expect(captured?.path).toMatchObject({ workspaceId: 'test-workspaceId' });
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({ include: 'test-include' });
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -4001,6 +5029,7 @@ describe('Postman workspaces', () => {
 		expect(
 			PostmanEndpointInputSchemas.workspacesGet.safeParse({
 				workspaceId: 'test-workspaceId',
+				include: 'test-include',
 			}).success,
 		).toBe(true);
 	});
@@ -4055,13 +5084,14 @@ describe('Postman workspaces', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.workspaces.getRoles(mockCtx, {
 			workspaceId: 'test-workspaceId',
+			include: 'scim',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/workspaces/{workspaceId}/roles');
 		expect(captured?.path).toMatchObject({ workspaceId: 'test-workspaceId' });
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({ include: 'scim' });
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -4070,6 +5100,7 @@ describe('Postman workspaces', () => {
 		expect(
 			PostmanEndpointInputSchemas.workspacesGetRoles.safeParse({
 				workspaceId: 'test-workspaceId',
+				include: 'scim',
 			}).success,
 		).toBe(true);
 	});
@@ -4086,20 +5117,26 @@ describe('Postman workspaces', () => {
 		);
 
 		const plugin = postman();
-		const result = await plugin.endpoints!.workspaces.create(mockCtx, {});
+		const result = await plugin.endpoints!.workspaces.create(mockCtx, {
+			workspace: { name: 'test-name', type: 'personal' },
+		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('POST');
 		expect(captured?.url).toBe('/workspaces');
 		expect(captured?.path).toBeUndefined();
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			workspace: { name: 'test-name', type: 'personal' },
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.workspacesCreate.safeParse(result).success,
 		).toBe(true);
 		expect(
-			PostmanEndpointInputSchemas.workspacesCreate.safeParse({}).success,
+			PostmanEndpointInputSchemas.workspacesCreate.safeParse({
+				workspace: { name: 'test-name', type: 'personal' },
+			}).success,
 		).toBe(true);
 	});
 
@@ -4150,7 +5187,7 @@ describe('Postman workspaces', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.workspaces.updateGlobalVariables(
 			mockCtx,
-			{ workspaceId: 'test-workspaceId' },
+			{ workspaceId: 'test-workspaceId', values: [{}] },
 		);
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -4158,7 +5195,7 @@ describe('Postman workspaces', () => {
 		expect(captured?.url).toBe('/workspaces/{workspaceId}/global-variables');
 		expect(captured?.path).toMatchObject({ workspaceId: 'test-workspaceId' });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({ values: [{}] });
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.workspacesUpdateGlobalVariables.safeParse(
@@ -4168,6 +5205,7 @@ describe('Postman workspaces', () => {
 		expect(
 			PostmanEndpointInputSchemas.workspacesUpdateGlobalVariables.safeParse({
 				workspaceId: 'test-workspaceId',
+				values: [{}],
 			}).success,
 		).toBe(true);
 	});
@@ -4186,6 +5224,7 @@ describe('Postman workspaces', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.workspaces.update(mockCtx, {
 			workspaceId: 'test-workspaceId',
+			workspace: {},
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -4193,7 +5232,7 @@ describe('Postman workspaces', () => {
 		expect(captured?.url).toBe('/workspaces/{workspaceId}');
 		expect(captured?.path).toMatchObject({ workspaceId: 'test-workspaceId' });
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({ workspace: {} });
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.workspacesUpdate.safeParse(result).success,
@@ -4201,6 +5240,7 @@ describe('Postman workspaces', () => {
 		expect(
 			PostmanEndpointInputSchemas.workspacesUpdate.safeParse({
 				workspaceId: 'test-workspaceId',
+				workspace: {},
 			}).success,
 		).toBe(true);
 	});
@@ -4326,20 +5366,29 @@ describe('Postman accessKeys', () => {
 		);
 
 		const plugin = postman();
-		const result = await plugin.endpoints!.accessKeys.list(mockCtx, {});
+		const result = await plugin.endpoints!.accessKeys.list(mockCtx, {
+			collectionId: 'test-collectionId',
+			cursor: 'test-cursor',
+		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/collection-access-keys');
 		expect(captured?.path).toBeUndefined();
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			collectionId: 'test-collectionId',
+			cursor: 'test-cursor',
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.accessKeysList.safeParse(result).success,
 		).toBe(true);
 		expect(
-			PostmanEndpointInputSchemas.accessKeysList.safeParse({}).success,
+			PostmanEndpointInputSchemas.accessKeysList.safeParse({
+				collectionId: 'test-collectionId',
+				cursor: 'test-cursor',
+			}).success,
 		).toBe(true);
 	});
 });
@@ -4362,6 +5411,10 @@ describe('Postman environments', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.environments.getForks(mockCtx, {
 			environmentId: 'test-environmentId',
+			cursor: 'test-cursor',
+			direction: 'asc',
+			limit: 1,
+			sort: 'createdAt',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -4370,7 +5423,12 @@ describe('Postman environments', () => {
 		expect(captured?.path).toMatchObject({
 			environmentId: 'test-environmentId',
 		});
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({
+			cursor: 'test-cursor',
+			direction: 'asc',
+			limit: 1,
+			sort: 'createdAt',
+		});
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
@@ -4380,6 +5438,10 @@ describe('Postman environments', () => {
 		expect(
 			PostmanEndpointInputSchemas.environmentsGetForks.safeParse({
 				environmentId: 'test-environmentId',
+				cursor: 'test-cursor',
+				direction: 'asc',
+				limit: 1,
+				sort: 'createdAt',
 			}).success,
 		).toBe(true);
 	});
@@ -4433,6 +5495,7 @@ describe('Postman environments', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.environments.create(mockCtx, {
 			workspace: 'test-workspace',
+			environment: { name: 'test-name' },
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -4440,7 +5503,9 @@ describe('Postman environments', () => {
 		expect(captured?.url).toBe('/environments');
 		expect(captured?.path).toBeUndefined();
 		expect(captured?.query).toMatchObject({ workspace: 'test-workspace' });
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({
+			environment: { name: 'test-name' },
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.environmentsCreate.safeParse(result).success,
@@ -4448,6 +5513,7 @@ describe('Postman environments', () => {
 		expect(
 			PostmanEndpointInputSchemas.environmentsCreate.safeParse({
 				workspace: 'test-workspace',
+				environment: { name: 'test-name' },
 			}).success,
 		).toBe(true);
 	});
@@ -4541,6 +5607,7 @@ describe('Postman environments', () => {
 		const result = await plugin.endpoints!.environments.mergeFork(mockCtx, {
 			environmentId: 'test-environmentId',
 			source: 'test-source',
+			deleteSource: true,
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -4550,7 +5617,10 @@ describe('Postman environments', () => {
 			environmentId: 'test-environmentId',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ source: 'test-source' });
+		expect(captured?.body).toMatchObject({
+			source: 'test-source',
+			deleteSource: true,
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.environmentsMergeFork.safeParse(result)
@@ -4560,6 +5630,7 @@ describe('Postman environments', () => {
 			PostmanEndpointInputSchemas.environmentsMergeFork.safeParse({
 				environmentId: 'test-environmentId',
 				source: 'test-source',
+				deleteSource: true,
 			}).success,
 		).toBe(true);
 	});
@@ -4578,6 +5649,7 @@ describe('Postman environments', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.environments.replace(mockCtx, {
 			environmentId: 'test-environmentId',
+			environment: {},
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -4587,7 +5659,7 @@ describe('Postman environments', () => {
 			environmentId: 'test-environmentId',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeDefined();
+		expect(captured?.body).toMatchObject({ environment: {} });
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.environmentsReplace.safeParse(result)
@@ -4596,6 +5668,7 @@ describe('Postman environments', () => {
 		expect(
 			PostmanEndpointInputSchemas.environmentsReplace.safeParse({
 				environmentId: 'test-environmentId',
+				environment: {},
 			}).success,
 		).toBe(true);
 	});
@@ -4614,6 +5687,7 @@ describe('Postman environments', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.environments.update(mockCtx, {
 			environmentId: 'test-environmentId',
+			body: [{ op: 'test-op', path: 'test-path', value: {} }],
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -4623,7 +5697,9 @@ describe('Postman environments', () => {
 			environmentId: 'test-environmentId',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toBeUndefined();
+		expect(captured?.body).toMatchObject([
+			{ op: 'test-op', path: 'test-path', value: {} },
+		]);
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.environmentsUpdate.safeParse(result).success,
@@ -4631,6 +5707,7 @@ describe('Postman environments', () => {
 		expect(
 			PostmanEndpointInputSchemas.environmentsUpdate.safeParse({
 				environmentId: 'test-environmentId',
+				body: [{ op: 'test-op', path: 'test-path', value: {} }],
 			}).success,
 		).toBe(true);
 	});
@@ -4647,20 +5724,24 @@ describe('Postman environments', () => {
 		);
 
 		const plugin = postman();
-		const result = await plugin.endpoints!.environments.list(mockCtx, {});
+		const result = await plugin.endpoints!.environments.list(mockCtx, {
+			workspace: 'test-workspace',
+		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(captured?.method).toBe('GET');
 		expect(captured?.url).toBe('/environments');
 		expect(captured?.path).toBeUndefined();
-		expect(captured?.query).toMatchObject({});
+		expect(captured?.query).toMatchObject({ workspace: 'test-workspace' });
 		expect(captured?.body).toBeUndefined();
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.environmentsList.safeParse(result).success,
 		).toBe(true);
 		expect(
-			PostmanEndpointInputSchemas.environmentsList.safeParse({}).success,
+			PostmanEndpointInputSchemas.environmentsList.safeParse({
+				workspace: 'test-workspace',
+			}).success,
 		).toBe(true);
 	});
 });
@@ -4729,44 +5810,6 @@ describe('Postman scim', () => {
 		).toBe(true);
 	});
 });
-describe('Postman webhooks', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-	});
-
-	it('webhooks.create Create a webhook', async () => {
-		const canned = {};
-		let captured: ApiRequestOptions | undefined;
-		mockRequest.mockImplementationOnce(
-			async (config: OpenAPIConfig, options: ApiRequestOptions) => {
-				expect(config.BASE).toBe('https://api.getpostman.com');
-				captured = options;
-				return canned;
-			},
-		);
-
-		const plugin = postman();
-		const result = await plugin.endpoints!.webhooks.create(mockCtx, {
-			workspace: 'test-workspace',
-		});
-
-		expect(mockRequest).toHaveBeenCalledTimes(1);
-		expect(captured?.method).toBe('POST');
-		expect(captured?.url).toBe('/webhooks');
-		expect(captured?.path).toBeUndefined();
-		expect(captured?.query).toMatchObject({ workspace: 'test-workspace' });
-		expect(captured?.body).toBeDefined();
-		expect(result).toEqual(canned);
-		expect(
-			PostmanEndpointOutputSchemas.webhooksCreate.safeParse(result).success,
-		).toBe(true);
-		expect(
-			PostmanEndpointInputSchemas.webhooksCreate.safeParse({
-				workspace: 'test-workspace',
-			}).success,
-		).toBe(true);
-	});
-});
 describe('Postman tools', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
@@ -4786,6 +5829,7 @@ describe('Postman tools', () => {
 		const plugin = postman();
 		const result = await plugin.endpoints!.tools.importOpenapi(mockCtx, {
 			workspace: 'test-workspace',
+			body: { type: 'json', input: { 'test-key': 'test-value' } },
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -4793,7 +5837,10 @@ describe('Postman tools', () => {
 		expect(captured?.url).toBe('/import/openapi');
 		expect(captured?.path).toBeUndefined();
 		expect(captured?.query).toMatchObject({ workspace: 'test-workspace' });
-		expect(captured?.body).toBeUndefined();
+		expect(captured?.body).toMatchObject({
+			type: 'json',
+			input: { 'test-key': 'test-value' },
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.toolsImportOpenapi.safeParse(result).success,
@@ -4801,6 +5848,7 @@ describe('Postman tools', () => {
 		expect(
 			PostmanEndpointInputSchemas.toolsImportOpenapi.safeParse({
 				workspace: 'test-workspace',
+				body: { type: 'json', input: { 'test-key': 'test-value' } },
 			}).success,
 		).toBe(true);
 	});
@@ -4862,6 +5910,7 @@ describe('Postman pullRequests', () => {
 		const result = await plugin.endpoints!.pullRequests.review(mockCtx, {
 			pullRequestId: 'test-pullRequestId',
 			action: 'approve',
+			comment: 'test-comment',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -4871,7 +5920,10 @@ describe('Postman pullRequests', () => {
 			pullRequestId: 'test-pullRequestId',
 		});
 		expect(captured?.query).toBeUndefined();
-		expect(captured?.body).toMatchObject({ action: 'approve' });
+		expect(captured?.body).toMatchObject({
+			action: 'approve',
+			comment: 'test-comment',
+		});
 		expect(result).toEqual(canned);
 		expect(
 			PostmanEndpointOutputSchemas.pullRequestsReview.safeParse(result).success,
@@ -4880,6 +5932,7 @@ describe('Postman pullRequests', () => {
 			PostmanEndpointInputSchemas.pullRequestsReview.safeParse({
 				pullRequestId: 'test-pullRequestId',
 				action: 'approve',
+				comment: 'test-comment',
 			}).success,
 		).toBe(true);
 	});
@@ -4899,6 +5952,7 @@ describe('Postman pullRequests', () => {
 		const result = await plugin.endpoints!.pullRequests.update(mockCtx, {
 			pullRequestId: 'test-pullRequestId',
 			title: 'test-title',
+			description: 'test-description',
 			reviewers: ['test-reviewersItem'],
 		});
 
@@ -4911,6 +5965,7 @@ describe('Postman pullRequests', () => {
 		expect(captured?.query).toBeUndefined();
 		expect(captured?.body).toMatchObject({
 			title: 'test-title',
+			description: 'test-description',
 			reviewers: ['test-reviewersItem'],
 		});
 		expect(result).toEqual(canned);
@@ -4921,6 +5976,7 @@ describe('Postman pullRequests', () => {
 			PostmanEndpointInputSchemas.pullRequestsUpdate.safeParse({
 				pullRequestId: 'test-pullRequestId',
 				title: 'test-title',
+				description: 'test-description',
 				reviewers: ['test-reviewersItem'],
 			}).success,
 		).toBe(true);

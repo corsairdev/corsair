@@ -387,7 +387,7 @@ export const create: PostmanEndpoints['collectionsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'postman.collections.create',
-		{ ...input },
+		{ workspace: input.workspace },
 		'completed',
 	);
 	return response;
@@ -866,7 +866,7 @@ export const createRequest: PostmanEndpoints['collectionsCreateRequest'] =
 		await logEventFromContext(
 			ctx,
 			'postman.collections.createRequest',
-			{ ...input },
+			{ collectionId: input.collectionId },
 			'completed',
 		);
 		return response;
@@ -937,7 +937,7 @@ export const replace: PostmanEndpoints['collectionsReplace'] = async (
 	await logEventFromContext(
 		ctx,
 		'postman.collections.replace',
-		{ ...input },
+		{ collectionId: input.collectionId },
 		'completed',
 	);
 	return response;
@@ -1058,7 +1058,7 @@ export const update: PostmanEndpoints['collectionsUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'postman.collections.update',
-		{ ...input },
+		{ collectionId: input.collectionId },
 		'completed',
 	);
 	return response;
@@ -1094,7 +1094,7 @@ export const updateRequest: PostmanEndpoints['collectionsUpdateRequest'] =
 		await logEventFromContext(
 			ctx,
 			'postman.collections.updateRequest',
-			{ ...input },
+			{ collectionId: input.collectionId },
 			'completed',
 		);
 		return response;

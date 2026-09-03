@@ -30,7 +30,6 @@ import {
 	Specs,
 	Tools,
 	Users,
-	Webhooks,
 	Workspaces,
 } from './endpoints';
 import type {
@@ -136,7 +135,6 @@ export type PostmanEndpoints = {
 	collectionsCreateResponse: PostmanEndpoint<'collectionsCreateResponse'>;
 	collectionsCreateResponseComment: PostmanEndpoint<'collectionsCreateResponseComment'>;
 	specsCreate: PostmanEndpoint<'specsCreate'>;
-	webhooksCreate: PostmanEndpoint<'webhooksCreate'>;
 	workspacesCreate: PostmanEndpoint<'workspacesCreate'>;
 	apisCreate: PostmanEndpoint<'apisCreate'>;
 	environmentsCreate: PostmanEndpoint<'environmentsCreate'>;
@@ -200,6 +198,16 @@ export type PostmanEndpoints = {
 	apisUpdateComment: PostmanEndpoint<'apisUpdateComment'>;
 	environmentsUpdate: PostmanEndpoint<'environmentsUpdate'>;
 	environmentsList: PostmanEndpoint<'environmentsList'>;
+	apisCreateRelations: PostmanEndpoint<'apisCreateRelations'>;
+	apisGetLinkedRelations: PostmanEndpoint<'apisGetLinkedRelations'>;
+	apisGetTestRelations: PostmanEndpoint<'apisGetTestRelations'>;
+	apisGetContractTestRelations: PostmanEndpoint<'apisGetContractTestRelations'>;
+	apisGetIntegrationTestRelations: PostmanEndpoint<'apisGetIntegrationTestRelations'>;
+	apisGetTestSuiteRelations: PostmanEndpoint<'apisGetTestSuiteRelations'>;
+	apisGetDocumentationRelations: PostmanEndpoint<'apisGetDocumentationRelations'>;
+	apisGetEnvironmentRelations: PostmanEndpoint<'apisGetEnvironmentRelations'>;
+	apisListReleases: PostmanEndpoint<'apisListReleases'>;
+	apisGetUnclassifiedRelations: PostmanEndpoint<'apisGetUnclassifiedRelations'>;
 };
 
 const postmanEndpointsNested = {
@@ -221,6 +229,16 @@ const postmanEndpointsNested = {
 		deleteComment: Apis.deleteComment,
 		update: Apis.update,
 		updateComment: Apis.updateComment,
+		createRelations: Apis.createRelations,
+		getLinkedRelations: Apis.getLinkedRelations,
+		getTestRelations: Apis.getTestRelations,
+		getContractTestRelations: Apis.getContractTestRelations,
+		getIntegrationTestRelations: Apis.getIntegrationTestRelations,
+		getTestSuiteRelations: Apis.getTestSuiteRelations,
+		getDocumentationRelations: Apis.getDocumentationRelations,
+		getEnvironmentRelations: Apis.getEnvironmentRelations,
+		listReleases: Apis.listReleases,
+		getUnclassifiedRelations: Apis.getUnclassifiedRelations,
 	},
 	specs: {
 		get: Specs.get,
@@ -349,9 +367,6 @@ const postmanEndpointsNested = {
 		getResourceTypes: Scim.getResourceTypes,
 		getServiceConfig: Scim.getServiceConfig,
 	},
-	webhooks: {
-		create: Webhooks.create,
-	},
 	tools: {
 		importOpenapi: Tools.importOpenapi,
 	},
@@ -363,8 +378,6 @@ const postmanEndpointsNested = {
 		update: PullRequests.update,
 	},
 } as const;
-
-const postmanWebhooksNested = {} as const;
 
 export const postmanEndpointSchemas = {
 	'apis.createSchema': {
@@ -610,10 +623,6 @@ export const postmanEndpointSchemas = {
 	'specs.create': {
 		input: PostmanEndpointInputSchemas.specsCreate,
 		output: PostmanEndpointOutputSchemas.specsCreate,
-	},
-	'webhooks.create': {
-		input: PostmanEndpointInputSchemas.webhooksCreate,
-		output: PostmanEndpointOutputSchemas.webhooksCreate,
 	},
 	'workspaces.create': {
 		input: PostmanEndpointInputSchemas.workspacesCreate,
@@ -867,6 +876,46 @@ export const postmanEndpointSchemas = {
 		input: PostmanEndpointInputSchemas.environmentsList,
 		output: PostmanEndpointOutputSchemas.environmentsList,
 	},
+	'apis.createRelations': {
+		input: PostmanEndpointInputSchemas.apisCreateRelations,
+		output: PostmanEndpointOutputSchemas.apisCreateRelations,
+	},
+	'apis.getLinkedRelations': {
+		input: PostmanEndpointInputSchemas.apisGetLinkedRelations,
+		output: PostmanEndpointOutputSchemas.apisGetLinkedRelations,
+	},
+	'apis.getTestRelations': {
+		input: PostmanEndpointInputSchemas.apisGetTestRelations,
+		output: PostmanEndpointOutputSchemas.apisGetTestRelations,
+	},
+	'apis.getContractTestRelations': {
+		input: PostmanEndpointInputSchemas.apisGetContractTestRelations,
+		output: PostmanEndpointOutputSchemas.apisGetContractTestRelations,
+	},
+	'apis.getIntegrationTestRelations': {
+		input: PostmanEndpointInputSchemas.apisGetIntegrationTestRelations,
+		output: PostmanEndpointOutputSchemas.apisGetIntegrationTestRelations,
+	},
+	'apis.getTestSuiteRelations': {
+		input: PostmanEndpointInputSchemas.apisGetTestSuiteRelations,
+		output: PostmanEndpointOutputSchemas.apisGetTestSuiteRelations,
+	},
+	'apis.getDocumentationRelations': {
+		input: PostmanEndpointInputSchemas.apisGetDocumentationRelations,
+		output: PostmanEndpointOutputSchemas.apisGetDocumentationRelations,
+	},
+	'apis.getEnvironmentRelations': {
+		input: PostmanEndpointInputSchemas.apisGetEnvironmentRelations,
+		output: PostmanEndpointOutputSchemas.apisGetEnvironmentRelations,
+	},
+	'apis.listReleases': {
+		input: PostmanEndpointInputSchemas.apisListReleases,
+		output: PostmanEndpointOutputSchemas.apisListReleases,
+	},
+	'apis.getUnclassifiedRelations': {
+		input: PostmanEndpointInputSchemas.apisGetUnclassifiedRelations,
+		output: PostmanEndpointOutputSchemas.apisGetUnclassifiedRelations,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof postmanEndpointsNested
 >;
@@ -1117,10 +1166,6 @@ const postmanEndpointMeta = {
 	'specs.create': {
 		riskLevel: 'write',
 		description: 'Create a spec',
-	},
-	'webhooks.create': {
-		riskLevel: 'write',
-		description: 'Create a webhook',
 	},
 	'workspaces.create': {
 		riskLevel: 'write',
@@ -1374,6 +1419,53 @@ const postmanEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get all environments',
 	},
+	'apis.createRelations': {
+		riskLevel: 'write',
+		description: 'Create new relations for an API version',
+	},
+	'apis.getLinkedRelations': {
+		riskLevel: 'read',
+		description: 'Retrieve all linked relations for a specific API version',
+	},
+	'apis.getTestRelations': {
+		riskLevel: 'read',
+		description:
+			'Retrieve all test relations for a specific API version (deprecated in Postman v10 and higher) (Deprecated by Postman.)',
+	},
+	'apis.getContractTestRelations': {
+		riskLevel: 'read',
+		description:
+			'Retrieve contract test relations for a specific API version (Deprecated by Postman.)',
+	},
+	'apis.getIntegrationTestRelations': {
+		riskLevel: 'read',
+		description:
+			'Retrieve integration test relations for a specific API version (Deprecated by Postman.)',
+	},
+	'apis.getTestSuiteRelations': {
+		riskLevel: 'read',
+		description:
+			'Retrieve the test suites associated with an API version (deprecated, legacy v9 APIs only) (Deprecated by Postman.)',
+	},
+	'apis.getDocumentationRelations': {
+		riskLevel: 'read',
+		description:
+			'Get documentation relations for a specific API version (deprecated in Postman v10 and higher) (Deprecated by Postman.)',
+	},
+	'apis.getEnvironmentRelations': {
+		riskLevel: 'read',
+		description:
+			'Get environment relations for a specific API version (deprecated in Postman v10 and higher) (Deprecated by Postman.)',
+	},
+	'apis.listReleases': {
+		riskLevel: 'read',
+		description:
+			'List releases for an API version (deprecated in Postman v10 and higher) (Deprecated by Postman.)',
+	},
+	'apis.getUnclassifiedRelations': {
+		riskLevel: 'read',
+		description: 'Get unclassified relations for a specific API version',
+	},
 } as const satisfies RequiredPluginEndpointMeta<typeof postmanEndpointsNested>;
 
 export const postmanAuthConfig = {
@@ -1386,7 +1478,7 @@ export type BasePostmanPlugin<T extends PostmanPluginOptions> = CorsairPlugin<
 	'postman',
 	typeof PostmanSchema,
 	typeof postmanEndpointsNested,
-	typeof postmanWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType,
 	typeof postmanAuthConfig
@@ -1398,11 +1490,7 @@ export type ExternalPostmanPlugin<T extends PostmanPluginOptions> =
 	BasePostmanPlugin<T>;
 
 export function postman<const T extends PostmanPluginOptions>(
-	incomingOptions: PostmanPluginOptions &
-		// Safe: T extends PostmanPluginOptions, so an empty object is a valid
-		// no-op default when no options are passed. TypeScript requires the cast
-		// because it cannot verify T = {}.
-		T = {} as PostmanPluginOptions & T,
+	incomingOptions: PostmanPluginOptions & T = {} as PostmanPluginOptions & T,
 ): ExternalPostmanPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -1414,13 +1502,11 @@ export function postman<const T extends PostmanPluginOptions>(
 		schema: PostmanSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: undefined,
 		endpoints: postmanEndpointsNested,
-		webhooks: postmanWebhooksNested,
+		webhooks: {},
 		endpointMeta: postmanEndpointMeta,
 		endpointSchemas: postmanEndpointSchemas,
 		webhookSchemas: {},
-		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

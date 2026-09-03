@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { PostmanEndpoints } from '..';
-import { makePostmanRequest } from '../client';
+import { assertSafePathParam, makePostmanRequest } from '../client';
 import type { PostmanEndpointOutputs } from './types';
 
 export const get: PostmanEndpoints['specsGet'] = async (ctx, input) => {
@@ -68,6 +68,7 @@ export const getDefinition: PostmanEndpoints['specsGetDefinition'] = async (
 };
 
 export const getFile: PostmanEndpoints['specsGetFile'] = async (ctx, input) => {
+	assertSafePathParam('filePath', input.filePath);
 	const response = await makePostmanRequest<
 		PostmanEndpointOutputs['specsGetFile']
 	>('/specs/{specId}/files/{filePath}', ctx.key, {
@@ -162,6 +163,7 @@ export const deleteFile: PostmanEndpoints['specsDeleteFile'] = async (
 	ctx,
 	input,
 ) => {
+	assertSafePathParam('filePath', input.filePath);
 	const response = await makePostmanRequest<
 		PostmanEndpointOutputs['specsDeleteFile']
 	>('/specs/{specId}/files/{filePath}', ctx.key, {
@@ -245,7 +247,7 @@ export const createFile: PostmanEndpoints['specsCreateFile'] = async (
 	await logEventFromContext(
 		ctx,
 		'postman.specs.createFile',
-		{ ...input },
+		{ specId: input.specId },
 		'completed',
 	);
 	return response;
@@ -278,6 +280,7 @@ export const updateFile: PostmanEndpoints['specsUpdateFile'] = async (
 	ctx,
 	input,
 ) => {
+	assertSafePathParam('filePath', input.filePath);
 	const response = await makePostmanRequest<
 		PostmanEndpointOutputs['specsUpdateFile']
 	>('/specs/{specId}/files/{filePath}', ctx.key, {
@@ -296,7 +299,7 @@ export const updateFile: PostmanEndpoints['specsUpdateFile'] = async (
 	await logEventFromContext(
 		ctx,
 		'postman.specs.updateFile',
-		{ ...input },
+		{ specId: input.specId, filePath: input.filePath },
 		'completed',
 	);
 	return response;

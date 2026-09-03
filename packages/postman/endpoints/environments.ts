@@ -69,7 +69,7 @@ export const create: PostmanEndpoints['environmentsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'postman.environments.create',
-		{ ...input },
+		{ workspace: input.workspace },
 		'completed',
 	);
 	return response;
@@ -170,7 +170,7 @@ export const replace: PostmanEndpoints['environmentsReplace'] = async (
 	await logEventFromContext(
 		ctx,
 		'postman.environments.replace',
-		{ ...input },
+		{ environmentId: input.environmentId },
 		'completed',
 	);
 	return response;
@@ -193,7 +193,7 @@ export const update: PostmanEndpoints['environmentsUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'postman.environments.update',
-		{ ...input },
+		{ environmentId: input.environmentId },
 		'completed',
 	);
 	return response;
