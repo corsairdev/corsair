@@ -9,15 +9,13 @@ import MountHandlerNextjs from '/snippets/mount-handler-nextjs.mdx';
 
 Hub hosts the OAuth connect, approval, and webhook surfaces, so there are no connect pages, callback routes, or per-environment redirect URIs to build. Credentials are encrypted and stored in your own database. Hub stores none.
 
-<Note>
-**Rather have your coding agent do it?** Install the Corsair skill, then ask your agent to set Corsair up — it runs this whole walkthrough for you and doesn't stop until a real call returns data.
+<div style={{ maxWidth: '30rem', marginLeft: 'auto' }}>
 
-```bash
+```bash Set up with your agent
 npx skills add https://github.com/corsairdev/corsair --skill corsair
 ```
 
-Works in Claude Code and any agent that supports skills. Prefer to wire it yourself? Follow the steps below.
-</Note>
+</div>
 
 <Steps>
 
