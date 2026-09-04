@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Figma plugin for Corsair"
+description: "Figma plugin for Corsair — files, comments, and file-change events."
 ---
 
 Use **Figma** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -92,19 +92,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`activityLogs.list`**
+**Get file metadata**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.figma.api.activityLogs.list({});
+await tenant.figma.api.files.getMetadata({ file_key: 'abcDEF123' });
 ```
 
 
-**`comments.add`**
+**Add a comment**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.figma.api.comments.add({});
+await tenant.figma.api.comments.add({ file_key: 'abcDEF123', message: 'Hello from Corsair' });
 ```
 
 
@@ -112,15 +112,37 @@ See the full list on the [API](/plugins/figma/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.figma.db.<entity>.search()` and `.list()`: `comments`, `components`, `fileMetadata`, `versions`, `webhookConfigs`.
+Search synced file metadata without hitting Figma.
 
-See [Database](/plugins/figma/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.figma.db.fileMetadata.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `comments`, `components`, `fileMetadata`, `versions`, `webhookConfigs`. See [Database](/plugins/figma/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **6** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a Figma file is updated. Do not use ping.ping.
 
-See [Webhooks](/plugins/figma/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+figma({
+    webhookHooks: {
+        files: {
+            fileUpdate: {
+                after: async (ctx, result) => {
+                    console.log('Figma file updated:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/figma/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
