@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { getOAuthAccessToken, logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
 import { encodeResourcePath, GoogleAnalyticsAPIError } from './client';
 import {
@@ -22,6 +22,7 @@ jest.mock('corsair/core', () => {
 	return {
 		...original,
 		logEventFromContext: jest.fn(async () => null),
+		getOAuthAccessToken: jest.fn(),
 	};
 });
 
@@ -1013,39 +1014,25 @@ describe('keyBuilder', () => {
 		jest.restoreAllMocks();
 	});
 
-	it('rethrows GoogleAnalyticsAPIError so 429 metadata is kept', async () => {
-		jest.spyOn(globalThis, 'fetch').mockImplementation(() =>
-			Promise.resolve(
-				new Response('slow down', {
-					status: 429,
-					headers: { 'Retry-After': '0' },
-				}),
-			),
-		);
+	it('uses shared oauth access instead of a plugin-local refresher', async () => {
+		const mockGetToken = getOAuthAccessToken as jest.MockedFunction<
+			typeof getOAuthAccessToken
+		>;
+		mockGetToken.mockResolvedValue('hub-token');
 
 		const plugin = googleanalytics();
 		const ctx = {
 			authType: 'oauth_2' as const,
-			keys: {
-				get_access_token: async () => null,
-				get_expires_at: async () => null,
-				get_refresh_token: async () => 'refresh',
-				get_integration_credentials: async () => ({
-					client_id: 'id',
-					client_secret: 'secret',
-				}),
-				set_access_token: async () => undefined,
-				set_expires_at: async () => undefined,
-				set_refresh_token: async () => undefined,
-			},
+			tenantId: 'tenant-1',
+			keys: {},
 		};
 
-		await expect(
-			plugin.keyBuilder?.(ctx as never, 'endpoint'),
-		).rejects.toMatchObject({
-			name: 'GoogleAnalyticsAPIError',
-			code: 429,
-			retryAfter: 0,
+		await expect(plugin.keyBuilder?.(ctx as never, 'endpoint')).resolves.toBe(
+			'hub-token',
+		);
+		expect(mockGetToken).toHaveBeenCalledWith(ctx, {
+			plugin: 'googleanalytics',
+			tokenUrl: 'https://oauth2.googleapis.com/token',
 		});
 	});
 });

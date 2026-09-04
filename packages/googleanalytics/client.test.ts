@@ -1,135 +1,15 @@
-import { getValidAccessToken } from './client';
+import { ApiError, request } from 'corsair/http';
+import { makeAuthenticatedGoogleAnalyticsRequest } from './client';
 
-function okToken(overrides: Record<string, unknown> = {}): Response {
-	return new Response(
-		JSON.stringify({
-			access_token: 'fresh',
-			expires_in: 3600,
-			...overrides,
-		}),
-		{ status: 200, headers: { 'Content-Type': 'application/json' } },
-	);
-}
-
-function rateLimited(retryAfter = '0'): Response {
-	return new Response('slow down', {
-		status: 429,
-		headers: { 'Retry-After': retryAfter },
-	});
-}
-
-describe('getValidAccessToken', () => {
-	const creds = {
-		clientId: 'client',
-		clientSecret: 'secret',
-		refreshToken: 'refresh',
+jest.mock('corsair/http', () => {
+	const actual = jest.requireActual('corsair/http');
+	return {
+		...actual,
+		request: jest.fn(),
 	};
-
-	let fetchMock: jest.SpyInstance;
-
-	beforeEach(() => {
-		fetchMock = jest.spyOn(globalThis, 'fetch');
-	});
-
-	afterEach(() => {
-		fetchMock.mockRestore();
-	});
-
-	it('reuses an access token outside the expiry skew without refreshing', async () => {
-		const expiresAt = String(Math.floor(Date.now() / 1000) + 3600);
-		const result = await getValidAccessToken({
-			...creds,
-			accessToken: 'cached',
-			expiresAt,
-		});
-		expect(result).toEqual({
-			accessToken: 'cached',
-			expiresAt: Number(expiresAt),
-			refreshed: false,
-		});
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-
-	it('treats an ISO expiresAt that is still in the future as valid', async () => {
-		const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
-		const result = await getValidAccessToken({
-			...creds,
-			accessToken: 'cached',
-			expiresAt,
-		});
-		expect(result.accessToken).toBe('cached');
-		expect(result.refreshed).toBe(false);
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-
-	it('refreshes when expiresAt is not a unix timestamp or ISO date', async () => {
-		fetchMock.mockResolvedValueOnce(okToken());
-		const result = await getValidAccessToken({
-			...creds,
-			accessToken: 'cached',
-			expiresAt: 'not-a-date',
-		});
-		expect(result.accessToken).toBe('fresh');
-		expect(result.refreshed).toBe(true);
-		expect(fetchMock).toHaveBeenCalledTimes(1);
-	});
-
-	it('sends the refresh grant with a timeout signal', async () => {
-		fetchMock.mockResolvedValueOnce(okToken());
-		await getValidAccessToken(creds);
-		const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
-		expect(init.signal).toBeInstanceOf(AbortSignal);
-	});
-
-	it('retries a 429 refresh using Retry-After then returns the token', async () => {
-		fetchMock
-			.mockResolvedValueOnce(rateLimited())
-			.mockResolvedValueOnce(okToken());
-		const result = await getValidAccessToken(creds);
-		expect(result.accessToken).toBe('fresh');
-		expect(fetchMock).toHaveBeenCalledTimes(2);
-	});
-
-	it('gives up after repeated 429 refresh responses and keeps Retry-After', async () => {
-		fetchMock.mockImplementation(() => Promise.resolve(rateLimited()));
-		await expect(getValidAccessToken(creds)).rejects.toMatchObject({
-			name: 'GoogleAnalyticsAPIError',
-			code: 429,
-			retryAfter: 0,
-		});
-		expect(fetchMock).toHaveBeenCalledTimes(6);
-	});
-
-	it('rejects a 200 token payload that is missing access_token', async () => {
-		fetchMock.mockResolvedValueOnce(okToken({ access_token: undefined }));
-		await expect(getValidAccessToken(creds)).rejects.toMatchObject({
-			name: 'GoogleAnalyticsAPIError',
-		});
-	});
-
-	it('rejects a 200 token payload with a non-finite expires_in', async () => {
-		fetchMock.mockResolvedValueOnce(
-			new Response(
-				JSON.stringify({ access_token: 'fresh', expires_in: 'nope' }),
-				{
-					status: 200,
-					headers: { 'Content-Type': 'application/json' },
-				},
-			),
-		);
-		await expect(getValidAccessToken(creds)).rejects.toMatchObject({
-			name: 'GoogleAnalyticsAPIError',
-		});
-	});
-
-	it('accepts expires_in when the token endpoint returns it as a numeric string', async () => {
-		fetchMock.mockResolvedValueOnce(okToken({ expires_in: '3600' }));
-		const result = await getValidAccessToken(creds);
-		expect(result.accessToken).toBe('fresh');
-		expect(result.refreshed).toBe(true);
-		expect(result.expiresAt).toBeGreaterThan(Math.floor(Date.now() / 1000));
-	});
 });
+
+const mockRequest = request as jest.MockedFunction<typeof request>;
 
 describe('callMeasurementProtocol', () => {
 	afterEach(() => {
@@ -151,5 +31,61 @@ describe('callMeasurementProtocol', () => {
 		);
 		const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
 		expect(init.signal).toBeInstanceOf(AbortSignal);
+	});
+});
+
+describe('makeAuthenticatedGoogleAnalyticsRequest', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+	});
+
+	function unauthorized(): ApiError {
+		return new ApiError(
+			{ method: 'GET', url: '/v1beta/accounts' },
+			{
+				url: '/v1beta/accounts',
+				ok: false,
+				status: 401,
+				statusText: 'Unauthorized',
+				body: {},
+			},
+			'Unauthorized',
+		);
+	}
+
+	it('retries once with a refreshed token after 401', async () => {
+		const first = unauthorized();
+		mockRequest.mockRejectedValueOnce(first);
+		mockRequest.mockResolvedValueOnce({ name: 'accounts/1' } as never);
+		const refresh = jest.fn().mockResolvedValue('fresh-token');
+
+		const result = await makeAuthenticatedGoogleAnalyticsRequest(
+			'/v1beta/accounts',
+			{ key: 'stale-token', _refreshAuth: refresh },
+		);
+
+		expect(result).toEqual({ name: 'accounts/1' });
+		expect(refresh).toHaveBeenCalledTimes(1);
+		expect(mockRequest).toHaveBeenCalledTimes(2);
+		expect(mockRequest.mock.calls[1]?.[0]).toEqual(
+			expect.objectContaining({ TOKEN: 'fresh-token' }),
+		);
+	});
+
+	it('does not retry a second 401', async () => {
+		const first = unauthorized();
+		const second = unauthorized();
+		mockRequest.mockRejectedValueOnce(first);
+		mockRequest.mockRejectedValueOnce(second);
+		const refresh = jest.fn().mockResolvedValue('fresh-token');
+
+		await expect(
+			makeAuthenticatedGoogleAnalyticsRequest('/v1beta/accounts', {
+				key: 'stale-token',
+				_refreshAuth: refresh,
+			}),
+		).rejects.toBe(second);
+		expect(refresh).toHaveBeenCalledTimes(1);
+		expect(mockRequest).toHaveBeenCalledTimes(2);
 	});
 });

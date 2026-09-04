@@ -15,8 +15,7 @@ OAuth 2 (`oauth_2`).
    - `https://www.googleapis.com/auth/analytics.edit` for Admin API reads
      and writes. The bare `analytics` scope is not enough for Admin calls.
 
-The key builder refreshes the access token about five minutes before
-expiry and retries once on 401.
+Corsair refreshes the access token and retries once on 401.
 
 `measurementProtocol.sendEvents` and `validateEvents` take an `api_secret`
 from Admin, Data Streams, Measurement Protocol API secrets, plus either

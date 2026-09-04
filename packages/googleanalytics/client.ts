@@ -1,6 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
-import { z } from 'zod';
 
 export class GoogleAnalyticsAPIError extends Error {
 	constructor(
@@ -19,16 +18,7 @@ export const GOOGLE_ANALYTICS_DATA_BASE =
 	'https://analyticsdata.googleapis.com';
 export const GOOGLE_ANALYTICS_MP_BASE = 'https://www.google-analytics.com';
 
-const REFRESH_RATE_LIMIT_ATTEMPTS = 6;
-const REFRESH_RATE_LIMIT_DEFAULT_MS = 1000;
-const TOKEN_FETCH_TIMEOUT_MS = 10_000;
 const MP_FETCH_TIMEOUT_MS = 15_000;
-
-const GoogleTokenResponse = z.object({
-	access_token: z.string().min(1),
-	expires_in: z.coerce.number().finite().positive(),
-	refresh_token: z.string().min(1).optional(),
-});
 
 function isAbortError(error: unknown): boolean {
 	return (
@@ -49,128 +39,6 @@ function retryAfterMsFromResponse(response: Response): number | undefined {
 		return Math.max(0, when - Date.now());
 	}
 	return undefined;
-}
-
-function expiresAtSeconds(
-	expiresAt: string | null | undefined,
-): number | undefined {
-	if (!expiresAt) return undefined;
-	const numeric = Number(expiresAt);
-	if (Number.isFinite(numeric)) return numeric;
-	const parsed = Date.parse(expiresAt);
-	if (Number.isNaN(parsed)) return undefined;
-	return Math.floor(parsed / 1000);
-}
-
-async function refreshAccessToken(
-	clientId: string,
-	clientSecret: string,
-	refreshToken: string,
-) {
-	let lastError: GoogleAnalyticsAPIError | undefined;
-	for (let attempt = 0; attempt < REFRESH_RATE_LIMIT_ATTEMPTS; attempt++) {
-		let response: Response;
-		try {
-			response = await fetch('https://oauth2.googleapis.com/token', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded',
-				},
-				body: new URLSearchParams({
-					client_id: clientId,
-					client_secret: clientSecret,
-					refresh_token: refreshToken,
-					grant_type: 'refresh_token',
-				}),
-				signal: AbortSignal.timeout(TOKEN_FETCH_TIMEOUT_MS),
-			});
-		} catch (error) {
-			if (isAbortError(error)) {
-				throw new GoogleAnalyticsAPIError(
-					'Failed to refresh access token: request timed out',
-				);
-			}
-			throw error;
-		}
-
-		if (response.ok) {
-			let json: unknown;
-			try {
-				json = await response.json();
-			} catch {
-				throw new GoogleAnalyticsAPIError('Invalid token response');
-			}
-			const parsed = GoogleTokenResponse.safeParse(json);
-			if (!parsed.success) {
-				throw new GoogleAnalyticsAPIError('Invalid token response');
-			}
-			return parsed.data;
-		}
-
-		const retryAfter = retryAfterMsFromResponse(response);
-		const error = await response.text();
-		lastError = new GoogleAnalyticsAPIError(
-			`Failed to refresh access token: ${error}`,
-			response.status,
-			retryAfter,
-		);
-		if (response.status === 429 && attempt < REFRESH_RATE_LIMIT_ATTEMPTS - 1) {
-			await new Promise((resolve) =>
-				setTimeout(resolve, retryAfter ?? REFRESH_RATE_LIMIT_DEFAULT_MS),
-			);
-			continue;
-		}
-		throw lastError;
-	}
-	throw (
-		lastError ?? new GoogleAnalyticsAPIError('Failed to refresh access token')
-	);
-}
-
-export async function getValidAccessToken({
-	accessToken,
-	expiresAt,
-	clientId,
-	clientSecret,
-	refreshToken,
-	forceRefresh = false,
-}: {
-	clientId: string;
-	clientSecret: string;
-	accessToken?: string | null;
-	expiresAt?: string | null;
-	refreshToken: string;
-	forceRefresh?: boolean;
-}): Promise<{
-	accessToken: string;
-	newRefreshToken?: string;
-	expiresAt: number;
-	refreshed: boolean;
-}> {
-	const now = Math.floor(Date.now() / 1000);
-	const bufferSeconds = 5 * 60;
-	const expiry = expiresAtSeconds(expiresAt);
-
-	if (
-		!forceRefresh &&
-		accessToken &&
-		expiry !== undefined &&
-		expiry > now + bufferSeconds
-	) {
-		return { accessToken, expiresAt: expiry, refreshed: false };
-	}
-
-	const tokenData = await refreshAccessToken(
-		clientId,
-		clientSecret,
-		refreshToken,
-	);
-	return {
-		accessToken: tokenData.access_token,
-		newRefreshToken: tokenData.refresh_token,
-		expiresAt: now + tokenData.expires_in,
-		refreshed: true,
-	};
 }
 
 type GoogleAnalyticsRequestOptions = {
