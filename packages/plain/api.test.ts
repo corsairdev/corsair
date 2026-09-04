@@ -564,4 +564,56 @@ describe('Plain plugin', () => {
 			}),
 		).rejects.toMatchObject({ code: 'NOT_FOUND' });
 	});
+
+	it('rejects mixed forward and reverse pagination controls', async () => {
+		const plugin = plain();
+
+		await expect(
+			plugin.endpoints!.customers.list(mockCtx, {
+				first: 10,
+				before: 'cursor_1',
+			}),
+		).rejects.toThrow(
+			'Cannot mix forward (first/after) and reverse (last/before) pagination controls',
+		);
+
+		await expect(
+			plugin.endpoints!.threads.query(mockCtx, {
+				after: 'cursor_2',
+				last: 5,
+			}),
+		).rejects.toThrow(
+			'Cannot mix forward (first/after) and reverse (last/before) pagination controls',
+		);
+
+		await expect(
+			plugin.endpoints!.threads.fetchIssues(mockCtx, {
+				customerId: 'cus_123',
+				threadFirst: 10,
+				threadBefore: 'cursor_3',
+			}),
+		).rejects.toThrow(
+			'Cannot mix forward (threadFirst/threadAfter) and reverse (threadLast/threadBefore) thread pagination controls',
+		);
+
+		await expect(
+			plugin.endpoints!.tiers.list(mockCtx, {
+				first: 10,
+				last: 5,
+			}),
+		).rejects.toThrow(
+			'Cannot mix forward (first/after) and reverse (last/before) pagination controls',
+		);
+
+		await expect(
+			plugin.endpoints!.customerGroups.list(mockCtx, {
+				after: 'cursor_4',
+				before: 'cursor_5',
+			}),
+		).rejects.toThrow(
+			'Cannot mix forward (first/after) and reverse (last/before) pagination controls',
+		);
+
+		expect(mockMakePlainRequest).not.toHaveBeenCalled();
+	});
 });

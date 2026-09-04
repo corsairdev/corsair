@@ -171,6 +171,26 @@ const ThreadsSortSchema = z
 	})
 	.loose();
 
+function rejectMixedPaginationControls<T extends z.ZodRawShape>(
+	schema: z.ZodObject<T>,
+) {
+	return schema.superRefine((value, ctx) => {
+		const hasForward =
+			typeof (value as Record<string, unknown>).first === 'number' ||
+			typeof (value as Record<string, unknown>).after === 'string';
+		const hasReverse =
+			typeof (value as Record<string, unknown>).last === 'number' ||
+			typeof (value as Record<string, unknown>).before === 'string';
+		if (hasForward && hasReverse) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message:
+					'Cannot mix forward (first/after) and reverse (last/before) pagination controls',
+			});
+		}
+	});
+}
+
 const GetCustomerByIdInputSchema = z.object({
 	customerId: z.string(),
 });
@@ -179,19 +199,21 @@ const GetCustomerByEmailInputSchema = z.object({
 	email: z.string().email(),
 });
 
-const GetCustomersInputSchema = z.object({
-	filters: CustomersFilterSchema.optional(),
-	sortBy: z
-		.object({
-			field: z.enum(['FULL_NAME']),
-			direction: z.enum(['ASC', 'DESC']),
-		})
-		.optional(),
-	first: z.number().int().positive().max(100).optional(),
-	after: z.string().optional(),
-	last: z.number().int().positive().max(100).optional(),
-	before: z.string().optional(),
-});
+const GetCustomersInputSchema = rejectMixedPaginationControls(
+	z.object({
+		filters: CustomersFilterSchema.optional(),
+		sortBy: z
+			.object({
+				field: z.enum(['FULL_NAME']),
+				direction: z.enum(['ASC', 'DESC']),
+			})
+			.optional(),
+		first: z.number().int().positive().max(100).optional(),
+		after: z.string().optional(),
+		last: z.number().int().positive().max(100).optional(),
+		before: z.string().optional(),
+	}),
+);
 
 const UpsertCustomerInputSchema = z.object({
 	identifier: CustomerIdentifierInputSchema,
@@ -230,23 +252,41 @@ const GetThreadByIdInputSchema = z.object({
 	threadId: z.string(),
 });
 
-const QueryThreadsInputSchema = z.object({
-	filters: z.record(z.string(), z.unknown()).optional(),
-	sortBy: ThreadsSortSchema.optional(),
-	first: z.number().int().positive().max(100).optional(),
-	after: z.string().optional(),
-	last: z.number().int().positive().max(100).optional(),
-	before: z.string().optional(),
-});
+const QueryThreadsInputSchema = rejectMixedPaginationControls(
+	z.object({
+		filters: z.record(z.string(), z.unknown()).optional(),
+		sortBy: ThreadsSortSchema.optional(),
+		first: z.number().int().positive().max(100).optional(),
+		after: z.string().optional(),
+		last: z.number().int().positive().max(100).optional(),
+		before: z.string().optional(),
+	}),
+);
 
-const FetchIssuesInputSchema = z.object({
-	customerId: z.string(),
-	threadFirst: z.number().int().positive().max(100).optional(),
-	threadAfter: z.string().optional(),
-	threadLast: z.number().int().positive().max(100).optional(),
-	threadBefore: z.string().optional(),
-	linkFirst: z.number().int().positive().max(100).optional(),
-});
+const FetchIssuesInputSchema = z
+	.object({
+		customerId: z.string(),
+		threadFirst: z.number().int().positive().max(100).optional(),
+		threadAfter: z.string().optional(),
+		threadLast: z.number().int().positive().max(100).optional(),
+		threadBefore: z.string().optional(),
+		linkFirst: z.number().int().positive().max(100).optional(),
+	})
+	.superRefine((value, ctx) => {
+		const hasForward =
+			typeof value.threadFirst === 'number' ||
+			typeof value.threadAfter === 'string';
+		const hasReverse =
+			typeof value.threadLast === 'number' ||
+			typeof value.threadBefore === 'string';
+		if (hasForward && hasReverse) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message:
+					'Cannot mix forward (threadFirst/threadAfter) and reverse (threadLast/threadBefore) thread pagination controls',
+			});
+		}
+	});
 
 const SendMessageInputSchema = z.object({
 	threadId: z.string(),
@@ -311,12 +351,14 @@ const FetchTierInputSchema = z.object({
 	tierId: z.string(),
 });
 
-const ListTiersInputSchema = z.object({
-	first: z.number().int().positive().max(100).optional(),
-	after: z.string().optional(),
-	last: z.number().int().positive().max(100).optional(),
-	before: z.string().optional(),
-});
+const ListTiersInputSchema = rejectMixedPaginationControls(
+	z.object({
+		first: z.number().int().positive().max(100).optional(),
+		after: z.string().optional(),
+		last: z.number().int().positive().max(100).optional(),
+		before: z.string().optional(),
+	}),
+);
 
 const CreateCustomerGroupInputSchema = z.object({
 	name: z.string().min(1),
@@ -325,17 +367,19 @@ const CreateCustomerGroupInputSchema = z.object({
 	externalId: z.string().optional(),
 });
 
-const ListCustomerGroupsInputSchema = z.object({
-	filters: z
-		.object({
-			externalIds: z.array(z.string()).optional(),
-		})
-		.optional(),
-	first: z.number().int().positive().max(100).optional(),
-	after: z.string().optional(),
-	last: z.number().int().positive().max(100).optional(),
-	before: z.string().optional(),
-});
+const ListCustomerGroupsInputSchema = rejectMixedPaginationControls(
+	z.object({
+		filters: z
+			.object({
+				externalIds: z.array(z.string()).optional(),
+			})
+			.optional(),
+		first: z.number().int().positive().max(100).optional(),
+		after: z.string().optional(),
+		last: z.number().int().positive().max(100).optional(),
+		before: z.string().optional(),
+	}),
+);
 
 const AddCustomerToGroupInputSchema = z.object({
 	customerId: z.string(),
