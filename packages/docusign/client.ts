@@ -95,6 +95,7 @@ function assertSafePath(endpoint: string): void {
 function toMethod(method: string | undefined): ApiRequestOptions['method'] {
 	const upper = typeof method === 'string' ? method.toUpperCase() : 'GET';
 	if (
+		upper === 'GET' ||
 		upper === 'POST' ||
 		upper === 'PUT' ||
 		upper === 'DELETE' ||
@@ -104,7 +105,7 @@ function toMethod(method: string | undefined): ApiRequestOptions['method'] {
 	) {
 		return upper;
 	}
-	return 'GET';
+	throw new Error(`Unsupported DocuSign request method: "${method}".`);
 }
 
 export interface DocusignRequestOptions {
