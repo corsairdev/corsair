@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { wixRoutes } from './endpoints/routes';
 import {
 	WixEndpointInputSchemas,
@@ -129,6 +130,19 @@ describe('Wix output schemas', () => {
 		expect(orders.pagingMetadata?.total).toBe(0);
 	});
 
+	it('infers query response item fields as arrays at the type level', () => {
+		type QueryContactsOutput = z.infer<
+			typeof WixEndpointOutputSchemas.queryContacts
+		>;
+		type ContactsIsArray = NonNullable<
+			QueryContactsOutput['contacts']
+		> extends unknown[]
+			? true
+			: false;
+		const typeCheck: ContactsIsArray = true;
+		expect(typeCheck).toBe(true);
+	});
+
 	it('parses bulk action responses', () => {
 		const parsed = WixEndpointOutputSchemas.bulkDeleteProducts.parse({
 			results: [],
@@ -143,7 +157,7 @@ describe('Wix database entities', () => {
 		expect(
 			WixContact.safeParse({
 				id: 'contact-1',
-				revision: 3,
+				revision: '3',
 				createdDate: '2026-01-01T00:00:00.000Z',
 			}).success,
 		).toBe(true);
@@ -158,6 +172,7 @@ describe('Wix database entities', () => {
 
 	it('rejects mistyped entity fields', () => {
 		expect(WixContact.safeParse({ id: 123 }).success).toBe(false);
+		expect(WixContact.safeParse({ revision: 3 }).success).toBe(false);
 		expect(WixProduct.safeParse({ revision: 42 }).success).toBe(false);
 		expect(WixOrder.safeParse({ status: 7 }).success).toBe(false);
 	});

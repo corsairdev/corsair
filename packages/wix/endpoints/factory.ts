@@ -78,7 +78,11 @@ export function resolvePath(
 }
 
 function buildQuery(route: WixRoute, input: WixEndpointInput) {
-	const queryBag = (input.query ?? {}) as Record<string, unknown>;
+	// For queryBody routes the query options belong in the POST body
+	// (`{ query: {...} }`), not in the URL query string.
+	const queryBag = route.queryBody
+		? {}
+		: ((input.query ?? {}) as Record<string, unknown>);
 	const query: Record<string, unknown> = { ...queryBag };
 	for (const key of route.queryParams ?? []) {
 		const value = input[key] ?? input[camelToSnake(key)];
@@ -88,7 +92,11 @@ function buildQuery(route: WixRoute, input: WixEndpointInput) {
 }
 
 function buildQueryBody(input: WixEndpointInput): Record<string, unknown> {
-	const query: Record<string, unknown> = {};
+	// Callers may pass Wix query options either as the `{ query: {...} }`
+	// object or as top-level fields; both forms must reach the body query.
+	const query: Record<string, unknown> = {
+		...((input.query ?? {}) as Record<string, unknown>),
+	};
 	if (input.filter !== undefined) query.filter = input.filter;
 	if (input.sort !== undefined) query.sort = input.sort;
 	const paging = input.paging;
@@ -110,7 +118,11 @@ function buildQueryBody(input: WixEndpointInput): Record<string, unknown> {
 function requestBody(route: WixRoute, input: WixEndpointInput): unknown {
 	if ('body' in input && input.body !== undefined) return input.body;
 
-	const pathParams = new Set(route.pathParams ?? []);
+	// resolvePath accepts both camelCase and snake_case path parameters, so
+	// both forms must be excluded from the request body.
+	const pathParams = new Set(
+		(route.pathParams ?? []).flatMap((key) => [key, camelToSnake(key)]),
+	);
 	const queryParams = new Set(
 		(route.queryParams ?? []).flatMap((key) => [key, camelToSnake(key)]),
 	);
@@ -175,13 +187,21 @@ export async function requestWixOperation(
 	) as WixEndpointInput;
 	const headers =
 		(validated.headers as Record<string, string> | undefined) ?? undefined;
+	// Site-level scoping: an explicit per-call siteId always wins. When the
+	// caller explicitly scopes the request to an account, the plugin-level
+	// siteId default is suppressed so account-level calls are never polluted
+	// with a site header (the client rejects any combination of both).
+	const accountId = validated.accountId as string | undefined;
+	const siteId =
+		(validated.siteId as string | undefined) ??
+		(accountId ? undefined : ctx.options?.siteId);
 	return makeWixRequest(path, ctx.key, {
 		method: route.method,
 		body: requestBody(route, validated),
 		query: buildQuery(route, validated),
 		headers,
-		siteId: validated.siteId as string | undefined,
-		accountId: validated.accountId as string | undefined,
+		siteId,
+		accountId,
 	});
 }
 

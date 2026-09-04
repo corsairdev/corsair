@@ -92,10 +92,25 @@ export async function makeWixRequest<T>(
 	} = options;
 	const resolvedBase = resolveWixBase(baseUrl);
 
+	// Wix requires exactly one scope header per API-key request; sending both
+	// is undefined behavior and may be rejected by the API.
+	if (siteId && accountId) {
+		throw new WixAPIError(
+			'[wix] siteId and accountId are mutually exclusive; set only one scope',
+		);
+	}
+
 	// Wix REST authenticates with the raw token in the Authorization header
 	// (`Authorization: <token>`, no Bearer prefix). Do NOT set TOKEN here:
 	// corsair's request() overwrites Authorization with `Bearer ${TOKEN}`,
-	// which Wix rejects.
+	// which Wix rejects. Custom headers are merged first and any
+	// case-insensitive Authorization entry is stripped so a caller-supplied
+	// header can never replace the credential.
+	const customHeaders: Record<string, string> = {};
+	for (const [key, value] of Object.entries(headers ?? {})) {
+		if (key.toLowerCase() === 'authorization') continue;
+		customHeaders[key] = value;
+	}
 	const config: OpenAPIConfig = {
 		BASE: resolvedBase,
 		VERSION: '1.0.0',
@@ -103,8 +118,8 @@ export async function makeWixRequest<T>(
 		CREDENTIALS: 'omit',
 		HEADERS: {
 			'Content-Type': 'application/json',
+			...customHeaders,
 			Authorization: token,
-			...headers,
 			...(siteId ? { 'wix-site-id': siteId } : {}),
 			...(accountId ? { 'wix-account-id': accountId } : {}),
 		},
@@ -117,7 +132,10 @@ export async function makeWixRequest<T>(
 		url: endpoint,
 		body: hasBody ? body : undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		// Wix DELETE endpoints accept required query parameters (e.g.
+		// `revision` on delete-loyalty-coupon), so query is sent for every
+		// method, not just GET.
+		query,
 	};
 
 	try {

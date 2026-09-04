@@ -3,7 +3,8 @@ import { z } from 'zod';
 export const WixContact = z
 	.object({
 		id: z.string().optional(),
-		revision: z.number().optional(),
+		// Wix returns Contact.revision as a read-only int64 encoded string.
+		revision: z.string().optional(),
 		createdDate: z.string().optional(),
 		updatedDate: z.string().optional(),
 	})

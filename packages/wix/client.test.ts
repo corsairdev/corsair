@@ -105,6 +105,46 @@ describe('makeWixRequest plumbing', () => {
 		expect(config.HEADERS.Authorization).toBe('tok');
 	});
 
+	it.each([
+		['Authorization', 'forged'],
+		['authorization', 'forged'],
+		['AUTHORIZATION', 'forged'],
+	])(
+		'never lets a custom %s header replace the Wix token',
+		async (header, value) => {
+			await makeWixRequest('/apps/v1/instance', 'tok', {
+				headers: { [header]: value },
+			});
+			const [config] = mockRequest.mock.calls[0] as [
+				{ HEADERS: Record<string, string> },
+			];
+			expect(config.HEADERS.Authorization).toBe('tok');
+		},
+	);
+
+	it('rejects requests that set both siteId and accountId', async () => {
+		await expect(
+			makeWixRequest('/site-properties/v4/properties', 'tok', {
+				siteId: 'site-1',
+				accountId: 'account-1',
+			}),
+		).rejects.toThrow('mutually exclusive');
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('sends query parameters for DELETE requests', async () => {
+		await makeWixRequest('/loyalty/v1/coupons/coupon-1', 'tok', {
+			method: 'DELETE',
+			query: { revision: 3 },
+		});
+		const [, options] = mockRequest.mock.calls[0] as [
+			unknown,
+			{ method: string; query?: unknown },
+		];
+		expect(options.method).toBe('DELETE');
+		expect(options.query).toEqual({ revision: 3 });
+	});
+
 	it('rejects non-allowlisted hosts before sending', async () => {
 		await expect(
 			makeWixRequest('/x', 'tok', { baseUrl: 'https://evil.example.com' }),

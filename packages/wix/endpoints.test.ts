@@ -65,6 +65,7 @@ function sampleInput(
 		password: 'test-password',
 		domainName: 'example.com',
 		text: 'hello world',
+		mimeType: 'image/jpeg',
 		moderationStatus: 'APPROVED',
 		labels: ['label-1'],
 		ids: ['id-1'],
@@ -269,6 +270,74 @@ describe('Wix endpoints', () => {
 			{ body?: { query?: { paging?: unknown } } },
 		];
 		expect(options.body?.query?.paging).toEqual({ limit: 5, offset: 10 });
+	});
+
+	it('preserves input.query in the body for queryBody routes', async () => {
+		const fn = endpointFn('contacts', 'query');
+		await fn(mockCtx, { siteId: 's', query: { filter: { firstName: 'Ada' } } });
+
+		const [path, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{
+				body?: { query?: { filter?: unknown } };
+				query?: Record<string, unknown>;
+			},
+		];
+		expect(options.body?.query?.filter).toEqual({ firstName: 'Ada' });
+		expect(options.query).toBeUndefined();
+		expect(path).toBe('/contacts/v4/contacts/query');
+	});
+
+	it('excludes snake_case path param duplicates from the request body', async () => {
+		const fn = endpointFn('contacts', 'addLabels');
+		await fn(mockCtx, {
+			contactId: 'contact-1',
+			// resolvePath also accepts the snake_case alias; it must never leak
+			// into the request body as a duplicate field.
+			contact_id: 'contact-1',
+			labelKeys: ['vip'],
+		});
+
+		const [path, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{ body?: Record<string, unknown> },
+		];
+		expect(path).toBe('/contacts/v4/contacts/contact-1/label');
+		expect(options.body).toEqual({ labelKeys: ['vip'] });
+		expect(options.body?.contact_id).toBeUndefined();
+	});
+
+	it('falls back to the plugin-level siteId when the call omits it', async () => {
+		const fn = endpointFn('contacts', 'list');
+		await fn(
+			{ ...mockCtx, options: { siteId: 'plugin-site' } } as WixContext,
+			{},
+		);
+
+		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{ siteId?: string; accountId?: string },
+		];
+		expect(options.siteId).toBe('plugin-site');
+		expect(options.accountId).toBeUndefined();
+	});
+
+	it('suppresses the plugin-level siteId for explicit account calls', async () => {
+		const fn = endpointFn('sites', 'queryFolders');
+		await fn({ ...mockCtx, options: { siteId: 'plugin-site' } } as WixContext, {
+			accountId: 'account-1',
+		});
+
+		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{ siteId?: string; accountId?: string },
+		];
+		expect(options.siteId).toBeUndefined();
+		expect(options.accountId).toBe('account-1');
 	});
 
 	it('rejects invalid input through the schema before any request', async () => {

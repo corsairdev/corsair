@@ -51,11 +51,25 @@ const BulkActionMetadataSchema = z
 
 const WixItemSchema = z.looseObject({});
 
-function queryResponse(itemsField: string) {
+type WixQueryResponse<ItemsField extends string> = {
+	[field in ItemsField]?: z.infer<typeof WixItemSchema>[];
+} & {
+	pagingMetadata?: z.infer<typeof PagingMetadataSchema>;
+} & Record<string, unknown>;
+
+/**
+ * A computed `[itemsField]` key makes TypeScript widen the zod shape to a
+ * string index signature, so consumers could not see e.g. `contacts` as an
+ * array. The narrow assertion restores the literal-key output type; the
+ * runtime loose-object parse behavior is unchanged.
+ */
+function queryResponse<ItemsField extends string>(
+	itemsField: ItemsField,
+): z.ZodType<WixQueryResponse<ItemsField>> {
 	return z.looseObject({
 		[itemsField]: z.array(WixItemSchema).optional(),
 		pagingMetadata: PagingMetadataSchema.optional(),
-	});
+	}) as unknown as z.ZodType<WixQueryResponse<ItemsField>>;
 }
 
 // ── contacts ───────────────────────────────────────────────────────────────
@@ -1552,7 +1566,8 @@ export type DeleteUserDefinedFieldsResponse = z.infer<
 const GenerateFileUploadUrlInputSchema = z.looseObject({
 	...SiteScopeFields,
 	fileName: z.string().optional(),
-	mimeType: z.string().optional(),
+	// Wix requires `mimeType` on generate-file-upload-url.
+	mimeType: z.string().min(1),
 });
 export type GenerateFileUploadUrlInput = z.infer<
 	typeof GenerateFileUploadUrlInputSchema
