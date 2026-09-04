@@ -394,9 +394,11 @@ const MeasurementProtocolEventsInputSchema = z
 		timestampMicros: z.number().optional(),
 		userProperties: z.record(z.string(), z.unknown()).optional(),
 		consent: ResourceBody.optional(),
-		events: z.array(
-			z.object({ name: z.string(), params: ResourceBody.optional() }).loose(),
-		),
+		events: z
+			.array(
+				z.object({ name: z.string(), params: ResourceBody.optional() }).loose(),
+			)
+			.min(1),
 	})
 	.loose()
 	.refine(

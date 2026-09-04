@@ -893,6 +893,14 @@ describe('input schemas accept documented shapes', () => {
 				events: [{ name: 'login', params: { method: 'Google' } }],
 			});
 		expect(parsed.events[0]?.name).toBe('login');
+		expect(() =>
+			GoogleAnalyticsEndpointInputSchemas.measurementProtocolSendEvents.parse({
+				apiSecret: 'secret',
+				measurementId: 'G-XXXX',
+				clientId: '555',
+				events: [],
+			}),
+		).toThrow();
 	});
 
 	it('measurementProtocol web stream requires clientId alongside measurementId', () => {
