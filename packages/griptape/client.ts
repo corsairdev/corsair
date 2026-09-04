@@ -32,7 +32,6 @@ export async function makeGriptapeRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 

@@ -110,15 +110,15 @@ describe('makeGriptapeRequest request wiring', () => {
 		).resolves.toBe(payload);
 	});
 
-	it('targets the Griptape Cloud base URL with a Bearer key header', async () => {
+	it('targets the Griptape Cloud base URL with a Bearer token', async () => {
 		await makeGriptapeRequest('assistants', 'test-api-key');
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				BASE: 'https://cloud.griptape.ai/api',
+				TOKEN: 'test-api-key',
 				HEADERS: expect.objectContaining({
 					'Content-Type': 'application/json',
-					Authorization: 'Bearer test-api-key',
 				}),
 			}),
 			expect.anything(),
