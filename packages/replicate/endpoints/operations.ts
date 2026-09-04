@@ -26,11 +26,21 @@ export const collectionsList: ReplicateEndpoints['collectionsList'] = async (
 	ctx,
 	rawInput,
 ) => {
-	ReplicateEndpointInputSchemas.collectionsList.parse(rawInput);
+	const input = ReplicateEndpointInputSchemas.collectionsList.parse(rawInput);
 	const response = ReplicateEndpointOutputSchemas.collectionsList.parse(
-		await makeReplicateRequest('/collections', ctx.key, { method: 'GET' }),
+		await makeReplicateRequest('/collections', ctx.key, {
+			method: 'GET',
+			query: {
+				cursor: input.cursor,
+			},
+		}),
 	);
-	await logEventFromContext(ctx, 'replicate.collections.list', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'replicate.collections.list',
+		{ cursor: input.cursor },
+		'completed',
+	);
 	return response;
 };
 
@@ -167,11 +177,21 @@ export const filesList: ReplicateEndpoints['filesList'] = async (
 	ctx,
 	rawInput,
 ) => {
-	ReplicateEndpointInputSchemas.filesList.parse(rawInput);
+	const input = ReplicateEndpointInputSchemas.filesList.parse(rawInput);
 	const response = ReplicateEndpointOutputSchemas.filesList.parse(
-		await makeReplicateRequest('/files', ctx.key, { method: 'GET' }),
+		await makeReplicateRequest('/files', ctx.key, {
+			method: 'GET',
+			query: {
+				cursor: input.cursor,
+			},
+		}),
 	);
-	await logEventFromContext(ctx, 'replicate.files.list', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'replicate.files.list',
+		{ cursor: input.cursor },
+		'completed',
+	);
 	return response;
 };
 
@@ -263,6 +283,7 @@ export const modelsList: ReplicateEndpoints['modelsList'] = async (
 		await makeReplicateRequest('/models', ctx.key, {
 			method: 'GET',
 			query: {
+				cursor: input.cursor,
 				sort_by: input.sort_by,
 				sort_direction: input.sort_direction,
 			},
@@ -271,7 +292,11 @@ export const modelsList: ReplicateEndpoints['modelsList'] = async (
 	await logEventFromContext(
 		ctx,
 		'replicate.models.list',
-		{ sortBy: input.sort_by, sortDirection: input.sort_direction },
+		{
+			cursor: input.cursor,
+			sortBy: input.sort_by,
+			sortDirection: input.sort_direction,
+		},
 		'completed',
 	);
 	return response;
@@ -437,13 +462,16 @@ export const modelsVersionsList: ReplicateEndpoints['modelsVersionsList'] =
 				ctx.key,
 				{
 					method: 'GET',
+					query: {
+						cursor: input.cursor,
+					},
 				},
 			),
 		);
 		await logEventFromContext(
 			ctx,
 			'replicate.models.versions_list',
-			{ owner: input.owner, name: input.name },
+			{ owner: input.owner, name: input.name, cursor: input.cursor },
 			'completed',
 		);
 		return response;
@@ -458,6 +486,7 @@ export const predictionsList: ReplicateEndpoints['predictionsList'] = async (
 		await makeReplicateRequest('/predictions', ctx.key, {
 			method: 'GET',
 			query: {
+				cursor: input.cursor,
 				created_after: input.created_after,
 				created_before: input.created_before,
 				source: input.source,
@@ -621,11 +650,21 @@ export const trainingsList: ReplicateEndpoints['trainingsList'] = async (
 	ctx,
 	rawInput,
 ) => {
-	ReplicateEndpointInputSchemas.trainingsList.parse(rawInput);
+	const input = ReplicateEndpointInputSchemas.trainingsList.parse(rawInput);
 	const response = ReplicateEndpointOutputSchemas.trainingsList.parse(
-		await makeReplicateRequest('/trainings', ctx.key, { method: 'GET' }),
+		await makeReplicateRequest('/trainings', ctx.key, {
+			method: 'GET',
+			query: {
+				cursor: input.cursor,
+			},
+		}),
 	);
-	await logEventFromContext(ctx, 'replicate.trainings.list', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'replicate.trainings.list',
+		{ cursor: input.cursor },
+		'completed',
+	);
 	return response;
 };
 

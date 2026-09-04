@@ -113,9 +113,12 @@ describe('Replicate endpoint contracts', () => {
 		mockRequest.mockResolvedValueOnce({
 			results: [{ name: 'Image', slug: 'image', description: 'desc' }],
 		});
-		await collectionsList(ctx as never, {});
+		await collectionsList(ctx as never, { cursor: 'next-page-token' });
 		expect(mockRequest).toHaveBeenCalledWith('/collections', ctx.key, {
 			method: 'GET',
+			query: {
+				cursor: 'next-page-token',
+			},
 		});
 	});
 
@@ -218,9 +221,12 @@ describe('Replicate endpoint contracts', () => {
 
 	it('files.list', async () => {
 		mockRequest.mockResolvedValueOnce({ results: [uploadedFile] });
-		await filesList(ctx as never, {});
+		await filesList(ctx as never, { cursor: 'files-cursor' });
 		expect(mockRequest).toHaveBeenCalledWith('/files', ctx.key, {
 			method: 'GET',
+			query: {
+				cursor: 'files-cursor',
+			},
 		});
 	});
 
@@ -274,12 +280,14 @@ describe('Replicate endpoint contracts', () => {
 	it('models.list', async () => {
 		mockRequest.mockResolvedValueOnce({ results: [model] });
 		await modelsList(ctx as never, {
+			cursor: 'models-cursor',
 			sort_by: 'latest_version_created_at',
 			sort_direction: 'desc',
 		});
 		expect(mockRequest).toHaveBeenCalledWith('/models', ctx.key, {
 			method: 'GET',
 			query: {
+				cursor: 'models-cursor',
 				sort_by: 'latest_version_created_at',
 				sort_direction: 'desc',
 			},
@@ -374,23 +382,31 @@ describe('Replicate endpoint contracts', () => {
 		await modelsVersionsList(ctx as never, {
 			owner: 'replicate',
 			name: 'hello-world',
+			cursor: 'versions-cursor',
 		});
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/models/replicate/hello-world/versions',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: {
+					cursor: 'versions-cursor',
+				},
+			},
 		);
 	});
 
 	it('predictions.list', async () => {
 		mockRequest.mockResolvedValueOnce({ results: [prediction] });
 		await predictionsList(ctx as never, {
+			cursor: 'predictions-cursor',
 			created_after: '2025-01-01T00:00:00Z',
 			source: 'web',
 		});
 		expect(mockRequest).toHaveBeenCalledWith('/predictions', ctx.key, {
 			method: 'GET',
 			query: {
+				cursor: 'predictions-cursor',
 				created_after: '2025-01-01T00:00:00Z',
 				created_before: undefined,
 				source: 'web',
@@ -477,9 +493,12 @@ describe('Replicate endpoint contracts', () => {
 
 	it('trainings.list', async () => {
 		mockRequest.mockResolvedValueOnce({ results: [training] });
-		await trainingsList(ctx as never, {});
+		await trainingsList(ctx as never, { cursor: 'trainings-cursor' });
 		expect(mockRequest).toHaveBeenCalledWith('/trainings', ctx.key, {
 			method: 'GET',
+			query: {
+				cursor: 'trainings-cursor',
+			},
 		});
 	});
 

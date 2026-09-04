@@ -240,7 +240,9 @@ const PredictionCreateBaseSchema = z.object({
 
 export const ReplicateEndpointInputSchemas = {
 	accountGet: EmptyInputSchema,
-	collectionsList: EmptyInputSchema,
+	collectionsList: z.object({
+		cursor: z.string().min(1).optional(),
+	}),
 	collectionsGet: z.object({ collectionSlug: z.string().min(1) }),
 	deploymentsList: EmptyInputSchema,
 	deploymentsCreate: z.object({
@@ -262,7 +264,9 @@ export const ReplicateEndpointInputSchemas = {
 	deploymentsPredictionsCreate: z
 		.object({ owner: z.string().min(1), name: z.string().min(1) })
 		.merge(PredictionCreateBaseSchema),
-	filesList: EmptyInputSchema,
+	filesList: z.object({
+		cursor: z.string().min(1).optional(),
+	}),
 	filesCreate: z.object({
 		content: z.unknown(),
 		filename: z.string().max(255).optional(),
@@ -273,6 +277,7 @@ export const ReplicateEndpointInputSchemas = {
 	filesGet: z.object({ fileId: z.string().min(1) }),
 	hardwareList: EmptyInputSchema,
 	modelsList: z.object({
+		cursor: z.string().min(1).optional(),
 		sort_by: z
 			.enum(['model_created_at', 'latest_version_created_at'])
 			.optional(),
@@ -308,12 +313,14 @@ export const ReplicateEndpointInputSchemas = {
 	modelsVersionsList: z.object({
 		owner: z.string().min(1),
 		name: z.string().min(1),
+		cursor: z.string().min(1).optional(),
 	}),
 	predictionsCreate: PredictionCreateBaseSchema.extend({
 		version: z.string().min(1),
 	}),
 	predictionsGet: z.object({ predictionId: z.string().min(1) }),
 	predictionsList: z.object({
+		cursor: z.string().min(1).optional(),
 		created_after: z.string().optional(),
 		created_before: z.string().optional(),
 		source: z.enum(['web']).optional(),
@@ -335,7 +342,9 @@ export const ReplicateEndpointInputSchemas = {
 			.optional(),
 	}),
 	trainingsGet: z.object({ trainingId: z.string().min(1) }),
-	trainingsList: EmptyInputSchema,
+	trainingsList: z.object({
+		cursor: z.string().min(1).optional(),
+	}),
 	trainingsCancel: z.object({ trainingId: z.string().min(1) }),
 	webhooksDefaultSecretGet: EmptyInputSchema,
 } as const;

@@ -111,7 +111,12 @@ List model collections
 await corsair.replicate.api.collections.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+
 
 
 **Output**
@@ -603,7 +608,12 @@ List uploaded files
 await corsair.replicate.api.files.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+
 
 
 **Output**
@@ -803,6 +813,7 @@ await corsair.replicate.api.models.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `cursor` | `string` | No | — |
 | `sort_by` | `model_created_at \| latest_version_created_at` | No | — |
 | `sort_direction` | `asc \| desc` | No | — |
 
@@ -1064,6 +1075,7 @@ await corsair.replicate.api.models.versionsList({});
 |------|------|----------|-------------|
 | `owner` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
 
 
 
@@ -1355,6 +1367,7 @@ await corsair.replicate.api.predictions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `cursor` | `string` | No | — |
 | `created_after` | `string` | No | — |
 | `created_before` | `string` | No | — |
 | `source` | `web` | No | — |
@@ -1768,7 +1781,12 @@ List training jobs
 await corsair.replicate.api.trainings.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+
 
 
 **Output**
