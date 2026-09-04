@@ -61,18 +61,12 @@ export const list: BrevoEndpoints['contactsList'] = async (ctx, input) => {
 
 export const get: BrevoEndpoints['contactsGet'] = async (ctx, input) => {
 	const parsed = BrevoEndpointInputSchemas.contactsGet.parse(input);
-	const query: Record<string, string | undefined> = {};
-	if (parsed.attributes && parsed.attributes.length > 0) {
-		query.attributes = parsed.attributes.join(',');
-	}
-
 	const encodedIdentifier = encodeURIComponent(String(parsed.identifier));
 	const raw = await makeBrevoRequest<unknown>(
 		`contacts/${encodedIdentifier}`,
 		ctx.key,
 		{
 			method: 'GET',
-			query,
 		},
 	);
 	const response = BrevoEndpointOutputSchemas.contactsGet.parse(raw);

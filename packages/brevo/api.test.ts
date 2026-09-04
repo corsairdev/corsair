@@ -2,7 +2,10 @@ import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import { BrevoAPIError } from './client';
 import { Account, Contacts, EmailCampaigns } from './endpoints';
-import { BrevoEndpointOutputSchemas } from './endpoints/types';
+import {
+	BrevoEndpointInputSchemas,
+	BrevoEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import type { BrevoContext } from './index';
 import { brevo } from './index';
@@ -209,16 +212,12 @@ describe('Brevo Plugin & Client Tests', () => {
 
 			const result = await Contacts.get(ctx, {
 				identifier: 'alice@example.com',
-				attributes: ['FIRSTNAME'],
 			});
 			expect(result).toEqual(contact);
 			expect(mockMakeBrevoRequest).toHaveBeenCalledWith(
 				'contacts/alice%40example.com',
 				'test-api-key',
-				expect.objectContaining({
-					method: 'GET',
-					query: { attributes: 'FIRSTNAME' },
-				}),
+				{ method: 'GET' },
 			);
 			expect(mockDbContacts.upsertByEntityId).toHaveBeenCalledWith('42', {
 				id: 42,
@@ -229,6 +228,14 @@ describe('Brevo Plugin & Client Tests', () => {
 				modifiedAt: '2026-01-02T00:00:00.000Z',
 				attributes: { FIRSTNAME: 'Alice' },
 			});
+		});
+
+		it('contacts.get ignores an attributes filter that Brevo does not support', async () => {
+			const parsed = BrevoEndpointInputSchemas.contactsGet.parse({
+				identifier: 'alice@example.com',
+				attributes: ['FIRSTNAME'],
+			});
+			expect(parsed).toEqual({ identifier: 'alice@example.com' });
 		});
 
 		it('contacts.create creates a contact and returns ID', async () => {

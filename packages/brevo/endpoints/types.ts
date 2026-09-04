@@ -89,7 +89,6 @@ export type ContactsListResponse = z.infer<typeof ContactsListResponseSchema>;
 
 export const ContactsGetInputSchema = z.object({
 	identifier: z.union([z.string(), z.number()]),
-	attributes: z.array(z.string()).optional(),
 });
 export type ContactsGetInput = z.infer<typeof ContactsGetInputSchema>;
 
