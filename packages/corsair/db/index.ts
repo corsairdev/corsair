@@ -157,33 +157,6 @@ export type CorsairPermissionInsert = {
 	error?: string | null;
 };
 
-// A short-lived record that a tenant hit a wall and must connect a plugin —
-// written when a tool call raises auth-missing, read on-demand by the client to
-// drive the connect dialog. One row per tenant (latest wins).
-export type CorsairConnect = {
-	tenant_id: string;
-	plugin: string;
-	connect_url: string;
-	/** ISO8601 timestamp the request was recorded; the store enforces the TTL on read. */
-	requested_at: string;
-};
-
-export type CorsairConnectInsert = {
-	tenant_id: string;
-	plugin: string;
-	connect_url: string;
-	requested_at: string;
-};
-
-// Registered in setup's REQUIRED_TABLES so a deploy missing this table gets a
-// clear "run your migrations" warning instead of a 500 on the first connect.
-export const CorsairConnectsSchema = z.object({
-	tenant_id: z.string(),
-	plugin: z.string(),
-	connect_url: z.string(),
-	requested_at: z.string(),
-});
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Table Names
 // ─────────────────────────────────────────────────────────────────────────────
@@ -194,7 +167,6 @@ export type CorsairTableName =
 	| 'corsair_entities'
 	| 'corsair_events'
 	| 'corsair_permissions'
-	| 'corsair_connects'
 	| (string & {});
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -206,7 +178,6 @@ export type CorsairTableRow = {
 	corsair_accounts: CorsairAccount;
 	corsair_entities: CorsairEntity;
 	corsair_events: CorsairEvent;
-	corsair_connects: CorsairConnect;
 };
 
 export type TableRowType<T extends CorsairTableName> =
@@ -263,7 +234,6 @@ export type CorsairTableInsert = {
 	corsair_accounts: CorsairAccountInsert;
 	corsair_entities: CorsairEntityInsert;
 	corsair_events: CorsairEventInsert;
-	corsair_connects: CorsairConnectInsert;
 };
 
 export type TableInsertType<T extends CorsairTableName> =

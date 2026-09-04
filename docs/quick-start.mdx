@@ -54,7 +54,7 @@ CORSAIR_SIGNING_SECRET=...
 
 ## Create the database
 
-Corsair stores data in six tables. SQLite is the fastest way to start:
+Corsair stores data in five tables. SQLite is the fastest way to start:
 
 <CodeGroup>
   ```bash npm npm install better-sqlite3 ``` ```bash yarn yarn add
@@ -122,13 +122,6 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     error TEXT
 );
 
-CREATE TABLE IF NOT EXISTS corsair_connects (
-    tenant_id TEXT PRIMARY KEY,
-    plugin TEXT NOT NULL,
-    connect_url TEXT NOT NULL,
-    requested_at TEXT NOT NULL
-);
-
 CREATE INDEX IF NOT EXISTS corsair_accounts_tenant_integration_idx
     ON corsair_accounts (tenant_id, integration_id);
 CREATE INDEX IF NOT EXISTS corsair_entities_account_type_entity_idx
@@ -156,7 +149,7 @@ Get-Content migration.sql | sqlite3 corsair.db
   </Tab>
 </Tabs>
 
-Existing installs: add `corsair_connects` if it is missing, then run the two `CREATE INDEX` statements.
+If the tables already exist, run only the two `CREATE INDEX` statements.
 
 Using Postgres, Drizzle, or Prisma instead? See [Database](/concepts/database) for each option.
 
@@ -257,7 +250,7 @@ Load your app so the mounted route gets its first hit. That request registers yo
     credentials.
   </Card>
   <Card title="Database options" href="/concepts/database">
-    Postgres, Drizzle, Prisma, and the six tables Corsair uses.
+    Postgres, Drizzle, Prisma, and the five tables Corsair uses.
   </Card>
   <Card title="Provisioning" href="/concepts/provisioning">
     Seed credentials and provision tenants from the `corsair` CLI or

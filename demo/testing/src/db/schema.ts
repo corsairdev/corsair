@@ -69,18 +69,28 @@ export const corsair_entities = sqliteTable(
 	],
 );
 
-export const corsair_events = sqliteTable('corsair_events', {
-	id: text('id')
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	created_at: integer('created_at', { mode: 'timestamp' })
-		.notNull()
-		.$defaultFn(() => new Date()),
-	updated_at: integer('updated_at', { mode: 'timestamp' })
-		.notNull()
-		.$defaultFn(() => new Date()),
-	account_id: text('account_id').notNull(),
-	event_type: text('event_type').notNull(),
-	payload: text('payload', { mode: 'json' }).notNull(),
-	status: text('status'),
-});
+export const corsair_events = sqliteTable(
+	'corsair_events',
+	{
+		id: text('id')
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
+		created_at: integer('created_at', { mode: 'timestamp' })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		updated_at: integer('updated_at', { mode: 'timestamp' })
+			.notNull()
+			.$defaultFn(() => new Date()),
+		account_id: text('account_id').notNull(),
+		event_type: text('event_type').notNull(),
+		payload: text('payload', { mode: 'json' }).notNull(),
+		status: text('status'),
+	},
+	(table) => [
+		index('corsair_events_account_type_created_idx').on(
+			table.account_id,
+			table.event_type,
+			table.created_at,
+		),
+	],
+);

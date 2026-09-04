@@ -1,6 +1,6 @@
 ---
 title: Database
-description: Six tables, always-fresh integration data, tenant-scoped by default.
+description: Five tables, always-fresh integration data, tenant-scoped by default.
 ---
 
 import { WindowsMigrationNote } from '/snippets/windows-shell.mdx'
@@ -9,7 +9,7 @@ Every API call and webhook that flows through Corsair is stored in your database
 
 ## Get started
 
-Run the migration once, then pass your connection to `createCorsair({ database, ... })`. See [Quick Start](/quick-start) for a full setup example. Existing installs: add `corsair_connects` if it is missing, then run the two `CREATE INDEX` statements.
+Run the migration once, then pass your connection to `createCorsair({ database, ... })`. See [Quick Start](/quick-start) for a full setup example. If the tables already exist, run only the two `CREATE INDEX` statements.
 
 <Tabs>
   <Tab title="SQLite">
@@ -109,13 +109,6 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     error TEXT
 );
 
-CREATE TABLE IF NOT EXISTS corsair_connects (
-    tenant_id TEXT PRIMARY KEY,
-    plugin TEXT NOT NULL,
-    connect_url TEXT NOT NULL,
-    requested_at TEXT NOT NULL
-);
-
 CREATE INDEX IF NOT EXISTS corsair_accounts_tenant_integration_idx
     ON corsair_accounts (tenant_id, integration_id);
 CREATE INDEX IF NOT EXISTS corsair_entities_account_type_entity_idx
@@ -206,13 +199,6 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     status TEXT NOT NULL DEFAULT 'pending',
     expires_at TEXT NOT NULL,
     error TEXT
-);
-
-CREATE TABLE IF NOT EXISTS corsair_connects (
-    tenant_id TEXT PRIMARY KEY,
-    plugin TEXT NOT NULL,
-    connect_url TEXT NOT NULL,
-    requested_at TEXT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS corsair_accounts_tenant_integration_idx
@@ -350,13 +336,6 @@ export const corsairPermissions = pgTable('corsair_permissions', {
   expiresAt: text('expires_at').notNull(),
   error: text('error'),
 })
-
-export const corsairConnects = pgTable('corsair_connects', {
-  tenantId: text('tenant_id').primaryKey(),
-  plugin: text('plugin').notNull(),
-  connectUrl: text('connect_url').notNull(),
-  requestedAt: text('requested_at').notNull(),
-})
 ```
 
 </Accordion>
@@ -446,15 +425,6 @@ model CorsairPermission {
 
   @@map("corsair_permissions")
 }
-
-model CorsairConnect {
-  tenantId    String @id @map("tenant_id")
-  plugin      String
-  connectUrl  String @map("connect_url")
-  requestedAt String @map("requested_at")
-
-  @@map("corsair_connects")
-}
 ```
 
 </Accordion>
@@ -499,16 +469,15 @@ Use `*.api.*` to write or force a fresh read. Use `*.db.*` for lists, search, an
 
 ## Core tables
 
-Six tables. The first five are shared by every integration — Slack, GitHub, Linear, and the rest use the same schema. `corsair_connects` records a tenant's pending connect prompt.
+Five tables, shared by every integration — Slack, GitHub, Linear, and the rest use the same schema. Connect prompts are recorded in `corsair_events`.
 
-| Table                  | Purpose                                                                                                                                                    |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `corsair_integrations` | One row per enabled plugin (`slack`, `github`, …)                                                                                                          |
-| `corsair_accounts`     | Per-tenant connection + encrypted credentials (`tenant_id`, `integration_id`)                                                                              |
-| `corsair_entities`     | Synced resources like messages, channels, issues, repos (`entity_id`, `entity_type`, `data`)                                                               |
-| `corsair_events`       | Audit log of API calls and webhooks                                                                                                                        |
-| `corsair_permissions`  | Approval queue for gated [permissions](/concepts/permissions) (`token`, `tenant_id`, `endpoint`, `args`, `status`)                                         |
-| `corsair_connects`     | A tenant's pending connect prompt, written when a call needs auth and read by the client to open the connect dialog (`tenant_id`, `plugin`, `connect_url`) |
+| Table | Purpose |
+|-------|---------|
+| `corsair_integrations` | One row per enabled plugin (`slack`, `github`, …) |
+| `corsair_accounts` | Per-tenant connection + encrypted credentials (`tenant_id`, `integration_id`) |
+| `corsair_entities` | Synced resources like messages, channels, issues, repos (`entity_id`, `entity_type`, `data`) |
+| `corsair_events` | Audit log of API calls and webhooks |
+| `corsair_permissions` | Approval queue for gated [permissions](/concepts/permissions) (`token`, `tenant_id`, `endpoint`, `args`, `status`) |
 
 ```sql
 -- corsair_entities example (a Slack message)
