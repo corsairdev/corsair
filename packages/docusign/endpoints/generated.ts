@@ -1,0 +1,5207 @@
+import type { RequiredPluginEndpointMeta } from 'corsair/core';
+import {
+	AddOrUpdateAccountStampsInputSchema,
+	AddOrUpdateAccountStampsOutputSchema,
+	addOrUpdateAccountStamps,
+	CreateAccountCustomFieldInputSchema,
+	CreateAccountCustomFieldOutputSchema,
+	CreateBccEmailArchiveConfigurationInputSchema,
+	CreateBccEmailArchiveConfigurationOutputSchema,
+	createAccountCustomField,
+	createBccEmailArchiveConfiguration,
+	DeleteAccountCustomFieldInputSchema,
+	DeleteAccountCustomFieldOutputSchema,
+	DeleteAccountStampInputSchema,
+	DeleteAccountStampOutputSchema,
+	DeleteBccEmailArchiveConfigurationInputSchema,
+	DeleteBccEmailArchiveConfigurationOutputSchema,
+	DeleteEnoteConfigurationInputSchema,
+	DeleteEnoteConfigurationOutputSchema,
+	DeleteSignatureForCaptiveRecipientsInputSchema,
+	DeleteSignatureForCaptiveRecipientsOutputSchema,
+	DeleteSpecifiedAccountInputSchema,
+	DeleteSpecifiedAccountOutputSchema,
+	DeleteStampImageForAccountInputSchema,
+	DeleteStampImageForAccountOutputSchema,
+	deleteAccountCustomField,
+	deleteAccountStamp,
+	deleteBccEmailArchiveConfiguration,
+	deleteEnoteConfiguration,
+	deleteSignatureForCaptiveRecipients,
+	deleteSpecifiedAccount,
+	deleteStampImageForAccount,
+	GetAccountBillingChargesListInputSchema,
+	GetAccountBillingChargesListOutputSchema,
+	GetAccountPasswordRulesInputSchema,
+	GetAccountPasswordRulesOutputSchema,
+	GetAccountStampImageInputSchema,
+	GetAccountStampImageOutputSchema,
+	GetBccEmailArchiveConfigurationsInputSchema,
+	GetBccEmailArchiveConfigurationsOutputSchema,
+	GetBccemailArchiveHistoryInputSchema,
+	GetBccemailArchiveHistoryOutputSchema,
+	GetElectronicRecordAndSignatureDisclosureInputSchema,
+	GetElectronicRecordAndSignatureDisclosureOutputSchema,
+	GetEnoteIntegrationSettingsInputSchema,
+	GetEnoteIntegrationSettingsOutputSchema,
+	GetSpecifiedAccountStampInfoInputSchema,
+	GetSpecifiedAccountStampInfoOutputSchema,
+	GetSupportedLanguagesForRecipientsInputSchema,
+	GetSupportedLanguagesForRecipientsOutputSchema,
+	GetTabSettingsForAccountInputSchema,
+	GetTabSettingsForAccountOutputSchema,
+	GetUnsupportedFileTypesListInputSchema,
+	GetUnsupportedFileTypesListOutputSchema,
+	GetWatermarkDetailsForAccountInputSchema,
+	GetWatermarkDetailsForAccountOutputSchema,
+	getAccountBillingChargesList,
+	getAccountPasswordRules,
+	getAccountStampImage,
+	getBccEmailArchiveConfigurations,
+	getBccemailArchiveHistory,
+	getElectronicRecordAndSignatureDisclosure,
+	getEnoteIntegrationSettings,
+	getSpecifiedAccountStampInfo,
+	getSupportedLanguagesForRecipients,
+	getTabSettingsForAccount,
+	getUnsupportedFileTypesList,
+	getWatermarkDetailsForAccount,
+	ListSignatureProvidersForAccountInputSchema,
+	ListSignatureProvidersForAccountOutputSchema,
+	listSignatureProvidersForAccount,
+	ModifyAccountNotificationSettingsInputSchema,
+	ModifyAccountNotificationSettingsOutputSchema,
+	ModifyTabSettingsForAccountInputSchema,
+	ModifyTabSettingsForAccountOutputSchema,
+	modifyAccountNotificationSettings,
+	modifyTabSettingsForAccount,
+	RetrieveAccountEnvelopePurgeConfigInputSchema,
+	RetrieveAccountEnvelopePurgeConfigOutputSchema,
+	RetrieveAccountInformationForSpecifiedAccountInputSchema,
+	RetrieveAccountInformationForSpecifiedAccountOutputSchema,
+	RetrieveAccountProvisioningInfoInputSchema,
+	RetrieveAccountProvisioningInfoOutputSchema,
+	RetrieveAccountSealProvidersInputSchema,
+	RetrieveAccountSealProvidersOutputSchema,
+	RetrieveAccountSettingsInformationInputSchema,
+	RetrieveAccountSettingsInformationOutputSchema,
+	RetrieveAvailableAccountStampsInputSchema,
+	RetrieveAvailableAccountStampsOutputSchema,
+	RetrieveSharedItemStatusForUsersInputSchema,
+	RetrieveSharedItemStatusForUsersOutputSchema,
+	retrieveAccountEnvelopePurgeConfig,
+	retrieveAccountInformationForSpecifiedAccount,
+	retrieveAccountProvisioningInfo,
+	retrieveAccountSealProviders,
+	retrieveAccountSettingsInformation,
+	retrieveAvailableAccountStamps,
+	retrieveSharedItemStatusForUsers,
+	SetEnvelopePurgeConfigForAccountInputSchema,
+	SetEnvelopePurgeConfigForAccountOutputSchema,
+	SetSharedAccessForUsersAndTemplatesInputSchema,
+	SetSharedAccessForUsersAndTemplatesOutputSchema,
+	setEnvelopePurgeConfigForAccount,
+	setSharedAccessForUsersAndTemplates,
+	UpdateAccountCustomFieldInputSchema,
+	UpdateAccountCustomFieldOutputSchema,
+	UpdateAccountPasswordRulesInputSchema,
+	UpdateAccountPasswordRulesOutputSchema,
+	UpdateAccountSettingsInputSchema,
+	UpdateAccountSettingsOutputSchema,
+	UpdateAccountStampByIdInputSchema,
+	UpdateAccountStampByIdOutputSchema,
+	UpdateAccountStampsInputSchema,
+	UpdateAccountStampsOutputSchema,
+	UpdateAccountWatermarkInformationInputSchema,
+	UpdateAccountWatermarkInformationOutputSchema,
+	UpdateAccountWatermarkPreviewInputSchema,
+	UpdateAccountWatermarkPreviewOutputSchema,
+	UpdateElectronicRecordDisclosureInputSchema,
+	UpdateElectronicRecordDisclosureOutputSchema,
+	UpdateEnoteIntegrationConfigInputSchema,
+	UpdateEnoteIntegrationConfigOutputSchema,
+	updateAccountCustomField,
+	updateAccountPasswordRules,
+	updateAccountSettings,
+	updateAccountStampById,
+	updateAccountStamps,
+	updateAccountWatermarkInformation,
+	updateAccountWatermarkPreview,
+	updateElectronicRecordDisclosure,
+	updateEnoteIntegrationConfig,
+} from './accounts';
+import {
+	GetDowngradePlanInfoForAccountInputSchema,
+	GetDowngradePlanInfoForAccountOutputSchema,
+	getDowngradePlanInfoForAccount,
+	ListBillingInvoicesInputSchema,
+	ListBillingInvoicesOutputSchema,
+	ListPastDueInvoicesInputSchema,
+	ListPastDueInvoicesOutputSchema,
+	ListPaymentGatewayAccountsInfoInputSchema,
+	ListPaymentGatewayAccountsInfoOutputSchema,
+	listBillingInvoices,
+	listPastDueInvoices,
+	listPaymentGatewayAccountsInfo,
+	PostPaymentToInvoiceInputSchema,
+	PostPaymentToInvoiceOutputSchema,
+	PurchaseAdditionalEnvelopesInputSchema,
+	PurchaseAdditionalEnvelopesOutputSchema,
+	postPaymentToInvoice,
+	purchaseAdditionalEnvelopes,
+	QueueDowngradeBillingPlanRequestInputSchema,
+	QueueDowngradeBillingPlanRequestOutputSchema,
+	queueDowngradeBillingPlanRequest,
+	RetrieveAccountBillingPlanInputSchema,
+	RetrieveAccountBillingPlanOutputSchema,
+	RetrieveBillingInvoiceInputSchema,
+	RetrieveBillingInvoiceOutputSchema,
+	RetrieveBillingPaymentInfoInputSchema,
+	RetrieveBillingPaymentInfoOutputSchema,
+	RetrieveCreditCardInfoInputSchema,
+	RetrieveCreditCardInfoOutputSchema,
+	RetrieveListOfBillingPlansInputSchema,
+	RetrieveListOfBillingPlansOutputSchema,
+	RetrievePaymentInformationListInputSchema,
+	RetrievePaymentInformationListOutputSchema,
+	retrieveAccountBillingPlan,
+	retrieveBillingInvoice,
+	retrieveBillingPaymentInfo,
+	retrieveCreditCardInfo,
+	retrieveListOfBillingPlans,
+	retrievePaymentInformationList,
+	UpdateBillingPlanForAccountInputSchema,
+	UpdateBillingPlanForAccountOutputSchema,
+	updateBillingPlanForAccount,
+} from './billing';
+import {
+	CreateBrandProfilesForAccountInputSchema,
+	CreateBrandProfilesForAccountOutputSchema,
+	createBrandProfilesForAccount,
+	DeleteAccountBrandInputSchema,
+	DeleteAccountBrandOutputSchema,
+	DeleteBrandLogoByTypeInputSchema,
+	DeleteBrandLogoByTypeOutputSchema,
+	DeleteBrandProfilesInputSchema,
+	DeleteBrandProfilesOutputSchema,
+	deleteAccountBrand,
+	deleteBrandLogoByType,
+	deleteBrandProfiles,
+	ExportBrandToXmlfileInputSchema,
+	ExportBrandToXmlfileOutputSchema,
+	exportBrandToXmlfile,
+	GetBrandLogoByTypeInputSchema,
+	GetBrandLogoByTypeOutputSchema,
+	GetSpecificBrandResourceFileInputSchema,
+	GetSpecificBrandResourceFileOutputSchema,
+	getBrandLogoByType,
+	getSpecificBrandResourceFile,
+	ListBrandsForAccountInputSchema,
+	ListBrandsForAccountOutputSchema,
+	listBrandsForAccount,
+	RetrieveAccountBrandInformationInputSchema,
+	RetrieveAccountBrandInformationOutputSchema,
+	ReturnBrandResourceMetadataForAccountInputSchema,
+	ReturnBrandResourceMetadataForAccountOutputSchema,
+	retrieveAccountBrandInformation,
+	returnBrandResourceMetadataForAccount,
+	UpdateAccountBrandSettingsInputSchema,
+	UpdateAccountBrandSettingsOutputSchema,
+	updateAccountBrandSettings,
+} from './brands';
+import {
+	ApplyActionToBulkSendEnvelopesInputSchema,
+	ApplyActionToBulkSendEnvelopesOutputSchema,
+	applyActionToBulkSendEnvelopes,
+	CreateBulkSendRequestInputSchema,
+	CreateBulkSendRequestOutputSchema,
+	CreateBulkSendTestRequestInputSchema,
+	CreateBulkSendTestRequestOutputSchema,
+	createBulkSendRequest,
+	createBulkSendTestRequest,
+	GetBulkSendBatchStatusInputSchema,
+	GetBulkSendBatchStatusOutputSchema,
+	GetBulkSendListsInformationInputSchema,
+	GetBulkSendListsInformationOutputSchema,
+	getBulkSendBatchStatus,
+	getBulkSendListsInformation,
+	ListBulkSendBatchSummariesInputSchema,
+	ListBulkSendBatchSummariesOutputSchema,
+	listBulkSendBatchSummaries,
+	RemoveBulkSendListInputSchema,
+	RemoveBulkSendListOutputSchema,
+	removeBulkSendList,
+	UpdateBulkSendBatchNameInputSchema,
+	UpdateBulkSendBatchNameOutputSchema,
+	updateBulkSendBatchName,
+} from './bulk-send';
+import {
+	AddPartToChunkedUploadInputSchema,
+	AddPartToChunkedUploadOutputSchema,
+	addPartToChunkedUpload,
+	CommitChunkedUploadForEnvelopesInputSchema,
+	CommitChunkedUploadForEnvelopesOutputSchema,
+	commitChunkedUploadForEnvelopes,
+	DeleteChunkedUploadInputSchema,
+	DeleteChunkedUploadOutputSchema,
+	deleteChunkedUpload,
+	InitiateNewChunkedUploadInputSchema,
+	InitiateNewChunkedUploadOutputSchema,
+	initiateNewChunkedUpload,
+	RetrieveChunkedUploadMetadataInputSchema,
+	RetrieveChunkedUploadMetadataOutputSchema,
+	retrieveChunkedUploadMetadata,
+} from './chunked-uploads';
+import {
+	ConfigureCloudStorageRedirectUrlInputSchema,
+	ConfigureCloudStorageRedirectUrlOutputSchema,
+	configureCloudStorageRedirectUrl,
+	DeleteUserAuthForCloudStorageProvidersInputSchema,
+	DeleteUserAuthForCloudStorageProvidersOutputSchema,
+	DeleteUserCloudStorageAuthenticationInputSchema,
+	DeleteUserCloudStorageAuthenticationOutputSchema,
+	deleteUserAuthForCloudStorageProviders,
+	deleteUserCloudStorageAuthentication,
+	GetUserCloudStorageProviderConfigurationInputSchema,
+	GetUserCloudStorageProviderConfigurationOutputSchema,
+	getUserCloudStorageProviderConfiguration,
+	ListCloudStorageItemsInputSchema,
+	ListCloudStorageItemsOutputSchema,
+	listCloudStorageItems,
+	RetrieveCloudStorageProviderConfigurationInputSchema,
+	RetrieveCloudStorageProviderConfigurationOutputSchema,
+	RetrieveItemsInCloudStorageFolderInputSchema,
+	RetrieveItemsInCloudStorageFolderOutputSchema,
+	retrieveCloudStorageProviderConfiguration,
+	retrieveItemsInCloudStorageFolder,
+} from './cloud-storage';
+import {
+	CreateConnectConfigurationForAccountInputSchema,
+	CreateConnectConfigurationForAccountOutputSchema,
+	createConnectConfigurationForAccount,
+	DeleteConnectConfigurationInputSchema,
+	DeleteConnectConfigurationOutputSchema,
+	DeleteConnectFailureLogEntryInputSchema,
+	DeleteConnectFailureLogEntryOutputSchema,
+	DeleteConnectLogEntriesInputSchema,
+	DeleteConnectLogEntriesOutputSchema,
+	DeleteConnectOauthConfigurationInputSchema,
+	DeleteConnectOauthConfigurationOutputSchema,
+	DeleteSpecificConnectLogEntryInputSchema,
+	DeleteSpecificConnectLogEntryOutputSchema,
+	deleteConnectConfiguration,
+	deleteConnectFailureLogEntry,
+	deleteConnectLogEntries,
+	deleteConnectOauthConfiguration,
+	deleteSpecificConnectLogEntry,
+	RepublishConnectDataForEnvelopeInputSchema,
+	RepublishConnectDataForEnvelopeOutputSchema,
+	RepublishConnectInfoForEnvelopesInputSchema,
+	RepublishConnectInfoForEnvelopesOutputSchema,
+	RetrieveConnectConfigurationDetailsInputSchema,
+	RetrieveConnectConfigurationDetailsOutputSchema,
+	RetrieveConnectConfigurationsInputSchema,
+	RetrieveConnectConfigurationsOutputSchema,
+	RetrieveConnectFailureLogsInputSchema,
+	RetrieveConnectFailureLogsOutputSchema,
+	RetrieveConnectLogEntryInputSchema,
+	RetrieveConnectLogEntryOutputSchema,
+	RetrieveConnectLogsInputSchema,
+	RetrieveConnectLogsOutputSchema,
+	RetrieveConnectOauthConfigurationInputSchema,
+	RetrieveConnectOauthConfigurationOutputSchema,
+	ReturnAllConnectServiceUsersInputSchema,
+	ReturnAllConnectServiceUsersOutputSchema,
+	ReturnUsersFromConnectServiceInputSchema,
+	ReturnUsersFromConnectServiceOutputSchema,
+	republishConnectDataForEnvelope,
+	republishConnectInfoForEnvelopes,
+	retrieveConnectConfigurationDetails,
+	retrieveConnectConfigurations,
+	retrieveConnectFailureLogs,
+	retrieveConnectLogEntry,
+	retrieveConnectLogs,
+	retrieveConnectOauthConfiguration,
+	returnAllConnectServiceUsers,
+	returnUsersFromConnectService,
+	SetUpConnectOauthConfigurationInputSchema,
+	SetUpConnectOauthConfigurationOutputSchema,
+	setUpConnectOauthConfiguration,
+	UpdateConnectOauthConfigurationInputSchema,
+	UpdateConnectOauthConfigurationOutputSchema,
+	UpdateDocusignConnectConfigurationInputSchema,
+	UpdateDocusignConnectConfigurationOutputSchema,
+	updateConnectOauthConfiguration,
+	updateDocusignConnectConfiguration,
+} from './connect';
+import {
+	AddContactsToContactsListInputSchema,
+	AddContactsToContactsListOutputSchema,
+	addContactsToContactsList,
+	DeleteContactFromAccountInputSchema,
+	DeleteContactFromAccountOutputSchema,
+	DeleteMultipleContactsFromAccountInputSchema,
+	DeleteMultipleContactsFromAccountOutputSchema,
+	deleteContactFromAccount,
+	deleteMultipleContactsFromAccount,
+	GetDocusignAccountContactsInputSchema,
+	GetDocusignAccountContactsOutputSchema,
+	getDocusignAccountContacts,
+	UpdateContactsInformationInputSchema,
+	UpdateContactsInformationOutputSchema,
+	updateContactsInformation,
+} from './contacts';
+import {
+	CreateCustomTabWithPropertiesInputSchema,
+	CreateCustomTabWithPropertiesOutputSchema,
+	createCustomTabWithProperties,
+	DeleteCustomTabInformationInputSchema,
+	DeleteCustomTabInformationOutputSchema,
+	deleteCustomTabInformation,
+	RetrieveAllAccountTabsInputSchema,
+	RetrieveAllAccountTabsOutputSchema,
+	RetrieveCustomTabInformationInputSchema,
+	RetrieveCustomTabInformationOutputSchema,
+	retrieveAllAccountTabs,
+	retrieveCustomTabInformation,
+	UpdateCustomTabInformationForAccountInputSchema,
+	UpdateCustomTabInformationForAccountOutputSchema,
+	updateCustomTabInformationForAccount,
+} from './custom-tabs';
+import {
+	DeleteRequestLogFilesInputSchema,
+	DeleteRequestLogFilesOutputSchema,
+	deleteRequestLogFiles,
+	GetRequestLoggingLogFileInputSchema,
+	GetRequestLoggingLogFileOutputSchema,
+	GetRequestLogSettingsInputSchema,
+	GetRequestLogSettingsOutputSchema,
+	GetRequestLogsInputSchema,
+	GetRequestLogsOutputSchema,
+	GetResourceInformationInputSchema,
+	GetResourceInformationOutputSchema,
+	GetServiceInformationInputSchema,
+	GetServiceInformationOutputSchema,
+	getRequestLoggingLogFile,
+	getRequestLogSettings,
+	getRequestLogs,
+	getResourceInformation,
+	getServiceInformation,
+	ToggleApiRequestLoggingInputSchema,
+	ToggleApiRequestLoggingOutputSchema,
+	toggleApiRequestLogging,
+} from './diagnostics';
+import {
+	AddEnvelopeAttachmentsInputSchema,
+	AddEnvelopeAttachmentsOutputSchema,
+	addEnvelopeAttachments,
+	CreateCustomDocumentFieldsInEnvelopeInputSchema,
+	CreateCustomDocumentFieldsInEnvelopeOutputSchema,
+	CreateDocumentResponsiveHtmlPreviewInputSchema,
+	CreateDocumentResponsiveHtmlPreviewOutputSchema,
+	CreatePreviewOfResponsiveHtmlInEnvelopeInputSchema,
+	CreatePreviewOfResponsiveHtmlInEnvelopeOutputSchema,
+	createCustomDocumentFieldsInEnvelope,
+	createDocumentResponsiveHtmlPreview,
+	createPreviewOfResponsiveHtmlInEnvelope,
+	DeleteCustomDocumentFieldsInputSchema,
+	DeleteCustomDocumentFieldsOutputSchema,
+	DeleteDraftEnvelopeAttachmentsInputSchema,
+	DeleteDraftEnvelopeAttachmentsOutputSchema,
+	DeprecatedEndpointForTabBlobInputSchema,
+	DeprecatedEndpointForTabBlobOutputSchema,
+	deleteCustomDocumentFields,
+	deleteDraftEnvelopeAttachments,
+	deprecatedEndpointForTabBlob,
+	GetEnvelopeDocGenFormFieldsInputSchema,
+	GetEnvelopeDocGenFormFieldsOutputSchema,
+	GetEnvelopeDocumentFieldsInputSchema,
+	GetEnvelopeDocumentFieldsOutputSchema,
+	GetPdftranscriptOfEnvelopeCommentsInputSchema,
+	GetPdftranscriptOfEnvelopeCommentsOutputSchema,
+	GetRecipientDocumentVisibilityInputSchema,
+	GetRecipientDocumentVisibilityOutputSchema,
+	GetTabsBlobForEnvelopeInputSchema,
+	GetTabsBlobForEnvelopeOutputSchema,
+	getEnvelopeDocGenFormFields,
+	getEnvelopeDocumentFields,
+	getPdftranscriptOfEnvelopeComments,
+	getRecipientDocumentVisibility,
+	getTabsBlobForEnvelope,
+	ListEnvelopeAttachmentsByEnvelopeIdInputSchema,
+	ListEnvelopeAttachmentsByEnvelopeIdOutputSchema,
+	listEnvelopeAttachmentsByEnvelopeId,
+	RetrieveEnvelopeAttachmentInputSchema,
+	RetrieveEnvelopeAttachmentOutputSchema,
+	RetrieveEnvelopeDocumentsInputSchema,
+	RetrieveEnvelopeDocumentsOutputSchema,
+	RetrieveEnvelopeHtmlDefinitionInputSchema,
+	RetrieveEnvelopeHtmlDefinitionOutputSchema,
+	ReturnEnvelopeTabDataForExistingEnvelopeInputSchema,
+	ReturnEnvelopeTabDataForExistingEnvelopeOutputSchema,
+	retrieveEnvelopeAttachment,
+	retrieveEnvelopeDocuments,
+	retrieveEnvelopeHtmlDefinition,
+	returnEnvelopeTabDataForExistingEnvelope,
+	UpdateCustomFieldsInEnvelopeDocumentInputSchema,
+	UpdateCustomFieldsInEnvelopeDocumentOutputSchema,
+	UpdateDocumentVisibilityRecipientsInputSchema,
+	UpdateDocumentVisibilityRecipientsOutputSchema,
+	UpdateEnvelopeAttachmentInputSchema,
+	UpdateEnvelopeAttachmentOutputSchema,
+	UpdateEnvelopeDocGenFormFieldsInputSchema,
+	UpdateEnvelopeDocGenFormFieldsOutputSchema,
+	UpdateRecipientDocumentVisibilityInputSchema,
+	UpdateRecipientDocumentVisibilityOutputSchema,
+	updateCustomFieldsInEnvelopeDocument,
+	updateDocumentVisibilityRecipients,
+	updateEnvelopeAttachment,
+	updateEnvelopeDocGenFormFields,
+	updateRecipientDocumentVisibility,
+} from './envelope-documents';
+import {
+	DeletePageFromDocumentInEnvelopeInputSchema,
+	DeletePageFromDocumentInEnvelopeOutputSchema,
+	deletePageFromDocumentInEnvelope,
+	GetEnvelopeNotificationDefaultsInputSchema,
+	GetEnvelopeNotificationDefaultsOutputSchema,
+	GetPageImageFromEnvelopeInputSchema,
+	GetPageImageFromEnvelopeOutputSchema,
+	GetSignatureInformationForRecipientInputSchema,
+	GetSignatureInformationForRecipientOutputSchema,
+	getEnvelopeNotificationDefaults,
+	getPageImageFromEnvelope,
+	getSignatureInformationForRecipient,
+	RetrieveEnvelopeAuditEventsInputSchema,
+	RetrieveEnvelopeAuditEventsOutputSchema,
+	RetrieveEnvelopeNotificationDetailsInputSchema,
+	RetrieveEnvelopeNotificationDetailsOutputSchema,
+	RetrieveSignerSignatureImageInformationInputSchema,
+	RetrieveSignerSignatureImageInformationOutputSchema,
+	RetrieveUserInitialsImageForEnvelopesInputSchema,
+	RetrieveUserInitialsImageForEnvelopesOutputSchema,
+	ReturnsDocumentPageImagesBasedOnInputInputSchema,
+	ReturnsDocumentPageImagesBasedOnInputOutputSchema,
+	RotatePageImageForEnvelopeInputSchema,
+	RotatePageImageForEnvelopeOutputSchema,
+	retrieveEnvelopeAuditEvents,
+	retrieveEnvelopeNotificationDetails,
+	retrieveSignerSignatureImageInformation,
+	retrieveUserInitialsImageForEnvelopes,
+	returnsDocumentPageImagesBasedOnInput,
+	rotatePageImageForEnvelope,
+	SetInitialsImageForAccountlessSignerInputSchema,
+	SetInitialsImageForAccountlessSignerOutputSchema,
+	SetSignatureImageForNoAccountSignerInputSchema,
+	SetSignatureImageForNoAccountSignerOutputSchema,
+	setInitialsImageForAccountlessSigner,
+	setSignatureImageForNoAccountSigner,
+	UpdateEnvelopeNotificationSettingsInputSchema,
+	UpdateEnvelopeNotificationSettingsOutputSchema,
+	updateEnvelopeNotificationSettings,
+} from './envelope-management';
+import {
+	CreateIdproofResourceTokenForRecipientInputSchema,
+	CreateIdproofResourceTokenForRecipientOutputSchema,
+	CreateRecipientManualReviewLinkInputSchema,
+	CreateRecipientManualReviewLinkOutputSchema,
+	CreateRecipientPreviewForEnvelopeInputSchema,
+	CreateRecipientPreviewForEnvelopeOutputSchema,
+	CreateSenderViewUrlForEnvelopeInputSchema,
+	CreateSenderViewUrlForEnvelopeOutputSchema,
+	createIdproofResourceTokenForRecipient,
+	createRecipientManualReviewLink,
+	createRecipientPreviewForEnvelope,
+	createSenderViewUrlForEnvelope,
+	GenerateEditViewUrlforEnvelopeInputSchema,
+	GenerateEditViewUrlforEnvelopeOutputSchema,
+	GenerateEnvelopeCorrectionUrlInputSchema,
+	GenerateEnvelopeCorrectionUrlOutputSchema,
+	GenerateRecipientSharedViewUrlInputSchema,
+	GenerateRecipientSharedViewUrlOutputSchema,
+	GetElectronicDisclosureForRecipientInputSchema,
+	GetElectronicDisclosureForRecipientOutputSchema,
+	GetUrlforEmbeddingDocusignUiInputSchema,
+	GetUrlforEmbeddingDocusignUiOutputSchema,
+	generateEditViewUrlforEnvelope,
+	generateEnvelopeCorrectionUrl,
+	generateRecipientSharedViewUrl,
+	getElectronicDisclosureForRecipient,
+	getUrlforEmbeddingDocusignUi,
+	RetrieveAccountVerificationWorkflowsInputSchema,
+	RetrieveAccountVerificationWorkflowsOutputSchema,
+	RetrieveDefaultDisclosureForEnvelopeInputSchema,
+	RetrieveDefaultDisclosureForEnvelopeOutputSchema,
+	RevokeEnvelopeCorrectionUrlInputSchema,
+	RevokeEnvelopeCorrectionUrlOutputSchema,
+	retrieveAccountVerificationWorkflows,
+	retrieveDefaultDisclosureForEnvelope,
+	revokeEnvelopeCorrectionUrl,
+} from './envelope-recipients';
+import {
+	AddEmailOverridesToEnvelopeInputSchema,
+	AddEmailOverridesToEnvelopeOutputSchema,
+	AddStepToEnvelopeWorkflowInputSchema,
+	AddStepToEnvelopeWorkflowOutputSchema,
+	AddTemplatesToDocumentInEnvelopeInputSchema,
+	AddTemplatesToDocumentInEnvelopeOutputSchema,
+	AddTemplatesToEnvelopeInputSchema,
+	AddTemplatesToEnvelopeOutputSchema,
+	addEmailOverridesToEnvelope,
+	addStepToEnvelopeWorkflow,
+	addTemplatesToDocumentInEnvelope,
+	addTemplatesToEnvelope,
+	CreateCustomFieldsForEnvelopeInputSchema,
+	CreateCustomFieldsForEnvelopeOutputSchema,
+	CreateTemplateWorkflowStepInputSchema,
+	CreateTemplateWorkflowStepOutputSchema,
+	createCustomFieldsForEnvelope,
+	createTemplateWorkflowStep,
+	DeleteDelayedRoutingRuleForEnvelopeStepInputSchema,
+	DeleteDelayedRoutingRuleForEnvelopeStepOutputSchema,
+	DeleteDelayedRoutingRulesForTemplateInputSchema,
+	DeleteDelayedRoutingRulesForTemplateOutputSchema,
+	DeleteEnvelopeCustomFieldsInputSchema,
+	DeleteEnvelopeCustomFieldsOutputSchema,
+	DeleteEnvelopeEmailSettingsInputSchema,
+	DeleteEnvelopeEmailSettingsOutputSchema,
+	DeleteEnvelopeLockInputSchema,
+	DeleteEnvelopeLockOutputSchema,
+	DeleteEnvelopeScheduledSendingRulesInputSchema,
+	DeleteEnvelopeScheduledSendingRulesOutputSchema,
+	DeleteEnvelopeTransferRuleInputSchema,
+	DeleteEnvelopeTransferRuleOutputSchema,
+	DeleteEnvelopeWorkflowDefinitionInputSchema,
+	DeleteEnvelopeWorkflowDefinitionOutputSchema,
+	DeleteEnvelopeWorkflowStepInputSchema,
+	DeleteEnvelopeWorkflowStepOutputSchema,
+	DeleteScheduledSendingRulesInputSchema,
+	DeleteScheduledSendingRulesOutputSchema,
+	DeleteTemplateFromEnvelopeDocumentInputSchema,
+	DeleteTemplateFromEnvelopeDocumentOutputSchema,
+	DeleteTemplateWorkflowStepInputSchema,
+	DeleteTemplateWorkflowStepOutputSchema,
+	DeleteWorkflowDefinitionForTemplateInputSchema,
+	DeleteWorkflowDefinitionForTemplateOutputSchema,
+	deleteDelayedRoutingRuleForEnvelopeStep,
+	deleteDelayedRoutingRulesForTemplate,
+	deleteEnvelopeCustomFields,
+	deleteEnvelopeEmailSettings,
+	deleteEnvelopeLock,
+	deleteEnvelopeScheduledSendingRules,
+	deleteEnvelopeTransferRule,
+	deleteEnvelopeWorkflowDefinition,
+	deleteEnvelopeWorkflowStep,
+	deleteScheduledSendingRules,
+	deleteTemplateFromEnvelopeDocument,
+	deleteTemplateWorkflowStep,
+	deleteWorkflowDefinitionForTemplate,
+	GetEnvelopeLockInformationInputSchema,
+	GetEnvelopeLockInformationOutputSchema,
+	GetEnvelopeWorkflowDefinitionInputSchema,
+	GetEnvelopeWorkflowDefinitionOutputSchema,
+	GetEnvelopeWorkflowDelayedRoutingDefinitionInputSchema,
+	GetEnvelopeWorkflowDelayedRoutingDefinitionOutputSchema,
+	GetTemplateDelayedRoutingRulesInputSchema,
+	GetTemplateDelayedRoutingRulesOutputSchema,
+	GetTemplateScheduledSendingSettingsInputSchema,
+	GetTemplateScheduledSendingSettingsOutputSchema,
+	GetTemplatesForEnvelopeDocumentInputSchema,
+	GetTemplatesForEnvelopeDocumentOutputSchema,
+	GetTemplatesUsedInEnvelopeInputSchema,
+	GetTemplatesUsedInEnvelopeOutputSchema,
+	GetWorkflowStepForEnvelopeInputSchema,
+	GetWorkflowStepForEnvelopeOutputSchema,
+	getEnvelopeLockInformation,
+	getEnvelopeWorkflowDefinition,
+	getEnvelopeWorkflowDelayedRoutingDefinition,
+	getTemplateDelayedRoutingRules,
+	getTemplateScheduledSendingSettings,
+	getTemplatesForEnvelopeDocument,
+	getTemplatesUsedInEnvelope,
+	getWorkflowStepForEnvelope,
+	ListEnvelopeAndDocumentCustomFieldsInputSchema,
+	ListEnvelopeAndDocumentCustomFieldsOutputSchema,
+	LockAnEnvelopeForEditingInputSchema,
+	LockAnEnvelopeForEditingOutputSchema,
+	listEnvelopeAndDocumentCustomFields,
+	lockAnEnvelopeForEditing,
+	RetrieveCustomFieldsForEnvelopeInputSchema,
+	RetrieveCustomFieldsForEnvelopeOutputSchema,
+	RetrieveEnvelopeEmailOverridesInputSchema,
+	RetrieveEnvelopeEmailOverridesOutputSchema,
+	RetrieveWorkflowStepForTemplateInputSchema,
+	RetrieveWorkflowStepForTemplateOutputSchema,
+	ReturnScheduledSendingRulesForEnvelopeInputSchema,
+	ReturnScheduledSendingRulesForEnvelopeOutputSchema,
+	ReturnTemplateWorkflowDefinitionInputSchema,
+	ReturnTemplateWorkflowDefinitionOutputSchema,
+	retrieveCustomFieldsForEnvelope,
+	retrieveEnvelopeEmailOverrides,
+	retrieveWorkflowStepForTemplate,
+	returnScheduledSendingRulesForEnvelope,
+	returnTemplateWorkflowDefinition,
+	SubmitBatchHistoricalEnvelopesToWebhookInputSchema,
+	SubmitBatchHistoricalEnvelopesToWebhookOutputSchema,
+	submitBatchHistoricalEnvelopesToWebhook,
+	UpdateEnvelopeCustomFieldsInputSchema,
+	UpdateEnvelopeCustomFieldsOutputSchema,
+	UpdateEnvelopeDelayedRoutingRulesInputSchema,
+	UpdateEnvelopeDelayedRoutingRulesOutputSchema,
+	UpdateEnvelopeEmailSettingsInputSchema,
+	UpdateEnvelopeEmailSettingsOutputSchema,
+	UpdateEnvelopeScheduledSendingRulesInputSchema,
+	UpdateEnvelopeScheduledSendingRulesOutputSchema,
+	UpdateEnvelopeWorkflowDefinitionInputSchema,
+	UpdateEnvelopeWorkflowDefinitionOutputSchema,
+	UpdateEnvelopeWorkflowStepInputSchema,
+	UpdateEnvelopeWorkflowStepOutputSchema,
+	UpdateLockForEnvelopeInputSchema,
+	UpdateLockForEnvelopeOutputSchema,
+	UpdateTemplateDelayedRoutingRulesInputSchema,
+	UpdateTemplateDelayedRoutingRulesOutputSchema,
+	UpdateTemplateScheduledSendingRulesInputSchema,
+	UpdateTemplateScheduledSendingRulesOutputSchema,
+	UpdateTemplateWorkflowDefinitionInputSchema,
+	UpdateTemplateWorkflowDefinitionOutputSchema,
+	UpdateWorkflowStepForTemplateInputSchema,
+	UpdateWorkflowStepForTemplateOutputSchema,
+	updateEnvelopeCustomFields,
+	updateEnvelopeDelayedRoutingRules,
+	updateEnvelopeEmailSettings,
+	updateEnvelopeScheduledSendingRules,
+	updateEnvelopeWorkflowDefinition,
+	updateEnvelopeWorkflowStep,
+	updateLockForEnvelope,
+	updateTemplateDelayedRoutingRules,
+	updateTemplateScheduledSendingRules,
+	updateTemplateWorkflowDefinition,
+	updateWorkflowStepForTemplate,
+} from './envelope-workflow';
+import {
+	AddExistingBrandToGroupInputSchema,
+	AddExistingBrandToGroupOutputSchema,
+	AddMembersToSigningGroupInputSchema,
+	AddMembersToSigningGroupOutputSchema,
+	AddUsersToExistingGroupInputSchema,
+	AddUsersToExistingGroupOutputSchema,
+	addExistingBrandToGroup,
+	addMembersToSigningGroup,
+	addUsersToExistingGroup,
+	CreateGroupsForAccountInputSchema,
+	CreateGroupsForAccountOutputSchema,
+	CreateNewAccountPermissionProfileInputSchema,
+	CreateNewAccountPermissionProfileOutputSchema,
+	CreateSigningGroupInputSchema,
+	CreateSigningGroupOutputSchema,
+	createGroupsForAccount,
+	createNewAccountPermissionProfile,
+	createSigningGroup,
+	DeleteAccountPermissionProfileInputSchema,
+	DeleteAccountPermissionProfileOutputSchema,
+	DeleteBrandFromGroupInputSchema,
+	DeleteBrandFromGroupOutputSchema,
+	DeleteMembersFromSigningGroupInputSchema,
+	DeleteMembersFromSigningGroupOutputSchema,
+	DeleteOneOrMoreSigningGroupsInputSchema,
+	DeleteOneOrMoreSigningGroupsOutputSchema,
+	DeleteUserGroupInputSchema,
+	DeleteUserGroupOutputSchema,
+	DeleteUsersFromGroupInputSchema,
+	DeleteUsersFromGroupOutputSchema,
+	deleteAccountPermissionProfile,
+	deleteBrandFromGroup,
+	deleteMembersFromSigningGroup,
+	deleteOneOrMoreSigningGroups,
+	deleteUserGroup,
+	deleteUsersFromGroup,
+	GetBrandsInformationForGroupInputSchema,
+	GetBrandsInformationForGroupOutputSchema,
+	GetGroupsInformationForAccountInputSchema,
+	GetGroupsInformationForAccountOutputSchema,
+	GetListOfAccountPermissionProfilesInputSchema,
+	GetListOfAccountPermissionProfilesOutputSchema,
+	GetMembersOfASigningGroupInputSchema,
+	GetMembersOfASigningGroupOutputSchema,
+	GetPermissionProfileForAccountInputSchema,
+	GetPermissionProfileForAccountOutputSchema,
+	GetSigningGroupInformationInputSchema,
+	GetSigningGroupInformationOutputSchema,
+	GetUsersInGroupInputSchema,
+	GetUsersInGroupOutputSchema,
+	getBrandsInformationForGroup,
+	getGroupsInformationForAccount,
+	getListOfAccountPermissionProfiles,
+	getMembersOfASigningGroup,
+	getPermissionProfileForAccount,
+	getSigningGroupInformation,
+	getUsersInGroup,
+	RetrieveAccountSigningGroupsInputSchema,
+	RetrieveAccountSigningGroupsOutputSchema,
+	retrieveAccountSigningGroups,
+	UpdateGroupInformationInputSchema,
+	UpdateGroupInformationOutputSchema,
+	UpdatePermissionProfileSettingsInputSchema,
+	UpdatePermissionProfileSettingsOutputSchema,
+	UpdateSigningGroupDetailsInputSchema,
+	UpdateSigningGroupDetailsOutputSchema,
+	UpdateSigningGroupNamesInputSchema,
+	UpdateSigningGroupNamesOutputSchema,
+	updateGroupInformation,
+	updatePermissionProfileSettings,
+	updateSigningGroupDetails,
+	updateSigningGroupNames,
+} from './groups';
+import {
+	CreateNotaryJurisdictionObjectInputSchema,
+	CreateNotaryJurisdictionObjectOutputSchema,
+	createNotaryJurisdictionObject,
+	DeleteNotaryJurisdictionInputSchema,
+	DeleteNotaryJurisdictionOutputSchema,
+	deleteNotaryJurisdiction,
+	GetNotaryJournalsInputSchema,
+	GetNotaryJournalsOutputSchema,
+	GetNotaryJurisdictionObjectInputSchema,
+	GetNotaryJurisdictionObjectOutputSchema,
+	GetNotaryUserSettingsInputSchema,
+	GetNotaryUserSettingsOutputSchema,
+	getNotaryJournals,
+	getNotaryJurisdictionObject,
+	getNotaryUserSettings,
+	ListNotaryJournalsInputSchema,
+	ListNotaryJournalsOutputSchema,
+	ListRegisteredNotaryJurisdictionsInputSchema,
+	ListRegisteredNotaryJurisdictionsOutputSchema,
+	listNotaryJournals,
+	listRegisteredNotaryJurisdictions,
+	RegisterCurrentUserAsNotaryInputSchema,
+	RegisterCurrentUserAsNotaryOutputSchema,
+	registerCurrentUserAsNotary,
+	UpdateNotaryJurisdictionInfoInputSchema,
+	UpdateNotaryJurisdictionInfoOutputSchema,
+	UpdateUserNotaryInformationInputSchema,
+	UpdateUserNotaryInformationOutputSchema,
+	updateNotaryJurisdictionInfo,
+	updateUserNotaryInformation,
+} from './notary';
+import {
+	DeletePowerFormByIdInputSchema,
+	DeletePowerFormByIdOutputSchema,
+	deletePowerFormById,
+	GetPowerFormSendersInputSchema,
+	GetPowerFormSendersOutputSchema,
+	getPowerFormSenders,
+	RetrievePowerFormDataEntriesInputSchema,
+	RetrievePowerFormDataEntriesOutputSchema,
+	retrievePowerFormDataEntries,
+} from './powerforms';
+import {
+	CreateCustomFieldsInTemplateDocumentInputSchema,
+	CreateCustomFieldsInTemplateDocumentOutputSchema,
+	CreatePreviewOfResponsiveHtmlInputSchema,
+	CreatePreviewOfResponsiveHtmlOutputSchema,
+	CreateTemplateDocumentCustomFieldsInputSchema,
+	CreateTemplateDocumentCustomFieldsOutputSchema,
+	CreateTemplateRecipientPreviewUrlInputSchema,
+	CreateTemplateRecipientPreviewUrlOutputSchema,
+	CreateTemplateResponsiveHtmlPreviewInputSchema,
+	CreateTemplateResponsiveHtmlPreviewOutputSchema,
+	CreateUrlforTemplateEditViewInputSchema,
+	CreateUrlforTemplateEditViewOutputSchema,
+	createCustomFieldsInTemplateDocument,
+	createPreviewOfResponsiveHtml,
+	createTemplateDocumentCustomFields,
+	createTemplateRecipientPreviewUrl,
+	createTemplateResponsiveHtmlPreview,
+	createUrlforTemplateEditView,
+	DeleteCustomDocumentFieldsFromTemplateInputSchema,
+	DeleteCustomDocumentFieldsFromTemplateOutputSchema,
+	DeleteCustomFieldsInTemplateInputSchema,
+	DeleteCustomFieldsInTemplateOutputSchema,
+	DeletePageFromTemplateDocumentInputSchema,
+	DeletePageFromTemplateDocumentOutputSchema,
+	DeleteTemplateLockInputSchema,
+	DeleteTemplateLockOutputSchema,
+	deleteCustomDocumentFieldsFromTemplate,
+	deleteCustomFieldsInTemplate,
+	deletePageFromTemplateDocument,
+	deleteTemplateLock,
+	GetOriginalHtmlDefinitionForTemplateInputSchema,
+	GetOriginalHtmlDefinitionForTemplateOutputSchema,
+	GetTemplateDocumentHtmlDefinitionInputSchema,
+	GetTemplateDocumentHtmlDefinitionOutputSchema,
+	GetTemplateLockInformationInputSchema,
+	GetTemplateLockInformationOutputSchema,
+	GetTemplateNotificationInformationInputSchema,
+	GetTemplateNotificationInformationOutputSchema,
+	GetTemplateRecipientDocumentVisibilityInputSchema,
+	GetTemplateRecipientDocumentVisibilityOutputSchema,
+	getOriginalHtmlDefinitionForTemplate,
+	getTemplateDocumentHtmlDefinition,
+	getTemplateLockInformation,
+	getTemplateNotificationInformation,
+	getTemplateRecipientDocumentVisibility,
+	LockTemplateForEditingInputSchema,
+	LockTemplateForEditingOutputSchema,
+	lockTemplateForEditing,
+	RemoveGroupSharingPermissionsForTemplateInputSchema,
+	RemoveGroupSharingPermissionsForTemplateOutputSchema,
+	RemoveTemplatesFromFavoritesInputSchema,
+	RemoveTemplatesFromFavoritesOutputSchema,
+	RetrieveAccountFavoriteTemplatesInputSchema,
+	RetrieveAccountFavoriteTemplatesOutputSchema,
+	RetrieveCustomFieldsForTemplateInputSchema,
+	RetrieveCustomFieldsForTemplateOutputSchema,
+	RetrievePdfFromSpecifiedTemplateInputSchema,
+	RetrievePdfFromSpecifiedTemplateOutputSchema,
+	RetrieveTemplateCustomFieldsInputSchema,
+	RetrieveTemplateCustomFieldsOutputSchema,
+	RetrieveTemplateDocumentPageImagesInputSchema,
+	RetrieveTemplateDocumentPageImagesOutputSchema,
+	RetrieveTemplatePageImageInputSchema,
+	RetrieveTemplatePageImageOutputSchema,
+	RotateTemplatePageImageInputSchema,
+	RotateTemplatePageImageOutputSchema,
+	removeGroupSharingPermissionsForTemplate,
+	removeTemplatesFromFavorites,
+	retrieveAccountFavoriteTemplates,
+	retrieveCustomFieldsForTemplate,
+	retrievePdfFromSpecifiedTemplate,
+	retrieveTemplateCustomFields,
+	retrieveTemplateDocumentPageImages,
+	retrieveTemplatePageImage,
+	rotateTemplatePageImage,
+	SetTemplatesAsAccountFavoritesInputSchema,
+	SetTemplatesAsAccountFavoritesOutputSchema,
+	ShareTemplateWithGroupInputSchema,
+	ShareTemplateWithGroupOutputSchema,
+	setTemplatesAsAccountFavorites,
+	shareTemplateWithGroup,
+	UpdateTemplateCustomFieldsInputSchema,
+	UpdateTemplateCustomFieldsOutputSchema,
+	UpdateTemplateDocumentCustomFieldsInputSchema,
+	UpdateTemplateDocumentCustomFieldsOutputSchema,
+	UpdateTemplateDocVisibilityInputSchema,
+	UpdateTemplateDocVisibilityOutputSchema,
+	UpdateTemplateLockInformationInputSchema,
+	UpdateTemplateLockInformationOutputSchema,
+	UpdateTemplateNotificationSettingsInputSchema,
+	UpdateTemplateNotificationSettingsOutputSchema,
+	UpdateTemplateRecipientDocumentVisibilityInputSchema,
+	UpdateTemplateRecipientDocumentVisibilityOutputSchema,
+	updateTemplateCustomFields,
+	updateTemplateDocumentCustomFields,
+	updateTemplateDocVisibility,
+	updateTemplateLockInformation,
+	updateTemplateNotificationSettings,
+	updateTemplateRecipientDocumentVisibility,
+} from './template-management';
+import {
+	AddNewUsersToASpecifiedAccountInputSchema,
+	AddNewUsersToASpecifiedAccountOutputSchema,
+	AddOrUpdateUserCustomSettingsInputSchema,
+	AddOrUpdateUserCustomSettingsOutputSchema,
+	AddOrUpdateUserSignatureInputSchema,
+	AddOrUpdateUserSignatureOutputSchema,
+	AddUserSignatureAndInitialsImagesInputSchema,
+	AddUserSignatureAndInitialsImagesOutputSchema,
+	addNewUsersToASpecifiedAccount,
+	addOrUpdateUserCustomSettings,
+	addOrUpdateUserSignature,
+	addUserSignatureAndInitialsImages,
+	ChangeUsersInAccountInputSchema,
+	ChangeUsersInAccountOutputSchema,
+	CloseUsersInAccountInputSchema,
+	CloseUsersInAccountOutputSchema,
+	CreateOrUpdateUserAuthorizationsInputSchema,
+	CreateOrUpdateUserAuthorizationsOutputSchema,
+	CreateUserAuthorizationForAgentUserInputSchema,
+	CreateUserAuthorizationForAgentUserOutputSchema,
+	changeUsersInAccount,
+	closeUsersInAccount,
+	createOrUpdateUserAuthorizations,
+	createUserAuthorizationForAgentUser,
+	DeleteCustomUserSettingsInputSchema,
+	DeleteCustomUserSettingsOutputSchema,
+	DeleteUserAuthorizationInputSchema,
+	DeleteUserAuthorizationOutputSchema,
+	DeleteUserAuthorizationsInputSchema,
+	DeleteUserAuthorizationsOutputSchema,
+	DeleteUserInitialsOrSignatureImageInputSchema,
+	DeleteUserInitialsOrSignatureImageOutputSchema,
+	DeleteUserProfileImageInputSchema,
+	DeleteUserProfileImageOutputSchema,
+	deleteCustomUserSettings,
+	deleteUserAuthorization,
+	deleteUserAuthorizations,
+	deleteUserInitialsOrSignatureImage,
+	deleteUserProfileImage,
+	GetAgentUserAuthorizationsInputSchema,
+	GetAgentUserAuthorizationsOutputSchema,
+	GetUserAuthorizationDetailsInputSchema,
+	GetUserAuthorizationDetailsOutputSchema,
+	GetUserAuthorizationsForPrincipalInputSchema,
+	GetUserAuthorizationsForPrincipalOutputSchema,
+	GetUserInformationByIdInputSchema,
+	GetUserInformationByIdOutputSchema,
+	getAgentUserAuthorizations,
+	getUserAuthorizationDetails,
+	getUserAuthorizationsForPrincipal,
+	getUserInformationById,
+	ListUsersForAccountInputSchema,
+	ListUsersForAccountOutputSchema,
+	listUsersForAccount,
+	RemoveUserSignatureInformationInputSchema,
+	RemoveUserSignatureInformationOutputSchema,
+	RetrieveCustomUserSettingsInputSchema,
+	RetrieveCustomUserSettingsOutputSchema,
+	RetrieveUserAccountSettingsInputSchema,
+	RetrieveUserAccountSettingsOutputSchema,
+	RetrieveUserProfileImageInputSchema,
+	RetrieveUserProfileImageOutputSchema,
+	RetrieveUserProfileInformationInputSchema,
+	RetrieveUserProfileInformationOutputSchema,
+	RetrieveUserSignatureDefinitionsInputSchema,
+	RetrieveUserSignatureDefinitionsOutputSchema,
+	RetrieveUserSignatureImageInputSchema,
+	RetrieveUserSignatureImageOutputSchema,
+	RetrieveUserSignatureInformationInputSchema,
+	RetrieveUserSignatureInformationOutputSchema,
+	removeUserSignatureInformation,
+	retrieveCustomUserSettings,
+	retrieveUserAccountSettings,
+	retrieveUserProfileImage,
+	retrieveUserProfileInformation,
+	retrieveUserSignatureDefinitions,
+	retrieveUserSignatureImage,
+	retrieveUserSignatureInformation,
+	SetUserSignatureImageInputSchema,
+	SetUserSignatureImageOutputSchema,
+	setUserSignatureImage,
+	UpdateUserAccountSettingsInputSchema,
+	UpdateUserAccountSettingsOutputSchema,
+	UpdateUserAuthorizationDatesInputSchema,
+	UpdateUserAuthorizationDatesOutputSchema,
+	UpdateUserInformationForSpecifiedUserInputSchema,
+	UpdateUserInformationForSpecifiedUserOutputSchema,
+	UpdateUserProfileImageInputSchema,
+	UpdateUserProfileImageOutputSchema,
+	UpdateUserProfileInformationInputSchema,
+	UpdateUserProfileInformationOutputSchema,
+	UpdateUserSignatureByIdInputSchema,
+	UpdateUserSignatureByIdOutputSchema,
+	updateUserAccountSettings,
+	updateUserAuthorizationDates,
+	updateUserInformationForSpecifiedUser,
+	updateUserProfileImage,
+	updateUserProfileInformation,
+	updateUserSignatureById,
+} from './users';
+import {
+	AddFileToWorkspaceInputSchema,
+	AddFileToWorkspaceOutputSchema,
+	addFileToWorkspace,
+	CreateACollaborativeWorkspaceInputSchema,
+	CreateACollaborativeWorkspaceOutputSchema,
+	createACollaborativeWorkspace,
+	DeleteExistingWorkspaceLogicallyInputSchema,
+	DeleteExistingWorkspaceLogicallyOutputSchema,
+	DeleteWorkspaceFilesOrFoldersInputSchema,
+	DeleteWorkspaceFilesOrFoldersOutputSchema,
+	deleteExistingWorkspaceLogically,
+	deleteWorkspaceFilesOrFolders,
+	GetWorkspaceFileInputSchema,
+	GetWorkspaceFileOutputSchema,
+	GetWorkspaceFolderContentsInputSchema,
+	GetWorkspaceFolderContentsOutputSchema,
+	getWorkspaceFile,
+	getWorkspaceFolderContents,
+	ListWorkspaceFilePagesInputSchema,
+	ListWorkspaceFilePagesOutputSchema,
+	ListWorkspacesInputSchema,
+	ListWorkspacesOutputSchema,
+	listWorkspaceFilePages,
+	listWorkspaces,
+	RetrievePropertiesAboutWorkspaceInputSchema,
+	RetrievePropertiesAboutWorkspaceOutputSchema,
+	retrievePropertiesAboutWorkspace,
+	UpdateWorkspaceInformationInputSchema,
+	UpdateWorkspaceInformationOutputSchema,
+	UpdateWorkspaceItemMetadataInputSchema,
+	UpdateWorkspaceItemMetadataOutputSchema,
+	updateWorkspaceInformation,
+	updateWorkspaceItemMetadata,
+} from './workspaces';
+
+export const generatedEndpointsNested = {
+	addOrUpdateAccountStamps,
+	createAccountCustomField,
+	createBccEmailArchiveConfiguration,
+	deleteAccountCustomField,
+	deleteAccountStamp,
+	deleteBccEmailArchiveConfiguration,
+	deleteEnoteConfiguration,
+	deleteSignatureForCaptiveRecipients,
+	deleteSpecifiedAccount,
+	deleteStampImageForAccount,
+	getAccountBillingChargesList,
+	getAccountPasswordRules,
+	getAccountStampImage,
+	getBccEmailArchiveConfigurations,
+	getBccemailArchiveHistory,
+	getElectronicRecordAndSignatureDisclosure,
+	getEnoteIntegrationSettings,
+	getSpecifiedAccountStampInfo,
+	getSupportedLanguagesForRecipients,
+	getTabSettingsForAccount,
+	getUnsupportedFileTypesList,
+	getWatermarkDetailsForAccount,
+	listSignatureProvidersForAccount,
+	modifyAccountNotificationSettings,
+	modifyTabSettingsForAccount,
+	retrieveAccountEnvelopePurgeConfig,
+	retrieveAccountInformationForSpecifiedAccount,
+	retrieveAccountProvisioningInfo,
+	retrieveAccountSealProviders,
+	retrieveAccountSettingsInformation,
+	retrieveAvailableAccountStamps,
+	retrieveSharedItemStatusForUsers,
+	setEnvelopePurgeConfigForAccount,
+	setSharedAccessForUsersAndTemplates,
+	updateAccountCustomField,
+	updateAccountPasswordRules,
+	updateAccountSettings,
+	updateAccountStampById,
+	updateAccountStamps,
+	updateAccountWatermarkInformation,
+	updateAccountWatermarkPreview,
+	updateElectronicRecordDisclosure,
+	updateEnoteIntegrationConfig,
+	getDowngradePlanInfoForAccount,
+	listBillingInvoices,
+	listPastDueInvoices,
+	listPaymentGatewayAccountsInfo,
+	postPaymentToInvoice,
+	purchaseAdditionalEnvelopes,
+	queueDowngradeBillingPlanRequest,
+	retrieveAccountBillingPlan,
+	retrieveBillingInvoice,
+	retrieveBillingPaymentInfo,
+	retrieveCreditCardInfo,
+	retrieveListOfBillingPlans,
+	retrievePaymentInformationList,
+	updateBillingPlanForAccount,
+	createBrandProfilesForAccount,
+	deleteAccountBrand,
+	deleteBrandLogoByType,
+	deleteBrandProfiles,
+	exportBrandToXmlfile,
+	getBrandLogoByType,
+	getSpecificBrandResourceFile,
+	listBrandsForAccount,
+	retrieveAccountBrandInformation,
+	returnBrandResourceMetadataForAccount,
+	updateAccountBrandSettings,
+	applyActionToBulkSendEnvelopes,
+	createBulkSendRequest,
+	createBulkSendTestRequest,
+	getBulkSendBatchStatus,
+	getBulkSendListsInformation,
+	listBulkSendBatchSummaries,
+	removeBulkSendList,
+	updateBulkSendBatchName,
+	addPartToChunkedUpload,
+	commitChunkedUploadForEnvelopes,
+	deleteChunkedUpload,
+	initiateNewChunkedUpload,
+	retrieveChunkedUploadMetadata,
+	configureCloudStorageRedirectUrl,
+	deleteUserAuthForCloudStorageProviders,
+	deleteUserCloudStorageAuthentication,
+	getUserCloudStorageProviderConfiguration,
+	listCloudStorageItems,
+	retrieveCloudStorageProviderConfiguration,
+	retrieveItemsInCloudStorageFolder,
+	createConnectConfigurationForAccount,
+	deleteConnectConfiguration,
+	deleteConnectFailureLogEntry,
+	deleteConnectLogEntries,
+	deleteConnectOauthConfiguration,
+	deleteSpecificConnectLogEntry,
+	republishConnectDataForEnvelope,
+	republishConnectInfoForEnvelopes,
+	retrieveConnectConfigurationDetails,
+	retrieveConnectConfigurations,
+	retrieveConnectFailureLogs,
+	retrieveConnectLogEntry,
+	retrieveConnectLogs,
+	retrieveConnectOauthConfiguration,
+	returnAllConnectServiceUsers,
+	returnUsersFromConnectService,
+	setUpConnectOauthConfiguration,
+	updateConnectOauthConfiguration,
+	updateDocusignConnectConfiguration,
+	addContactsToContactsList,
+	deleteContactFromAccount,
+	deleteMultipleContactsFromAccount,
+	getDocusignAccountContacts,
+	updateContactsInformation,
+	createCustomTabWithProperties,
+	deleteCustomTabInformation,
+	retrieveAllAccountTabs,
+	retrieveCustomTabInformation,
+	updateCustomTabInformationForAccount,
+	deleteRequestLogFiles,
+	getRequestLoggingLogFile,
+	getRequestLogs,
+	getRequestLogSettings,
+	getResourceInformation,
+	getServiceInformation,
+	toggleApiRequestLogging,
+	addEnvelopeAttachments,
+	createCustomDocumentFieldsInEnvelope,
+	createDocumentResponsiveHtmlPreview,
+	createPreviewOfResponsiveHtmlInEnvelope,
+	deleteCustomDocumentFields,
+	deleteDraftEnvelopeAttachments,
+	deprecatedEndpointForTabBlob,
+	getEnvelopeDocGenFormFields,
+	getEnvelopeDocumentFields,
+	getPdftranscriptOfEnvelopeComments,
+	getRecipientDocumentVisibility,
+	getTabsBlobForEnvelope,
+	listEnvelopeAttachmentsByEnvelopeId,
+	retrieveEnvelopeAttachment,
+	retrieveEnvelopeDocuments,
+	retrieveEnvelopeHtmlDefinition,
+	returnEnvelopeTabDataForExistingEnvelope,
+	updateCustomFieldsInEnvelopeDocument,
+	updateDocumentVisibilityRecipients,
+	updateEnvelopeAttachment,
+	updateEnvelopeDocGenFormFields,
+	updateRecipientDocumentVisibility,
+	deletePageFromDocumentInEnvelope,
+	getEnvelopeNotificationDefaults,
+	getPageImageFromEnvelope,
+	getSignatureInformationForRecipient,
+	retrieveEnvelopeAuditEvents,
+	retrieveEnvelopeNotificationDetails,
+	retrieveSignerSignatureImageInformation,
+	retrieveUserInitialsImageForEnvelopes,
+	returnsDocumentPageImagesBasedOnInput,
+	rotatePageImageForEnvelope,
+	setInitialsImageForAccountlessSigner,
+	setSignatureImageForNoAccountSigner,
+	updateEnvelopeNotificationSettings,
+	createIdproofResourceTokenForRecipient,
+	createRecipientManualReviewLink,
+	createRecipientPreviewForEnvelope,
+	createSenderViewUrlForEnvelope,
+	generateEditViewUrlforEnvelope,
+	generateEnvelopeCorrectionUrl,
+	generateRecipientSharedViewUrl,
+	getElectronicDisclosureForRecipient,
+	getUrlforEmbeddingDocusignUi,
+	retrieveAccountVerificationWorkflows,
+	retrieveDefaultDisclosureForEnvelope,
+	revokeEnvelopeCorrectionUrl,
+	addEmailOverridesToEnvelope,
+	addStepToEnvelopeWorkflow,
+	addTemplatesToDocumentInEnvelope,
+	addTemplatesToEnvelope,
+	createCustomFieldsForEnvelope,
+	createTemplateWorkflowStep,
+	deleteDelayedRoutingRuleForEnvelopeStep,
+	deleteDelayedRoutingRulesForTemplate,
+	deleteEnvelopeCustomFields,
+	deleteEnvelopeEmailSettings,
+	deleteEnvelopeLock,
+	deleteEnvelopeScheduledSendingRules,
+	deleteEnvelopeTransferRule,
+	deleteEnvelopeWorkflowDefinition,
+	deleteEnvelopeWorkflowStep,
+	deleteScheduledSendingRules,
+	deleteTemplateFromEnvelopeDocument,
+	deleteTemplateWorkflowStep,
+	deleteWorkflowDefinitionForTemplate,
+	getEnvelopeLockInformation,
+	getEnvelopeWorkflowDefinition,
+	getEnvelopeWorkflowDelayedRoutingDefinition,
+	getTemplateDelayedRoutingRules,
+	getTemplateScheduledSendingSettings,
+	getTemplatesForEnvelopeDocument,
+	getTemplatesUsedInEnvelope,
+	getWorkflowStepForEnvelope,
+	listEnvelopeAndDocumentCustomFields,
+	lockAnEnvelopeForEditing,
+	retrieveCustomFieldsForEnvelope,
+	retrieveEnvelopeEmailOverrides,
+	retrieveWorkflowStepForTemplate,
+	returnScheduledSendingRulesForEnvelope,
+	returnTemplateWorkflowDefinition,
+	submitBatchHistoricalEnvelopesToWebhook,
+	updateEnvelopeCustomFields,
+	updateEnvelopeDelayedRoutingRules,
+	updateEnvelopeEmailSettings,
+	updateEnvelopeScheduledSendingRules,
+	updateEnvelopeWorkflowDefinition,
+	updateEnvelopeWorkflowStep,
+	updateLockForEnvelope,
+	updateTemplateDelayedRoutingRules,
+	updateTemplateScheduledSendingRules,
+	updateTemplateWorkflowDefinition,
+	updateWorkflowStepForTemplate,
+	addExistingBrandToGroup,
+	addMembersToSigningGroup,
+	addUsersToExistingGroup,
+	createGroupsForAccount,
+	createNewAccountPermissionProfile,
+	createSigningGroup,
+	deleteAccountPermissionProfile,
+	deleteBrandFromGroup,
+	deleteMembersFromSigningGroup,
+	deleteOneOrMoreSigningGroups,
+	deleteUserGroup,
+	deleteUsersFromGroup,
+	getBrandsInformationForGroup,
+	getGroupsInformationForAccount,
+	getListOfAccountPermissionProfiles,
+	getMembersOfASigningGroup,
+	getPermissionProfileForAccount,
+	getSigningGroupInformation,
+	getUsersInGroup,
+	retrieveAccountSigningGroups,
+	updateGroupInformation,
+	updatePermissionProfileSettings,
+	updateSigningGroupDetails,
+	updateSigningGroupNames,
+	createNotaryJurisdictionObject,
+	deleteNotaryJurisdiction,
+	getNotaryJournals,
+	getNotaryJurisdictionObject,
+	getNotaryUserSettings,
+	listNotaryJournals,
+	listRegisteredNotaryJurisdictions,
+	registerCurrentUserAsNotary,
+	updateNotaryJurisdictionInfo,
+	updateUserNotaryInformation,
+	deletePowerFormById,
+	getPowerFormSenders,
+	retrievePowerFormDataEntries,
+	createCustomFieldsInTemplateDocument,
+	createPreviewOfResponsiveHtml,
+	createTemplateDocumentCustomFields,
+	createTemplateRecipientPreviewUrl,
+	createTemplateResponsiveHtmlPreview,
+	createUrlforTemplateEditView,
+	deleteCustomDocumentFieldsFromTemplate,
+	deleteCustomFieldsInTemplate,
+	deletePageFromTemplateDocument,
+	deleteTemplateLock,
+	getOriginalHtmlDefinitionForTemplate,
+	getTemplateDocumentHtmlDefinition,
+	getTemplateLockInformation,
+	getTemplateNotificationInformation,
+	getTemplateRecipientDocumentVisibility,
+	lockTemplateForEditing,
+	removeGroupSharingPermissionsForTemplate,
+	removeTemplatesFromFavorites,
+	retrieveAccountFavoriteTemplates,
+	retrieveCustomFieldsForTemplate,
+	retrievePdfFromSpecifiedTemplate,
+	retrieveTemplateCustomFields,
+	retrieveTemplateDocumentPageImages,
+	retrieveTemplatePageImage,
+	rotateTemplatePageImage,
+	setTemplatesAsAccountFavorites,
+	shareTemplateWithGroup,
+	updateTemplateCustomFields,
+	updateTemplateDocumentCustomFields,
+	updateTemplateDocVisibility,
+	updateTemplateLockInformation,
+	updateTemplateNotificationSettings,
+	updateTemplateRecipientDocumentVisibility,
+	addNewUsersToASpecifiedAccount,
+	addOrUpdateUserCustomSettings,
+	addOrUpdateUserSignature,
+	addUserSignatureAndInitialsImages,
+	changeUsersInAccount,
+	closeUsersInAccount,
+	createOrUpdateUserAuthorizations,
+	createUserAuthorizationForAgentUser,
+	deleteCustomUserSettings,
+	deleteUserAuthorization,
+	deleteUserAuthorizations,
+	deleteUserInitialsOrSignatureImage,
+	deleteUserProfileImage,
+	getAgentUserAuthorizations,
+	getUserAuthorizationDetails,
+	getUserAuthorizationsForPrincipal,
+	getUserInformationById,
+	listUsersForAccount,
+	removeUserSignatureInformation,
+	retrieveCustomUserSettings,
+	retrieveUserAccountSettings,
+	retrieveUserProfileImage,
+	retrieveUserProfileInformation,
+	retrieveUserSignatureDefinitions,
+	retrieveUserSignatureImage,
+	retrieveUserSignatureInformation,
+	setUserSignatureImage,
+	updateUserAccountSettings,
+	updateUserAuthorizationDates,
+	updateUserInformationForSpecifiedUser,
+	updateUserProfileImage,
+	updateUserProfileInformation,
+	updateUserSignatureById,
+	addFileToWorkspace,
+	createACollaborativeWorkspace,
+	deleteExistingWorkspaceLogically,
+	deleteWorkspaceFilesOrFolders,
+	getWorkspaceFile,
+	getWorkspaceFolderContents,
+	listWorkspaceFilePages,
+	listWorkspaces,
+	retrievePropertiesAboutWorkspace,
+	updateWorkspaceInformation,
+	updateWorkspaceItemMetadata,
+};
+
+export const generatedEndpointMeta = {
+	addOrUpdateAccountStamps: {
+		description:
+			'Add or update account-level stamps (Japanese Hanko-style stamps) in DocuSign. Stamps are pre-configured signature images that can be applied to documents. This action supports creating new stamps or updating existing ones by including the signatureId. \\*\\*Common use cases:\\*\\* - Create name stamps (',
+		riskLevel: 'write',
+	},
+	createAccountCustomField: {
+		description:
+			"Creates a new custom field at the account level in DocuSign, making it available for all new envelopes associated with the account. This endpoint enables account administrators to define custom fields for enhanced envelope management and grouping. The created custom field can be of type 'text' or 'l",
+		riskLevel: 'write',
+	},
+	createBccEmailArchiveConfiguration: {
+		description:
+			"Creates a BCC email archive configuration for a DocuSign account, enabling automatic archiving of DocuSign-generated emails. This endpoint allows you to set up a BCC email address that will receive copies of all DocuSign notifications for the specified account. It's particularly useful for organizat",
+		riskLevel: 'write',
+	},
+	deleteAccountCustomField: {
+		description:
+			'Deletes an existing account custom field from a DocuSign account. This endpoint should be used when you need to remove a custom field that is no longer required or relevant for your account. It permanently removes the custom field, so use with caution. The deletion can optionally be applied to templ',
+		riskLevel: 'destructive',
+	},
+	deleteAccountStamp: {
+		description:
+			"Deletes a specific account stamp (signature) from a DocuSign account. This endpoint should be used when you need to permanently remove a stamp from an account, such as when it's no longer needed or has been replaced. The operation is irreversible, so use it with caution. It's particularly useful for",
+		riskLevel: 'destructive',
+	},
+	deleteBccEmailArchiveConfiguration: {
+		description:
+			"This endpoint deletes a BCC (Blind Carbon Copy) email archive configuration from a specified DocuSign account. When invoked, it changes the status of the targeted configuration to 'closed' and immediately stops the archiving of DocuSign-generated email messages to the associated BCC email address. T",
+		riskLevel: 'destructive',
+	},
+	deleteEnoteConfiguration: {
+		description:
+			'Deletes an existing eNote configuration associated with a specific DocuSign account. This endpoint is part of the ENoteConfigurations API and is currently in beta status. It should be used when you need to remove an eNote configuration that is no longer needed or is incorrect. The operation is irrev',
+		riskLevel: 'destructive',
+	},
+	deleteSignatureForCaptiveRecipients: {
+		description:
+			'Deletes the signature for one or more captive (embedded) recipients in DocuSign. This endpoint is primarily used for testing and development purposes to reset signatures associated with embedded recipients (identified by clientUserId). After deletion, a new signature can be created the next time the',
+		riskLevel: 'destructive',
+	},
+	deleteSpecifiedAccount: {
+		description:
+			'Deletes (closes) a specified DocuSign account. This operation permanently closes the account and can only be performed by an account admin. Once an account is closed, it cannot be reopened by users and must be reactivated by DocuSign support. Use this endpoint with caution as it has significant impl',
+		riskLevel: 'destructive',
+	},
+	deleteStampImageForAccount: {
+		description:
+			"This endpoint deletes a specific stamp image associated with an account signature in DocuSign. It is used to remove the visual representation of a stamp from a user's account, which can be useful for updating or removing outdated stamps. The endpoint requires the account ID, the type of image being ",
+		riskLevel: 'destructive',
+	},
+	getAccountBillingChargesList: {
+		description:
+			"Retrieves a detailed list of recurring and usage charges for a specified DocuSign account. This endpoint provides comprehensive information about the account's billing structure, including charge names, types, pricing, and usage quantities for various DocuSign services. It's particularly useful for ",
+		riskLevel: 'read',
+	},
+	getAccountPasswordRules: {
+		description:
+			'Retrieves the current password rules and security settings for a specified DocuSign account. This endpoint provides detailed information about password expiration policies, lockout durations, password strength requirements, and security question configurations. It is useful for account administrator',
+		riskLevel: 'read',
+	},
+	getAccountStampImage: {
+		description:
+			"Retrieves the image file for a specific account stamp, signature, or initials in DocuSign. This endpoint allows users to obtain the visual representation of stamps or signatures associated with their DocuSign account. It's particularly useful when you need to display or embed these images in other d",
+		riskLevel: 'read',
+	},
+	getBccEmailArchiveConfigurations: {
+		description:
+			'Retrieves a list of BCC (Blind Carbon Copy) email archive configurations associated with a specified DocuSign account. This endpoint allows users to fetch details about email addresses used for archiving DocuSign-generated emails. It supports pagination for large result sets and provides comprehensi',
+		riskLevel: 'read',
+	},
+	getBccemailArchiveHistory: {
+		description:
+			'Retrieves the history of changes made to a specific BCC email archive configuration for a DocuSign account. This endpoint allows users to track modifications, including creation, updates, and closure of email addresses used for archiving DocuSign-generated emails. It provides detailed information ab',
+		riskLevel: 'read',
+	},
+	getElectronicRecordAndSignatureDisclosure: {
+		description:
+			"Retrieves the HTML-formatted Electronic Record and Signature Disclosure (ERSD) associated with a specific DocuSign account. This endpoint allows you to fetch the current version of the ERSD, which is crucial for obtaining a consumer's consent to receive notices and disclosures electronically. It sup",
+		riskLevel: 'read',
+	},
+	getEnoteIntegrationSettings: {
+		description:
+			'Retrieves the eNote integration settings for a specified DocuSign account. This endpoint provides crucial information about the eNote configuration status, Connect configuration status, and necessary credentials for eNote functionality. It should be used when setting up or verifying the eNote integr',
+		riskLevel: 'read',
+	},
+	getSpecifiedAccountStampInfo: {
+		description:
+			"Retrieves detailed information about a specific account stamp (signature) in DocuSign. This endpoint allows users to fetch comprehensive data about a signature, including its creation and modification dates, image URIs, associated users, and formatting details. It's particularly useful when you need",
+		riskLevel: 'read',
+	},
+	getSupportedLanguagesForRecipients: {
+		description:
+			"Retrieves a comprehensive list of supported languages that can be set for individual recipients when creating a DocuSign envelope. This endpoint allows developers to access the available language options for customizing the standard email format and signing view for each recipient. It's particularly",
+		riskLevel: 'read',
+	},
+	getTabSettingsForAccount: {
+		description:
+			'Retrieves the current tab settings and functionality enabled for a specific DocuSign account. This endpoint provides detailed information about various tab types (such as checkbox, radio, text) and related features (like tab order, data labels, text formatting) that are currently active or inactive ',
+		riskLevel: 'read',
+	},
+	getUnsupportedFileTypesList: {
+		description:
+			'Retrieves the list of file types (extensions and MIME types) that DocuSign does not support for upload. Use this to validate file types before upload or to display supported formats to users. The list may change as DocuSign updates its supported file types.',
+		riskLevel: 'read',
+	},
+	getWatermarkDetailsForAccount: {
+		description:
+			"Retrieves and previews the watermark details for a specific DocuSign account. This endpoint allows users to view the current watermark configuration, including its visual properties and enabled status. It's useful for verifying existing watermark settings or preparing to update them. The endpoint re",
+		riskLevel: 'read',
+	},
+	listSignatureProvidersForAccount: {
+		description:
+			"Retrieves a list of signature providers available for a specified DocuSign account. This endpoint allows users to obtain detailed information about electronic and digital signature providers, including standards-based signatures, that can be used within the account. It's particularly useful when set",
+		riskLevel: 'read',
+	},
+	modifyAccountNotificationSettings: {
+		description:
+			'Updates the default email notification settings for envelope senders and signers in a DocuSign account. This endpoint allows customization of when and what type of notifications users receive regarding envelope status changes (e.g., signed, declined, completed), comments, and other events. Use this ',
+		riskLevel: 'write',
+	},
+	modifyTabSettingsForAccount: {
+		description:
+			'This endpoint modifies the tab types and tab functionality that are enabled for a DocuSign account. It allows administrators to configure various tab-related settings, such as enabling or disabling specific tab types, controlling tab order, and managing compliance with FDA regulations. The endpoint ',
+		riskLevel: 'write',
+	},
+	retrieveAccountEnvelopePurgeConfig: {
+		description:
+			'Retrieves the current envelope purge configuration for a specified DocuSign account. This endpoint allows account administrators to view the settings that control how and when documents are permanently removed from completed and voided envelopes after a specified retention period. It provides crucia',
+		riskLevel: 'read',
+	},
+	retrieveAccountInformationForSpecifiedAccount: {
+		description:
+			"Retrieves comprehensive information for a specified DocuSign account, including account details, billing information, plan specifics, and optionally detailed account settings. This endpoint is used to gather extensive data about an account's configuration, status, and capabilities within the DocuSig",
+		riskLevel: 'read',
+	},
+	retrieveAccountProvisioningInfo: {
+		description:
+			'Retrieves the account provisioning information for a DocuSign account. This endpoint returns crucial setup and configuration details including default connection IDs, billing plan identifiers, distributor codes, password policy rules, and promotional information. Use this action when you need to: - ',
+		riskLevel: 'read',
+	},
+	retrieveAccountSealProviders: {
+		description:
+			'Retrieves electronic seal providers (eSeals) available for a DocuSign account. Electronic seals certify document origin and integrity using a legal entity identity rather than an individual signature. Returns seal identifiers and names for all configured seals in the account. Use this to display ava',
+		riskLevel: 'read',
+	},
+	retrieveAccountSettingsInformation: {
+		description:
+			"Retrieves the comprehensive account settings information for a specified DocuSign account. This endpoint provides a detailed view of the account's configuration, including access code formats, account-wide preferences, feature toggles, security settings, UI customization options, and compliance-rela",
+		riskLevel: 'read',
+	},
+	retrieveAvailableAccountStamps: {
+		description:
+			"Retrieves a list of stamps available in a DocuSign account. This endpoint allows users to fetch detailed information about various types of stamps, signatures, and related properties associated with the specified account. It's particularly useful for applications that need to display or manage avail",
+		riskLevel: 'read',
+	},
+	retrieveSharedItemStatusForUsers: {
+		description:
+			'Retrieves shared item status for one or more users and types of items within a DocuSign account. This endpoint provides detailed information about how envelopes, templates, and folders are shared among users and groups. It can be used to audit sharing permissions, track shared resources, or gather i',
+		riskLevel: 'read',
+	},
+	setEnvelopePurgeConfigForAccount: {
+		description:
+			'Configures automatic envelope purge settings for a DocuSign account. This action allows account administrators to set up policies for automatically removing envelope documents after a specified retention period. The configuration includes options for: - Enabling/disabling automatic purging - Setting',
+		riskLevel: 'write',
+	},
+	setSharedAccessForUsersAndTemplates: {
+		description:
+			'This endpoint sets shared access for users and templates in DocuSign. It manages collaboration and access control within an organization for envelopes, templates, and folders. Only users with admin privileges can set envelope access, while template access requires ownership or admin rights. Changes ',
+		riskLevel: 'write',
+	},
+	updateAccountCustomField: {
+		description:
+			'This endpoint updates an existing account custom field in DocuSign. It allows you to modify the properties of a custom field, such as its name, type, required status, visibility, and value. The endpoint supports both list and text custom fields, enabling account administrators to refine and adjust c',
+		riskLevel: 'write',
+	},
+	updateAccountPasswordRules: {
+		description:
+			'This endpoint updates the password rules for a DocuSign account. It allows account administrators to modify various password policy settings, including expiration, complexity requirements, lockout durations, and security question requirements. Use this endpoint to enhance account security, comply wi',
+		riskLevel: 'write',
+	},
+	updateAccountSettings: {
+		description:
+			'Updates various settings for a specified DocuSign account. This endpoint allows administrators to configure a wide range of account-level options, including security settings, compliance features, and user interface preferences. Use this when you need to modify your DocuSign account configuration to',
+		riskLevel: 'write',
+	},
+	updateAccountStampById: {
+		description:
+			"This endpoint allows you to update an existing account stamp (signature) in DocuSign. It provides extensive customization options for the stamp's appearance, associated users, and properties. Use this when you need to modify an existing stamp's details, such as its image, font, size, or user permiss",
+		riskLevel: 'write',
+	},
+	updateAccountStamps: {
+		description:
+			'Update existing account stamps (signatures) in a DocuSign account. Modifies properties of existing stamps by referencing their signatureId. Supports updating names, sizes, formats (NameHanko/NameDateHanko), resize permissions, phonetic names, and external IDs. Supports batch updates of multiple stam',
+		riskLevel: 'write',
+	},
+	updateAccountWatermarkInformation: {
+		description:
+			'This endpoint updates the watermark settings for a specified DocuSign account. It allows customization of various watermark properties such as display angle, font, color, size, and transparency. The endpoint can be used to enable or disable the watermark feature, change the watermark text, or modify',
+		riskLevel: 'write',
+	},
+	updateAccountWatermarkPreview: {
+		description:
+			'Updates and previews watermark settings for a DocuSign account before applying them. This endpoint allows you to test watermark appearance settings including text, font, color, size, display angle, and transparency without permanently saving the configuration. Use this action when you want to previe',
+		riskLevel: 'write',
+	},
+	updateElectronicRecordDisclosure: {
+		description:
+			'Updates the Electronic Record and Signature Disclosure (ERSD) for a DocuSign account. Allows administrators to customize the default disclosure, switch to a custom one, or update existing custom disclosures in multiple languages. Only account administrators can use this method. Changes may require u',
+		riskLevel: 'write',
+	},
+	updateEnoteIntegrationConfig: {
+		description:
+			'Updates the eNote integration configuration for a specific DocuSign account. This endpoint allows users to modify settings related to eNote functionality, including API key, Connect configuration, eNote configuration, organization details, and user credentials. It should be used when setting up or m',
+		riskLevel: 'write',
+	},
+	getDowngradePlanInfoForAccount: {
+		description:
+			'Retrieves detailed billing information related to a downgrade request for a specific DocuSign account. This endpoint provides essential data about the requested downgrade plan, including the new plan details, payment method, effective date, and current status of the downgrade request. It should be u',
+		riskLevel: 'read',
+	},
+	listBillingInvoices: {
+		description:
+			'Retrieves a list of billing invoices for a specified DocuSign account. This endpoint allows account administrators to fetch detailed invoice information, including total amounts, due dates, and itemized charges. It supports optional date range filtering and provides a paginated response for efficien',
+		riskLevel: 'read',
+	},
+	listPastDueInvoices: {
+		description:
+			'Retrieves a list of past due invoices for a specified DocuSign account and indicates if payment can be made through the REST API. This endpoint is designed for account administrators to manage outstanding financial obligations. It provides comprehensive invoice details including total amounts, balan',
+		riskLevel: 'read',
+	},
+	listPaymentGatewayAccountsInfo: {
+		description:
+			'Retrieves a list of all payment gateway accounts associated with a specific DocuSign account, along with detailed information about each account. This endpoint is useful for obtaining an overview of the payment gateways configured for an account, including their status, supported currencies, and pay',
+		riskLevel: 'read',
+	},
+	postPaymentToInvoice: {
+		description:
+			"Posts a payment to past due invoices for a DocuSign account. This action applies a payment amount to settle outstanding invoice balances and creates a payment transaction record. Before using this action, retrieve past due invoice information using the 'List Past Due Invoices' action to get the tota",
+		riskLevel: 'write',
+	},
+	purchaseAdditionalEnvelopes: {
+		description:
+			"This endpoint completes the purchase of additional envelopes for a DocuSign account through an internal workflow interaction with an envelope vendor. It is designed to handle the financial transaction and update the account's envelope quota. This tool should be used when there's a need to increase t",
+		riskLevel: 'write',
+	},
+	queueDowngradeBillingPlanRequest: {
+		description:
+			"Queues a downgrade request for a DocuSign account's billing plan. This action initiates the process of changing an account to a lower-tier or less expensive billing plan without immediately applying the change. Use this action when an account administrator needs to: - Downgrade from a paid plan to a",
+		riskLevel: 'write',
+	},
+	retrieveAccountBillingPlan: {
+		description:
+			'Retrieves detailed billing plan information for a specified DocuSign account. This endpoint provides comprehensive data about the current billing plan, successor plans, billing address, and credit card information associated with the account. It is particularly useful for obtaining an overview of an',
+		riskLevel: 'read',
+	},
+	retrieveBillingInvoice: {
+		description:
+			"Retrieves a specific billing invoice for a DocuSign account, providing detailed information about charges and payment details. This endpoint allows account administrators to access invoice data in both JSON format and, when available, as a downloadable PDF. It's particularly useful for financial rec",
+		riskLevel: 'read',
+	},
+	retrieveBillingPaymentInfo: {
+		description:
+			'Retrieves detailed information for a specific billing payment in a DocuSign account. Returns payment details including ID, number, amount, description, and date. Useful for auditing, reconciliation, and reviewing payment records. \\*\\*Production Account Required:\\*\\* This endpoint ONLY works with pro',
+		riskLevel: 'read',
+	},
+	retrieveCreditCardInfo: {
+		description:
+			'This endpoint retrieves detailed credit card information associated with a specific DocuSign account. It provides comprehensive details about the credit card on file, including the card number (partially masked), type, expiration date, cardholder name, and associated billing address. This tool shoul',
+		riskLevel: 'read',
+	},
+	retrieveListOfBillingPlans: {
+		description:
+			'Retrieves a comprehensive list of billing plans associated with a distributor in the DocuSign system. This endpoint provides detailed information about each billing plan, including plan names, IDs, payment cycles, methods, and pricing details in various currencies. It is particularly useful for admi',
+		riskLevel: 'read',
+	},
+	retrievePaymentInformationList: {
+		description:
+			"Retrieves a list of payment information for a specific DocuSign account. This endpoint allows you to fetch detailed payment data, including amounts, descriptions, payment dates, and IDs. It's particularly useful for accounting purposes, reconciliation, or generating financial reports. By default, it",
+		riskLevel: 'read',
+	},
+	updateBillingPlanForAccount: {
+		description:
+			'Updates billing plan information, address, and payment details for a DocuSign account. Allows comprehensive modifications to billing setup, including payment methods, plan features, and promotional offers. Offers a preview mode for reviewing changes before applying. Use for significant billing confi',
+		riskLevel: 'write',
+	},
+	createBrandProfilesForAccount: {
+		description:
+			"Creates a new brand profile for a DocuSign account to customize the signing and sending experience with your organization's visual identity and branding elements. This action allows you to define brand properties such as company name, brand languages, colors for UI elements (buttons, headers), and c",
+		riskLevel: 'write',
+	},
+	deleteAccountBrand: {
+		description:
+			'This endpoint deletes a specific brand from a DocuSign account. It should be used when you need to permanently remove a brand configuration from an account, such as when a brand is no longer needed or has been replaced. The operation requires that branding for either signing or sending (or both) is ',
+		riskLevel: 'destructive',
+	},
+	deleteBrandLogoByType: {
+		description:
+			'This endpoint deletes a specific logo from an account brand in DocuSign. It allows users to remove primary, secondary, or email logos associated with their brand, helping maintain brand consistency across DocuSign documents. The endpoint should be used when updating or removing branding elements fro',
+		riskLevel: 'destructive',
+	},
+	deleteBrandProfiles: {
+		description:
+			"This endpoint allows you to delete one or more brand profiles from a DocuSign account. It is used to remove custom branding configurations that are no longer needed. The method requires either the 'canSelfBrandSign' or 'canSelfBrandSend' setting to be enabled for the account. It's important to note ",
+		riskLevel: 'destructive',
+	},
+	exportBrandToXmlfile: {
+		description:
+			"Exports a DocuSign brand's configuration as an XML string. Use this action to retrieve comprehensive brand data including brand ID, name, company name, color scheme (background/text colors), logos (Base64-encoded), language settings, and custom links/landing pages. The XML format makes it suitable f",
+		riskLevel: 'read',
+	},
+	getBrandLogoByType: {
+		description:
+			"Retrieves a specific logo used in a brand for a DocuSign account. This endpoint allows you to fetch the image file for a primary, secondary, or email logo associated with a particular brand in your DocuSign account. It's useful for maintaining consistent branding across DocuSign documents and commun",
+		riskLevel: 'read',
+	},
+	getSpecificBrandResourceFile: {
+		description:
+			'Retrieves a specific branding resource file (XML format) for customizing DocuSign experiences. Brand resource files control text and visual elements for sending, signing, email, and captive signing experiences. IMPORTANT: Resource files must be pre-configured for the brand. This is an advanced featu',
+		riskLevel: 'read',
+	},
+	listBrandsForAccount: {
+		description:
+			"Retrieves a comprehensive list of brands associated with a DocuSign account, including default brand profiles. This endpoint provides detailed information about each brand, such as visual elements, language settings, and resource URLs for customizing various DocuSign experiences. It's particularly u",
+		riskLevel: 'read',
+	},
+	retrieveAccountBrandInformation: {
+		description:
+			'Retrieves detailed information about a specific brand associated with a DocuSign account. This endpoint allows users to access comprehensive brand settings, including company name, languages, colors, logos, and resource URLs for customizing various DocuSign experiences such as email, sending, and si',
+		riskLevel: 'read',
+	},
+	returnBrandResourceMetadataForAccount: {
+		description:
+			"Retrieves metadata about the branding resources associated with a specific DocuSign account and brand. This endpoint returns detailed information about various brand resource types, including those used for sending, signing, email, and captive (embedded) signing experiences. It's particularly useful",
+		riskLevel: 'read',
+	},
+	updateAccountBrandSettings: {
+		description:
+			'The UpdateAccountBrandSettings endpoint modifies or replaces an existing brand configuration for a DocuSign account. It customizes various brand aspects like company name, languages, colors, and landing pages. Use this tool to update branding elements for consistency across DocuSign interactions. It',
+		riskLevel: 'write',
+	},
+	applyActionToBulkSendEnvelopes: {
+		description:
+			"This endpoint allows users to apply specific actions (resend, correct, or void) to all envelopes within a specified DocuSign bulk send batch. It's designed for managing large-scale document signing processes efficiently, enabling users to update the status or take action on multiple envelopes simult",
+		riskLevel: 'write',
+	},
+	createBulkSendRequest: {
+		description:
+			'Initiates a bulk send process in DocuSign to send a single template or envelope to multiple recipients in a single batch operation. This is ideal for large-scale document distribution scenarios such as sending contracts to numerous clients or company-wide notices. \\*\\*Prerequisites:\\*\\* 1. Create a ',
+		riskLevel: 'write',
+	},
+	createBulkSendTestRequest: {
+		description:
+			"This endpoint creates a Bulk Send Test Request to validate the compatibility between a bulk send list and an envelope or template for DocuSign's bulk sending feature. It performs comprehensive checks on envelope state, recipients, tabs, and custom fields to ensure a successful bulk send operation. U",
+		riskLevel: 'write',
+	},
+	getBulkSendBatchStatus: {
+		description:
+			'Get the status and progress of a DocuSign bulk send batch operation. This action retrieves comprehensive status information for a bulk send batch, including counts of sent, queued, and failed envelopes. Use this to monitor the progress of large-scale document distribution operations. \\*\\*Key Respons',
+		riskLevel: 'read',
+	},
+	getBulkSendListsInformation: {
+		description:
+			'Retrieves a list of Bulk Send Lists belonging to the current user in a specified DocuSign account. This endpoint provides basic information about each Bulk Send List, including its unique identifier, creator, creation date, and name. It is particularly useful for managing and tracking bulk send oper',
+		riskLevel: 'read',
+	},
+	listBulkSendBatchSummaries: {
+		description:
+			"Retrieves a summary of bulk send batches for a DocuSign account. This endpoint allows users to query and filter bulk send batch information, providing details such as batch status, size, and processing information. It's particularly useful for monitoring the progress of large-scale document sending ",
+		riskLevel: 'read',
+	},
+	removeBulkSendList: {
+		description:
+			'This endpoint deletes a specific bulk send list from a DocuSign account. It is used to permanently remove a bulk send list that is no longer needed or was created in error. The operation requires both the account identifier and the specific bulk send list ID to ensure precise targeting of the list t',
+		riskLevel: 'destructive',
+	},
+	updateBulkSendBatchName: {
+		description:
+			'Updates the name of an existing DocuSign bulk send batch. This action allows you to rename a specific bulk send batch for better organization and identification. Use this when you need to update the batch name after creation, for example to reflect the batch purpose or processing status. Key points:',
+		riskLevel: 'write',
+	},
+	addPartToChunkedUpload: {
+		description:
+			'Adds a chunk or part to an existing chunked upload in DocuSign. This endpoint is used for uploading large files in smaller pieces, allowing for documents that exceed standard file size limits. It should be used after initiating a new chunked upload and uploading the first part. The method is particu',
+		riskLevel: 'write',
+	},
+	commitChunkedUploadForEnvelopes: {
+		description:
+			'This endpoint commits a chunked upload in DocuSign, finalizing the upload process and preparing the uploaded content for use in other API calls. It should be used after all parts of a large document have been uploaded using the chunked upload method. The endpoint performs integrity checks on the upl',
+		riskLevel: 'write',
+	},
+	deleteChunkedUpload: {
+		description:
+			"Deletes a chunked upload that has been committed but not yet consumed in the DocuSign system. This endpoint is useful for managing large file uploads and maintaining quota efficiency. It should be used when a chunked upload is no longer needed and hasn't been used in other API calls. The endpoint ca",
+		riskLevel: 'destructive',
+	},
+	initiateNewChunkedUpload: {
+		description:
+			"Initiates a new chunked upload in DocuSign by sending the first part of the content. This endpoint is designed to handle large file uploads by breaking them into smaller, manageable pieces. It's particularly useful for adding documents to envelopes in DocuSign's electronic signature workflow. The me",
+		riskLevel: 'write',
+	},
+	retrieveChunkedUploadMetadata: {
+		description:
+			"Retrieves metadata for a specific chunked upload in DocuSign. This endpoint allows users to check the status, parts, and other details of a large file upload that has been split into chunks. It's particularly useful for verifying the integrity and completeness of an upload before committing it for u",
+		riskLevel: 'read',
+	},
+	configureCloudStorageRedirectUrl: {
+		description:
+			'Configures the OAuth redirect URL for one or more cloud storage providers (Box, Dropbox, GoogleDrive, SkyDrive/OneDrive, Salesforce) for a specific user in DocuSign. This action sets up the authentication flow between DocuSign and cloud storage services by specifying where users should be redirected',
+		riskLevel: 'write',
+	},
+	deleteUserAuthForCloudStorageProviders: {
+		description:
+			"This endpoint deletes the user authentication information for one or more cloud storage providers associated with a specific DocuSign user account. It's used to revoke access to connected cloud storage services, requiring the user to re-authenticate the next time they attempt to access these provide",
+		riskLevel: 'destructive',
+	},
+	deleteUserCloudStorageAuthentication: {
+		description:
+			"This endpoint deletes the user authentication information for a specified cloud storage provider in DocuSign. It's used to remove the stored credentials that allow a user to access their cloud storage within the DocuSign platform. After deletion, the next time the user attempts to access this cloud ",
+		riskLevel: 'destructive',
+	},
+	getUserCloudStorageProviderConfiguration: {
+		description:
+			'Retrieves the cloud storage provider configuration for a specific cloud storage service (identified by serviceId) for a user within a DocuSign account. This endpoint returns configuration details for the specified provider, such as service name and serviceId. Note: This endpoint primarily works with',
+		riskLevel: 'read',
+	},
+	listCloudStorageItems: {
+		description:
+			'Retrieves a list of items (files and folders) from a specific folder in a cloud storage provider integrated with DocuSign. This endpoint enables browsing and searching cloud storage contents directly within DocuSign, making it easier to select documents for signing workflows. Prerequisites: - The cl',
+		riskLevel: 'read',
+	},
+	retrieveCloudStorageProviderConfiguration: {
+		description:
+			'Retrieves the list of cloud storage providers enabled for a specific user in a DocuSign account, along with their configuration information. This endpoint is essential for integrating external cloud storage services with DocuSign, allowing users to access and manage documents from various providers.',
+		riskLevel: 'read',
+	},
+	retrieveItemsInCloudStorageFolder: {
+		description:
+			'Retrieves a list of items (files and folders) from a specified folder in an integrated cloud storage provider. This endpoint allows users to browse and search their cloud storage contents directly within the DocuSign application, facilitating document selection for e-signature workflows. It supports',
+		riskLevel: 'read',
+	},
+	createConnectConfigurationForAccount: {
+		description:
+			'This endpoint creates a custom Connect configuration for a specified DocuSign account, enabling webhook notifications for envelope and recipient events. It allows users to set up real-time updates for eSignature workflows without the need for polling. The configuration can be customized for differen',
+		riskLevel: 'write',
+	},
+	deleteConnectConfiguration: {
+		description:
+			'Deletes a specified DocuSign Connect configuration from the given account. This endpoint should be used when you need to remove an existing Connect integration setup. It requires account administrator privileges and that Connect is enabled on the account. The operation is irreversible, so use with c',
+		riskLevel: 'destructive',
+	},
+	deleteConnectFailureLogEntry: {
+		description:
+			'Deletes one or all Connect failure log entries for a specified DocuSign account. This endpoint is used for maintenance and cleanup of Connect integration logs, allowing account administrators to remove specific failure records or clear all failure logs. It should be used when troubleshooting Connect',
+		riskLevel: 'destructive',
+	},
+	deleteConnectLogEntries: {
+		description:
+			'Deletes Connect log entries for a DocuSign account. This endpoint allows account administrators to manage and clean up Connect event logs, which record webhook delivery attempts and outcomes. \\*\\*Use Case:\\*\\* Remove Connect log entries for data management, privacy compliance, or housekeeping purpos',
+		riskLevel: 'destructive',
+	},
+	deleteConnectOauthConfiguration: {
+		description:
+			'Deletes the Connect OAuth configuration for a specified DocuSign account. This endpoint is used to remove the OAuth settings that allow DocuSign Connect to securely integrate with other applications and send webhook notifications. It should be used when you need to disable or reconfigure the Connect',
+		riskLevel: 'destructive',
+	},
+	deleteSpecificConnectLogEntry: {
+		description:
+			'Deletes a specified entry or all entries from the DocuSign Connect log for a given account. This endpoint is crucial for managing and cleaning up Connect logs, which contain records of events and updates in eSignature workflows. It should be used when you need to remove specific log entries, perhaps',
+		riskLevel: 'destructive',
+	},
+	republishConnectDataForEnvelope: {
+		description:
+			"Republishes Connect information for a specified envelope in DocuSign. This endpoint is used to retry sending Connect event data that may have failed to deliver previously. It's particularly useful for ensuring that all relevant updates about an envelope are successfully communicated to integrated sy",
+		riskLevel: 'write',
+	},
+	republishConnectInfoForEnvelopes: {
+		description:
+			'Republishes Connect webhook information for multiple DocuSign envelopes. Queues envelopes for Connect webhook republishing to retry failed webhook deliveries. When DocuSign Connect fails to deliver webhook events to your endpoint, envelopes are added to a failure queue. This action manually triggers',
+		riskLevel: 'write',
+	},
+	retrieveConnectConfigurationDetails: {
+		description:
+			"Retrieves detailed information for a specific DocuSign Connect configuration. This endpoint allows account administrators to access and review the settings of a custom Connect configuration, including event triggers, delivery modes, and integration details. It's particularly useful for auditing exis",
+		riskLevel: 'read',
+	},
+	retrieveConnectConfigurations: {
+		description:
+			'Retrieves all Docusign Custom Connect definitions for a specified account. This endpoint allows account administrators to fetch detailed information about existing Connect configurations, including webhook settings, event triggers, and delivery modes. It provides a comprehensive view of how the acco',
+		riskLevel: 'read',
+	},
+	retrieveConnectFailureLogs: {
+		description:
+			'Retrieves the Connect failure log information for a specified DocuSign account. This endpoint is specifically designed for account administrators to identify which envelopes failed to post during Connect events. It provides detailed information about each failure, including error messages, retry cou',
+		riskLevel: 'read',
+	},
+	retrieveConnectLogEntry: {
+		description:
+			'Retrieves a specific Connect log entry for a DocuSign account. This endpoint provides detailed information about a Connect event, including account details, configuration information, envelope data, and potential error details. It is particularly useful for troubleshooting Connect integrations, audi',
+		riskLevel: 'read',
+	},
+	retrieveConnectLogs: {
+		description:
+			'Retrieves the 100 most recent Connect log entries for a specified DocuSign account. This endpoint is essential for monitoring and troubleshooting DocuSign Connect integrations, providing detailed information about both successful and failed Connect events. It allows administrators to review recent a',
+		riskLevel: 'read',
+	},
+	retrieveConnectOauthConfiguration: {
+		description:
+			'Retrieves the Connect OAuth configuration for a specified DocuSign account. This endpoint allows account administrators to access the OAuth settings used for DocuSign Connect, which is crucial for webhook integrations and automated notifications. The retrieved configuration includes essential detail',
+		riskLevel: 'read',
+	},
+	returnAllConnectServiceUsers: {
+		description:
+			'Retrieves all users from the configured Connect service for a specific DocuSign account and Connect configuration. This endpoint allows account administrators to fetch user information, including email addresses, user IDs, and inclusion status in the Connect service. It supports filtering by email, ',
+		riskLevel: 'read',
+	},
+	returnUsersFromConnectService: {
+		description:
+			'Retrieves users associated with a specific DocuSign Connect configuration. This endpoint returns information about which users are linked to a Connect configuration, indicating either that all users are selected (allUsersSelected) or providing a list of specific users. Connect configurations define ',
+		riskLevel: 'read',
+	},
+	setUpConnectOauthConfiguration: {
+		description:
+			'Sets up Connect OAuth configuration for a specified DocuSign account using a custom authorization server. This endpoint enables secure, OAuth-based communication for DocuSign Connect, allowing real-time notifications about envelope status changes. It should be used when integrating DocuSign Connect ',
+		riskLevel: 'write',
+	},
+	updateConnectOauthConfiguration: {
+		description:
+			"This endpoint updates an existing Connect OAuth Configuration for a DocuSign account. Use it to modify OAuth settings for DocuSign Connect integrations, such as updating authorization URLs, client credentials, or scopes. It's crucial for maintaining secure data exchange between DocuSign and integrat",
+		riskLevel: 'write',
+	},
+	updateDocusignConnectConfiguration: {
+		description:
+			'This endpoint updates an existing DocuSign Connect configuration for a specified account. It allows you to modify various settings such as the events that trigger notifications, the endpoint URL for receiving webhooks, data format preferences, and integration details with Salesforce. Use this endpoi',
+		riskLevel: 'write',
+	},
+	addContactsToContactsList: {
+		description:
+			"Adds multiple contacts to a user's contacts list in DocuSign. This endpoint allows for bulk addition of contacts with detailed information, including cloud provider details, phone numbers, email addresses, and notary-specific information. It's particularly useful for populating a user's address book",
+		riskLevel: 'write',
+	},
+	deleteContactFromAccount: {
+		description:
+			"Deletes a specific contact from a DocuSign account. This endpoint should be used when you need to remove a contact's information from an account's address book. It requires both the account ID and the specific contact ID to be provided. Upon successful deletion, it returns an updated list of contact",
+		riskLevel: 'destructive',
+	},
+	deleteMultipleContactsFromAccount: {
+		description:
+			"Deletes multiple contacts associated with a specific DocuSign account. This endpoint allows for bulk removal of contacts from an account's address book, streamlining contact management operations. It's particularly useful for cleaning up outdated or unnecessary contacts, or when reorganizing large c",
+		riskLevel: 'destructive',
+	},
+	getDocusignAccountContacts: {
+		description:
+			"Retrieves detailed information about a specific contact from a DocuSign account's address book. Use this action when you need to look up a contact's details including their name, email addresses, phone numbers, organization, notary certifications, and signing group associations. Requires the contact",
+		riskLevel: 'read',
+	},
+	updateContactsInformation: {
+		description:
+			'This endpoint updates one or more contacts associated with a DocuSign account. It allows for comprehensive modifications to contact information, including personal details, communication methods, and notary-specific data. The endpoint supports bulk updates, enabling efficient management of multiple ',
+		riskLevel: 'write',
+	},
+	createCustomTabWithProperties: {
+		description:
+			'Creates a custom tab with pre-defined properties for use in DocuSign envelopes. This endpoint allows users to define reusable tab types with specific configurations such as font styles, validation patterns, and positioning rules. Custom tabs can be created for various field types including text, che',
+		riskLevel: 'write',
+	},
+	deleteCustomTabInformation: {
+		description:
+			'Deletes a specified custom tab from a DocuSign account. This endpoint should be used when you need to remove a custom tab that is no longer needed or is obsolete. It permanently removes the custom tab from the account, so it should be used with caution. The operation requires both the account ID and',
+		riskLevel: 'destructive',
+	},
+	retrieveAllAccountTabs: {
+		description:
+			'Retrieves a comprehensive list of all tabs associated with a specified DocuSign account. It returns detailed information about each tab, including type, label, validation rules, and formatting settings. Use this endpoint for auditing tab configurations, managing account-wide tab settings, or integra',
+		riskLevel: 'read',
+	},
+	retrieveCustomTabInformation: {
+		description:
+			'Retrieves detailed information about a specific custom tab associated with a DocuSign account. This endpoint allows users to access the properties and settings of a custom tab, including its anchor information, formatting options, merge field details, and locale settings. It is particularly useful w',
+		riskLevel: 'read',
+	},
+	updateCustomTabInformationForAccount: {
+		description:
+			'This endpoint updates the information for a custom tab associated with a specific DocuSign account. It allows for extensive customization of tab properties, including appearance, behavior, and positioning within documents. The endpoint is used when modifying existing custom tabs to change their char',
+		riskLevel: 'write',
+	},
+	deleteRequestLogFiles: {
+		description:
+			'Deletes all request log files for the authenticated user in DocuSign. This endpoint clears the diagnostic log buffer by removing all current request/response log entries. API request logging in DocuSign captures up to 50 request/response pairs for troubleshooting purposes. Use this action to clear t',
+		riskLevel: 'destructive',
+	},
+	getRequestLoggingLogFile: {
+		description:
+			"Downloads the complete log file for a specific API request from DocuSign's Diagnostics service. This action is essential for debugging and troubleshooting API interactions by providing detailed request/response information. The log file contains: - Full HTTP request details (method, URL, headers, bo",
+		riskLevel: 'read',
+	},
+	getRequestLogs: {
+		description:
+			'Retrieves a list of API request log entries as a JSON object. Use when you need to view diagnostic information about API requests made to DocuSign.',
+		riskLevel: 'read',
+	},
+	getRequestLogSettings: {
+		description:
+			'Tool to retrieve current API request logging settings for the authenticated user. Use when you need to check logging configuration or remaining log entries.',
+		riskLevel: 'read',
+	},
+	getResourceInformation: {
+		description:
+			'Retrieves the base resources available for the DocuSign eSignature REST API. Use when you need to discover available API endpoints and resources.',
+		riskLevel: 'read',
+	},
+	getServiceInformation: {
+		description:
+			'Gets the current version and other information about the DocuSign eSignature REST API. Use this to retrieve service information including API versions and build details. This returns the available REST API versions (v1, v2, v2.1) with their endpoint URLs, the current build version string, and linked',
+		riskLevel: 'read',
+	},
+	toggleApiRequestLogging: {
+		description:
+			'This endpoint enables or disables API request logging for troubleshooting purposes in DocuSign. It allows users to toggle the logging of REST API requests and responses, set the maximum number of log entries, and view the remaining log capacity. The tool is crucial for debugging API integrations by ',
+		riskLevel: 'write',
+	},
+	addEnvelopeAttachments: {
+		description:
+			"Adds one or more envelope attachments to a draft or in-process envelope in DocuSign. This endpoint allows developers to include additional files with an envelope that are not converted to PDF and are only accessible through the API. It's useful for attaching supporting documents or metadata files th",
+		riskLevel: 'write',
+	},
+	createCustomDocumentFieldsInEnvelope: {
+		description:
+			"Creates custom document fields in an existing envelope document within DocuSign. This endpoint allows you to add metadata to specific documents in an envelope, which can be used for tracking, sorting, and reporting purposes. It's particularly useful when you need to associate additional information ",
+		riskLevel: 'write',
+	},
+	createDocumentResponsiveHtmlPreview: {
+		description:
+			'Creates a responsive HTML preview for a specific document in an envelope. Generates a mobile-friendly preview showing how the document renders on different devices. Useful for testing smart sections, collapsible content, and responsive tables before sending. \\*\\*Requirements:\\*\\* Envelope and docume',
+		riskLevel: 'write',
+	},
+	createPreviewOfResponsiveHtmlInEnvelope: {
+		description:
+			'Creates a preview of the responsive HTML versions of all documents in an envelope, allowing users to review how PDF documents will appear as responsive HTML across different device types before sending. This endpoint is particularly useful for ensuring document compatibility and readability on vario',
+		riskLevel: 'write',
+	},
+	deleteCustomDocumentFields: {
+		description:
+			"Deletes custom document fields from an existing envelope document in DocuSign. This endpoint allows you to remove specific metadata or custom data strings associated with a document within an envelope. It's useful for updating or cleaning up custom information that is no longer relevant or needed. T",
+		riskLevel: 'destructive',
+	},
+	deleteDraftEnvelopeAttachments: {
+		description:
+			"Deletes one or more envelope attachments from a draft envelope in DocuSign. This endpoint allows users to remove attachments that are no longer needed or were added in error before the envelope is sent. It's important to note that this operation only works on draft envelopes and is distinct from man",
+		riskLevel: 'destructive',
+	},
+	deprecatedEndpointForTabBlob: {
+		description:
+			'This deprecated endpoint is used to update tab-related data (tab blobs) within a specific envelope in a DocuSign account. It is important to note that this endpoint should not be used in new integrations or applications due to its deprecated status. The endpoint requires both an account identifier a',
+		riskLevel: 'read',
+	},
+	getEnvelopeDocGenFormFields: {
+		description:
+			"Retrieves document generation form fields from an envelope's documents. DocGen form fields are placeholder fields (tags) in template documents that can be dynamically populated with data before sending. This action returns the list of available form fields including their names, types, validation ru",
+		riskLevel: 'read',
+	},
+	getEnvelopeDocumentFields: {
+		description:
+			'Retrieves custom document fields from a specific document within a DocuSign envelope. Custom document fields are metadata key-value pairs attached to individual documents in an envelope. They are different from: - Envelope custom fields (which apply to the entire envelope) - Tabs/fields (which are f',
+		riskLevel: 'read',
+	},
+	getPdftranscriptOfEnvelopeComments: {
+		description:
+			'Retrieves a PDF transcript containing all comments added by senders and recipients to documents within a specific envelope in a DocuSign account. This endpoint is useful for obtaining a comprehensive record of all discussions and annotations related to the documents in an envelope. It should be used',
+		riskLevel: 'read',
+	},
+	getRecipientDocumentVisibility: {
+		description:
+			'Retrieves document visibility settings for a specific recipient within a DocuSign envelope. This endpoint allows you to check which documents are visible to a particular recipient and their access rights (editable or read-only). Use this method when you need to verify or audit the document access co',
+		riskLevel: 'read',
+	},
+	getTabsBlobForEnvelope: {
+		description:
+			'This deprecated endpoint retrieves the tabs blob associated with a specific envelope in DocuSign. It allows developers to access detailed information about the tabs (such as signature fields, text fields, etc.) within a document envelope. However, as this endpoint is no longer recommended for use, d',
+		riskLevel: 'read',
+	},
+	listEnvelopeAttachmentsByEnvelopeId: {
+		description:
+			"Retrieves a list of envelope attachments associated with a specified envelope in DocuSign. This endpoint is used to fetch developer-only files attached to an envelope, providing details such as attachment IDs, types, and access controls. It's important to note that this operation returns envelope at",
+		riskLevel: 'read',
+	},
+	retrieveEnvelopeAttachment: {
+		description:
+			'Downloads a developer-only envelope attachment file from a DocuSign envelope. This retrieves attachments that were added programmatically to an envelope (not signer attachments). These are files associated with the envelope that are only accessible via the API and not visible to signers in the DocuS',
+		riskLevel: 'read',
+	},
+	retrieveEnvelopeDocuments: {
+		description:
+			"Retrieves one or more documents from a DocuSign envelope. This endpoint allows users to fetch a single document, all documents combined, or specific document sets in various formats (PDF, ZIP, PDF portfolio). It's particularly useful for accessing signed documents, certificates of completion, or ent",
+		riskLevel: 'read',
+	},
+	retrieveEnvelopeHtmlDefinition: {
+		description:
+			"Retrieves the original HTML definition used to generate the responsive HTML for a specific document within an envelope in a DocuSign account. This endpoint is crucial for developers working with DocuSign's responsive signing feature, as it provides detailed information about how the document is form",
+		riskLevel: 'read',
+	},
+	returnEnvelopeTabDataForExistingEnvelope: {
+		description:
+			'Retrieves detailed form data from a DocuSign envelope, including the current values of form fields, recipient information, and envelope status. This endpoint is used to download envelope and tab data from in-process, completed, or canceled envelopes that the user has sent or that are shared with the',
+		riskLevel: 'read',
+	},
+	updateCustomFieldsInEnvelopeDocument: {
+		description:
+			'This endpoint allows you to update existing custom document fields in a specific document within an envelope in DocuSign. Custom document fields are name-value pairs that can be used to store additional metadata or information about the document. This function is useful when you need to modify or ad',
+		riskLevel: 'write',
+	},
+	updateDocumentVisibilityRecipients: {
+		description:
+			'Updates document visibility settings for multiple recipients in a DocuSign envelope. Use this action to control which documents each recipient can see and their access level (read-only or editable). This is essential for managing multi-document envelopes where different recipients should only access',
+		riskLevel: 'write',
+	},
+	updateEnvelopeAttachment: {
+		description:
+			'Updates an existing attachment for a draft or in-process envelope in DocuSign. This endpoint allows you to modify attachment properties such as access control, type, content, label, and name. It supports file attachments up to 50 MB and provides options for chunked uploads of large files. Use this e',
+		riskLevel: 'write',
+	},
+	updateEnvelopeDocGenFormFields: {
+		description:
+			"This method dynamically generates an envelope's documents by populating its sender fields. The envelope must be in a draft state. Use the DocumentGeneration::getEnvelopeDocGenFormFields response to retrieve the list of sender fields for your envelope. Use that list to build the request for this meth",
+		riskLevel: 'write',
+	},
+	updateRecipientDocumentVisibility: {
+		description:
+			'This endpoint updates the document visibility settings for a specific recipient within a DocuSign envelope. It allows fine-grained control over which documents a recipient can see and whether they have read-only or edit access. Use this when you need to modify document access for a particular recipi',
+		riskLevel: 'write',
+	},
+	deletePageFromDocumentInEnvelope: {
+		description:
+			'Deletes a specific page from a document within a DocuSign envelope. This endpoint removes a single page from a document based on its page number. The page is permanently deleted and this operation cannot be undone. \\*\\*Important Requirements:\\*\\* - The envelope must be in draft status (not yet sent)',
+		riskLevel: 'destructive',
+	},
+	getEnvelopeNotificationDefaults: {
+		description:
+			'Retrieves the default email notification settings for envelopes at the account level. This endpoint returns account-wide defaults for envelope notifications including: - Reminder settings (frequency, email subject/body for reminders) - Expiration settings (days until expiration, warning days) - Deli',
+		riskLevel: 'read',
+	},
+	getPageImageFromEnvelope: {
+		description:
+			'Retrieves an image of a specific page from a document within a DocuSign envelope. This endpoint is used to fetch a visual representation of a document page, which can be useful for previewing or displaying document contents without accessing the full document. The returned image is in PNG format and',
+		riskLevel: 'read',
+	},
+	getSignatureInformationForRecipient: {
+		description:
+			'Retrieves signature information for a specific recipient in a DocuSign envelope. Returns signature metadata including: signature ID, name, type, initials, adoption and modification timestamps, signature image URI, base64-encoded image data, and stamp properties if applicable. \\*\\*Use when you need t',
+		riskLevel: 'read',
+	},
+	retrieveEnvelopeAuditEvents: {
+		description:
+			'Retrieves the audit events for a specified envelope in DocuSign. This endpoint allows users to access a detailed history of all actions and changes made to a particular envelope, providing a comprehensive audit trail. It is particularly useful for compliance, security, and tracking purposes, allowin',
+		riskLevel: 'read',
+	},
+	retrieveEnvelopeNotificationDetails: {
+		description:
+			"Retrieves the notification, reminder, and expiration settings for an existing envelope in DocuSign. This endpoint allows developers to access and review the current notification configuration for a specific envelope, including expiration timelines and reminder schedules. It's particularly useful whe",
+		riskLevel: 'read',
+	},
+	retrieveSignerSignatureImageInformation: {
+		description:
+			"Retrieves the specified user's signature image from a DocuSign envelope. This endpoint allows developers to access the electronic signature image of a specific recipient within an envelope, which can be useful for verification, display, or record-keeping purposes. The image is returned in its origin",
+		riskLevel: 'read',
+	},
+	retrieveUserInitialsImageForEnvelopes: {
+		description:
+			"Retrieves the initials image that a recipient used when signing a DocuSign envelope. This endpoint allows you to fetch the recipient's initials image in its original format (GIF, PNG, JPEG, or BMP), with an option to include or exclude the chrome (added line and identifier around the image). The ini",
+		riskLevel: 'read',
+	},
+	returnsDocumentPageImagesBasedOnInput: {
+		description:
+			"Retrieves images of document pages from a specific envelope in a DocuSign account. This endpoint allows users to fetch page images with customizable parameters such as resolution (DPI), image dimensions, and pagination options. It's particularly useful when you need to display or process document pa",
+		riskLevel: 'read',
+	},
+	rotatePageImageForEnvelope: {
+		description:
+			'This endpoint rotates a page image within a specific document of an envelope in DocuSign. It allows users to change the orientation of a page to either left or right for improved display and readability. This function is particularly useful when dealing with documents that may have been scanned or u',
+		riskLevel: 'write',
+	},
+	setInitialsImageForAccountlessSigner: {
+		description:
+			"This endpoint allows you to update the initials image for a signer who does not have a DocuSign account within a specific envelope. It's used to customize the appearance of a signer's initials on documents, enhancing the personalization of the signing process. The endpoint supports various image for",
+		riskLevel: 'write',
+	},
+	setSignatureImageForNoAccountSigner: {
+		description:
+			"This endpoint updates the signature image for an accountless signer in a DocuSign envelope. It allows you to set a custom signature image for recipients who don't have a DocuSign account, enhancing the flexibility of the signing process. The endpoint supports gif, png, jpeg, and bmp image formats, w",
+		riskLevel: 'write',
+	},
+	updateEnvelopeNotificationSettings: {
+		description:
+			'Updates the notification settings for a specific DocuSign envelope, including reminders and expirations. This endpoint allows you to customize when and how often recipients receive reminder emails, as well as set the expiration period for the envelope. It can either apply custom settings or use the ',
+		riskLevel: 'write',
+	},
+	createIdproofResourceTokenForRecipient: {
+		description:
+			"Generates a 2-minute resource token to access recipient identity verification data via DocuSign's ID Evidence API. \\*\\*Requirements:\\*\\* Recipient must have completed identity verification (phone auth, ID scan, etc.) during envelope signing. Fails if envelope is draft or verification incomplete. \\*\\",
+		riskLevel: 'write',
+	},
+	createRecipientManualReviewLink: {
+		description:
+			"Creates a URL for manually reviewing a recipient's identity in DocuSign. This endpoint is used when automatic identity verification has failed and manual review is required. It returns a URL that allows the sender to access a page for manually verifying the recipient's ID. This method should only be",
+		riskLevel: 'write',
+	},
+	createRecipientPreviewForEnvelope: {
+		description:
+			"Creates a URL for previewing the recipient's view of a draft envelope or template. This endpoint allows senders to simulate the recipient's experience by generating an embeddable preview URL. It's useful for verifying the appearance and functionality of an envelope before sending it to recipients. T",
+		riskLevel: 'write',
+	},
+	createSenderViewUrlForEnvelope: {
+		description:
+			'Creates a URL for the sender view of a DocuSign envelope, enabling the embedding of DocuSign UI within an external application. This endpoint is crucial for integrating envelope sending functionality, allowing users to prepare and send envelopes directly from your application. The returned URL provi',
+		riskLevel: 'write',
+	},
+	generateEditViewUrlforEnvelope: {
+		description:
+			'Generates a URL for accessing and editing an existing envelope within the DocuSign UI, allowing for embedded editing functionality in external applications. This endpoint is identical to the createSender endpoint and is recommended to be replaced by it. The generated URL provides a customizable view',
+		riskLevel: 'write',
+	},
+	generateEnvelopeCorrectionUrl: {
+		description:
+			'Generates a URL that allows embedding the envelope correction view of the DocuSign UI within an application. This endpoint enables customization of the correction view appearance and functionality through query parameters. The returned URL provides temporary, one-time access to the envelope correcti',
+		riskLevel: 'write',
+	},
+	generateRecipientSharedViewUrl: {
+		description:
+			"Generates a URL for embedding the DocuSign recipient view of a shared envelope in your application. IMPORTANT: This endpoint requires the envelope to be explicitly shared with users on the same DocuSign account. The envelope must be shared first using DocuSign's envelope sharing feature. Required: e",
+		riskLevel: 'write',
+	},
+	getElectronicDisclosureForRecipient: {
+		description:
+			'Retrieves the HTML-formatted Electronic Record and Signature Disclosure (ERSD) for a specific envelope recipient in DocuSign. This endpoint allows you to obtain the customized disclosure that may differ from the account-level disclosure based on the signing brand applied to the envelope and the reci',
+		riskLevel: 'read',
+	},
+	getUrlforEmbeddingDocusignUi: {
+		description:
+			'Generate a URL to embed the DocuSign console view within your application. This action creates a URL that provides access to the DocuSign web interface, allowing users to interact with DocuSign features directly from your application without leaving your UI. \\*\\*Use Cases:\\*\\* - Display DocuSign con',
+		riskLevel: 'write',
+	},
+	retrieveAccountVerificationWorkflows: {
+		description:
+			'Retrieves a list of Identity Verification workflows available for a DocuSign account. This endpoint allows account administrators or senders to fetch details about the verification methods that can be applied to signers during the document signing process. It provides information about active, deact',
+		riskLevel: 'read',
+	},
+	retrieveDefaultDisclosureForEnvelope: {
+		description:
+			'Retrieves the default HTML-formatted Electronic Record and Signature Disclosure (ERSD) for a specified envelope in DocuSign. This endpoint is used to obtain the standard disclosure text that recipients must agree to before signing documents electronically. It is particularly useful for retrieving la',
+		riskLevel: 'read',
+	},
+	revokeEnvelopeCorrectionUrl: {
+		description:
+			'This endpoint revokes the correction view URL for a specific envelope in DocuSign, effectively disabling the ability to make further corrections to the envelope. It should be used when you want to prevent any additional modifications to an envelope that was previously available for correction. This ',
+		riskLevel: 'destructive',
+	},
+	addEmailOverridesToEnvelope: {
+		description:
+			'Adds or modifies email override settings for a specific DocuSign envelope, allowing customization of the reply-to email address and name, as well as BCC email addresses for archiving purposes. This endpoint should be used when you need to change email settings for an individual envelope, overriding ',
+		riskLevel: 'write',
+	},
+	addStepToEnvelopeWorkflow: {
+		description:
+			"This endpoint adds a new step to an existing envelope's workflow in DocuSign. It allows for the configuration of complex workflow rules, including delayed routing, conditional recipients, and specific actions based on envelope status or recipient actions. Use this endpoint when you need to modify an",
+		riskLevel: 'write',
+	},
+	addTemplatesToDocumentInEnvelope: {
+		description:
+			'This endpoint adds pre-configured templates to a specific document within an existing envelope in DocuSign. It allows you to apply standardized content, such as tabs and anchor text, from templates to documents, streamlining the process of preparing documents for signature. Use this when you need to',
+		riskLevel: 'write',
+	},
+	addTemplatesToEnvelope: {
+		description:
+			"This endpoint adds templates to an existing DocuSign envelope. It's used to apply pre-defined document templates, including content and settings, to standardize workflows. The operation can affect existing recipients based on the 'preserve\\_template\\_recipient' parameter. It's suitable for adding co",
+		riskLevel: 'write',
+	},
+	createCustomFieldsForEnvelope: {
+		description:
+			'This endpoint allows you to create or update custom fields for a specific DocuSign envelope. It is used to add or modify additional metadata to envelopes, which can be utilized for sorting, organizing, searching, and other downstream processes. The endpoint supports both list-type custom fields (wit',
+		riskLevel: 'write',
+	},
+	createTemplateWorkflowStep: {
+		description:
+			'Adds a new workflow step to an existing DocuSign template. This action enables sophisticated document routing automation within templates, including: - Pausing workflows before specific routing steps - Implementing delayed sending with scheduled resume dates - Setting up conditional recipient routin',
+		riskLevel: 'write',
+	},
+	deleteDelayedRoutingRuleForEnvelopeStep: {
+		description:
+			"This endpoint deletes the delayed routing object for a specific envelope's workflow step in DocuSign. It allows users to remove scheduled delays in the routing process of an envelope. The endpoint should be used when you need to cancel a planned delay in the envelope's workflow, but it cannot be cal",
+		riskLevel: 'destructive',
+	},
+	deleteDelayedRoutingRulesForTemplate: {
+		description:
+			"Deletes the delayed routing rules for a specific template workflow step in DocuSign. This endpoint should be used when you need to remove timing or conditional routing logic from a template, allowing for immediate progression to the next step in the workflow. It's particularly useful when updating o",
+		riskLevel: 'destructive',
+	},
+	deleteEnvelopeCustomFields: {
+		description:
+			'This endpoint deletes envelope custom fields for draft and in-process envelopes in DocuSign. It allows users to remove both list custom fields (predefined options) and text custom fields (free-form text) associated with a specific envelope. The operation requires the account ID and envelope ID to id',
+		riskLevel: 'destructive',
+	},
+	deleteEnvelopeEmailSettings: {
+		description:
+			"Deletes all existing email override settings for a specific envelope in DocuSign. This endpoint reverts the envelope's email configuration back to the account's default settings, affecting only future email communications. It's useful when you need to remove customized email settings for an envelope",
+		riskLevel: 'destructive',
+	},
+	deleteEnvelopeLock: {
+		description:
+			'Deletes the lock from a specified envelope, allowing it to be modified again. \\*\\*Important Requirements:\\*\\* - Only the user who originally locked the envelope can delete the lock - The lock is automatically released when the lock duration expires - Deleting a lock without the X-DocuSign-Edit heade',
+		riskLevel: 'destructive',
+	},
+	deleteEnvelopeScheduledSendingRules: {
+		description:
+			"Deletes the scheduled sending rules for a specific envelope's workflow in DocuSign. This endpoint should be used when you need to cancel or remove previously set rules for scheduled sending of an envelope. It's particularly useful for managing automated document workflows where timing adjustments ar",
+		riskLevel: 'destructive',
+	},
+	deleteEnvelopeTransferRule: {
+		description:
+			'Deletes a specific envelope transfer rule from a DocuSign account. This endpoint allows account administrators to remove previously created rules that automatically transfer ownership of envelopes between users. It should be used when a transfer rule is no longer needed or requires updating. The ope',
+		riskLevel: 'destructive',
+	},
+	deleteEnvelopeWorkflowDefinition: {
+		description:
+			"This endpoint deletes the workflow definition for a specified envelope in DocuSign. It's used to remove any scheduled or automated processes associated with the envelope, such as delayed sending or routing. When called, it cancels any scheduled send and resets the envelope status to 'created'. This ",
+		riskLevel: 'destructive',
+	},
+	deleteEnvelopeWorkflowStep: {
+		description:
+			"Deletes a specific workflow step from an envelope in DocuSign. This endpoint allows you to remove a single step from an envelope's workflow definition, potentially altering the envelope's processing lifecycle. Use this when you need to modify an envelope's workflow by removing unnecessary or outdate",
+		riskLevel: 'destructive',
+	},
+	deleteScheduledSendingRules: {
+		description:
+			"Deletes all scheduled sending rules associated with a specific DocuSign template's workflow. This endpoint should be used when you need to remove automated sending schedules for a template, reverting it to manual sending only. It's particularly useful for updating or removing outdated scheduling con",
+		riskLevel: 'destructive',
+	},
+	deleteTemplateFromEnvelopeDocument: {
+		description:
+			'Deletes a template from a document within an envelope. Removes a previously applied template from a specific document. This is useful when: - Replacing one template with another - Reverting a document to its original state - Correcting template application errors ⚠️ This operation is permanent and c',
+		riskLevel: 'destructive',
+	},
+	deleteTemplateWorkflowStep: {
+		description:
+			"Deletes a specific workflow step from a template's workflow definition in DocuSign. This endpoint allows users to customize and refine their document workflows by removing individual steps from existing templates. It should be used when modifying the structure of a template's workflow, such as remov",
+		riskLevel: 'destructive',
+	},
+	deleteWorkflowDefinitionForTemplate: {
+		description:
+			"Deletes the workflow definition associated with a specific template in DocuSign. This endpoint is used to remove any existing workflow settings from a template, such as scheduled sending or delayed routing. It's particularly useful when you need to reset a template's workflow or prepare it for new w",
+		riskLevel: 'destructive',
+	},
+	getEnvelopeLockInformation: {
+		description:
+			"Retrieves general information about an envelope lock in DocuSign. This endpoint is used to obtain details about the lock on a specific envelope, including the lock token, duration, owner, and expiration time. It's particularly useful for recovering lock information when managing concurrent access to",
+		riskLevel: 'read',
+	},
+	getEnvelopeWorkflowDefinition: {
+		description:
+			"Retrieves the workflow definition for a specified envelope in DocuSign. This endpoint provides detailed information about the envelope's workflow steps, scheduled sending settings, and delayed routing configurations. It is useful for developers who need to understand or analyze the current state and",
+		riskLevel: 'read',
+	},
+	getEnvelopeWorkflowDelayedRoutingDefinition: {
+		description:
+			"Retrieves the delayed routing rules for a specific workflow step within a DocuSign envelope. This endpoint allows users to access information about when and how an envelope is scheduled to be sent to recipients associated with a particular workflow step. It's useful for checking the current delay se",
+		riskLevel: 'read',
+	},
+	getTemplateDelayedRoutingRules: {
+		description:
+			"Retrieves the delayed routing rules for a specific workflow step within a DocuSign template. This endpoint allows users to fetch the scheduled sending and routing information for a particular step in a template's workflow. It's useful for understanding when and how an envelope will be sent to recipi",
+		riskLevel: 'read',
+	},
+	getTemplateScheduledSendingSettings: {
+		description:
+			"Retrieves the scheduled sending settings for a specified DocuSign template. This endpoint allows developers to access and review the configuration that determines when and how envelopes based on the template will be sent. It's particularly useful for automating document workflows and managing the ti",
+		riskLevel: 'read',
+	},
+	getTemplatesForEnvelopeDocument: {
+		description:
+			'Retrieves the templates associated with a specific document within a DocuSign envelope. This endpoint is useful for identifying and managing templates linked to individual documents in an envelope, which can be beneficial for template management and document processing workflows. It should be used w',
+		riskLevel: 'read',
+	},
+	getTemplatesUsedInEnvelope: {
+		description:
+			'This endpoint retrieves a list of server-side templates used in a specific DocuSign envelope. It provides detailed information about each template, including its name, ID, and other relevant attributes. The endpoint is particularly useful for understanding which templates have been applied to an env',
+		riskLevel: 'read',
+	},
+	getWorkflowStepForEnvelope: {
+		description:
+			"Retrieves detailed information about a specific workflow step for a DocuSign envelope. This endpoint allows you to fetch comprehensive data about a single step in an envelope's workflow, including its action, status, delayed routing settings, and recipient routing rules. It's particularly useful whe",
+		riskLevel: 'read',
+	},
+	listEnvelopeAndDocumentCustomFields: {
+		description:
+			'Retrieves all account-level custom fields defined for a DocuSign account. Account custom fields are envelope custom fields that can be applied across multiple envelopes, enabling account administrators to group, track, and manage envelopes consistently. The response includes two types of custom fiel',
+		riskLevel: 'read',
+	},
+	lockAnEnvelopeForEditing: {
+		description:
+			"This endpoint locks an envelope for editing, preventing other users or recipients from changing it. It's used to ensure exclusive access to an envelope during updates. The method returns a lock token that must be included in subsequent PUT requests to modify the locked envelope. Use this endpoint wh",
+		riskLevel: 'write',
+	},
+	retrieveCustomFieldsForEnvelope: {
+		description:
+			"Retrieves custom field metadata for a specified envelope. Custom fields are additional data points attached to envelopes that are NOT visible to document recipients. They're used for: - Organizing and categorizing envelopes internally - Tracking workflow stages or approval statuses - Storing referen",
+		riskLevel: 'read',
+	},
+	retrieveEnvelopeEmailOverrides: {
+		description:
+			'Retrieves custom email settings for a specific DocuSign envelope. Use this action to get the envelope-specific email configuration overrides including: - Reply-to email address and display name - BCC email addresses for archiving (up to 5 addresses) These settings override the account-level defaults',
+		riskLevel: 'read',
+	},
+	retrieveWorkflowStepForTemplate: {
+		description:
+			"Retrieves detailed information about a specific workflow step for a DocuSign template. This endpoint allows users to access the configuration and status of a single step within a template's workflow, including delayed routing settings and conditional recipient rules. It's particularly useful for mon",
+		riskLevel: 'read',
+	},
+	returnScheduledSendingRulesForEnvelope: {
+		description:
+			'Get the scheduled sending configuration for a DocuSign envelope. Returns when and how an envelope is scheduled to be sent, including: - Send date/time (resumeDate): When the envelope will be sent - Delay rules: Time to wait before sending (format: d.hh:mm:ss) - Status: Whether sending is pending, st',
+		riskLevel: 'read',
+	},
+	returnTemplateWorkflowDefinition: {
+		description:
+			"Retrieves the workflow definition for a specified DocuSign template. This endpoint returns detailed information about the template's workflow, including scheduled sending settings, workflow status, and individual workflow steps. It's useful for understanding and managing the automated process flow o",
+		riskLevel: 'read',
+	},
+	submitBatchHistoricalEnvelopesToWebhook: {
+		description:
+			'This endpoint submits a batch of existing envelopes to a specified webhook for historical publishing. It allows you to retroactively send envelope data to your systems for completed transactions, which is useful for data synchronization, auditing, or recovering missed notifications. The endpoint use',
+		riskLevel: 'write',
+	},
+	updateEnvelopeCustomFields: {
+		description:
+			'This endpoint allows users to update custom fields for draft and in-process envelopes in DocuSign. It enables the modification of both list-based and text-based custom fields, which can be used for sorting, organizing, searching, and other downstream processes. This tool is particularly useful when ',
+		riskLevel: 'write',
+	},
+	updateEnvelopeDelayedRoutingRules: {
+		description:
+			'Updates the delayed routing rules for a specific workflow step in a DocuSign envelope. This endpoint allows you to add or modify delayed routing settings for both draft and sent envelopes, as long as the previous workflow step has not been completed. It enables you to control when the envelope will ',
+		riskLevel: 'write',
+	},
+	updateEnvelopeEmailSettings: {
+		description:
+			"Updates the existing email override settings for a specified envelope in DocuSign. This endpoint allows customization of the Reply To email address and name, as well as BCC email addresses for a specific envelope. It's particularly useful when you need to modify email settings for an individual enve",
+		riskLevel: 'write',
+	},
+	updateEnvelopeScheduledSendingRules: {
+		description:
+			"Updates the scheduled sending rules for an envelope's workflow in DocuSign. This endpoint allows users to set or modify when an envelope will be sent, providing precise control over document delivery timing. It can be used to delay sending, schedule future sends, or manage bulk send operations with ",
+		riskLevel: 'write',
+	},
+	updateEnvelopeWorkflowDefinition: {
+		description:
+			'Updates the workflow definition for a specified envelope in DocuSign. It allows modification of scheduled sending, delayed routing, and conditional recipient rules. Use this endpoint to add or update scheduling for draft or in-progress envelopes, or to add delayed routing to envelopes not yet in wor',
+		riskLevel: 'write',
+	},
+	updateEnvelopeWorkflowStep: {
+		description:
+			"Updates a specific workflow step for a DocuSign envelope, allowing for customization of envelope processing, including delayed routing and conditional recipients. This endpoint can be used to modify workflow steps for both draft envelopes and sent envelopes (as long as the previous step hasn't been ",
+		riskLevel: 'write',
+	},
+	updateLockForEnvelope: {
+		description:
+			'Updates lock settings for an already-locked envelope in DocuSign to extend duration or modify the locking application identifier. Use this to extend lock time during long editing sessions (max 1800 seconds/30 minutes) or update the lockedByApp identifier. Returns updated lock information including t',
+		riskLevel: 'write',
+	},
+	updateTemplateDelayedRoutingRules: {
+		description:
+			'This endpoint updates the scheduled sending rules for a specific workflow step in a DocuSign template. It allows users to set up delayed routing for envelopes, controlling when documents are sent to recipients associated with the workflow step. The function can be used to implement time-based workfl',
+		riskLevel: 'write',
+	},
+	updateTemplateScheduledSendingRules: {
+		description:
+			'Updates the scheduled sending rules for a DocuSign template, controlling when envelopes created from this template are automatically sent. Use this to set up either a relative delay (e.g., send 2 days after creation) or an absolute future date/time. This is useful for: - Automating timed document de',
+		riskLevel: 'write',
+	},
+	updateTemplateWorkflowDefinition: {
+		description:
+			"Updates the workflow definition for a specified template in DocuSign, allowing for customization of the document signing process. This endpoint enables users to modify the sequence of steps, set up conditional routing, schedule envelope sending, and define recipient rules for a template. It's partic",
+		riskLevel: 'write',
+	},
+	updateWorkflowStepForTemplate: {
+		description:
+			'This endpoint updates a specified workflow step for a DocuSign template. It allows users to modify various aspects of the workflow step, including delayed routing settings, recipient routing rules, and conditional recipient configurations. The endpoint is used to fine-tune the automation and customi',
+		riskLevel: 'write',
+	},
+	addExistingBrandToGroup: {
+		description:
+			"This endpoint adds one or more existing brands to a specified group in DocuSign. It allows users to associate multiple brands with a group, enabling customized branding for different groups within an account. The endpoint should be used when there's a need to update the brands associated with a part",
+		riskLevel: 'write',
+	},
+	addMembersToSigningGroup: {
+		description:
+			'This endpoint adds one or more new members to a specified signing group within a DocuSign account. Signing groups allow multiple users to act as potential signers for a document, where any member of the group can sign on behalf of the group. This tool should be used when you need to expand or update',
+		riskLevel: 'write',
+	},
+	addUsersToExistingGroup: {
+		description:
+			'Adds one or more existing DocuSign users to an existing group within a specified account. This endpoint is used to manage group memberships by adding users to a predefined group. It requires the account ID and group ID as path parameters, and accepts a list of user information in the request body. T',
+		riskLevel: 'write',
+	},
+	createGroupsForAccount: {
+		description:
+			'Creates one or more groups for a specified DocuSign account. This endpoint is used for managing user access and permissions by organizing users into groups. Groups can be associated with permission profiles to streamline user management for large numbers of users. The endpoint accepts an array of gr',
+		riskLevel: 'write',
+	},
+	createNewAccountPermissionProfile: {
+		description:
+			'This endpoint creates a new permission profile for a DocuSign account, defining specific sets of permissions for user groups. It allows administrators to establish role-based access control within their DocuSign environment. The profile controls a wide range of user capabilities, from basic envelope',
+		riskLevel: 'write',
+	},
+	createSigningGroup: {
+		description:
+			'Creates one or more signing groups in a DocuSign account. This endpoint allows account administrators to set up predefined groups of recipients for document signing. Multiple signing groups can be created in a single API call, enhancing efficiency in setting up complex signing workflows. Use this wh',
+		riskLevel: 'write',
+	},
+	deleteAccountPermissionProfile: {
+		description:
+			'This endpoint deletes a specific permission profile from a DocuSign account. It is used to remove outdated or unnecessary permission profiles, helping to streamline account management. The endpoint requires that the profile being deleted has no associated users, unless they are being reassigned to a',
+		riskLevel: 'destructive',
+	},
+	deleteBrandFromGroup: {
+		description:
+			'This endpoint allows users to delete one or more brands from a specified group within a DocuSign account. It is used to manage brand associations with groups, enabling customization of branding for different envelopes and signing experiences. The operation removes the specified brands from the group',
+		riskLevel: 'destructive',
+	},
+	deleteMembersFromSigningGroup: {
+		description:
+			'Removes one or more members from a specified DocuSign signing group. This endpoint allows you to manage the composition of your signing groups by deleting users who no longer need access. It should be used when you want to remove specific individuals from a signing group, such as when an employee le',
+		riskLevel: 'destructive',
+	},
+	deleteOneOrMoreSigningGroups: {
+		description:
+			'Deletes one or more signing groups from a specified DocuSign account. This endpoint allows for bulk deletion of signing groups, which are collections of users authorized to sign documents on behalf of the group. It should be used when you need to remove outdated or unnecessary signing groups from yo',
+		riskLevel: 'destructive',
+	},
+	deleteUserGroup: {
+		description:
+			'Deletes one or more existing user groups from a specified DocuSign account. This endpoint should be used when you need to remove user groups that are no longer needed or have become obsolete. It requires the account ID and the group ID(s) of the group(s) to be deleted. The operation is irreversible,',
+		riskLevel: 'destructive',
+	},
+	deleteUsersFromGroup: {
+		description:
+			'Deletes one or more users from a specified group within a DocuSign account. This endpoint allows for bulk removal of users from a group, streamlining group management operations. It requires the account ID, group ID, and a list of users to be deleted. The endpoint is useful for maintaining group mem',
+		riskLevel: 'destructive',
+	},
+	getBrandsInformationForGroup: {
+		description:
+			"Retrieves detailed brand information associated with a specific group within a DocuSign account. This endpoint provides a comprehensive view of the brand settings, including default brands for recipients and senders, as well as a list of all available brands with their properties. It's particularly ",
+		riskLevel: 'read',
+	},
+	getGroupsInformationForAccount: {
+		description:
+			"Retrieves detailed information about groups associated with a specific DocuSign account. This endpoint allows users to fetch a list of groups, including their IDs, names, types, and user counts. It's particularly useful for account administrators who need to manage user access, set permissions, or o",
+		riskLevel: 'read',
+	},
+	getListOfAccountPermissionProfiles: {
+		description:
+			'This endpoint retrieves a comprehensive list of permission profiles associated with a specified DocuSign account. It provides detailed information about each profile, including its unique identifier, name, last modification timestamp, and an extensive set of permission settings. This tool is essenti',
+		riskLevel: 'read',
+	},
+	getMembersOfASigningGroup: {
+		description:
+			'Retrieves the list of members in a specified DocuSign Signing Group. This endpoint provides detailed information about users in a particular Signing Group, including their email addresses and usernames. Use this tool to audit or manage Signing Group composition, which is crucial for maintaining prop',
+		riskLevel: 'read',
+	},
+	getPermissionProfileForAccount: {
+		description:
+			'This endpoint retrieves detailed information about a specific permission profile in a DocuSign account. It provides a comprehensive view of permissions, settings, and capabilities assigned to a profile. Useful for auditing or reviewing permissions granted to user groups, it returns data on account r',
+		riskLevel: 'read',
+	},
+	getSigningGroupInformation: {
+		description:
+			"Retrieves detailed information about a specific signing group in a DocuSign account. Returns comprehensive data including the group's name, type (sharedSigningGroup, privateSigningGroup, or systemSigningGroup), email address, creation/modification timestamps, and a complete list of member users with",
+		riskLevel: 'read',
+	},
+	getUsersInGroup: {
+		description:
+			'Retrieves a paginated list of users belonging to a specific group within a DocuSign account. This endpoint is useful for managing and auditing group memberships, allowing administrators to view detailed information about users associated with a particular group. It supports pagination to handle larg',
+		riskLevel: 'read',
+	},
+	retrieveAccountSigningGroups: {
+		description:
+			"Retrieves a comprehensive list of all signing groups within a specified DocuSign account. This endpoint allows you to obtain detailed information about each signing group, including group names, types, IDs, and optionally, member details. It's particularly useful for managing and auditing signing gr",
+		riskLevel: 'read',
+	},
+	updateGroupInformation: {
+		description:
+			'Updates group information for one or more user groups in a DocuSign account. This action allows you to modify group properties such as group name and permission profile assignments. \\*\\*Required Parameters:\\*\\* - groups: A list of group objects to update. Each group must include: - groupId: The Docu',
+		riskLevel: 'write',
+	},
+	updatePermissionProfileSettings: {
+		description:
+			'This endpoint updates an existing account permission profile in DocuSign. It allows administrators to modify various settings and permissions for users associated with the profile, providing granular control over user capabilities within the DocuSign platform. The endpoint is used to customize user ',
+		riskLevel: 'write',
+	},
+	updateSigningGroupDetails: {
+		description:
+			"Updates the details of a specified signing group within a DocuSign account, including the group name, email, and member information. This endpoint allows for modifying existing group data and adding new members to the signing group, with a maximum limit of 50 members per group. It's particularly use",
+		riskLevel: 'write',
+	},
+	updateSigningGroupNames: {
+		description:
+			"Updates the names of one or more existing signing groups in DocuSign. This endpoint allows you to modify the names of signing groups, which are collections of users grouped together for document signing purposes. It's useful when you need to rename signing groups to reflect organizational changes or",
+		riskLevel: 'write',
+	},
+	createNotaryJurisdictionObject: {
+		description:
+			'Registers a notary jurisdiction for the current DocuSign user, enabling electronic notarizations for a specific U.S. state. A user can only have ONE jurisdiction at a time. Required fields: commissionExpiration (MM/DD/YYYY format), commissionId, registeredName, sealType, and jurisdiction details (ju',
+		riskLevel: 'write',
+	},
+	deleteNotaryJurisdiction: {
+		description:
+			'Deletes a specified notary jurisdiction from the DocuSign system. This endpoint should be used when you need to remove a notary jurisdiction from your DocuSign account, typically when a notary is no longer active in a particular jurisdiction or when correcting erroneously added jurisdictions. The op',
+		riskLevel: 'destructive',
+	},
+	getNotaryJournals: {
+		description:
+			"Tool to retrieve notary journal entries for the current user. Use when you need to access a user's notary journal records, which contain information about notarized documents including signer names, document names, jurisdictions, and timestamps.",
+		riskLevel: 'read',
+	},
+	getNotaryJurisdictionObject: {
+		description:
+			'Retrieves detailed information about a specific notary jurisdiction for the authenticated user. This endpoint should be used when a notary needs to access information about their registered jurisdiction, including commission details, seal requirements, and jurisdiction-specific rules. It provides cr',
+		riskLevel: 'read',
+	},
+	getNotaryUserSettings: {
+		description:
+			'Retrieves notary settings and configuration for the currently authenticated user. This endpoint returns comprehensive notary account information including personal details (name, email, userId), notary status (enabled/disabled), and optionally jurisdiction details when include\\_jurisdictions is set ',
+		riskLevel: 'read',
+	},
+	listNotaryJournals: {
+		description:
+			'Gets notary journals for the current user. This is a legacy endpoint that returns journal information for notaries. Use when you need to retrieve notary journal data.',
+		riskLevel: 'read',
+	},
+	listRegisteredNotaryJurisdictions: {
+		description:
+			'Retrieves a paginated list of registered notary jurisdictions for the current user, who must be a notary. This endpoint provides detailed information about each jurisdiction where the notary is registered, including commission details, seal settings, and supported features. It is useful for managing',
+		riskLevel: 'read',
+	},
+	registerCurrentUserAsNotary: {
+		description:
+			"This endpoint registers the current user as a notary in DocuSign, enabling remote online notarization capabilities. It configures the user's notary profile, settings, and permissions. Use this when setting up a new notary within the DocuSign system. Note that this does not replace legal notary certi",
+		riskLevel: 'write',
+	},
+	updateNotaryJurisdictionInfo: {
+		description:
+			"Updates the jurisdiction information for a notary in the DocuSign system. This endpoint allows for modification of various details related to a notary's commission and jurisdiction settings. It should be used when there are changes to a notary's information, such as their registered name, commission",
+		riskLevel: 'write',
+	},
+	updateUserNotaryInformation: {
+		description:
+			"The UpdateUserNotaryInformation endpoint modifies a notary's profile and settings in DocuSign. It manages account details, preferences, and operational parameters. Use this to update a notary's visibility, capabilities, or personal settings. It's crucial for maintaining accurate records and ensuring",
+		riskLevel: 'write',
+	},
+	deletePowerFormById: {
+		description:
+			'This endpoint deletes a specific PowerForm identified by its unique ID within a DocuSign account. PowerForms are pre-configured document templates that can be accessed via a custom URL, allowing for easy collection of signatures and form data. Use this endpoint when you need to permanently remove a ',
+		riskLevel: 'destructive',
+	},
+	getPowerFormSenders: {
+		description:
+			'Retrieves a list of users who have sent PowerForms within a specified DocuSign account. This endpoint is useful for monitoring PowerForm usage, tracking sender activity, and gathering insights on user engagement with PowerForms. It returns detailed information about each sender, including their acco',
+		riskLevel: 'read',
+	},
+	retrievePowerFormDataEntries: {
+		description:
+			'This endpoint retrieves data entries for a specific PowerForm within a DocuSign account. It allows PowerForm Administrators or the PowerForm sender to download the information entered by recipients into a PowerForm. The data can be retrieved in various formats (JSON, XML, or CSV) and can be filtered',
+		riskLevel: 'read',
+	},
+	createCustomFieldsInTemplateDocument: {
+		description:
+			'Creates custom document fields in an existing template document within DocuSign. This endpoint allows users to add metadata to specific documents in a template, enhancing document management and workflow customization. It is particularly useful for prepopulating custom data fields that will be appli',
+		riskLevel: 'write',
+	},
+	createPreviewOfResponsiveHtml: {
+		description:
+			"Creates a preview of the responsive HTML version of a specific template document in DocuSign. This endpoint allows users to visualize how a PDF document will be converted to responsive HTML across various device types before sending it for signing. It's particularly useful for ensuring that template",
+		riskLevel: 'write',
+	},
+	createTemplateDocumentCustomFields: {
+		description:
+			'Creates custom fields on a DocuSign template to capture additional metadata. Custom fields allow you to: - Add dropdown lists (listCustomFields) where senders select from predefined options - Add text fields (textCustomFields) where senders enter free-form text - Set default values and mark fields a',
+		riskLevel: 'write',
+	},
+	createTemplateRecipientPreviewUrl: {
+		description:
+			"Generate a preview URL showing how a template will appear to recipients. This action creates an embeddable URL that displays a template from the recipient's perspective, allowing senders to verify the signing experience before sending the actual document. This is particularly useful for: - Previewin",
+		riskLevel: 'write',
+	},
+	createTemplateResponsiveHtmlPreview: {
+		description:
+			'Creates a preview of the responsive HTML versions of all documents associated with a DocuSign template. This endpoint enables users to generate and customize the HTML preview of PDF documents across various device types before sending them for signing. It is particularly useful for ensuring that doc',
+		riskLevel: 'write',
+	},
+	createUrlforTemplateEditView: {
+		description:
+			"Creates a URL for embedding the DocuSign Template Edit view within an application. This endpoint enables developers to integrate DocuSign's template creation and editing functionality directly into their applications, allowing users to manage templates without leaving the app environment. The genera",
+		riskLevel: 'write',
+	},
+	deleteCustomDocumentFieldsFromTemplate: {
+		description:
+			'Deletes specified custom document fields from an existing template document in DocuSign. This endpoint is useful for maintaining and updating templates by removing unnecessary or outdated custom fields. It should be used when you need to clean up or modify the structure of a template document. The o',
+		riskLevel: 'destructive',
+	},
+	deleteCustomFieldsInTemplate: {
+		description:
+			'Deletes specified custom fields from a DocuSign template. This action removes envelope-level custom fields (both list and text types) that are no longer needed. \\*\\*How it works:\\*\\* - Specify which custom fields to delete by providing their fieldId values - You can delete multiple list and/or text ',
+		riskLevel: 'destructive',
+	},
+	deletePageFromTemplateDocument: {
+		description:
+			'Deletes a specific page from a document within a DocuSign template. This endpoint allows you to remove a single page from a template document, which can be useful for updating or refining existing templates. Use this when you need to modify the structure of a template by removing unnecessary or outd',
+		riskLevel: 'destructive',
+	},
+	deleteTemplateLock: {
+		description:
+			'Deletes the lock from a specified DocuSign template, releasing it for editing by others. \\*\\*Important Requirements:\\*\\* - The lock token is required to authenticate ownership of the lock - Only the user/application that created the lock can delete it - The lock is automatically released when the lo',
+		riskLevel: 'destructive',
+	},
+	getOriginalHtmlDefinitionForTemplate: {
+		description:
+			"Retrieves the original HTML definition for a specified DocuSign template. This endpoint is used to obtain the properties that define how to generate the responsive-formatted HTML for the template's documents. It provides detailed information about display settings, anchors, and collapsible sections ",
+		riskLevel: 'read',
+	},
+	getTemplateDocumentHtmlDefinition: {
+		description:
+			"Retrieves the HTML definition for a specific document within a DocuSign template. This endpoint is used to obtain the properties that define how to generate responsive-formatted HTML for the document, including display anchors, collapsible sections, and other formatting settings. It's particularly u",
+		riskLevel: 'read',
+	},
+	getTemplateLockInformation: {
+		description:
+			'Retrieves lock information for a DocuSign template. Returns details about an existing template lock including the lock token, duration, expiration time, and information about the user who locked the template. The lock token is required in the X-DocuSign-Edit header for subsequent update operations. ',
+		riskLevel: 'read',
+	},
+	getTemplateNotificationInformation: {
+		description:
+			'Retrieves the envelope notification, reminders, and expiration information for an existing template in DocuSign. This endpoint allows users to get detailed settings about how notifications are configured for envelopes created from the specified template. It provides information on expiration setting',
+		riskLevel: 'read',
+	},
+	getTemplateRecipientDocumentVisibility: {
+		description:
+			'Retrieves document visibility settings for a specific recipient in a DocuSign template. Returns which documents are visible to a recipient and their access rights (view/edit). Document visibility controls show or hide specific documents from recipients in multi-document templates, ensuring sensitive',
+		riskLevel: 'read',
+	},
+	lockTemplateForEditing: {
+		description:
+			'Locks a specified DocuSign template for editing to prevent concurrent modifications. This endpoint acquires an exclusive lock on a template, ensuring that only the lock holder can make changes during the lock period. The response includes a lockToken that must be included in the X-DocuSign-Edit head',
+		riskLevel: 'write',
+	},
+	removeGroupSharingPermissionsForTemplate: {
+		description:
+			"Removes sharing permissions for specified member groups from a DocuSign template. This endpoint is used to revoke access to a template for one or more groups, enhancing template security and access control. It's particularly useful when reorganizing team structures, updating project access, or when ",
+		riskLevel: 'destructive',
+	},
+	removeTemplatesFromFavorites: {
+		description:
+			"Removes one or more templates from an account's list of favorite templates in DocuSign. This endpoint allows users to manage their favorite templates by specifying which templates should no longer be marked as favorites. It accepts an account identifier and a list of template IDs to be removed from ",
+		riskLevel: 'destructive',
+	},
+	retrieveAccountFavoriteTemplates: {
+		description:
+			'Retrieves the list of favorite templates for a DocuSign account. Returns an array of template IDs and the dates they were marked as favorites. This is useful for identifying which templates a user has marked for quick access. Note: This endpoint only returns template IDs and favorited dates, not the',
+		riskLevel: 'read',
+	},
+	retrieveCustomFieldsForTemplate: {
+		description:
+			'This endpoint retrieves the custom document fields for an existing template document in DocuSign. It allows users to access name-value pairs of custom data strings associated with a specific document within a template. This tool is useful for retrieving metadata or custom information that has been a',
+		riskLevel: 'read',
+	},
+	retrievePdfFromSpecifiedTemplate: {
+		description:
+			"Retrieves one or more PDF documents from a specified DocuSign template. This endpoint allows you to fetch individual documents or combine all documents in the template into a single PDF file. It's particularly useful when you need to access template documents for review, processing, or to create new",
+		riskLevel: 'read',
+	},
+	retrieveTemplateCustomFields: {
+		description:
+			"Retrieves the custom document field information from an existing template in DocuSign. This endpoint allows users to fetch both list and text custom fields associated with a specific template. It's particularly useful when you need to view or work with the custom fields that have been set up for a t",
+		riskLevel: 'read',
+	},
+	retrieveTemplateDocumentPageImages: {
+		description:
+			"Retrieves and returns images of pages from a specified template document in DocuSign. This endpoint allows users to fetch visual representations of template pages with customizable image properties such as resolution and dimensions. It's particularly useful for previewing or displaying template cont",
+		riskLevel: 'read',
+	},
+	retrieveTemplatePageImage: {
+		description:
+			"Retrieves a specific page image from a template document for display purposes. This endpoint is part of the DocuSign Templates API and allows developers to fetch and display individual pages from template documents. It's particularly useful when you need to preview or display a specific page of a te",
+		riskLevel: 'read',
+	},
+	rotateTemplatePageImage: {
+		description:
+			'Rotates a page image within a DocuSign template for display purposes. This endpoint allows users to adjust the orientation of a specific page image to either the left or right within a template. It is particularly useful when preparing templates for use in electronic signature processes, ensuring th',
+		riskLevel: 'write',
+	},
+	setTemplatesAsAccountFavorites: {
+		description:
+			"This endpoint allows users to set one or more templates as account favorites in DocuSign. It's used to mark specific templates for quick access within a user's account. The endpoint can handle multiple templates in a single request, making it efficient for bulk operations. It's particularly useful f",
+		riskLevel: 'write',
+	},
+	shareTemplateWithGroup: {
+		description:
+			"This endpoint allows you to share a DocuSign template with a specified members group. It's used to grant access to templates for collaboration and reuse within an organization. Note that this endpoint is deprecated, and for newer functionality, it's recommended to use the 'Accounts: Update Shared Ac",
+		riskLevel: 'write',
+	},
+	updateTemplateCustomFields: {
+		description:
+			"Updates the custom fields in a DocuSign template. This endpoint allows you to modify both list and text custom fields associated with a specific template, ensuring each field has a unique name. It's used to customize templates for specific use cases, enabling prepopulation of metadata for envelopes ",
+		riskLevel: 'write',
+	},
+	updateTemplateDocumentCustomFields: {
+		description:
+			"This endpoint updates existing custom document fields in a specific document within a DocuSign template. It allows you to modify metadata associated with a template document without changing the document's content or structure. Use this when you need to update or add custom information to a template",
+		riskLevel: 'write',
+	},
+	updateTemplateDocVisibility: {
+		description:
+			'This endpoint updates document visibility settings for one or more recipients in a DocuSign template. It allows fine-grained control over which documents are visible to specific recipients, enhancing document security and workflow customization. The method is particularly useful when you need to res',
+		riskLevel: 'write',
+	},
+	updateTemplateLockInformation: {
+		description:
+			'This endpoint allows you to update the lock information for an already locked template in DocuSign. It is used to modify the duration of an existing lock or change the name of the application that has locked the template. This operation is crucial for managing access to templates that are currently ',
+		riskLevel: 'write',
+	},
+	updateTemplateNotificationSettings: {
+		description:
+			'This endpoint updates the notification structure for an existing DocuSign template. It allows users to customize reminder and expiration notifications for a specific template, which can then be used to create envelopes with these predefined settings. The endpoint is particularly useful when you need',
+		riskLevel: 'write',
+	},
+	updateTemplateRecipientDocumentVisibility: {
+		description:
+			'Updates document visibility settings for a specific recipient in a DocuSign template. This endpoint allows you to control which documents a particular recipient can see in a template with multiple documents. Use this when you need to: - Restrict certain documents from specific recipients for securit',
+		riskLevel: 'write',
+	},
+	addNewUsersToASpecifiedAccount: {
+		description:
+			"This endpoint adds new users to a specified DocuSign account, allowing bulk creation of up to 500 users in a single call. It's ideal for quickly setting up multiple users with customized permissions and settings. The endpoint requires at least a username and email for each user, but supports additio",
+		riskLevel: 'write',
+	},
+	addOrUpdateUserCustomSettings: {
+		description:
+			'Adds or updates custom user settings for a specified DocuSign user. This endpoint allows for flexible storage and retrieval of user-specific information that can be used in your own system, separate from standard DocuSign account settings. It supports grouping of settings using the X-DocuSign-User-S',
+		riskLevel: 'write',
+	},
+	addOrUpdateUserSignature: {
+		description:
+			"This endpoint allows you to add or update a user's signature in DocuSign. It provides comprehensive management of signature properties, including the signature image, font, initials, and stamp details. Use this endpoint when you need to create a new signature for a user or modify an existing one. Th",
+		riskLevel: 'write',
+	},
+	addUserSignatureAndInitialsImages: {
+		description:
+			"Add or update a user's signature and initials images in DocuSign. This action creates default signature images based on the user's name and a DocuSign font style. When using JSON content type (as this action does), DocuSign automatically generates signature images based on the signatureName and sign",
+		riskLevel: 'write',
+	},
+	changeUsersInAccount: {
+		description:
+			'This endpoint allows you to update information for one or more users within a DocuSign account. It is used to modify various user attributes such as personal information, settings, permissions, and notification preferences. The endpoint is particularly useful for account administrators who need to m',
+		riskLevel: 'write',
+	},
+	closeUsersInAccount: {
+		description:
+			'Closes one or more users in a DocuSign account, preventing them from accessing account features without permanently deleting them. This endpoint is useful for temporarily disabling user access, such as when an employee is on leave or has changed roles. It allows for easy re-activation of users throu',
+		riskLevel: 'destructive',
+	},
+	createOrUpdateUserAuthorizations: {
+		description:
+			'Creates or updates user authorizations in DocuSign, allowing an agent user to perform actions on behalf of a principal user. Grants permissions like Send, Manage, Sign, or Edit. Requirements: principal must be authenticated user or caller must be admin; agent users must be active; principal and agen',
+		riskLevel: 'write',
+	},
+	createUserAuthorizationForAgentUser: {
+		description:
+			"Creates a user authorization in DocuSign, enabling an agent user to perform specific actions on behalf of a principal user within the same account. This endpoint is essential for setting up delegated access, allowing users to share envelope management, signing, or sending capabilities. It's particul",
+		riskLevel: 'write',
+	},
+	deleteCustomUserSettings: {
+		description:
+			'Deletes specified custom user settings for a DocuSign user by their names. Custom user settings allow flexible storage and retrieval of user-specific information within DocuSign (separate from standard account settings). This endpoint removes one or more custom settings by specifying their names in ',
+		riskLevel: 'destructive',
+	},
+	deleteUserAuthorization: {
+		description:
+			'Deletes a specific user authorization within the DocuSign system. This endpoint is used to revoke or remove permissions previously granted to a user. It requires either account administrator privileges or being the principal user of the specified authorization. The operation is irreversible, so it s',
+		riskLevel: 'destructive',
+	},
+	deleteUserAuthorizations: {
+		description:
+			'The DeleteUserAuthorizations endpoint is used to remove one or more user authorizations for a specified principal user within a DocuSign account. This tool allows account administrators or the principal user themselves to revoke specific permissions or access rights previously granted to the user. I',
+		riskLevel: 'destructive',
+	},
+	deleteUserInitialsOrSignatureImage: {
+		description:
+			'This endpoint deletes a specified initials image or signature image for a user in DocuSign. It allows users to remove either their initials image or signature image from their DocuSign account. The endpoint should be used when a user wants to update or remove their existing signature or initials ima',
+		riskLevel: 'destructive',
+	},
+	deleteUserProfileImage: {
+		description:
+			"Deletes the profile image of a specified user within a DocuSign account. This endpoint should be used when a user wants to remove their current profile picture from their DocuSign account. It's important to note that this operation can only be performed by the user on their own profile; even users w",
+		riskLevel: 'destructive',
+	},
+	getAgentUserAuthorizations: {
+		description:
+			'Returns the authorizations for which the specified user is the agent user. An agent user can act on behalf of other users (principal users) in the account. This endpoint retrieves the list of principal users and their authorization details, including permissions like Send, Manage, Sign, and Edit. Su',
+		riskLevel: 'read',
+	},
+	getUserAuthorizationDetails: {
+		description:
+			"Retrieves detailed information about a specific user authorization in DocuSign. This endpoint allows account administrators or the principal user to fetch comprehensive data about an authorization, including the agent user, principal user, permission levels, and relevant timestamps. It's particularl",
+		riskLevel: 'read',
+	},
+	getUserAuthorizationsForPrincipal: {
+		description:
+			'Retrieves user authorizations for a specified principal user within a DocuSign account. This endpoint allows account administrators or the principal user themselves to view and manage user access and permissions. It provides detailed information about each authorization, including the agent user, pe',
+		riskLevel: 'read',
+	},
+	getUserInformationById: {
+		description:
+			"Retrieves detailed information about a specific user within a DocuSign account. This endpoint provides comprehensive data about the user, including personal details, account settings, and permissions. It's useful for account administrators and system integrations needing to verify or sync user confi",
+		riskLevel: 'read',
+	},
+	listUsersForAccount: {
+		description:
+			"Retrieves a list of users for a specified DocuSign account. This endpoint allows for detailed querying of user information, including their account status, email addresses, and various account settings. It's particularly useful for account administrators who need to manage users or gather informatio",
+		riskLevel: 'read',
+	},
+	removeUserSignatureInformation: {
+		description:
+			"Removes the signature information for a specific user in DocuSign. This endpoint should be used when a user wants to delete their existing signature from their DocuSign account. It's particularly useful for updating or refreshing signature information. The operation is restricted to the authenticate",
+		riskLevel: 'destructive',
+	},
+	retrieveCustomUserSettings: {
+		description:
+			'Retrieves a list of custom user settings for a single user in DocuSign. This endpoint allows flexible storage and retrieval of user-specific information that can be used in your own system, separate from standard user account settings. It supports both grouped and ungrouped custom settings, with the',
+		riskLevel: 'read',
+	},
+	retrieveUserAccountSettings: {
+		description:
+			"Retrieves a comprehensive list of account settings and email notification preferences for a specified user within a DocuSign account. This endpoint provides detailed information about the user's configuration, including locale settings, email notification preferences, account management capabilities",
+		riskLevel: 'read',
+	},
+	retrieveUserProfileImage: {
+		description:
+			"Retrieves the user profile picture for a specified user within a DocuSign account. This endpoint allows users to fetch their own profile image, which is returned in the same format as it was originally uploaded. It's particularly useful for applications that need to display user avatars or profile p",
+		riskLevel: 'read',
+	},
+	retrieveUserProfileInformation: {
+		description:
+			"This endpoint retrieves comprehensive user profile information for a specified user within a DocuSign account. It provides detailed data about the user's personal information, settings, preferences, and permissions. The endpoint is particularly useful for obtaining an in-depth view of a user's confi",
+		riskLevel: 'read',
+	},
+	retrieveUserSignatureDefinitions: {
+		description:
+			'This endpoint retrieves the signature definitions for a specified user within a DocuSign account. It allows users to access their own signature information, including details about signature images, stamps, and associated metadata. The endpoint is useful for applications that need to display or mana',
+		riskLevel: 'read',
+	},
+	retrieveUserSignatureImage: {
+		description:
+			"Retrieves a specified user's signature or initials image from DocuSign. This endpoint allows you to fetch the image in its original upload format, with an option to include or exclude the chrome (frame) around the image. It's useful for applications that need to display or process user signatures. T",
+		riskLevel: 'read',
+	},
+	retrieveUserSignatureInformation: {
+		description:
+			'This endpoint retrieves the detailed structure and information of a single user signature within a DocuSign account. It provides comprehensive details about the signature, including its creation date, image URIs, stamp properties, and associated rights. The endpoint is designed for users to access a',
+		riskLevel: 'read',
+	},
+	setUserSignatureImage: {
+		description:
+			"Sets or updates a user's signature image, initials, or stamp in their DocuSign account. This endpoint uploads an image file to replace or create a signature element. Use this action to: - Upload a signature image for electronic document signing - Set initials image for a user - Add custom stamp imag",
+		riskLevel: 'write',
+	},
+	updateUserAccountSettings: {
+		description:
+			"This endpoint updates the account settings and email notification types for a specified user in DocuSign. It allows for comprehensive customization of a user's experience within the DocuSign platform, including locale preferences, timezone settings, email notifications, account management capabiliti",
+		riskLevel: 'write',
+	},
+	updateUserAuthorizationDates: {
+		description:
+			"Updates the start and/or end dates for a specified user authorization in DocuSign. This endpoint allows account administrators or the principal user to modify the duration of an existing authorization, enabling precise control over when an agent can act on behalf of the principal user. It's particul",
+		riskLevel: 'write',
+	},
+	updateUserInformationForSpecifiedUser: {
+		description:
+			'The User\\_PutUser endpoint allows updating user information for a specified user within a DocuSign account. It provides comprehensive control over user settings, including personal information, permissions, notification preferences, and locale settings. This endpoint should be used when modifying us',
+		riskLevel: 'write',
+	},
+	updateUserProfileImage: {
+		description:
+			"Updates the user's profile image in DocuSign by uploading a new image file. This action allows users to personalize their DocuSign account by uploading a profile picture. Supported formats include GIF, PNG, JPEG, and BMP. The image file must be less than 200KB, and for optimal display, DocuSign reco",
+		riskLevel: 'write',
+	},
+	updateUserProfileInformation: {
+		description:
+			"Updates a user's profile in DocuSign, including personal details, privacy settings, and user ID card information. It allows modifications to name, address, locale preferences, and various account settings. Users can only update their own information. Some settings may require admin rights to modify.",
+		riskLevel: 'write',
+	},
+	updateUserSignatureById: {
+		description:
+			"Updates or creates a user's signature and initials for a specified DocuSign account. This endpoint allows for customization of signature appearance, including font, stamp format, and date stamp properties. It can be used to modify an existing signature or create a default signature if one doesn't ex",
+		riskLevel: 'write',
+	},
+	addFileToWorkspace: {
+		description:
+			'This endpoint adds a file to a specific folder within a DocuSign workspace. It allows users to upload and organize files in their DocuSign account, enabling better document management and collaboration. The method should be used when integrating file upload functionality with DocuSign workspaces, su',
+		riskLevel: 'write',
+	},
+	createACollaborativeWorkspace: {
+		description:
+			'Creates a new collaborative workspace in DocuSign for document management and team collaboration. A workspace provides a centralized area for file sharing and collaborative work on agreements. Use this when setting up a new project or team workspace. The creator becomes the workspace owner automatic',
+		riskLevel: 'write',
+	},
+	deleteExistingWorkspaceLogically: {
+		description:
+			'Marks a DocuSign workspace as deleted by changing its status to "status\\_deleted". This is a logical deletion that makes the workspace inaccessible to users but preserves the workspace data in the system. The workspace will no longer appear in active workspace lists and users cannot access its files',
+		riskLevel: 'destructive',
+	},
+	deleteWorkspaceFilesOrFolders: {
+		description:
+			"This endpoint allows for the deletion of one or more files or sub-folders from a DocuSign workspace folder or root. It's used to remove unwanted or obsolete items from a workspace, helping to maintain organization and manage storage. The operation can handle bulk deletions, making it efficient for c",
+		riskLevel: 'destructive',
+	},
+	getWorkspaceFile: {
+		description:
+			"Retrieves a binary version of a file from a DocuSign workspace. This endpoint allows you to access and download files stored within a specific workspace, folder, and account. It's particularly useful for retrieving document content for further processing or viewing outside the DocuSign platform. The",
+		riskLevel: 'read',
+	},
+	getWorkspaceFolderContents: {
+		description:
+			'Retrieves the contents of a specific workspace folder in DocuSign, including sub-folders and files. This endpoint provides detailed information about the items within the folder, such as metadata, user permissions, and hierarchical structure. It can be used to navigate and explore the contents of a ',
+		riskLevel: 'read',
+	},
+	listWorkspaceFilePages: {
+		description:
+			'Retrieves a workspace file as rasterized pages from a DocuSign workspace. This endpoint allows users to fetch file pages as images with customizable resolution and dimensions. It supports pagination for handling large files efficiently. Use this method when you need to view or process workspace file',
+		riskLevel: 'read',
+	},
+	listWorkspaces: {
+		description:
+			"Retrieves a list of DocuSign workspaces and their associated information for a specified account. This endpoint allows users to get a comprehensive view of all workspaces they have access to, including details such as workspace IDs, names, descriptions, creation dates, and user information. It's par",
+		riskLevel: 'read',
+	},
+	retrievePropertiesAboutWorkspace: {
+		description:
+			"Retrieves detailed properties and information about a specific DocuSign workspace. This endpoint allows you to fetch comprehensive data about a workspace, including its settings, user details, and various metadata. It's particularly useful when you need to access or verify workspace information, suc",
+		riskLevel: 'read',
+	},
+	updateWorkspaceInformation: {
+		description:
+			"Updates information about a specific DocuSign workspace. This endpoint allows you to modify various aspects of a workspace, including its name, description, settings, and status. It's used when you need to change workspace details or adjust collaboration settings. The endpoint requires both the acco",
+		riskLevel: 'write',
+	},
+	updateWorkspaceItemMetadata: {
+		description:
+			'Updates the metadata for a specific file in a DocuSign workspace. This endpoint allows you to modify file properties such as name, content type, extension, and visibility settings without changing the actual file content. Use this action when you need to rename a file, update its MIME type, or chang',
+		riskLevel: 'write',
+	},
+} satisfies RequiredPluginEndpointMeta<typeof generatedEndpointsNested>;
+
+export const generatedEndpointSchemas: Record<
+	string,
+	{ input?: unknown; output?: unknown }
+> = {
+	addOrUpdateAccountStamps: {
+		input: AddOrUpdateAccountStampsInputSchema,
+		output: AddOrUpdateAccountStampsOutputSchema,
+	},
+	createAccountCustomField: {
+		input: CreateAccountCustomFieldInputSchema,
+		output: CreateAccountCustomFieldOutputSchema,
+	},
+	createBccEmailArchiveConfiguration: {
+		input: CreateBccEmailArchiveConfigurationInputSchema,
+		output: CreateBccEmailArchiveConfigurationOutputSchema,
+	},
+	deleteAccountCustomField: {
+		input: DeleteAccountCustomFieldInputSchema,
+		output: DeleteAccountCustomFieldOutputSchema,
+	},
+	deleteAccountStamp: {
+		input: DeleteAccountStampInputSchema,
+		output: DeleteAccountStampOutputSchema,
+	},
+	deleteBccEmailArchiveConfiguration: {
+		input: DeleteBccEmailArchiveConfigurationInputSchema,
+		output: DeleteBccEmailArchiveConfigurationOutputSchema,
+	},
+	deleteEnoteConfiguration: {
+		input: DeleteEnoteConfigurationInputSchema,
+		output: DeleteEnoteConfigurationOutputSchema,
+	},
+	deleteSignatureForCaptiveRecipients: {
+		input: DeleteSignatureForCaptiveRecipientsInputSchema,
+		output: DeleteSignatureForCaptiveRecipientsOutputSchema,
+	},
+	deleteSpecifiedAccount: {
+		input: DeleteSpecifiedAccountInputSchema,
+		output: DeleteSpecifiedAccountOutputSchema,
+	},
+	deleteStampImageForAccount: {
+		input: DeleteStampImageForAccountInputSchema,
+		output: DeleteStampImageForAccountOutputSchema,
+	},
+	getAccountBillingChargesList: {
+		input: GetAccountBillingChargesListInputSchema,
+		output: GetAccountBillingChargesListOutputSchema,
+	},
+	getAccountPasswordRules: {
+		input: GetAccountPasswordRulesInputSchema,
+		output: GetAccountPasswordRulesOutputSchema,
+	},
+	getAccountStampImage: {
+		input: GetAccountStampImageInputSchema,
+		output: GetAccountStampImageOutputSchema,
+	},
+	getBccEmailArchiveConfigurations: {
+		input: GetBccEmailArchiveConfigurationsInputSchema,
+		output: GetBccEmailArchiveConfigurationsOutputSchema,
+	},
+	getBccemailArchiveHistory: {
+		input: GetBccemailArchiveHistoryInputSchema,
+		output: GetBccemailArchiveHistoryOutputSchema,
+	},
+	getElectronicRecordAndSignatureDisclosure: {
+		input: GetElectronicRecordAndSignatureDisclosureInputSchema,
+		output: GetElectronicRecordAndSignatureDisclosureOutputSchema,
+	},
+	getEnoteIntegrationSettings: {
+		input: GetEnoteIntegrationSettingsInputSchema,
+		output: GetEnoteIntegrationSettingsOutputSchema,
+	},
+	getSpecifiedAccountStampInfo: {
+		input: GetSpecifiedAccountStampInfoInputSchema,
+		output: GetSpecifiedAccountStampInfoOutputSchema,
+	},
+	getSupportedLanguagesForRecipients: {
+		input: GetSupportedLanguagesForRecipientsInputSchema,
+		output: GetSupportedLanguagesForRecipientsOutputSchema,
+	},
+	getTabSettingsForAccount: {
+		input: GetTabSettingsForAccountInputSchema,
+		output: GetTabSettingsForAccountOutputSchema,
+	},
+	getUnsupportedFileTypesList: {
+		input: GetUnsupportedFileTypesListInputSchema,
+		output: GetUnsupportedFileTypesListOutputSchema,
+	},
+	getWatermarkDetailsForAccount: {
+		input: GetWatermarkDetailsForAccountInputSchema,
+		output: GetWatermarkDetailsForAccountOutputSchema,
+	},
+	listSignatureProvidersForAccount: {
+		input: ListSignatureProvidersForAccountInputSchema,
+		output: ListSignatureProvidersForAccountOutputSchema,
+	},
+	modifyAccountNotificationSettings: {
+		input: ModifyAccountNotificationSettingsInputSchema,
+		output: ModifyAccountNotificationSettingsOutputSchema,
+	},
+	modifyTabSettingsForAccount: {
+		input: ModifyTabSettingsForAccountInputSchema,
+		output: ModifyTabSettingsForAccountOutputSchema,
+	},
+	retrieveAccountEnvelopePurgeConfig: {
+		input: RetrieveAccountEnvelopePurgeConfigInputSchema,
+		output: RetrieveAccountEnvelopePurgeConfigOutputSchema,
+	},
+	retrieveAccountInformationForSpecifiedAccount: {
+		input: RetrieveAccountInformationForSpecifiedAccountInputSchema,
+		output: RetrieveAccountInformationForSpecifiedAccountOutputSchema,
+	},
+	retrieveAccountProvisioningInfo: {
+		input: RetrieveAccountProvisioningInfoInputSchema,
+		output: RetrieveAccountProvisioningInfoOutputSchema,
+	},
+	retrieveAccountSealProviders: {
+		input: RetrieveAccountSealProvidersInputSchema,
+		output: RetrieveAccountSealProvidersOutputSchema,
+	},
+	retrieveAccountSettingsInformation: {
+		input: RetrieveAccountSettingsInformationInputSchema,
+		output: RetrieveAccountSettingsInformationOutputSchema,
+	},
+	retrieveAvailableAccountStamps: {
+		input: RetrieveAvailableAccountStampsInputSchema,
+		output: RetrieveAvailableAccountStampsOutputSchema,
+	},
+	retrieveSharedItemStatusForUsers: {
+		input: RetrieveSharedItemStatusForUsersInputSchema,
+		output: RetrieveSharedItemStatusForUsersOutputSchema,
+	},
+	setEnvelopePurgeConfigForAccount: {
+		input: SetEnvelopePurgeConfigForAccountInputSchema,
+		output: SetEnvelopePurgeConfigForAccountOutputSchema,
+	},
+	setSharedAccessForUsersAndTemplates: {
+		input: SetSharedAccessForUsersAndTemplatesInputSchema,
+		output: SetSharedAccessForUsersAndTemplatesOutputSchema,
+	},
+	updateAccountCustomField: {
+		input: UpdateAccountCustomFieldInputSchema,
+		output: UpdateAccountCustomFieldOutputSchema,
+	},
+	updateAccountPasswordRules: {
+		input: UpdateAccountPasswordRulesInputSchema,
+		output: UpdateAccountPasswordRulesOutputSchema,
+	},
+	updateAccountSettings: {
+		input: UpdateAccountSettingsInputSchema,
+		output: UpdateAccountSettingsOutputSchema,
+	},
+	updateAccountStampById: {
+		input: UpdateAccountStampByIdInputSchema,
+		output: UpdateAccountStampByIdOutputSchema,
+	},
+	updateAccountStamps: {
+		input: UpdateAccountStampsInputSchema,
+		output: UpdateAccountStampsOutputSchema,
+	},
+	updateAccountWatermarkInformation: {
+		input: UpdateAccountWatermarkInformationInputSchema,
+		output: UpdateAccountWatermarkInformationOutputSchema,
+	},
+	updateAccountWatermarkPreview: {
+		input: UpdateAccountWatermarkPreviewInputSchema,
+		output: UpdateAccountWatermarkPreviewOutputSchema,
+	},
+	updateElectronicRecordDisclosure: {
+		input: UpdateElectronicRecordDisclosureInputSchema,
+		output: UpdateElectronicRecordDisclosureOutputSchema,
+	},
+	updateEnoteIntegrationConfig: {
+		input: UpdateEnoteIntegrationConfigInputSchema,
+		output: UpdateEnoteIntegrationConfigOutputSchema,
+	},
+	getDowngradePlanInfoForAccount: {
+		input: GetDowngradePlanInfoForAccountInputSchema,
+		output: GetDowngradePlanInfoForAccountOutputSchema,
+	},
+	listBillingInvoices: {
+		input: ListBillingInvoicesInputSchema,
+		output: ListBillingInvoicesOutputSchema,
+	},
+	listPastDueInvoices: {
+		input: ListPastDueInvoicesInputSchema,
+		output: ListPastDueInvoicesOutputSchema,
+	},
+	listPaymentGatewayAccountsInfo: {
+		input: ListPaymentGatewayAccountsInfoInputSchema,
+		output: ListPaymentGatewayAccountsInfoOutputSchema,
+	},
+	postPaymentToInvoice: {
+		input: PostPaymentToInvoiceInputSchema,
+		output: PostPaymentToInvoiceOutputSchema,
+	},
+	purchaseAdditionalEnvelopes: {
+		input: PurchaseAdditionalEnvelopesInputSchema,
+		output: PurchaseAdditionalEnvelopesOutputSchema,
+	},
+	queueDowngradeBillingPlanRequest: {
+		input: QueueDowngradeBillingPlanRequestInputSchema,
+		output: QueueDowngradeBillingPlanRequestOutputSchema,
+	},
+	retrieveAccountBillingPlan: {
+		input: RetrieveAccountBillingPlanInputSchema,
+		output: RetrieveAccountBillingPlanOutputSchema,
+	},
+	retrieveBillingInvoice: {
+		input: RetrieveBillingInvoiceInputSchema,
+		output: RetrieveBillingInvoiceOutputSchema,
+	},
+	retrieveBillingPaymentInfo: {
+		input: RetrieveBillingPaymentInfoInputSchema,
+		output: RetrieveBillingPaymentInfoOutputSchema,
+	},
+	retrieveCreditCardInfo: {
+		input: RetrieveCreditCardInfoInputSchema,
+		output: RetrieveCreditCardInfoOutputSchema,
+	},
+	retrieveListOfBillingPlans: {
+		input: RetrieveListOfBillingPlansInputSchema,
+		output: RetrieveListOfBillingPlansOutputSchema,
+	},
+	retrievePaymentInformationList: {
+		input: RetrievePaymentInformationListInputSchema,
+		output: RetrievePaymentInformationListOutputSchema,
+	},
+	updateBillingPlanForAccount: {
+		input: UpdateBillingPlanForAccountInputSchema,
+		output: UpdateBillingPlanForAccountOutputSchema,
+	},
+	createBrandProfilesForAccount: {
+		input: CreateBrandProfilesForAccountInputSchema,
+		output: CreateBrandProfilesForAccountOutputSchema,
+	},
+	deleteAccountBrand: {
+		input: DeleteAccountBrandInputSchema,
+		output: DeleteAccountBrandOutputSchema,
+	},
+	deleteBrandLogoByType: {
+		input: DeleteBrandLogoByTypeInputSchema,
+		output: DeleteBrandLogoByTypeOutputSchema,
+	},
+	deleteBrandProfiles: {
+		input: DeleteBrandProfilesInputSchema,
+		output: DeleteBrandProfilesOutputSchema,
+	},
+	exportBrandToXmlfile: {
+		input: ExportBrandToXmlfileInputSchema,
+		output: ExportBrandToXmlfileOutputSchema,
+	},
+	getBrandLogoByType: {
+		input: GetBrandLogoByTypeInputSchema,
+		output: GetBrandLogoByTypeOutputSchema,
+	},
+	getSpecificBrandResourceFile: {
+		input: GetSpecificBrandResourceFileInputSchema,
+		output: GetSpecificBrandResourceFileOutputSchema,
+	},
+	listBrandsForAccount: {
+		input: ListBrandsForAccountInputSchema,
+		output: ListBrandsForAccountOutputSchema,
+	},
+	retrieveAccountBrandInformation: {
+		input: RetrieveAccountBrandInformationInputSchema,
+		output: RetrieveAccountBrandInformationOutputSchema,
+	},
+	returnBrandResourceMetadataForAccount: {
+		input: ReturnBrandResourceMetadataForAccountInputSchema,
+		output: ReturnBrandResourceMetadataForAccountOutputSchema,
+	},
+	updateAccountBrandSettings: {
+		input: UpdateAccountBrandSettingsInputSchema,
+		output: UpdateAccountBrandSettingsOutputSchema,
+	},
+	applyActionToBulkSendEnvelopes: {
+		input: ApplyActionToBulkSendEnvelopesInputSchema,
+		output: ApplyActionToBulkSendEnvelopesOutputSchema,
+	},
+	createBulkSendRequest: {
+		input: CreateBulkSendRequestInputSchema,
+		output: CreateBulkSendRequestOutputSchema,
+	},
+	createBulkSendTestRequest: {
+		input: CreateBulkSendTestRequestInputSchema,
+		output: CreateBulkSendTestRequestOutputSchema,
+	},
+	getBulkSendBatchStatus: {
+		input: GetBulkSendBatchStatusInputSchema,
+		output: GetBulkSendBatchStatusOutputSchema,
+	},
+	getBulkSendListsInformation: {
+		input: GetBulkSendListsInformationInputSchema,
+		output: GetBulkSendListsInformationOutputSchema,
+	},
+	listBulkSendBatchSummaries: {
+		input: ListBulkSendBatchSummariesInputSchema,
+		output: ListBulkSendBatchSummariesOutputSchema,
+	},
+	removeBulkSendList: {
+		input: RemoveBulkSendListInputSchema,
+		output: RemoveBulkSendListOutputSchema,
+	},
+	updateBulkSendBatchName: {
+		input: UpdateBulkSendBatchNameInputSchema,
+		output: UpdateBulkSendBatchNameOutputSchema,
+	},
+	addPartToChunkedUpload: {
+		input: AddPartToChunkedUploadInputSchema,
+		output: AddPartToChunkedUploadOutputSchema,
+	},
+	commitChunkedUploadForEnvelopes: {
+		input: CommitChunkedUploadForEnvelopesInputSchema,
+		output: CommitChunkedUploadForEnvelopesOutputSchema,
+	},
+	deleteChunkedUpload: {
+		input: DeleteChunkedUploadInputSchema,
+		output: DeleteChunkedUploadOutputSchema,
+	},
+	initiateNewChunkedUpload: {
+		input: InitiateNewChunkedUploadInputSchema,
+		output: InitiateNewChunkedUploadOutputSchema,
+	},
+	retrieveChunkedUploadMetadata: {
+		input: RetrieveChunkedUploadMetadataInputSchema,
+		output: RetrieveChunkedUploadMetadataOutputSchema,
+	},
+	configureCloudStorageRedirectUrl: {
+		input: ConfigureCloudStorageRedirectUrlInputSchema,
+		output: ConfigureCloudStorageRedirectUrlOutputSchema,
+	},
+	deleteUserAuthForCloudStorageProviders: {
+		input: DeleteUserAuthForCloudStorageProvidersInputSchema,
+		output: DeleteUserAuthForCloudStorageProvidersOutputSchema,
+	},
+	deleteUserCloudStorageAuthentication: {
+		input: DeleteUserCloudStorageAuthenticationInputSchema,
+		output: DeleteUserCloudStorageAuthenticationOutputSchema,
+	},
+	getUserCloudStorageProviderConfiguration: {
+		input: GetUserCloudStorageProviderConfigurationInputSchema,
+		output: GetUserCloudStorageProviderConfigurationOutputSchema,
+	},
+	listCloudStorageItems: {
+		input: ListCloudStorageItemsInputSchema,
+		output: ListCloudStorageItemsOutputSchema,
+	},
+	retrieveCloudStorageProviderConfiguration: {
+		input: RetrieveCloudStorageProviderConfigurationInputSchema,
+		output: RetrieveCloudStorageProviderConfigurationOutputSchema,
+	},
+	retrieveItemsInCloudStorageFolder: {
+		input: RetrieveItemsInCloudStorageFolderInputSchema,
+		output: RetrieveItemsInCloudStorageFolderOutputSchema,
+	},
+	createConnectConfigurationForAccount: {
+		input: CreateConnectConfigurationForAccountInputSchema,
+		output: CreateConnectConfigurationForAccountOutputSchema,
+	},
+	deleteConnectConfiguration: {
+		input: DeleteConnectConfigurationInputSchema,
+		output: DeleteConnectConfigurationOutputSchema,
+	},
+	deleteConnectFailureLogEntry: {
+		input: DeleteConnectFailureLogEntryInputSchema,
+		output: DeleteConnectFailureLogEntryOutputSchema,
+	},
+	deleteConnectLogEntries: {
+		input: DeleteConnectLogEntriesInputSchema,
+		output: DeleteConnectLogEntriesOutputSchema,
+	},
+	deleteConnectOauthConfiguration: {
+		input: DeleteConnectOauthConfigurationInputSchema,
+		output: DeleteConnectOauthConfigurationOutputSchema,
+	},
+	deleteSpecificConnectLogEntry: {
+		input: DeleteSpecificConnectLogEntryInputSchema,
+		output: DeleteSpecificConnectLogEntryOutputSchema,
+	},
+	republishConnectDataForEnvelope: {
+		input: RepublishConnectDataForEnvelopeInputSchema,
+		output: RepublishConnectDataForEnvelopeOutputSchema,
+	},
+	republishConnectInfoForEnvelopes: {
+		input: RepublishConnectInfoForEnvelopesInputSchema,
+		output: RepublishConnectInfoForEnvelopesOutputSchema,
+	},
+	retrieveConnectConfigurationDetails: {
+		input: RetrieveConnectConfigurationDetailsInputSchema,
+		output: RetrieveConnectConfigurationDetailsOutputSchema,
+	},
+	retrieveConnectConfigurations: {
+		input: RetrieveConnectConfigurationsInputSchema,
+		output: RetrieveConnectConfigurationsOutputSchema,
+	},
+	retrieveConnectFailureLogs: {
+		input: RetrieveConnectFailureLogsInputSchema,
+		output: RetrieveConnectFailureLogsOutputSchema,
+	},
+	retrieveConnectLogEntry: {
+		input: RetrieveConnectLogEntryInputSchema,
+		output: RetrieveConnectLogEntryOutputSchema,
+	},
+	retrieveConnectLogs: {
+		input: RetrieveConnectLogsInputSchema,
+		output: RetrieveConnectLogsOutputSchema,
+	},
+	retrieveConnectOauthConfiguration: {
+		input: RetrieveConnectOauthConfigurationInputSchema,
+		output: RetrieveConnectOauthConfigurationOutputSchema,
+	},
+	returnAllConnectServiceUsers: {
+		input: ReturnAllConnectServiceUsersInputSchema,
+		output: ReturnAllConnectServiceUsersOutputSchema,
+	},
+	returnUsersFromConnectService: {
+		input: ReturnUsersFromConnectServiceInputSchema,
+		output: ReturnUsersFromConnectServiceOutputSchema,
+	},
+	setUpConnectOauthConfiguration: {
+		input: SetUpConnectOauthConfigurationInputSchema,
+		output: SetUpConnectOauthConfigurationOutputSchema,
+	},
+	updateConnectOauthConfiguration: {
+		input: UpdateConnectOauthConfigurationInputSchema,
+		output: UpdateConnectOauthConfigurationOutputSchema,
+	},
+	updateDocusignConnectConfiguration: {
+		input: UpdateDocusignConnectConfigurationInputSchema,
+		output: UpdateDocusignConnectConfigurationOutputSchema,
+	},
+	addContactsToContactsList: {
+		input: AddContactsToContactsListInputSchema,
+		output: AddContactsToContactsListOutputSchema,
+	},
+	deleteContactFromAccount: {
+		input: DeleteContactFromAccountInputSchema,
+		output: DeleteContactFromAccountOutputSchema,
+	},
+	deleteMultipleContactsFromAccount: {
+		input: DeleteMultipleContactsFromAccountInputSchema,
+		output: DeleteMultipleContactsFromAccountOutputSchema,
+	},
+	getDocusignAccountContacts: {
+		input: GetDocusignAccountContactsInputSchema,
+		output: GetDocusignAccountContactsOutputSchema,
+	},
+	updateContactsInformation: {
+		input: UpdateContactsInformationInputSchema,
+		output: UpdateContactsInformationOutputSchema,
+	},
+	createCustomTabWithProperties: {
+		input: CreateCustomTabWithPropertiesInputSchema,
+		output: CreateCustomTabWithPropertiesOutputSchema,
+	},
+	deleteCustomTabInformation: {
+		input: DeleteCustomTabInformationInputSchema,
+		output: DeleteCustomTabInformationOutputSchema,
+	},
+	retrieveAllAccountTabs: {
+		input: RetrieveAllAccountTabsInputSchema,
+		output: RetrieveAllAccountTabsOutputSchema,
+	},
+	retrieveCustomTabInformation: {
+		input: RetrieveCustomTabInformationInputSchema,
+		output: RetrieveCustomTabInformationOutputSchema,
+	},
+	updateCustomTabInformationForAccount: {
+		input: UpdateCustomTabInformationForAccountInputSchema,
+		output: UpdateCustomTabInformationForAccountOutputSchema,
+	},
+	deleteRequestLogFiles: {
+		input: DeleteRequestLogFilesInputSchema,
+		output: DeleteRequestLogFilesOutputSchema,
+	},
+	getRequestLoggingLogFile: {
+		input: GetRequestLoggingLogFileInputSchema,
+		output: GetRequestLoggingLogFileOutputSchema,
+	},
+	getRequestLogs: {
+		input: GetRequestLogsInputSchema,
+		output: GetRequestLogsOutputSchema,
+	},
+	getRequestLogSettings: {
+		input: GetRequestLogSettingsInputSchema,
+		output: GetRequestLogSettingsOutputSchema,
+	},
+	getResourceInformation: {
+		input: GetResourceInformationInputSchema,
+		output: GetResourceInformationOutputSchema,
+	},
+	getServiceInformation: {
+		input: GetServiceInformationInputSchema,
+		output: GetServiceInformationOutputSchema,
+	},
+	toggleApiRequestLogging: {
+		input: ToggleApiRequestLoggingInputSchema,
+		output: ToggleApiRequestLoggingOutputSchema,
+	},
+	addEnvelopeAttachments: {
+		input: AddEnvelopeAttachmentsInputSchema,
+		output: AddEnvelopeAttachmentsOutputSchema,
+	},
+	createCustomDocumentFieldsInEnvelope: {
+		input: CreateCustomDocumentFieldsInEnvelopeInputSchema,
+		output: CreateCustomDocumentFieldsInEnvelopeOutputSchema,
+	},
+	createDocumentResponsiveHtmlPreview: {
+		input: CreateDocumentResponsiveHtmlPreviewInputSchema,
+		output: CreateDocumentResponsiveHtmlPreviewOutputSchema,
+	},
+	createPreviewOfResponsiveHtmlInEnvelope: {
+		input: CreatePreviewOfResponsiveHtmlInEnvelopeInputSchema,
+		output: CreatePreviewOfResponsiveHtmlInEnvelopeOutputSchema,
+	},
+	deleteCustomDocumentFields: {
+		input: DeleteCustomDocumentFieldsInputSchema,
+		output: DeleteCustomDocumentFieldsOutputSchema,
+	},
+	deleteDraftEnvelopeAttachments: {
+		input: DeleteDraftEnvelopeAttachmentsInputSchema,
+		output: DeleteDraftEnvelopeAttachmentsOutputSchema,
+	},
+	deprecatedEndpointForTabBlob: {
+		input: DeprecatedEndpointForTabBlobInputSchema,
+		output: DeprecatedEndpointForTabBlobOutputSchema,
+	},
+	getEnvelopeDocGenFormFields: {
+		input: GetEnvelopeDocGenFormFieldsInputSchema,
+		output: GetEnvelopeDocGenFormFieldsOutputSchema,
+	},
+	getEnvelopeDocumentFields: {
+		input: GetEnvelopeDocumentFieldsInputSchema,
+		output: GetEnvelopeDocumentFieldsOutputSchema,
+	},
+	getPdftranscriptOfEnvelopeComments: {
+		input: GetPdftranscriptOfEnvelopeCommentsInputSchema,
+		output: GetPdftranscriptOfEnvelopeCommentsOutputSchema,
+	},
+	getRecipientDocumentVisibility: {
+		input: GetRecipientDocumentVisibilityInputSchema,
+		output: GetRecipientDocumentVisibilityOutputSchema,
+	},
+	getTabsBlobForEnvelope: {
+		input: GetTabsBlobForEnvelopeInputSchema,
+		output: GetTabsBlobForEnvelopeOutputSchema,
+	},
+	listEnvelopeAttachmentsByEnvelopeId: {
+		input: ListEnvelopeAttachmentsByEnvelopeIdInputSchema,
+		output: ListEnvelopeAttachmentsByEnvelopeIdOutputSchema,
+	},
+	retrieveEnvelopeAttachment: {
+		input: RetrieveEnvelopeAttachmentInputSchema,
+		output: RetrieveEnvelopeAttachmentOutputSchema,
+	},
+	retrieveEnvelopeDocuments: {
+		input: RetrieveEnvelopeDocumentsInputSchema,
+		output: RetrieveEnvelopeDocumentsOutputSchema,
+	},
+	retrieveEnvelopeHtmlDefinition: {
+		input: RetrieveEnvelopeHtmlDefinitionInputSchema,
+		output: RetrieveEnvelopeHtmlDefinitionOutputSchema,
+	},
+	returnEnvelopeTabDataForExistingEnvelope: {
+		input: ReturnEnvelopeTabDataForExistingEnvelopeInputSchema,
+		output: ReturnEnvelopeTabDataForExistingEnvelopeOutputSchema,
+	},
+	updateCustomFieldsInEnvelopeDocument: {
+		input: UpdateCustomFieldsInEnvelopeDocumentInputSchema,
+		output: UpdateCustomFieldsInEnvelopeDocumentOutputSchema,
+	},
+	updateDocumentVisibilityRecipients: {
+		input: UpdateDocumentVisibilityRecipientsInputSchema,
+		output: UpdateDocumentVisibilityRecipientsOutputSchema,
+	},
+	updateEnvelopeAttachment: {
+		input: UpdateEnvelopeAttachmentInputSchema,
+		output: UpdateEnvelopeAttachmentOutputSchema,
+	},
+	updateEnvelopeDocGenFormFields: {
+		input: UpdateEnvelopeDocGenFormFieldsInputSchema,
+		output: UpdateEnvelopeDocGenFormFieldsOutputSchema,
+	},
+	updateRecipientDocumentVisibility: {
+		input: UpdateRecipientDocumentVisibilityInputSchema,
+		output: UpdateRecipientDocumentVisibilityOutputSchema,
+	},
+	deletePageFromDocumentInEnvelope: {
+		input: DeletePageFromDocumentInEnvelopeInputSchema,
+		output: DeletePageFromDocumentInEnvelopeOutputSchema,
+	},
+	getEnvelopeNotificationDefaults: {
+		input: GetEnvelopeNotificationDefaultsInputSchema,
+		output: GetEnvelopeNotificationDefaultsOutputSchema,
+	},
+	getPageImageFromEnvelope: {
+		input: GetPageImageFromEnvelopeInputSchema,
+		output: GetPageImageFromEnvelopeOutputSchema,
+	},
+	getSignatureInformationForRecipient: {
+		input: GetSignatureInformationForRecipientInputSchema,
+		output: GetSignatureInformationForRecipientOutputSchema,
+	},
+	retrieveEnvelopeAuditEvents: {
+		input: RetrieveEnvelopeAuditEventsInputSchema,
+		output: RetrieveEnvelopeAuditEventsOutputSchema,
+	},
+	retrieveEnvelopeNotificationDetails: {
+		input: RetrieveEnvelopeNotificationDetailsInputSchema,
+		output: RetrieveEnvelopeNotificationDetailsOutputSchema,
+	},
+	retrieveSignerSignatureImageInformation: {
+		input: RetrieveSignerSignatureImageInformationInputSchema,
+		output: RetrieveSignerSignatureImageInformationOutputSchema,
+	},
+	retrieveUserInitialsImageForEnvelopes: {
+		input: RetrieveUserInitialsImageForEnvelopesInputSchema,
+		output: RetrieveUserInitialsImageForEnvelopesOutputSchema,
+	},
+	returnsDocumentPageImagesBasedOnInput: {
+		input: ReturnsDocumentPageImagesBasedOnInputInputSchema,
+		output: ReturnsDocumentPageImagesBasedOnInputOutputSchema,
+	},
+	rotatePageImageForEnvelope: {
+		input: RotatePageImageForEnvelopeInputSchema,
+		output: RotatePageImageForEnvelopeOutputSchema,
+	},
+	setInitialsImageForAccountlessSigner: {
+		input: SetInitialsImageForAccountlessSignerInputSchema,
+		output: SetInitialsImageForAccountlessSignerOutputSchema,
+	},
+	setSignatureImageForNoAccountSigner: {
+		input: SetSignatureImageForNoAccountSignerInputSchema,
+		output: SetSignatureImageForNoAccountSignerOutputSchema,
+	},
+	updateEnvelopeNotificationSettings: {
+		input: UpdateEnvelopeNotificationSettingsInputSchema,
+		output: UpdateEnvelopeNotificationSettingsOutputSchema,
+	},
+	createIdproofResourceTokenForRecipient: {
+		input: CreateIdproofResourceTokenForRecipientInputSchema,
+		output: CreateIdproofResourceTokenForRecipientOutputSchema,
+	},
+	createRecipientManualReviewLink: {
+		input: CreateRecipientManualReviewLinkInputSchema,
+		output: CreateRecipientManualReviewLinkOutputSchema,
+	},
+	createRecipientPreviewForEnvelope: {
+		input: CreateRecipientPreviewForEnvelopeInputSchema,
+		output: CreateRecipientPreviewForEnvelopeOutputSchema,
+	},
+	createSenderViewUrlForEnvelope: {
+		input: CreateSenderViewUrlForEnvelopeInputSchema,
+		output: CreateSenderViewUrlForEnvelopeOutputSchema,
+	},
+	generateEditViewUrlforEnvelope: {
+		input: GenerateEditViewUrlforEnvelopeInputSchema,
+		output: GenerateEditViewUrlforEnvelopeOutputSchema,
+	},
+	generateEnvelopeCorrectionUrl: {
+		input: GenerateEnvelopeCorrectionUrlInputSchema,
+		output: GenerateEnvelopeCorrectionUrlOutputSchema,
+	},
+	generateRecipientSharedViewUrl: {
+		input: GenerateRecipientSharedViewUrlInputSchema,
+		output: GenerateRecipientSharedViewUrlOutputSchema,
+	},
+	getElectronicDisclosureForRecipient: {
+		input: GetElectronicDisclosureForRecipientInputSchema,
+		output: GetElectronicDisclosureForRecipientOutputSchema,
+	},
+	getUrlforEmbeddingDocusignUi: {
+		input: GetUrlforEmbeddingDocusignUiInputSchema,
+		output: GetUrlforEmbeddingDocusignUiOutputSchema,
+	},
+	retrieveAccountVerificationWorkflows: {
+		input: RetrieveAccountVerificationWorkflowsInputSchema,
+		output: RetrieveAccountVerificationWorkflowsOutputSchema,
+	},
+	retrieveDefaultDisclosureForEnvelope: {
+		input: RetrieveDefaultDisclosureForEnvelopeInputSchema,
+		output: RetrieveDefaultDisclosureForEnvelopeOutputSchema,
+	},
+	revokeEnvelopeCorrectionUrl: {
+		input: RevokeEnvelopeCorrectionUrlInputSchema,
+		output: RevokeEnvelopeCorrectionUrlOutputSchema,
+	},
+	addEmailOverridesToEnvelope: {
+		input: AddEmailOverridesToEnvelopeInputSchema,
+		output: AddEmailOverridesToEnvelopeOutputSchema,
+	},
+	addStepToEnvelopeWorkflow: {
+		input: AddStepToEnvelopeWorkflowInputSchema,
+		output: AddStepToEnvelopeWorkflowOutputSchema,
+	},
+	addTemplatesToDocumentInEnvelope: {
+		input: AddTemplatesToDocumentInEnvelopeInputSchema,
+		output: AddTemplatesToDocumentInEnvelopeOutputSchema,
+	},
+	addTemplatesToEnvelope: {
+		input: AddTemplatesToEnvelopeInputSchema,
+		output: AddTemplatesToEnvelopeOutputSchema,
+	},
+	createCustomFieldsForEnvelope: {
+		input: CreateCustomFieldsForEnvelopeInputSchema,
+		output: CreateCustomFieldsForEnvelopeOutputSchema,
+	},
+	createTemplateWorkflowStep: {
+		input: CreateTemplateWorkflowStepInputSchema,
+		output: CreateTemplateWorkflowStepOutputSchema,
+	},
+	deleteDelayedRoutingRuleForEnvelopeStep: {
+		input: DeleteDelayedRoutingRuleForEnvelopeStepInputSchema,
+		output: DeleteDelayedRoutingRuleForEnvelopeStepOutputSchema,
+	},
+	deleteDelayedRoutingRulesForTemplate: {
+		input: DeleteDelayedRoutingRulesForTemplateInputSchema,
+		output: DeleteDelayedRoutingRulesForTemplateOutputSchema,
+	},
+	deleteEnvelopeCustomFields: {
+		input: DeleteEnvelopeCustomFieldsInputSchema,
+		output: DeleteEnvelopeCustomFieldsOutputSchema,
+	},
+	deleteEnvelopeEmailSettings: {
+		input: DeleteEnvelopeEmailSettingsInputSchema,
+		output: DeleteEnvelopeEmailSettingsOutputSchema,
+	},
+	deleteEnvelopeLock: {
+		input: DeleteEnvelopeLockInputSchema,
+		output: DeleteEnvelopeLockOutputSchema,
+	},
+	deleteEnvelopeScheduledSendingRules: {
+		input: DeleteEnvelopeScheduledSendingRulesInputSchema,
+		output: DeleteEnvelopeScheduledSendingRulesOutputSchema,
+	},
+	deleteEnvelopeTransferRule: {
+		input: DeleteEnvelopeTransferRuleInputSchema,
+		output: DeleteEnvelopeTransferRuleOutputSchema,
+	},
+	deleteEnvelopeWorkflowDefinition: {
+		input: DeleteEnvelopeWorkflowDefinitionInputSchema,
+		output: DeleteEnvelopeWorkflowDefinitionOutputSchema,
+	},
+	deleteEnvelopeWorkflowStep: {
+		input: DeleteEnvelopeWorkflowStepInputSchema,
+		output: DeleteEnvelopeWorkflowStepOutputSchema,
+	},
+	deleteScheduledSendingRules: {
+		input: DeleteScheduledSendingRulesInputSchema,
+		output: DeleteScheduledSendingRulesOutputSchema,
+	},
+	deleteTemplateFromEnvelopeDocument: {
+		input: DeleteTemplateFromEnvelopeDocumentInputSchema,
+		output: DeleteTemplateFromEnvelopeDocumentOutputSchema,
+	},
+	deleteTemplateWorkflowStep: {
+		input: DeleteTemplateWorkflowStepInputSchema,
+		output: DeleteTemplateWorkflowStepOutputSchema,
+	},
+	deleteWorkflowDefinitionForTemplate: {
+		input: DeleteWorkflowDefinitionForTemplateInputSchema,
+		output: DeleteWorkflowDefinitionForTemplateOutputSchema,
+	},
+	getEnvelopeLockInformation: {
+		input: GetEnvelopeLockInformationInputSchema,
+		output: GetEnvelopeLockInformationOutputSchema,
+	},
+	getEnvelopeWorkflowDefinition: {
+		input: GetEnvelopeWorkflowDefinitionInputSchema,
+		output: GetEnvelopeWorkflowDefinitionOutputSchema,
+	},
+	getEnvelopeWorkflowDelayedRoutingDefinition: {
+		input: GetEnvelopeWorkflowDelayedRoutingDefinitionInputSchema,
+		output: GetEnvelopeWorkflowDelayedRoutingDefinitionOutputSchema,
+	},
+	getTemplateDelayedRoutingRules: {
+		input: GetTemplateDelayedRoutingRulesInputSchema,
+		output: GetTemplateDelayedRoutingRulesOutputSchema,
+	},
+	getTemplateScheduledSendingSettings: {
+		input: GetTemplateScheduledSendingSettingsInputSchema,
+		output: GetTemplateScheduledSendingSettingsOutputSchema,
+	},
+	getTemplatesForEnvelopeDocument: {
+		input: GetTemplatesForEnvelopeDocumentInputSchema,
+		output: GetTemplatesForEnvelopeDocumentOutputSchema,
+	},
+	getTemplatesUsedInEnvelope: {
+		input: GetTemplatesUsedInEnvelopeInputSchema,
+		output: GetTemplatesUsedInEnvelopeOutputSchema,
+	},
+	getWorkflowStepForEnvelope: {
+		input: GetWorkflowStepForEnvelopeInputSchema,
+		output: GetWorkflowStepForEnvelopeOutputSchema,
+	},
+	listEnvelopeAndDocumentCustomFields: {
+		input: ListEnvelopeAndDocumentCustomFieldsInputSchema,
+		output: ListEnvelopeAndDocumentCustomFieldsOutputSchema,
+	},
+	lockAnEnvelopeForEditing: {
+		input: LockAnEnvelopeForEditingInputSchema,
+		output: LockAnEnvelopeForEditingOutputSchema,
+	},
+	retrieveCustomFieldsForEnvelope: {
+		input: RetrieveCustomFieldsForEnvelopeInputSchema,
+		output: RetrieveCustomFieldsForEnvelopeOutputSchema,
+	},
+	retrieveEnvelopeEmailOverrides: {
+		input: RetrieveEnvelopeEmailOverridesInputSchema,
+		output: RetrieveEnvelopeEmailOverridesOutputSchema,
+	},
+	retrieveWorkflowStepForTemplate: {
+		input: RetrieveWorkflowStepForTemplateInputSchema,
+		output: RetrieveWorkflowStepForTemplateOutputSchema,
+	},
+	returnScheduledSendingRulesForEnvelope: {
+		input: ReturnScheduledSendingRulesForEnvelopeInputSchema,
+		output: ReturnScheduledSendingRulesForEnvelopeOutputSchema,
+	},
+	returnTemplateWorkflowDefinition: {
+		input: ReturnTemplateWorkflowDefinitionInputSchema,
+		output: ReturnTemplateWorkflowDefinitionOutputSchema,
+	},
+	submitBatchHistoricalEnvelopesToWebhook: {
+		input: SubmitBatchHistoricalEnvelopesToWebhookInputSchema,
+		output: SubmitBatchHistoricalEnvelopesToWebhookOutputSchema,
+	},
+	updateEnvelopeCustomFields: {
+		input: UpdateEnvelopeCustomFieldsInputSchema,
+		output: UpdateEnvelopeCustomFieldsOutputSchema,
+	},
+	updateEnvelopeDelayedRoutingRules: {
+		input: UpdateEnvelopeDelayedRoutingRulesInputSchema,
+		output: UpdateEnvelopeDelayedRoutingRulesOutputSchema,
+	},
+	updateEnvelopeEmailSettings: {
+		input: UpdateEnvelopeEmailSettingsInputSchema,
+		output: UpdateEnvelopeEmailSettingsOutputSchema,
+	},
+	updateEnvelopeScheduledSendingRules: {
+		input: UpdateEnvelopeScheduledSendingRulesInputSchema,
+		output: UpdateEnvelopeScheduledSendingRulesOutputSchema,
+	},
+	updateEnvelopeWorkflowDefinition: {
+		input: UpdateEnvelopeWorkflowDefinitionInputSchema,
+		output: UpdateEnvelopeWorkflowDefinitionOutputSchema,
+	},
+	updateEnvelopeWorkflowStep: {
+		input: UpdateEnvelopeWorkflowStepInputSchema,
+		output: UpdateEnvelopeWorkflowStepOutputSchema,
+	},
+	updateLockForEnvelope: {
+		input: UpdateLockForEnvelopeInputSchema,
+		output: UpdateLockForEnvelopeOutputSchema,
+	},
+	updateTemplateDelayedRoutingRules: {
+		input: UpdateTemplateDelayedRoutingRulesInputSchema,
+		output: UpdateTemplateDelayedRoutingRulesOutputSchema,
+	},
+	updateTemplateScheduledSendingRules: {
+		input: UpdateTemplateScheduledSendingRulesInputSchema,
+		output: UpdateTemplateScheduledSendingRulesOutputSchema,
+	},
+	updateTemplateWorkflowDefinition: {
+		input: UpdateTemplateWorkflowDefinitionInputSchema,
+		output: UpdateTemplateWorkflowDefinitionOutputSchema,
+	},
+	updateWorkflowStepForTemplate: {
+		input: UpdateWorkflowStepForTemplateInputSchema,
+		output: UpdateWorkflowStepForTemplateOutputSchema,
+	},
+	addExistingBrandToGroup: {
+		input: AddExistingBrandToGroupInputSchema,
+		output: AddExistingBrandToGroupOutputSchema,
+	},
+	addMembersToSigningGroup: {
+		input: AddMembersToSigningGroupInputSchema,
+		output: AddMembersToSigningGroupOutputSchema,
+	},
+	addUsersToExistingGroup: {
+		input: AddUsersToExistingGroupInputSchema,
+		output: AddUsersToExistingGroupOutputSchema,
+	},
+	createGroupsForAccount: {
+		input: CreateGroupsForAccountInputSchema,
+		output: CreateGroupsForAccountOutputSchema,
+	},
+	createNewAccountPermissionProfile: {
+		input: CreateNewAccountPermissionProfileInputSchema,
+		output: CreateNewAccountPermissionProfileOutputSchema,
+	},
+	createSigningGroup: {
+		input: CreateSigningGroupInputSchema,
+		output: CreateSigningGroupOutputSchema,
+	},
+	deleteAccountPermissionProfile: {
+		input: DeleteAccountPermissionProfileInputSchema,
+		output: DeleteAccountPermissionProfileOutputSchema,
+	},
+	deleteBrandFromGroup: {
+		input: DeleteBrandFromGroupInputSchema,
+		output: DeleteBrandFromGroupOutputSchema,
+	},
+	deleteMembersFromSigningGroup: {
+		input: DeleteMembersFromSigningGroupInputSchema,
+		output: DeleteMembersFromSigningGroupOutputSchema,
+	},
+	deleteOneOrMoreSigningGroups: {
+		input: DeleteOneOrMoreSigningGroupsInputSchema,
+		output: DeleteOneOrMoreSigningGroupsOutputSchema,
+	},
+	deleteUserGroup: {
+		input: DeleteUserGroupInputSchema,
+		output: DeleteUserGroupOutputSchema,
+	},
+	deleteUsersFromGroup: {
+		input: DeleteUsersFromGroupInputSchema,
+		output: DeleteUsersFromGroupOutputSchema,
+	},
+	getBrandsInformationForGroup: {
+		input: GetBrandsInformationForGroupInputSchema,
+		output: GetBrandsInformationForGroupOutputSchema,
+	},
+	getGroupsInformationForAccount: {
+		input: GetGroupsInformationForAccountInputSchema,
+		output: GetGroupsInformationForAccountOutputSchema,
+	},
+	getListOfAccountPermissionProfiles: {
+		input: GetListOfAccountPermissionProfilesInputSchema,
+		output: GetListOfAccountPermissionProfilesOutputSchema,
+	},
+	getMembersOfASigningGroup: {
+		input: GetMembersOfASigningGroupInputSchema,
+		output: GetMembersOfASigningGroupOutputSchema,
+	},
+	getPermissionProfileForAccount: {
+		input: GetPermissionProfileForAccountInputSchema,
+		output: GetPermissionProfileForAccountOutputSchema,
+	},
+	getSigningGroupInformation: {
+		input: GetSigningGroupInformationInputSchema,
+		output: GetSigningGroupInformationOutputSchema,
+	},
+	getUsersInGroup: {
+		input: GetUsersInGroupInputSchema,
+		output: GetUsersInGroupOutputSchema,
+	},
+	retrieveAccountSigningGroups: {
+		input: RetrieveAccountSigningGroupsInputSchema,
+		output: RetrieveAccountSigningGroupsOutputSchema,
+	},
+	updateGroupInformation: {
+		input: UpdateGroupInformationInputSchema,
+		output: UpdateGroupInformationOutputSchema,
+	},
+	updatePermissionProfileSettings: {
+		input: UpdatePermissionProfileSettingsInputSchema,
+		output: UpdatePermissionProfileSettingsOutputSchema,
+	},
+	updateSigningGroupDetails: {
+		input: UpdateSigningGroupDetailsInputSchema,
+		output: UpdateSigningGroupDetailsOutputSchema,
+	},
+	updateSigningGroupNames: {
+		input: UpdateSigningGroupNamesInputSchema,
+		output: UpdateSigningGroupNamesOutputSchema,
+	},
+	createNotaryJurisdictionObject: {
+		input: CreateNotaryJurisdictionObjectInputSchema,
+		output: CreateNotaryJurisdictionObjectOutputSchema,
+	},
+	deleteNotaryJurisdiction: {
+		input: DeleteNotaryJurisdictionInputSchema,
+		output: DeleteNotaryJurisdictionOutputSchema,
+	},
+	getNotaryJournals: {
+		input: GetNotaryJournalsInputSchema,
+		output: GetNotaryJournalsOutputSchema,
+	},
+	getNotaryJurisdictionObject: {
+		input: GetNotaryJurisdictionObjectInputSchema,
+		output: GetNotaryJurisdictionObjectOutputSchema,
+	},
+	getNotaryUserSettings: {
+		input: GetNotaryUserSettingsInputSchema,
+		output: GetNotaryUserSettingsOutputSchema,
+	},
+	listNotaryJournals: {
+		input: ListNotaryJournalsInputSchema,
+		output: ListNotaryJournalsOutputSchema,
+	},
+	listRegisteredNotaryJurisdictions: {
+		input: ListRegisteredNotaryJurisdictionsInputSchema,
+		output: ListRegisteredNotaryJurisdictionsOutputSchema,
+	},
+	registerCurrentUserAsNotary: {
+		input: RegisterCurrentUserAsNotaryInputSchema,
+		output: RegisterCurrentUserAsNotaryOutputSchema,
+	},
+	updateNotaryJurisdictionInfo: {
+		input: UpdateNotaryJurisdictionInfoInputSchema,
+		output: UpdateNotaryJurisdictionInfoOutputSchema,
+	},
+	updateUserNotaryInformation: {
+		input: UpdateUserNotaryInformationInputSchema,
+		output: UpdateUserNotaryInformationOutputSchema,
+	},
+	deletePowerFormById: {
+		input: DeletePowerFormByIdInputSchema,
+		output: DeletePowerFormByIdOutputSchema,
+	},
+	getPowerFormSenders: {
+		input: GetPowerFormSendersInputSchema,
+		output: GetPowerFormSendersOutputSchema,
+	},
+	retrievePowerFormDataEntries: {
+		input: RetrievePowerFormDataEntriesInputSchema,
+		output: RetrievePowerFormDataEntriesOutputSchema,
+	},
+	createCustomFieldsInTemplateDocument: {
+		input: CreateCustomFieldsInTemplateDocumentInputSchema,
+		output: CreateCustomFieldsInTemplateDocumentOutputSchema,
+	},
+	createPreviewOfResponsiveHtml: {
+		input: CreatePreviewOfResponsiveHtmlInputSchema,
+		output: CreatePreviewOfResponsiveHtmlOutputSchema,
+	},
+	createTemplateDocumentCustomFields: {
+		input: CreateTemplateDocumentCustomFieldsInputSchema,
+		output: CreateTemplateDocumentCustomFieldsOutputSchema,
+	},
+	createTemplateRecipientPreviewUrl: {
+		input: CreateTemplateRecipientPreviewUrlInputSchema,
+		output: CreateTemplateRecipientPreviewUrlOutputSchema,
+	},
+	createTemplateResponsiveHtmlPreview: {
+		input: CreateTemplateResponsiveHtmlPreviewInputSchema,
+		output: CreateTemplateResponsiveHtmlPreviewOutputSchema,
+	},
+	createUrlforTemplateEditView: {
+		input: CreateUrlforTemplateEditViewInputSchema,
+		output: CreateUrlforTemplateEditViewOutputSchema,
+	},
+	deleteCustomDocumentFieldsFromTemplate: {
+		input: DeleteCustomDocumentFieldsFromTemplateInputSchema,
+		output: DeleteCustomDocumentFieldsFromTemplateOutputSchema,
+	},
+	deleteCustomFieldsInTemplate: {
+		input: DeleteCustomFieldsInTemplateInputSchema,
+		output: DeleteCustomFieldsInTemplateOutputSchema,
+	},
+	deletePageFromTemplateDocument: {
+		input: DeletePageFromTemplateDocumentInputSchema,
+		output: DeletePageFromTemplateDocumentOutputSchema,
+	},
+	deleteTemplateLock: {
+		input: DeleteTemplateLockInputSchema,
+		output: DeleteTemplateLockOutputSchema,
+	},
+	getOriginalHtmlDefinitionForTemplate: {
+		input: GetOriginalHtmlDefinitionForTemplateInputSchema,
+		output: GetOriginalHtmlDefinitionForTemplateOutputSchema,
+	},
+	getTemplateDocumentHtmlDefinition: {
+		input: GetTemplateDocumentHtmlDefinitionInputSchema,
+		output: GetTemplateDocumentHtmlDefinitionOutputSchema,
+	},
+	getTemplateLockInformation: {
+		input: GetTemplateLockInformationInputSchema,
+		output: GetTemplateLockInformationOutputSchema,
+	},
+	getTemplateNotificationInformation: {
+		input: GetTemplateNotificationInformationInputSchema,
+		output: GetTemplateNotificationInformationOutputSchema,
+	},
+	getTemplateRecipientDocumentVisibility: {
+		input: GetTemplateRecipientDocumentVisibilityInputSchema,
+		output: GetTemplateRecipientDocumentVisibilityOutputSchema,
+	},
+	lockTemplateForEditing: {
+		input: LockTemplateForEditingInputSchema,
+		output: LockTemplateForEditingOutputSchema,
+	},
+	removeGroupSharingPermissionsForTemplate: {
+		input: RemoveGroupSharingPermissionsForTemplateInputSchema,
+		output: RemoveGroupSharingPermissionsForTemplateOutputSchema,
+	},
+	removeTemplatesFromFavorites: {
+		input: RemoveTemplatesFromFavoritesInputSchema,
+		output: RemoveTemplatesFromFavoritesOutputSchema,
+	},
+	retrieveAccountFavoriteTemplates: {
+		input: RetrieveAccountFavoriteTemplatesInputSchema,
+		output: RetrieveAccountFavoriteTemplatesOutputSchema,
+	},
+	retrieveCustomFieldsForTemplate: {
+		input: RetrieveCustomFieldsForTemplateInputSchema,
+		output: RetrieveCustomFieldsForTemplateOutputSchema,
+	},
+	retrievePdfFromSpecifiedTemplate: {
+		input: RetrievePdfFromSpecifiedTemplateInputSchema,
+		output: RetrievePdfFromSpecifiedTemplateOutputSchema,
+	},
+	retrieveTemplateCustomFields: {
+		input: RetrieveTemplateCustomFieldsInputSchema,
+		output: RetrieveTemplateCustomFieldsOutputSchema,
+	},
+	retrieveTemplateDocumentPageImages: {
+		input: RetrieveTemplateDocumentPageImagesInputSchema,
+		output: RetrieveTemplateDocumentPageImagesOutputSchema,
+	},
+	retrieveTemplatePageImage: {
+		input: RetrieveTemplatePageImageInputSchema,
+		output: RetrieveTemplatePageImageOutputSchema,
+	},
+	rotateTemplatePageImage: {
+		input: RotateTemplatePageImageInputSchema,
+		output: RotateTemplatePageImageOutputSchema,
+	},
+	setTemplatesAsAccountFavorites: {
+		input: SetTemplatesAsAccountFavoritesInputSchema,
+		output: SetTemplatesAsAccountFavoritesOutputSchema,
+	},
+	shareTemplateWithGroup: {
+		input: ShareTemplateWithGroupInputSchema,
+		output: ShareTemplateWithGroupOutputSchema,
+	},
+	updateTemplateCustomFields: {
+		input: UpdateTemplateCustomFieldsInputSchema,
+		output: UpdateTemplateCustomFieldsOutputSchema,
+	},
+	updateTemplateDocumentCustomFields: {
+		input: UpdateTemplateDocumentCustomFieldsInputSchema,
+		output: UpdateTemplateDocumentCustomFieldsOutputSchema,
+	},
+	updateTemplateDocVisibility: {
+		input: UpdateTemplateDocVisibilityInputSchema,
+		output: UpdateTemplateDocVisibilityOutputSchema,
+	},
+	updateTemplateLockInformation: {
+		input: UpdateTemplateLockInformationInputSchema,
+		output: UpdateTemplateLockInformationOutputSchema,
+	},
+	updateTemplateNotificationSettings: {
+		input: UpdateTemplateNotificationSettingsInputSchema,
+		output: UpdateTemplateNotificationSettingsOutputSchema,
+	},
+	updateTemplateRecipientDocumentVisibility: {
+		input: UpdateTemplateRecipientDocumentVisibilityInputSchema,
+		output: UpdateTemplateRecipientDocumentVisibilityOutputSchema,
+	},
+	addNewUsersToASpecifiedAccount: {
+		input: AddNewUsersToASpecifiedAccountInputSchema,
+		output: AddNewUsersToASpecifiedAccountOutputSchema,
+	},
+	addOrUpdateUserCustomSettings: {
+		input: AddOrUpdateUserCustomSettingsInputSchema,
+		output: AddOrUpdateUserCustomSettingsOutputSchema,
+	},
+	addOrUpdateUserSignature: {
+		input: AddOrUpdateUserSignatureInputSchema,
+		output: AddOrUpdateUserSignatureOutputSchema,
+	},
+	addUserSignatureAndInitialsImages: {
+		input: AddUserSignatureAndInitialsImagesInputSchema,
+		output: AddUserSignatureAndInitialsImagesOutputSchema,
+	},
+	changeUsersInAccount: {
+		input: ChangeUsersInAccountInputSchema,
+		output: ChangeUsersInAccountOutputSchema,
+	},
+	closeUsersInAccount: {
+		input: CloseUsersInAccountInputSchema,
+		output: CloseUsersInAccountOutputSchema,
+	},
+	createOrUpdateUserAuthorizations: {
+		input: CreateOrUpdateUserAuthorizationsInputSchema,
+		output: CreateOrUpdateUserAuthorizationsOutputSchema,
+	},
+	createUserAuthorizationForAgentUser: {
+		input: CreateUserAuthorizationForAgentUserInputSchema,
+		output: CreateUserAuthorizationForAgentUserOutputSchema,
+	},
+	deleteCustomUserSettings: {
+		input: DeleteCustomUserSettingsInputSchema,
+		output: DeleteCustomUserSettingsOutputSchema,
+	},
+	deleteUserAuthorization: {
+		input: DeleteUserAuthorizationInputSchema,
+		output: DeleteUserAuthorizationOutputSchema,
+	},
+	deleteUserAuthorizations: {
+		input: DeleteUserAuthorizationsInputSchema,
+		output: DeleteUserAuthorizationsOutputSchema,
+	},
+	deleteUserInitialsOrSignatureImage: {
+		input: DeleteUserInitialsOrSignatureImageInputSchema,
+		output: DeleteUserInitialsOrSignatureImageOutputSchema,
+	},
+	deleteUserProfileImage: {
+		input: DeleteUserProfileImageInputSchema,
+		output: DeleteUserProfileImageOutputSchema,
+	},
+	getAgentUserAuthorizations: {
+		input: GetAgentUserAuthorizationsInputSchema,
+		output: GetAgentUserAuthorizationsOutputSchema,
+	},
+	getUserAuthorizationDetails: {
+		input: GetUserAuthorizationDetailsInputSchema,
+		output: GetUserAuthorizationDetailsOutputSchema,
+	},
+	getUserAuthorizationsForPrincipal: {
+		input: GetUserAuthorizationsForPrincipalInputSchema,
+		output: GetUserAuthorizationsForPrincipalOutputSchema,
+	},
+	getUserInformationById: {
+		input: GetUserInformationByIdInputSchema,
+		output: GetUserInformationByIdOutputSchema,
+	},
+	listUsersForAccount: {
+		input: ListUsersForAccountInputSchema,
+		output: ListUsersForAccountOutputSchema,
+	},
+	removeUserSignatureInformation: {
+		input: RemoveUserSignatureInformationInputSchema,
+		output: RemoveUserSignatureInformationOutputSchema,
+	},
+	retrieveCustomUserSettings: {
+		input: RetrieveCustomUserSettingsInputSchema,
+		output: RetrieveCustomUserSettingsOutputSchema,
+	},
+	retrieveUserAccountSettings: {
+		input: RetrieveUserAccountSettingsInputSchema,
+		output: RetrieveUserAccountSettingsOutputSchema,
+	},
+	retrieveUserProfileImage: {
+		input: RetrieveUserProfileImageInputSchema,
+		output: RetrieveUserProfileImageOutputSchema,
+	},
+	retrieveUserProfileInformation: {
+		input: RetrieveUserProfileInformationInputSchema,
+		output: RetrieveUserProfileInformationOutputSchema,
+	},
+	retrieveUserSignatureDefinitions: {
+		input: RetrieveUserSignatureDefinitionsInputSchema,
+		output: RetrieveUserSignatureDefinitionsOutputSchema,
+	},
+	retrieveUserSignatureImage: {
+		input: RetrieveUserSignatureImageInputSchema,
+		output: RetrieveUserSignatureImageOutputSchema,
+	},
+	retrieveUserSignatureInformation: {
+		input: RetrieveUserSignatureInformationInputSchema,
+		output: RetrieveUserSignatureInformationOutputSchema,
+	},
+	setUserSignatureImage: {
+		input: SetUserSignatureImageInputSchema,
+		output: SetUserSignatureImageOutputSchema,
+	},
+	updateUserAccountSettings: {
+		input: UpdateUserAccountSettingsInputSchema,
+		output: UpdateUserAccountSettingsOutputSchema,
+	},
+	updateUserAuthorizationDates: {
+		input: UpdateUserAuthorizationDatesInputSchema,
+		output: UpdateUserAuthorizationDatesOutputSchema,
+	},
+	updateUserInformationForSpecifiedUser: {
+		input: UpdateUserInformationForSpecifiedUserInputSchema,
+		output: UpdateUserInformationForSpecifiedUserOutputSchema,
+	},
+	updateUserProfileImage: {
+		input: UpdateUserProfileImageInputSchema,
+		output: UpdateUserProfileImageOutputSchema,
+	},
+	updateUserProfileInformation: {
+		input: UpdateUserProfileInformationInputSchema,
+		output: UpdateUserProfileInformationOutputSchema,
+	},
+	updateUserSignatureById: {
+		input: UpdateUserSignatureByIdInputSchema,
+		output: UpdateUserSignatureByIdOutputSchema,
+	},
+	addFileToWorkspace: {
+		input: AddFileToWorkspaceInputSchema,
+		output: AddFileToWorkspaceOutputSchema,
+	},
+	createACollaborativeWorkspace: {
+		input: CreateACollaborativeWorkspaceInputSchema,
+		output: CreateACollaborativeWorkspaceOutputSchema,
+	},
+	deleteExistingWorkspaceLogically: {
+		input: DeleteExistingWorkspaceLogicallyInputSchema,
+		output: DeleteExistingWorkspaceLogicallyOutputSchema,
+	},
+	deleteWorkspaceFilesOrFolders: {
+		input: DeleteWorkspaceFilesOrFoldersInputSchema,
+		output: DeleteWorkspaceFilesOrFoldersOutputSchema,
+	},
+	getWorkspaceFile: {
+		input: GetWorkspaceFileInputSchema,
+		output: GetWorkspaceFileOutputSchema,
+	},
+	getWorkspaceFolderContents: {
+		input: GetWorkspaceFolderContentsInputSchema,
+		output: GetWorkspaceFolderContentsOutputSchema,
+	},
+	listWorkspaceFilePages: {
+		input: ListWorkspaceFilePagesInputSchema,
+		output: ListWorkspaceFilePagesOutputSchema,
+	},
+	listWorkspaces: {
+		input: ListWorkspacesInputSchema,
+		output: ListWorkspacesOutputSchema,
+	},
+	retrievePropertiesAboutWorkspace: {
+		input: RetrievePropertiesAboutWorkspaceInputSchema,
+		output: RetrievePropertiesAboutWorkspaceOutputSchema,
+	},
+	updateWorkspaceInformation: {
+		input: UpdateWorkspaceInformationInputSchema,
+		output: UpdateWorkspaceInformationOutputSchema,
+	},
+	updateWorkspaceItemMetadata: {
+		input: UpdateWorkspaceItemMetadataInputSchema,
+		output: UpdateWorkspaceItemMetadataOutputSchema,
+	},
+};
+
+export const generatedInputSchemas = {
+	addOrUpdateAccountStamps: AddOrUpdateAccountStampsInputSchema,
+	createAccountCustomField: CreateAccountCustomFieldInputSchema,
+	createBccEmailArchiveConfiguration:
+		CreateBccEmailArchiveConfigurationInputSchema,
+	deleteAccountCustomField: DeleteAccountCustomFieldInputSchema,
+	deleteAccountStamp: DeleteAccountStampInputSchema,
+	deleteBccEmailArchiveConfiguration:
+		DeleteBccEmailArchiveConfigurationInputSchema,
+	deleteEnoteConfiguration: DeleteEnoteConfigurationInputSchema,
+	deleteSignatureForCaptiveRecipients:
+		DeleteSignatureForCaptiveRecipientsInputSchema,
+	deleteSpecifiedAccount: DeleteSpecifiedAccountInputSchema,
+	deleteStampImageForAccount: DeleteStampImageForAccountInputSchema,
+	getAccountBillingChargesList: GetAccountBillingChargesListInputSchema,
+	getAccountPasswordRules: GetAccountPasswordRulesInputSchema,
+	getAccountStampImage: GetAccountStampImageInputSchema,
+	getBccEmailArchiveConfigurations: GetBccEmailArchiveConfigurationsInputSchema,
+	getBccemailArchiveHistory: GetBccemailArchiveHistoryInputSchema,
+	getElectronicRecordAndSignatureDisclosure:
+		GetElectronicRecordAndSignatureDisclosureInputSchema,
+	getEnoteIntegrationSettings: GetEnoteIntegrationSettingsInputSchema,
+	getSpecifiedAccountStampInfo: GetSpecifiedAccountStampInfoInputSchema,
+	getSupportedLanguagesForRecipients:
+		GetSupportedLanguagesForRecipientsInputSchema,
+	getTabSettingsForAccount: GetTabSettingsForAccountInputSchema,
+	getUnsupportedFileTypesList: GetUnsupportedFileTypesListInputSchema,
+	getWatermarkDetailsForAccount: GetWatermarkDetailsForAccountInputSchema,
+	listSignatureProvidersForAccount: ListSignatureProvidersForAccountInputSchema,
+	modifyAccountNotificationSettings:
+		ModifyAccountNotificationSettingsInputSchema,
+	modifyTabSettingsForAccount: ModifyTabSettingsForAccountInputSchema,
+	retrieveAccountEnvelopePurgeConfig:
+		RetrieveAccountEnvelopePurgeConfigInputSchema,
+	retrieveAccountInformationForSpecifiedAccount:
+		RetrieveAccountInformationForSpecifiedAccountInputSchema,
+	retrieveAccountProvisioningInfo: RetrieveAccountProvisioningInfoInputSchema,
+	retrieveAccountSealProviders: RetrieveAccountSealProvidersInputSchema,
+	retrieveAccountSettingsInformation:
+		RetrieveAccountSettingsInformationInputSchema,
+	retrieveAvailableAccountStamps: RetrieveAvailableAccountStampsInputSchema,
+	retrieveSharedItemStatusForUsers: RetrieveSharedItemStatusForUsersInputSchema,
+	setEnvelopePurgeConfigForAccount: SetEnvelopePurgeConfigForAccountInputSchema,
+	setSharedAccessForUsersAndTemplates:
+		SetSharedAccessForUsersAndTemplatesInputSchema,
+	updateAccountCustomField: UpdateAccountCustomFieldInputSchema,
+	updateAccountPasswordRules: UpdateAccountPasswordRulesInputSchema,
+	updateAccountSettings: UpdateAccountSettingsInputSchema,
+	updateAccountStampById: UpdateAccountStampByIdInputSchema,
+	updateAccountStamps: UpdateAccountStampsInputSchema,
+	updateAccountWatermarkInformation:
+		UpdateAccountWatermarkInformationInputSchema,
+	updateAccountWatermarkPreview: UpdateAccountWatermarkPreviewInputSchema,
+	updateElectronicRecordDisclosure: UpdateElectronicRecordDisclosureInputSchema,
+	updateEnoteIntegrationConfig: UpdateEnoteIntegrationConfigInputSchema,
+	getDowngradePlanInfoForAccount: GetDowngradePlanInfoForAccountInputSchema,
+	listBillingInvoices: ListBillingInvoicesInputSchema,
+	listPastDueInvoices: ListPastDueInvoicesInputSchema,
+	listPaymentGatewayAccountsInfo: ListPaymentGatewayAccountsInfoInputSchema,
+	postPaymentToInvoice: PostPaymentToInvoiceInputSchema,
+	purchaseAdditionalEnvelopes: PurchaseAdditionalEnvelopesInputSchema,
+	queueDowngradeBillingPlanRequest: QueueDowngradeBillingPlanRequestInputSchema,
+	retrieveAccountBillingPlan: RetrieveAccountBillingPlanInputSchema,
+	retrieveBillingInvoice: RetrieveBillingInvoiceInputSchema,
+	retrieveBillingPaymentInfo: RetrieveBillingPaymentInfoInputSchema,
+	retrieveCreditCardInfo: RetrieveCreditCardInfoInputSchema,
+	retrieveListOfBillingPlans: RetrieveListOfBillingPlansInputSchema,
+	retrievePaymentInformationList: RetrievePaymentInformationListInputSchema,
+	updateBillingPlanForAccount: UpdateBillingPlanForAccountInputSchema,
+	createBrandProfilesForAccount: CreateBrandProfilesForAccountInputSchema,
+	deleteAccountBrand: DeleteAccountBrandInputSchema,
+	deleteBrandLogoByType: DeleteBrandLogoByTypeInputSchema,
+	deleteBrandProfiles: DeleteBrandProfilesInputSchema,
+	exportBrandToXmlfile: ExportBrandToXmlfileInputSchema,
+	getBrandLogoByType: GetBrandLogoByTypeInputSchema,
+	getSpecificBrandResourceFile: GetSpecificBrandResourceFileInputSchema,
+	listBrandsForAccount: ListBrandsForAccountInputSchema,
+	retrieveAccountBrandInformation: RetrieveAccountBrandInformationInputSchema,
+	returnBrandResourceMetadataForAccount:
+		ReturnBrandResourceMetadataForAccountInputSchema,
+	updateAccountBrandSettings: UpdateAccountBrandSettingsInputSchema,
+	applyActionToBulkSendEnvelopes: ApplyActionToBulkSendEnvelopesInputSchema,
+	createBulkSendRequest: CreateBulkSendRequestInputSchema,
+	createBulkSendTestRequest: CreateBulkSendTestRequestInputSchema,
+	getBulkSendBatchStatus: GetBulkSendBatchStatusInputSchema,
+	getBulkSendListsInformation: GetBulkSendListsInformationInputSchema,
+	listBulkSendBatchSummaries: ListBulkSendBatchSummariesInputSchema,
+	removeBulkSendList: RemoveBulkSendListInputSchema,
+	updateBulkSendBatchName: UpdateBulkSendBatchNameInputSchema,
+	addPartToChunkedUpload: AddPartToChunkedUploadInputSchema,
+	commitChunkedUploadForEnvelopes: CommitChunkedUploadForEnvelopesInputSchema,
+	deleteChunkedUpload: DeleteChunkedUploadInputSchema,
+	initiateNewChunkedUpload: InitiateNewChunkedUploadInputSchema,
+	retrieveChunkedUploadMetadata: RetrieveChunkedUploadMetadataInputSchema,
+	configureCloudStorageRedirectUrl: ConfigureCloudStorageRedirectUrlInputSchema,
+	deleteUserAuthForCloudStorageProviders:
+		DeleteUserAuthForCloudStorageProvidersInputSchema,
+	deleteUserCloudStorageAuthentication:
+		DeleteUserCloudStorageAuthenticationInputSchema,
+	getUserCloudStorageProviderConfiguration:
+		GetUserCloudStorageProviderConfigurationInputSchema,
+	listCloudStorageItems: ListCloudStorageItemsInputSchema,
+	retrieveCloudStorageProviderConfiguration:
+		RetrieveCloudStorageProviderConfigurationInputSchema,
+	retrieveItemsInCloudStorageFolder:
+		RetrieveItemsInCloudStorageFolderInputSchema,
+	createConnectConfigurationForAccount:
+		CreateConnectConfigurationForAccountInputSchema,
+	deleteConnectConfiguration: DeleteConnectConfigurationInputSchema,
+	deleteConnectFailureLogEntry: DeleteConnectFailureLogEntryInputSchema,
+	deleteConnectLogEntries: DeleteConnectLogEntriesInputSchema,
+	deleteConnectOauthConfiguration: DeleteConnectOauthConfigurationInputSchema,
+	deleteSpecificConnectLogEntry: DeleteSpecificConnectLogEntryInputSchema,
+	republishConnectDataForEnvelope: RepublishConnectDataForEnvelopeInputSchema,
+	republishConnectInfoForEnvelopes: RepublishConnectInfoForEnvelopesInputSchema,
+	retrieveConnectConfigurationDetails:
+		RetrieveConnectConfigurationDetailsInputSchema,
+	retrieveConnectConfigurations: RetrieveConnectConfigurationsInputSchema,
+	retrieveConnectFailureLogs: RetrieveConnectFailureLogsInputSchema,
+	retrieveConnectLogEntry: RetrieveConnectLogEntryInputSchema,
+	retrieveConnectLogs: RetrieveConnectLogsInputSchema,
+	retrieveConnectOauthConfiguration:
+		RetrieveConnectOauthConfigurationInputSchema,
+	returnAllConnectServiceUsers: ReturnAllConnectServiceUsersInputSchema,
+	returnUsersFromConnectService: ReturnUsersFromConnectServiceInputSchema,
+	setUpConnectOauthConfiguration: SetUpConnectOauthConfigurationInputSchema,
+	updateConnectOauthConfiguration: UpdateConnectOauthConfigurationInputSchema,
+	updateDocusignConnectConfiguration:
+		UpdateDocusignConnectConfigurationInputSchema,
+	addContactsToContactsList: AddContactsToContactsListInputSchema,
+	deleteContactFromAccount: DeleteContactFromAccountInputSchema,
+	deleteMultipleContactsFromAccount:
+		DeleteMultipleContactsFromAccountInputSchema,
+	getDocusignAccountContacts: GetDocusignAccountContactsInputSchema,
+	updateContactsInformation: UpdateContactsInformationInputSchema,
+	createCustomTabWithProperties: CreateCustomTabWithPropertiesInputSchema,
+	deleteCustomTabInformation: DeleteCustomTabInformationInputSchema,
+	retrieveAllAccountTabs: RetrieveAllAccountTabsInputSchema,
+	retrieveCustomTabInformation: RetrieveCustomTabInformationInputSchema,
+	updateCustomTabInformationForAccount:
+		UpdateCustomTabInformationForAccountInputSchema,
+	deleteRequestLogFiles: DeleteRequestLogFilesInputSchema,
+	getRequestLoggingLogFile: GetRequestLoggingLogFileInputSchema,
+	getRequestLogs: GetRequestLogsInputSchema,
+	getRequestLogSettings: GetRequestLogSettingsInputSchema,
+	getResourceInformation: GetResourceInformationInputSchema,
+	getServiceInformation: GetServiceInformationInputSchema,
+	toggleApiRequestLogging: ToggleApiRequestLoggingInputSchema,
+	addEnvelopeAttachments: AddEnvelopeAttachmentsInputSchema,
+	createCustomDocumentFieldsInEnvelope:
+		CreateCustomDocumentFieldsInEnvelopeInputSchema,
+	createDocumentResponsiveHtmlPreview:
+		CreateDocumentResponsiveHtmlPreviewInputSchema,
+	createPreviewOfResponsiveHtmlInEnvelope:
+		CreatePreviewOfResponsiveHtmlInEnvelopeInputSchema,
+	deleteCustomDocumentFields: DeleteCustomDocumentFieldsInputSchema,
+	deleteDraftEnvelopeAttachments: DeleteDraftEnvelopeAttachmentsInputSchema,
+	deprecatedEndpointForTabBlob: DeprecatedEndpointForTabBlobInputSchema,
+	getEnvelopeDocGenFormFields: GetEnvelopeDocGenFormFieldsInputSchema,
+	getEnvelopeDocumentFields: GetEnvelopeDocumentFieldsInputSchema,
+	getPdftranscriptOfEnvelopeComments:
+		GetPdftranscriptOfEnvelopeCommentsInputSchema,
+	getRecipientDocumentVisibility: GetRecipientDocumentVisibilityInputSchema,
+	getTabsBlobForEnvelope: GetTabsBlobForEnvelopeInputSchema,
+	listEnvelopeAttachmentsByEnvelopeId:
+		ListEnvelopeAttachmentsByEnvelopeIdInputSchema,
+	retrieveEnvelopeAttachment: RetrieveEnvelopeAttachmentInputSchema,
+	retrieveEnvelopeDocuments: RetrieveEnvelopeDocumentsInputSchema,
+	retrieveEnvelopeHtmlDefinition: RetrieveEnvelopeHtmlDefinitionInputSchema,
+	returnEnvelopeTabDataForExistingEnvelope:
+		ReturnEnvelopeTabDataForExistingEnvelopeInputSchema,
+	updateCustomFieldsInEnvelopeDocument:
+		UpdateCustomFieldsInEnvelopeDocumentInputSchema,
+	updateDocumentVisibilityRecipients:
+		UpdateDocumentVisibilityRecipientsInputSchema,
+	updateEnvelopeAttachment: UpdateEnvelopeAttachmentInputSchema,
+	updateEnvelopeDocGenFormFields: UpdateEnvelopeDocGenFormFieldsInputSchema,
+	updateRecipientDocumentVisibility:
+		UpdateRecipientDocumentVisibilityInputSchema,
+	deletePageFromDocumentInEnvelope: DeletePageFromDocumentInEnvelopeInputSchema,
+	getEnvelopeNotificationDefaults: GetEnvelopeNotificationDefaultsInputSchema,
+	getPageImageFromEnvelope: GetPageImageFromEnvelopeInputSchema,
+	getSignatureInformationForRecipient:
+		GetSignatureInformationForRecipientInputSchema,
+	retrieveEnvelopeAuditEvents: RetrieveEnvelopeAuditEventsInputSchema,
+	retrieveEnvelopeNotificationDetails:
+		RetrieveEnvelopeNotificationDetailsInputSchema,
+	retrieveSignerSignatureImageInformation:
+		RetrieveSignerSignatureImageInformationInputSchema,
+	retrieveUserInitialsImageForEnvelopes:
+		RetrieveUserInitialsImageForEnvelopesInputSchema,
+	returnsDocumentPageImagesBasedOnInput:
+		ReturnsDocumentPageImagesBasedOnInputInputSchema,
+	rotatePageImageForEnvelope: RotatePageImageForEnvelopeInputSchema,
+	setInitialsImageForAccountlessSigner:
+		SetInitialsImageForAccountlessSignerInputSchema,
+	setSignatureImageForNoAccountSigner:
+		SetSignatureImageForNoAccountSignerInputSchema,
+	updateEnvelopeNotificationSettings:
+		UpdateEnvelopeNotificationSettingsInputSchema,
+	createIdproofResourceTokenForRecipient:
+		CreateIdproofResourceTokenForRecipientInputSchema,
+	createRecipientManualReviewLink: CreateRecipientManualReviewLinkInputSchema,
+	createRecipientPreviewForEnvelope:
+		CreateRecipientPreviewForEnvelopeInputSchema,
+	createSenderViewUrlForEnvelope: CreateSenderViewUrlForEnvelopeInputSchema,
+	generateEditViewUrlforEnvelope: GenerateEditViewUrlforEnvelopeInputSchema,
+	generateEnvelopeCorrectionUrl: GenerateEnvelopeCorrectionUrlInputSchema,
+	generateRecipientSharedViewUrl: GenerateRecipientSharedViewUrlInputSchema,
+	getElectronicDisclosureForRecipient:
+		GetElectronicDisclosureForRecipientInputSchema,
+	getUrlforEmbeddingDocusignUi: GetUrlforEmbeddingDocusignUiInputSchema,
+	retrieveAccountVerificationWorkflows:
+		RetrieveAccountVerificationWorkflowsInputSchema,
+	retrieveDefaultDisclosureForEnvelope:
+		RetrieveDefaultDisclosureForEnvelopeInputSchema,
+	revokeEnvelopeCorrectionUrl: RevokeEnvelopeCorrectionUrlInputSchema,
+	addEmailOverridesToEnvelope: AddEmailOverridesToEnvelopeInputSchema,
+	addStepToEnvelopeWorkflow: AddStepToEnvelopeWorkflowInputSchema,
+	addTemplatesToDocumentInEnvelope: AddTemplatesToDocumentInEnvelopeInputSchema,
+	addTemplatesToEnvelope: AddTemplatesToEnvelopeInputSchema,
+	createCustomFieldsForEnvelope: CreateCustomFieldsForEnvelopeInputSchema,
+	createTemplateWorkflowStep: CreateTemplateWorkflowStepInputSchema,
+	deleteDelayedRoutingRuleForEnvelopeStep:
+		DeleteDelayedRoutingRuleForEnvelopeStepInputSchema,
+	deleteDelayedRoutingRulesForTemplate:
+		DeleteDelayedRoutingRulesForTemplateInputSchema,
+	deleteEnvelopeCustomFields: DeleteEnvelopeCustomFieldsInputSchema,
+	deleteEnvelopeEmailSettings: DeleteEnvelopeEmailSettingsInputSchema,
+	deleteEnvelopeLock: DeleteEnvelopeLockInputSchema,
+	deleteEnvelopeScheduledSendingRules:
+		DeleteEnvelopeScheduledSendingRulesInputSchema,
+	deleteEnvelopeTransferRule: DeleteEnvelopeTransferRuleInputSchema,
+	deleteEnvelopeWorkflowDefinition: DeleteEnvelopeWorkflowDefinitionInputSchema,
+	deleteEnvelopeWorkflowStep: DeleteEnvelopeWorkflowStepInputSchema,
+	deleteScheduledSendingRules: DeleteScheduledSendingRulesInputSchema,
+	deleteTemplateFromEnvelopeDocument:
+		DeleteTemplateFromEnvelopeDocumentInputSchema,
+	deleteTemplateWorkflowStep: DeleteTemplateWorkflowStepInputSchema,
+	deleteWorkflowDefinitionForTemplate:
+		DeleteWorkflowDefinitionForTemplateInputSchema,
+	getEnvelopeLockInformation: GetEnvelopeLockInformationInputSchema,
+	getEnvelopeWorkflowDefinition: GetEnvelopeWorkflowDefinitionInputSchema,
+	getEnvelopeWorkflowDelayedRoutingDefinition:
+		GetEnvelopeWorkflowDelayedRoutingDefinitionInputSchema,
+	getTemplateDelayedRoutingRules: GetTemplateDelayedRoutingRulesInputSchema,
+	getTemplateScheduledSendingSettings:
+		GetTemplateScheduledSendingSettingsInputSchema,
+	getTemplatesForEnvelopeDocument: GetTemplatesForEnvelopeDocumentInputSchema,
+	getTemplatesUsedInEnvelope: GetTemplatesUsedInEnvelopeInputSchema,
+	getWorkflowStepForEnvelope: GetWorkflowStepForEnvelopeInputSchema,
+	listEnvelopeAndDocumentCustomFields:
+		ListEnvelopeAndDocumentCustomFieldsInputSchema,
+	lockAnEnvelopeForEditing: LockAnEnvelopeForEditingInputSchema,
+	retrieveCustomFieldsForEnvelope: RetrieveCustomFieldsForEnvelopeInputSchema,
+	retrieveEnvelopeEmailOverrides: RetrieveEnvelopeEmailOverridesInputSchema,
+	retrieveWorkflowStepForTemplate: RetrieveWorkflowStepForTemplateInputSchema,
+	returnScheduledSendingRulesForEnvelope:
+		ReturnScheduledSendingRulesForEnvelopeInputSchema,
+	returnTemplateWorkflowDefinition: ReturnTemplateWorkflowDefinitionInputSchema,
+	submitBatchHistoricalEnvelopesToWebhook:
+		SubmitBatchHistoricalEnvelopesToWebhookInputSchema,
+	updateEnvelopeCustomFields: UpdateEnvelopeCustomFieldsInputSchema,
+	updateEnvelopeDelayedRoutingRules:
+		UpdateEnvelopeDelayedRoutingRulesInputSchema,
+	updateEnvelopeEmailSettings: UpdateEnvelopeEmailSettingsInputSchema,
+	updateEnvelopeScheduledSendingRules:
+		UpdateEnvelopeScheduledSendingRulesInputSchema,
+	updateEnvelopeWorkflowDefinition: UpdateEnvelopeWorkflowDefinitionInputSchema,
+	updateEnvelopeWorkflowStep: UpdateEnvelopeWorkflowStepInputSchema,
+	updateLockForEnvelope: UpdateLockForEnvelopeInputSchema,
+	updateTemplateDelayedRoutingRules:
+		UpdateTemplateDelayedRoutingRulesInputSchema,
+	updateTemplateScheduledSendingRules:
+		UpdateTemplateScheduledSendingRulesInputSchema,
+	updateTemplateWorkflowDefinition: UpdateTemplateWorkflowDefinitionInputSchema,
+	updateWorkflowStepForTemplate: UpdateWorkflowStepForTemplateInputSchema,
+	addExistingBrandToGroup: AddExistingBrandToGroupInputSchema,
+	addMembersToSigningGroup: AddMembersToSigningGroupInputSchema,
+	addUsersToExistingGroup: AddUsersToExistingGroupInputSchema,
+	createGroupsForAccount: CreateGroupsForAccountInputSchema,
+	createNewAccountPermissionProfile:
+		CreateNewAccountPermissionProfileInputSchema,
+	createSigningGroup: CreateSigningGroupInputSchema,
+	deleteAccountPermissionProfile: DeleteAccountPermissionProfileInputSchema,
+	deleteBrandFromGroup: DeleteBrandFromGroupInputSchema,
+	deleteMembersFromSigningGroup: DeleteMembersFromSigningGroupInputSchema,
+	deleteOneOrMoreSigningGroups: DeleteOneOrMoreSigningGroupsInputSchema,
+	deleteUserGroup: DeleteUserGroupInputSchema,
+	deleteUsersFromGroup: DeleteUsersFromGroupInputSchema,
+	getBrandsInformationForGroup: GetBrandsInformationForGroupInputSchema,
+	getGroupsInformationForAccount: GetGroupsInformationForAccountInputSchema,
+	getListOfAccountPermissionProfiles:
+		GetListOfAccountPermissionProfilesInputSchema,
+	getMembersOfASigningGroup: GetMembersOfASigningGroupInputSchema,
+	getPermissionProfileForAccount: GetPermissionProfileForAccountInputSchema,
+	getSigningGroupInformation: GetSigningGroupInformationInputSchema,
+	getUsersInGroup: GetUsersInGroupInputSchema,
+	retrieveAccountSigningGroups: RetrieveAccountSigningGroupsInputSchema,
+	updateGroupInformation: UpdateGroupInformationInputSchema,
+	updatePermissionProfileSettings: UpdatePermissionProfileSettingsInputSchema,
+	updateSigningGroupDetails: UpdateSigningGroupDetailsInputSchema,
+	updateSigningGroupNames: UpdateSigningGroupNamesInputSchema,
+	createNotaryJurisdictionObject: CreateNotaryJurisdictionObjectInputSchema,
+	deleteNotaryJurisdiction: DeleteNotaryJurisdictionInputSchema,
+	getNotaryJournals: GetNotaryJournalsInputSchema,
+	getNotaryJurisdictionObject: GetNotaryJurisdictionObjectInputSchema,
+	getNotaryUserSettings: GetNotaryUserSettingsInputSchema,
+	listNotaryJournals: ListNotaryJournalsInputSchema,
+	listRegisteredNotaryJurisdictions:
+		ListRegisteredNotaryJurisdictionsInputSchema,
+	registerCurrentUserAsNotary: RegisterCurrentUserAsNotaryInputSchema,
+	updateNotaryJurisdictionInfo: UpdateNotaryJurisdictionInfoInputSchema,
+	updateUserNotaryInformation: UpdateUserNotaryInformationInputSchema,
+	deletePowerFormById: DeletePowerFormByIdInputSchema,
+	getPowerFormSenders: GetPowerFormSendersInputSchema,
+	retrievePowerFormDataEntries: RetrievePowerFormDataEntriesInputSchema,
+	createCustomFieldsInTemplateDocument:
+		CreateCustomFieldsInTemplateDocumentInputSchema,
+	createPreviewOfResponsiveHtml: CreatePreviewOfResponsiveHtmlInputSchema,
+	createTemplateDocumentCustomFields:
+		CreateTemplateDocumentCustomFieldsInputSchema,
+	createTemplateRecipientPreviewUrl:
+		CreateTemplateRecipientPreviewUrlInputSchema,
+	createTemplateResponsiveHtmlPreview:
+		CreateTemplateResponsiveHtmlPreviewInputSchema,
+	createUrlforTemplateEditView: CreateUrlforTemplateEditViewInputSchema,
+	deleteCustomDocumentFieldsFromTemplate:
+		DeleteCustomDocumentFieldsFromTemplateInputSchema,
+	deleteCustomFieldsInTemplate: DeleteCustomFieldsInTemplateInputSchema,
+	deletePageFromTemplateDocument: DeletePageFromTemplateDocumentInputSchema,
+	deleteTemplateLock: DeleteTemplateLockInputSchema,
+	getOriginalHtmlDefinitionForTemplate:
+		GetOriginalHtmlDefinitionForTemplateInputSchema,
+	getTemplateDocumentHtmlDefinition:
+		GetTemplateDocumentHtmlDefinitionInputSchema,
+	getTemplateLockInformation: GetTemplateLockInformationInputSchema,
+	getTemplateNotificationInformation:
+		GetTemplateNotificationInformationInputSchema,
+	getTemplateRecipientDocumentVisibility:
+		GetTemplateRecipientDocumentVisibilityInputSchema,
+	lockTemplateForEditing: LockTemplateForEditingInputSchema,
+	removeGroupSharingPermissionsForTemplate:
+		RemoveGroupSharingPermissionsForTemplateInputSchema,
+	removeTemplatesFromFavorites: RemoveTemplatesFromFavoritesInputSchema,
+	retrieveAccountFavoriteTemplates: RetrieveAccountFavoriteTemplatesInputSchema,
+	retrieveCustomFieldsForTemplate: RetrieveCustomFieldsForTemplateInputSchema,
+	retrievePdfFromSpecifiedTemplate: RetrievePdfFromSpecifiedTemplateInputSchema,
+	retrieveTemplateCustomFields: RetrieveTemplateCustomFieldsInputSchema,
+	retrieveTemplateDocumentPageImages:
+		RetrieveTemplateDocumentPageImagesInputSchema,
+	retrieveTemplatePageImage: RetrieveTemplatePageImageInputSchema,
+	rotateTemplatePageImage: RotateTemplatePageImageInputSchema,
+	setTemplatesAsAccountFavorites: SetTemplatesAsAccountFavoritesInputSchema,
+	shareTemplateWithGroup: ShareTemplateWithGroupInputSchema,
+	updateTemplateCustomFields: UpdateTemplateCustomFieldsInputSchema,
+	updateTemplateDocumentCustomFields:
+		UpdateTemplateDocumentCustomFieldsInputSchema,
+	updateTemplateDocVisibility: UpdateTemplateDocVisibilityInputSchema,
+	updateTemplateLockInformation: UpdateTemplateLockInformationInputSchema,
+	updateTemplateNotificationSettings:
+		UpdateTemplateNotificationSettingsInputSchema,
+	updateTemplateRecipientDocumentVisibility:
+		UpdateTemplateRecipientDocumentVisibilityInputSchema,
+	addNewUsersToASpecifiedAccount: AddNewUsersToASpecifiedAccountInputSchema,
+	addOrUpdateUserCustomSettings: AddOrUpdateUserCustomSettingsInputSchema,
+	addOrUpdateUserSignature: AddOrUpdateUserSignatureInputSchema,
+	addUserSignatureAndInitialsImages:
+		AddUserSignatureAndInitialsImagesInputSchema,
+	changeUsersInAccount: ChangeUsersInAccountInputSchema,
+	closeUsersInAccount: CloseUsersInAccountInputSchema,
+	createOrUpdateUserAuthorizations: CreateOrUpdateUserAuthorizationsInputSchema,
+	createUserAuthorizationForAgentUser:
+		CreateUserAuthorizationForAgentUserInputSchema,
+	deleteCustomUserSettings: DeleteCustomUserSettingsInputSchema,
+	deleteUserAuthorization: DeleteUserAuthorizationInputSchema,
+	deleteUserAuthorizations: DeleteUserAuthorizationsInputSchema,
+	deleteUserInitialsOrSignatureImage:
+		DeleteUserInitialsOrSignatureImageInputSchema,
+	deleteUserProfileImage: DeleteUserProfileImageInputSchema,
+	getAgentUserAuthorizations: GetAgentUserAuthorizationsInputSchema,
+	getUserAuthorizationDetails: GetUserAuthorizationDetailsInputSchema,
+	getUserAuthorizationsForPrincipal:
+		GetUserAuthorizationsForPrincipalInputSchema,
+	getUserInformationById: GetUserInformationByIdInputSchema,
+	listUsersForAccount: ListUsersForAccountInputSchema,
+	removeUserSignatureInformation: RemoveUserSignatureInformationInputSchema,
+	retrieveCustomUserSettings: RetrieveCustomUserSettingsInputSchema,
+	retrieveUserAccountSettings: RetrieveUserAccountSettingsInputSchema,
+	retrieveUserProfileImage: RetrieveUserProfileImageInputSchema,
+	retrieveUserProfileInformation: RetrieveUserProfileInformationInputSchema,
+	retrieveUserSignatureDefinitions: RetrieveUserSignatureDefinitionsInputSchema,
+	retrieveUserSignatureImage: RetrieveUserSignatureImageInputSchema,
+	retrieveUserSignatureInformation: RetrieveUserSignatureInformationInputSchema,
+	setUserSignatureImage: SetUserSignatureImageInputSchema,
+	updateUserAccountSettings: UpdateUserAccountSettingsInputSchema,
+	updateUserAuthorizationDates: UpdateUserAuthorizationDatesInputSchema,
+	updateUserInformationForSpecifiedUser:
+		UpdateUserInformationForSpecifiedUserInputSchema,
+	updateUserProfileImage: UpdateUserProfileImageInputSchema,
+	updateUserProfileInformation: UpdateUserProfileInformationInputSchema,
+	updateUserSignatureById: UpdateUserSignatureByIdInputSchema,
+	addFileToWorkspace: AddFileToWorkspaceInputSchema,
+	createACollaborativeWorkspace: CreateACollaborativeWorkspaceInputSchema,
+	deleteExistingWorkspaceLogically: DeleteExistingWorkspaceLogicallyInputSchema,
+	deleteWorkspaceFilesOrFolders: DeleteWorkspaceFilesOrFoldersInputSchema,
+	getWorkspaceFile: GetWorkspaceFileInputSchema,
+	getWorkspaceFolderContents: GetWorkspaceFolderContentsInputSchema,
+	listWorkspaceFilePages: ListWorkspaceFilePagesInputSchema,
+	listWorkspaces: ListWorkspacesInputSchema,
+	retrievePropertiesAboutWorkspace: RetrievePropertiesAboutWorkspaceInputSchema,
+	updateWorkspaceInformation: UpdateWorkspaceInformationInputSchema,
+	updateWorkspaceItemMetadata: UpdateWorkspaceItemMetadataInputSchema,
+};
+
+export const generatedOutputSchemas = {
+	addOrUpdateAccountStamps: AddOrUpdateAccountStampsOutputSchema,
+	createAccountCustomField: CreateAccountCustomFieldOutputSchema,
+	createBccEmailArchiveConfiguration:
+		CreateBccEmailArchiveConfigurationOutputSchema,
+	deleteAccountCustomField: DeleteAccountCustomFieldOutputSchema,
+	deleteAccountStamp: DeleteAccountStampOutputSchema,
+	deleteBccEmailArchiveConfiguration:
+		DeleteBccEmailArchiveConfigurationOutputSchema,
+	deleteEnoteConfiguration: DeleteEnoteConfigurationOutputSchema,
+	deleteSignatureForCaptiveRecipients:
+		DeleteSignatureForCaptiveRecipientsOutputSchema,
+	deleteSpecifiedAccount: DeleteSpecifiedAccountOutputSchema,
+	deleteStampImageForAccount: DeleteStampImageForAccountOutputSchema,
+	getAccountBillingChargesList: GetAccountBillingChargesListOutputSchema,
+	getAccountPasswordRules: GetAccountPasswordRulesOutputSchema,
+	getAccountStampImage: GetAccountStampImageOutputSchema,
+	getBccEmailArchiveConfigurations:
+		GetBccEmailArchiveConfigurationsOutputSchema,
+	getBccemailArchiveHistory: GetBccemailArchiveHistoryOutputSchema,
+	getElectronicRecordAndSignatureDisclosure:
+		GetElectronicRecordAndSignatureDisclosureOutputSchema,
+	getEnoteIntegrationSettings: GetEnoteIntegrationSettingsOutputSchema,
+	getSpecifiedAccountStampInfo: GetSpecifiedAccountStampInfoOutputSchema,
+	getSupportedLanguagesForRecipients:
+		GetSupportedLanguagesForRecipientsOutputSchema,
+	getTabSettingsForAccount: GetTabSettingsForAccountOutputSchema,
+	getUnsupportedFileTypesList: GetUnsupportedFileTypesListOutputSchema,
+	getWatermarkDetailsForAccount: GetWatermarkDetailsForAccountOutputSchema,
+	listSignatureProvidersForAccount:
+		ListSignatureProvidersForAccountOutputSchema,
+	modifyAccountNotificationSettings:
+		ModifyAccountNotificationSettingsOutputSchema,
+	modifyTabSettingsForAccount: ModifyTabSettingsForAccountOutputSchema,
+	retrieveAccountEnvelopePurgeConfig:
+		RetrieveAccountEnvelopePurgeConfigOutputSchema,
+	retrieveAccountInformationForSpecifiedAccount:
+		RetrieveAccountInformationForSpecifiedAccountOutputSchema,
+	retrieveAccountProvisioningInfo: RetrieveAccountProvisioningInfoOutputSchema,
+	retrieveAccountSealProviders: RetrieveAccountSealProvidersOutputSchema,
+	retrieveAccountSettingsInformation:
+		RetrieveAccountSettingsInformationOutputSchema,
+	retrieveAvailableAccountStamps: RetrieveAvailableAccountStampsOutputSchema,
+	retrieveSharedItemStatusForUsers:
+		RetrieveSharedItemStatusForUsersOutputSchema,
+	setEnvelopePurgeConfigForAccount:
+		SetEnvelopePurgeConfigForAccountOutputSchema,
+	setSharedAccessForUsersAndTemplates:
+		SetSharedAccessForUsersAndTemplatesOutputSchema,
+	updateAccountCustomField: UpdateAccountCustomFieldOutputSchema,
+	updateAccountPasswordRules: UpdateAccountPasswordRulesOutputSchema,
+	updateAccountSettings: UpdateAccountSettingsOutputSchema,
+	updateAccountStampById: UpdateAccountStampByIdOutputSchema,
+	updateAccountStamps: UpdateAccountStampsOutputSchema,
+	updateAccountWatermarkInformation:
+		UpdateAccountWatermarkInformationOutputSchema,
+	updateAccountWatermarkPreview: UpdateAccountWatermarkPreviewOutputSchema,
+	updateElectronicRecordDisclosure:
+		UpdateElectronicRecordDisclosureOutputSchema,
+	updateEnoteIntegrationConfig: UpdateEnoteIntegrationConfigOutputSchema,
+	getDowngradePlanInfoForAccount: GetDowngradePlanInfoForAccountOutputSchema,
+	listBillingInvoices: ListBillingInvoicesOutputSchema,
+	listPastDueInvoices: ListPastDueInvoicesOutputSchema,
+	listPaymentGatewayAccountsInfo: ListPaymentGatewayAccountsInfoOutputSchema,
+	postPaymentToInvoice: PostPaymentToInvoiceOutputSchema,
+	purchaseAdditionalEnvelopes: PurchaseAdditionalEnvelopesOutputSchema,
+	queueDowngradeBillingPlanRequest:
+		QueueDowngradeBillingPlanRequestOutputSchema,
+	retrieveAccountBillingPlan: RetrieveAccountBillingPlanOutputSchema,
+	retrieveBillingInvoice: RetrieveBillingInvoiceOutputSchema,
+	retrieveBillingPaymentInfo: RetrieveBillingPaymentInfoOutputSchema,
+	retrieveCreditCardInfo: RetrieveCreditCardInfoOutputSchema,
+	retrieveListOfBillingPlans: RetrieveListOfBillingPlansOutputSchema,
+	retrievePaymentInformationList: RetrievePaymentInformationListOutputSchema,
+	updateBillingPlanForAccount: UpdateBillingPlanForAccountOutputSchema,
+	createBrandProfilesForAccount: CreateBrandProfilesForAccountOutputSchema,
+	deleteAccountBrand: DeleteAccountBrandOutputSchema,
+	deleteBrandLogoByType: DeleteBrandLogoByTypeOutputSchema,
+	deleteBrandProfiles: DeleteBrandProfilesOutputSchema,
+	exportBrandToXmlfile: ExportBrandToXmlfileOutputSchema,
+	getBrandLogoByType: GetBrandLogoByTypeOutputSchema,
+	getSpecificBrandResourceFile: GetSpecificBrandResourceFileOutputSchema,
+	listBrandsForAccount: ListBrandsForAccountOutputSchema,
+	retrieveAccountBrandInformation: RetrieveAccountBrandInformationOutputSchema,
+	returnBrandResourceMetadataForAccount:
+		ReturnBrandResourceMetadataForAccountOutputSchema,
+	updateAccountBrandSettings: UpdateAccountBrandSettingsOutputSchema,
+	applyActionToBulkSendEnvelopes: ApplyActionToBulkSendEnvelopesOutputSchema,
+	createBulkSendRequest: CreateBulkSendRequestOutputSchema,
+	createBulkSendTestRequest: CreateBulkSendTestRequestOutputSchema,
+	getBulkSendBatchStatus: GetBulkSendBatchStatusOutputSchema,
+	getBulkSendListsInformation: GetBulkSendListsInformationOutputSchema,
+	listBulkSendBatchSummaries: ListBulkSendBatchSummariesOutputSchema,
+	removeBulkSendList: RemoveBulkSendListOutputSchema,
+	updateBulkSendBatchName: UpdateBulkSendBatchNameOutputSchema,
+	addPartToChunkedUpload: AddPartToChunkedUploadOutputSchema,
+	commitChunkedUploadForEnvelopes: CommitChunkedUploadForEnvelopesOutputSchema,
+	deleteChunkedUpload: DeleteChunkedUploadOutputSchema,
+	initiateNewChunkedUpload: InitiateNewChunkedUploadOutputSchema,
+	retrieveChunkedUploadMetadata: RetrieveChunkedUploadMetadataOutputSchema,
+	configureCloudStorageRedirectUrl:
+		ConfigureCloudStorageRedirectUrlOutputSchema,
+	deleteUserAuthForCloudStorageProviders:
+		DeleteUserAuthForCloudStorageProvidersOutputSchema,
+	deleteUserCloudStorageAuthentication:
+		DeleteUserCloudStorageAuthenticationOutputSchema,
+	getUserCloudStorageProviderConfiguration:
+		GetUserCloudStorageProviderConfigurationOutputSchema,
+	listCloudStorageItems: ListCloudStorageItemsOutputSchema,
+	retrieveCloudStorageProviderConfiguration:
+		RetrieveCloudStorageProviderConfigurationOutputSchema,
+	retrieveItemsInCloudStorageFolder:
+		RetrieveItemsInCloudStorageFolderOutputSchema,
+	createConnectConfigurationForAccount:
+		CreateConnectConfigurationForAccountOutputSchema,
+	deleteConnectConfiguration: DeleteConnectConfigurationOutputSchema,
+	deleteConnectFailureLogEntry: DeleteConnectFailureLogEntryOutputSchema,
+	deleteConnectLogEntries: DeleteConnectLogEntriesOutputSchema,
+	deleteConnectOauthConfiguration: DeleteConnectOauthConfigurationOutputSchema,
+	deleteSpecificConnectLogEntry: DeleteSpecificConnectLogEntryOutputSchema,
+	republishConnectDataForEnvelope: RepublishConnectDataForEnvelopeOutputSchema,
+	republishConnectInfoForEnvelopes:
+		RepublishConnectInfoForEnvelopesOutputSchema,
+	retrieveConnectConfigurationDetails:
+		RetrieveConnectConfigurationDetailsOutputSchema,
+	retrieveConnectConfigurations: RetrieveConnectConfigurationsOutputSchema,
+	retrieveConnectFailureLogs: RetrieveConnectFailureLogsOutputSchema,
+	retrieveConnectLogEntry: RetrieveConnectLogEntryOutputSchema,
+	retrieveConnectLogs: RetrieveConnectLogsOutputSchema,
+	retrieveConnectOauthConfiguration:
+		RetrieveConnectOauthConfigurationOutputSchema,
+	returnAllConnectServiceUsers: ReturnAllConnectServiceUsersOutputSchema,
+	returnUsersFromConnectService: ReturnUsersFromConnectServiceOutputSchema,
+	setUpConnectOauthConfiguration: SetUpConnectOauthConfigurationOutputSchema,
+	updateConnectOauthConfiguration: UpdateConnectOauthConfigurationOutputSchema,
+	updateDocusignConnectConfiguration:
+		UpdateDocusignConnectConfigurationOutputSchema,
+	addContactsToContactsList: AddContactsToContactsListOutputSchema,
+	deleteContactFromAccount: DeleteContactFromAccountOutputSchema,
+	deleteMultipleContactsFromAccount:
+		DeleteMultipleContactsFromAccountOutputSchema,
+	getDocusignAccountContacts: GetDocusignAccountContactsOutputSchema,
+	updateContactsInformation: UpdateContactsInformationOutputSchema,
+	createCustomTabWithProperties: CreateCustomTabWithPropertiesOutputSchema,
+	deleteCustomTabInformation: DeleteCustomTabInformationOutputSchema,
+	retrieveAllAccountTabs: RetrieveAllAccountTabsOutputSchema,
+	retrieveCustomTabInformation: RetrieveCustomTabInformationOutputSchema,
+	updateCustomTabInformationForAccount:
+		UpdateCustomTabInformationForAccountOutputSchema,
+	deleteRequestLogFiles: DeleteRequestLogFilesOutputSchema,
+	getRequestLoggingLogFile: GetRequestLoggingLogFileOutputSchema,
+	getRequestLogs: GetRequestLogsOutputSchema,
+	getRequestLogSettings: GetRequestLogSettingsOutputSchema,
+	getResourceInformation: GetResourceInformationOutputSchema,
+	getServiceInformation: GetServiceInformationOutputSchema,
+	toggleApiRequestLogging: ToggleApiRequestLoggingOutputSchema,
+	addEnvelopeAttachments: AddEnvelopeAttachmentsOutputSchema,
+	createCustomDocumentFieldsInEnvelope:
+		CreateCustomDocumentFieldsInEnvelopeOutputSchema,
+	createDocumentResponsiveHtmlPreview:
+		CreateDocumentResponsiveHtmlPreviewOutputSchema,
+	createPreviewOfResponsiveHtmlInEnvelope:
+		CreatePreviewOfResponsiveHtmlInEnvelopeOutputSchema,
+	deleteCustomDocumentFields: DeleteCustomDocumentFieldsOutputSchema,
+	deleteDraftEnvelopeAttachments: DeleteDraftEnvelopeAttachmentsOutputSchema,
+	deprecatedEndpointForTabBlob: DeprecatedEndpointForTabBlobOutputSchema,
+	getEnvelopeDocGenFormFields: GetEnvelopeDocGenFormFieldsOutputSchema,
+	getEnvelopeDocumentFields: GetEnvelopeDocumentFieldsOutputSchema,
+	getPdftranscriptOfEnvelopeComments:
+		GetPdftranscriptOfEnvelopeCommentsOutputSchema,
+	getRecipientDocumentVisibility: GetRecipientDocumentVisibilityOutputSchema,
+	getTabsBlobForEnvelope: GetTabsBlobForEnvelopeOutputSchema,
+	listEnvelopeAttachmentsByEnvelopeId:
+		ListEnvelopeAttachmentsByEnvelopeIdOutputSchema,
+	retrieveEnvelopeAttachment: RetrieveEnvelopeAttachmentOutputSchema,
+	retrieveEnvelopeDocuments: RetrieveEnvelopeDocumentsOutputSchema,
+	retrieveEnvelopeHtmlDefinition: RetrieveEnvelopeHtmlDefinitionOutputSchema,
+	returnEnvelopeTabDataForExistingEnvelope:
+		ReturnEnvelopeTabDataForExistingEnvelopeOutputSchema,
+	updateCustomFieldsInEnvelopeDocument:
+		UpdateCustomFieldsInEnvelopeDocumentOutputSchema,
+	updateDocumentVisibilityRecipients:
+		UpdateDocumentVisibilityRecipientsOutputSchema,
+	updateEnvelopeAttachment: UpdateEnvelopeAttachmentOutputSchema,
+	updateEnvelopeDocGenFormFields: UpdateEnvelopeDocGenFormFieldsOutputSchema,
+	updateRecipientDocumentVisibility:
+		UpdateRecipientDocumentVisibilityOutputSchema,
+	deletePageFromDocumentInEnvelope:
+		DeletePageFromDocumentInEnvelopeOutputSchema,
+	getEnvelopeNotificationDefaults: GetEnvelopeNotificationDefaultsOutputSchema,
+	getPageImageFromEnvelope: GetPageImageFromEnvelopeOutputSchema,
+	getSignatureInformationForRecipient:
+		GetSignatureInformationForRecipientOutputSchema,
+	retrieveEnvelopeAuditEvents: RetrieveEnvelopeAuditEventsOutputSchema,
+	retrieveEnvelopeNotificationDetails:
+		RetrieveEnvelopeNotificationDetailsOutputSchema,
+	retrieveSignerSignatureImageInformation:
+		RetrieveSignerSignatureImageInformationOutputSchema,
+	retrieveUserInitialsImageForEnvelopes:
+		RetrieveUserInitialsImageForEnvelopesOutputSchema,
+	returnsDocumentPageImagesBasedOnInput:
+		ReturnsDocumentPageImagesBasedOnInputOutputSchema,
+	rotatePageImageForEnvelope: RotatePageImageForEnvelopeOutputSchema,
+	setInitialsImageForAccountlessSigner:
+		SetInitialsImageForAccountlessSignerOutputSchema,
+	setSignatureImageForNoAccountSigner:
+		SetSignatureImageForNoAccountSignerOutputSchema,
+	updateEnvelopeNotificationSettings:
+		UpdateEnvelopeNotificationSettingsOutputSchema,
+	createIdproofResourceTokenForRecipient:
+		CreateIdproofResourceTokenForRecipientOutputSchema,
+	createRecipientManualReviewLink: CreateRecipientManualReviewLinkOutputSchema,
+	createRecipientPreviewForEnvelope:
+		CreateRecipientPreviewForEnvelopeOutputSchema,
+	createSenderViewUrlForEnvelope: CreateSenderViewUrlForEnvelopeOutputSchema,
+	generateEditViewUrlforEnvelope: GenerateEditViewUrlforEnvelopeOutputSchema,
+	generateEnvelopeCorrectionUrl: GenerateEnvelopeCorrectionUrlOutputSchema,
+	generateRecipientSharedViewUrl: GenerateRecipientSharedViewUrlOutputSchema,
+	getElectronicDisclosureForRecipient:
+		GetElectronicDisclosureForRecipientOutputSchema,
+	getUrlforEmbeddingDocusignUi: GetUrlforEmbeddingDocusignUiOutputSchema,
+	retrieveAccountVerificationWorkflows:
+		RetrieveAccountVerificationWorkflowsOutputSchema,
+	retrieveDefaultDisclosureForEnvelope:
+		RetrieveDefaultDisclosureForEnvelopeOutputSchema,
+	revokeEnvelopeCorrectionUrl: RevokeEnvelopeCorrectionUrlOutputSchema,
+	addEmailOverridesToEnvelope: AddEmailOverridesToEnvelopeOutputSchema,
+	addStepToEnvelopeWorkflow: AddStepToEnvelopeWorkflowOutputSchema,
+	addTemplatesToDocumentInEnvelope:
+		AddTemplatesToDocumentInEnvelopeOutputSchema,
+	addTemplatesToEnvelope: AddTemplatesToEnvelopeOutputSchema,
+	createCustomFieldsForEnvelope: CreateCustomFieldsForEnvelopeOutputSchema,
+	createTemplateWorkflowStep: CreateTemplateWorkflowStepOutputSchema,
+	deleteDelayedRoutingRuleForEnvelopeStep:
+		DeleteDelayedRoutingRuleForEnvelopeStepOutputSchema,
+	deleteDelayedRoutingRulesForTemplate:
+		DeleteDelayedRoutingRulesForTemplateOutputSchema,
+	deleteEnvelopeCustomFields: DeleteEnvelopeCustomFieldsOutputSchema,
+	deleteEnvelopeEmailSettings: DeleteEnvelopeEmailSettingsOutputSchema,
+	deleteEnvelopeLock: DeleteEnvelopeLockOutputSchema,
+	deleteEnvelopeScheduledSendingRules:
+		DeleteEnvelopeScheduledSendingRulesOutputSchema,
+	deleteEnvelopeTransferRule: DeleteEnvelopeTransferRuleOutputSchema,
+	deleteEnvelopeWorkflowDefinition:
+		DeleteEnvelopeWorkflowDefinitionOutputSchema,
+	deleteEnvelopeWorkflowStep: DeleteEnvelopeWorkflowStepOutputSchema,
+	deleteScheduledSendingRules: DeleteScheduledSendingRulesOutputSchema,
+	deleteTemplateFromEnvelopeDocument:
+		DeleteTemplateFromEnvelopeDocumentOutputSchema,
+	deleteTemplateWorkflowStep: DeleteTemplateWorkflowStepOutputSchema,
+	deleteWorkflowDefinitionForTemplate:
+		DeleteWorkflowDefinitionForTemplateOutputSchema,
+	getEnvelopeLockInformation: GetEnvelopeLockInformationOutputSchema,
+	getEnvelopeWorkflowDefinition: GetEnvelopeWorkflowDefinitionOutputSchema,
+	getEnvelopeWorkflowDelayedRoutingDefinition:
+		GetEnvelopeWorkflowDelayedRoutingDefinitionOutputSchema,
+	getTemplateDelayedRoutingRules: GetTemplateDelayedRoutingRulesOutputSchema,
+	getTemplateScheduledSendingSettings:
+		GetTemplateScheduledSendingSettingsOutputSchema,
+	getTemplatesForEnvelopeDocument: GetTemplatesForEnvelopeDocumentOutputSchema,
+	getTemplatesUsedInEnvelope: GetTemplatesUsedInEnvelopeOutputSchema,
+	getWorkflowStepForEnvelope: GetWorkflowStepForEnvelopeOutputSchema,
+	listEnvelopeAndDocumentCustomFields:
+		ListEnvelopeAndDocumentCustomFieldsOutputSchema,
+	lockAnEnvelopeForEditing: LockAnEnvelopeForEditingOutputSchema,
+	retrieveCustomFieldsForEnvelope: RetrieveCustomFieldsForEnvelopeOutputSchema,
+	retrieveEnvelopeEmailOverrides: RetrieveEnvelopeEmailOverridesOutputSchema,
+	retrieveWorkflowStepForTemplate: RetrieveWorkflowStepForTemplateOutputSchema,
+	returnScheduledSendingRulesForEnvelope:
+		ReturnScheduledSendingRulesForEnvelopeOutputSchema,
+	returnTemplateWorkflowDefinition:
+		ReturnTemplateWorkflowDefinitionOutputSchema,
+	submitBatchHistoricalEnvelopesToWebhook:
+		SubmitBatchHistoricalEnvelopesToWebhookOutputSchema,
+	updateEnvelopeCustomFields: UpdateEnvelopeCustomFieldsOutputSchema,
+	updateEnvelopeDelayedRoutingRules:
+		UpdateEnvelopeDelayedRoutingRulesOutputSchema,
+	updateEnvelopeEmailSettings: UpdateEnvelopeEmailSettingsOutputSchema,
+	updateEnvelopeScheduledSendingRules:
+		UpdateEnvelopeScheduledSendingRulesOutputSchema,
+	updateEnvelopeWorkflowDefinition:
+		UpdateEnvelopeWorkflowDefinitionOutputSchema,
+	updateEnvelopeWorkflowStep: UpdateEnvelopeWorkflowStepOutputSchema,
+	updateLockForEnvelope: UpdateLockForEnvelopeOutputSchema,
+	updateTemplateDelayedRoutingRules:
+		UpdateTemplateDelayedRoutingRulesOutputSchema,
+	updateTemplateScheduledSendingRules:
+		UpdateTemplateScheduledSendingRulesOutputSchema,
+	updateTemplateWorkflowDefinition:
+		UpdateTemplateWorkflowDefinitionOutputSchema,
+	updateWorkflowStepForTemplate: UpdateWorkflowStepForTemplateOutputSchema,
+	addExistingBrandToGroup: AddExistingBrandToGroupOutputSchema,
+	addMembersToSigningGroup: AddMembersToSigningGroupOutputSchema,
+	addUsersToExistingGroup: AddUsersToExistingGroupOutputSchema,
+	createGroupsForAccount: CreateGroupsForAccountOutputSchema,
+	createNewAccountPermissionProfile:
+		CreateNewAccountPermissionProfileOutputSchema,
+	createSigningGroup: CreateSigningGroupOutputSchema,
+	deleteAccountPermissionProfile: DeleteAccountPermissionProfileOutputSchema,
+	deleteBrandFromGroup: DeleteBrandFromGroupOutputSchema,
+	deleteMembersFromSigningGroup: DeleteMembersFromSigningGroupOutputSchema,
+	deleteOneOrMoreSigningGroups: DeleteOneOrMoreSigningGroupsOutputSchema,
+	deleteUserGroup: DeleteUserGroupOutputSchema,
+	deleteUsersFromGroup: DeleteUsersFromGroupOutputSchema,
+	getBrandsInformationForGroup: GetBrandsInformationForGroupOutputSchema,
+	getGroupsInformationForAccount: GetGroupsInformationForAccountOutputSchema,
+	getListOfAccountPermissionProfiles:
+		GetListOfAccountPermissionProfilesOutputSchema,
+	getMembersOfASigningGroup: GetMembersOfASigningGroupOutputSchema,
+	getPermissionProfileForAccount: GetPermissionProfileForAccountOutputSchema,
+	getSigningGroupInformation: GetSigningGroupInformationOutputSchema,
+	getUsersInGroup: GetUsersInGroupOutputSchema,
+	retrieveAccountSigningGroups: RetrieveAccountSigningGroupsOutputSchema,
+	updateGroupInformation: UpdateGroupInformationOutputSchema,
+	updatePermissionProfileSettings: UpdatePermissionProfileSettingsOutputSchema,
+	updateSigningGroupDetails: UpdateSigningGroupDetailsOutputSchema,
+	updateSigningGroupNames: UpdateSigningGroupNamesOutputSchema,
+	createNotaryJurisdictionObject: CreateNotaryJurisdictionObjectOutputSchema,
+	deleteNotaryJurisdiction: DeleteNotaryJurisdictionOutputSchema,
+	getNotaryJournals: GetNotaryJournalsOutputSchema,
+	getNotaryJurisdictionObject: GetNotaryJurisdictionObjectOutputSchema,
+	getNotaryUserSettings: GetNotaryUserSettingsOutputSchema,
+	listNotaryJournals: ListNotaryJournalsOutputSchema,
+	listRegisteredNotaryJurisdictions:
+		ListRegisteredNotaryJurisdictionsOutputSchema,
+	registerCurrentUserAsNotary: RegisterCurrentUserAsNotaryOutputSchema,
+	updateNotaryJurisdictionInfo: UpdateNotaryJurisdictionInfoOutputSchema,
+	updateUserNotaryInformation: UpdateUserNotaryInformationOutputSchema,
+	deletePowerFormById: DeletePowerFormByIdOutputSchema,
+	getPowerFormSenders: GetPowerFormSendersOutputSchema,
+	retrievePowerFormDataEntries: RetrievePowerFormDataEntriesOutputSchema,
+	createCustomFieldsInTemplateDocument:
+		CreateCustomFieldsInTemplateDocumentOutputSchema,
+	createPreviewOfResponsiveHtml: CreatePreviewOfResponsiveHtmlOutputSchema,
+	createTemplateDocumentCustomFields:
+		CreateTemplateDocumentCustomFieldsOutputSchema,
+	createTemplateRecipientPreviewUrl:
+		CreateTemplateRecipientPreviewUrlOutputSchema,
+	createTemplateResponsiveHtmlPreview:
+		CreateTemplateResponsiveHtmlPreviewOutputSchema,
+	createUrlforTemplateEditView: CreateUrlforTemplateEditViewOutputSchema,
+	deleteCustomDocumentFieldsFromTemplate:
+		DeleteCustomDocumentFieldsFromTemplateOutputSchema,
+	deleteCustomFieldsInTemplate: DeleteCustomFieldsInTemplateOutputSchema,
+	deletePageFromTemplateDocument: DeletePageFromTemplateDocumentOutputSchema,
+	deleteTemplateLock: DeleteTemplateLockOutputSchema,
+	getOriginalHtmlDefinitionForTemplate:
+		GetOriginalHtmlDefinitionForTemplateOutputSchema,
+	getTemplateDocumentHtmlDefinition:
+		GetTemplateDocumentHtmlDefinitionOutputSchema,
+	getTemplateLockInformation: GetTemplateLockInformationOutputSchema,
+	getTemplateNotificationInformation:
+		GetTemplateNotificationInformationOutputSchema,
+	getTemplateRecipientDocumentVisibility:
+		GetTemplateRecipientDocumentVisibilityOutputSchema,
+	lockTemplateForEditing: LockTemplateForEditingOutputSchema,
+	removeGroupSharingPermissionsForTemplate:
+		RemoveGroupSharingPermissionsForTemplateOutputSchema,
+	removeTemplatesFromFavorites: RemoveTemplatesFromFavoritesOutputSchema,
+	retrieveAccountFavoriteTemplates:
+		RetrieveAccountFavoriteTemplatesOutputSchema,
+	retrieveCustomFieldsForTemplate: RetrieveCustomFieldsForTemplateOutputSchema,
+	retrievePdfFromSpecifiedTemplate:
+		RetrievePdfFromSpecifiedTemplateOutputSchema,
+	retrieveTemplateCustomFields: RetrieveTemplateCustomFieldsOutputSchema,
+	retrieveTemplateDocumentPageImages:
+		RetrieveTemplateDocumentPageImagesOutputSchema,
+	retrieveTemplatePageImage: RetrieveTemplatePageImageOutputSchema,
+	rotateTemplatePageImage: RotateTemplatePageImageOutputSchema,
+	setTemplatesAsAccountFavorites: SetTemplatesAsAccountFavoritesOutputSchema,
+	shareTemplateWithGroup: ShareTemplateWithGroupOutputSchema,
+	updateTemplateCustomFields: UpdateTemplateCustomFieldsOutputSchema,
+	updateTemplateDocumentCustomFields:
+		UpdateTemplateDocumentCustomFieldsOutputSchema,
+	updateTemplateDocVisibility: UpdateTemplateDocVisibilityOutputSchema,
+	updateTemplateLockInformation: UpdateTemplateLockInformationOutputSchema,
+	updateTemplateNotificationSettings:
+		UpdateTemplateNotificationSettingsOutputSchema,
+	updateTemplateRecipientDocumentVisibility:
+		UpdateTemplateRecipientDocumentVisibilityOutputSchema,
+	addNewUsersToASpecifiedAccount: AddNewUsersToASpecifiedAccountOutputSchema,
+	addOrUpdateUserCustomSettings: AddOrUpdateUserCustomSettingsOutputSchema,
+	addOrUpdateUserSignature: AddOrUpdateUserSignatureOutputSchema,
+	addUserSignatureAndInitialsImages:
+		AddUserSignatureAndInitialsImagesOutputSchema,
+	changeUsersInAccount: ChangeUsersInAccountOutputSchema,
+	closeUsersInAccount: CloseUsersInAccountOutputSchema,
+	createOrUpdateUserAuthorizations:
+		CreateOrUpdateUserAuthorizationsOutputSchema,
+	createUserAuthorizationForAgentUser:
+		CreateUserAuthorizationForAgentUserOutputSchema,
+	deleteCustomUserSettings: DeleteCustomUserSettingsOutputSchema,
+	deleteUserAuthorization: DeleteUserAuthorizationOutputSchema,
+	deleteUserAuthorizations: DeleteUserAuthorizationsOutputSchema,
+	deleteUserInitialsOrSignatureImage:
+		DeleteUserInitialsOrSignatureImageOutputSchema,
+	deleteUserProfileImage: DeleteUserProfileImageOutputSchema,
+	getAgentUserAuthorizations: GetAgentUserAuthorizationsOutputSchema,
+	getUserAuthorizationDetails: GetUserAuthorizationDetailsOutputSchema,
+	getUserAuthorizationsForPrincipal:
+		GetUserAuthorizationsForPrincipalOutputSchema,
+	getUserInformationById: GetUserInformationByIdOutputSchema,
+	listUsersForAccount: ListUsersForAccountOutputSchema,
+	removeUserSignatureInformation: RemoveUserSignatureInformationOutputSchema,
+	retrieveCustomUserSettings: RetrieveCustomUserSettingsOutputSchema,
+	retrieveUserAccountSettings: RetrieveUserAccountSettingsOutputSchema,
+	retrieveUserProfileImage: RetrieveUserProfileImageOutputSchema,
+	retrieveUserProfileInformation: RetrieveUserProfileInformationOutputSchema,
+	retrieveUserSignatureDefinitions:
+		RetrieveUserSignatureDefinitionsOutputSchema,
+	retrieveUserSignatureImage: RetrieveUserSignatureImageOutputSchema,
+	retrieveUserSignatureInformation:
+		RetrieveUserSignatureInformationOutputSchema,
+	setUserSignatureImage: SetUserSignatureImageOutputSchema,
+	updateUserAccountSettings: UpdateUserAccountSettingsOutputSchema,
+	updateUserAuthorizationDates: UpdateUserAuthorizationDatesOutputSchema,
+	updateUserInformationForSpecifiedUser:
+		UpdateUserInformationForSpecifiedUserOutputSchema,
+	updateUserProfileImage: UpdateUserProfileImageOutputSchema,
+	updateUserProfileInformation: UpdateUserProfileInformationOutputSchema,
+	updateUserSignatureById: UpdateUserSignatureByIdOutputSchema,
+	addFileToWorkspace: AddFileToWorkspaceOutputSchema,
+	createACollaborativeWorkspace: CreateACollaborativeWorkspaceOutputSchema,
+	deleteExistingWorkspaceLogically:
+		DeleteExistingWorkspaceLogicallyOutputSchema,
+	deleteWorkspaceFilesOrFolders: DeleteWorkspaceFilesOrFoldersOutputSchema,
+	getWorkspaceFile: GetWorkspaceFileOutputSchema,
+	getWorkspaceFolderContents: GetWorkspaceFolderContentsOutputSchema,
+	listWorkspaceFilePages: ListWorkspaceFilePagesOutputSchema,
+	listWorkspaces: ListWorkspacesOutputSchema,
+	retrievePropertiesAboutWorkspace:
+		RetrievePropertiesAboutWorkspaceOutputSchema,
+	updateWorkspaceInformation: UpdateWorkspaceInformationOutputSchema,
+	updateWorkspaceItemMetadata: UpdateWorkspaceItemMetadataOutputSchema,
+};
