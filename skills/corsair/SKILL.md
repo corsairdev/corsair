@@ -56,23 +56,26 @@ openssl rand -base64 32
 
 ## Keys and environment
 
-Corsair needs a dev API key, a signing secret, and the KEK in `.env`. The API-key prefix (`ck_dev_` or `ck_prod_`) tells the SDK which environment it's in.
+Corsair needs an API key, a signing secret, and the KEK in `.env`. The key prefix (`ck_dev_` or `ck_prod_`) tells the SDK which environment it's in.
 
-Fastest path: mint a sign-in link with the project name in the query string.
+Fastest path: hand the user a sign-in link that carries the project name and the integrations they want. Build it whenever you set Corsair up for someone.
 
 ```text
-https://hub.corsair.dev/login?title=My%20App
+https://hub.corsair.dev/login?title=My%20App&mode=agent&plugins=slack,linear
 ```
 
-The user opens it, signs in with Google, and a workspace and project are created for them. The keys show up on the onboarding screen; copy them into `.env`. Prefer the dashboard? Create a project at `https://hub.corsair.dev/dashboard` and copy the same keys from the Keys tab.
+- `mode=agent`. Include it every time you hand over this link. It tells the sign-in page an agent sent the user, which shows a short "get your API key in under a minute" note.
+- `plugins=`. Comma-separated, lowercase plugin ids from the [catalog](https://api.corsair.dev/md/integrations), for the integrations the user named. They render on the sign-in card so the user sees what they're setting up. Leave it off if none came up; cap at 8.
+
+The user opens the link, signs in, and Hub creates a workspace and project for them. If they aren't logged in, sign-in comes first, then the same result. The keys land on the setup screen; copy them into `.env`. Prefer the dashboard? Create a project at `https://hub.corsair.dev/dashboard` and copy the same keys from the Keys tab.
 
 ```bash
-CORSAIR_DEV_API_KEY=ck_dev_...
-CORSAIR_DEV_SIGNING_SECRET=...
+CORSAIR_API_KEY=ck_dev_...       # ck_prod_ in production; the prefix picks the environment
+CORSAIR_SIGNING_SECRET=csec_...
 CORSAIR_KEK=...
 ```
 
-Production uses `CORSAIR_PROD_API_KEY` and `CORSAIR_PROD_SIGNING_SECRET`, with the same `CORSAIR_KEK`. Never log or commit secrets.
+The same two names hold in production. Swap in the `ck_prod_` key and its signing secret, and keep the same `CORSAIR_KEK`. Never log or commit secrets.
 
 ## Wire `corsair.ts`
 
@@ -85,8 +88,8 @@ export const corsair = createCorsair({
   kek: process.env.CORSAIR_KEK!,
   database: db, // the app's own DB handle; Corsair persists here, Hub stores nothing
   hub: {
-    projectApiKey: (process.env.CORSAIR_PROD_API_KEY ?? process.env.CORSAIR_DEV_API_KEY)!,
-    signingSecret: (process.env.CORSAIR_PROD_SIGNING_SECRET ?? process.env.CORSAIR_DEV_SIGNING_SECRET)!,
+    projectApiKey: process.env.CORSAIR_API_KEY!,
+    signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
   },
   plugins: [github()],
   multiTenancy: true, // from the "whose accounts?" choice
@@ -132,7 +135,39 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 // redirect the user to connectUrl
 ```
 
-In React, use `createCorsairReactClient({ baseURL })` and its `useCreateConnectLink` and `useConnectionStatus` hooks. See [adapters/react](https://docs.corsair.dev/adapters/react.md). The user authorizes on Hub's hosted page, and the tokens land encrypted in the user's database.
+The user authorizes on Hub's hosted page, and the tokens land encrypted in the user's database.
+
+### React apps: Corsair Connect
+
+On a React frontend, wrap the app once and write no connect or reconnect handling. When any Corsair call fails because the tenant hasn't connected a plugin (or a credential expired and a reconnect is required), the provider opens a connect dialog on its own and the user fixes it inline.
+
+```tsx
+// app/providers.tsx
+"use client";
+import { CorsairProvider } from "corsair/client/react";
+import { useRouter } from "next/navigation";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  return (
+    <CorsairProvider onConnected={() => router.refresh()}>
+      {children}
+    </CorsairProvider>
+  );
+}
+```
+
+- The dialog opens for any failed call with no per-call code (`captureUnhandled`, on by default). `baseURL` defaults to `/api/corsair`; `appearance` is `"light"`, `"dark"`, or `"auto"`.
+- `useConnections()` gives `connect(plugin)` for a proactive "Connect X" button, `call(fn)` to wrap a mutation so it re-runs itself after connect, and `isConnected(plugin)` for button state.
+- A Server Component that reads Corsair data throws to its segment's `error.tsx`. Re-export the boundary there and the read retries once connected:
+
+```tsx
+// app/inbox/error.tsx
+"use client";
+export { CorsairErrorBoundary as default } from "corsair/client/react";
+```
+
+Full API in [adapters/react](https://docs.corsair.dev/adapters/react.md). The lower-level `createCorsairReactClient` hooks (`useConnectionStatus`, `useCreateConnectLink`, and friends) are for an admin dashboard reading arbitrary tenants.
 
 Don't stop here. Make a real call and confirm the data comes back (below).
 
@@ -224,7 +259,7 @@ Gate risky operations. The root config is `permissions: { timeout: "30m", onTime
 
 ## Go to production
 
-1. Set `CORSAIR_PROD_API_KEY` (`ck_prod_`) and `CORSAIR_PROD_SIGNING_SECRET` in the deploy environment. The `corsair.ts` above prefers them when present, and the `ck_prod_` prefix flips the SDK to production.
+1. Set `CORSAIR_API_KEY` to the `ck_prod_` key and `CORSAIR_SIGNING_SECRET` to its signing secret in the deploy environment. Same names as dev; the `ck_prod_` prefix flips the SDK to production.
 2. Register the app's public HTTPS delivery URL in the dashboard Delivery URLs tab and activate production. Dev self-registers; prod is explicit.
 3. Deploy. See [environments](https://docs.corsair.dev/hub/environments.md) and [delivery URLs](https://docs.corsair.dev/hub/delivery-urls.md).
 
@@ -250,6 +285,7 @@ The job isn't done when the server runs. Confirm all three:
 - Doc index: https://docs.corsair.dev/llms.txt
 - Setup guide: https://docs.corsair.dev/hub/setup.md
 - Route handlers (all stacks): https://docs.corsair.dev/adapters/handlers.md
+- Corsair Connect (React provider): https://docs.corsair.dev/adapters/react.md
 - Connect and OAuth: https://docs.corsair.dev/management/connect.md
 - Environments (dev vs prod): https://docs.corsair.dev/hub/environments.md
 - Integrations catalog: https://api.corsair.dev/md/integrations
