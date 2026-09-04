@@ -32,7 +32,7 @@ export const workersUpload = async (ctx: Context, input: Input) => {
 	const path = `/accounts/${accountId}/workers/scripts/${scriptName}`;
 	const { script_content, bindings, compatibility_date } = input;
 	const result = bindings != null || compatibility_date != null
-		? await makeCloudflareApiKeyRequest(path, ctx.key, { method: 'PUT', formData: { metadata: JSON.stringify({ ...(bindings != null ? { bindings } : {}), ...(compatibility_date != null ? { compatibility_date } : {}) }), script: String(script_content) } })
+		? await makeCloudflareApiKeyRequest(path, ctx.key, { method: 'PUT', formData: { metadata: JSON.stringify({ main_module: 'main.js', ...(bindings != null ? { bindings } : {}), ...(compatibility_date != null ? { compatibility_date } : {}) }), 'main.js': String(script_content) } })
 		: await makeCloudflareApiKeyRequest(path, ctx.key, { method: 'PUT', rawBody: String(script_content), mediaType: 'application/javascript' });
 	await logEventFromContext(ctx, 'cloudflareapikey.workers.scripts.upload', input, 'completed'); return result;
 };

@@ -28,12 +28,18 @@ function unwrapCloudflareResponse<T>(response: unknown): T {
 }
 
 export class CloudflareApiKeyAPIError extends Error {
+	public readonly status?: number;
+	public readonly retryAfter?: number;
+
 	constructor(
 		message: string,
 		public readonly code?: string,
+		options?: { status?: number; retryAfter?: number; cause?: Error },
 	) {
-		super(message);
+		super(message, options?.cause ? { cause: options.cause } : undefined);
 		this.name = 'CloudflareApiKeyAPIError';
+		this.status = options?.status;
+		this.retryAfter = options?.retryAfter;
 	}
 }
 
@@ -60,13 +66,8 @@ export async function makeCloudflareApiKeyRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
-			'Content-Type': 'application/json',
-			// If using Cloudflare API Token:
+			...(formData ? {} : { 'Content-Type': 'application/json' }),
 			Authorization: `Bearer ${apiKey}`,
-			
-			// If using Global API Key instead, comment out Authorization above and use:
-			// 'X-Auth-Key': apiKey,
-			// 'X-Auth-Email': 'your-email@example.com',
 		},
 	};
 	const requestOptions: ApiRequestOptions = formData
@@ -86,7 +87,11 @@ export async function makeCloudflareApiKeyRequest<T>(
 		return unwrapCloudflareResponse<T>(response);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new CloudflareApiKeyAPIError(error.message, String(error.status));
+			throw new CloudflareApiKeyAPIError(error.message, String(error.status), {
+				status: error.status,
+				retryAfter: error.retryAfter,
+				cause: error,
+			});
 		}
 		if (error instanceof Error) {
 			throw new CloudflareApiKeyAPIError(error.message);

@@ -177,8 +177,7 @@ export function cloudflareapikey<const T extends CloudflareApiKeyPluginOptions>(
 		webhookSchemas: cloudflareApiKeyWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-cloudflareapikey-signature' in headers;
+			return 'cf-webhook-auth' in headers || 'webhook-signature' in headers;
 		},
 		pluginTenantWebhookMatcher: matchCloudflareApiKeyTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveCloudflareApiKeyOAuthWebhookTenantLink,
