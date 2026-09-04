@@ -1,4 +1,8 @@
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import * as crypto from 'crypto';
 import { z } from 'zod';
 
@@ -7,7 +11,9 @@ export const UploadcareWebhookPayloadSchema = z.object({
 	data: z.record(z.string(), z.unknown()),
 });
 
-export type UploadcareWebhookPayload = z.infer<typeof UploadcareWebhookPayloadSchema>;
+export type UploadcareWebhookPayload = z.infer<
+	typeof UploadcareWebhookPayloadSchema
+>;
 
 export const FileUploadedEventSchema = UploadcareWebhookPayloadSchema.extend({
 	event: z.literal('file.uploaded'),
@@ -29,7 +35,9 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
-			return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+			return parsed !== null &&
+				typeof parsed === 'object' &&
+				!Array.isArray(parsed)
 				? (parsed as Record<string, unknown>)
 				: null;
 		} catch {
@@ -41,7 +49,9 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
-export function createUploadcareMatch(eventType: string): CorsairWebhookMatcher {
+export function createUploadcareMatch(
+	eventType: string,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body);
 		return parsedBody !== null && parsedBody.event === eventType;
@@ -95,4 +105,3 @@ export function verifyUploadcareWebhookSignature(
 		return { valid: false, error: 'Invalid webhook signature' };
 	}
 }
-

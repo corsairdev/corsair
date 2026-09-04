@@ -25,4 +25,3 @@ export const UploadcareGroup = z
 
 export type UploadcareFile = z.infer<typeof UploadcareFile>;
 export type UploadcareGroup = z.infer<typeof UploadcareGroup>;
-

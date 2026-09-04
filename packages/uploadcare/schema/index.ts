@@ -7,4 +7,3 @@ export const UploadcareSchema = {
 		UploadcareGroup,
 	},
 } as const;
-

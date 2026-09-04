@@ -7,4 +7,3 @@ export function matchUploadcareTenantWebhook(
 ): WebhookTenantMatch | null {
 	return null;
 }
-

@@ -58,7 +58,9 @@ export async function makeUploadcareRequest<T>(
 			const msg =
 				typeof error.body === 'object' && error.body && 'detail' in error.body
 					? String((error.body as any).detail)
-					: typeof error.body === 'object' && error.body && 'message' in error.body
+					: typeof error.body === 'object' &&
+							error.body &&
+							'message' in error.body
 						? String((error.body as any).message)
 						: error.message;
 			throw new UploadcareAPIError(
@@ -75,4 +77,3 @@ export async function makeUploadcareRequest<T>(
 		throw new UploadcareAPIError('Unknown error');
 	}
 }
-

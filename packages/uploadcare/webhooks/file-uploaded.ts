@@ -1,6 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import type { UploadcareWebhooks } from '..';
-import { createUploadcareMatch, verifyUploadcareWebhookSignature } from './types';
+import {
+	createUploadcareMatch,
+	verifyUploadcareWebhookSignature,
+} from './types';
 
 export const fileUploaded: UploadcareWebhooks['fileUploaded'] = {
 	match: createUploadcareMatch('file.uploaded'),
@@ -20,7 +23,12 @@ export const fileUploaded: UploadcareWebhooks['fileUploaded'] = {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'uploadcare.webhook.file_uploaded', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'uploadcare.webhook.file_uploaded',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, data: event };
 	},

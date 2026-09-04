@@ -3,14 +3,14 @@ import {
 	batchStore as batchStoreFiles,
 	deleteFile,
 	get as fileGet,
-	list as filesList,
 	store as fileStore,
+	list as filesList,
 } from './files';
 import { get as groupGet, list as groupsList } from './groups';
 import { get as projectGet } from './project';
 import {
-	create as webhookCreate,
 	deleteWebhook,
+	create as webhookCreate,
 	list as webhooksList,
 	update as webhookUpdate,
 } from './webhooks';

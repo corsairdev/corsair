@@ -3,9 +3,8 @@ import {
 	UploadcareEndpointInputSchemas,
 	UploadcareEndpointOutputSchemas,
 } from './endpoints/types';
-import { verifyUploadcareWebhookSignature } from './webhooks/types';
 import { errorHandlers } from './error-handlers';
-import { ApiError } from 'corsair/http';
+import { verifyUploadcareWebhookSignature } from './webhooks/types';
 
 const TEST_API_KEY = 'test_public_key:test_secret_key';
 
@@ -13,7 +12,8 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 	describe('Schema Validation', () => {
 		it('validates filesList input & output schema', () => {
 			const validOptions = { limit: 10, stored: true };
-			const parsedInput = UploadcareEndpointInputSchemas.filesList.parse(validOptions);
+			const parsedInput =
+				UploadcareEndpointInputSchemas.filesList.parse(validOptions);
 			expect(parsedInput.limit).toBe(10);
 
 			const validOutput = {
@@ -31,9 +31,12 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 					},
 				],
 			};
-			const parsedOutput = UploadcareEndpointOutputSchemas.filesList.parse(validOutput);
+			const parsedOutput =
+				UploadcareEndpointOutputSchemas.filesList.parse(validOutput);
 			expect(parsedOutput.results).toBeDefined();
-			expect(parsedOutput.results[0]!.uuid).toBe('123e4567-e89b-12d3-a456-426614174000');
+			expect(parsedOutput.results[0]!.uuid).toBe(
+				'123e4567-e89b-12d3-a456-426614174000',
+			);
 		});
 
 		it('validates fileGet input & output schema', () => {
@@ -46,13 +49,15 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 				original_filename: 'sample.png',
 				size: 2048,
 			};
-			const parsedOutput = UploadcareEndpointOutputSchemas.fileGet.parse(validFile);
+			const parsedOutput =
+				UploadcareEndpointOutputSchemas.fileGet.parse(validFile);
 			expect(parsedOutput.uuid).toBe('123e4567-e89b-12d3-a456-426614174000');
 		});
 
 		it('validates batchStore & batchDelete schemas', () => {
 			const batchInput = { file_ids: ['uuid-1', 'uuid-2'] };
-			const parsedInput = UploadcareEndpointInputSchemas.batchStoreFiles.parse(batchInput);
+			const parsedInput =
+				UploadcareEndpointInputSchemas.batchStoreFiles.parse(batchInput);
 			expect(parsedInput.file_ids).toHaveLength(2);
 
 			const batchOutput = {
@@ -62,7 +67,8 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 					{ uuid: 'uuid-2', is_stored: true },
 				],
 			};
-			const parsedOutput = UploadcareEndpointOutputSchemas.batchStoreFiles.parse(batchOutput);
+			const parsedOutput =
+				UploadcareEndpointOutputSchemas.batchStoreFiles.parse(batchOutput);
 			expect(parsedOutput.status).toBe('ok');
 			expect(parsedOutput.result?.length).toBe(2);
 		});
@@ -77,7 +83,8 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 				files_count: 2,
 				files: [{ uuid: 'f1' }, { uuid: 'f2' }],
 			};
-			const parsedOutput = UploadcareEndpointOutputSchemas.groupGet.parse(groupOutput);
+			const parsedOutput =
+				UploadcareEndpointOutputSchemas.groupGet.parse(groupOutput);
 			expect(parsedOutput.id).toBe('group-uuid-123');
 			expect(parsedOutput.files_count).toBe(2);
 		});
@@ -91,7 +98,8 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 				pub_key: 'pub_key_123',
 				collaborator_emails: ['dev@example.com'],
 			};
-			const parsedOutput = UploadcareEndpointOutputSchemas.projectGet.parse(projectOutput);
+			const parsedOutput =
+				UploadcareEndpointOutputSchemas.projectGet.parse(projectOutput);
 			expect(parsedOutput.name).toBe('My Uploadcare Project');
 		});
 
@@ -101,7 +109,8 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 				event: 'file.uploaded',
 				is_active: true,
 			};
-			const parsedInput = UploadcareEndpointInputSchemas.webhookCreate.parse(createInput);
+			const parsedInput =
+				UploadcareEndpointInputSchemas.webhookCreate.parse(createInput);
 			expect(parsedInput.target_url).toBe('https://example.com/webhook');
 
 			const webhookOutput = {
@@ -110,7 +119,8 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 				event: 'file.uploaded',
 				is_active: true,
 			};
-			const parsedOutput = UploadcareEndpointOutputSchemas.webhookCreate.parse(webhookOutput);
+			const parsedOutput =
+				UploadcareEndpointOutputSchemas.webhookCreate.parse(webhookOutput);
 			expect(parsedOutput.id).toBe(12345);
 		});
 	});
@@ -122,23 +132,36 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 				status: 200,
 				headers: new Headers({ 'content-type': 'application/json' }),
 				json: async () => ({ name: 'Test Project', pub_key: 'test_pk' }),
-				text: async () => JSON.stringify({ name: 'Test Project', pub_key: 'test_pk' }),
+				text: async () =>
+					JSON.stringify({ name: 'Test Project', pub_key: 'test_pk' }),
 			});
 
 			global.fetch = fetchMock as any;
 
-			const result = await makeUploadcareRequest<{ name: string }>('project/', TEST_API_KEY, {
-				method: 'GET',
-			});
+			const result = await makeUploadcareRequest<{ name: string }>(
+				'project/',
+				TEST_API_KEY,
+				{
+					method: 'GET',
+				},
+			);
 
 			expect(result.name).toBe('Test Project');
 			expect(fetchMock).toHaveBeenCalled();
 			const callArgs = fetchMock.mock.calls[0];
 			expect(callArgs[0]).toContain('https://api.uploadcare.com/project/');
 			const headers = callArgs[1].headers;
-			const authHeader = typeof headers.get === 'function' ? headers.get('Authorization') : headers['Authorization'];
-			const acceptHeader = typeof headers.get === 'function' ? headers.get('Accept') : headers['Accept'];
-			expect(authHeader).toBe('Uploadcare.Simple test_public_key:test_secret_key');
+			const authHeader =
+				typeof headers.get === 'function'
+					? headers.get('Authorization')
+					: headers['Authorization'];
+			const acceptHeader =
+				typeof headers.get === 'function'
+					? headers.get('Accept')
+					: headers['Accept'];
+			expect(authHeader).toBe(
+				'Uploadcare.Simple test_public_key:test_secret_key',
+			);
 			expect(acceptHeader).toBe('application/vnd.uploadcare-v0.7+json');
 		});
 
@@ -180,7 +203,9 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 
 			let caughtError: UploadcareAPIError | null = null;
 			try {
-				await makeUploadcareRequest('project/', TEST_API_KEY, { method: 'GET' });
+				await makeUploadcareRequest('project/', TEST_API_KEY, {
+					method: 'GET',
+				});
 			} catch (err: any) {
 				caughtError = err;
 			}
@@ -193,16 +218,27 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 
 	describe('Error Handlers', () => {
 		it('matches 429 status and returns retryAfter', async () => {
-			const uploadcareErr = new UploadcareAPIError('Throttled', undefined, 429, {}, 30);
+			const uploadcareErr = new UploadcareAPIError(
+				'Throttled',
+				undefined,
+				429,
+				{},
+				30,
+			);
 			const isMatch = errorHandlers.RATE_LIMIT_ERROR.match(uploadcareErr);
 			expect(isMatch).toBe(true);
 
-			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(uploadcareErr);
+			const result =
+				await errorHandlers.RATE_LIMIT_ERROR.handler(uploadcareErr);
 			expect(result.headersRetryAfterMs).toBe(30);
 		});
 
 		it('matches 401 status for auth errors', async () => {
-			const uploadcareErr = new UploadcareAPIError('Unauthorized', undefined, 401);
+			const uploadcareErr = new UploadcareAPIError(
+				'Unauthorized',
+				undefined,
+				401,
+			);
 			const isMatch = errorHandlers.AUTH_ERROR.match(uploadcareErr);
 			expect(isMatch).toBe(true);
 		});
@@ -212,8 +248,14 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 		it('verifies valid HMAC-SHA256 signature', () => {
 			const crypto = require('crypto');
 			const secret = 'my_secret';
-			const rawBody = JSON.stringify({ event: 'file.uploaded', data: { uuid: '123' } });
-			const signature = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+			const rawBody = JSON.stringify({
+				event: 'file.uploaded',
+				data: { uuid: '123' },
+			});
+			const signature = crypto
+				.createHmac('sha256', secret)
+				.update(rawBody)
+				.digest('hex');
 
 			const req = {
 				headers: { 'x-uc-signature': `v1=${signature}` },
@@ -249,4 +291,3 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 		});
 	});
 });
-

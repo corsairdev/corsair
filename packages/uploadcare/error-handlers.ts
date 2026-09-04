@@ -1,12 +1,13 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { UploadcareAPIError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
-			if (error instanceof UploadcareAPIError && error.status === 429) return true;
+			if (error instanceof UploadcareAPIError && error.status === 429)
+				return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('rate_limited') ||
@@ -31,7 +32,8 @@ export const errorHandlers = {
 	AUTH_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 401) return true;
-			if (error instanceof UploadcareAPIError && error.status === 401) return true;
+			if (error instanceof UploadcareAPIError && error.status === 401)
+				return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('unauthorized') ||
@@ -46,4 +48,3 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;
-

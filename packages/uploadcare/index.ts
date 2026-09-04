@@ -15,18 +15,24 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { UploadcareEndpointInputs, UploadcareEndpointOutputs } from './endpoints/types';
-import { UploadcareEndpointInputSchemas, UploadcareEndpointOutputSchemas } from './endpoints/types';
+import { Files, Groups, Project, Webhooks } from './endpoints';
+import type {
+	UploadcareEndpointInputs,
+	UploadcareEndpointOutputs,
+} from './endpoints/types';
+import {
+	UploadcareEndpointInputSchemas,
+	UploadcareEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { UploadcareSchema } from './schema';
+import { UploadcareWebhooksList } from './webhooks';
+import { matchUploadcareTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	FileUploadedEvent,
 	UploadcareWebhookOutputs,
 } from './webhooks/types';
 import { FileUploadedEventSchema } from './webhooks/types';
-import { Files, Groups, Project, Webhooks } from './endpoints';
-import { UploadcareSchema } from './schema';
-import { UploadcareWebhooksList } from './webhooks';
-import { errorHandlers } from './error-handlers';
-import { matchUploadcareTenantWebhook } from './webhooks/tenant-matcher';
 
 export type UploadcarePluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -43,17 +49,19 @@ export type UploadcareContext = CorsairPluginContext<
 	UploadcarePluginOptions
 >;
 
-export type UploadcareKeyBuilderContext = KeyBuilderContext<UploadcarePluginOptions>;
+export type UploadcareKeyBuilderContext =
+	KeyBuilderContext<UploadcarePluginOptions>;
 
-export type UploadcareBoundEndpoints = BindEndpoints<typeof uploadcareEndpointsNested>;
-
-type UploadcareEndpoint<
-	K extends keyof UploadcareEndpointOutputs,
-> = CorsairEndpoint<
-	UploadcareContext,
-	UploadcareEndpointInputs[K],
-	UploadcareEndpointOutputs[K]
+export type UploadcareBoundEndpoints = BindEndpoints<
+	typeof uploadcareEndpointsNested
 >;
+
+type UploadcareEndpoint<K extends keyof UploadcareEndpointOutputs> =
+	CorsairEndpoint<
+		UploadcareContext,
+		UploadcareEndpointInputs[K],
+		UploadcareEndpointOutputs[K]
+	>;
 
 export type UploadcareEndpoints = {
 	filesList: UploadcareEndpoint<'filesList'>;
@@ -165,7 +173,9 @@ export const uploadcareEndpointSchemas = {
 		input: UploadcareEndpointInputSchemas.webhookDelete,
 		output: UploadcareEndpointOutputSchemas.webhookDelete,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof uploadcareEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof uploadcareEndpointsNested
+>;
 
 const uploadcareWebhookSchemas = {
 	'fileUploaded.fileUploaded': {
@@ -173,7 +183,9 @@ const uploadcareWebhookSchemas = {
 		payload: FileUploadedEventSchema,
 		response: FileUploadedEventSchema,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof uploadcareWebhooksNested>;
+} as const satisfies RequiredPluginWebhookSchemas<
+	typeof uploadcareWebhooksNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -183,15 +195,23 @@ const uploadcareEndpointMeta = {
 	'files.store': { riskLevel: 'write', description: 'Store a file' },
 	'files.delete': { riskLevel: 'write', description: 'Delete a file' },
 	'files.batchStore': { riskLevel: 'write', description: 'Batch store files' },
-	'files.batchDelete': { riskLevel: 'write', description: 'Batch delete files' },
+	'files.batchDelete': {
+		riskLevel: 'write',
+		description: 'Batch delete files',
+	},
 	'groups.list': { riskLevel: 'read', description: 'List file groups' },
 	'groups.get': { riskLevel: 'read', description: 'Get group info by ID' },
 	'project.get': { riskLevel: 'read', description: 'Get project info' },
-	'webhooks.list': { riskLevel: 'read', description: 'List registered webhooks' },
+	'webhooks.list': {
+		riskLevel: 'read',
+		description: 'List registered webhooks',
+	},
 	'webhooks.create': { riskLevel: 'write', description: 'Create a webhook' },
 	'webhooks.update': { riskLevel: 'write', description: 'Update a webhook' },
 	'webhooks.delete': { riskLevel: 'write', description: 'Delete a webhook' },
-} as const satisfies RequiredPluginEndpointMeta<typeof uploadcareEndpointsNested>;
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof uploadcareEndpointsNested
+>;
 
 export const uploadcareAuthConfig = {
 	api_key: {
@@ -199,22 +219,25 @@ export const uploadcareAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseUploadcarePlugin<T extends UploadcarePluginOptions> = CorsairPlugin<
-	'uploadcare',
-	typeof UploadcareSchema,
-	typeof uploadcareEndpointsNested,
-	typeof uploadcareWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseUploadcarePlugin<T extends UploadcarePluginOptions> =
+	CorsairPlugin<
+		'uploadcare',
+		typeof UploadcareSchema,
+		typeof uploadcareEndpointsNested,
+		typeof uploadcareWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalUploadcarePlugin = BaseUploadcarePlugin<UploadcarePluginOptions>;
+export type InternalUploadcarePlugin =
+	BaseUploadcarePlugin<UploadcarePluginOptions>;
 
 export type ExternalUploadcarePlugin<T extends UploadcarePluginOptions> =
 	BaseUploadcarePlugin<T>;
 
 export function uploadcare<const T extends UploadcarePluginOptions>(
-	incomingOptions: UploadcarePluginOptions & T = {} as UploadcarePluginOptions & T,
+	incomingOptions: UploadcarePluginOptions & T = {} as UploadcarePluginOptions &
+		T,
 ): ExternalUploadcarePlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -234,10 +257,7 @@ export function uploadcare<const T extends UploadcarePluginOptions>(
 		webhookSchemas: uploadcareWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			if (
-				'x-uc-signature' in headers ||
-				'x-uploadcare-signature' in headers
-			) {
+			if ('x-uc-signature' in headers || 'x-uploadcare-signature' in headers) {
 				return true;
 			}
 			const body =
@@ -287,13 +307,12 @@ export function uploadcare<const T extends UploadcarePluginOptions>(
 }
 
 export type {
+	FilesListInput,
+	FilesListResponse,
+	UploadcareEndpointInputs,
+	UploadcareEndpointOutputs,
+} from './endpoints/types';
+export type {
 	FileUploadedEvent,
 	UploadcareWebhookOutputs,
 } from './webhooks/types';
-
-export type {
-	UploadcareEndpointInputs,
-	UploadcareEndpointOutputs,
-	FilesListInput,
-	FilesListResponse,
-} from './endpoints/types';
