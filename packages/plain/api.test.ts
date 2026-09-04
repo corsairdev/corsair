@@ -103,7 +103,7 @@ describe('Plain plugin', () => {
 	it('uses api_key auth and resolves keys', async () => {
 		const plugin = plain({ key: 'plainApiKey_option' });
 		expect(plugin.authConfig).toEqual({ api_key: {} });
-		expect(plugin.options?.authType).toBe('api_key');
+		expect((plugin.options as { authType?: string }).authType).toBe('api_key');
 
 		await expect(
 			plugin.keyBuilder?.(
@@ -130,7 +130,7 @@ describe('Plain plugin', () => {
 	it('calls get customer by id endpoint', async () => {
 		mockMakePlainRequest.mockResolvedValue({ customer: sampleCustomer });
 		const plugin = plain();
-		const result = await plugin.endpoints.customers.getById(mockCtx, {
+		const result = await plugin.endpoints!.customers.getById(mockCtx, {
 			customerId: 'cus_123',
 		});
 
@@ -146,7 +146,7 @@ describe('Plain plugin', () => {
 	it('calls get customer by email endpoint', async () => {
 		mockMakePlainRequest.mockResolvedValue({ customer: sampleCustomer });
 		const plugin = plain();
-		const result = await plugin.endpoints.customers.getByEmail(mockCtx, {
+		const result = await plugin.endpoints!.customers.getByEmail(mockCtx, {
 			email: 'ada@example.com',
 		});
 
@@ -173,7 +173,7 @@ describe('Plain plugin', () => {
 			},
 		});
 		const plugin = plain();
-		const result = await plugin.endpoints.customers.list(mockCtx, {
+		const result = await plugin.endpoints!.customers.list(mockCtx, {
 			first: 10,
 		});
 
@@ -189,7 +189,7 @@ describe('Plain plugin', () => {
 			},
 		});
 		const plugin = plain();
-		const result = await plugin.endpoints.customers.upsert(mockCtx, {
+		const result = await plugin.endpoints!.customers.upsert(mockCtx, {
 			identifier: { emailAddress: 'ada@example.com' },
 			onCreate: { fullName: 'Ada Lovelace' },
 			onUpdate: { fullName: { value: 'Ada Lovelace' } },
@@ -202,7 +202,7 @@ describe('Plain plugin', () => {
 	it('calls delete customer endpoint', async () => {
 		mockMakePlainRequest.mockResolvedValue({ deleteCustomer: {} });
 		const plugin = plain();
-		const result = await plugin.endpoints.customers.delete(mockCtx, {
+		const result = await plugin.endpoints!.customers.delete(mockCtx, {
 			customerId: 'cus_123',
 		});
 
@@ -214,7 +214,7 @@ describe('Plain plugin', () => {
 			createThread: { thread: sampleThread },
 		});
 		const plugin = plain();
-		const result = await plugin.endpoints.threads.create(mockCtx, {
+		const result = await plugin.endpoints!.threads.create(mockCtx, {
 			customerIdentifier: { customerId: 'cus_123' },
 			title: 'Need help with billing',
 		});
@@ -225,7 +225,7 @@ describe('Plain plugin', () => {
 	it('calls get thread by id endpoint', async () => {
 		mockMakePlainRequest.mockResolvedValue({ thread: sampleThread });
 		const plugin = plain();
-		const result = await plugin.endpoints.threads.getById(mockCtx, {
+		const result = await plugin.endpoints!.threads.getById(mockCtx, {
 			threadId: 'th_123',
 		});
 
@@ -247,10 +247,10 @@ describe('Plain plugin', () => {
 		});
 		const plugin = plain();
 
-		const queryResult = await plugin.endpoints.threads.query(mockCtx, {
+		const queryResult = await plugin.endpoints!.threads.query(mockCtx, {
 			first: 5,
 		});
-		const listResult = await plugin.endpoints.threads.listDeprecated(mockCtx, {
+		const listResult = await plugin.endpoints!.threads.listDeprecated(mockCtx, {
 			first: 5,
 		});
 
@@ -298,7 +298,7 @@ describe('Plain plugin', () => {
 			},
 		});
 		const plugin = plain();
-		const result = await plugin.endpoints.threads.fetchIssues(mockCtx, {
+		const result = await plugin.endpoints!.threads.fetchIssues(mockCtx, {
 			customerId: 'cus_123',
 		});
 
@@ -310,7 +310,7 @@ describe('Plain plugin', () => {
 	it('calls send message endpoint', async () => {
 		mockMakePlainRequest.mockResolvedValue({ replyToThread: {} });
 		const plugin = plain();
-		const result = await plugin.endpoints.threads.sendMessage(mockCtx, {
+		const result = await plugin.endpoints!.threads.sendMessage(mockCtx, {
 			threadId: 'th_123',
 			textContent: 'Thanks for the update',
 		});
@@ -325,7 +325,7 @@ describe('Plain plugin', () => {
 			},
 		});
 		const plugin = plain();
-		const result = await plugin.endpoints.threads.update(mockCtx, {
+		const result = await plugin.endpoints!.threads.update(mockCtx, {
 			threadId: 'th_123',
 			title: 'Updated title',
 		});
@@ -347,10 +347,10 @@ describe('Plain plugin', () => {
 			.mockResolvedValueOnce({ deleteUser: {} });
 
 		const plugin = plain();
-		const user = await plugin.endpoints.users.getById(mockCtx, {
+		const user = await plugin.endpoints!.users.getById(mockCtx, {
 			userId: 'usr_1',
 		});
-		const deleted = await plugin.endpoints.users.delete(mockCtx, {
+		const deleted = await plugin.endpoints!.users.delete(mockCtx, {
 			userId: 'usr_1',
 		});
 
@@ -381,10 +381,10 @@ describe('Plain plugin', () => {
 			});
 
 		const plugin = plain();
-		const company = await plugin.endpoints.companies.fetch(mockCtx, {
+		const company = await plugin.endpoints!.companies.fetch(mockCtx, {
 			companyId: 'co_1',
 		});
-		const updated = await plugin.endpoints.companies.update(mockCtx, {
+		const updated = await plugin.endpoints!.companies.update(mockCtx, {
 			identifier: { companyId: 'co_1' },
 			name: 'Plain Inc',
 			domainName: 'plain.com',
@@ -411,10 +411,10 @@ describe('Plain plugin', () => {
 			});
 
 		const plugin = plain();
-		const tier = await plugin.endpoints.tiers.fetch(mockCtx, {
+		const tier = await plugin.endpoints!.tiers.fetch(mockCtx, {
 			tierId: 'tier_1',
 		});
-		const tiers = await plugin.endpoints.tiers.list(mockCtx, { first: 10 });
+		const tiers = await plugin.endpoints!.tiers.list(mockCtx, { first: 10 });
 
 		expect(tier.tier?.name).toBe('Enterprise');
 		expect(tiers.tiers.length).toBe(1);
@@ -446,17 +446,17 @@ describe('Plain plugin', () => {
 			.mockResolvedValueOnce({ removeCustomerFromCustomerGroups: {} });
 
 		const plugin = plain();
-		const created = await plugin.endpoints.customerGroups.create(mockCtx, {
+		const created = await plugin.endpoints!.customerGroups.create(mockCtx, {
 			name: 'Enterprise',
 			key: 'enterprise',
 			color: 'blue',
 		});
-		const listed = await plugin.endpoints.customerGroups.list(mockCtx, {});
-		const added = await plugin.endpoints.customerGroups.addCustomer(mockCtx, {
+		const listed = await plugin.endpoints!.customerGroups.list(mockCtx, {});
+		const added = await plugin.endpoints!.customerGroups.addCustomer(mockCtx, {
 			customerId: 'cus_123',
 			customerGroupIdentifiers: [{ customerGroupKey: 'enterprise' }],
 		});
-		const removed = await plugin.endpoints.customerGroups.removeCustomer(
+		const removed = await plugin.endpoints!.customerGroups.removeCustomer(
 			mockCtx,
 			{
 				customerId: 'cus_123',
@@ -475,7 +475,7 @@ describe('Plain plugin', () => {
 			myWorkspace: { id: 'ws_123', name: 'Plain Workspace' },
 		});
 		const plugin = plain();
-		const result = await plugin.endpoints.graphql.run(mockCtx, {
+		const result = await plugin.endpoints!.graphql.run(mockCtx, {
 			query: 'query { myWorkspace { id name } }',
 		});
 

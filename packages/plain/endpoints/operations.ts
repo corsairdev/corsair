@@ -25,7 +25,11 @@ async function requestParsed<TOutput extends keyof PlainEndpointOutputs>(
 		variables,
 		operationName,
 	);
-	const parsed = PlainEndpointOutputSchemas[outputKey].parse(data);
+	// outputKey is a generic key into the schema record, so `.parse` widens to the
+	// union of every operation's output; narrow back to this operation's type.
+	const parsed = PlainEndpointOutputSchemas[outputKey].parse(
+		data,
+	) as PlainEndpointOutputs[TOutput];
 	await logEventFromContext(ctx, event, meta, 'completed');
 	return parsed;
 }
@@ -873,5 +877,7 @@ export const runGraphqlQuery: PlainEndpoints['runGraphqlQuery'] = async (
 		'completed',
 	);
 
-	return PlainEndpointOutputSchemas.runGraphqlQuery.parse({ data });
+	// The output schema wraps the value in `{ data }` itself — pass the raw result,
+	// not a pre-wrapped object, or it double-nests.
+	return PlainEndpointOutputSchemas.runGraphqlQuery.parse(data);
 };
