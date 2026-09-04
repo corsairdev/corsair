@@ -41,6 +41,7 @@ function platformPackageBinary(): string | null {
 	}
 }
 
+/** `<platform>-<arch>` key (e.g. `darwin-arm64`) naming the frpc build for this host. */
 export function frpcPlatformKey(): string {
 	return `${process.platform}-${process.arch}`;
 }
@@ -69,23 +70,16 @@ export function frpcCacheBinary(): string {
 }
 
 /**
- * Absolute path to a runnable frpc for this platform. Resolution order: an
- * explicit `CORSAIR_FRP_BIN` override, then this platform's optional-dependency
- * package `@corsair-dev/frpc-<platform>-<arch>` (the esbuild pattern, npm-native, no
- * install script), then a local cache if one is present. Throws with an install
- * hint if none resolves.
- */
-/**
  * Ensure the resolved frpc binary carries the executable bit. Published npm
  * tarballs and some package stores drop it, which makes spawn() fail with
  * EACCES. Only touches the mode when a bit is missing; a no-op on Windows
- * (frpc.exe needs none) and best-effort elsewhere — a read-only store that
+ * (frpc.exe needs none) and best-effort elsewhere. A read-only store that
  * already has the bit still runs.
  */
 function ensureExecutable(bin: string): string {
 	if (process.platform === 'win32') return bin;
 	try {
-		// Mask to the permission bits — fs.Stats.mode also carries file-type bits
+		// Mask to the permission bits; fs.Stats.mode also carries file-type bits
 		// that must not be handed to chmod.
 		const perms = statSync(bin).mode & 0o777;
 		const executable = perms | 0o111;
@@ -97,6 +91,13 @@ function ensureExecutable(bin: string): string {
 	return bin;
 }
 
+/**
+ * Absolute path to a runnable frpc for this platform. Resolution order: an
+ * explicit `CORSAIR_FRP_BIN` override, then this platform's optional-dependency
+ * package `@corsair-dev/frpc-<platform>-<arch>` (the esbuild pattern, npm-native, no
+ * install script), then a local cache if one is present. Throws with an install
+ * hint if none resolves.
+ */
 export function resolveFrpcBinary(): string {
 	const override = process.env.CORSAIR_FRP_BIN;
 	if (override && existsSync(override)) return ensureExecutable(override);
