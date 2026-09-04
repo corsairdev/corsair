@@ -71,7 +71,7 @@ export function frpcCacheBinary(): string {
 /**
  * Absolute path to a runnable frpc for this platform. Resolution order: an
  * explicit `CORSAIR_FRP_BIN` override, then this platform's optional-dependency
- * package `@corsair-dev/frpc-<platform>` (the esbuild pattern, npm-native, no
+ * package `@corsair-dev/frpc-<platform>-<arch>` (the esbuild pattern, npm-native, no
  * install script), then a local cache if one is present. Throws with an install
  * hint if none resolves.
  */
