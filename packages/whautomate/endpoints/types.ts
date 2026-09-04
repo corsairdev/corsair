@@ -264,139 +264,54 @@ const StaffAvailabilityBlockSchema = z
 	})
 	.loose();
 
-const WhautomateResponseSchema = z
-	.object({
-		success: z.boolean().optional(),
-		data: z.unknown().optional(),
-		message: z.string().optional(),
-		error: z.string().optional(),
-	})
-	.loose();
+const PaginationResponseSchema = z.object({
+	page: z.number(),
+	limit: z.number(),
+	total: z.number(),
+	totalPages: z.number(),
+});
 
-const AddContactResponseSchema = WhautomateResponseSchema.extend({
-	data: ContactSchema.optional(),
-}).loose();
-
-const DeleteSegmentResponseSchema = WhautomateResponseSchema.extend({
-	data: z.object({ id: z.string() }).optional(),
-}).loose();
-
-const DeleteServiceCategoryResponseSchema = WhautomateResponseSchema.extend({
-	data: z.object({ id: z.string() }).optional(),
-}).loose();
-
-const GetAccountInfoResponseSchema = WhautomateResponseSchema.extend({
-	data: AccountInfoSchema.optional(),
-}).loose();
-
-const GetAllWebhooksResponseSchema = WhautomateResponseSchema.extend({
-	data: z.array(WebhookSchema).optional(),
-}).loose();
-
-const GetBroadcastByIdResponseSchema = WhautomateResponseSchema.extend({
-	data: BroadcastSchema.optional(),
-}).loose();
-
-const GetBroadcastsResponseSchema = WhautomateResponseSchema.extend({
-	data: z.array(BroadcastSchema).optional(),
-	pagination: z
-		.object({
-			page: z.number(),
-			limit: z.number(),
-			total: z.number(),
-			totalPages: z.number(),
-		})
-		.optional(),
-}).loose();
-
-const GetContactsResponseSchema = WhautomateResponseSchema.extend({
-	data: z.array(ContactSchema).optional(),
-	pagination: z
-		.object({
-			page: z.number(),
-			limit: z.number(),
-			total: z.number(),
-			totalPages: z.number(),
-		})
-		.optional(),
-}).loose();
-
-const GetMessagesOfContactResponseSchema = WhautomateResponseSchema.extend({
-	data: z.array(MessageSchema).optional(),
-	pagination: z
-		.object({
-			page: z.number(),
-			limit: z.number(),
-			total: z.number(),
-			totalPages: z.number(),
-		})
-		.optional(),
-}).loose();
-
-const GetSegmentsResponseSchema = WhautomateResponseSchema.extend({
-	data: z.array(SegmentSchema).optional(),
-	pagination: z
-		.object({
-			page: z.number(),
-			limit: z.number(),
-			total: z.number(),
-			totalPages: z.number(),
-		})
-		.optional(),
-}).loose();
-
-const GetServiceByIdResponseSchema = WhautomateResponseSchema.extend({
-	data: ServiceSchema.optional(),
-}).loose();
-
-const GetServiceCategoriesResponseSchema = WhautomateResponseSchema.extend({
-	data: z.array(ServiceCategorySchema).optional(),
-	pagination: z
-		.object({
-			page: z.number(),
-			limit: z.number(),
-			total: z.number(),
-			totalPages: z.number(),
-		})
-		.optional(),
-}).loose();
-
-const GetServicesResponseSchema = WhautomateResponseSchema.extend({
-	data: z.array(ServiceSchema).optional(),
-	pagination: z
-		.object({
-			page: z.number(),
-			limit: z.number(),
-			total: z.number(),
-			totalPages: z.number(),
-		})
-		.optional(),
-}).loose();
-
-const GetStaffAvailabilityBlocksResponseSchema =
-	WhautomateResponseSchema.extend({
-		data: z.array(StaffAvailabilityBlockSchema).optional(),
-	}).loose();
-
-const GetStaffByIdResponseSchema = WhautomateResponseSchema.extend({
-	data: StaffSchema.optional(),
-}).loose();
-
-const GetStaffsResponseSchema = WhautomateResponseSchema.extend({
-	data: z.array(StaffSchema).optional(),
-	pagination: z
-		.object({
-			page: z.number(),
-			limit: z.number(),
-			total: z.number(),
-			totalPages: z.number(),
-		})
-		.optional(),
-}).loose();
-
-const UpdateServiceResponseSchema = WhautomateResponseSchema.extend({
-	data: ServiceSchema.optional(),
-}).loose();
+// List endpoints return bare arrays (no envelope)
+const AddContactResponseSchema = ContactSchema;
+const DeleteSegmentResponseSchema = z.object({ id: z.string() });
+const DeleteServiceCategoryResponseSchema = z.object({ id: z.string() });
+const GetAccountInfoResponseSchema = AccountInfoSchema;
+const GetAllWebhooksResponseSchema = z.array(WebhookSchema);
+const GetBroadcastByIdResponseSchema = BroadcastSchema;
+const GetBroadcastsResponseSchema = z.object({
+	data: z.array(BroadcastSchema),
+	pagination: PaginationResponseSchema.optional(),
+});
+const GetContactsResponseSchema = z.object({
+	data: z.array(ContactSchema),
+	pagination: PaginationResponseSchema.optional(),
+});
+const GetMessagesOfContactResponseSchema = z.object({
+	data: z.array(MessageSchema),
+	pagination: PaginationResponseSchema.optional(),
+});
+const GetSegmentsResponseSchema = z.object({
+	data: z.array(SegmentSchema),
+	pagination: PaginationResponseSchema.optional(),
+});
+const GetServiceByIdResponseSchema = ServiceSchema;
+const GetServiceCategoriesResponseSchema = z.object({
+	data: z.array(ServiceCategorySchema),
+	pagination: PaginationResponseSchema.optional(),
+});
+const GetServicesResponseSchema = z.object({
+	data: z.array(ServiceSchema),
+	pagination: PaginationResponseSchema.optional(),
+});
+const GetStaffAvailabilityBlocksResponseSchema = z.array(
+	StaffAvailabilityBlockSchema,
+);
+const GetStaffByIdResponseSchema = StaffSchema;
+const GetStaffsResponseSchema = z.object({
+	data: z.array(StaffSchema),
+	pagination: PaginationResponseSchema.optional(),
+});
+const UpdateServiceResponseSchema = ServiceSchema;
 
 export const WhautomateEndpointInputSchemas = {
 	addContact: AddContactInputSchema,

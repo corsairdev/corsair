@@ -102,6 +102,8 @@ export type WhautomateWebhooks = {};
 
 export type WhautomateBoundWebhooks = BindWebhooks<WhautomateWebhooks>;
 
+type WhautomateWebhookOutputs = {};
+
 const whautomateEndpointsNested = {
 	contacts: {
 		addContact,
