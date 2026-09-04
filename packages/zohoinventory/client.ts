@@ -112,11 +112,25 @@ export type ZohoInventoryRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
+	path?: Record<string, string>;
 	formData?: Record<string, string | Blob>;
 	region?: ZohoInventoryRegion;
 	apiDomain?: string;
 	binary?: boolean;
 };
+
+/** Fill `{name}` tokens without a regex so user ids never hit a ReDoS pattern. */
+export function applyPathTemplate(
+	template: string,
+	path?: Record<string, string>,
+): string {
+	if (!path) return template;
+	let out = template;
+	for (const [key, value] of Object.entries(path)) {
+		out = out.split(`{${key}}`).join(encodeURIComponent(value));
+	}
+	return out;
+}
 
 function headersFor(token: string): Record<string, string> {
 	return { Authorization: `Zoho-oauthtoken ${token}` };
@@ -184,6 +198,7 @@ export async function makeZohoInventoryRequest<T>(
 		body,
 		query,
 		formData,
+		path,
 		region,
 		apiDomain,
 		binary,
@@ -196,7 +211,7 @@ export async function makeZohoInventoryRequest<T>(
 			if (value !== undefined) params.set(key, String(value));
 		}
 		const qs = params.toString();
-		const url = `${base}${endpoint}${qs ? `?${qs}` : ''}`;
+		const url = `${base}${applyPathTemplate(endpoint, path)}${qs ? `?${qs}` : ''}`;
 		const response = await fetch(url, {
 			method,
 			headers: headersFor(token),
@@ -238,6 +253,7 @@ export async function makeZohoInventoryRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
+		path,
 		body:
 			!formData && (method === 'POST' || method === 'PUT' || method === 'PATCH')
 				? body

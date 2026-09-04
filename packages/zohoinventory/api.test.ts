@@ -1,4 +1,5 @@
 import {
+	applyPathTemplate,
 	isAllowedZohoApiDomain,
 	isUnauthorizedError,
 	makeAuthenticatedZohoInventoryRequest,
@@ -73,6 +74,15 @@ describe('regional hosts', () => {
 		expect(zohoInventoryOAuthAuthUrl('eu')).toBe(
 			'https://accounts.zoho.eu/oauth/v2/auth',
 		);
+	});
+
+	it('fills path templates without interpolating ids into the template string', () => {
+		expect(
+			applyPathTemplate('/invoices/{invoice_id}/comments/{comment_id}', {
+				invoice_id: 'i',
+				comment_id: 'c',
+			}),
+		).toBe('/invoices/i/comments/c');
 	});
 
 	it('allowlists only HTTPS zohoapis hosts', () => {

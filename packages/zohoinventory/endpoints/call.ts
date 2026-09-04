@@ -33,14 +33,41 @@ function pick(
 	return query;
 }
 
-function pathOf(template: string, input: Record<string, unknown>): string {
-	return template.replace(/:([a-z_]+)/g, (_, key: string) => {
+function openApiPath(template: string): string {
+	let out = '';
+	for (let i = 0; i < template.length; i++) {
+		const ch = template[i];
+		if (ch !== ':') {
+			out += ch;
+			continue;
+		}
+		let end = i + 1;
+		while (end < template.length) {
+			const c = template.charCodeAt(end);
+			const isName = (c >= 97 && c <= 122) || c === 95 || (c >= 48 && c <= 57);
+			if (!isName) break;
+			end += 1;
+		}
+		out += `{${template.slice(i + 1, end)}}`;
+		i = end - 1;
+	}
+	return out;
+}
+
+function pathParams(
+	input: Record<string, unknown>,
+	keys: readonly string[] | undefined,
+): Record<string, string> | undefined {
+	if (!keys?.length) return undefined;
+	const path: Record<string, string> = {};
+	for (const key of keys) {
 		const value = input[key];
 		if (value === undefined || value === null || value === '') {
 			throw new Error(`[zohoinventory] missing path parameter ${key}`);
 		}
-		return encodeURIComponent(String(value));
-	});
+		path[key] = String(value);
+	}
+	return path;
 }
 
 function jsonBody(
@@ -119,11 +146,12 @@ export async function runZohoInventory(
 
 	const res = await makeAuthenticatedZohoInventoryRequest<
 		Record<string, unknown>
-	>(pathOf(spec.path, input), ctx, {
+	>(openApiPath(spec.path), ctx, {
 		method: spec.method,
 		region: ctx.options.region,
 		apiDomain: ctx.options.apiDomain,
 		query,
+		path: pathParams(input, spec.params),
 		body: jsonBody(input, spec),
 		formData,
 		binary: spec.binary,

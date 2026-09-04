@@ -180,11 +180,12 @@ async function bulkEmailInvoices(
 	if (!contactId) {
 		const first = await makeAuthenticatedZohoInventoryRequest<{
 			invoice?: { customer_id?: string };
-		}>(`/invoices/${encodeURIComponent(input.invoice_ids[0] ?? '')}`, ctx, {
+		}>('/invoices/{invoice_id}', ctx, {
 			method: 'GET',
 			region: ctx.options.region,
 			apiDomain: ctx.options.apiDomain,
 			query: { organization_id: input.organization_id },
+			path: { invoice_id: String(input.invoice_ids[0] ?? '') },
 		});
 		contactId = first.invoice?.customer_id;
 	}
