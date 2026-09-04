@@ -1,6 +1,7 @@
 # Plain Plugin Demo (Terminal Recording)
 
 Date: 2026-09-04
+Type: terminal transcript (command log)
 
 Commands executed in this PR worktree:
 
