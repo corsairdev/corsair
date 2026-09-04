@@ -133,6 +133,29 @@ export const update: BrevoEndpoints['emailCampaignsUpdate'] = async (
 		body,
 	});
 
+	const refreshed = BrevoEndpointOutputSchemas.emailCampaignsGet.parse(
+		await makeBrevoRequest<unknown>(`emailCampaigns/${campaignId}`, ctx.key, {
+			method: 'GET',
+		}),
+	);
+
+	if (ctx.db?.campaigns) {
+		try {
+			await ctx.db.campaigns.upsertByEntityId(String(refreshed.id), {
+				id: refreshed.id,
+				name: refreshed.name,
+				subject: refreshed.subject,
+				type: refreshed.type,
+				status: refreshed.status,
+				scheduledAt: refreshed.scheduledAt,
+				createdAt: refreshed.createdAt,
+				modifiedAt: refreshed.modifiedAt,
+			});
+		} catch (error) {
+			console.warn('Failed to save campaign to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'brevo.emailCampaigns.update',

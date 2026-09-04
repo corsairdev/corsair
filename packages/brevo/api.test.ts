@@ -499,19 +499,40 @@ describe('Brevo Plugin & Client Tests', () => {
 
 		it('emailCampaigns.update updates campaign details', async () => {
 			const ctx = createMockContext();
-			mockMakeBrevoRequest.mockResolvedValueOnce(undefined);
+			mockMakeBrevoRequest
+				.mockResolvedValueOnce(undefined)
+				.mockResolvedValueOnce({
+					id: 99,
+					name: 'Updated Product Launch',
+					subject: 'Introducing Our New Product',
+					status: 'draft',
+				});
 
 			const result = await EmailCampaigns.update(ctx, {
 				campaignId: 99,
 				name: 'Updated Product Launch',
 			});
 			expect(result).toEqual({ success: true });
-			expect(mockMakeBrevoRequest).toHaveBeenCalledWith(
+			expect(mockMakeBrevoRequest).toHaveBeenNthCalledWith(
+				1,
 				'emailCampaigns/99',
 				'test-api-key',
 				expect.objectContaining({
 					method: 'PUT',
 					body: { name: 'Updated Product Launch' },
+				}),
+			);
+			expect(mockMakeBrevoRequest).toHaveBeenNthCalledWith(
+				2,
+				'emailCampaigns/99',
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
+			expect(mockDbCampaigns.upsertByEntityId).toHaveBeenCalledWith(
+				'99',
+				expect.objectContaining({
+					id: 99,
+					name: 'Updated Product Launch',
 				}),
 			);
 		});
