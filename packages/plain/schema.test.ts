@@ -13,8 +13,12 @@ describe('Plain schema', () => {
 		for (const entity of Object.values(PlainSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
+		expect(Object.keys(PlainSchema.entities)).toEqual([
+			'customers',
+			'threads',
+			'companies',
+			'tiers',
+			'customer_groups',
+		]);
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
