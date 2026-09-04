@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { altoviz } from '@corsair-dev/altoviz';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		altoviz(),
 	],

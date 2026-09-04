@@ -20,7 +20,8 @@ Create a chat completion
 **Risk:** `read`
 
 ```ts
-await corsair.perplexityai.api.chat.completions({});
+const tenant = corsair.withTenant('acme');
+await tenant.perplexityai.api.chat.completions({});
 ```
 
 **Input**

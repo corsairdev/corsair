@@ -20,7 +20,8 @@ Transcribe an audio file into text
 **Risk:** `write`
 
 ```ts
-await corsair.groqcloud.api.audio.createTranscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.groqcloud.api.audio.createTranscription({});
 ```
 
 **Input**
@@ -57,7 +58,8 @@ Translate an audio recording into English text
 **Risk:** `write`
 
 ```ts
-await corsair.groqcloud.api.audio.createTranslation({});
+const tenant = corsair.withTenant('acme');
+await tenant.groqcloud.api.audio.createTranslation({});
 ```
 
 **Input**
@@ -93,7 +95,8 @@ Retrieve available TTS voices for Groq PlayAI models
 **Risk:** `read`
 
 ```ts
-await corsair.groqcloud.api.audio.listVoices({});
+const tenant = corsair.withTenant('acme');
+await tenant.groqcloud.api.audio.listVoices({});
 ```
 
 **Input:** _empty object_
@@ -121,7 +124,8 @@ Generate a chat completion from a list of messages
 **Risk:** `write`
 
 ```ts
-await corsair.groqcloud.api.chat.createCompletion({});
+const tenant = corsair.withTenant('acme');
+await tenant.groqcloud.api.chat.createCompletion({});
 ```
 
 **Input**
@@ -206,7 +210,8 @@ Create a model response for the given input (Responses API)
 **Risk:** `write`
 
 ```ts
-await corsair.groqcloud.api.chat.createResponse({});
+const tenant = corsair.withTenant('acme');
+await tenant.groqcloud.api.chat.createResponse({});
 ```
 
 **Input**
@@ -291,7 +296,8 @@ Retrieve currently available Groq models
 **Risk:** `read`
 
 ```ts
-await corsair.groqcloud.api.models.listModels({});
+const tenant = corsair.withTenant('acme');
+await tenant.groqcloud.api.models.listModels({});
 ```
 
 **Input:** _empty object_
@@ -345,7 +351,8 @@ Retrieve detailed metadata for a specific model
 **Risk:** `read`
 
 ```ts
-await corsair.groqcloud.api.models.retrieveModel({});
+const tenant = corsair.withTenant('acme');
+await tenant.groqcloud.api.models.retrieveModel({});
 ```
 
 **Input**

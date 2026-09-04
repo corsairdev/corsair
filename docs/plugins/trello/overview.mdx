@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { trello } from '@corsair-dev/trello';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		trello(),
 	],

@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { spotify } from '@corsair-dev/spotify';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		spotify({
 			authType: 'managed',

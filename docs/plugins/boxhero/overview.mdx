@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { boxhero } from '@corsair-dev/boxhero';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		boxhero(),
 	],

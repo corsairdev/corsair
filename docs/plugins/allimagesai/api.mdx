@@ -20,7 +20,8 @@ Validate the configured API key and return the email address and optional name o
 **Risk:** `read`
 
 ```ts
-await corsair.allimagesai.api.apiKeys.check({});
+const tenant = corsair.withTenant('acme');
+await tenant.allimagesai.api.apiKeys.check({});
 ```
 
 **Input:** _empty object_
@@ -48,7 +49,8 @@ Return the remaining and total credits for each quota bucket on the account.
 **Risk:** `read`
 
 ```ts
-await corsair.allimagesai.api.credits.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.allimagesai.api.credits.get({});
 ```
 
 **Input:** _empty object_
@@ -89,7 +91,8 @@ Permanently delete one or more image generation batches by their print ids.
 **Risk:** `destructive`
 
 ```ts
-await corsair.allimagesai.api.imageGenerations.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.allimagesai.api.imageGenerations.delete({});
 ```
 
 **Input**
@@ -120,7 +123,8 @@ List image generation batches created for bulk use, filterable by name and tag. 
 **Risk:** `read`
 
 ```ts
-await corsair.allimagesai.api.imageGenerations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.allimagesai.api.imageGenerations.list({});
 ```
 
 **Input**
@@ -193,7 +197,8 @@ List images previously downloaded on this account, optionally filtered by downlo
 **Risk:** `read`
 
 ```ts
-await corsair.allimagesai.api.images.listDownloaded({});
+const tenant = corsair.withTenant('acme');
+await tenant.allimagesai.api.images.listDownloaded({});
 ```
 
 **Input**
@@ -254,7 +259,8 @@ Register a webhook endpoint on the API key to receive print lifecycle callbacks.
 **Risk:** `write`
 
 ```ts
-await corsair.allimagesai.api.webhooks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.allimagesai.api.webhooks.create({});
 ```
 
 **Input**
@@ -285,7 +291,8 @@ Retrieve a registered webhook by its id, returning its URL. The provider does no
 **Risk:** `read`
 
 ```ts
-await corsair.allimagesai.api.webhooks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.allimagesai.api.webhooks.get({});
 ```
 
 **Input**

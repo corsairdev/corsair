@@ -20,7 +20,8 @@ Copy a file to a new location
 **Risk:** `write`
 
 ```ts
-await corsair.dropbox.api.files.copy({});
+const tenant = corsair.withTenant('acme');
+await tenant.dropbox.api.files.copy({});
 ```
 
 **Input**
@@ -86,7 +87,8 @@ Delete a file [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.dropbox.api.files.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.dropbox.api.files.delete({});
 ```
 
 **Input**
@@ -148,7 +150,8 @@ Download a file
 **Risk:** `read`
 
 ```ts
-await corsair.dropbox.api.files.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.dropbox.api.files.download({});
 ```
 
 **Input**
@@ -181,7 +184,8 @@ Move a file to a new location
 **Risk:** `write`
 
 ```ts
-await corsair.dropbox.api.files.move({});
+const tenant = corsair.withTenant('acme');
+await tenant.dropbox.api.files.move({});
 ```
 
 **Input**
@@ -247,7 +251,8 @@ Upload a file
 **Risk:** `write`
 
 ```ts
-await corsair.dropbox.api.files.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.dropbox.api.files.upload({});
 ```
 
 **Input**
@@ -293,7 +298,8 @@ Copy a folder to a new location
 **Risk:** `write`
 
 ```ts
-await corsair.dropbox.api.folders.copy({});
+const tenant = corsair.withTenant('acme');
+await tenant.dropbox.api.folders.copy({});
 ```
 
 **Input**
@@ -359,7 +365,8 @@ Create a new folder
 **Risk:** `write`
 
 ```ts
-await corsair.dropbox.api.folders.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.dropbox.api.folders.create({});
 ```
 
 **Input**
@@ -405,7 +412,8 @@ Delete a folder and all its contents [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.dropbox.api.folders.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.dropbox.api.folders.delete({});
 ```
 
 **Input**
@@ -467,7 +475,8 @@ List files and folders within a folder
 **Risk:** `read`
 
 ```ts
-await corsair.dropbox.api.folders.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.dropbox.api.folders.list({});
 ```
 
 **Input**
@@ -537,7 +546,8 @@ Continue listing from a cursor returned by folders.list
 **Risk:** `read`
 
 ```ts
-await corsair.dropbox.api.folders.listContinue({});
+const tenant = corsair.withTenant('acme');
+await tenant.dropbox.api.folders.listContinue({});
 ```
 
 **Input**
@@ -603,7 +613,8 @@ Move a folder to a new location
 **Risk:** `write`
 
 ```ts
-await corsair.dropbox.api.folders.move({});
+const tenant = corsair.withTenant('acme');
+await tenant.dropbox.api.folders.move({});
 ```
 
 **Input**
@@ -671,7 +682,8 @@ Search for files and folders by name or content
 **Risk:** `read`
 
 ```ts
-await corsair.dropbox.api.search.query({});
+const tenant = corsair.withTenant('acme');
+await tenant.dropbox.api.search.query({});
 ```
 
 **Input**

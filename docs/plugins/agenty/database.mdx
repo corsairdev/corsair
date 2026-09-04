@@ -14,7 +14,8 @@ The Agenty plugin syncs data locally. Use `corsair.agenty.db.<entity>.search({ d
 Path: `agenty.db.agents.search`
 
 ```ts
-const rows = await corsair.agenty.db.agents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agenty.db.agents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agenty.db.jobs.search`
 
 ```ts
-const rows = await corsair.agenty.db.jobs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agenty.db.jobs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -65,7 +67,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agenty.db.lists.search`
 
 ```ts
-const rows = await corsair.agenty.db.lists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agenty.db.lists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

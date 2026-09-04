@@ -20,7 +20,8 @@ Get free/busy availability for a calendar
 **Risk:** `read`
 
 ```ts
-await corsair.googlecalendar.api.calendar.getAvailability({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecalendar.api.calendar.getAvailability({});
 ```
 
 **Input**
@@ -90,7 +91,8 @@ Create a new calendar event
 **Risk:** `write`
 
 ```ts
-await corsair.googlecalendar.api.events.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecalendar.api.events.create({});
 ```
 
 **Input**
@@ -387,7 +389,8 @@ Delete a calendar event [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.googlecalendar.api.events.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecalendar.api.events.delete({});
 ```
 
 **Input**
@@ -415,7 +418,8 @@ Get a specific calendar event
 **Risk:** `read`
 
 ```ts
-await corsair.googlecalendar.api.events.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecalendar.api.events.get({});
 ```
 
 **Input**
@@ -650,7 +654,8 @@ List calendar events
 **Risk:** `read`
 
 ```ts
-await corsair.googlecalendar.api.events.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecalendar.api.events.getMany({});
 ```
 
 **Input**
@@ -846,7 +851,8 @@ Update an existing calendar event
 **Risk:** `write`
 
 ```ts
-await corsair.googlecalendar.api.events.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecalendar.api.events.update({});
 ```
 
 **Input**

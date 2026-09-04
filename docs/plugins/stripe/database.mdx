@@ -14,7 +14,8 @@ The Stripe plugin syncs data locally. Use `corsair.stripe.db.<entity>.search({ d
 Path: `stripe.db.balance.search`
 
 ```ts
-const rows = await corsair.stripe.db.balance.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.stripe.db.balance.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `stripe.db.charges.search`
 
 ```ts
-const rows = await corsair.stripe.db.charges.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.stripe.db.charges.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -74,7 +76,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `stripe.db.coupons.search`
 
 ```ts
-const rows = await corsair.stripe.db.coupons.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.stripe.db.coupons.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -109,7 +112,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `stripe.db.customers.search`
 
 ```ts
-const rows = await corsair.stripe.db.customers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.stripe.db.customers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -141,7 +145,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `stripe.db.paymentIntents.search`
 
 ```ts
-const rows = await corsair.stripe.db.paymentIntents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.stripe.db.paymentIntents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -175,7 +180,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `stripe.db.prices.search`
 
 ```ts
-const rows = await corsair.stripe.db.prices.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.stripe.db.prices.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -207,7 +213,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `stripe.db.sources.search`
 
 ```ts
-const rows = await corsair.stripe.db.sources.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.stripe.db.sources.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

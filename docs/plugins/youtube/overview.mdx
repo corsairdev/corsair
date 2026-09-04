@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { youtube } from '@corsair-dev/youtube';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		youtube(),
 	],

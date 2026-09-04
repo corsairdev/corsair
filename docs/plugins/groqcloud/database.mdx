@@ -14,7 +14,8 @@ The GroqCloud plugin syncs data locally. Use `corsair.groqcloud.db.<entity>.sear
 Path: `groqcloud.db.models.search`
 
 ```ts
-const rows = await corsair.groqcloud.db.models.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.groqcloud.db.models.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

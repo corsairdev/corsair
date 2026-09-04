@@ -20,7 +20,8 @@ Retrieve current API usage and account information. Use when you need to monitor
 **Risk:** `read`
 
 ```ts
-await corsair.twochat.api.account.getApiUsageInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.twochat.api.account.getApiUsageInfo({});
 ```
 
 **Input:** _empty object_
@@ -85,7 +86,8 @@ Validate your API key and retrieve account info. Use when confirming credentials
 **Risk:** `read`
 
 ```ts
-await corsair.twochat.api.account.testApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.twochat.api.account.testApiKey({});
 ```
 
 **Input:** _empty object_
@@ -152,7 +154,8 @@ Create a new contact in your 2Chat account. Use after gathering and verifying fi
 **Risk:** `write`
 
 ```ts
-await corsair.twochat.api.contacts.createContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.twochat.api.contacts.createContact({});
 ```
 
 **Input**
@@ -231,7 +234,8 @@ List all contacts in your 2Chat account. Use when you need to retrieve your cont
 **Risk:** `read`
 
 ```ts
-await corsair.twochat.api.contacts.listContacts({});
+const tenant = corsair.withTenant('acme');
+await tenant.twochat.api.contacts.listContacts({});
 ```
 
 **Input**
@@ -299,7 +303,8 @@ List all configured webhook subscriptions for WhatsApp and phone call events. Re
 **Risk:** `read`
 
 ```ts
-await corsair.twochat.api.webhookSubscriptions.listWebhooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.twochat.api.webhookSubscriptions.listWebhooks({});
 ```
 
 **Input:** _empty object_

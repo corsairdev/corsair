@@ -20,7 +20,8 @@ Retrieve WhatsApp Business Profile information
 **Risk:** `read`
 
 ```ts
-await corsair.whatsapp.api.businessProfiles.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.whatsapp.api.businessProfiles.get({});
 ```
 
 **Input**
@@ -69,7 +70,8 @@ Get information about uploaded media
 **Risk:** `read`
 
 ```ts
-await corsair.whatsapp.api.media.getInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.whatsapp.api.media.getInfo({});
 ```
 
 **Input**
@@ -104,7 +106,8 @@ Upload media to WhatsApp servers
 **Risk:** `write`
 
 ```ts
-await corsair.whatsapp.api.media.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.whatsapp.api.media.upload({});
 ```
 
 **Input**
@@ -138,7 +141,8 @@ Mark an incoming WhatsApp message as read
 **Risk:** `write`
 
 ```ts
-await corsair.whatsapp.api.messages.markRead({});
+const tenant = corsair.withTenant('acme');
+await tenant.whatsapp.api.messages.markRead({});
 ```
 
 **Input**
@@ -169,7 +173,8 @@ Send a text, media, template, or interactive WhatsApp message
 **Risk:** `write`
 
 ```ts
-await corsair.whatsapp.api.messages.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.whatsapp.api.messages.send({});
 ```
 
 **Input:** `object`
@@ -367,7 +372,8 @@ Create a new message template
 **Risk:** `write`
 
 ```ts
-await corsair.whatsapp.api.messageTemplates.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.whatsapp.api.messageTemplates.create({});
 ```
 
 **Input**
@@ -413,7 +419,8 @@ Delete a message template by name
 **Risk:** `write`
 
 ```ts
-await corsair.whatsapp.api.messageTemplates.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.whatsapp.api.messageTemplates.delete({});
 ```
 
 **Input**
@@ -444,7 +451,8 @@ Get the status of a message template
 **Risk:** `read`
 
 ```ts
-await corsair.whatsapp.api.messageTemplates.getStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.whatsapp.api.messageTemplates.getStatus({});
 ```
 
 **Input**
@@ -485,7 +493,8 @@ List all message templates
 **Risk:** `read`
 
 ```ts
-await corsair.whatsapp.api.messageTemplates.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.whatsapp.api.messageTemplates.list({});
 ```
 
 **Input**
@@ -527,7 +536,8 @@ Validate credentials and retrieve phone number health
 **Risk:** `read`
 
 ```ts
-await corsair.whatsapp.api.phoneNumbers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.whatsapp.api.phoneNumbers.get({});
 ```
 
 **Input**
@@ -574,7 +584,8 @@ List all phone numbers for the WhatsApp Business Account
 **Risk:** `read`
 
 ```ts
-await corsair.whatsapp.api.phoneNumbers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.whatsapp.api.phoneNumbers.list({});
 ```
 
 **Input**

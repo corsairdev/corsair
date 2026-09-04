@@ -14,7 +14,8 @@ The Xquik plugin syncs data locally. Use `corsair.xquik.db.<entity>.search({ dat
 Path: `xquik.db.deliveries.search`
 
 ```ts
-const rows = await corsair.xquik.db.deliveries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.xquik.db.deliveries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `xquik.db.events.search`
 
 ```ts
-const rows = await corsair.xquik.db.events.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.xquik.db.events.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -73,7 +75,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `xquik.db.tweets.search`
 
 ```ts
-const rows = await corsair.xquik.db.tweets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.xquik.db.tweets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -95,7 +98,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `xquik.db.users.search`
 
 ```ts
-const rows = await corsair.xquik.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.xquik.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -129,7 +133,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `xquik.db.webhooks.search`
 
 ```ts
-const rows = await corsair.xquik.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.xquik.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

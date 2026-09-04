@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { devinmcp } from '@corsair-dev/devinmcp';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		devinmcp(),
 	],

@@ -20,7 +20,8 @@ Create a new draft
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.drafts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.drafts.create({});
 ```
 
 **Input**
@@ -99,7 +100,8 @@ Delete a draft [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.gmail.api.drafts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.drafts.delete({});
 ```
 
 **Input**
@@ -125,7 +127,8 @@ Get a specific draft
 **Risk:** `read`
 
 ```ts
-await corsair.gmail.api.drafts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.drafts.get({});
 ```
 
 **Input**
@@ -191,7 +194,8 @@ List drafts in the mailbox
 **Risk:** `read`
 
 ```ts
-await corsair.gmail.api.drafts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.drafts.list({});
 ```
 
 **Input**
@@ -262,7 +266,8 @@ Send a draft as an email
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.drafts.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.drafts.send({});
 ```
 
 **Input**
@@ -337,7 +342,8 @@ Update an existing draft
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.drafts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.drafts.update({});
 ```
 
 **Input**
@@ -419,7 +425,8 @@ Create a new label
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.labels.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.labels.create({});
 ```
 
 **Input**
@@ -488,7 +495,8 @@ Delete a label [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.gmail.api.labels.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.labels.delete({});
 ```
 
 **Input**
@@ -514,7 +522,8 @@ Get a specific label
 **Risk:** `read`
 
 ```ts
-await corsair.gmail.api.labels.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.labels.get({});
 ```
 
 **Input**
@@ -566,7 +575,8 @@ List all labels in the mailbox
 **Risk:** `read`
 
 ```ts
-await corsair.gmail.api.labels.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.labels.list({});
 ```
 
 **Input**
@@ -619,7 +629,8 @@ Update an existing label
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.labels.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.labels.update({});
 ```
 
 **Input**
@@ -691,7 +702,8 @@ Add or remove labels from multiple messages in bulk
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.messages.batchModify({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.messages.batchModify({});
 ```
 
 **Input**
@@ -719,7 +731,8 @@ Permanently delete a message [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.gmail.api.messages.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.messages.delete({});
 ```
 
 **Input**
@@ -745,7 +758,8 @@ Get a specific message
 **Risk:** `read`
 
 ```ts
-await corsair.gmail.api.messages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.messages.get({});
 ```
 
 **Input**
@@ -809,7 +823,8 @@ List messages in a mailbox
 **Risk:** `read`
 
 ```ts
-await corsair.gmail.api.messages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.messages.list({});
 ```
 
 **Input**
@@ -879,7 +894,8 @@ Add or remove labels from a message
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.messages.modify({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.messages.modify({});
 ```
 
 **Input**
@@ -943,7 +959,8 @@ Send an email to one or more recipients
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.messages.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.messages.send({});
 ```
 
 **Input**
@@ -1006,7 +1023,8 @@ Move a message to the trash
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.messages.trash({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.messages.trash({});
 ```
 
 **Input**
@@ -1068,7 +1086,8 @@ Restore a message from the trash
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.messages.untrash({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.messages.untrash({});
 ```
 
 **Input**
@@ -1132,7 +1151,8 @@ Permanently delete a thread [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.gmail.api.threads.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.threads.delete({});
 ```
 
 **Input**
@@ -1158,7 +1178,8 @@ Get a specific thread
 **Risk:** `read`
 
 ```ts
-await corsair.gmail.api.threads.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.threads.get({});
 ```
 
 **Input**
@@ -1227,7 +1248,8 @@ List threads in the mailbox
 **Risk:** `read`
 
 ```ts
-await corsair.gmail.api.threads.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.threads.list({});
 ```
 
 **Input**
@@ -1302,7 +1324,8 @@ Add or remove labels from a thread
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.threads.modify({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.threads.modify({});
 ```
 
 **Input**
@@ -1371,7 +1394,8 @@ Move a thread to the trash
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.threads.trash({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.threads.trash({});
 ```
 
 **Input**
@@ -1438,7 +1462,8 @@ Restore a thread from the trash
 **Risk:** `write`
 
 ```ts
-await corsair.gmail.api.threads.untrash({});
+const tenant = corsair.withTenant('acme');
+await tenant.gmail.api.threads.untrash({});
 ```
 
 **Input**

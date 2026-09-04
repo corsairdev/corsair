@@ -14,7 +14,8 @@ The API2PDF plugin syncs data locally. Use `corsair.api2pdf.db.<entity>.search({
 Path: `api2pdf.db.pdfJobs.search`
 
 ```ts
-const rows = await corsair.api2pdf.db.pdfJobs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.api2pdf.db.pdfJobs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

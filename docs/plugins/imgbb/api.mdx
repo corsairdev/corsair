@@ -20,7 +20,8 @@ Confirm an ImgBB API key is configured for this account and return a masked prev
 **Risk:** `read`
 
 ```ts
-await corsair.imgbb.api.auth.getApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.imgbb.api.auth.getApiKey({});
 ```
 
 **Input:** _empty object_
@@ -48,7 +49,8 @@ Upload an image to ImgBB and return the hosted image URLs and metadata
 **Risk:** `write`
 
 ```ts
-await corsair.imgbb.api.images.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.imgbb.api.images.upload({});
 ```
 
 **Input**

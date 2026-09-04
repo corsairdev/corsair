@@ -14,7 +14,8 @@ The Neon plugin syncs data locally. Use `corsair.neon.db.<entity>.search({ data,
 Path: `neon.db.apiKeys.search`
 
 ```ts
-const rows = await corsair.neon.db.apiKeys.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.neon.db.apiKeys.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `neon.db.branches.search`
 
 ```ts
-const rows = await corsair.neon.db.branches.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.neon.db.branches.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -69,7 +71,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `neon.db.computeEndpoints.search`
 
 ```ts
-const rows = await corsair.neon.db.computeEndpoints.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.neon.db.computeEndpoints.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -97,7 +100,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `neon.db.databases.search`
 
 ```ts
-const rows = await corsair.neon.db.databases.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.neon.db.databases.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -124,7 +128,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `neon.db.organizations.search`
 
 ```ts
-const rows = await corsair.neon.db.organizations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.neon.db.organizations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -150,7 +155,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `neon.db.projects.search`
 
 ```ts
-const rows = await corsair.neon.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.neon.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -179,7 +185,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `neon.db.roles.search`
 
 ```ts
-const rows = await corsair.neon.db.roles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.neon.db.roles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -205,7 +212,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `neon.db.snapshots.search`
 
 ```ts
-const rows = await corsair.neon.db.snapshots.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.neon.db.snapshots.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

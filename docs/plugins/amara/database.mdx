@@ -14,7 +14,8 @@ The Amara (subtitling platform) plugin syncs data locally. Use `corsair.amara.db
 Path: `amara.db.teams.search`
 
 ```ts
-const rows = await corsair.amara.db.teams.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.amara.db.teams.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -45,7 +46,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `amara.db.users.search`
 
 ```ts
-const rows = await corsair.amara.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.amara.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -78,7 +80,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `amara.db.videos.search`
 
 ```ts
-const rows = await corsair.amara.db.videos.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.amara.db.videos.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

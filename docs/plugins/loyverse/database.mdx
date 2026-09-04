@@ -14,7 +14,8 @@ The Loyverse plugin syncs data locally. Use `corsair.loyverse.db.<entity>.search
 Path: `loyverse.db.categories.search`
 
 ```ts
-const rows = await corsair.loyverse.db.categories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.categories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `loyverse.db.customers.search`
 
 ```ts
-const rows = await corsair.loyverse.db.customers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.customers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -83,7 +85,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `loyverse.db.discounts.search`
 
 ```ts
-const rows = await corsair.loyverse.db.discounts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.discounts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -114,7 +117,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `loyverse.db.employees.search`
 
 ```ts
-const rows = await corsair.loyverse.db.employees.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.employees.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -144,7 +148,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `loyverse.db.items.search`
 
 ```ts
-const rows = await corsair.loyverse.db.items.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.items.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -186,7 +191,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `loyverse.db.merchant.search`
 
 ```ts
-const rows = await corsair.loyverse.db.merchant.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.merchant.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -213,7 +219,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `loyverse.db.modifiers.search`
 
 ```ts
-const rows = await corsair.loyverse.db.modifiers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.modifiers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -241,7 +248,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `loyverse.db.paymentTypes.search`
 
 ```ts
-const rows = await corsair.loyverse.db.paymentTypes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.paymentTypes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -269,7 +277,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `loyverse.db.posDevices.search`
 
 ```ts
-const rows = await corsair.loyverse.db.posDevices.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.posDevices.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -296,7 +305,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `loyverse.db.stores.search`
 
 ```ts
-const rows = await corsair.loyverse.db.stores.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.stores.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -332,7 +342,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `loyverse.db.suppliers.search`
 
 ```ts
-const rows = await corsair.loyverse.db.suppliers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.suppliers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -370,7 +381,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `loyverse.db.taxes.search`
 
 ```ts
-const rows = await corsair.loyverse.db.taxes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.taxes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -399,7 +411,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `loyverse.db.variants.search`
 
 ```ts
-const rows = await corsair.loyverse.db.variants.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.loyverse.db.variants.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

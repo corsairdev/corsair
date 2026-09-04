@@ -20,7 +20,8 @@ Create a new tweet filter rule for the webhook stream (inactive by default — c
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.api.webhooks.addRule({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.api.webhooks.addRule({});
 ```
 
 **Input**
@@ -54,7 +55,8 @@ Permanently delete a tweet filter rule
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.twitterapiio.api.api.webhooks.deleteRule({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.api.webhooks.deleteRule({});
 ```
 
 **Input**
@@ -85,7 +87,8 @@ List all existing tweet filter rules
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.api.webhooks.getRules({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.api.webhooks.getRules({});
 ```
 
 **Input:** _empty object_
@@ -126,7 +129,8 @@ Update a tweet filter rule, including activating or deactivating it
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.api.webhooks.updateRule({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.api.webhooks.updateRule({});
 ```
 
 **Input**
@@ -164,7 +168,8 @@ Create a new Twitter community
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.communities.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.communities.create({});
 ```
 
 **Input**
@@ -197,7 +202,8 @@ Delete a Twitter community
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.twitterapiio.api.communities.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.communities.delete({});
 ```
 
 **Input**
@@ -229,7 +235,8 @@ Get community info by ID
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.communities.getById({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.communities.getById({});
 ```
 
 **Input**
@@ -281,7 +288,8 @@ Get members of a community
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.communities.getMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.communities.getMembers({});
 ```
 
 **Input**
@@ -345,7 +353,8 @@ Get moderators of a community
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.communities.getModerators({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.communities.getModerators({});
 ```
 
 **Input**
@@ -409,7 +418,8 @@ Get tweets posted in a community
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.communities.getTweets({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.communities.getTweets({});
 ```
 
 **Input**
@@ -518,7 +528,8 @@ Join a Twitter community
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.communities.join({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.communities.join({});
 ```
 
 **Input**
@@ -550,7 +561,8 @@ Leave a Twitter community
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.communities.leave({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.communities.leave({});
 ```
 
 **Input**
@@ -582,7 +594,8 @@ Search tweets across all communities
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.communities.searchTweets({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.communities.searchTweets({});
 ```
 
 **Input**
@@ -693,7 +706,8 @@ Get followers of a Twitter list
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.lists.getFollowers({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.lists.getFollowers({});
 ```
 
 **Input**
@@ -757,7 +771,8 @@ Get members of a Twitter list
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.lists.getMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.lists.getMembers({});
 ```
 
 **Input**
@@ -821,7 +836,8 @@ Get tweets from a Twitter list timeline
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.lists.getTweets({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.lists.getTweets({});
 ```
 
 **Input**
@@ -932,7 +948,8 @@ Get replies to a tweet, paginated by time range — stored independently in the 
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.replies.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.replies.get({});
 ```
 
 **Input**
@@ -1047,7 +1064,8 @@ Get replies to a tweet (v2) with sort order control (Relevance, Latest, Likes) �
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.replies.getV2({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.replies.getV2({});
 ```
 
 **Input**
@@ -1163,7 +1181,8 @@ Add a Twitter user to the real-time tweet monitor stream
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.stream.addUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.stream.addUser({});
 ```
 
 **Input**
@@ -1194,7 +1213,8 @@ List all Twitter users currently in the monitor stream
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.stream.listUsers({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.stream.listUsers({});
 ```
 
 **Input:** _empty object_
@@ -1221,7 +1241,8 @@ Remove a Twitter user from the real-time tweet monitor stream
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.stream.removeUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.stream.removeUser({});
 ```
 
 **Input**
@@ -1254,7 +1275,8 @@ Get trending topics by location (woeid)
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.trends.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.trends.get({});
 ```
 
 **Input**
@@ -1302,7 +1324,8 @@ Search tweets using structured operators (keywords, users, dates, engagement thr
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.tweets.advancedSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.advancedSearch({});
 ```
 
 **Input**
@@ -1433,7 +1456,8 @@ Post a new tweet or reply
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.tweets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.create({});
 ```
 
 **Input**
@@ -1467,7 +1491,8 @@ Delete a tweet
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.twitterapiio.api.tweets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.delete({});
 ```
 
 **Input**
@@ -1499,7 +1524,8 @@ Fetch tweets by their IDs
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.tweets.getByIds({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.getByIds({});
 ```
 
 **Input**
@@ -1605,7 +1631,8 @@ Get quote tweets for a tweet
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.tweets.getQuotations({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.getQuotations({});
 ```
 
 **Input**
@@ -1714,7 +1741,8 @@ Get users who retweeted a tweet
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.tweets.getRetweeters({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.getRetweeters({});
 ```
 
 **Input**
@@ -1778,7 +1806,8 @@ Get the full thread context for a tweet
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.tweets.getThreadContext({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.getThreadContext({});
 ```
 
 **Input**
@@ -1887,7 +1916,8 @@ Retrieve a user's most recent tweets by username
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.tweets.getUserLastTweets({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.getUserLastTweets({});
 ```
 
 **Input**
@@ -1996,7 +2026,8 @@ Get tweets that mention a user
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.tweets.getUserMentions({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.getUserMentions({});
 ```
 
 **Input**
@@ -2105,7 +2136,8 @@ Retrieve a user's tweet timeline by user ID
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.tweets.getUserTimeline({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.getUserTimeline({});
 ```
 
 **Input**
@@ -2214,7 +2246,8 @@ Like a tweet
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.tweets.like({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.like({});
 ```
 
 **Input**
@@ -2246,7 +2279,8 @@ Retweet a tweet
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.tweets.retweet({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.retweet({});
 ```
 
 **Input**
@@ -2278,7 +2312,8 @@ Search tweets with a raw query string
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.tweets.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.search({});
 ```
 
 **Input**
@@ -2388,7 +2423,8 @@ Remove a like from a tweet
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.tweets.unlike({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.tweets.unlike({});
 ```
 
 **Input**
@@ -2422,7 +2458,8 @@ Batch fetch user profiles by user IDs
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.users.batchGetByIds({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.users.batchGetByIds({});
 ```
 
 **Input**
@@ -2483,7 +2520,8 @@ Check if two users follow each other
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.users.checkFollowRelationship({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.users.checkFollowRelationship({});
 ```
 
 **Input**
@@ -2516,7 +2554,8 @@ Follow a user
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.users.follow({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.users.follow({});
 ```
 
 **Input**
@@ -2548,7 +2587,8 @@ Get user profile by username
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.users.getByUsername({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.users.getByUsername({});
 ```
 
 **Input**
@@ -2609,7 +2649,8 @@ Get a user's followers
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.users.getFollowers({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.users.getFollowers({});
 ```
 
 **Input**
@@ -2673,7 +2714,8 @@ Get users that a user is following
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.users.getFollowings({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.users.getFollowings({});
 ```
 
 **Input**
@@ -2737,7 +2779,8 @@ Get the authenticated account info
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.users.getMe({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.users.getMe({});
 ```
 
 **Input**
@@ -2798,7 +2841,8 @@ Get a user's verified (blue-check) followers
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.users.getVerifiedFollowers({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.users.getVerifiedFollowers({});
 ```
 
 **Input**
@@ -2862,7 +2906,8 @@ Authenticate a Twitter account via credentials and obtain a login cookie for v2 
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.users.login({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.users.login({});
 ```
 
 **Input**
@@ -2898,7 +2943,8 @@ Search users by keyword
 **Risk:** `read`
 
 ```ts
-await corsair.twitterapiio.api.users.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.users.search({});
 ```
 
 **Input**
@@ -2962,7 +3008,8 @@ Unfollow a user
 **Risk:** `write`
 
 ```ts
-await corsair.twitterapiio.api.users.unfollow({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitterapiio.api.users.unfollow({});
 ```
 
 **Input**

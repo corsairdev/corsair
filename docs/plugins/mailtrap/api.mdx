@@ -20,7 +20,8 @@ Get billing usage against the account's testing/sending/marketing plan limits
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.account.getBillingUsage({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.account.getBillingUsage({});
 ```
 
 **Input:** _empty object_
@@ -115,7 +116,8 @@ Get every resource (inboxes, projects, domains, billing, account) the token has 
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.account.getPermissionResources({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.account.getPermissionResources({});
 ```
 
 **Input:** _empty object_
@@ -135,7 +137,8 @@ List Mailtrap accounts the token can access
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.account.listAccounts({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.account.listAccounts({});
 ```
 
 **Input:** _empty object_
@@ -170,7 +173,8 @@ Create a custom contact field
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.contactFields.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contactFields.create({});
 ```
 
 **Input**
@@ -207,7 +211,8 @@ Permanently delete a custom contact field, dropping its stored values off every 
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailtrap.api.contactFields.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contactFields.delete({});
 ```
 
 **Input**
@@ -232,7 +237,8 @@ Get a custom contact field by id
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.contactFields.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contactFields.get({});
 ```
 
 **Input**
@@ -267,7 +273,8 @@ List custom contact fields
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.contactFields.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contactFields.list({});
 ```
 
 **Input:** _empty object_
@@ -303,7 +310,8 @@ Update a custom contact field
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.contactFields.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contactFields.update({});
 ```
 
 **Input**
@@ -342,7 +350,8 @@ Create a contact list
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.contactLists.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contactLists.create({});
 ```
 
 **Input**
@@ -373,7 +382,8 @@ Permanently delete a contact list [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailtrap.api.contactLists.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contactLists.delete({});
 ```
 
 **Input**
@@ -398,7 +408,8 @@ Get a contact list by id
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.contactLists.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contactLists.get({});
 ```
 
 **Input**
@@ -429,7 +440,8 @@ List contact lists
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.contactLists.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contactLists.list({});
 ```
 
 **Input**
@@ -466,7 +478,8 @@ Rename a contact list
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.contactLists.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contactLists.update({});
 ```
 
 **Input**
@@ -500,7 +513,8 @@ Create a contact
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.contacts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contacts.create({});
 ```
 
 **Input**
@@ -559,7 +573,8 @@ Record a custom event against a contact
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.contacts.createEvent({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contacts.createEvent({});
 ```
 
 **Input**
@@ -614,7 +629,8 @@ Start an async export of contacts matching a filter
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.contacts.createExport({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contacts.createExport({});
 ```
 
 **Input**
@@ -661,7 +677,8 @@ Permanently delete a contact [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailtrap.api.contacts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contacts.delete({});
 ```
 
 **Input**
@@ -686,7 +703,8 @@ Get a contact by id or email
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.contacts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contacts.get({});
 ```
 
 **Input**
@@ -732,7 +750,8 @@ Get the status/download URL of a contact export job
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.contacts.getExport({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contacts.getExport({});
 ```
 
 **Input**
@@ -766,7 +785,8 @@ Get the status of a contact import job
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.contacts.getImport({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contacts.getImport({});
 ```
 
 **Input**
@@ -802,7 +822,8 @@ Bulk-import contacts, upserting by email
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.contacts.import({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contacts.import({});
 ```
 
 **Input**
@@ -853,7 +874,8 @@ Update a contact by id or email
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.contacts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.contacts.update({});
 ```
 
 **Input**
@@ -917,7 +939,8 @@ Create an email template
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.emailTemplates.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.emailTemplates.create({});
 ```
 
 **Input**
@@ -959,7 +982,8 @@ Permanently delete an email template [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailtrap.api.emailTemplates.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.emailTemplates.delete({});
 ```
 
 **Input**
@@ -984,7 +1008,8 @@ Get an email template by id
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.emailTemplates.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.emailTemplates.get({});
 ```
 
 **Input**
@@ -1022,7 +1047,8 @@ List email templates
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.emailTemplates.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.emailTemplates.list({});
 ```
 
 **Input:** _empty object_
@@ -1061,7 +1087,8 @@ Update an email template
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.emailTemplates.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.emailTemplates.update({});
 ```
 
 **Input**
@@ -1106,7 +1133,8 @@ Delete every message in a sandbox inbox [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailtrap.api.inboxes.clean({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.inboxes.clean({});
 ```
 
 **Input**
@@ -1173,7 +1201,8 @@ Get an inbox's attributes, including its SMTP credentials
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.inboxes.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.inboxes.get({});
 ```
 
 **Input**
@@ -1240,7 +1269,8 @@ List sandbox inboxes
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.inboxes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.inboxes.list({});
 ```
 
 **Input:** _empty object_
@@ -1299,7 +1329,8 @@ Mark every message in a sandbox inbox as read
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.inboxes.markAsRead({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.inboxes.markAsRead({});
 ```
 
 **Input**
@@ -1366,7 +1397,8 @@ Reset an inbox's SMTP credentials, invalidating the previous ones [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailtrap.api.inboxes.resetCredentials({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.inboxes.resetCredentials({});
 ```
 
 **Input**
@@ -1433,7 +1465,8 @@ Update an inbox's name and/or email username
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.inboxes.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.inboxes.update({});
 ```
 
 **Input**
@@ -1504,7 +1537,8 @@ Get the formatted HTML body of a message
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.messages.getHtml({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.messages.getHtml({});
 ```
 
 **Input**
@@ -1535,7 +1569,8 @@ List messages in a sandbox inbox
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.messages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.messages.list({});
 ```
 
 **Input**
@@ -1595,7 +1630,8 @@ Permanently delete a project and every inbox in it [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailtrap.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.projects.delete({});
 ```
 
 **Input**
@@ -1625,7 +1661,8 @@ Get a project and its inboxes by id
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.projects.get({});
 ```
 
 **Input**
@@ -1720,7 +1757,8 @@ List projects and their sandbox inboxes
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.projects.list({});
 ```
 
 **Input:** _empty object_
@@ -1793,7 +1831,8 @@ Rename a project
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.projects.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.projects.update({});
 ```
 
 **Input**
@@ -1891,7 +1930,8 @@ Register a sending domain for DNS verification
 **Risk:** `write`
 
 ```ts
-await corsair.mailtrap.api.sendingDomains.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.sendingDomains.create({});
 ```
 
 **Input**
@@ -1950,7 +1990,8 @@ Permanently remove a sending domain [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailtrap.api.sendingDomains.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.sendingDomains.delete({});
 ```
 
 **Input**
@@ -1975,7 +2016,8 @@ Get a sending domain by id, including its DNS records
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.sendingDomains.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.sendingDomains.get({});
 ```
 
 **Input**
@@ -2034,7 +2076,8 @@ List sending domains
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.sendingDomains.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.sendingDomains.list({});
 ```
 
 **Input:** _empty object_
@@ -2087,7 +2130,8 @@ Get sending stats broken down by category
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.stats.byCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.stats.byCategories({});
 ```
 
 **Input**
@@ -2140,7 +2184,8 @@ Get sending stats broken down by day
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.stats.byDate({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.stats.byDate({});
 ```
 
 **Input**
@@ -2193,7 +2238,8 @@ Get sending stats broken down by sending domain
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.stats.byDomains({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.stats.byDomains({});
 ```
 
 **Input**
@@ -2246,7 +2292,8 @@ Get sending stats broken down by recipient email service provider
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.stats.byEsp({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.stats.byEsp({});
 ```
 
 **Input**
@@ -2299,7 +2346,8 @@ Get aggregated sending stats for a date range
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.stats.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.stats.get({});
 ```
 
 **Input**
@@ -2345,7 +2393,8 @@ List (and optionally search) suppressed email addresses
 **Risk:** `read`
 
 ```ts
-await corsair.mailtrap.api.suppressions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailtrap.api.suppressions.list({});
 ```
 
 **Input**

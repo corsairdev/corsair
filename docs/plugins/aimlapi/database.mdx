@@ -14,7 +14,8 @@ The AimlApi plugin syncs data locally. Use `corsair.aimlapi.db.<entity>.search({
 Path: `aimlapi.db.assistants.search`
 
 ```ts
-const rows = await corsair.aimlapi.db.assistants.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.aimlapi.db.assistants.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `aimlapi.db.batches.search`
 
 ```ts
-const rows = await corsair.aimlapi.db.batches.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.aimlapi.db.batches.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -63,7 +65,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `aimlapi.db.models.search`
 
 ```ts
-const rows = await corsair.aimlapi.db.models.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.aimlapi.db.models.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -88,7 +91,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `aimlapi.db.threads.search`
 
 ```ts
-const rows = await corsair.aimlapi.db.threads.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.aimlapi.db.threads.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

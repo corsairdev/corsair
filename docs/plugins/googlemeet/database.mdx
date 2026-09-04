@@ -14,7 +14,8 @@ The Google Meet plugin syncs data locally. Use `corsair.googlemeet.db.<entity>.s
 Path: `googlemeet.db.conferenceRecords.search`
 
 ```ts
-const rows = await corsair.googlemeet.db.conferenceRecords.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlemeet.db.conferenceRecords.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googlemeet.db.participants.search`
 
 ```ts
-const rows = await corsair.googlemeet.db.participants.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlemeet.db.participants.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -69,7 +71,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googlemeet.db.recordings.search`
 
 ```ts
-const rows = await corsair.googlemeet.db.recordings.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlemeet.db.recordings.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -95,7 +98,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googlemeet.db.smartNotes.search`
 
 ```ts
-const rows = await corsair.googlemeet.db.smartNotes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlemeet.db.smartNotes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -121,7 +125,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googlemeet.db.spaces.search`
 
 ```ts
-const rows = await corsair.googlemeet.db.spaces.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlemeet.db.spaces.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -147,7 +152,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googlemeet.db.transcripts.search`
 
 ```ts
-const rows = await corsair.googlemeet.db.transcripts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlemeet.db.transcripts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

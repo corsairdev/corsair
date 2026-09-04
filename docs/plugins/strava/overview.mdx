@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { strava } from '@corsair-dev/strava';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		strava(),
 	],

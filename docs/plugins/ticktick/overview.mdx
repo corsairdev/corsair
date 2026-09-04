@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { ticktick } from '@corsair-dev/ticktick';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		ticktick(),
 	],

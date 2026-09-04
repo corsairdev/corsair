@@ -20,7 +20,8 @@ Look up a word in Merriam-Webster (collegiate / sd2 / sd3 / sd4), returning defi
 **Risk:** `read`
 
 ```ts
-await corsair.merriamwebsterdict.api.words.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.merriamwebsterdict.api.words.get({});
 ```
 
 **Input**

@@ -20,7 +20,8 @@ Retrieve Google-supported countries filtered by search term.
 **Risk:** `read`
 
 ```ts
-await corsair.autom.api.google.countries({});
+const tenant = corsair.withTenant('acme');
+await tenant.autom.api.google.countries({});
 ```
 
 **Input**
@@ -57,7 +58,8 @@ Fetch image search results from Google Search.
 **Risk:** `read`
 
 ```ts
-await corsair.autom.api.google.images({});
+const tenant = corsair.withTenant('acme');
+await tenant.autom.api.google.images({});
 ```
 
 **Input**
@@ -122,7 +124,8 @@ Retrieve Google-supported languages filtered by search term.
 **Risk:** `read`
 
 ```ts
-await corsair.autom.api.google.languages({});
+const tenant = corsair.withTenant('acme');
+await tenant.autom.api.google.languages({});
 ```
 
 **Input**
@@ -159,7 +162,8 @@ Retrieve Google-supported locations filtered by search term.
 **Risk:** `read`
 
 ```ts
-await corsair.autom.api.google.locations({});
+const tenant = corsair.withTenant('acme');
+await tenant.autom.api.google.locations({});
 ```
 
 **Input**

@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { cloudinary } from '@corsair-dev/cloudinary';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		cloudinary(),
 	],

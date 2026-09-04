@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { tisane } from '@corsair-dev/tisane';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		tisane(),
 	],

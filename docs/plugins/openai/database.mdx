@@ -14,7 +14,8 @@ The Openai plugin syncs data locally. Use `corsair.openai.db.<entity>.search({ d
 Path: `openai.db.assistants.search`
 
 ```ts
-const rows = await corsair.openai.db.assistants.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.openai.db.assistants.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `openai.db.threads.search`
 
 ```ts
-const rows = await corsair.openai.db.threads.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.openai.db.threads.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -65,7 +67,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `openai.db.vectorStores.search`
 
 ```ts
-const rows = await corsair.openai.db.vectorStores.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.openai.db.vectorStores.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

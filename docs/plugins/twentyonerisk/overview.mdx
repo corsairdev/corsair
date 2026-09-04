@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { twentyonerisk } from '@corsair-dev/twentyonerisk';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		twentyonerisk(),
 	],

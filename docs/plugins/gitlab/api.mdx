@@ -20,7 +20,8 @@ Create a new branch
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.branches.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.branches.create({});
 ```
 
 **Input**
@@ -82,7 +83,8 @@ Delete a branch [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.gitlab.api.branches.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.branches.delete({});
 ```
 
 **Input**
@@ -108,7 +110,8 @@ Get a specific branch
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.branches.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.branches.get({});
 ```
 
 **Input**
@@ -169,7 +172,8 @@ List branches in a repository
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.branches.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.branches.list({});
 ```
 
 **Input**
@@ -231,7 +235,8 @@ Get a specific commit
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.commits.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.commits.get({});
 ```
 
 **Input**
@@ -288,7 +293,8 @@ Get the diff of a commit
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.commits.getDiff({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.commits.getDiff({});
 ```
 
 **Input**
@@ -334,7 +340,8 @@ List commits in a repository
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.commits.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.commits.list({});
 ```
 
 **Input**
@@ -391,7 +398,8 @@ Create a new group
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.groups.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.groups.create({});
 ```
 
 **Input**
@@ -435,7 +443,8 @@ Delete a group [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.gitlab.api.groups.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.groups.delete({});
 ```
 
 **Input**
@@ -460,7 +469,8 @@ Get a specific group
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.groups.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.groups.get({});
 ```
 
 **Input**
@@ -501,7 +511,8 @@ List groups
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.groups.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.groups.list({});
 ```
 
 **Input**
@@ -554,7 +565,8 @@ List projects in a group
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.groups.listProjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.groups.listProjects({});
 ```
 
 **Input**
@@ -632,7 +644,8 @@ Update a group
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.groups.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.groups.update({});
 ```
 
 **Input**
@@ -678,7 +691,8 @@ Create a new issue
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.issues.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.issues.create({});
 ```
 
 **Input**
@@ -817,7 +831,8 @@ Add a comment to an issue
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.issues.createNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.issues.createNote({});
 ```
 
 **Input**
@@ -874,7 +889,8 @@ Delete an issue [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.gitlab.api.issues.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.issues.delete({});
 ```
 
 **Input**
@@ -900,7 +916,8 @@ Get a specific issue
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.issues.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.issues.get({});
 ```
 
 **Input**
@@ -1032,7 +1049,8 @@ List issues in a project
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.issues.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.issues.list({});
 ```
 
 **Input**
@@ -1136,7 +1154,8 @@ List comments on an issue
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.issues.listNotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.issues.listNotes({});
 ```
 
 **Input**
@@ -1193,7 +1212,8 @@ Update an existing issue
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.issues.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.issues.update({});
 ```
 
 **Input**
@@ -1336,7 +1356,8 @@ Create a new label
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.labels.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.labels.create({});
 ```
 
 **Input**
@@ -1379,7 +1400,8 @@ Delete a label [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.gitlab.api.labels.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.labels.delete({});
 ```
 
 **Input**
@@ -1405,7 +1427,8 @@ List labels in a project
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.labels.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.labels.list({});
 ```
 
 **Input**
@@ -1453,7 +1476,8 @@ Update a label
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.labels.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.labels.update({});
 ```
 
 **Input**
@@ -1499,7 +1523,8 @@ Approve a merge request
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.mergeRequests.approve({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.mergeRequests.approve({});
 ```
 
 **Input**
@@ -1526,7 +1551,8 @@ Create a new merge request
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.mergeRequests.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.mergeRequests.create({});
 ```
 
 **Input**
@@ -1689,7 +1715,8 @@ Add a comment to a merge request
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.mergeRequests.createNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.mergeRequests.createNote({});
 ```
 
 **Input**
@@ -1746,7 +1773,8 @@ Delete a merge request [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.gitlab.api.mergeRequests.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.mergeRequests.delete({});
 ```
 
 **Input**
@@ -1772,7 +1800,8 @@ Get a specific merge request
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.mergeRequests.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.mergeRequests.get({});
 ```
 
 **Input**
@@ -1925,7 +1954,8 @@ List merge requests in a project
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.mergeRequests.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.mergeRequests.list({});
 ```
 
 **Input**
@@ -2046,7 +2076,8 @@ List comments on a merge request
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.mergeRequests.listNotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.mergeRequests.listNotes({});
 ```
 
 **Input**
@@ -2103,7 +2134,8 @@ Merge a merge request
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.mergeRequests.merge({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.mergeRequests.merge({});
 ```
 
 **Input**
@@ -2262,7 +2294,8 @@ Update a merge request
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.mergeRequests.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.mergeRequests.update({});
 ```
 
 **Input**
@@ -2427,7 +2460,8 @@ Create a new milestone
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.milestones.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.milestones.create({});
 ```
 
 **Input**
@@ -2471,7 +2505,8 @@ Delete a milestone [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.gitlab.api.milestones.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.milestones.delete({});
 ```
 
 **Input**
@@ -2497,7 +2532,8 @@ Get a specific milestone
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.milestones.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.milestones.get({});
 ```
 
 **Input**
@@ -2538,7 +2574,8 @@ List milestones in a project
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.milestones.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.milestones.list({});
 ```
 
 **Input**
@@ -2588,7 +2625,8 @@ Update a milestone
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.milestones.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.milestones.update({});
 ```
 
 **Input**
@@ -2636,7 +2674,8 @@ Cancel a running pipeline
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.pipelines.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.pipelines.cancel({});
 ```
 
 **Input**
@@ -2696,7 +2735,8 @@ Create a new pipeline
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.pipelines.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.pipelines.create({});
 ```
 
 **Input**
@@ -2770,7 +2810,8 @@ Delete a pipeline [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.gitlab.api.pipelines.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.pipelines.delete({});
 ```
 
 **Input**
@@ -2796,7 +2837,8 @@ Get a specific pipeline
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.pipelines.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.pipelines.get({});
 ```
 
 **Input**
@@ -2856,7 +2898,8 @@ List pipelines for a project
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.pipelines.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.pipelines.list({});
 ```
 
 **Input**
@@ -2920,7 +2963,8 @@ List jobs in a pipeline
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.pipelines.listJobs({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.pipelines.listJobs({});
 ```
 
 **Input**
@@ -2973,7 +3017,8 @@ Retry a failed pipeline
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.pipelines.retry({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.pipelines.retry({});
 ```
 
 **Input**
@@ -3035,7 +3080,8 @@ Create a new project
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.projects.create({});
 ```
 
 **Input**
@@ -3121,7 +3167,8 @@ Delete a project [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.gitlab.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.projects.delete({});
 ```
 
 **Input**
@@ -3146,7 +3193,8 @@ Fork a project
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.projects.fork({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.projects.fork({});
 ```
 
 **Input**
@@ -3231,7 +3279,8 @@ Get a specific project
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.projects.get({});
 ```
 
 **Input**
@@ -3313,7 +3362,8 @@ List projects
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.projects.list({});
 ```
 
 **Input**
@@ -3393,7 +3443,8 @@ Update an existing project
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.projects.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.projects.update({});
 ```
 
 **Input**
@@ -3480,7 +3531,8 @@ Create a new release
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.releases.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.releases.create({});
 ```
 
 **Input**
@@ -3573,7 +3625,8 @@ Delete a release [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.gitlab.api.releases.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.releases.delete({});
 ```
 
 **Input**
@@ -3599,7 +3652,8 @@ Get a specific release
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.releases.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.releases.get({});
 ```
 
 **Input**
@@ -3687,7 +3741,8 @@ List releases in a project
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.releases.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.releases.list({});
 ```
 
 **Input**
@@ -3761,7 +3816,8 @@ Update a release
 **Risk:** `write`
 
 ```ts
-await corsair.gitlab.api.releases.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.releases.update({});
 ```
 
 **Input**
@@ -3855,7 +3911,8 @@ Compare branches, tags, or commits
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.repository.compare({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.repository.compare({});
 ```
 
 **Input**
@@ -3950,7 +4007,8 @@ Get a file from the repository
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.repository.getFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.repository.getFile({});
 ```
 
 **Input**
@@ -3991,7 +4049,8 @@ List repository tree (files and directories)
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.repository.getTree({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.repository.getTree({});
 ```
 
 **Input**
@@ -4038,7 +4097,8 @@ Get the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.users.getCurrentUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.users.getCurrentUser({});
 ```
 
 **Input:** _empty object_
@@ -4075,7 +4135,8 @@ Get a specific user by ID
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.users.getUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.users.getUser({});
 ```
 
 **Input**
@@ -4110,7 +4171,8 @@ List users
 **Risk:** `read`
 
 ```ts
-await corsair.gitlab.api.users.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.gitlab.api.users.list({});
 ```
 
 **Input**

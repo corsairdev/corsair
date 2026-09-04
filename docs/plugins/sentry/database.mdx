@@ -14,7 +14,8 @@ The Sentry plugin syncs data locally. Use `corsair.sentry.db.<entity>.search({ d
 Path: `sentry.db.comments.search`
 
 ```ts
-const rows = await corsair.sentry.db.comments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sentry.db.comments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `sentry.db.events.search`
 
 ```ts
-const rows = await corsair.sentry.db.events.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sentry.db.events.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -71,7 +73,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `sentry.db.issues.search`
 
 ```ts
-const rows = await corsair.sentry.db.issues.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sentry.db.issues.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -111,7 +114,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `sentry.db.organizations.search`
 
 ```ts
-const rows = await corsair.sentry.db.organizations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sentry.db.organizations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -140,7 +144,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `sentry.db.projects.search`
 
 ```ts
-const rows = await corsair.sentry.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sentry.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -172,7 +177,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `sentry.db.releases.search`
 
 ```ts
-const rows = await corsair.sentry.db.releases.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sentry.db.releases.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -202,7 +208,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `sentry.db.teams.search`
 
 ```ts
-const rows = await corsair.sentry.db.teams.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sentry.db.teams.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

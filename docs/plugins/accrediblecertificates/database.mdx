@@ -14,7 +14,8 @@ The AccredibleCertificates plugin syncs data locally. Use `corsair.accrediblecer
 Path: `accrediblecertificates.db.credentials.search`
 
 ```ts
-const rows = await corsair.accrediblecertificates.db.credentials.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.accrediblecertificates.db.credentials.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

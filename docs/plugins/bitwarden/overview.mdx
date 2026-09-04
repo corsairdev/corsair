@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { bitwarden } from '@corsair-dev/bitwarden';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		bitwarden(),
 	],

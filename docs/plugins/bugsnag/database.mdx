@@ -14,7 +14,8 @@ The BugSnag plugin syncs data locally. Use `corsair.bugsnag.db.<entity>.search({
 Path: `bugsnag.db.collaborators.search`
 
 ```ts
-const rows = await corsair.bugsnag.db.collaborators.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bugsnag.db.collaborators.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -51,7 +52,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bugsnag.db.organizations.search`
 
 ```ts
-const rows = await corsair.bugsnag.db.organizations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bugsnag.db.organizations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -87,7 +89,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bugsnag.db.projects.search`
 
 ```ts
-const rows = await corsair.bugsnag.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bugsnag.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -134,7 +137,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bugsnag.db.teams.search`
 
 ```ts
-const rows = await corsair.bugsnag.db.teams.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bugsnag.db.teams.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

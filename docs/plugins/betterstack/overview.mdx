@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { betterstack } from '@corsair-dev/betterstack';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		betterstack(),
 	],

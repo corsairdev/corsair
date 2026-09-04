@@ -20,7 +20,8 @@ Create a document and queue it for PDF generation
 **Risk:** `write`
 
 ```ts
-await corsair.pdfmonkey.api.documents.createDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.documents.createDocument({});
 ```
 
 **Input**
@@ -80,7 +81,8 @@ Create a document and wait for generation to complete
 **Risk:** `write`
 
 ```ts
-await corsair.pdfmonkey.api.documents.createDocumentSync({});
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.documents.createDocumentSync({});
 ```
 
 **Input**
@@ -137,7 +139,8 @@ Delete a document [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.pdfmonkey.api.documents.deleteDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.documents.deleteDocument({});
 ```
 
 **Input**
@@ -167,7 +170,8 @@ Get a full document including payload and generation logs
 **Risk:** `read`
 
 ```ts
-await corsair.pdfmonkey.api.documents.getDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.documents.getDocument({});
 ```
 
 **Input**
@@ -213,7 +217,8 @@ Get a document card with status and download URL
 **Risk:** `read`
 
 ```ts
-await corsair.pdfmonkey.api.documents.getDocumentCard({});
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.documents.getDocumentCard({});
 ```
 
 **Input**
@@ -256,7 +261,8 @@ List document cards with pagination and filters
 **Risk:** `read`
 
 ```ts
-await corsair.pdfmonkey.api.documents.listDocumentCards({});
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.documents.listDocumentCards({});
 ```
 
 **Input**
@@ -339,7 +345,8 @@ Update a document's payload, metadata, or template
 **Risk:** `write`
 
 ```ts
-await corsair.pdfmonkey.api.documents.updateDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.documents.updateDocument({});
 ```
 
 **Input**
@@ -402,7 +409,8 @@ Create a new document template
 **Risk:** `write`
 
 ```ts
-await corsair.pdfmonkey.api.templates.createTemplate({});
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.templates.createTemplate({});
 ```
 
 **Input**
@@ -469,7 +477,8 @@ Delete a template [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.pdfmonkey.api.templates.deleteTemplate({});
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.templates.deleteTemplate({});
 ```
 
 **Input**
@@ -499,7 +508,8 @@ Get a template by ID
 **Risk:** `read`
 
 ```ts
-await corsair.pdfmonkey.api.templates.getTemplate({});
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.templates.getTemplate({});
 ```
 
 **Input**
@@ -559,7 +569,8 @@ List template cards for a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.pdfmonkey.api.templates.listTemplateCards({});
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.templates.listTemplateCards({});
 ```
 
 **Input**
@@ -634,7 +645,8 @@ Update an existing template
 **Risk:** `write`
 
 ```ts
-await corsair.pdfmonkey.api.templates.updateTemplate({});
+const tenant = corsair.withTenant('acme');
+await tenant.pdfmonkey.api.templates.updateTemplate({});
 ```
 
 **Input**

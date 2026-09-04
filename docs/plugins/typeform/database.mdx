@@ -14,7 +14,8 @@ The Typeform plugin syncs data locally. Use `corsair.typeform.db.<entity>.search
 Path: `typeform.db.forms.search`
 
 ```ts
-const rows = await corsair.typeform.db.forms.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.typeform.db.forms.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `typeform.db.images.search`
 
 ```ts
-const rows = await corsair.typeform.db.images.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.typeform.db.images.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -71,7 +73,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `typeform.db.responses.search`
 
 ```ts
-const rows = await corsair.typeform.db.responses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.typeform.db.responses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -97,7 +100,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `typeform.db.themes.search`
 
 ```ts
-const rows = await corsair.typeform.db.themes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.typeform.db.themes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -125,7 +129,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `typeform.db.webhookConfigs.search`
 
 ```ts
-const rows = await corsair.typeform.db.webhookConfigs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.typeform.db.webhookConfigs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -155,7 +160,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `typeform.db.workspaces.search`
 
 ```ts
-const rows = await corsair.typeform.db.workspaces.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.typeform.db.workspaces.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

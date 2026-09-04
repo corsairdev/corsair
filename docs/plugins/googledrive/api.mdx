@@ -20,7 +20,8 @@ Copy a file in Google Drive
 **Risk:** `write`
 
 ```ts
-await corsair.googledrive.api.files.copy({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.files.copy({});
 ```
 
 **Input**
@@ -111,7 +112,8 @@ Create a new Drive file from text content
 **Risk:** `write`
 
 ```ts
-await corsair.googledrive.api.files.createFromText({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.files.createFromText({});
 ```
 
 **Input**
@@ -202,7 +204,8 @@ Permanently delete a file [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.googledrive.api.files.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.files.delete({});
 ```
 
 **Input**
@@ -229,7 +232,8 @@ Download the content of a file
 **Risk:** `read`
 
 ```ts
-await corsair.googledrive.api.files.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.files.download({});
 ```
 
 **Input**
@@ -255,7 +259,8 @@ Get metadata for a specific file
 **Risk:** `read`
 
 ```ts
-await corsair.googledrive.api.files.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.files.get({});
 ```
 
 **Input**
@@ -346,7 +351,8 @@ List files in Google Drive
 **Risk:** `read`
 
 ```ts
-await corsair.googledrive.api.files.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.files.list({});
 ```
 
 **Input**
@@ -442,7 +448,8 @@ Move a file to a different folder
 **Risk:** `write`
 
 ```ts
-await corsair.googledrive.api.files.move({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.files.move({});
 ```
 
 **Input**
@@ -533,7 +540,8 @@ Share a file by granting permissions to users
 **Risk:** `write`
 
 ```ts
-await corsair.googledrive.api.files.share({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.files.share({});
 ```
 
 **Input**
@@ -586,7 +594,8 @@ Update the content or metadata of a file
 **Risk:** `write`
 
 ```ts
-await corsair.googledrive.api.files.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.files.update({});
 ```
 
 **Input**
@@ -702,7 +711,8 @@ Upload a file to Google Drive
 **Risk:** `write`
 
 ```ts
-await corsair.googledrive.api.files.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.files.upload({});
 ```
 
 **Input**
@@ -794,7 +804,8 @@ Create a new folder
 **Risk:** `write`
 
 ```ts
-await corsair.googledrive.api.folders.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.folders.create({});
 ```
 
 **Input**
@@ -883,7 +894,8 @@ Permanently delete a folder and its contents [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.googledrive.api.folders.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.folders.delete({});
 ```
 
 **Input**
@@ -910,7 +922,8 @@ Get metadata for a specific folder
 **Risk:** `read`
 
 ```ts
-await corsair.googledrive.api.folders.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.folders.get({});
 ```
 
 **Input**
@@ -1000,7 +1013,8 @@ List folders in Google Drive
 **Risk:** `read`
 
 ```ts
-await corsair.googledrive.api.folders.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.folders.list({});
 ```
 
 **Input**
@@ -1096,7 +1110,8 @@ Share a folder by granting permissions to users
 **Risk:** `write`
 
 ```ts
-await corsair.googledrive.api.folders.share({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.folders.share({});
 ```
 
 **Input**
@@ -1151,7 +1166,8 @@ Search for files and folders in Google Drive
 **Risk:** `read`
 
 ```ts
-await corsair.googledrive.api.search.filesAndFolders({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.search.filesAndFolders({});
 ```
 
 **Input**
@@ -1249,7 +1265,8 @@ Create a new shared drive
 **Risk:** `write`
 
 ```ts
-await corsair.googledrive.api.sharedDrives.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.sharedDrives.create({});
 ```
 
 **Input**
@@ -1303,7 +1320,8 @@ Permanently delete a shared drive [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.googledrive.api.sharedDrives.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.sharedDrives.delete({});
 ```
 
 **Input**
@@ -1328,7 +1346,8 @@ Get info about a shared drive
 **Risk:** `read`
 
 ```ts
-await corsair.googledrive.api.sharedDrives.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.sharedDrives.get({});
 ```
 
 **Input**
@@ -1365,7 +1384,8 @@ List shared drives
 **Risk:** `read`
 
 ```ts
-await corsair.googledrive.api.sharedDrives.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.sharedDrives.list({});
 ```
 
 **Input**
@@ -1417,7 +1437,8 @@ Update a shared drive
 **Risk:** `write`
 
 ```ts
-await corsair.googledrive.api.sharedDrives.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.sharedDrives.update({});
 ```
 
 **Input**
@@ -1474,7 +1495,8 @@ Get the user's Google Drive storage quota and usage
 **Risk:** `read`
 
 ```ts
-await corsair.googledrive.api.storage.getQuota({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledrive.api.storage.getQuota({});
 ```
 
 **Input:** _empty object_

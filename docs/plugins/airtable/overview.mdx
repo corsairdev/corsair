@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { airtable } from '@corsair-dev/airtable';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		airtable(),
 	],
@@ -133,17 +134,25 @@ Synced entities: `bases`, `records`. See [Database](/plugins/airtable/database) 
 React when an Airtable base sends a change notification.
 
 ```ts
-airtable({
-    webhookHooks: {
-        events: {
-            event: {
-                after: async (ctx, result) => {
-                    console.log('Airtable event:', result.data);
-                }
-            },
-        },
-    },
-})
+import { createCorsair } from 'corsair';
+import { airtable } from '@corsair-dev/airtable';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+		airtable({
+			webhookHooks: {
+				events: {
+					event: {
+						after: async (ctx, result) => {
+							console.log('Airtable event:', result.data);
+						}
+					},
+				},
+			},
+		)
+	],
+});
 ```
 
 Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/airtable/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).

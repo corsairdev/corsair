@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { tally } from '@corsair-dev/tally';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		tally(),
 	],

@@ -14,7 +14,8 @@ The WhatsApp plugin syncs data locally. Use `corsair.whatsapp.db.<entity>.search
 Path: `whatsapp.db.businessProfiles.search`
 
 ```ts
-const rows = await corsair.whatsapp.db.businessProfiles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.whatsapp.db.businessProfiles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -45,7 +46,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `whatsapp.db.contacts.search`
 
 ```ts
-const rows = await corsair.whatsapp.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.whatsapp.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -71,7 +73,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `whatsapp.db.messages.search`
 
 ```ts
-const rows = await corsair.whatsapp.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.whatsapp.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -103,7 +106,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `whatsapp.db.phoneNumbers.search`
 
 ```ts
-const rows = await corsair.whatsapp.db.phoneNumbers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.whatsapp.db.phoneNumbers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

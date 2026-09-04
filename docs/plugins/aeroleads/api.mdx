@@ -20,7 +20,8 @@ Retrieve detailed information about a prospect using their LinkedIn profile URL,
 **Risk:** `read`
 
 ```ts
-await corsair.aeroleads.api.linkedinDetails.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.aeroleads.api.linkedinDetails.get({});
 ```
 
 **Input**

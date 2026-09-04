@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { basecamp } from '@corsair-dev/basecamp';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		basecamp(),
 	],

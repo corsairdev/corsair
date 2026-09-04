@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { monday } from '@corsair-dev/monday';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		monday(),
 	],

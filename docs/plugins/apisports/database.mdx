@@ -14,7 +14,8 @@ The API-Sports plugin syncs data locally. Use `corsair.apisports.db.<entity>.sea
 Path: `apisports.db.queries.search`
 
 ```ts
-const rows = await corsair.apisports.db.queries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apisports.db.queries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

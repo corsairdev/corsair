@@ -52,6 +52,7 @@ import { createCorsair } from 'corsair';
 import { zohomail } from '@corsair-dev/zohomail';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		zohomail({
 			authType: 'managed',

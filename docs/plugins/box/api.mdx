@@ -20,7 +20,8 @@ Copy a Box file to a destination folder
 **Risk:** `write`
 
 ```ts
-await corsair.box.api.files.copy({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.files.copy({});
 ```
 
 **Input**
@@ -176,7 +177,8 @@ Delete a Box file [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.box.api.files.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.files.delete({});
 ```
 
 **Input**
@@ -207,7 +209,8 @@ Download the content of a Box file
 **Risk:** `read`
 
 ```ts
-await corsair.box.api.files.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.files.download({});
 ```
 
 **Input**
@@ -233,7 +236,8 @@ Get metadata for a Box file by ID
 **Risk:** `read`
 
 ```ts
-await corsair.box.api.files.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.files.get({});
 ```
 
 **Input**
@@ -376,7 +380,8 @@ Search for files in Box
 **Risk:** `read`
 
 ```ts
-await corsair.box.api.files.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.files.search({});
 ```
 
 **Input**
@@ -432,7 +437,8 @@ Create or update a shared link for a Box file
 **Risk:** `write`
 
 ```ts
-await corsair.box.api.files.share({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.files.share({});
 ```
 
 **Input**
@@ -593,7 +599,8 @@ Upload a new file to Box
 **Risk:** `write`
 
 ```ts
-await corsair.box.api.files.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.files.upload({});
 ```
 
 **Input**
@@ -710,7 +717,8 @@ Create a new folder in Box
 **Risk:** `write`
 
 ```ts
-await corsair.box.api.folders.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.folders.create({});
 ```
 
 **Input**
@@ -865,7 +873,8 @@ Delete a Box folder [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.box.api.folders.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.folders.delete({});
 ```
 
 **Input**
@@ -896,7 +905,8 @@ Get metadata for a Box folder by ID
 **Risk:** `read`
 
 ```ts
-await corsair.box.api.folders.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.folders.get({});
 ```
 
 **Input**
@@ -1049,7 +1059,8 @@ Search for folders in Box
 **Risk:** `read`
 
 ```ts
-await corsair.box.api.folders.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.folders.search({});
 ```
 
 **Input**
@@ -1101,7 +1112,8 @@ Create or update a shared link for a Box folder
 **Risk:** `write`
 
 ```ts
-await corsair.box.api.folders.share({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.folders.share({});
 ```
 
 **Input**
@@ -1271,7 +1283,8 @@ Update properties of a Box folder
 **Risk:** `write`
 
 ```ts
-await corsair.box.api.folders.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.box.api.folders.update({});
 ```
 
 **Input**

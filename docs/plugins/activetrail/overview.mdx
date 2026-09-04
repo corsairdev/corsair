@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { activetrail } from '@corsair-dev/activetrail';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		activetrail(),
 	],

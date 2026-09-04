@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { asyncinterview } from '@corsair-dev/asyncinterview';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		asyncinterview(),
 	],

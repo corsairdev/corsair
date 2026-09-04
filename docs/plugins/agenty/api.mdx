@@ -20,7 +20,8 @@ Creates a new Agenty agent for web scraping, change detection, crawling, map mon
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.agents.agentsControllerCreateAgent({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.agents.agentsControllerCreateAgent({});
 ```
 
 **Input**
@@ -107,7 +108,8 @@ Tool to fetch all public agent templates and sample agents. Use when listing ava
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.agents.agentsControllerGetTemplates({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.agents.agentsControllerGetTemplates({});
 ```
 
 **Input**
@@ -156,7 +158,8 @@ Tool to delete a single agent by its ID. Use when you need to permanently remove
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agenty.api.agents.agentsDeleteById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.agents.agentsDeleteById({});
 ```
 
 **Input**
@@ -202,7 +205,8 @@ Tool to fetch all active agents under an account. Use after authenticating when 
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.agents.agentsGetAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.agents.agentsGetAll({});
 ```
 
 **Input**
@@ -251,7 +255,8 @@ Retrieves complete details of a specific agent including its configuration, inpu
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.agents.agentsGetById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.agents.agentsGetById({});
 ```
 
 **Input**
@@ -297,7 +302,8 @@ Updates an existing agent's configuration, settings, and metadata. Use this tool
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.agents.agentsUpdateById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.agents.agentsUpdateById({});
 ```
 
 **Input**
@@ -383,7 +389,8 @@ Tool to copy an existing agent by its ID, creating a duplicate with optionally a
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.agents.copyAgent({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.agents.copyAgent({});
 ```
 
 **Input**
@@ -430,7 +437,8 @@ Tool to transfer agent ownership to another Agenty account. Use when you need to
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.agents.transferAgentOwnership({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.agents.transferAgentOwnership({});
 ```
 
 **Input**
@@ -479,7 +487,8 @@ Creates a new API key for programmatic access to the Agenty API. The generated A
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.apiKeys.apiKeysControllerCreateApiKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.apiKeys.apiKeysControllerCreateApiKeys({});
 ```
 
 **Input**
@@ -527,7 +536,8 @@ Delete an API key by its unique identifier. Use this tool to permanently revoke 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agenty.api.apiKeys.apiKeysDeleteById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.apiKeys.apiKeysDeleteById({});
 ```
 
 **Input**
@@ -573,7 +583,8 @@ Tool to download all API keys under an account in CSV format. Use when you need 
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.apiKeys.apiKeysDownload({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.apiKeys.apiKeysDownload({});
 ```
 
 **Input**
@@ -622,7 +633,8 @@ Tool to retrieve all API keys under an account. Use after authentication when yo
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.apiKeys.apiKeysGetAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.apiKeys.apiKeysGetAll({});
 ```
 
 **Input**
@@ -671,7 +683,8 @@ Retrieves detailed information about a specific API key by its ID. Use this acti
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.apiKeys.apiKeysGetById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.apiKeys.apiKeysGetById({});
 ```
 
 **Input**
@@ -717,7 +730,8 @@ Resets (regenerates) the secret value of an existing API key. The old secret bec
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agenty.api.apiKeys.apiKeysResetById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.apiKeys.apiKeysResetById({});
 ```
 
 **Input**
@@ -763,7 +777,8 @@ Updates an existing API key's name and role by its unique identifier. This actio
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.apiKeys.apiKeysUpdateById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.apiKeys.apiKeysUpdateById({});
 ```
 
 **Input**
@@ -811,7 +826,8 @@ Toggles the enabled/disabled status of an API key. This endpoint switches the ke
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.apiKeys.changeApiKeyStatusById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.apiKeys.changeApiKeyStatusById({});
 ```
 
 **Input**
@@ -859,7 +875,8 @@ Tool to capture a full-page or visible screenshot of any webpage URL. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.browser.captureScreenshot({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.browser.captureScreenshot({});
 ```
 
 **Input**
@@ -905,7 +922,8 @@ Tool to capture webpage screenshots with extensive customization options includi
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.browser.captureScreenshotWithOptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.browser.captureScreenshotWithOptions({});
 ```
 
 **Input**
@@ -999,7 +1017,8 @@ Tool to convert a webpage URL to a PDF document. Use when you need to generate a
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.browser.convertUrlToPdf({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.browser.convertUrlToPdf({});
 ```
 
 **Input**
@@ -1045,7 +1064,8 @@ Tool to convert a URL or raw HTML to PDF with customizable options. Use when you
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.browser.convertUrlToPdfWithOptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.browser.convertUrlToPdfWithOptions({});
 ```
 
 **Input**
@@ -1123,7 +1143,8 @@ Tool to auto-extract structured data from a webpage including schema.org, RDFa, 
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.browser.extractBrowserStructuredData({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.browser.extractBrowserStructuredData({});
 ```
 
 **Input**
@@ -1178,7 +1199,8 @@ Tool to auto-extract structured data from a webpage URL. Use when you need to ex
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.browser.extractStructuredData({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.browser.extractStructuredData({});
 ```
 
 **Input**
@@ -1224,7 +1246,8 @@ Tool to get the complete redirect chain for a URL. Use when you need to trace ho
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.browser.getBrowserRedirects({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.browser.getBrowserRedirects({});
 ```
 
 **Input**
@@ -1270,7 +1293,8 @@ Tool to fetch the complete HTML content of any webpage URL. Use this when you ne
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.browser.getPageContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.browser.getPageContent({});
 ```
 
 **Input**
@@ -1316,7 +1340,8 @@ Tool to fetch HTML content of a webpage with custom options including ad blockin
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.browser.getPageContentWithOptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.browser.getPageContentWithOptions({});
 ```
 
 **Input**
@@ -1363,7 +1388,8 @@ Tool to get the complete redirect chain of a URL with custom navigation options.
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.browser.getRedirectsWithOptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.browser.getRedirectsWithOptions({});
 ```
 
 **Input**
@@ -1418,7 +1444,8 @@ Tool to scrape data from any webpage using jQuery/CSS selectors. Use when you ne
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.browser.scrapeWebpageData({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.browser.scrapeWebpageData({});
 ```
 
 **Input**
@@ -1486,7 +1513,8 @@ Retrieves all connections from your Agenty account. Supports pagination via limi
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.connections.connectionsGetAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.connections.connectionsGetAll({});
 ```
 
 **Input**
@@ -1537,7 +1565,8 @@ Tool to fetch account reports like pages used by agent, date, and product. Use w
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.dashboard.dashboardGetReportsUsage({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.dashboard.dashboardGetReportsUsage({});
 ```
 
 **Input**
@@ -1586,7 +1615,8 @@ Retrieves the input configuration for a specific agent by its ID. Returns the in
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.inputs.inputsGetByAgentId({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.inputs.inputsGetByAgentId({});
 ```
 
 **Input**
@@ -1632,7 +1662,8 @@ Updates the input configuration for a specific agent in Agenty. This tool modifi
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.inputs.inputsUpdateByAgentId({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.inputs.inputsUpdateByAgentId({});
 ```
 
 **Input**
@@ -1685,7 +1716,8 @@ Tool to download agent results by agent ID in CSV, TSV or JSON format. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.jobs.downloadAgentResult({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.jobs.downloadAgentResult({});
 ```
 
 **Input**
@@ -1738,7 +1770,8 @@ Tool to get the most recent result data for an agent. Use when you need to retri
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.jobs.getAgentResult({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.jobs.getAgentResult({});
 ```
 
 **Input**
@@ -1790,7 +1823,8 @@ Tool to get the result data from a completed job. Use when you need to retrieve 
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.jobs.getJobResult({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.jobs.getJobResult({});
 ```
 
 **Input**
@@ -1843,7 +1877,8 @@ Tool to download all jobs in CSV format. Use when you need a complete list of jo
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.jobs.jobsDownload({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.jobs.jobsDownload({});
 ```
 
 **Input**
@@ -1893,7 +1928,8 @@ Tool to download output files by job ID. Use when you need to fetch a specific o
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.jobs.jobsDownloadFilesById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.jobs.jobsDownloadFilesById({});
 ```
 
 **Input**
@@ -1940,7 +1976,8 @@ Tool to download the agent output result by job ID. Use when you need to fetch t
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.jobs.jobsDownloadResultById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.jobs.jobsDownloadResultById({});
 ```
 
 **Input**
@@ -1992,7 +2029,8 @@ Tool to fetch all jobs under an account. Use when you need to view and filter th
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.jobs.jobsGetAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.jobs.jobsGetAll({});
 ```
 
 **Input**
@@ -2042,7 +2080,8 @@ Retrieves comprehensive details about a specific job including its status, progr
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.jobs.jobsGetById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.jobs.jobsGetById({});
 ```
 
 **Input**
@@ -2088,7 +2127,8 @@ Tool to fetch logs for a given job by its ID. Use when you need to review or deb
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.jobs.jobsGetLogsById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.jobs.jobsGetLogsById({});
 ```
 
 **Input**
@@ -2136,7 +2176,8 @@ Lists all output files generated by a specific job. Returns file names and sizes
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.jobs.jobsListFilesById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.jobs.jobsListFilesById({});
 ```
 
 **Input**
@@ -2182,7 +2223,8 @@ Tool to start a new agent job. Use when you need to trigger execution of an exis
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.jobs.jobsStart({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.jobs.jobsStart({});
 ```
 
 **Input**
@@ -2228,7 +2270,8 @@ Tool to stop a running job by job ID. Use when you need to halt an in-progress j
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.jobs.jobsStopById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.jobs.jobsStopById({});
 ```
 
 **Input**
@@ -2276,7 +2319,8 @@ Tool to add new rows to a list. Use when you need to insert one or more data row
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.lists.addListRows({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.addListRows({});
 ```
 
 **Input**
@@ -2323,7 +2367,8 @@ Tool to delete a specific row from a list by its unique identifier. Use when you
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agenty.api.lists.deleteListRow({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.deleteListRow({});
 ```
 
 **Input**
@@ -2370,7 +2415,8 @@ Tool to delete specific rows from a list by their IDs. Use when you need to remo
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agenty.api.lists.deleteListRows({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.deleteListRows({});
 ```
 
 **Input**
@@ -2417,7 +2463,8 @@ Tool to download list rows as CSV file. Use when you need to export or backup al
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.lists.downloadListRows({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.downloadListRows({});
 ```
 
 **Input**
@@ -2463,7 +2510,8 @@ Retrieves detailed information about a specific list by its ID. Use this action 
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.lists.getListById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.getListById({});
 ```
 
 **Input**
@@ -2509,7 +2557,8 @@ Tool to fetch a specific row by its ID from a list. Use when you need to retriev
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.lists.getListRowById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.getListRowById({});
 ```
 
 **Input**
@@ -2556,7 +2605,8 @@ Tool to clear all rows in a list by its ID. Use when you need to wipe out all da
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agenty.api.lists.listsClearRows({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.listsClearRows({});
 ```
 
 **Input**
@@ -2602,7 +2652,8 @@ Tool to create a new list. Use after preparing the list name and optional descri
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.lists.listsControllerCreateList({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.listsControllerCreateList({});
 ```
 
 **Input**
@@ -2649,7 +2700,8 @@ Tool to delete a specific list by its ID. Use when you need to permanently remov
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agenty.api.lists.listsDeleteById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.listsDeleteById({});
 ```
 
 **Input**
@@ -2696,7 +2748,8 @@ Tool to download all lists in CSV format. Use when you need a complete set of li
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.lists.listsDownload({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.listsDownload({});
 ```
 
 **Input**
@@ -2745,7 +2798,8 @@ Tool to retrieve all lists under an account. Use after authentication when you n
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.lists.listsGetAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.listsGetAll({});
 ```
 
 **Input**
@@ -2794,7 +2848,8 @@ Tool to fetch all rows in a specified list. Use when you need to retrieve all da
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.lists.listsGetRowsById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.listsGetRowsById({});
 ```
 
 **Input**
@@ -2844,7 +2899,8 @@ Tool to update a list's name and optionally description by list ID. The name fie
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.lists.listsUpdateById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.listsUpdateById({});
 ```
 
 **Input**
@@ -2892,7 +2948,8 @@ Tool to upload a CSV file to an Agenty list for bulk import of data rows. Use th
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.lists.listsUploadCsv({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.listsUploadCsv({});
 ```
 
 **Input**
@@ -2947,7 +3004,8 @@ Tool to update a specific row in a list by list ID and row ID. Use when you need
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.lists.updateListRow({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.lists.updateListRow({});
 ```
 
 **Input**
@@ -3005,7 +3063,8 @@ Tool to delete a project by its ID. Use when you need to permanently remove a pr
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agenty.api.projects.deleteProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.projects.deleteProject({});
 ```
 
 **Input**
@@ -3051,7 +3110,8 @@ Retrieves complete details of a specific project by its ID, including name, desc
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.projects.getProjectById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.projects.getProjectById({});
 ```
 
 **Input**
@@ -3097,7 +3157,8 @@ Add one or more agents to an Agenty project to organize and group related agents
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.projects.projectsAddAgents({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.projects.projectsAddAgents({});
 ```
 
 **Input**
@@ -3144,7 +3205,8 @@ Creates a new project in Agenty. Use this to initialize a project with a name an
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.projects.projectsControllerCreateProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.projects.projectsControllerCreateProject({});
 ```
 
 **Input**
@@ -3191,7 +3253,8 @@ Retrieve all projects in the authenticated user's account. Returns a paginated l
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.projects.projectsGetAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.projects.projectsGetAll({});
 ```
 
 **Input**
@@ -3240,7 +3303,8 @@ Remove an agent from an Agenty project. Use when you need to disassociate an age
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agenty.api.projects.removeAgentFromProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.projects.removeAgentFromProject({});
 ```
 
 **Input**
@@ -3287,7 +3351,8 @@ Update an existing project's name and description in Agenty. Use this to modify 
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.projects.updateProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.projects.updateProject({});
 ```
 
 **Input**
@@ -3337,7 +3402,8 @@ Tool to delete a schedule for an agent by its agent ID. Use when you need to rem
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agenty.api.scheduler.deleteSchedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.scheduler.deleteSchedule({});
 ```
 
 **Input**
@@ -3383,7 +3449,8 @@ Tool to retrieve the schedule configuration for a specific agent. Use when you n
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.scheduler.getSchedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.scheduler.getSchedule({});
 ```
 
 **Input**
@@ -3429,7 +3496,8 @@ Tool to toggle schedule on/off for an agent. Use when you need to enable or disa
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.scheduler.toggleSchedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.scheduler.toggleSchedule({});
 ```
 
 **Input**
@@ -3476,7 +3544,8 @@ Updates the schedule configuration for a specific agent. Use when you need to mo
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.scheduler.updateSchedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.scheduler.updateSchedule({});
 ```
 
 **Input**
@@ -3529,7 +3598,8 @@ Tool to download users list in CSV format. Use when you need to export or backup
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.users.downloadUsers({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.users.downloadUsers({});
 ```
 
 **Input**
@@ -3578,7 +3648,8 @@ Tool to retrieve all team members (users) under an account. Use after authentica
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.users.getAllTeamMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.users.getAllTeamMembers({});
 ```
 
 **Input**
@@ -3628,7 +3699,8 @@ Tool to retrieve detailed information about a user by their ID. Use this to fetc
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.users.getUserById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.users.getUserById({});
 ```
 
 **Input**
@@ -3674,7 +3746,8 @@ Tool to update a user's information by user ID. Use this to modify user properti
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.users.updateUserById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.users.updateUserById({});
 ```
 
 **Input**
@@ -3729,7 +3802,8 @@ Creates a new workflow in Agenty to automate actions based on agent events. Use 
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.workflows.createWorkflow({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.workflows.createWorkflow({});
 ```
 
 **Input**
@@ -3794,7 +3868,8 @@ Tool to delete a workflow by its ID. Use when you need to permanently remove a w
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agenty.api.workflows.deleteWorkflow({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.workflows.deleteWorkflow({});
 ```
 
 **Input**
@@ -3841,7 +3916,8 @@ Tool to download all workflows in CSV format. Use when you need to export or bac
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.workflows.downloadWorkflows({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.workflows.downloadWorkflows({});
 ```
 
 **Input**
@@ -3886,7 +3962,8 @@ Retrieves complete details of a specific workflow by its ID. Use this to view wo
 **Risk:** `read`
 
 ```ts
-await corsair.agenty.api.workflows.getWorkflowById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.workflows.getWorkflowById({});
 ```
 
 **Input**
@@ -3933,7 +4010,8 @@ Tool to partially update a workflow by ID. Use when you need to update specific 
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.workflows.patchWorkflow({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.workflows.patchWorkflow({});
 ```
 
 **Input**
@@ -3981,7 +4059,8 @@ Tool to update an existing workflow's configuration by workflow ID. Use this to 
 **Risk:** `write`
 
 ```ts
-await corsair.agenty.api.workflows.updateWorkflow({});
+const tenant = corsair.withTenant('acme');
+await tenant.agenty.api.workflows.updateWorkflow({});
 ```
 
 **Input**

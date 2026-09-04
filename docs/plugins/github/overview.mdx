@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { github } from '@corsair-dev/github';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		github({
 			authType: 'managed',
@@ -161,17 +162,26 @@ Synced entities: `branches`, `comments`, `discussions`, `events`, `forks`, `issu
 Fires when a GitHub issue is opened.
 
 ```ts
-github({
-    webhookHooks: {
-        issue: {
-            opened: {
-                after: async (ctx, result) => {
-                    console.log('GitHub issue opened:', result.data);
-                }
-            },
-        },
-    },
-})
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+		github({
+			authType: 'managed',
+			webhookHooks: {
+				issue: {
+					opened: {
+						after: async (ctx, result) => {
+							console.log('GitHub issue opened:', result.data);
+						}
+					},
+				},
+			},
+		)
+	],
+});
 ```
 
 Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/github/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).

@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { slack } from '@corsair-dev/slack';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		slack({
 			authType: 'managed',
@@ -161,18 +162,27 @@ Synced entities: `channels`, `files`, `messages`, `userGroups`, `users`. See [Da
 React when someone posts in a channel — `messages.message` is the common entry point.
 
 ```ts
-slack({
-    webhookHooks: {
-        messages: {
-            message: {
-                after: async (ctx, result) => {
-                    const text = result.data?.text;
-                    console.log('Slack message:', text);
-                }
-            },
-        },
-    },
-})
+import { createCorsair } from 'corsair';
+import { slack } from '@corsair-dev/slack';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+		slack({
+			authType: 'managed',
+			webhookHooks: {
+				messages: {
+					message: {
+						after: async (ctx, result) => {
+							const text = result.data?.text;
+							console.log('Slack message:', text);
+						}
+					},
+				},
+			},
+		)
+	],
+});
 ```
 
 Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/slack/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).

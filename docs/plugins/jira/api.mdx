@@ -20,7 +20,8 @@ Add a comment to a Jira issue
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.comments.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.comments.add({});
 ```
 
 **Input**
@@ -72,7 +73,8 @@ Delete a comment from a Jira issue [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.jira.api.comments.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.comments.delete({});
 ```
 
 **Input**
@@ -103,7 +105,8 @@ Get a specific comment on a Jira issue
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.comments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.comments.get({});
 ```
 
 **Input**
@@ -156,7 +159,8 @@ List all comments on a Jira issue
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.comments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.comments.list({});
 ```
 
 **Input**
@@ -216,7 +220,8 @@ Update a comment on a Jira issue
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.comments.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.comments.update({});
 ```
 
 **Input**
@@ -272,7 +277,8 @@ Create a new Jira group
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.groups.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.groups.create({});
 ```
 
 **Input**
@@ -304,7 +310,8 @@ Get all Jira groups
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.groups.getAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.groups.getAll({});
 ```
 
 **Input**
@@ -352,7 +359,8 @@ Add an attachment to a Jira issue
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.issues.addAttachment({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.addAttachment({});
 ```
 
 **Input**
@@ -398,7 +406,8 @@ Add a watcher to a Jira issue
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.issues.addWatcher({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.addWatcher({});
 ```
 
 **Input**
@@ -429,7 +438,8 @@ Assign a Jira issue to a user
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.issues.assign({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.assign({});
 ```
 
 **Input**
@@ -460,7 +470,8 @@ Bulk create multiple Jira issues
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.issues.bulkCreate({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.bulkCreate({});
 ```
 
 **Input**
@@ -520,7 +531,8 @@ Bulk fetch multiple Jira issues by ID or key
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.issues.bulkFetch({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.bulkFetch({});
 ```
 
 **Input**
@@ -618,7 +630,8 @@ Create a new Jira issue
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.issues.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.create({});
 ```
 
 **Input**
@@ -658,7 +671,8 @@ Delete a Jira issue [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.jira.api.issues.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.delete({});
 ```
 
 **Input**
@@ -690,7 +704,8 @@ Edit an existing Jira issue
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.issues.edit({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.edit({});
 ```
 
 **Input**
@@ -728,7 +743,8 @@ Get a Jira issue by ID or key
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.issues.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.get({});
 ```
 
 **Input**
@@ -823,7 +839,8 @@ Get available transitions for a Jira issue
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.issues.getTransitions({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.getTransitions({});
 ```
 
 **Input**
@@ -874,7 +891,8 @@ Link two Jira issues together
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.issues.linkIssues({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.linkIssues({});
 ```
 
 **Input**
@@ -907,7 +925,8 @@ Remove a watcher from a Jira issue
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.issues.removeWatcher({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.removeWatcher({});
 ```
 
 **Input**
@@ -938,7 +957,8 @@ Search issues using JQL
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.issues.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.search({});
 ```
 
 **Input**
@@ -1040,7 +1060,8 @@ Transition a Jira issue to a new status
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.issues.transition({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.issues.transition({});
 ```
 
 **Input**
@@ -1074,7 +1095,8 @@ Create a new Jira project
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.projects.create({});
 ```
 
 **Input**
@@ -1111,7 +1133,8 @@ Get a Jira project by ID or key
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.projects.get({});
 ```
 
 **Input**
@@ -1164,7 +1187,8 @@ Get project roles for a Jira project
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.projects.getRoles({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.projects.getRoles({});
 ```
 
 **Input**
@@ -1199,7 +1223,8 @@ List Jira projects
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.projects.list({});
 ```
 
 **Input**
@@ -1263,7 +1288,8 @@ Create a new sprint on a Jira board
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.sprints.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.sprints.create({});
 ```
 
 **Input**
@@ -1306,7 +1332,8 @@ List sprints for a Jira board
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.sprints.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.sprints.list({});
 ```
 
 **Input**
@@ -1362,7 +1389,8 @@ List Jira boards
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.sprints.listBoards({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.sprints.listBoards({});
 ```
 
 **Input**
@@ -1419,7 +1447,8 @@ Move issues to a sprint
 **Risk:** `write`
 
 ```ts
-await corsair.jira.api.sprints.moveIssues({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.sprints.moveIssues({});
 ```
 
 **Input**
@@ -1452,7 +1481,8 @@ Search for Jira users
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.users.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.users.find({});
 ```
 
 **Input**
@@ -1496,7 +1526,8 @@ Get all Jira users
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.users.getAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.users.getAll({});
 ```
 
 **Input**
@@ -1538,7 +1569,8 @@ Get the currently authenticated Jira user
 **Risk:** `read`
 
 ```ts
-await corsair.jira.api.users.getCurrent({});
+const tenant = corsair.withTenant('acme');
+await tenant.jira.api.users.getCurrent({});
 ```
 
 **Input:** _empty object_

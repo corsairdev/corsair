@@ -20,7 +20,8 @@ Create an alias linking two distinct user IDs
 **Risk:** `write`
 
 ```ts
-await corsair.posthog.api.events.aliasCreate({});
+const tenant = corsair.withTenant('acme');
+await tenant.posthog.api.events.aliasCreate({});
 ```
 
 **Input**
@@ -58,7 +59,8 @@ Ingest an analytics event
 **Risk:** `write`
 
 ```ts
-await corsair.posthog.api.events.eventCreate({});
+const tenant = corsair.withTenant('acme');
+await tenant.posthog.api.events.eventCreate({});
 ```
 
 **Input**
@@ -109,7 +111,8 @@ Associate properties with a user identity
 **Risk:** `write`
 
 ```ts
-await corsair.posthog.api.events.identityCreate({});
+const tenant = corsair.withTenant('acme');
+await tenant.posthog.api.events.identityCreate({});
 ```
 
 **Input**
@@ -157,7 +160,8 @@ Track a page view event
 **Risk:** `write`
 
 ```ts
-await corsair.posthog.api.events.trackPage({});
+const tenant = corsair.withTenant('acme');
+await tenant.posthog.api.events.trackPage({});
 ```
 
 **Input**
@@ -208,7 +212,8 @@ Track a screen view event
 **Risk:** `write`
 
 ```ts
-await corsair.posthog.api.events.trackScreen({});
+const tenant = corsair.withTenant('acme');
+await tenant.posthog.api.events.trackScreen({});
 ```
 
 **Input**

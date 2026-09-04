@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { affinda } from '@corsair-dev/affinda';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		affinda(),
 	],

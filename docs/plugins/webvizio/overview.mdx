@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { webvizio } from '@corsair-dev/webvizio';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		webvizio({
 			authType: 'api_key',

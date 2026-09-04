@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { openweathermap } from '@corsair-dev/openweathermap';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		openweathermap(),
 	],

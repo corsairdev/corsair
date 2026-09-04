@@ -20,7 +20,8 @@ Exchange a password for an API token
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.auth.login({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.auth.login({});
 ```
 
 **Input**
@@ -54,7 +55,8 @@ Register a new Habitica account and mint its credential
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.auth.register({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.auth.register({});
 ```
 
 **Input**
@@ -90,7 +92,8 @@ Authenticate through a social provider
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.auth.social({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.auth.social({});
 ```
 
 **Input**
@@ -136,7 +139,8 @@ Duplicate a challenge
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.challenges.clone({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.challenges.clone({});
 ```
 
 **Input**
@@ -239,7 +243,8 @@ Create a challenge in a group
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.challenges.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.challenges.create({});
 ```
 
 **Input**
@@ -347,7 +352,8 @@ Permanently delete a challenge and its tasks
 **Risk:** `destructive`
 
 ```ts
-await corsair.habitica.api.challenges.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.challenges.delete({});
 ```
 
 **Input**
@@ -382,7 +388,8 @@ Export a challenge as CSV
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.challenges.exportCsv({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.challenges.exportCsv({});
 ```
 
 **Input**
@@ -413,7 +420,8 @@ Retrieve a challenge
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.challenges.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.challenges.get({});
 ```
 
 **Input**
@@ -516,7 +524,8 @@ Join a challenge
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.challenges.join({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.challenges.join({});
 ```
 
 **Input**
@@ -619,7 +628,8 @@ Leave a challenge
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.challenges.leave({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.challenges.leave({});
 ```
 
 **Input**
@@ -655,7 +665,8 @@ List a group's challenges
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.challenges.listByGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.challenges.listByGroup({});
 ```
 
 **Input**
@@ -727,7 +738,8 @@ List the challenges the account takes part in
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.challenges.listForUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.challenges.listForUser({});
 ```
 
 **Input**
@@ -804,7 +816,8 @@ Permanently delete a chat message
 **Risk:** `destructive`
 
 ```ts
-await corsair.habitica.api.chat.deleteMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.chat.deleteMessage({});
 ```
 
 **Input**
@@ -841,7 +854,8 @@ Read a group's chat messages
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.chat.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.chat.list({});
 ```
 
 **Input**
@@ -879,7 +893,8 @@ Mark a group's chat as read
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.chat.markSeen({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.chat.markSeen({});
 ```
 
 **Input**
@@ -916,7 +931,8 @@ Dismiss the current announcement
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.content.dismissNews({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.content.dismissNews({});
 ```
 
 **Input:** _empty object_
@@ -946,7 +962,8 @@ Fetch the whole game content catalogue
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.content.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.content.get({});
 ```
 
 **Input**
@@ -981,7 +998,8 @@ Fetch the content catalogue with named categories EXCLUDED
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.content.getByType({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.content.getByType({});
 ```
 
 **Input**
@@ -1017,7 +1035,8 @@ List gear for sale in the market
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.content.marketGear({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.content.marketGear({});
 ```
 
 **Input**
@@ -1052,7 +1071,8 @@ List a model's field paths and types
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.content.modelPaths({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.content.modelPaths({});
 ```
 
 **Input**
@@ -1087,7 +1107,8 @@ Read the latest Bailey announcement
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.content.news({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.content.news({});
 ```
 
 **Input:** _empty object_
@@ -1117,7 +1138,8 @@ Check that the Habitica API is up
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.content.status({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.content.status({});
 ```
 
 **Input:** _empty object_
@@ -1147,7 +1169,8 @@ List the Time Travellers shop stock
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.content.timeTravelers({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.content.timeTravelers({});
 ```
 
 **Input**
@@ -1182,7 +1205,8 @@ Check whether a coupon code is valid
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.content.validateCoupon({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.content.validateCoupon({});
 ```
 
 **Input**
@@ -1217,7 +1241,8 @@ Read world events and the world boss
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.content.worldState({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.content.worldState({});
 ```
 
 **Input:** _empty object_
@@ -1249,7 +1274,8 @@ Export task history as CSV
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.exports.history({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.exports.history({});
 ```
 
 **Input:** _empty object_
@@ -1275,7 +1301,8 @@ Export the inbox as HTML
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.exports.inbox({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.exports.inbox({});
 ```
 
 **Input:** _empty object_
@@ -1301,7 +1328,8 @@ Export the whole account as JSON (contains the account email)
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.exports.userData({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.exports.userData({});
 ```
 
 **Input:** _empty object_
@@ -1333,7 +1361,8 @@ Create a party or guild
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.groups.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.groups.create({});
 ```
 
 **Input**
@@ -1484,7 +1513,8 @@ Retrieve a group by id
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.groups.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.groups.get({});
 ```
 
 **Input**
@@ -1631,7 +1661,8 @@ Retrieve the account's party
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.groups.getParty({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.groups.getParty({});
 ```
 
 **Input:** _empty object_
@@ -1773,7 +1804,8 @@ Retrieve the Tavern
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.groups.getTavern({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.groups.getTavern({});
 ```
 
 **Input:** _empty object_
@@ -1915,7 +1947,8 @@ Invite people to a group
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.groups.invite({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.groups.invite({});
 ```
 
 **Input**
@@ -1963,7 +1996,8 @@ Invite the party to a quest
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.groups.inviteToQuest({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.groups.inviteToQuest({});
 ```
 
 **Input**
@@ -1999,7 +2033,8 @@ Leave a group
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.groups.leave({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.groups.leave({});
 ```
 
 **Input**
@@ -2036,7 +2071,8 @@ List groups by type
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.groups.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.groups.list({});
 ```
 
 **Input**
@@ -2126,7 +2162,8 @@ List a group's members
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.groups.listMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.groups.listMembers({});
 ```
 
 **Input**
@@ -2170,7 +2207,8 @@ Remove a member from the party
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.groups.removeMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.groups.removeMember({});
 ```
 
 **Input**
@@ -2207,7 +2245,8 @@ Update a group's properties
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.groups.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.groups.update({});
 ```
 
 **Input**
@@ -2361,7 +2400,8 @@ Create a tag
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.tags.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tags.create({});
 ```
 
 **Input**
@@ -2394,7 +2434,8 @@ Permanently delete a tag
 **Risk:** `destructive`
 
 ```ts
-await corsair.habitica.api.tags.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tags.delete({});
 ```
 
 **Input**
@@ -2429,7 +2470,8 @@ List every tag on the account
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.tags.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tags.list({});
 ```
 
 **Input:** _empty object_
@@ -2463,7 +2505,8 @@ Rename a tag
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.tags.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tags.update({});
 ```
 
 **Input**
@@ -2499,7 +2542,8 @@ Apply an existing tag to a task
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.tasks.addTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.addTag({});
 ```
 
 **Input**
@@ -2658,7 +2702,8 @@ Create a habit, daily, todo or reward
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.tasks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.create({});
 ```
 
 **Input**
@@ -2860,7 +2905,8 @@ Add a task to a challenge
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.tasks.createChallengeTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.createChallengeTask({});
 ```
 
 **Input**
@@ -3002,7 +3048,8 @@ Permanently delete a task
 **Risk:** `destructive`
 
 ```ts
-await corsair.habitica.api.tasks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.delete({});
 ```
 
 **Input**
@@ -3037,7 +3084,8 @@ Remove a checklist item from a task
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.tasks.deleteChecklistItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.deleteChecklistItem({});
 ```
 
 **Input**
@@ -3196,7 +3244,8 @@ Retrieve any task by id
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.tasks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.get({});
 ```
 
 **Input**
@@ -3354,7 +3403,8 @@ List the account's tasks
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.tasks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.list({});
 ```
 
 **Input**
@@ -3475,7 +3525,8 @@ List a challenge's tasks
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.tasks.listChallengeTasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.listChallengeTasks({});
 ```
 
 **Input**
@@ -3596,7 +3647,8 @@ Move a task to a position in its list
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.tasks.move({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.move({});
 ```
 
 **Input**
@@ -3622,7 +3674,8 @@ Score a task up or down
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.tasks.score({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.score({});
 ```
 
 **Input**
@@ -3693,7 +3746,8 @@ Unlink every task of a challenge, optionally deleting members' copies
 **Risk:** `destructive`
 
 ```ts
-await corsair.habitica.api.tasks.unlinkAllChallengeTasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.unlinkAllChallengeTasks({});
 ```
 
 **Input**
@@ -3729,7 +3783,8 @@ Update a task
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.tasks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.update({});
 ```
 
 **Input**
@@ -3931,7 +3986,8 @@ Update a checklist item's text
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.tasks.updateChecklistItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.tasks.updateChecklistItem({});
 ```
 
 **Input**
@@ -4093,7 +4149,8 @@ Register a push-notification device
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.user.addPushDevice({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.user.addPushDevice({});
 ```
 
 **Input**
@@ -4129,7 +4186,8 @@ Permanently delete an inbox message
 **Risk:** `destructive`
 
 ```ts
-await corsair.habitica.api.user.deleteMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.user.deleteMessage({});
 ```
 
 **Input**
@@ -4164,7 +4222,8 @@ Unregister a push-notification device
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.user.deletePushDevice({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.user.deletePushDevice({});
 ```
 
 **Input**
@@ -4199,7 +4258,8 @@ Equip or unequip gear, a pet, a mount or a costume
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.user.equip({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.user.equip({});
 ```
 
 **Input**
@@ -4235,7 +4295,8 @@ Read the account's user document
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.user.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.user.get({});
 ```
 
 **Input**
@@ -4270,7 +4331,8 @@ Mark one notification as seen
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.user.markNotificationSeen({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.user.markNotificationSeen({});
 ```
 
 **Input**
@@ -4305,7 +4367,8 @@ Mark several notifications as seen
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.user.markNotificationsSeen({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.user.markNotificationsSeen({});
 ```
 
 **Input**
@@ -4340,7 +4403,8 @@ Reorder a pinned reward
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.user.movePinnedItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.user.movePinnedItem({});
 ```
 
 **Input**
@@ -4376,7 +4440,8 @@ Mark a received card as read
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.user.readCard({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.user.readCard({});
 ```
 
 **Input**
@@ -4411,7 +4476,8 @@ Reset the account, deleting every task and returning to level 1
 **Risk:** `destructive`
 
 ```ts
-await corsair.habitica.api.user.reset({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.user.reset({});
 ```
 
 **Input:** _empty object_
@@ -4441,7 +4507,8 @@ Update user fields by dot path
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.user.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.user.update({});
 ```
 
 **Input**
@@ -4488,7 +4555,8 @@ Register an outbound webhook
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.webhooks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.webhooks.create({});
 ```
 
 **Input**
@@ -4563,7 +4631,8 @@ List the account's outbound webhooks
 **Risk:** `read`
 
 ```ts
-await corsair.habitica.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.webhooks.list({});
 ```
 
 **Input:** _empty object_
@@ -4616,7 +4685,8 @@ Enable an existing webhook
 **Risk:** `write`
 
 ```ts
-await corsair.habitica.api.webhooks.subscribe({});
+const tenant = corsair.withTenant('acme');
+await tenant.habitica.api.webhooks.subscribe({});
 ```
 
 **Input**

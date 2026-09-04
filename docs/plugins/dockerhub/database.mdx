@@ -14,7 +14,8 @@ The Docker Hub plugin syncs data locally. Use `corsair.dockerhub.db.<entity>.sea
 Path: `dockerhub.db.images.search`
 
 ```ts
-const rows = await corsair.dockerhub.db.images.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dockerhub.db.images.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -47,7 +48,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dockerhub.db.invites.search`
 
 ```ts
-const rows = await corsair.dockerhub.db.invites.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dockerhub.db.invites.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -75,7 +77,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dockerhub.db.orgAccessTokens.search`
 
 ```ts
-const rows = await corsair.dockerhub.db.orgAccessTokens.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dockerhub.db.orgAccessTokens.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -104,7 +107,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dockerhub.db.organizations.search`
 
 ```ts
-const rows = await corsair.dockerhub.db.organizations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dockerhub.db.organizations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -137,7 +141,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dockerhub.db.orgMembers.search`
 
 ```ts
-const rows = await corsair.dockerhub.db.orgMembers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dockerhub.db.orgMembers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -175,7 +180,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dockerhub.db.repositories.search`
 
 ```ts
-const rows = await corsair.dockerhub.db.repositories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dockerhub.db.repositories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -217,7 +223,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dockerhub.db.tags.search`
 
 ```ts
-const rows = await corsair.dockerhub.db.tags.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dockerhub.db.tags.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -253,7 +260,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dockerhub.db.teamMembers.search`
 
 ```ts
-const rows = await corsair.dockerhub.db.teamMembers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dockerhub.db.teamMembers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -285,7 +293,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dockerhub.db.teams.search`
 
 ```ts
-const rows = await corsair.dockerhub.db.teams.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dockerhub.db.teams.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -312,7 +321,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dockerhub.db.users.search`
 
 ```ts
-const rows = await corsair.dockerhub.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dockerhub.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

@@ -14,7 +14,8 @@ The Spotify plugin syncs data locally. Use `corsair.spotify.db.<entity>.search({
 Path: `spotify.db.albums.search`
 
 ```ts
-const rows = await corsair.spotify.db.albums.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.spotify.db.albums.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `spotify.db.artists.search`
 
 ```ts
-const rows = await corsair.spotify.db.artists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.spotify.db.artists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -71,7 +73,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `spotify.db.playlistItems.search`
 
 ```ts
-const rows = await corsair.spotify.db.playlistItems.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.spotify.db.playlistItems.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -100,7 +103,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `spotify.db.playlists.search`
 
 ```ts
-const rows = await corsair.spotify.db.playlists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.spotify.db.playlists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -129,7 +133,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `spotify.db.tracks.search`
 
 ```ts
-const rows = await corsair.spotify.db.tracks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.spotify.db.tracks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -161,7 +166,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `spotify.db.users.search`
 
 ```ts
-const rows = await corsair.spotify.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.spotify.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

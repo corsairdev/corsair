@@ -14,7 +14,8 @@ The Webflow plugin syncs data locally. Use `corsair.webflow.db.<entity>.search({
 Path: `webflow.db.assetFolders.search`
 
 ```ts
-const rows = await corsair.webflow.db.assetFolders.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.webflow.db.assetFolders.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `webflow.db.assets.search`
 
 ```ts
-const rows = await corsair.webflow.db.assets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.webflow.db.assets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -72,7 +74,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `webflow.db.collectionItems.search`
 
 ```ts
-const rows = await corsair.webflow.db.collectionItems.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.webflow.db.collectionItems.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -102,7 +105,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `webflow.db.collections.search`
 
 ```ts
-const rows = await corsair.webflow.db.collections.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.webflow.db.collections.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -131,7 +135,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `webflow.db.orders.search`
 
 ```ts
-const rows = await corsair.webflow.db.orders.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.webflow.db.orders.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -158,7 +163,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `webflow.db.pages.search`
 
 ```ts
-const rows = await corsair.webflow.db.pages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.webflow.db.pages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -188,7 +194,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `webflow.db.sites.search`
 
 ```ts
-const rows = await corsair.webflow.db.sites.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.webflow.db.sites.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -218,7 +225,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `webflow.db.webhooks.search`
 
 ```ts
-const rows = await corsair.webflow.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.webflow.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

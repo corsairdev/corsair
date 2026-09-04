@@ -14,7 +14,8 @@ The Asana plugin syncs data locally. Use `corsair.asana.db.<entity>.search({ dat
 Path: `asana.db.projects.search`
 
 ```ts
-const rows = await corsair.asana.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asana.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -53,7 +54,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `asana.db.sections.search`
 
 ```ts
-const rows = await corsair.asana.db.sections.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asana.db.sections.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -79,7 +81,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `asana.db.stories.search`
 
 ```ts
-const rows = await corsair.asana.db.stories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asana.db.stories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -112,7 +115,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `asana.db.tags.search`
 
 ```ts
-const rows = await corsair.asana.db.tags.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asana.db.tags.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -141,7 +145,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `asana.db.tasks.search`
 
 ```ts
-const rows = await corsair.asana.db.tasks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asana.db.tasks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -183,7 +188,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `asana.db.teams.search`
 
 ```ts
-const rows = await corsair.asana.db.teams.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asana.db.teams.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -212,7 +218,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `asana.db.users.search`
 
 ```ts
-const rows = await corsair.asana.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asana.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

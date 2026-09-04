@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { discord } from '@corsair-dev/discord';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		discord(),
 	],
@@ -129,17 +130,25 @@ Synced entities: `channels`, `guilds`, `members`, `messages`. See [Database](/pl
 Fires when a user invokes a slash command or context-menu action.
 
 ```ts
-discord({
-    webhookHooks: {
-        interactions: {
-            applicationCommand: {
-                after: async (ctx, result) => {
-                    console.log('Discord application command:', result.data);
-                }
-            },
-        },
-    },
-})
+import { createCorsair } from 'corsair';
+import { discord } from '@corsair-dev/discord';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+		discord({
+			webhookHooks: {
+				interactions: {
+					applicationCommand: {
+						after: async (ctx, result) => {
+							console.log('Discord application command:', result.data);
+						}
+					},
+				},
+			},
+		)
+	],
+});
 ```
 
 Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/discord/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).

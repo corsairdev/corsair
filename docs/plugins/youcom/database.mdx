@@ -14,7 +14,8 @@ The You.com Web Search plugin syncs data locally. Use `corsair.youcom.db.<entity
 Path: `youcom.db.searchResults.search`
 
 ```ts
-const rows = await corsair.youcom.db.searchResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.youcom.db.searchResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

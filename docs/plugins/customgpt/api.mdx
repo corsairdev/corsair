@@ -20,7 +20,8 @@ Tool to create a new conversation session for a CustomGPT agent. Use this when s
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.conversations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.conversations.create({});
 ```
 
 **Input**
@@ -73,7 +74,8 @@ Deletes a license from a CustomGPT project/agent. Requires numeric project ID an
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.customgpt.api.licenses.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.licenses.delete({});
 ```
 
 **Input**
@@ -116,7 +118,8 @@ Tool to retrieve a license for a specific project. Use when you need to fetch li
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.licenses.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.licenses.get({});
 ```
 
 **Input**
@@ -164,7 +167,8 @@ List all licenses for a CustomGPT project/agent. Returns an array of license obj
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.licenses.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.licenses.list({});
 ```
 
 **Input**
@@ -211,7 +215,8 @@ Updates the name of an existing license for a CustomGPT project/agent. Prerequis
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.licenses.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.licenses.update({});
 ```
 
 **Input**
@@ -262,7 +267,8 @@ Get account usage limits showing current usage vs. maximum allowed for projects,
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.limits.getUsage({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.limits.getUsage({});
 ```
 
 **Input:** _empty object_
@@ -306,7 +312,8 @@ Tool to get message details from a CustomGPT conversation. Returns the complete 
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.messages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.messages.get({});
 ```
 
 **Input**
@@ -396,7 +403,8 @@ Tool to retrieve verification trust score for a message in a CustomGPT conversat
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.messages.getTrustScore({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.messages.getTrustScore({});
 ```
 
 **Input**
@@ -478,7 +486,8 @@ Retrieves all messages from a CustomGPT conversation, including both user querie
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.messages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.messages.list({});
 ```
 
 **Input**
@@ -595,7 +604,8 @@ Tool to submit feedback (thumbs up/down) for a message in a CustomGPT conversati
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.messages.submitFeedback({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.messages.submitFeedback({});
 ```
 
 **Input**
@@ -686,7 +696,8 @@ Tool to verify message accuracy by triggering a fact-checking verification proce
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.messages.verify({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.messages.verify({});
 ```
 
 **Input**
@@ -732,7 +743,8 @@ Tool to delete a document from a CustomGPT agent's knowledge base. Permanently r
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.customgpt.api.pages.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.pages.delete({});
 ```
 
 **Input**
@@ -775,7 +787,8 @@ Tool to get document metadata including title, source URL, word count, and custo
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.pages.getMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.pages.getMetadata({});
 ```
 
 **Input**
@@ -822,7 +835,8 @@ Lists all documents in a CustomGPT agent's knowledge base. Returns indexed conte
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.pages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.pages.list({});
 ```
 
 **Input**
@@ -921,7 +935,8 @@ Tool to reindex a document in CustomGPT knowledge base. Re-crawls and re-indexes
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.pages.reindex({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.pages.reindex({});
 ```
 
 **Input**
@@ -964,7 +979,8 @@ Update document metadata for a specific page in a CustomGPT project. Updates cus
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.pages.updateMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.pages.updateMetadata({});
 ```
 
 **Input**
@@ -1017,7 +1033,8 @@ Restore a previous persona version for a CustomGPT agent. Activates a previous p
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.personas.activate({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.personas.activate({});
 ```
 
 **Input**
@@ -1060,7 +1077,8 @@ Tool to list persona versions for a CustomGPT agent. Use when you need to view t
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.personas.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.personas.list({});
 ```
 
 **Input**
@@ -1122,7 +1140,8 @@ Tool to clone a CustomGPT agent (project). Creates a complete copy of an existin
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.projects.clone({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.projects.clone({});
 ```
 
 **Input**
@@ -1182,7 +1201,8 @@ Tool to create a new CustomGPT agent from a sitemap URL or file upload. The agen
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.projects.create({});
 ```
 
 **Input**
@@ -1280,7 +1300,8 @@ Tool to delete a CustomGPT project by ID. Use when you need to permanently remov
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.customgpt.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.projects.delete({});
 ```
 
 **Input**
@@ -1322,7 +1343,8 @@ Tool to get agent details. Returns the full configuration and current status for
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.projects.get({});
 ```
 
 **Input**
@@ -1384,7 +1406,8 @@ Lists all CustomGPT projects (agents) for the authenticated user. Returns projec
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.projects.list({});
 ```
 
 **Input**
@@ -1463,7 +1486,8 @@ Tool to retrieve plugin details for a specific CustomGPT agent (project). Use wh
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.projects.plugins({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.projects.plugins({});
 ```
 
 **Input**
@@ -1511,7 +1535,8 @@ Tool to get agent statistics. Returns usage metrics and performance statistics f
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.projects.stats({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.projects.stats({});
 ```
 
 **Input**
@@ -1560,7 +1585,8 @@ Updates an existing CustomGPT agent's name or configuration settings. Use this t
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.projects.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.projects.update({});
 ```
 
 **Input**
@@ -1661,7 +1687,8 @@ Export leads from a CustomGPT project. Returns lead information captured from co
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.reports.exportLeads({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.reports.exportLeads({});
 ```
 
 **Input**
@@ -1734,7 +1761,8 @@ Tool to retrieve analytics chart data for a CustomGPT project. Returns time-seri
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.reports.getAnalysis({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.reports.getAnalysis({});
 ```
 
 **Input**
@@ -1789,7 +1817,8 @@ Tool to get conversation analytics for a CustomGPT project. Returns conversation
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.reports.getConversations({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.reports.getConversations({});
 ```
 
 **Input**
@@ -1833,7 +1862,8 @@ Tool to get customer intelligence for a CustomGPT project. Returns AI-analyzed i
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.reports.getIntelligence({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.reports.getIntelligence({});
 ```
 
 **Input**
@@ -1930,7 +1960,8 @@ Tool to retrieve traffic analytics for a CustomGPT agent/project. Returns user t
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.reports.getTraffic({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.reports.getTraffic({});
 ```
 
 **Input**
@@ -1978,7 +2009,8 @@ Retrieve configuration settings for a specific CustomGPT agent/project. Returns 
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.settings.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.settings.get({});
 ```
 
 **Input**
@@ -2100,7 +2132,8 @@ Update CustomGPT agent configuration settings. Updates persona instructions, res
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.settings.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.settings.update({});
 ```
 
 **Input**
@@ -2223,7 +2256,8 @@ Add a data source to a CustomGPT agent's knowledge base. Connects content via si
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.sources.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.sources.add({});
 ```
 
 **Input**
@@ -2336,7 +2370,8 @@ Tool to delete a data source from a CustomGPT agent. Removes the source and all 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.customgpt.api.sources.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.sources.delete({});
 ```
 
 **Input**
@@ -2379,7 +2414,8 @@ Tool to list all data sources connected to an agent. Returns sources from variou
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.sources.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.sources.list({});
 ```
 
 **Input**
@@ -2901,7 +2937,8 @@ Update source settings for a CustomGPT agent data source. Configure how the sour
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.sources.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.sources.update({});
 ```
 
 **Input**
@@ -3002,7 +3039,8 @@ Tool to retrieve the current user's profile information. Use when you need to di
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.user.getProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.user.getProfile({});
 ```
 
 **Input:** _empty object_
@@ -3045,7 +3083,8 @@ Tool to search for team members by email address or user ID. Use this to find us
 **Risk:** `read`
 
 ```ts
-await corsair.customgpt.api.user.searchTeamMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.user.searchTeamMembers({});
 ```
 
 **Input**
@@ -3094,7 +3133,8 @@ Updates the authenticated user's profile information in CustomGPT. Use this acti
 **Risk:** `write`
 
 ```ts
-await corsair.customgpt.api.user.updateProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.customgpt.api.user.updateProfile({});
 ```
 
 **Input**

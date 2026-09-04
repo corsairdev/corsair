@@ -14,7 +14,8 @@ The WitAi plugin syncs data locally. Use `corsair.witai.db.<entity>.search({ dat
 Path: `witai.db.apps.search`
 
 ```ts
-const rows = await corsair.witai.db.apps.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.witai.db.apps.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -47,7 +48,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `witai.db.entities.search`
 
 ```ts
-const rows = await corsair.witai.db.entities.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.witai.db.entities.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -71,7 +73,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `witai.db.intents.search`
 
 ```ts
-const rows = await corsair.witai.db.intents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.witai.db.intents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -95,7 +98,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `witai.db.tags.search`
 
 ```ts
-const rows = await corsair.witai.db.tags.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.witai.db.tags.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -122,7 +126,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `witai.db.traits.search`
 
 ```ts
-const rows = await corsair.witai.db.traits.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.witai.db.traits.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -146,7 +151,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `witai.db.utterances.search`
 
 ```ts
-const rows = await corsair.witai.db.utterances.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.witai.db.utterances.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -170,7 +176,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `witai.db.voices.search`
 
 ```ts
-const rows = await corsair.witai.db.voices.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.witai.db.voices.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

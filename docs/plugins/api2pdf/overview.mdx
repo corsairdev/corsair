@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { api2pdf } from '@corsair-dev/api2pdf';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		api2pdf(),
 	],

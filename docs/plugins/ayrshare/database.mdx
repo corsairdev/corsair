@@ -14,7 +14,8 @@ The Ayrshare plugin syncs data locally. Use `corsair.ayrshare.db.<entity>.search
 Path: `ayrshare.db.autoSchedules.search`
 
 ```ts
-const rows = await corsair.ayrshare.db.autoSchedules.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ayrshare.db.autoSchedules.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -38,7 +39,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `ayrshare.db.posts.search`
 
 ```ts
-const rows = await corsair.ayrshare.db.posts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ayrshare.db.posts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

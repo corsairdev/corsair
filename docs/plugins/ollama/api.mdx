@@ -20,7 +20,8 @@ Tool to send a chat message with conversation history to Ollama. Use when you ne
 **Risk:** `write`
 
 ```ts
-await corsair.ollama.api.chat.chat({});
+const tenant = corsair.withTenant('acme');
+await tenant.ollama.api.chat.chat({});
 ```
 
 **Input**
@@ -109,7 +110,8 @@ Tool to generate text responses from Ollama models with optional raw mode. Use r
 **Risk:** `write`
 
 ```ts
-await corsair.ollama.api.chat.generate({});
+const tenant = corsair.withTenant('acme');
+await tenant.ollama.api.chat.generate({});
 ```
 
 **Input**
@@ -179,7 +181,8 @@ Tool to list all available Ollama models and their details. Use when you need to
 **Risk:** `read`
 
 ```ts
-await corsair.ollama.api.models.listModels({});
+const tenant = corsair.withTenant('acme');
+await tenant.ollama.api.models.listModels({});
 ```
 
 **Input:** _empty object_
@@ -227,7 +230,8 @@ Tool to show comprehensive information about an Ollama model. Use when you need 
 **Risk:** `read`
 
 ```ts
-await corsair.ollama.api.models.showModel({});
+const tenant = corsair.withTenant('acme');
+await tenant.ollama.api.models.showModel({});
 ```
 
 **Input**
@@ -300,7 +304,8 @@ Tool to get the version of Ollama running locally. Use to check which version of
 **Risk:** `read`
 
 ```ts
-await corsair.ollama.api.models.version({});
+const tenant = corsair.withTenant('acme');
+await tenant.ollama.api.models.version({});
 ```
 
 **Input:** _empty object_
@@ -327,7 +332,8 @@ Tool to create OpenAI-compatible chat completions using Ollama models. Use when 
 **Risk:** `write`
 
 ```ts
-await corsair.ollama.api.openai.createOpenAiChatCompletion({});
+const tenant = corsair.withTenant('acme');
+await tenant.ollama.api.openai.createOpenAiChatCompletion({});
 ```
 
 **Input**
@@ -411,7 +417,8 @@ Tool to create OpenAI-compatible text completions using Ollama models. Use when 
 **Risk:** `write`
 
 ```ts
-await corsair.ollama.api.openai.createOpenAiCompletion({});
+const tenant = corsair.withTenant('acme');
+await tenant.ollama.api.openai.createOpenAiCompletion({});
 ```
 
 **Input**
@@ -485,7 +492,8 @@ Tool to list available models using OpenAI-compatible API format. Use when you n
 **Risk:** `read`
 
 ```ts
-await corsair.ollama.api.openai.listOpenAiModels({});
+const tenant = corsair.withTenant('acme');
+await tenant.ollama.api.openai.listOpenAiModels({});
 ```
 
 **Input:** _empty object_

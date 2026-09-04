@@ -14,7 +14,8 @@ The Tavily plugin syncs data locally. Use `corsair.tavily.db.<entity>.search({ d
 Path: `tavily.db.crawlResults.search`
 
 ```ts
-const rows = await corsair.tavily.db.crawlResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tavily.db.crawlResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `tavily.db.extractResults.search`
 
 ```ts
-const rows = await corsair.tavily.db.extractResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tavily.db.extractResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -67,7 +69,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `tavily.db.mapResults.search`
 
 ```ts
-const rows = await corsair.tavily.db.mapResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tavily.db.mapResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -92,7 +95,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `tavily.db.searchResults.search`
 
 ```ts
-const rows = await corsair.tavily.db.searchResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tavily.db.searchResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

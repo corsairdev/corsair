@@ -20,7 +20,8 @@ Create an action class
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.actionClasses.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.actionClasses.create({});
 ```
 
 **Input**
@@ -73,7 +74,8 @@ List the action classes that can trigger a survey
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.actionClasses.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.actionClasses.list({});
 ```
 
 **Input:** _empty object_
@@ -114,7 +116,8 @@ Read a respondent's state, creating the contact if the userId is new
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.client.contactsState({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.client.contactsState({});
 ```
 
 **Input**
@@ -157,7 +160,8 @@ Record that a survey was displayed to someone
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.client.createDisplay({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.client.createDisplay({});
 ```
 
 **Input**
@@ -191,7 +195,8 @@ Create a client user
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.client.createUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.client.createUser({});
 ```
 
 **Input**
@@ -245,7 +250,8 @@ Read the client environment bundle for a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.client.environment({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.client.environment({});
 ```
 
 **Input**
@@ -276,7 +282,8 @@ Create or identify a client user
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.client.identifyUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.client.identifyUser({});
 ```
 
 **Input**
@@ -332,7 +339,8 @@ Create a contact attribute key
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.contactAttributeKeys.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contactAttributeKeys.create({});
 ```
 
 **Input**
@@ -374,7 +382,8 @@ Delete a contact attribute key
 **Risk:** `destructive`
 
 ```ts
-await corsair.formbricks.api.contactAttributeKeys.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contactAttributeKeys.delete({});
 ```
 
 **Input**
@@ -406,7 +415,8 @@ Get a single contact attribute key
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.contactAttributeKeys.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contactAttributeKeys.get({});
 ```
 
 **Input**
@@ -445,7 +455,8 @@ Get an attribute key under the catalog's former "attribute class" name - same ro
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.contactAttributeKeys.getClass({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contactAttributeKeys.getClass({});
 ```
 
 **Input**
@@ -484,7 +495,8 @@ List the contact attribute keys a workspace defines
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.contactAttributeKeys.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contactAttributeKeys.list({});
 ```
 
 **Input**
@@ -530,7 +542,8 @@ List attribute keys under the catalog's former "attribute class" name - same rou
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.contactAttributeKeys.listClasses({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contactAttributeKeys.listClasses({});
 ```
 
 **Input**
@@ -576,7 +589,8 @@ Update a contact attribute key's definition - not any contact's values
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.contactAttributeKeys.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contactAttributeKeys.update({});
 ```
 
 **Input**
@@ -619,7 +633,8 @@ List contact attribute values across contacts
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.contactAttributes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contactAttributes.list({});
 ```
 
 **Input:** _empty object_
@@ -659,7 +674,8 @@ Create a contact
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.contacts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contacts.create({});
 ```
 
 **Input**
@@ -704,7 +720,8 @@ Delete a contact, removing a respondent's identity
 **Risk:** `destructive`
 
 ```ts
-await corsair.formbricks.api.contacts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contacts.delete({});
 ```
 
 **Input**
@@ -736,7 +753,8 @@ Get a single contact
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.contacts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contacts.get({});
 ```
 
 **Input**
@@ -770,7 +788,8 @@ Get a contact under the catalog's former "person" name - same route as contacts.
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.contacts.getPerson({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contacts.getPerson({});
 ```
 
 **Input**
@@ -804,7 +823,8 @@ List the contacts in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.contacts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contacts.list({});
 ```
 
 **Input:** _empty object_
@@ -839,7 +859,8 @@ List contacts under the catalog's former "people" name - same route as contacts.
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.contacts.listPeople({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contacts.listPeople({});
 ```
 
 **Input:** _empty object_
@@ -874,7 +895,8 @@ Set a contact's attribute values by userId, creating the contact if it is new
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.contacts.updateAttributes({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contacts.updateAttributes({});
 ```
 
 **Input**
@@ -928,7 +950,8 @@ Create many contacts in one request
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.contacts.uploadBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.contacts.uploadBulk({});
 ```
 
 **Input**
@@ -979,7 +1002,8 @@ Check service health
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.health.check({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.health.check({});
 ```
 
 **Input:** _empty object_
@@ -1005,7 +1029,8 @@ Read service health status
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.health.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.health.list({});
 ```
 
 **Input:** _empty object_
@@ -1033,7 +1058,8 @@ Get the API key's identity, workspaces and organization
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.me.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.me.get({});
 ```
 
 **Input:** _empty object_
@@ -1061,7 +1087,8 @@ Get account information
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.me.getAccountInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.me.getAccountInfo({});
 ```
 
 **Input:** _empty object_
@@ -1092,7 +1119,8 @@ Get the v1 account payload, for a workspace-scoped key only
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.me.getManagement({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.me.getManagement({});
 ```
 
 **Input:** _empty object_
@@ -1125,7 +1153,8 @@ Record a survey response
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.responses.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.responses.create({});
 ```
 
 **Input**
@@ -1202,7 +1231,8 @@ Delete a survey response, erasing a respondent's submitted answers
 **Risk:** `destructive`
 
 ```ts
-await corsair.formbricks.api.responses.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.responses.delete({});
 ```
 
 **Input**
@@ -1234,7 +1264,8 @@ List survey responses, optionally for one survey
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.responses.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.responses.list({});
 ```
 
 **Input**
@@ -1287,7 +1318,8 @@ Update a survey response
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.responses.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.responses.update({});
 ```
 
 **Input**
@@ -1356,7 +1388,8 @@ List the organization roles a member can hold
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.roles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.roles.list({});
 ```
 
 **Input:** _empty object_
@@ -1378,7 +1411,8 @@ Request an upload for a private respondent file
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.storage.uploadPrivate({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.storage.uploadPrivate({});
 ```
 
 **Input**
@@ -1413,7 +1447,8 @@ Request an upload for a public file
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.storage.uploadPublic({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.storage.uploadPublic({});
 ```
 
 **Input**
@@ -1449,7 +1484,8 @@ Create a survey
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.surveys.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.surveys.create({});
 ```
 
 **Input**
@@ -1565,7 +1601,8 @@ Delete a survey and the responses collected against it
 **Risk:** `destructive`
 
 ```ts
-await corsair.formbricks.api.surveys.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.surveys.delete({});
 ```
 
 **Input**
@@ -1597,7 +1634,8 @@ List the surveys in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.surveys.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.surveys.list({});
 ```
 
 **Input**
@@ -1679,7 +1717,8 @@ Update a survey
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.surveys.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.surveys.update({});
 ```
 
 **Input**
@@ -1796,7 +1835,8 @@ Delete a team, removing the workspace access it granted
 **Risk:** `destructive`
 
 ```ts
-await corsair.formbricks.api.teams.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.teams.delete({});
 ```
 
 **Input**
@@ -1829,7 +1869,8 @@ List the teams in an organization
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.teams.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.teams.list({});
 ```
 
 **Input**
@@ -1871,7 +1912,8 @@ List which teams have access to which workspace
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.teams.listWorkspaceTeams({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.teams.listWorkspaceTeams({});
 ```
 
 **Input**
@@ -1916,7 +1958,8 @@ Create a webhook and receive its signing secret
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.webhooks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.webhooks.create({});
 ```
 
 **Input**
@@ -1960,7 +2003,8 @@ Delete a webhook, invalidating its signing secret
 **Risk:** `destructive`
 
 ```ts
-await corsair.formbricks.api.webhooks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.webhooks.delete({});
 ```
 
 **Input**
@@ -1992,7 +2036,8 @@ Get a single webhook
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.webhooks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.webhooks.get({});
 ```
 
 **Input**
@@ -2031,7 +2076,8 @@ List the webhooks on a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.formbricks.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.webhooks.list({});
 ```
 
 **Input**
@@ -2077,7 +2123,8 @@ Update a webhook
 **Risk:** `write`
 
 ```ts
-await corsair.formbricks.api.webhooks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.formbricks.api.webhooks.update({});
 ```
 
 **Input**

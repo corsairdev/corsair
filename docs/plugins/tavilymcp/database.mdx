@@ -14,7 +14,8 @@ The TavilyMcp plugin syncs data locally. Use `corsair.tavilymcp.db.<entity>.sear
 Path: `tavilymcp.db.crawlResults.search`
 
 ```ts
-const rows = await corsair.tavilymcp.db.crawlResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tavilymcp.db.crawlResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `tavilymcp.db.extractResults.search`
 
 ```ts
-const rows = await corsair.tavilymcp.db.extractResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tavilymcp.db.extractResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -68,7 +70,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `tavilymcp.db.mapResults.search`
 
 ```ts
-const rows = await corsair.tavilymcp.db.mapResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tavilymcp.db.mapResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -93,7 +96,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `tavilymcp.db.researchResults.search`
 
 ```ts
-const rows = await corsair.tavilymcp.db.researchResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tavilymcp.db.researchResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -120,7 +124,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `tavilymcp.db.searchResults.search`
 
 ```ts
-const rows = await corsair.tavilymcp.db.searchResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tavilymcp.db.searchResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

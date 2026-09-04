@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { workday } from '@corsair-dev/workday';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		workday({
 			host: 'wd2-impl-services1.workday.com',

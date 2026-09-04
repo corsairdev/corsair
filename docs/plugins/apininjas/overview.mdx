@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { apininjas } from '@corsair-dev/apininjas';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		apininjas(),
 	],

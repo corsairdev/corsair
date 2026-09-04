@@ -14,7 +14,8 @@ The ActiveCampaign plugin syncs data locally. Use `corsair.activecampaign.db.<en
 Path: `activecampaign.db.accountContacts.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.accountContacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.accountContacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.accountCustomFieldMeta.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.accountCustomFieldMeta.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.accountCustomFieldMeta.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -72,7 +74,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.accounts.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.accounts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.accounts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -100,7 +103,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.addresses.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.addresses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.addresses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -137,7 +141,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.automations.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.automations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.automations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -166,7 +171,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.brandings.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.brandings.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.brandings.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -211,7 +217,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.calendars.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.calendars.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.calendars.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -241,7 +248,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.campaigns.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.campaigns.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.campaigns.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -280,7 +288,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.connections.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.connections.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.connections.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -320,7 +329,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.contactLists.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.contactLists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.contactLists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -369,7 +379,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.contacts.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -434,7 +445,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.contactTags.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.contactTags.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.contactTags.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -464,7 +476,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.customObjectSchemas.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.customObjectSchemas.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.customObjectSchemas.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -492,7 +505,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.dealCustomFieldMeta.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.dealCustomFieldMeta.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.dealCustomFieldMeta.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -522,7 +536,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.dealGroups.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.dealGroups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.dealGroups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -555,7 +570,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.dealRoles.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.dealRoles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.dealRoles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -581,7 +597,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.deals.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.deals.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.deals.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -621,7 +638,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.dealStages.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.dealStages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.dealStages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -657,7 +675,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.dealTasks.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.dealTasks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.dealTasks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -691,7 +710,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.dealTaskTypes.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.dealTaskTypes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.dealTaskTypes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -724,7 +744,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.ecomCustomers.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.ecomCustomers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.ecomCustomers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -756,7 +777,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.eventTrackingEvents.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.eventTrackingEvents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.eventTrackingEvents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -780,7 +802,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.fieldOptions.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.fieldOptions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.fieldOptions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -810,7 +833,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.fieldRels.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.fieldRels.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.fieldRels.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -837,7 +861,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.fields.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.fields.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.fields.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -878,7 +903,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.fieldValues.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.fieldValues.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.fieldValues.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -909,7 +935,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.forms.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.forms.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.forms.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -938,7 +965,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.groupLimits.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.groupLimits.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.groupLimits.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -973,7 +1001,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.groupMembers.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.groupMembers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.groupMembers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -996,7 +1025,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.groups.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.groups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.groups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1027,7 +1057,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.listGroups.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.listGroups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.listGroups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1066,7 +1097,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.lists.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.lists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.lists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1139,7 +1171,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.messages.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1187,7 +1220,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.notes.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.notes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.notes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1218,7 +1252,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.personalizations.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.personalizations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.personalizations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1248,7 +1283,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.savedResponses.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.savedResponses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.savedResponses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1277,7 +1313,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.scores.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.scores.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.scores.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1306,7 +1343,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.segments.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.segments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.segments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1338,7 +1376,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.tags.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.tags.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.tags.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1371,7 +1410,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.taskOutcomes.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.taskOutcomes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.taskOutcomes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1401,7 +1441,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.templates.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.templates.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.templates.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1431,7 +1472,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.users.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1462,7 +1504,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activecampaign.db.webhooks.search`
 
 ```ts
-const rows = await corsair.activecampaign.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activecampaign.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

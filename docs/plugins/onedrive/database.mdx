@@ -14,7 +14,8 @@ The Onedrive plugin syncs data locally. Use `corsair.onedrive.db.<entity>.search
 Path: `onedrive.db.driveItems.search`
 
 ```ts
-const rows = await corsair.onedrive.db.driveItems.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.onedrive.db.driveItems.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `onedrive.db.drives.search`
 
 ```ts
-const rows = await corsair.onedrive.db.drives.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.onedrive.db.drives.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

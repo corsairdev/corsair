@@ -14,7 +14,8 @@ The Databricks plugin syncs data locally. Use `corsair.databricks.db.<entity>.se
 Path: `databricks.db.catalog.search`
 
 ```ts
-const rows = await corsair.databricks.db.catalog.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.databricks.db.catalog.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `databricks.db.cluster.search`
 
 ```ts
-const rows = await corsair.databricks.db.cluster.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.databricks.db.cluster.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -69,7 +71,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `databricks.db.job.search`
 
 ```ts
-const rows = await corsair.databricks.db.job.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.databricks.db.job.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -95,7 +98,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `databricks.db.warehouse.search`
 
 ```ts
-const rows = await corsair.databricks.db.warehouse.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.databricks.db.warehouse.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

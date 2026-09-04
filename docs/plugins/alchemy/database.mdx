@@ -14,7 +14,8 @@ The Alchemy plugin syncs data locally. Use `corsair.alchemy.db.<entity>.search({
 Path: `alchemy.db.AlchemyNft.search`
 
 ```ts
-const rows = await corsair.alchemy.db.AlchemyNft.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.alchemy.db.AlchemyNft.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -50,7 +51,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `alchemy.db.AlchemyNftContract.search`
 
 ```ts
-const rows = await corsair.alchemy.db.AlchemyNftContract.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.alchemy.db.AlchemyNftContract.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -85,7 +87,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `alchemy.db.AlchemyToken.search`
 
 ```ts
-const rows = await corsair.alchemy.db.AlchemyToken.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.alchemy.db.AlchemyToken.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -114,7 +117,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `alchemy.db.AlchemyTokenBalance.search`
 
 ```ts
-const rows = await corsair.alchemy.db.AlchemyTokenBalance.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.alchemy.db.AlchemyTokenBalance.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -141,7 +145,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `alchemy.db.AlchemyTokenPrice.search`
 
 ```ts
-const rows = await corsair.alchemy.db.AlchemyTokenPrice.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.alchemy.db.AlchemyTokenPrice.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

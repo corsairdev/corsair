@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { jigsawstack } from '@corsair-dev/jigsawstack';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		jigsawstack(),
 	],

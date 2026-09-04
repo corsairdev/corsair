@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { cursor } from '@corsair-dev/cursor';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		cursor(),
 	],

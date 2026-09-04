@@ -42,6 +42,7 @@ import { createCorsair } from 'corsair';
 import { googledocs } from '@corsair-dev/googledocs';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		googledocs(),
 	],

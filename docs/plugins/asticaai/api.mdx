@@ -20,7 +20,8 @@ Transcribe audio using Astica speech-to-text.
 **Risk:** `read`
 
 ```ts
-await corsair.asticaai.api.analyzeAudio.analyze({});
+const tenant = corsair.withTenant('acme');
+await tenant.asticaai.api.analyzeAudio.analyze({});
 ```
 
 **Input**
@@ -58,7 +59,8 @@ Extract text from an image using Astica OCR.
 **Risk:** `read`
 
 ```ts
-await corsair.asticaai.api.readText.read({});
+const tenant = corsair.withTenant('acme');
+await tenant.asticaai.api.readText.read({});
 ```
 
 **Input**

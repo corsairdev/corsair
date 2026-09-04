@@ -14,7 +14,8 @@ The OCR.space plugin syncs data locally. Use `corsair.ocrspace.db.<entity>.searc
 Path: `ocrspace.db.conversions.search`
 
 ```ts
-const rows = await corsair.ocrspace.db.conversions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ocrspace.db.conversions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `ocrspace.db.ocrResults.search`
 
 ```ts
-const rows = await corsair.ocrspace.db.ocrResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ocrspace.db.ocrResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

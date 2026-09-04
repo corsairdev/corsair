@@ -20,7 +20,8 @@ Create API key
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.apiKeys.createApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.apiKeys.createApiKey({});
 ```
 
 **Input**
@@ -84,7 +85,8 @@ List API keys
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.apiKeys.listApiKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.apiKeys.listApiKeys({});
 ```
 
 **Input**
@@ -148,7 +150,8 @@ Revoke API key
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.neon.api.apiKeys.revokeApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.apiKeys.revokeApiKey({});
 ```
 
 **Input**
@@ -214,7 +217,8 @@ Create new auth user
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.auth.createBranchNeonAuthNewUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.createBranchNeonAuthNewUser({});
 ```
 
 **Input**
@@ -278,7 +282,8 @@ Enable Neon Auth for the branch
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.auth.createNeonAuth({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.createNeonAuth({});
 ```
 
 **Input**
@@ -342,7 +347,8 @@ Create Auth Provider SDK keys
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.auth.createNeonAuthProviderSDKKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.createNeonAuthProviderSDKKeys({});
 ```
 
 **Input**
@@ -406,7 +412,8 @@ Delete OAuth provider
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.auth.deleteBranchNeonAuthOauthProvider({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.deleteBranchNeonAuthOauthProvider({});
 ```
 
 **Input**
@@ -470,7 +477,8 @@ Delete domain from redirect_uri whitelist
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.auth.deleteBranchNeonAuthTrustedDomain({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.deleteBranchNeonAuthTrustedDomain({});
 ```
 
 **Input**
@@ -534,7 +542,8 @@ Delete auth user
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.neon.api.auth.deleteBranchNeonAuthUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.deleteBranchNeonAuthUser({});
 ```
 
 **Input**
@@ -598,7 +607,8 @@ Delete trusted redirect URI domain (deprecated project-level route)
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.auth.deleteNeonAuthDomainFromRedirectURIWhitelist({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.deleteNeonAuthDomainFromRedirectURIWhitelist({});
 ```
 
 **Input**
@@ -662,7 +672,8 @@ Disable Neon Auth for the branch
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.auth.disableNeonAuth({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.disableNeonAuth({});
 ```
 
 **Input**
@@ -726,7 +737,8 @@ Retrieve details about the current API credentials
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.auth.getAuthDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.getAuthDetails({});
 ```
 
 **Input**
@@ -790,7 +802,8 @@ Retrieve localhost allow setting
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.auth.getNeonAuthAllowLocalhost({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.getNeonAuthAllowLocalhost({});
 ```
 
 **Input**
@@ -854,7 +867,8 @@ Retrieve email provider configuration
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.auth.getNeonAuthEmailProvider({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.getNeonAuthEmailProvider({});
 ```
 
 **Input**
@@ -918,7 +932,8 @@ List OAuth providers for the branch
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.auth.listBranchNeonAuthOauthProviders({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.listBranchNeonAuthOauthProviders({});
 ```
 
 **Input**
@@ -982,7 +997,8 @@ List domains in redirect_uri whitelist
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.auth.listBranchNeonAuthTrustedDomains({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.listBranchNeonAuthTrustedDomains({});
 ```
 
 **Input**
@@ -1046,7 +1062,8 @@ List OAuth providers (deprecated project-level route)
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.auth.listNeonAuthOauthProviders({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.listNeonAuthOauthProviders({});
 ```
 
 **Input**
@@ -1110,7 +1127,8 @@ Send test email
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.auth.sendNeonAuthTestEmail({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.sendNeonAuthTestEmail({});
 ```
 
 **Input**
@@ -1174,7 +1192,8 @@ Update localhost allow setting
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.auth.updateNeonAuthAllowLocalhost({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.updateNeonAuthAllowLocalhost({});
 ```
 
 **Input**
@@ -1238,7 +1257,8 @@ Update email provider configuration
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.auth.updateNeonAuthEmailProvider({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.updateNeonAuthEmailProvider({});
 ```
 
 **Input**
@@ -1302,7 +1322,8 @@ Update OAuth provider (deprecated project-level route)
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.auth.updateNeonAuthOauthProvider({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.auth.updateNeonAuthOauthProvider({});
 ```
 
 **Input**
@@ -1368,7 +1389,8 @@ Retrieve number of branches
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.branches.countProjectBranches({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.countProjectBranches({});
 ```
 
 **Input**
@@ -1432,7 +1454,8 @@ Create branch
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.branches.createProjectBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.createProjectBranch({});
 ```
 
 **Input**
@@ -1496,7 +1519,8 @@ Create anonymized branch
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.branches.createProjectBranchAnonymized({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.createProjectBranchAnonymized({});
 ```
 
 **Input**
@@ -1560,7 +1584,8 @@ Delete branch
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.branches.deleteProjectBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.deleteProjectBranch({});
 ```
 
 **Input**
@@ -1624,7 +1649,8 @@ Finalize branch restore from snapshot
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.branches.finalizeRestoreBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.finalizeRestoreBranch({});
 ```
 
 **Input**
@@ -1688,7 +1714,8 @@ Retrieve anonymized branch status
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.branches.getAnonymizedBranchStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.getAnonymizedBranchStatus({});
 ```
 
 **Input**
@@ -1752,7 +1779,8 @@ Retrieve masking rules
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.branches.getMaskingRules({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.getMaskingRules({});
 ```
 
 **Input**
@@ -1816,7 +1844,8 @@ Retrieve branch details
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.branches.getProjectBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.getProjectBranch({});
 ```
 
 **Input**
@@ -1880,7 +1909,8 @@ Retrieve database schema
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.branches.getProjectBranchSchema({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.getProjectBranchSchema({});
 ```
 
 **Input**
@@ -1944,7 +1974,8 @@ Compare database schema
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.branches.getProjectBranchSchemaComparison({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.getProjectBranchSchemaComparison({});
 ```
 
 **Input**
@@ -2008,7 +2039,8 @@ List compute endpoints for the branch
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.branches.listProjectBranchEndpoints({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.listProjectBranchEndpoints({});
 ```
 
 **Input**
@@ -2072,7 +2104,8 @@ List branches
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.branches.listProjectBranches({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.listProjectBranches({});
 ```
 
 **Input**
@@ -2136,7 +2169,8 @@ Restore branch to a historical state
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.branches.restoreProjectBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.restoreProjectBranch({});
 ```
 
 **Input**
@@ -2200,7 +2234,8 @@ Set branch as default
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.branches.setDefaultProjectBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.setDefaultProjectBranch({});
 ```
 
 **Input**
@@ -2264,7 +2299,8 @@ Start anonymization
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.branches.startAnonymization({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.startAnonymization({});
 ```
 
 **Input**
@@ -2328,7 +2364,8 @@ Update masking rules
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.branches.updateMaskingRules({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.updateMaskingRules({});
 ```
 
 **Input**
@@ -2392,7 +2429,8 @@ Update branch
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.branches.updateProjectBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.branches.updateProjectBranch({});
 ```
 
 **Input**
@@ -2458,7 +2496,8 @@ Create compute endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.computeEndpoints.createProjectEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.computeEndpoints.createProjectEndpoint({});
 ```
 
 **Input**
@@ -2522,7 +2561,8 @@ Delete compute endpoint
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.computeEndpoints.deleteProjectEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.computeEndpoints.deleteProjectEndpoint({});
 ```
 
 **Input**
@@ -2586,7 +2626,8 @@ Retrieve compute endpoint details
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.computeEndpoints.getProjectEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.computeEndpoints.getProjectEndpoint({});
 ```
 
 **Input**
@@ -2650,7 +2691,8 @@ List compute endpoints
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.computeEndpoints.listProjectEndpoints({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.computeEndpoints.listProjectEndpoints({});
 ```
 
 **Input**
@@ -2714,7 +2756,8 @@ Restart compute endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.computeEndpoints.restartProjectEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.computeEndpoints.restartProjectEndpoint({});
 ```
 
 **Input**
@@ -2778,7 +2821,8 @@ Start compute endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.computeEndpoints.startProjectEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.computeEndpoints.startProjectEndpoint({});
 ```
 
 **Input**
@@ -2842,7 +2886,8 @@ Suspend compute endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.computeEndpoints.suspendProjectEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.computeEndpoints.suspendProjectEndpoint({});
 ```
 
 **Input**
@@ -2906,7 +2951,8 @@ Update compute endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.computeEndpoints.updateProjectEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.computeEndpoints.updateProjectEndpoint({});
 ```
 
 **Input**
@@ -2972,7 +3018,8 @@ Retrieve account consumption metrics (legacy, deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.consumption.getConsumptionHistoryPerAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.consumption.getConsumptionHistoryPerAccount({});
 ```
 
 **Input**
@@ -3036,7 +3083,8 @@ Retrieve project consumption metrics (legacy plans)
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.consumption.getConsumptionHistoryPerProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.consumption.getConsumptionHistoryPerProject({});
 ```
 
 **Input**
@@ -3102,7 +3150,8 @@ Create Neon Data API
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.dataApi.createProjectBranchDataAPI({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.dataApi.createProjectBranchDataAPI({});
 ```
 
 **Input**
@@ -3166,7 +3215,8 @@ Delete Neon Data API
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.dataApi.deleteProjectBranchDataAPI({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.dataApi.deleteProjectBranchDataAPI({});
 ```
 
 **Input**
@@ -3230,7 +3280,8 @@ Retrieve Neon Data API configuration
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.dataApi.getProjectBranchDataAPI({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.dataApi.getProjectBranchDataAPI({});
 ```
 
 **Input**
@@ -3294,7 +3345,8 @@ Update Neon Data API
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.dataApi.updateProjectBranchDataAPI({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.dataApi.updateProjectBranchDataAPI({});
 ```
 
 **Input**
@@ -3360,7 +3412,8 @@ Create database
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.databases.createProjectBranchDatabase({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.databases.createProjectBranchDatabase({});
 ```
 
 **Input**
@@ -3424,7 +3477,8 @@ Delete database
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.databases.deleteProjectBranchDatabase({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.databases.deleteProjectBranchDatabase({});
 ```
 
 **Input**
@@ -3488,7 +3542,8 @@ Retrieve database details
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.databases.getProjectBranchDatabase({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.databases.getProjectBranchDatabase({});
 ```
 
 **Input**
@@ -3552,7 +3607,8 @@ List databases
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.databases.listProjectBranchDatabases({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.databases.listProjectBranchDatabases({});
 ```
 
 **Input**
@@ -3616,7 +3672,8 @@ Update database
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.databases.updateProjectBranchDatabase({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.databases.updateProjectBranchDatabase({});
 ```
 
 **Input**
@@ -3682,7 +3739,8 @@ Create organization invitations
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.organizations.createOrganizationInvitations({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.organizations.createOrganizationInvitations({});
 ```
 
 **Input**
@@ -3746,7 +3804,8 @@ Create organization API key
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.organizations.createOrgApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.organizations.createOrgApiKey({});
 ```
 
 **Input**
@@ -3810,7 +3869,8 @@ Retrieve organization details
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.organizations.getOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.organizations.getOrganization({});
 ```
 
 **Input**
@@ -3874,7 +3934,8 @@ List organization invitations
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.organizations.getOrganizationInvitations({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.organizations.getOrganizationInvitations({});
 ```
 
 **Input**
@@ -3938,7 +3999,8 @@ Retrieve organization member details
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.organizations.getOrganizationMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.organizations.getOrganizationMember({});
 ```
 
 **Input**
@@ -4002,7 +4064,8 @@ List organization members
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.organizations.getOrganizationMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.organizations.getOrganizationMembers({});
 ```
 
 **Input**
@@ -4066,7 +4129,8 @@ List organization API keys
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.organizations.listOrgApiKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.organizations.listOrgApiKeys({});
 ```
 
 **Input**
@@ -4130,7 +4194,8 @@ Remove organization member
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.organizations.removeOrganizationMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.organizations.removeOrganizationMember({});
 ```
 
 **Input**
@@ -4194,7 +4259,8 @@ Revoke organization API key
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.neon.api.organizations.revokeOrgApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.organizations.revokeOrgApiKey({});
 ```
 
 **Input**
@@ -4258,7 +4324,8 @@ Transfer projects between organizations
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.organizations.transferProjectsFromOrgToOrg({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.organizations.transferProjectsFromOrgToOrg({});
 ```
 
 **Input**
@@ -4322,7 +4389,8 @@ Transfer projects from personal account to organization (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.organizations.transferProjectsFromUserToOrg({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.organizations.transferProjectsFromUserToOrg({});
 ```
 
 **Input**
@@ -4386,7 +4454,8 @@ Update role for organization member
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.organizations.updateOrganizationMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.organizations.updateOrganizationMember({});
 ```
 
 **Input**
@@ -4452,7 +4521,8 @@ Accept a project transfer request
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.projects.acceptProjectTransferRequest({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.acceptProjectTransferRequest({});
 ```
 
 **Input**
@@ -4516,7 +4586,8 @@ Add JWKS URL
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.projects.addProjectJWKS({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.addProjectJWKS({});
 ```
 
 **Input**
@@ -4580,7 +4651,8 @@ Create project
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.projects.createProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.createProject({});
 ```
 
 **Input**
@@ -4644,7 +4716,8 @@ Create a project transfer request
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.projects.createProjectTransferRequest({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.createProjectTransferRequest({});
 ```
 
 **Input**
@@ -4708,7 +4781,8 @@ Delete project
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.neon.api.projects.deleteProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.deleteProject({});
 ```
 
 **Input**
@@ -4772,7 +4846,8 @@ Delete JWKS URL
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.projects.deleteProjectJWKS({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.deleteProjectJWKS({});
 ```
 
 **Input**
@@ -4836,7 +4911,8 @@ List available shared preload libraries
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.projects.getAvailablePreloadLibraries({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.getAvailablePreloadLibraries({});
 ```
 
 **Input**
@@ -4900,7 +4976,8 @@ Retrieve database connection URI
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.projects.getConnectionURI({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.getConnectionURI({});
 ```
 
 **Input**
@@ -4964,7 +5041,8 @@ Retrieve project details
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.projects.getProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.getProject({});
 ```
 
 **Input**
@@ -5028,7 +5106,8 @@ List JWKS URLs
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.projects.getProjectJWKS({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.getProjectJWKS({});
 ```
 
 **Input**
@@ -5092,7 +5171,8 @@ Retrieve operation details
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.projects.getProjectOperation({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.getProjectOperation({});
 ```
 
 **Input**
@@ -5156,7 +5236,8 @@ Grant project access
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.projects.grantPermissionToProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.grantPermissionToProject({});
 ```
 
 **Input**
@@ -5220,7 +5301,8 @@ List operations
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.projects.listProjectOperations({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.listProjectOperations({});
 ```
 
 **Input**
@@ -5284,7 +5366,8 @@ List project access
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.projects.listProjectPermissions({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.listProjectPermissions({});
 ```
 
 **Input**
@@ -5348,7 +5431,8 @@ List projects
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.projects.listProjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.listProjects({});
 ```
 
 **Input**
@@ -5412,7 +5496,8 @@ List shared projects
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.projects.listSharedProjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.listSharedProjects({});
 ```
 
 **Input**
@@ -5476,7 +5561,8 @@ Revoke project access
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.projects.revokePermissionFromProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.revokePermissionFromProject({});
 ```
 
 **Input**
@@ -5540,7 +5626,8 @@ Update project
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.projects.updateProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.projects.updateProject({});
 ```
 
 **Input**
@@ -5606,7 +5693,8 @@ List supported regions
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.regions.getActiveRegions({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.regions.getActiveRegions({});
 ```
 
 **Input**
@@ -5672,7 +5760,8 @@ Create role
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.roles.createProjectBranchRole({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.roles.createProjectBranchRole({});
 ```
 
 **Input**
@@ -5736,7 +5825,8 @@ Delete role
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.roles.deleteProjectBranchRole({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.roles.deleteProjectBranchRole({});
 ```
 
 **Input**
@@ -5800,7 +5890,8 @@ Retrieve role details
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.roles.getProjectBranchRole({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.roles.getProjectBranchRole({});
 ```
 
 **Input**
@@ -5864,7 +5955,8 @@ Retrieve role password
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.roles.getProjectBranchRolePassword({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.roles.getProjectBranchRolePassword({});
 ```
 
 **Input**
@@ -5928,7 +6020,8 @@ List roles
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.roles.listProjectBranchRoles({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.roles.listProjectBranchRoles({});
 ```
 
 **Input**
@@ -5992,7 +6085,8 @@ Reset role password
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.roles.resetProjectBranchRolePassword({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.roles.resetProjectBranchRolePassword({});
 ```
 
 **Input**
@@ -6058,7 +6152,8 @@ Create snapshot
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.snapshots.createSnapshot({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.snapshots.createSnapshot({});
 ```
 
 **Input**
@@ -6122,7 +6217,8 @@ Delete snapshot
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.neon.api.snapshots.deleteSnapshot({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.snapshots.deleteSnapshot({});
 ```
 
 **Input**
@@ -6186,7 +6282,8 @@ Retrieve backup schedule
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.snapshots.getSnapshotSchedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.snapshots.getSnapshotSchedule({});
 ```
 
 **Input**
@@ -6250,7 +6347,8 @@ List project snapshots
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.snapshots.listSnapshots({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.snapshots.listSnapshots({});
 ```
 
 **Input**
@@ -6314,7 +6412,8 @@ Restore snapshot
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.snapshots.restoreSnapshot({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.snapshots.restoreSnapshot({});
 ```
 
 **Input**
@@ -6378,7 +6477,8 @@ Update snapshot
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.snapshots.updateSnapshot({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.snapshots.updateSnapshot({});
 ```
 
 **Input**
@@ -6444,7 +6544,8 @@ Retrieve current user details
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.users.getCurrentUserInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.users.getCurrentUserInfo({});
 ```
 
 **Input**
@@ -6508,7 +6609,8 @@ List organizations for the current user
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.users.getCurrentUserOrganizations({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.users.getCurrentUserOrganizations({});
 ```
 
 **Input**
@@ -6574,7 +6676,8 @@ Assign or update VPC endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.vpc.assignOrganizationVPCEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.vpc.assignOrganizationVPCEndpoint({});
 ```
 
 **Input**
@@ -6638,7 +6741,8 @@ Set VPC endpoint restriction
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.vpc.assignProjectVPCEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.vpc.assignProjectVPCEndpoint({});
 ```
 
 **Input**
@@ -6702,7 +6806,8 @@ Delete VPC endpoint
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.neon.api.vpc.deleteOrganizationVPCEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.vpc.deleteOrganizationVPCEndpoint({});
 ```
 
 **Input**
@@ -6766,7 +6871,8 @@ Delete VPC endpoint restriction
 **Risk:** `destructive`
 
 ```ts
-await corsair.neon.api.vpc.deleteProjectVPCEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.vpc.deleteProjectVPCEndpoint({});
 ```
 
 **Input**
@@ -6830,7 +6936,8 @@ Retrieve VPC endpoint details
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.vpc.getOrganizationVPCEndpointDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.vpc.getOrganizationVPCEndpointDetails({});
 ```
 
 **Input**
@@ -6894,7 +7001,8 @@ List VPC endpoints
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.vpc.listOrganizationVPCEndpoints({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.vpc.listOrganizationVPCEndpoints({});
 ```
 
 **Input**
@@ -6958,7 +7066,8 @@ List VPC endpoints across all regions
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.vpc.listOrganizationVPCEndpointsAllRegions({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.vpc.listOrganizationVPCEndpointsAllRegions({});
 ```
 
 **Input**
@@ -7022,7 +7131,8 @@ List VPC endpoint restrictions
 **Risk:** `read`
 
 ```ts
-await corsair.neon.api.vpc.listProjectVPCEndpoints({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.vpc.listProjectVPCEndpoints({});
 ```
 
 **Input**

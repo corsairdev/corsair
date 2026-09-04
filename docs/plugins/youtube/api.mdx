@@ -20,7 +20,8 @@ List caption tracks for a video
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.captions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.captions.list({});
 ```
 
 **Input**
@@ -82,7 +83,8 @@ Download a caption track
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.captions.load({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.captions.load({});
 ```
 
 **Input**
@@ -113,7 +115,8 @@ Update a caption track
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.captions.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.captions.update({});
 ```
 
 **Input**
@@ -182,7 +185,8 @@ Get a channel's activity feed
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.channels.getActivities({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.channels.getActivities({});
 ```
 
 **Input**
@@ -281,7 +285,8 @@ Get channel ID by handle
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.channels.getIdByHandle({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.channels.getIdByHandle({});
 ```
 
 **Input**
@@ -457,7 +462,8 @@ Get channel statistics and details
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.channels.getStatistics({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.channels.getStatistics({});
 ```
 
 **Input**
@@ -637,7 +643,8 @@ Update channel branding settings
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.channels.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.channels.update({});
 ```
 
 **Input**
@@ -772,7 +779,8 @@ Create a new channel section
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.channelSections.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.channelSections.create({});
 ```
 
 **Input**
@@ -854,7 +862,8 @@ Delete a channel section
 **Risk:** `destructive`
 
 ```ts
-await corsair.youtube.api.channelSections.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.channelSections.delete({});
 ```
 
 **Input**
@@ -888,7 +897,8 @@ List channel sections
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.channelSections.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.channelSections.list({});
 ```
 
 **Input**
@@ -950,7 +960,8 @@ Update a channel section
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.channelSections.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.channelSections.update({});
 ```
 
 **Input**
@@ -1035,7 +1046,8 @@ Post a reply to a comment
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.comments.createReply({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.comments.createReply({});
 ```
 
 **Input**
@@ -1094,7 +1106,8 @@ Delete a comment
 **Risk:** `destructive`
 
 ```ts
-await corsair.youtube.api.comments.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.comments.delete({});
 ```
 
 **Input**
@@ -1127,7 +1140,8 @@ List comments
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.comments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.comments.list({});
 ```
 
 **Input**
@@ -1206,7 +1220,8 @@ Mark a comment as spam
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.comments.markSpam({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.comments.markSpam({});
 ```
 
 **Input**
@@ -1238,7 +1253,8 @@ Post a comment on a video
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.comments.post({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.comments.post({});
 ```
 
 **Input**
@@ -1309,7 +1325,8 @@ Set moderation status for a comment
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.comments.setModerationStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.comments.setModerationStatus({});
 ```
 
 **Input**
@@ -1342,7 +1359,8 @@ List comment threads (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.comments.threadsList({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.comments.threadsList({});
 ```
 
 **Input**
@@ -1459,7 +1477,8 @@ List comment threads
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.comments.threadsList2({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.comments.threadsList2({});
 ```
 
 **Input**
@@ -1578,7 +1597,8 @@ Update a comment
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.comments.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.comments.update({});
 ```
 
 **Input**
@@ -1639,7 +1659,8 @@ List supported i18n languages
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.i18n.listLanguages({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.i18n.listLanguages({});
 ```
 
 **Input**
@@ -1689,7 +1710,8 @@ List supported i18n regions
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.i18n.listRegions({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.i18n.listRegions({});
 ```
 
 **Input**
@@ -1741,7 +1763,8 @@ List messages in a live chat
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.liveChat.listMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.liveChat.listMessages({});
 ```
 
 **Input**
@@ -1826,7 +1849,8 @@ List Super Chat events
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.liveChat.listSuperChatEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.liveChat.listSuperChatEvents({});
 ```
 
 **Input**
@@ -1893,7 +1917,8 @@ List playlist images
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.playlistImages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.playlistImages.list({});
 ```
 
 **Input**
@@ -1963,7 +1988,8 @@ Add a video to a playlist
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.playlistItems.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.playlistItems.add({});
 ```
 
 **Input**
@@ -2074,7 +2100,8 @@ Remove an item from a playlist
 **Risk:** `destructive`
 
 ```ts
-await corsair.youtube.api.playlistItems.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.playlistItems.delete({});
 ```
 
 **Input**
@@ -2107,7 +2134,8 @@ List items in a playlist
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.playlistItems.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.playlistItems.list({});
 ```
 
 **Input**
@@ -2227,7 +2255,8 @@ Update a playlist item
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.playlistItems.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.playlistItems.update({});
 ```
 
 **Input**
@@ -2371,7 +2400,8 @@ Create a new playlist
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.playlists.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.playlists.create({});
 ```
 
 **Input**
@@ -2472,7 +2502,8 @@ Delete a playlist
 **Risk:** `destructive`
 
 ```ts
-await corsair.youtube.api.playlists.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.playlists.delete({});
 ```
 
 **Input**
@@ -2507,7 +2538,8 @@ List the authenticated user's playlists
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.playlists.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.playlists.list({});
 ```
 
 **Input**
@@ -2611,7 +2643,8 @@ Update an existing playlist
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.playlists.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.playlists.update({});
 ```
 
 **Input**
@@ -2737,7 +2770,8 @@ Search YouTube for videos, channels, and playlists
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.search.youtube({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.search.youtube({});
 ```
 
 **Input**
@@ -2842,7 +2876,8 @@ List the authenticated user's subscriptions
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.subscriptions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.subscriptions.list({});
 ```
 
 **Input**
@@ -2979,7 +3014,8 @@ Subscribe to a YouTube channel
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.subscriptions.subscribe({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.subscriptions.subscribe({});
 ```
 
 **Input**
@@ -3084,7 +3120,8 @@ Unsubscribe from a YouTube channel
 **Risk:** `destructive`
 
 ```ts
-await corsair.youtube.api.subscriptions.unsubscribe({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.subscriptions.unsubscribe({});
 ```
 
 **Input**
@@ -3119,7 +3156,8 @@ Get the authenticated user's rating for a video
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.videoActions.getRating({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videoActions.getRating({});
 ```
 
 **Input**
@@ -3164,7 +3202,8 @@ List available video abuse report reasons
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.videoActions.listAbuseReasons({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videoActions.listAbuseReasons({});
 ```
 
 **Input**
@@ -3215,7 +3254,8 @@ Rate a video (like, dislike, or remove rating)
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.videoActions.rate({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videoActions.rate({});
 ```
 
 **Input**
@@ -3249,7 +3289,8 @@ Report a video for abuse
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.videoActions.reportAbuse({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videoActions.reportAbuse({});
 ```
 
 **Input**
@@ -3285,7 +3326,8 @@ Update the thumbnail for a video
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.videoActions.updateThumbnail({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videoActions.updateThumbnail({});
 ```
 
 **Input**
@@ -3335,7 +3377,8 @@ List video categories
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.videoCategories.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videoCategories.list({});
 ```
 
 **Input**
@@ -3403,7 +3446,8 @@ Delete a video
 **Risk:** `destructive`
 
 ```ts
-await corsair.youtube.api.videos.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videos.delete({});
 ```
 
 **Input**
@@ -3438,7 +3482,8 @@ Get details for a single video
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.videos.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videos.get({});
 ```
 
 **Input**
@@ -3557,7 +3602,8 @@ Get details for multiple videos in one request
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.videos.getBatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videos.getBatch({});
 ```
 
 **Input**
@@ -3684,7 +3730,8 @@ List videos for a channel
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.videos.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videos.list({});
 ```
 
 **Input**
@@ -3807,7 +3854,8 @@ List most popular videos on YouTube
 **Risk:** `read`
 
 ```ts
-await corsair.youtube.api.videos.listMostPopular({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videos.listMostPopular({});
 ```
 
 **Input**
@@ -3931,7 +3979,8 @@ Update video metadata
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.videos.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videos.update({});
 ```
 
 **Input**
@@ -4038,7 +4087,8 @@ Upload a new video
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.videos.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videos.upload({});
 ```
 
 **Input**
@@ -4089,7 +4139,8 @@ Upload a new video using multipart upload
 **Risk:** `write`
 
 ```ts
-await corsair.youtube.api.videos.uploadMultipart({});
+const tenant = corsair.withTenant('acme');
+await tenant.youtube.api.videos.uploadMultipart({});
 ```
 
 **Input**

@@ -20,7 +20,8 @@ Delete a comment
 **Risk:** `write`
 
 ```ts
-await corsair.github.api.comments.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.comments.delete({});
 ```
 
 **Input**
@@ -47,7 +48,8 @@ Get a specific comment
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.comments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.comments.get({});
 ```
 
 **Input**
@@ -87,7 +89,8 @@ List all comments in a repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.comments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.comments.list({});
 ```
 
 **Input**
@@ -137,7 +140,8 @@ List comments on a specific issue or pull request
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.comments.listForIssue({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.comments.listForIssue({});
 ```
 
 **Input**
@@ -186,7 +190,8 @@ Update a comment
 **Risk:** `write`
 
 ```ts
-await corsair.github.api.comments.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.comments.update({});
 ```
 
 **Input**
@@ -229,7 +234,8 @@ Get a specific discussion
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.discussions.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.discussions.get({});
 ```
 
 **Input**
@@ -295,7 +301,8 @@ List discussions in a repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.discussions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.discussions.list({});
 ```
 
 **Input**
@@ -361,7 +368,8 @@ List public GitHub events
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.events.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.events.list({});
 ```
 
 **Input**
@@ -456,7 +464,8 @@ List public events for a repository network
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.events.listForNetwork({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.events.listForNetwork({});
 ```
 
 **Input**
@@ -553,7 +562,8 @@ List public events for an organization
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.events.listForOrg({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.events.listForOrg({});
 ```
 
 **Input**
@@ -649,7 +659,8 @@ List events for a repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.events.listForRepository({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.events.listForRepository({});
 ```
 
 **Input**
@@ -746,7 +757,8 @@ List events for a user
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.events.listForUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.events.listForUser({});
 ```
 
 **Input**
@@ -842,7 +854,8 @@ List organization events for a user
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.events.listForUserOrg({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.events.listForUserOrg({});
 ```
 
 **Input**
@@ -939,7 +952,8 @@ List public events for a user
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.events.listPublicForUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.events.listPublicForUser({});
 ```
 
 **Input**
@@ -1035,7 +1049,8 @@ List public events received by a user
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.events.listPublicReceivedForUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.events.listPublicReceivedForUser({});
 ```
 
 **Input**
@@ -1131,7 +1146,8 @@ List events received by a user
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.events.listReceivedForUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.events.listReceivedForUser({});
 ```
 
 **Input**
@@ -1229,7 +1245,8 @@ List forks of a repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.forks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.forks.list({});
 ```
 
 **Input**
@@ -1314,7 +1331,8 @@ Create a new issue
 **Risk:** `write`
 
 ```ts
-await corsair.github.api.issues.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.issues.create({});
 ```
 
 **Input**
@@ -1497,7 +1515,8 @@ Post a comment on an issue
 **Risk:** `write`
 
 ```ts
-await corsair.github.api.issues.createComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.issues.createComment({});
 ```
 
 **Input**
@@ -1554,7 +1573,8 @@ Get a specific issue
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.issues.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.issues.get({});
 ```
 
 **Input**
@@ -1716,7 +1736,8 @@ List issues in a repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.issues.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.issues.list({});
 ```
 
 **Input**
@@ -1864,7 +1885,8 @@ Update an existing issue
 **Risk:** `write`
 
 ```ts
-await corsair.github.api.issues.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.issues.update({});
 ```
 
 **Input**
@@ -2052,7 +2074,8 @@ Submit a pull request review
 **Risk:** `write`
 
 ```ts
-await corsair.github.api.pullRequests.createReview({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.pullRequests.createReview({});
 ```
 
 **Input**
@@ -2125,7 +2148,8 @@ Get a specific pull request
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.pullRequests.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.pullRequests.get({});
 ```
 
 **Input**
@@ -2511,7 +2535,8 @@ List pull requests
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.pullRequests.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.pullRequests.list({});
 ```
 
 **Input**
@@ -2858,7 +2883,8 @@ List reviews on a pull request
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.pullRequests.listReviews({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.pullRequests.listReviews({});
 ```
 
 **Input**
@@ -2911,7 +2937,8 @@ Create a new release
 **Risk:** `write`
 
 ```ts
-await corsair.github.api.releases.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.releases.create({});
 ```
 
 **Input**
@@ -3018,7 +3045,8 @@ Get a specific release
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.releases.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.releases.get({});
 ```
 
 **Input**
@@ -3119,7 +3147,8 @@ List releases in a repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.releases.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.releases.list({});
 ```
 
 **Input**
@@ -3211,7 +3240,8 @@ Update an existing release
 **Risk:** `write`
 
 ```ts
-await corsair.github.api.releases.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.releases.update({});
 ```
 
 **Input**
@@ -3320,7 +3350,8 @@ Check whether the authenticated user has starred a repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.repositories.checkStarred({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.repositories.checkStarred({});
 ```
 
 **Input**
@@ -3351,7 +3382,8 @@ Get a specific repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.repositories.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.repositories.get({});
 ```
 
 **Input**
@@ -3434,7 +3466,8 @@ Get file or directory content from a repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.repositories.getContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.repositories.getContent({});
 ```
 
 **Input**
@@ -3503,7 +3536,8 @@ List repositories for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.repositories.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.repositories.list({});
 ```
 
 **Input**
@@ -3587,7 +3621,8 @@ List branches in a repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.repositories.listBranches({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.repositories.listBranches({});
 ```
 
 **Input**
@@ -3632,7 +3667,8 @@ List commits in a repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.repositories.listCommits({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.repositories.listCommits({});
 ```
 
 **Input**
@@ -3713,7 +3749,8 @@ List users who have starred a repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.repositories.listStargazers({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.repositories.listStargazers({});
 ```
 
 **Input**
@@ -3776,7 +3813,8 @@ List repositories starred by the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.repositories.listStarred({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.repositories.listStarred({});
 ```
 
 **Input**
@@ -3858,7 +3896,8 @@ Star a repository for the authenticated user
 **Risk:** `write`
 
 ```ts
-await corsair.github.api.repositories.star({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.repositories.star({});
 ```
 
 **Input**
@@ -3884,7 +3923,8 @@ Unstar a repository for the authenticated user
 **Risk:** `write`
 
 ```ts
-await corsair.github.api.repositories.unstar({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.repositories.unstar({});
 ```
 
 **Input**
@@ -3912,7 +3952,8 @@ Search GitHub issues and pull requests
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.search.issues({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.search.issues({});
 ```
 
 **Input**
@@ -4115,7 +4156,8 @@ Search GitHub repositories
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.search.repositories({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.search.repositories({});
 ```
 
 **Input**
@@ -4207,7 +4249,8 @@ Search GitHub users and organizations
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.search.users({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.search.users({});
 ```
 
 **Input**
@@ -4278,7 +4321,8 @@ Get a user by username
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.users.get({});
 ```
 
 **Input**
@@ -4365,7 +4409,8 @@ Get the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.users.getAuthenticated({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.users.getAuthenticated({});
 ```
 
 **Input:** _empty object_
@@ -4447,7 +4492,8 @@ Get a user by account ID
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.users.getById({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.users.getById({});
 ```
 
 **Input**
@@ -4534,7 +4580,8 @@ Get contextual hovercard information for a user
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.users.getHovercard({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.users.getHovercard({});
 ```
 
 **Input**
@@ -4578,7 +4625,8 @@ List all GitHub users
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.users.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.users.list({});
 ```
 
 **Input**
@@ -4636,7 +4684,8 @@ Update the authenticated user profile
 **Risk:** `write`
 
 ```ts
-await corsair.github.api.users.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.users.update({});
 ```
 
 **Input**
@@ -4732,7 +4781,8 @@ Get a specific workflow
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.workflows.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.workflows.get({});
 ```
 
 **Input**
@@ -4774,7 +4824,8 @@ List workflows in a repository
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.workflows.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.workflows.list({});
 ```
 
 **Input**
@@ -4829,7 +4880,8 @@ List workflow runs
 **Risk:** `read`
 
 ```ts
-await corsair.github.api.workflows.listRuns({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.workflows.listRuns({});
 ```
 
 **Input**

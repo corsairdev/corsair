@@ -20,7 +20,8 @@ Annotate Files
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.files.annotate({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.files.annotate({});
 ```
 
 **Input**
@@ -85,7 +86,8 @@ Annotate Files Async
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.files.asyncBatchAnnotate({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.files.asyncBatchAnnotate({});
 ```
 
 **Input**
@@ -178,7 +180,8 @@ Annotate Images
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.images.annotate({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.images.annotate({});
 ```
 
 **Input**
@@ -242,7 +245,8 @@ Annotate Images Async
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.images.asyncBatchAnnotate({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.images.asyncBatchAnnotate({});
 ```
 
 **Input**
@@ -339,7 +343,8 @@ Annotate Location Images
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.images.locationAnnotate({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.images.locationAnnotate({});
 ```
 
 **Input**
@@ -406,7 +411,8 @@ List Locations
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.locations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.locations.list({});
 ```
 
 **Input**
@@ -457,7 +463,8 @@ Cancel Operation
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.operations.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.operations.cancel({});
 ```
 
 **Input**
@@ -482,7 +489,8 @@ Delete Operation
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.operations.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.operations.delete({});
 ```
 
 **Input**
@@ -507,7 +515,8 @@ Get Operation
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.operations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.operations.get({});
 ```
 
 **Input**
@@ -569,7 +578,8 @@ List Operations
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.operations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.operations.list({});
 ```
 
 **Input**
@@ -625,7 +635,8 @@ Create Product
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.products.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.products.create({});
 ```
 
 **Input**
@@ -691,7 +702,8 @@ Delete Product
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.products.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.products.delete({});
 ```
 
 **Input**
@@ -716,7 +728,8 @@ Get Product
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.products.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.products.get({});
 ```
 
 **Input**
@@ -762,7 +775,8 @@ List Products
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.products.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.products.list({});
 ```
 
 **Input**
@@ -813,7 +827,8 @@ Purge Products
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.googlecloudvision.api.products.purge({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.products.purge({});
 ```
 
 **Input**
@@ -889,7 +904,8 @@ Update Product
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.products.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.products.update({});
 ```
 
 **Input**
@@ -957,7 +973,8 @@ Add Product to Set
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.productSets.addProduct({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.productSets.addProduct({});
 ```
 
 **Input**
@@ -983,7 +1000,8 @@ Create Product Set
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.productSets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.productSets.create({});
 ```
 
 **Input**
@@ -1043,7 +1061,8 @@ Delete Product Set
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.productSets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.productSets.delete({});
 ```
 
 **Input**
@@ -1068,7 +1087,8 @@ Get Product Set
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.productSets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.productSets.get({});
 ```
 
 **Input**
@@ -1111,7 +1131,8 @@ Import Product Sets
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.productSets.import({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.productSets.import({});
 ```
 
 **Input**
@@ -1187,7 +1208,8 @@ List Product Sets
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.productSets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.productSets.list({});
 ```
 
 **Input**
@@ -1235,7 +1257,8 @@ List Products in Set
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.productSets.listProducts({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.productSets.listProducts({});
 ```
 
 **Input**
@@ -1278,7 +1301,8 @@ Remove Product from Set
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.productSets.removeProduct({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.productSets.removeProduct({});
 ```
 
 **Input**
@@ -1304,7 +1328,8 @@ Update Product Set
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.productSets.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.productSets.update({});
 ```
 
 **Input**
@@ -1366,7 +1391,8 @@ Create Reference Image
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.referenceImages.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.referenceImages.create({});
 ```
 
 **Input**
@@ -1424,7 +1450,8 @@ Delete Reference Image
 **Risk:** `write`
 
 ```ts
-await corsair.googlecloudvision.api.referenceImages.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.referenceImages.delete({});
 ```
 
 **Input**
@@ -1449,7 +1476,8 @@ Get Reference Image
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.referenceImages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.referenceImages.get({});
 ```
 
 **Input**
@@ -1491,7 +1519,8 @@ List Reference Images
 **Risk:** `read`
 
 ```ts
-await corsair.googlecloudvision.api.referenceImages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlecloudvision.api.referenceImages.list({});
 ```
 
 **Input**

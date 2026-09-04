@@ -14,7 +14,8 @@ The Toggl plugin syncs data locally. Use `corsair.toggl.db.<entity>.search({ dat
 Path: `toggl.db.clients.search`
 
 ```ts
-const rows = await corsair.toggl.db.clients.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.toggl.db.clients.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `toggl.db.projects.search`
 
 ```ts
-const rows = await corsair.toggl.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.toggl.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -71,7 +73,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `toggl.db.tags.search`
 
 ```ts
-const rows = await corsair.toggl.db.tags.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.toggl.db.tags.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -97,7 +100,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `toggl.db.workspaces.search`
 
 ```ts
-const rows = await corsair.toggl.db.workspaces.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.toggl.db.workspaces.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

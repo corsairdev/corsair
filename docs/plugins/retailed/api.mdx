@@ -20,7 +20,8 @@ Get GOAT product prices
 **Risk:** `read`
 
 ```ts
-await corsair.retailed.api.goat.prices({});
+const tenant = corsair.withTenant('acme');
+await tenant.retailed.api.goat.prices({});
 ```
 
 **Input**
@@ -76,7 +77,8 @@ Search products
 **Risk:** `read`
 
 ```ts
-await corsair.retailed.api.products.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.retailed.api.products.search({});
 ```
 
 **Input**
@@ -135,7 +137,8 @@ Get StockX product details
 **Risk:** `read`
 
 ```ts
-await corsair.retailed.api.stockx.product({});
+const tenant = corsair.withTenant('acme');
+await tenant.retailed.api.stockx.product({});
 ```
 
 **Input**
@@ -173,7 +176,8 @@ Search StockX products
 **Risk:** `read`
 
 ```ts
-await corsair.retailed.api.stockx.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.retailed.api.stockx.search({});
 ```
 
 **Input**
@@ -214,7 +218,8 @@ Get StockX trends
 **Risk:** `read`
 
 ```ts
-await corsair.retailed.api.stockx.trends({});
+const tenant = corsair.withTenant('acme');
+await tenant.retailed.api.stockx.trends({});
 ```
 
 **Input**
@@ -259,7 +264,8 @@ Get API usage information
 **Risk:** `read`
 
 ```ts
-await corsair.retailed.api.usage.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.retailed.api.usage.get({});
 ```
 
 **Input:** _empty object_

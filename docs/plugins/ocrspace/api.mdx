@@ -20,7 +20,8 @@ Retrieve conversion counts for the current month per OCR engine, updated once a 
 **Risk:** `read`
 
 ```ts
-await corsair.ocrspace.api.account.conversions({});
+const tenant = corsair.withTenant('acme');
+await tenant.ocrspace.api.account.conversions({});
 ```
 
 **Input**
@@ -55,7 +56,8 @@ Extract text from an image or PDF supplied as exactly one of a URL, a file uploa
 **Risk:** `read`
 
 ```ts
-await corsair.ocrspace.api.ocr.parse({});
+const tenant = corsair.withTenant('acme');
+await tenant.ocrspace.api.ocr.parse({});
 ```
 
 **Input**
@@ -133,7 +135,8 @@ Extract text from an image at a public URL using the simplified GET endpoint
 **Risk:** `read`
 
 ```ts
-await corsair.ocrspace.api.ocr.parseImageUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.ocrspace.api.ocr.parseImageUrl({});
 ```
 
 **Input**

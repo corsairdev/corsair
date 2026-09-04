@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { salesforce } from '@corsair-dev/salesforce';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		salesforce(),
 	],

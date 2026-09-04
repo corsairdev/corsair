@@ -14,7 +14,8 @@ The Razorpay plugin syncs data locally. Use `corsair.razorpay.db.<entity>.search
 Path: `razorpay.db.customers.search`
 
 ```ts
-const rows = await corsair.razorpay.db.customers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.razorpay.db.customers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `razorpay.db.orders.search`
 
 ```ts
-const rows = await corsair.razorpay.db.orders.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.razorpay.db.orders.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -76,7 +78,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `razorpay.db.payments.search`
 
 ```ts
-const rows = await corsair.razorpay.db.payments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.razorpay.db.payments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -111,7 +114,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `razorpay.db.payouts.search`
 
 ```ts
-const rows = await corsair.razorpay.db.payouts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.razorpay.db.payouts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -150,7 +154,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `razorpay.db.refunds.search`
 
 ```ts
-const rows = await corsair.razorpay.db.refunds.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.razorpay.db.refunds.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -182,7 +187,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `razorpay.db.settlements.search`
 
 ```ts
-const rows = await corsair.razorpay.db.settlements.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.razorpay.db.settlements.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -211,7 +217,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `razorpay.db.subscriptions.search`
 
 ```ts
-const rows = await corsair.razorpay.db.subscriptions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.razorpay.db.subscriptions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

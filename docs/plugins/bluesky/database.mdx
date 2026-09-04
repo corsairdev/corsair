@@ -14,7 +14,8 @@ The Bluesky plugin syncs data locally. Use `corsair.bluesky.db.<entity>.search({
 Path: `bluesky.db.posts.search`
 
 ```ts
-const rows = await corsair.bluesky.db.posts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bluesky.db.posts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

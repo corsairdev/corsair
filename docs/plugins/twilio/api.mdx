@@ -20,7 +20,8 @@ Initiate an outbound phone call
 **Risk:** `write`
 
 ```ts
-await corsair.twilio.api.calls.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.twilio.api.calls.create({});
 ```
 
 **Input**
@@ -86,7 +87,8 @@ Retrieve a call record by SID
 **Risk:** `read`
 
 ```ts
-await corsair.twilio.api.calls.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.twilio.api.calls.get({});
 ```
 
 **Input**
@@ -144,7 +146,8 @@ List call records with optional filters
 **Risk:** `read`
 
 ```ts
-await corsair.twilio.api.calls.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.twilio.api.calls.list({});
 ```
 
 **Input**
@@ -217,7 +220,8 @@ Retrieve a message by SID
 **Risk:** `read`
 
 ```ts
-await corsair.twilio.api.messages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.twilio.api.messages.get({});
 ```
 
 **Input**
@@ -275,7 +279,8 @@ List messages with optional filters
 **Risk:** `read`
 
 ```ts
-await corsair.twilio.api.messages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.twilio.api.messages.list({});
 ```
 
 **Input**
@@ -344,7 +349,8 @@ Send an SMS or MMS message
 **Risk:** `write`
 
 ```ts
-await corsair.twilio.api.messages.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.twilio.api.messages.send({});
 ```
 
 **Input**

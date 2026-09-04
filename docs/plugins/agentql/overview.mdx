@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { agentql } from '@corsair-dev/agentql';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		agentql(),
 	],

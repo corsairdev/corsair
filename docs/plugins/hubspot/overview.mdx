@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { hubspot } from '@corsair-dev/hubspot';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		hubspot({
 			authType: 'managed',
@@ -161,15 +162,24 @@ Synced entities: `companies`, `contacts`, `deals`, `engagements`, `tickets`. See
 Fires when a new contact is created in HubSpot.
 
 ```ts
-hubspot({
-    webhookHooks: {
-        contactCreated: {
-            after: async (ctx, result) => {
-                console.log('HubSpot contact created:', result.data);
-            }
-        },
-    },
-})
+import { createCorsair } from 'corsair';
+import { hubspot } from '@corsair-dev/hubspot';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+		hubspot({
+			authType: 'managed',
+			webhookHooks: {
+				contactCreated: {
+					after: async (ctx, result) => {
+						console.log('HubSpot contact created:', result.data);
+					}
+				},
+			},
+		)
+	],
+});
 ```
 
 Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/hubspot/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).

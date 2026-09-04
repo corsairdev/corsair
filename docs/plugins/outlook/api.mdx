@@ -20,7 +20,8 @@ Create a new calendar
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.calendars.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.calendars.create({});
 ```
 
 **Input**
@@ -78,7 +79,8 @@ Delete a calendar [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.outlook.api.calendars.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.calendars.delete({});
 ```
 
 **Input**
@@ -109,7 +111,8 @@ Get a calendar by ID
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.calendars.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.calendars.get({});
 ```
 
 **Input**
@@ -164,7 +167,8 @@ List all calendars
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.calendars.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.calendars.list({});
 ```
 
 **Input**
@@ -231,7 +235,8 @@ Create a new contact
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.contacts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.contacts.create({});
 ```
 
 **Input**
@@ -319,7 +324,8 @@ Delete a contact [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.outlook.api.contacts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.contacts.delete({});
 ```
 
 **Input**
@@ -350,7 +356,8 @@ List contacts
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.contacts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.contacts.list({});
 ```
 
 **Input**
@@ -422,7 +429,8 @@ Update a contact
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.contacts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.contacts.update({});
 ```
 
 **Input**
@@ -513,7 +521,8 @@ Cancel a calendar event and notify attendees
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.events.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.events.cancel({});
 ```
 
 **Input**
@@ -550,7 +559,8 @@ Create a calendar event
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.events.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.events.create({});
 ```
 
 **Input**
@@ -750,7 +760,8 @@ Decline a calendar event invitation
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.events.decline({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.events.decline({});
 ```
 
 **Input**
@@ -795,7 +806,8 @@ Delete a calendar event [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.outlook.api.events.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.events.delete({});
 ```
 
 **Input**
@@ -826,7 +838,8 @@ Find available meeting times for attendees
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.events.findMeetingTimes({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.events.findMeetingTimes({});
 ```
 
 **Input**
@@ -933,7 +946,8 @@ Get a calendar event by ID
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.events.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.events.get({});
 ```
 
 **Input**
@@ -1108,7 +1122,8 @@ Get free/busy schedule for a calendar
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.events.getSchedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.events.getSchedule({});
 ```
 
 **Input**
@@ -1175,7 +1190,8 @@ List calendar events
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.events.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.events.list({});
 ```
 
 **Input**
@@ -1297,7 +1313,8 @@ Update a calendar event
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.events.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.events.update({});
 ```
 
 **Input**
@@ -1500,7 +1517,8 @@ Create a new mail folder
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.folders.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.folders.create({});
 ```
 
 **Input**
@@ -1540,7 +1558,8 @@ Delete a mail folder [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.outlook.api.folders.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.folders.delete({});
 ```
 
 **Input**
@@ -1571,7 +1590,8 @@ Get a mail folder by ID
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.folders.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.folders.get({});
 ```
 
 **Input**
@@ -1610,7 +1630,8 @@ List mail folders
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.folders.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.folders.list({});
 ```
 
 **Input**
@@ -1668,7 +1689,8 @@ Rename a mail folder
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.folders.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.folders.update({});
 ```
 
 **Input**
@@ -1709,7 +1731,8 @@ Add an attachment to a message
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.messages.addAttachment({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.addAttachment({});
 ```
 
 **Input**
@@ -1779,7 +1802,8 @@ Batch move up to 20 messages to a folder
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.messages.batchMove({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.batchMove({});
 ```
 
 **Input**
@@ -1829,7 +1853,8 @@ Batch update up to 20 messages
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.messages.batchUpdate({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.batchUpdate({});
 ```
 
 **Input**
@@ -1890,7 +1915,8 @@ Create an email draft
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.messages.createDraft({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.createDraft({});
 ```
 
 **Input**
@@ -2044,7 +2070,8 @@ Delete an email message [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.outlook.api.messages.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.delete({});
 ```
 
 **Input**
@@ -2075,7 +2102,8 @@ Forward an email message
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.messages.forward({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.forward({});
 ```
 
 **Input**
@@ -2108,7 +2136,8 @@ Get an email message by ID
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.messages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.get({});
 ```
 
 **Input**
@@ -2248,7 +2277,8 @@ List email messages in a folder
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.messages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.list({});
 ```
 
 **Input**
@@ -2362,7 +2392,8 @@ Move a message to a different folder
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.messages.move({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.move({});
 ```
 
 **Input**
@@ -2502,7 +2533,8 @@ Query email messages with OData filters
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.messages.query({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.query({});
 ```
 
 **Input**
@@ -2602,7 +2634,8 @@ Reply to an email message
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.messages.reply({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.reply({});
 ```
 
 **Input**
@@ -2647,7 +2680,8 @@ Search email messages
 **Risk:** `read`
 
 ```ts
-await corsair.outlook.api.messages.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.search({});
 ```
 
 **Input**
@@ -2745,7 +2779,8 @@ Send an email message
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.messages.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.send({});
 ```
 
 **Input**
@@ -2806,7 +2841,8 @@ Send a saved draft message
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.messages.sendDraft({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.sendDraft({});
 ```
 
 **Input**
@@ -2837,7 +2873,8 @@ Update an email message (e.g. mark as read)
 **Risk:** `write`
 
 ```ts
-await corsair.outlook.api.messages.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.outlook.api.messages.update({});
 ```
 
 **Input**

@@ -14,7 +14,8 @@ The Telegram plugin syncs data locally. Use `corsair.telegram.db.<entity>.search
 Path: `telegram.db.chats.search`
 
 ```ts
-const rows = await corsair.telegram.db.chats.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.telegram.db.chats.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -46,7 +47,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `telegram.db.files.search`
 
 ```ts
-const rows = await corsair.telegram.db.files.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.telegram.db.files.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -74,7 +76,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `telegram.db.messages.search`
 
 ```ts
-const rows = await corsair.telegram.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.telegram.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -111,7 +114,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `telegram.db.polls.search`
 
 ```ts
-const rows = await corsair.telegram.db.polls.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.telegram.db.polls.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -142,7 +146,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `telegram.db.users.search`
 
 ```ts
-const rows = await corsair.telegram.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.telegram.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

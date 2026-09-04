@@ -14,7 +14,8 @@ The BoxHero plugin syncs data locally. Use `corsair.boxhero.db.<entity>.search({
 Path: `boxhero.db.attr.search`
 
 ```ts
-const rows = await corsair.boxhero.db.attr.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.boxhero.db.attr.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `boxhero.db.item.search`
 
 ```ts
-const rows = await corsair.boxhero.db.item.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.boxhero.db.item.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -69,7 +71,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `boxhero.db.location.search`
 
 ```ts
-const rows = await corsair.boxhero.db.location.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.boxhero.db.location.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -95,7 +98,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `boxhero.db.member.search`
 
 ```ts
-const rows = await corsair.boxhero.db.member.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.boxhero.db.member.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -119,7 +123,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `boxhero.db.partner.search`
 
 ```ts
-const rows = await corsair.boxhero.db.partner.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.boxhero.db.partner.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -147,7 +152,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `boxhero.db.team.search`
 
 ```ts
-const rows = await corsair.boxhero.db.team.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.boxhero.db.team.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -175,7 +181,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `boxhero.db.transaction.search`
 
 ```ts
-const rows = await corsair.boxhero.db.transaction.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.boxhero.db.transaction.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

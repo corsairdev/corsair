@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { asticaai } from '@corsair-dev/asticaai';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		asticaai(),
 	],

@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { alttextai } from '@corsair-dev/alttextai';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		alttextai(),
 	],

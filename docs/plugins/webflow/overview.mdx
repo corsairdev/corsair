@@ -41,6 +41,7 @@ import { createCorsair } from 'corsair';
 import { webflow } from '@corsair-dev/webflow';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		webflow(),
 	],

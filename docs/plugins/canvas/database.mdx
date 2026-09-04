@@ -14,7 +14,8 @@ The Canvas plugin syncs data locally. Use `corsair.canvas.db.<entity>.search({ d
 Path: `canvas.db.accounts.search`
 
 ```ts
-const rows = await corsair.canvas.db.accounts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.canvas.db.accounts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `canvas.db.assignments.search`
 
 ```ts
-const rows = await corsair.canvas.db.assignments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.canvas.db.assignments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -66,7 +68,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `canvas.db.courses.search`
 
 ```ts
-const rows = await corsair.canvas.db.courses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.canvas.db.courses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -93,7 +96,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `canvas.db.enrollments.search`
 
 ```ts
-const rows = await corsair.canvas.db.enrollments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.canvas.db.enrollments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -118,7 +122,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `canvas.db.users.search`
 
 ```ts
-const rows = await corsair.canvas.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.canvas.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

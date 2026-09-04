@@ -14,7 +14,8 @@ The AMcards plugin syncs data locally. Use `corsair.amcards.db.<entity>.search({
 Path: `amcards.db.cards.search`
 
 ```ts
-const rows = await corsair.amcards.db.cards.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.amcards.db.cards.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -36,7 +37,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `amcards.db.categories.search`
 
 ```ts
-const rows = await corsair.amcards.db.categories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.amcards.db.categories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -60,7 +62,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `amcards.db.contacts.search`
 
 ```ts
-const rows = await corsair.amcards.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.amcards.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -87,7 +90,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `amcards.db.gifts.search`
 
 ```ts
-const rows = await corsair.amcards.db.gifts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.amcards.db.gifts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -112,7 +116,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `amcards.db.templates.search`
 
 ```ts
-const rows = await corsair.amcards.db.templates.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.amcards.db.templates.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

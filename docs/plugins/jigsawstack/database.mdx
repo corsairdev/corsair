@@ -14,7 +14,8 @@ The JigsawStack plugin syncs data locally. Use `corsair.jigsawstack.db.<entity>.
 Path: `jigsawstack.db.prompts.search`
 
 ```ts
-const rows = await corsair.jigsawstack.db.prompts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.jigsawstack.db.prompts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `jigsawstack.db.summaries.search`
 
 ```ts
-const rows = await corsair.jigsawstack.db.summaries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.jigsawstack.db.summaries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -65,7 +67,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `jigsawstack.db.transcriptions.search`
 
 ```ts
-const rows = await corsair.jigsawstack.db.transcriptions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.jigsawstack.db.transcriptions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

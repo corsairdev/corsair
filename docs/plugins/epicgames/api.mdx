@@ -20,7 +20,8 @@ Get metadata for a Fortnite island by code
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.islands.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.islands.get({});
 ```
 
 **Input**
@@ -55,7 +56,8 @@ Get average minutes per unique player for an island
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.islands.getAvgMinutesPerPlayer({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.islands.getAvgMinutesPerPlayer({});
 ```
 
 **Input**
@@ -93,7 +95,8 @@ Get island favorites metrics for an interval
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.islands.getFavorites({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.islands.getFavorites({});
 ```
 
 **Input**
@@ -131,7 +134,8 @@ Get island usage metrics aggregated by time interval
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.islands.getMetricsByInterval({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.islands.getMetricsByInterval({});
 ```
 
 **Input**
@@ -170,7 +174,8 @@ Get total minutes played on an island for an interval
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.islands.getMinutesPlayed({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.islands.getMinutesPlayed({});
 ```
 
 **Input**
@@ -208,7 +213,8 @@ Get peak concurrent users for an island over an interval
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.islands.getPeakCcu({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.islands.getPeakCcu({});
 ```
 
 **Input**
@@ -246,7 +252,8 @@ Get island play/session-start counts for an interval
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.islands.getPlays({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.islands.getPlays({});
 ```
 
 **Input**
@@ -284,7 +291,8 @@ Get island recommendation counts for an interval
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.islands.getRecommendations({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.islands.getRecommendations({});
 ```
 
 **Input**
@@ -322,7 +330,8 @@ Get day-over-day retention metrics for an island
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.islands.getRetention({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.islands.getRetention({});
 ```
 
 **Input**
@@ -360,7 +369,8 @@ Get unique player counts for an island over an interval
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.islands.getUniquePlayers({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.islands.getUniquePlayers({});
 ```
 
 **Input**
@@ -398,7 +408,8 @@ List public discoverable Fortnite Creative islands
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.islands.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.islands.list({});
 ```
 
 **Input**
@@ -450,7 +461,8 @@ Batch multiple Remote Control API calls into one request
 **Risk:** `write`
 
 ```ts
-await corsair.epicgames.api.remote.batch({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.batch({});
 ```
 
 **Input**
@@ -498,7 +510,8 @@ Call a Blueprint-callable function on a UObject
 **Risk:** `write`
 
 ```ts
-await corsair.epicgames.api.remote.callObjectFunction({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.callObjectFunction({});
 ```
 
 **Input**
@@ -546,7 +559,8 @@ CORS preflight OPTIONS against the Remote Control API
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.remote.corsPreflight({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.corsPreflight({});
 ```
 
 **Input:** _empty object_
@@ -576,7 +590,8 @@ Delete a metadata key from a Remote Control preset
 **Risk:** `write`
 
 ```ts
-await corsair.epicgames.api.remote.deletePresetMetadataKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.deletePresetMetadataKey({});
 ```
 
 **Input**
@@ -612,7 +627,8 @@ Describe a UObject by path via Remote Control
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.remote.describeObject({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.describeObject({});
 ```
 
 **Input**
@@ -647,7 +663,8 @@ Fetch Content Browser thumbnail for an asset path
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.remote.getObjectThumbnail({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.getObjectThumbnail({});
 ```
 
 **Input**
@@ -682,7 +699,8 @@ Get a Remote Control preset by name
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.remote.getPreset({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.getPreset({});
 ```
 
 **Input**
@@ -717,7 +735,8 @@ Get all metadata entries for a Remote Control preset
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.remote.getPresetMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.getPresetMetadata({});
 ```
 
 **Input**
@@ -752,7 +771,8 @@ Get a single metadata key for a Remote Control preset
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.remote.getPresetMetadataKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.getPresetMetadataKey({});
 ```
 
 **Input**
@@ -788,7 +808,8 @@ Read a property exposed on a Remote Control preset
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.remote.getPresetProperty({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.getPresetProperty({});
 ```
 
 **Input**
@@ -824,7 +845,8 @@ Initiate an Unreal Web Remote Control session
 **Risk:** `write`
 
 ```ts
-await corsair.epicgames.api.remote.initiateSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.initiateSession({});
 ```
 
 **Input:** _empty object_
@@ -854,7 +876,8 @@ Invoke a function exposed on a Remote Control preset
 **Risk:** `write`
 
 ```ts
-await corsair.epicgames.api.remote.invokePresetFunction({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.invokePresetFunction({});
 ```
 
 **Input**
@@ -901,7 +924,8 @@ List Blueprint-callable functions exposed by a UObject
 **Risk:** `read`
 
 ```ts
-await corsair.epicgames.api.remote.listBlueprintCallableFunctions({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.listBlueprintCallableFunctions({});
 ```
 
 **Input**
@@ -936,7 +960,8 @@ Read or set UObject property values via Remote Control
 **Risk:** `write`
 
 ```ts
-await corsair.epicgames.api.remote.putObjectProperty({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.putObjectProperty({});
 ```
 
 **Input**
@@ -984,7 +1009,8 @@ Create or update a metadata key on a Remote Control preset
 **Risk:** `write`
 
 ```ts
-await corsair.epicgames.api.remote.putPresetMetadataKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.putPresetMetadataKey({});
 ```
 
 **Input**
@@ -1021,7 +1047,8 @@ Update a property exposed on a Remote Control preset
 **Risk:** `write`
 
 ```ts
-await corsair.epicgames.api.remote.updatePresetProperty({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.updatePresetProperty({});
 ```
 
 **Input**
@@ -1058,7 +1085,8 @@ Wait for a UObject event (experimental; requires EnableExperimentalRoutes)
 **Risk:** `write`
 
 ```ts
-await corsair.epicgames.api.remote.waitForObjectEvent({});
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.waitForObjectEvent({});
 ```
 
 **Input**

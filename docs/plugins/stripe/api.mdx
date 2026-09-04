@@ -20,7 +20,8 @@ Retrieve the current account balance
 **Risk:** `read`
 
 ```ts
-await corsair.stripe.api.balance.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.balance.get({});
 ```
 
 **Input:** _empty object_
@@ -72,7 +73,8 @@ Create a new Stripe charge
 **Risk:** `write`
 
 ```ts
-await corsair.stripe.api.charges.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.charges.create({});
 ```
 
 **Input**
@@ -140,7 +142,8 @@ Retrieve a Stripe charge by ID
 **Risk:** `read`
 
 ```ts
-await corsair.stripe.api.charges.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.charges.get({});
 ```
 
 **Input**
@@ -193,7 +196,8 @@ List Stripe charges with optional filters
 **Risk:** `read`
 
 ```ts
-await corsair.stripe.api.charges.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.charges.list({});
 ```
 
 **Input**
@@ -255,7 +259,8 @@ Update a Stripe charge
 **Risk:** `write`
 
 ```ts
-await corsair.stripe.api.charges.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.charges.update({});
 ```
 
 **Input**
@@ -332,7 +337,8 @@ Create a new Stripe coupon
 **Risk:** `write`
 
 ```ts
-await corsair.stripe.api.coupons.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.coupons.create({});
 ```
 
 **Input**
@@ -403,7 +409,8 @@ List Stripe coupons
 **Risk:** `read`
 
 ```ts
-await corsair.stripe.api.coupons.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.coupons.list({});
 ```
 
 **Input**
@@ -465,7 +472,8 @@ Create a new Stripe customer
 **Risk:** `write`
 
 ```ts
-await corsair.stripe.api.customers.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.customers.create({});
 ```
 
 **Input**
@@ -529,7 +537,8 @@ Delete a Stripe customer [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.stripe.api.customers.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.customers.delete({});
 ```
 
 **Input**
@@ -561,7 +570,8 @@ Retrieve a Stripe customer by ID
 **Risk:** `read`
 
 ```ts
-await corsair.stripe.api.customers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.customers.get({});
 ```
 
 **Input**
@@ -611,7 +621,8 @@ List Stripe customers with optional filters
 **Risk:** `read`
 
 ```ts
-await corsair.stripe.api.customers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.customers.list({});
 ```
 
 **Input**
@@ -671,7 +682,8 @@ Create a new Stripe payment intent
 **Risk:** `write`
 
 ```ts
-await corsair.stripe.api.paymentIntents.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.paymentIntents.create({});
 ```
 
 **Input**
@@ -739,7 +751,8 @@ Retrieve a Stripe payment intent by ID
 **Risk:** `read`
 
 ```ts
-await corsair.stripe.api.paymentIntents.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.paymentIntents.get({});
 ```
 
 **Input**
@@ -791,7 +804,8 @@ List Stripe payment intents with optional filters
 **Risk:** `read`
 
 ```ts
-await corsair.stripe.api.paymentIntents.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.paymentIntents.list({});
 ```
 
 **Input**
@@ -851,7 +865,8 @@ Update a Stripe payment intent
 **Risk:** `write`
 
 ```ts
-await corsair.stripe.api.paymentIntents.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.paymentIntents.update({});
 ```
 
 **Input**
@@ -921,7 +936,8 @@ Create a new Stripe price
 **Risk:** `write`
 
 ```ts
-await corsair.stripe.api.prices.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.prices.create({});
 ```
 
 **Input**
@@ -1017,7 +1033,8 @@ List Stripe prices
 **Risk:** `read`
 
 ```ts
-await corsair.stripe.api.prices.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.prices.list({});
 ```
 
 **Input**
@@ -1084,7 +1101,8 @@ Create a new Stripe source
 **Risk:** `write`
 
 ```ts
-await corsair.stripe.api.sources.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.sources.create({});
 ```
 
 **Input**
@@ -1165,7 +1183,8 @@ Retrieve a Stripe source by ID
 **Risk:** `read`
 
 ```ts
-await corsair.stripe.api.sources.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.sources.get({});
 ```
 
 **Input**
@@ -1215,7 +1234,8 @@ Create a Stripe token
 **Risk:** `write`
 
 ```ts
-await corsair.stripe.api.tokens.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.stripe.api.tokens.create({});
 ```
 
 **Input**

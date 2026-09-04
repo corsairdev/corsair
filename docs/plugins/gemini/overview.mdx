@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { gemini } from '@corsair-dev/gemini';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		gemini(),
 	],

@@ -20,7 +20,8 @@ Create an assistant
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.assistants.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.assistants.create({});
 ```
 
 **Input**
@@ -160,7 +161,8 @@ Delete an assistant
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.assistants.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.assistants.delete({});
 ```
 
 **Input**
@@ -192,7 +194,8 @@ List assistants
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.assistants.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.assistants.list({});
 ```
 
 **Input**
@@ -273,7 +276,8 @@ Modify an assistant
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.assistants.modify({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.assistants.modify({});
 ```
 
 **Input**
@@ -414,7 +418,8 @@ Retrieve an assistant by id
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.assistants.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.assistants.retrieve({});
 ```
 
 **Input**
@@ -495,7 +500,8 @@ Generate spoken audio from text
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.audio.createSpeech({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.audio.createSpeech({});
 ```
 
 **Input**
@@ -531,7 +537,8 @@ Transcribe audio into text
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.audio.createTranscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.audio.createTranscription({});
 ```
 
 **Input**
@@ -568,7 +575,8 @@ Translate audio into English text
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.audio.createTranslation({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.audio.createTranslation({});
 ```
 
 **Input**
@@ -605,7 +613,8 @@ Cancel an in-progress batch job
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.batches.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.batches.cancel({});
 ```
 
 **Input**
@@ -689,7 +698,8 @@ Create a batch job
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.batches.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.batches.create({});
 ```
 
 **Input**
@@ -786,7 +796,8 @@ List batch jobs
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.batches.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.batches.list({});
 ```
 
 **Input**
@@ -863,7 +874,8 @@ Retrieve a batch job
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.batches.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.batches.retrieve({});
 ```
 
 **Input**
@@ -949,7 +961,8 @@ Create a chat completion for the given messages
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.chat.createCompletion({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.chat.createCompletion({});
 ```
 
 **Input**
@@ -1158,7 +1171,8 @@ Delete a stored chat completion
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.chatCompletions.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.chatCompletions.delete({});
 ```
 
 **Input**
@@ -1190,7 +1204,8 @@ List stored chat completions
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.chatCompletions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.chatCompletions.list({});
 ```
 
 **Input**
@@ -1248,7 +1263,8 @@ List messages of a stored chat completion
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.chatCompletions.listMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.chatCompletions.listMessages({});
 ```
 
 **Input**
@@ -1295,7 +1311,8 @@ Retrieve a stored chat completion
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.chatCompletions.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.chatCompletions.retrieve({});
 ```
 
 **Input**
@@ -1328,7 +1345,8 @@ Update a stored chat completion's metadata
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.chatCompletions.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.chatCompletions.update({});
 ```
 
 **Input**
@@ -1374,7 +1392,8 @@ Retrieve a ChatKit thread
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.chatkit.getThread({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.chatkit.getThread({});
 ```
 
 **Input**
@@ -1417,7 +1436,8 @@ List items in a ChatKit thread
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.chatkit.listThreadItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.chatkit.listThreadItems({});
 ```
 
 **Input**
@@ -1465,7 +1485,8 @@ List ChatKit threads
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.chatkit.listThreads({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.chatkit.listThreads({});
 ```
 
 **Input**
@@ -1520,7 +1541,8 @@ Create a legacy text completion
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.completions.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.completions.create({});
 ```
 
 **Input**
@@ -1607,7 +1629,8 @@ Add a file to a container
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.containerFiles.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.containerFiles.create({});
 ```
 
 **Input**
@@ -1646,7 +1669,8 @@ Delete a container file
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.containerFiles.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.containerFiles.delete({});
 ```
 
 **Input**
@@ -1679,7 +1703,8 @@ List files in a container
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.containerFiles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.containerFiles.list({});
 ```
 
 **Input**
@@ -1733,7 +1758,8 @@ Retrieve a container file
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.containerFiles.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.containerFiles.retrieve({});
 ```
 
 **Input**
@@ -1770,7 +1796,8 @@ Download the contents of a container file
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.containerFiles.retrieveContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.containerFiles.retrieveContent({});
 ```
 
 **Input**
@@ -1805,7 +1832,8 @@ Create a code interpreter container
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.containers.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.containers.create({});
 ```
 
 **Input**
@@ -1866,7 +1894,8 @@ Delete a container
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.containers.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.containers.delete({});
 ```
 
 **Input**
@@ -1898,7 +1927,8 @@ List containers
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.containers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.containers.list({});
 ```
 
 **Input**
@@ -1953,7 +1983,8 @@ Retrieve a container
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.containers.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.containers.retrieve({});
 ```
 
 **Input**
@@ -2002,7 +2033,8 @@ Create a conversation
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.conversations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.conversations.create({});
 ```
 
 **Input**
@@ -2064,7 +2096,8 @@ Add items to a conversation
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.conversations.createItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.conversations.createItems({});
 ```
 
 **Input**
@@ -2120,7 +2153,8 @@ Delete a conversation
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.conversations.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.conversations.delete({});
 ```
 
 **Input**
@@ -2152,7 +2186,8 @@ Delete a conversation item
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.conversations.deleteItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.conversations.deleteItem({});
 ```
 
 **Input**
@@ -2196,7 +2231,8 @@ Retrieve a conversation item
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.conversations.getItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.conversations.getItem({});
 ```
 
 **Input**
@@ -2228,7 +2264,8 @@ List items in a conversation
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.conversations.listItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.conversations.listItems({});
 ```
 
 **Input**
@@ -2276,7 +2313,8 @@ Update a conversation's metadata
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.conversations.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.conversations.update({});
 ```
 
 **Input**
@@ -2332,7 +2370,8 @@ Create embeddings for the given input
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.embeddings.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.embeddings.create({});
 ```
 
 **Input**
@@ -2394,7 +2433,8 @@ List available engines (legacy, deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.engines.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.engines.list({});
 ```
 
 **Input:** _empty object_
@@ -2434,7 +2474,8 @@ Retrieve an engine by id (legacy, deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.engines.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.engines.retrieve({});
 ```
 
 **Input**
@@ -2469,7 +2510,8 @@ Cancel an in-progress eval run
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.evalRuns.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.evalRuns.cancel({});
 ```
 
 **Input**
@@ -2535,7 +2577,8 @@ Create an eval run
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.evalRuns.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.evalRuns.create({});
 ```
 
 **Input**
@@ -2621,7 +2664,8 @@ Delete an eval run
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.evalRuns.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.evalRuns.delete({});
 ```
 
 **Input**
@@ -2654,7 +2698,8 @@ Retrieve an eval run
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.evalRuns.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.evalRuns.get({});
 ```
 
 **Input**
@@ -2720,7 +2765,8 @@ Retrieve an eval run output item
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.evalRuns.getOutputItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.evalRuns.getOutputItem({});
 ```
 
 **Input**
@@ -2753,7 +2799,8 @@ List eval runs
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.evalRuns.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.evalRuns.list({});
 ```
 
 **Input**
@@ -2812,7 +2859,8 @@ List output items for an eval run
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.evalRuns.listOutputItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.evalRuns.listOutputItems({});
 ```
 
 **Input**
@@ -2861,7 +2909,8 @@ Create an eval
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.evals.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.evals.create({});
 ```
 
 **Input**
@@ -2952,7 +3001,8 @@ Delete an eval
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.evals.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.evals.delete({});
 ```
 
 **Input**
@@ -2984,7 +3034,8 @@ Retrieve an eval
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.evals.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.evals.get({});
 ```
 
 **Input**
@@ -3046,7 +3097,8 @@ List evals
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.evals.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.evals.list({});
 ```
 
 **Input**
@@ -3101,7 +3153,8 @@ Update an eval
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.evals.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.evals.update({});
 ```
 
 **Input**
@@ -3177,7 +3230,8 @@ Delete a file
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.files.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.files.delete({});
 ```
 
 **Input**
@@ -3209,7 +3263,8 @@ Download the contents of a file
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.files.downloadContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.files.downloadContent({});
 ```
 
 **Input**
@@ -3240,7 +3295,8 @@ List uploaded files
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.files.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.files.list({});
 ```
 
 **Input**
@@ -3294,7 +3350,8 @@ Retrieve file metadata
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.files.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.files.retrieve({});
 ```
 
 **Input**
@@ -3330,7 +3387,8 @@ Upload a file to OpenAI
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.files.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.files.upload({});
 ```
 
 **Input**
@@ -3370,7 +3428,8 @@ Cancel an in-progress fine-tuning job
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.fineTuning.cancelJob({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.fineTuning.cancelJob({});
 ```
 
 **Input**
@@ -3440,7 +3499,8 @@ Create a fine-tuning job
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.fineTuning.createJob({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.fineTuning.createJob({});
 ```
 
 **Input**
@@ -3552,7 +3612,8 @@ List checkpoints for a fine-tuning job
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.fineTuning.listCheckpoints({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.fineTuning.listCheckpoints({});
 ```
 
 **Input**
@@ -3605,7 +3666,8 @@ List events for a fine-tuning job
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.fineTuning.listEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.fineTuning.listEvents({});
 ```
 
 **Input**
@@ -3656,7 +3718,8 @@ List fine-tuning jobs
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.fineTuning.listJobs({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.fineTuning.listJobs({});
 ```
 
 **Input**
@@ -3728,7 +3791,8 @@ Retrieve a fine-tuning job
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.fineTuning.retrieveJob({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.fineTuning.retrieveJob({});
 ```
 
 **Input**
@@ -3800,7 +3864,8 @@ Run a grader against a model sample
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.graders.run({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.graders.run({});
 ```
 
 **Input**
@@ -3850,7 +3915,8 @@ Validate a grader configuration
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.graders.validate({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.graders.validate({});
 ```
 
 **Input**
@@ -3902,7 +3968,8 @@ Generate images from a prompt
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.images.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.images.create({});
 ```
 
 **Input**
@@ -3954,7 +4021,8 @@ Edit an image given a prompt and mask
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.images.createEdit({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.images.createEdit({});
 ```
 
 **Input**
@@ -4006,7 +4074,8 @@ Create variations of an image
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.images.createVariation({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.images.createVariation({});
 ```
 
 **Input**
@@ -4057,7 +4126,8 @@ Create a message on a thread
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.messages.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.messages.create({});
 ```
 
 **Input**
@@ -4209,7 +4279,8 @@ Delete a message
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.messages.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.messages.delete({});
 ```
 
 **Input**
@@ -4242,7 +4313,8 @@ List messages on a thread
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.messages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.messages.list({});
 ```
 
 **Input**
@@ -4333,7 +4405,8 @@ Modify a message
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.messages.modify({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.messages.modify({});
 ```
 
 **Input**
@@ -4439,7 +4512,8 @@ Retrieve a message
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.messages.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.messages.retrieve({});
 ```
 
 **Input**
@@ -4536,7 +4610,8 @@ List available models
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.models.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.models.list({});
 ```
 
 **Input:** _empty object_
@@ -4576,7 +4651,8 @@ Retrieve a model by id
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.models.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.models.retrieve({});
 ```
 
 **Input**
@@ -4611,7 +4687,8 @@ Classify text/image input against usage policies
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.moderation.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.moderation.create({});
 ```
 
 **Input**
@@ -4673,7 +4750,8 @@ Create a realtime call
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.realtime.createCall({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.realtime.createCall({});
 ```
 
 **Input**
@@ -4715,7 +4793,8 @@ Create an ephemeral client secret for the Realtime API
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.realtime.createClientSecret({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.realtime.createClientSecret({});
 ```
 
 **Input**
@@ -4767,7 +4846,8 @@ Create a realtime session
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.realtime.createSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.realtime.createSession({});
 ```
 
 **Input**
@@ -4800,7 +4880,8 @@ Create a realtime transcription session
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.realtime.createTranscriptionSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.realtime.createTranscriptionSession({});
 ```
 
 **Input**
@@ -4843,7 +4924,8 @@ Cancel an in-progress background response
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.responses.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.responses.cancel({});
 ```
 
 **Input**
@@ -4901,7 +4983,8 @@ Compact response input to reduce token usage
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.responses.compact({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.responses.compact({});
 ```
 
 **Input**
@@ -4967,7 +5050,8 @@ Create a model response via the Responses API
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.responses.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.responses.create({});
 ```
 
 **Input**
@@ -5082,7 +5166,8 @@ Delete a stored model response
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.responses.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.responses.delete({});
 ```
 
 **Input**
@@ -5114,7 +5199,8 @@ List input items for a response
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.responses.listInputItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.responses.listInputItems({});
 ```
 
 **Input**
@@ -5162,7 +5248,8 @@ Retrieve a model response
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.responses.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.responses.retrieve({});
 ```
 
 **Input**
@@ -5222,7 +5309,8 @@ Cancel an in-progress run
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.runs.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.runs.cancel({});
 ```
 
 **Input**
@@ -5333,7 +5421,8 @@ Create a run on a thread
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.runs.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.runs.create({});
 ```
 
 **Input**
@@ -5517,7 +5606,8 @@ List runs on a thread
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.runs.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.runs.list({});
 ```
 
 **Input**
@@ -5609,7 +5699,8 @@ Modify a run
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.runs.modify({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.runs.modify({});
 ```
 
 **Input**
@@ -5731,7 +5822,8 @@ Retrieve a run
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.runs.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.runs.retrieve({});
 ```
 
 **Input**
@@ -5842,7 +5934,8 @@ Submit tool outputs to a run awaiting action
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.runs.submitToolOutputs({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.runs.submitToolOutputs({});
 ```
 
 **Input**
@@ -5968,7 +6061,8 @@ List steps of a run
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.runSteps.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.runSteps.list({});
 ```
 
 **Input**
@@ -6036,7 +6130,8 @@ Retrieve a run step
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.runSteps.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.runSteps.retrieve({});
 ```
 
 **Input**
@@ -6111,7 +6206,8 @@ Upload a skill
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.skills.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.skills.create({});
 ```
 
 **Input**
@@ -6148,7 +6244,8 @@ Delete a skill
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.skills.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.skills.delete({});
 ```
 
 **Input**
@@ -6180,7 +6277,8 @@ List skills
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.skills.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.skills.list({});
 ```
 
 **Input**
@@ -6228,7 +6326,8 @@ Create a thread
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.threads.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.threads.create({});
 ```
 
 **Input**
@@ -6309,7 +6408,8 @@ Create a thread and run it in one call
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.threads.createAndRun({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.threads.createAndRun({});
 ```
 
 **Input**
@@ -6529,7 +6629,8 @@ Delete a thread
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.threads.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.threads.delete({});
 ```
 
 **Input**
@@ -6561,7 +6662,8 @@ Modify a thread
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.threads.modify({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.threads.modify({});
 ```
 
 **Input**
@@ -6630,7 +6732,8 @@ Retrieve a thread by id
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.threads.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.threads.retrieve({});
 ```
 
 **Input**
@@ -6675,7 +6778,8 @@ Count input tokens for a prospective request
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.tokens.countInput({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.tokens.countInput({});
 ```
 
 **Input**
@@ -6727,7 +6831,8 @@ Add a part of file data to an upload
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.uploads.addPart({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.uploads.addPart({});
 ```
 
 **Input**
@@ -6762,7 +6867,8 @@ Cancel an in-progress upload session
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.uploads.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.uploads.cancel({});
 ```
 
 **Input**
@@ -6816,7 +6922,8 @@ Complete a multipart upload session
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.uploads.complete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.uploads.complete({});
 ```
 
 **Input**
@@ -6872,7 +6979,8 @@ Create a multipart upload session
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.uploads.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.uploads.create({});
 ```
 
 **Input**
@@ -6931,7 +7039,8 @@ Attach a batch of files to a vector store
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.vectorStoreFileBatches.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStoreFileBatches.create({});
 ```
 
 **Input**
@@ -7009,7 +7118,8 @@ List files in a vector store file batch
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStoreFileBatches.listFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStoreFileBatches.listFiles({});
 ```
 
 **Input**
@@ -7071,7 +7181,8 @@ Retrieve a vector store file batch
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStoreFileBatches.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStoreFileBatches.retrieve({});
 ```
 
 **Input**
@@ -7124,7 +7235,8 @@ Attach a file to a vector store
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.vectorStoreFiles.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStoreFiles.create({});
 ```
 
 **Input**
@@ -7209,7 +7321,8 @@ Detach a file from a vector store
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.vectorStoreFiles.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStoreFiles.delete({});
 ```
 
 **Input**
@@ -7242,7 +7355,8 @@ List files attached to a vector store
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStoreFiles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStoreFiles.list({});
 ```
 
 **Input**
@@ -7303,7 +7417,8 @@ Retrieve a vector store file
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStoreFiles.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStoreFiles.retrieve({});
 ```
 
 **Input**
@@ -7361,7 +7476,8 @@ Retrieve the parsed content of a vector store file
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStoreFiles.retrieveContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStoreFiles.retrieveContent({});
 ```
 
 **Input**
@@ -7407,7 +7523,8 @@ Update attributes on a vector store file
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.vectorStoreFiles.updateAttributes({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStoreFiles.updateAttributes({});
 ```
 
 **Input**
@@ -7478,7 +7595,8 @@ Create a vector store
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.vectorStores.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStores.create({});
 ```
 
 **Input**
@@ -7590,7 +7708,8 @@ Delete a vector store
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.vectorStores.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStores.delete({});
 ```
 
 **Input**
@@ -7622,7 +7741,8 @@ List vector stores
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStores.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStores.list({});
 ```
 
 **Input**
@@ -7690,7 +7810,8 @@ Modify a vector store
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.vectorStores.modify({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStores.modify({});
 ```
 
 **Input**
@@ -7786,7 +7907,8 @@ Retrieve a vector store
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStores.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStores.retrieve({});
 ```
 
 **Input**
@@ -7859,7 +7981,8 @@ Search a vector store for relevant chunks
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStores.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.vectorStores.search({});
 ```
 
 **Input**
@@ -7939,7 +8062,8 @@ Generate a video from a prompt
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.videos.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.videos.create({});
 ```
 
 **Input**
@@ -7995,7 +8119,8 @@ Create a remix of an existing video
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.videos.createRemix({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.videos.createRemix({});
 ```
 
 **Input**
@@ -8047,7 +8172,8 @@ Delete a video
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.videos.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.videos.delete({});
 ```
 
 **Input**
@@ -8079,7 +8205,8 @@ Download the rendered content of a video
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.videos.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.videos.download({});
 ```
 
 **Input**
@@ -8110,7 +8237,8 @@ List generated videos
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.videos.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.videos.list({});
 ```
 
 **Input**
@@ -8169,7 +8297,8 @@ Retrieve a video
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.videos.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.openai.api.videos.retrieve({});
 ```
 
 **Input**

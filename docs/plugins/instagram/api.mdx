@@ -20,7 +20,8 @@ create a carousel container for publishing on instagram.
 **Risk:** `write`
 
 ```ts
-await corsair.instagram.api.carousel.post({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.carousel.post({});
 ```
 
 **Input**
@@ -70,7 +71,8 @@ get details about a specific comment on an instagram media object.
 **Risk:** `read`
 
 ```ts
-await corsair.instagram.api.comments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.comments.get({});
 ```
 
 **Input**
@@ -145,7 +147,8 @@ list comments on an instagram media object.
 **Risk:** `read`
 
 ```ts
-await corsair.instagram.api.comments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.comments.list({});
 ```
 
 **Input**
@@ -190,7 +193,8 @@ delete a comment on an instagram media object.
 **Risk:** `write`
 
 ```ts
-await corsair.instagram.api.comments.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.comments.remove({});
 ```
 
 **Input**
@@ -220,7 +224,8 @@ reply to a comment on an instagram media object.
 **Risk:** `write`
 
 ```ts
-await corsair.instagram.api.comments.reply({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.comments.reply({});
 ```
 
 **Input**
@@ -251,7 +256,8 @@ send a comment on an instagram media object.
 **Risk:** `write`
 
 ```ts
-await corsair.instagram.api.comments.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.comments.send({});
 ```
 
 **Input**
@@ -282,7 +288,8 @@ update a comment on an instagram media object.
 **Risk:** `write`
 
 ```ts
-await corsair.instagram.api.comments.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.comments.update({});
 ```
 
 **Input**
@@ -315,7 +322,8 @@ get messages in a conversation on instagram messaging.
 **Risk:** `read`
 
 ```ts
-await corsair.instagram.api.conversations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.conversations.get({});
 ```
 
 **Input**
@@ -376,7 +384,8 @@ list conversations on instagram messaging.
 **Risk:** `read`
 
 ```ts
-await corsair.instagram.api.conversations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.conversations.list({});
 ```
 
 **Input**
@@ -420,7 +429,8 @@ create an image container for publishing on instagram.
 **Risk:** `write`
 
 ```ts
-await corsair.instagram.api.image.post({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.image.post({});
 ```
 
 **Input**
@@ -481,7 +491,8 @@ create an image story container for publishing on instagram.
 **Risk:** `write`
 
 ```ts
-await corsair.instagram.api.image.story({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.image.story({});
 ```
 
 **Input**
@@ -515,7 +526,8 @@ get details about a specific media object.
 **Risk:** `read`
 
 ```ts
-await corsair.instagram.api.media.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.media.get({});
 ```
 
 **Input**
@@ -574,7 +586,8 @@ get insights for a specific media object.
 **Risk:** `read`
 
 ```ts
-await corsair.instagram.api.media.insights({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.media.insights({});
 ```
 
 **Input**
@@ -616,7 +629,8 @@ list media objects on the instagram account.
 **Risk:** `read`
 
 ```ts
-await corsair.instagram.api.media.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.media.list({});
 ```
 
 **Input**
@@ -691,7 +705,8 @@ get the status of a media container.
 **Risk:** `read`
 
 ```ts
-await corsair.instagram.api.media.status({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.media.status({});
 ```
 
 **Input**
@@ -724,7 +739,8 @@ get details about a specific message on instagram messaging.
 **Risk:** `read`
 
 ```ts
-await corsair.instagram.api.messages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.messages.get({});
 ```
 
 **Input**
@@ -790,7 +806,8 @@ send a message in instagram messaging.
 **Risk:** `write`
 
 ```ts
-await corsair.instagram.api.messages.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.messages.send({});
 ```
 
 **Input**
@@ -854,7 +871,8 @@ read the user instagram profile.
 **Risk:** `read`
 
 ```ts
-await corsair.instagram.api.profile.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.profile.get({});
 ```
 
 **Input**
@@ -896,7 +914,8 @@ get insights for the instagram business account.
 **Risk:** `read`
 
 ```ts
-await corsair.instagram.api.profile.insights({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.profile.insights({});
 ```
 
 **Input**
@@ -945,7 +964,8 @@ publish media on instagram.
 **Risk:** `write`
 
 ```ts
-await corsair.instagram.api.publish.publish_media({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.publish.publish_media({});
 ```
 
 **Input**
@@ -978,7 +998,8 @@ create a reel container for publishing on instagram.
 **Risk:** `write`
 
 ```ts
-await corsair.instagram.api.reel.post({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.reel.post({});
 ```
 
 **Input**
@@ -1034,7 +1055,8 @@ create a video carousel container for publishing on instagram.
 **Risk:** `write`
 
 ```ts
-await corsair.instagram.api.video.container({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.video.container({});
 ```
 
 **Input**
@@ -1094,7 +1116,8 @@ create a video story container for publishing on instagram.
 **Risk:** `write`
 
 ```ts
-await corsair.instagram.api.video.story({});
+const tenant = corsair.withTenant('acme');
+await tenant.instagram.api.video.story({});
 ```
 
 **Input**

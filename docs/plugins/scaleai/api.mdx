@@ -1,0 +1,2658 @@
+---
+title: API
+description: "API reference for Scale AI: every `scaleai.api.*` operation with input and output types."
+---
+
+Every `scaleai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Audits
+
+### getFixlessAudits
+
+`audits.getFixlessAudits`
+
+Retrieve fixless audits by task id or audit id
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.audits.getFixlessAudits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Batches
+
+### createBatch
+
+`batches.createBatch`
+
+Create a new batch within a project
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.batches.createBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `callback` | `string` | No | — |
+| `calibration_batch` | `boolean` | No | — |
+| `self_label_batch` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `project` | `string` | No | — |
+| `status` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `callback` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### finalizeBatch
+
+`batches.finalizeBatch`
+
+Finalize a batch so its tasks can be worked on
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.batches.finalizeBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `project` | `string` | No | — |
+| `status` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `callback` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBatch
+
+`batches.getBatch`
+
+Retrieve a batch by name
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.batches.getBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `project` | `string` | No | — |
+| `status` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `callback` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBatchStatus
+
+`batches.getBatchStatus`
+
+Retrieve a batch status with task completion counts
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.batches.getBatchStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `tasks_pending` | `number` | No | — |
+| `tasks_completed` | `number` | No | — |
+| `tasks_error` | `number` | No | — |
+| `tasks_canceled` | `number` | No | — |
+
+
+
+---
+
+### listBatches
+
+`batches.listBatches`
+
+List batches newest-first with pagination
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.batches.listBatches({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `status` | `string` | No | — |
+| `start_time` | `string` | No | — |
+| `end_time` | `string` | No | — |
+| `exclude_archived` | `boolean` | No | — |
+| `detailed` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docs` | `object[]` | Yes | — |
+| `totalDocs` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `has_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="docs full type">
+
+```ts
+{
+  name: string,
+  project?: string,
+  status?: string,
+  created_at?: string,
+  completed_at?: string,
+  callback?: string,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### getAssets
+
+`files.getAssets`
+
+List file assets filtered by project and metadata (paginated)
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.files.getAssets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docs` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `next_token` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="docs full type">
+
+```ts
+{
+  id?: string,
+  attachment_url?: string,
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importFile
+
+`files.importFile`
+
+Import a file into Scale from a remote URL
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.files.importFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_url` | `string` | Yes | — |
+| `project_name` | `string` | No | — |
+| `reference_id` | `string` | No | — |
+| `attachment_type` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `attachment_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### uploadFile
+
+`files.uploadFile`
+
+Upload a local file (base64) to Scale, max 80 MB
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.files.uploadFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_base64` | `string` | Yes | — |
+| `file_name` | `string` | Yes | — |
+| `mime_type` | `string` | No | — |
+| `project_name` | `string` | No | — |
+| `reference_id` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `attachment_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+## Projects
+
+### getProject
+
+`projects.getProject`
+
+Retrieve a project by name
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.projects.getProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `param_history` | `object[]` | No | — |
+| `created_at` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="param_history full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProjects
+
+`projects.listProjects`
+
+List all projects, optionally filtered by archived state
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.projects.listProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `archived` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  type?: string,
+  name: string,
+  param_history?: {
+  }[],
+  created_at?: string,
+  archived?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### setProjectOntology
+
+`projects.setProjectOntology`
+
+Set the ontology (label classes) for a project
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.projects.setProjectOntology({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `ontology` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="ontology full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `param_history` | `object[]` | No | — |
+| `created_at` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="param_history full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setProjectParams
+
+`projects.setProjectParams`
+
+Set default task parameters for a project
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.projects.setProjectParams({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `patch` | `boolean` | No | — |
+| `instruction` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `param_history` | `object[]` | No | — |
+| `created_at` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="param_history full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Quality
+
+### getQualityLabelers
+
+`quality.getQualityLabelers`
+
+Retrieve labeler training attempts by quality task id or email
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.quality.getQualityLabelers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quality_task_ids` | `string[]` | No | — |
+| `labeler_emails` | `string[]` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Studio
+
+### addStudioAssignments
+
+`studio.addStudioAssignments`
+
+Assign projects to Studio team members by email
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.studio.addStudioAssignments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+| `projects` | `string[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getStudioAssignments
+
+`studio.getStudioAssignments`
+
+Retrieve current Studio project assignments per active user
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.studio.getStudioAssignments({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getStudioBatches
+
+`studio.getStudioBatches`
+
+List pending Studio batches ordered by priority
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.studio.getStudioBatches({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeStudioAssignments
+
+`studio.removeStudioAssignments`
+
+Unassign projects from Studio team members by email
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.studio.removeStudioAssignments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+| `projects` | `string[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### resetBatchPriorities
+
+`studio.resetBatchPriorities`
+
+Reset Studio batch priority order to the default
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.studio.resetBatchPriorities({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### setBatchPriorities
+
+`studio.setBatchPriorities`
+
+Set the priority order of pending Studio batches
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.studio.setBatchPriorities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch_names` | `string[]` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tasks
+
+### addTaskTags
+
+`tasks.addTaskTags`
+
+Add tags to a task (duplicates ignored)
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.addTaskTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createDocumentTranscriptionTask
+
+`tasks.createDocumentTranscriptionTask`
+
+Create a document transcription / annotation task
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.createDocumentTranscriptionTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `unique_id` | `string` | No | — |
+| `clear_unique_id_on_error` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `priority` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `attachment` | `string` | No | — |
+| `attachments` | `string[]` | No | — |
+| `attachment_type` | `string` | No | — |
+| `fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createImageAnnotationTask
+
+`tasks.createImageAnnotationTask`
+
+Create an image annotation task (boxes, polygons, points, etc.)
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.createImageAnnotationTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `unique_id` | `string` | No | — |
+| `clear_unique_id_on_error` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `priority` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `attachment` | `string` | Yes | — |
+| `attachment_type` | `string` | No | — |
+| `geometries` | `object` | Yes | — |
+| `annotation_attributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="geometries full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="annotation_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createLidarAnnotationTask
+
+`tasks.createLidarAnnotationTask`
+
+Create a LiDAR 3D cuboid annotation task
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.createLidarAnnotationTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `unique_id` | `string` | No | — |
+| `clear_unique_id_on_error` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `priority` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `attachments` | `string[]` | No | — |
+| `attachment` | `string` | No | — |
+| `labels` | `object[]` | No | — |
+| `annotation_attributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+(
+  string | {
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="annotation_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createLidarSegmentationTask
+
+`tasks.createLidarSegmentationTask`
+
+Create a LiDAR point cloud semantic segmentation task
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.createLidarSegmentationTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `unique_id` | `string` | No | — |
+| `clear_unique_id_on_error` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `priority` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `attachments` | `string[]` | No | — |
+| `attachment` | `string` | No | — |
+| `labels` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+(
+  string | {
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createNamedEntityRecognitionTask
+
+`tasks.createNamedEntityRecognitionTask`
+
+Create a named entity recognition task over text
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.createNamedEntityRecognitionTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `unique_id` | `string` | No | — |
+| `clear_unique_id_on_error` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `priority` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `text` | `string` | No | — |
+| `attachments` | `object[]` | No | — |
+| `labels` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+(
+  string | {
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+(
+  string | {
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createSegmentationAnnotationTask
+
+`tasks.createSegmentationAnnotationTask`
+
+Create a semantic segmentation task classifying image pixels
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.createSegmentationAnnotationTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `unique_id` | `string` | No | — |
+| `clear_unique_id_on_error` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `priority` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `attachment` | `string` | Yes | — |
+| `labels` | `object[]` | Yes | — |
+| `allow_unlabeled` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+(
+  string | {
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createTextCollectionTask
+
+`tasks.createTextCollectionTask`
+
+Create a text collection task gathering structured field data
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.createTextCollectionTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `unique_id` | `string` | No | — |
+| `clear_unique_id_on_error` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `priority` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createVideoAnnotationTask
+
+`tasks.createVideoAnnotationTask`
+
+Create a video annotation task across frames or video files
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.createVideoAnnotationTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `unique_id` | `string` | No | — |
+| `clear_unique_id_on_error` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `priority` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `attachment` | `string` | No | — |
+| `attachments` | `string[]` | No | — |
+| `attachment_type` | `string` | No | — |
+| `geometries` | `object` | Yes | — |
+| `annotation_attributes` | `object` | No | — |
+| `events_to_annotate` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="geometries full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="annotation_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createVideoPlaybackAnnotationTask
+
+`tasks.createVideoPlaybackAnnotationTask`
+
+Create a video playback annotation task for object tracking
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.createVideoPlaybackAnnotationTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `unique_id` | `string` | No | — |
+| `clear_unique_id_on_error` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `priority` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `attachment` | `string` | Yes | — |
+| `attachments` | `string[]` | No | — |
+| `geometries` | `object` | Yes | — |
+| `annotation_attributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="geometries full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="annotation_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteTaskTags
+
+`tasks.deleteTaskTags`
+
+Remove tags from a task
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.deleteTaskTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteTaskUniqueId
+
+`tasks.deleteTaskUniqueId`
+
+Remove a task's unique_id
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.deleteTaskUniqueId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTask
+
+`tasks.getTask`
+
+Retrieve a task by id including status, response and metadata
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.getTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTaskResponseUrl
+
+`tasks.getTaskResponseUrl`
+
+Fetch secure authenticated task response data for a task
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.getTaskResponseUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### listTasks
+
+`tasks.listTasks`
+
+List tasks with filtering and cursor pagination
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.listTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `type` | `imageannotation \| segmentannotation \| videoannotation \| videoplaybackannotation \| lidarannotation \| lidarsegmentation \| lidartopdown \| namedentityrecognition \| textcollection \| documenttranscription \| categorization \| transcription \| comparison` | No | — |
+| `status` | `pending \| completed \| canceled \| error` | No | — |
+| `customer_review_status` | `accepted \| fixed \| commented \| rejected \| pending \| accepted \| fixed \| commented \| rejected \| pending[]` | No | — |
+| `unique_id` | `string \| string[]` | No | — |
+| `tags` | `string \| string[]` | No | — |
+| `start_time` | `string` | No | — |
+| `end_time` | `string` | No | — |
+| `completed_after` | `string` | No | — |
+| `completed_before` | `string` | No | — |
+| `updated_after` | `string` | No | — |
+| `updated_before` | `string` | No | — |
+| `include_attachment_url` | `boolean` | No | — |
+| `limited_response` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docs` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+| `count` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `has_more` | `boolean` | No | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="docs full type">
+
+```ts
+{
+  task_id: string,
+  created_at?: string,
+  updated_at?: string,
+  completed_at?: string,
+  type?: string,
+  status?: string,
+  instruction?: string,
+  params?: {
+  },
+  callback_url?: string,
+  callback_completed?: boolean,
+  project?: string,
+  batch?: string,
+  metadata?: {
+  },
+  response?: {
+  },
+  audits?: {
+  }[],
+  tags?: string[],
+  unique_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendTaskCallback
+
+`tasks.sendTaskCallback`
+
+Re-send the callback for a completed or errored task
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.sendTaskCallback({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### setTaskMetadata
+
+`tasks.setTaskMetadata`
+
+Set the metadata object on a task (idempotent)
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.setTaskMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateTaskUniqueId
+
+`tasks.updateTaskUniqueId`
+
+Set or update a task's unique_id
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.tasks.updateTaskUniqueId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `unique_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `instruction` | `string` | No | — |
+| `params` | `object` | No | — |
+| `callback_url` | `string` | No | — |
+| `callback_completed` | `boolean` | No | — |
+| `project` | `string` | No | — |
+| `batch` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `response` | `object` | No | — |
+| `audits` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `unique_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="audits full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### getTeams
+
+`teams.getTeams`
+
+List all team members with roles and notification preferences
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.teams.getTeams({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id?: string,
+  id?: string,
+  email?: string,
+  role?: string,
+  disableRapidEmails?: boolean,
+  isStudioLabeler?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### inviteTeamMember
+
+`teams.inviteTeamMember`
+
+Invite users by email to the team with a role
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scaleai.api.teams.inviteTeamMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+| `role` | `labeler \| member \| manager` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id?: string,
+  id?: string,
+  email?: string,
+  role?: string,
+  disableRapidEmails?: boolean,
+  isStudioLabeler?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

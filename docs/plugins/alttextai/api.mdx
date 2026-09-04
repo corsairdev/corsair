@@ -20,7 +20,8 @@ Get AltText.ai account settings and usage
 **Risk:** `read`
 
 ```ts
-await corsair.alttextai.api.account.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.alttextai.api.account.get({});
 ```
 
 **Input:** _empty object_
@@ -80,7 +81,8 @@ Update AltText.ai account settings
 **Risk:** `write`
 
 ```ts
-await corsair.alttextai.api.account.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.alttextai.api.account.update({});
 ```
 
 **Input**
@@ -163,7 +165,8 @@ Upload a CSV of image URLs for batch alt text generation
 **Risk:** `write`
 
 ```ts
-await corsair.alttextai.api.images.bulkCreate({});
+const tenant = corsair.withTenant('acme');
+await tenant.alttextai.api.images.bulkCreate({});
 ```
 
 **Input**
@@ -197,7 +200,8 @@ Add an image and generate AI alt text from URL or base64 data
 **Risk:** `write`
 
 ```ts
-await corsair.alttextai.api.images.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.alttextai.api.images.create({});
 ```
 
 **Input**
@@ -300,7 +304,8 @@ Delete an image from the AltText.ai library
 **Risk:** `destructive`
 
 ```ts
-await corsair.alttextai.api.images.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.alttextai.api.images.delete({});
 ```
 
 **Input**
@@ -365,7 +370,8 @@ Retrieve image metadata and alt text by asset ID
 **Risk:** `read`
 
 ```ts
-await corsair.alttextai.api.images.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.alttextai.api.images.get({});
 ```
 
 **Input**
@@ -430,7 +436,8 @@ List images in the AltText.ai library with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.alttextai.api.images.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.alttextai.api.images.list({});
 ```
 
 **Input**
@@ -485,7 +492,8 @@ Scrape a web page and queue alt text for all images found
 **Risk:** `write`
 
 ```ts
-await corsair.alttextai.api.images.pageScrape({});
+const tenant = corsair.withTenant('acme');
+await tenant.alttextai.api.images.pageScrape({});
 ```
 
 **Input**
@@ -549,7 +557,8 @@ Search images by alt text, asset ID, or URL substring
 **Risk:** `read`
 
 ```ts
-await corsair.alttextai.api.images.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.alttextai.api.images.search({});
 ```
 
 **Input**
@@ -604,7 +613,8 @@ Update alt text or metadata for an existing image
 **Risk:** `write`
 
 ```ts
-await corsair.alttextai.api.images.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.alttextai.api.images.update({});
 ```
 
 **Input**

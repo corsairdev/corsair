@@ -20,7 +20,8 @@ Get the global commodities price index
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.commodities.all({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.commodities.all({});
 ```
 
 **Input**
@@ -65,7 +66,8 @@ Get global aluminum prices
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.commodities.aluminum({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.commodities.aluminum({});
 ```
 
 **Input**
@@ -110,7 +112,8 @@ Get Brent crude oil prices
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.commodities.brent({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.commodities.brent({});
 ```
 
 **Input**
@@ -155,7 +158,8 @@ Get global coffee prices
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.commodities.coffee({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.commodities.coffee({});
 ```
 
 **Input**
@@ -200,7 +204,8 @@ Get global copper prices
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.commodities.copper({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.commodities.copper({});
 ```
 
 **Input**
@@ -245,7 +250,8 @@ Get global corn prices
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.commodities.corn({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.commodities.corn({});
 ```
 
 **Input**
@@ -290,7 +296,8 @@ Get global cotton prices
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.commodities.cotton({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.commodities.cotton({});
 ```
 
 **Input**
@@ -335,7 +342,8 @@ Get global sugar prices
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.commodities.sugar({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.commodities.sugar({});
 ```
 
 **Input**
@@ -380,7 +388,8 @@ Get global wheat prices
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.commodities.wheat({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.commodities.wheat({});
 ```
 
 **Input**
@@ -427,7 +436,8 @@ Get daily bars for a digital currency
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.crypto.daily({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.crypto.daily({});
 ```
 
 **Input**
@@ -468,7 +478,8 @@ Get intraday bars for a digital currency [PREMIUM PLAN]
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.crypto.intraday({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.crypto.intraday({});
 ```
 
 **Input**
@@ -511,7 +522,8 @@ Get monthly bars for a digital currency
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.crypto.monthly({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.crypto.monthly({});
 ```
 
 **Input**
@@ -552,7 +564,8 @@ Get weekly bars for a digital currency
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.crypto.weekly({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.crypto.weekly({});
 ```
 
 **Input**
@@ -595,7 +608,8 @@ Get the US consumer price index
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.economic.cpi({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.economic.cpi({});
 ```
 
 **Input**
@@ -640,7 +654,8 @@ Get US durable goods orders
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.economic.durables({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.economic.durables({});
 ```
 
 **Input:** _empty object_
@@ -680,7 +695,8 @@ Get the US federal funds rate
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.economic.federalFundsRate({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.economic.federalFundsRate({});
 ```
 
 **Input**
@@ -725,7 +741,8 @@ Get annual US inflation
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.economic.inflation({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.economic.inflation({});
 ```
 
 **Input:** _empty object_
@@ -765,7 +782,8 @@ Get US nonfarm payroll totals
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.economic.nonfarmPayroll({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.economic.nonfarmPayroll({});
 ```
 
 **Input:** _empty object_
@@ -805,7 +823,8 @@ Get US real gross domestic product
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.economic.realGdp({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.economic.realGdp({});
 ```
 
 **Input**
@@ -850,7 +869,8 @@ Get US real GDP per capita
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.economic.realGdpPerCapita({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.economic.realGdpPerCapita({});
 ```
 
 **Input:** _empty object_
@@ -890,7 +910,8 @@ Get US advance retail sales
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.economic.retailSales({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.economic.retailSales({});
 ```
 
 **Input:** _empty object_
@@ -930,7 +951,8 @@ Get US treasury yield for a constant maturity
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.economic.treasuryYield({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.economic.treasuryYield({});
 ```
 
 **Input**
@@ -976,7 +998,8 @@ Get the US unemployment rate
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.economic.unemployment({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.economic.unemployment({});
 ```
 
 **Input:** _empty object_
@@ -1018,7 +1041,8 @@ Get daily bars for a currency pair
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.forex.daily({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.forex.daily({});
 ```
 
 **Input**
@@ -1060,7 +1084,8 @@ Get the current rate for a currency pair
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.forex.exchangeRate({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.forex.exchangeRate({});
 ```
 
 **Input**
@@ -1110,7 +1135,8 @@ Get intraday bars for a currency pair [PREMIUM PLAN]
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.forex.intraday({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.forex.intraday({});
 ```
 
 **Input**
@@ -1153,7 +1179,8 @@ Get monthly bars for a currency pair
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.forex.monthly({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.forex.monthly({});
 ```
 
 **Input**
@@ -1194,7 +1221,8 @@ Get weekly bars for a currency pair
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.forex.weekly({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.forex.weekly({});
 ```
 
 **Input**
@@ -1237,7 +1265,8 @@ Get annual and quarterly balance sheets
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.fundamentals.balanceSheet({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.fundamentals.balanceSheet({});
 ```
 
 **Input**
@@ -1291,7 +1320,8 @@ Get annual and quarterly cash flow statements
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.fundamentals.cashFlow({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.fundamentals.cashFlow({});
 ```
 
 **Input**
@@ -1345,7 +1375,8 @@ Get a company profile with sector and valuation figures
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.fundamentals.companyOverview({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.fundamentals.companyOverview({});
 ```
 
 **Input**
@@ -1429,7 +1460,8 @@ Get historical and declared dividends
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.fundamentals.dividends({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.fundamentals.dividends({});
 ```
 
 **Input**
@@ -1475,7 +1507,8 @@ Get reported and estimated earnings per share
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.fundamentals.earnings({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.fundamentals.earnings({});
 ```
 
 **Input**
@@ -1530,7 +1563,8 @@ List upcoming earnings dates (CSV upstream)
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.fundamentals.earningsCalendar({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.fundamentals.earningsCalendar({});
 ```
 
 **Input**
@@ -1566,7 +1600,8 @@ Get an earnings call transcript with per-speaker sentiment
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.fundamentals.earningsCallTranscript({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.fundamentals.earningsCallTranscript({});
 ```
 
 **Input**
@@ -1613,7 +1648,8 @@ Get annual and quarterly income statements
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.fundamentals.incomeStatement({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.fundamentals.incomeStatement({});
 ```
 
 **Input**
@@ -1667,7 +1703,8 @@ List IPOs expected in the next three months (CSV upstream)
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.fundamentals.ipoCalendar({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.fundamentals.ipoCalendar({});
 ```
 
 **Input:** _empty object_
@@ -1697,7 +1734,8 @@ Get historical stock splits
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.fundamentals.splits({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.fundamentals.splits({});
 ```
 
 **Input**
@@ -1742,7 +1780,8 @@ Get a full options chain for one date [PREMIUM PLAN]
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.intelligence.historicalOptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.intelligence.historicalOptions({});
 ```
 
 **Input**
@@ -1790,7 +1829,8 @@ Get market news with article and ticker sentiment scores
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.intelligence.newsSentiment({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.intelligence.newsSentiment({});
 ```
 
 **Input**
@@ -1851,7 +1891,8 @@ Get rolling-window statistics across a set of tickers
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.intelligence.slidingWindowAnalytics({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.intelligence.slidingWindowAnalytics({});
 ```
 
 **Input**
@@ -1913,7 +1954,8 @@ List every covered security, active or delisted (CSV upstream)
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.market.listingStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.market.listingStatus({});
 ```
 
 **Input**
@@ -1949,7 +1991,8 @@ Get sector performance [DEPRECATED UPSTREAM: returns an empty body]
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.market.sector({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.market.sector({});
 ```
 
 **Input:** _empty object_
@@ -1979,7 +2022,8 @@ Get the open or closed state of global exchanges
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.market.status({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.market.status({});
 ```
 
 **Input:** _empty object_
@@ -2022,7 +2066,8 @@ Search securities by name or ticker fragment
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.market.symbolSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.market.symbolSearch({});
 ```
 
 **Input**
@@ -2071,7 +2116,8 @@ Get the top gainers, losers and most actively traded US tickers
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.market.topGainersLosers({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.market.topGainersLosers({});
 ```
 
 **Input:** _empty object_
@@ -2143,7 +2189,8 @@ Calculate any technical indicator (SMA, EMA, RSI, MACD, ...)
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.technical.indicator({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.technical.indicator({});
 ```
 
 **Input**
@@ -2201,7 +2248,8 @@ Get daily OHLCV bars
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.timeSeries.daily({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.timeSeries.daily({});
 ```
 
 **Input**
@@ -2242,7 +2290,8 @@ Get the latest price and volume for one ticker
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.timeSeries.globalQuote({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.timeSeries.globalQuote({});
 ```
 
 **Input**
@@ -2293,7 +2342,8 @@ Get intraday OHLCV bars at 1-60 minute resolution [PREMIUM PLAN]
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.timeSeries.intraday({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.timeSeries.intraday({});
 ```
 
 **Input**
@@ -2338,7 +2388,8 @@ Get historical intraday bars beyond the default window [PREMIUM PLAN]
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.timeSeries.intradayExtended({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.timeSeries.intradayExtended({});
 ```
 
 **Input**
@@ -2382,7 +2433,8 @@ Get monthly OHLCV bars
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.timeSeries.monthly({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.timeSeries.monthly({});
 ```
 
 **Input**
@@ -2422,7 +2474,8 @@ Get monthly bars adjusted for splits and dividends
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.timeSeries.monthlyAdjusted({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.timeSeries.monthlyAdjusted({});
 ```
 
 **Input**
@@ -2462,7 +2515,8 @@ Get quotes for up to 100 tickers at once [PREMIUM PLAN]
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.timeSeries.realtimeBulkQuotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.timeSeries.realtimeBulkQuotes({});
 ```
 
 **Input**
@@ -2505,7 +2559,8 @@ Get weekly OHLCV bars
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.timeSeries.weekly({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.timeSeries.weekly({});
 ```
 
 **Input**
@@ -2545,7 +2600,8 @@ Get weekly bars adjusted for splits and dividends
 **Risk:** `read`
 
 ```ts
-await corsair.alphavantage.api.timeSeries.weeklyAdjusted({});
+const tenant = corsair.withTenant('acme');
+await tenant.alphavantage.api.timeSeries.weeklyAdjusted({});
 ```
 
 **Input**

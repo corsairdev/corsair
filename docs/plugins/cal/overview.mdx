@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { cal } from '@corsair-dev/cal';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		cal(),
 	],

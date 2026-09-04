@@ -14,7 +14,8 @@ The Brandfetch plugin syncs data locally. Use `corsair.brandfetch.db.<entity>.se
 Path: `brandfetch.db.brands.search`
 
 ```ts
-const rows = await corsair.brandfetch.db.brands.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.brandfetch.db.brands.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -46,7 +47,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `brandfetch.db.companies.search`
 
 ```ts
-const rows = await corsair.brandfetch.db.companies.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.brandfetch.db.companies.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -79,7 +81,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `brandfetch.db.webhooks.search`
 
 ```ts
-const rows = await corsair.brandfetch.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.brandfetch.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

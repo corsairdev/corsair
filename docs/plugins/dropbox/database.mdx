@@ -14,7 +14,8 @@ The Dropbox plugin syncs data locally. Use `corsair.dropbox.db.<entity>.search({
 Path: `dropbox.db.files.search`
 
 ```ts
-const rows = await corsair.dropbox.db.files.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dropbox.db.files.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -46,7 +47,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dropbox.db.folders.search`
 
 ```ts
-const rows = await corsair.dropbox.db.folders.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dropbox.db.folders.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

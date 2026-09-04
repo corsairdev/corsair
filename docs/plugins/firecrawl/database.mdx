@@ -14,7 +14,8 @@ The Firecrawl plugin syncs data locally. Use `corsair.firecrawl.db.<entity>.sear
 Path: `firecrawl.db.jobs.search`
 
 ```ts
-const rows = await corsair.firecrawl.db.jobs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.firecrawl.db.jobs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `firecrawl.db.scrapes.search`
 
 ```ts
-const rows = await corsair.firecrawl.db.scrapes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.firecrawl.db.scrapes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -73,7 +75,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `firecrawl.db.searches.search`
 
 ```ts
-const rows = await corsair.firecrawl.db.searches.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.firecrawl.db.searches.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -98,7 +101,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `firecrawl.db.siteMaps.search`
 
 ```ts
-const rows = await corsair.firecrawl.db.siteMaps.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.firecrawl.db.siteMaps.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

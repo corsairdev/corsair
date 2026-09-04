@@ -14,7 +14,8 @@ The Youtube plugin syncs data locally. Use `corsair.youtube.db.<entity>.search({
 Path: `youtube.db.activities.search`
 
 ```ts
-const rows = await corsair.youtube.db.activities.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.youtube.db.activities.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `youtube.db.captions.search`
 
 ```ts
-const rows = await corsair.youtube.db.captions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.youtube.db.captions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -72,7 +74,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `youtube.db.channels.search`
 
 ```ts
-const rows = await corsair.youtube.db.channels.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.youtube.db.channels.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -104,7 +107,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `youtube.db.comments.search`
 
 ```ts
-const rows = await corsair.youtube.db.comments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.youtube.db.comments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -137,7 +141,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `youtube.db.playlistItems.search`
 
 ```ts
-const rows = await corsair.youtube.db.playlistItems.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.youtube.db.playlistItems.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -168,7 +173,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `youtube.db.playlists.search`
 
 ```ts
-const rows = await corsair.youtube.db.playlists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.youtube.db.playlists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -198,7 +204,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `youtube.db.subscriptions.search`
 
 ```ts
-const rows = await corsair.youtube.db.subscriptions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.youtube.db.subscriptions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -226,7 +233,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `youtube.db.videos.search`
 
 ```ts
-const rows = await corsair.youtube.db.videos.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.youtube.db.videos.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

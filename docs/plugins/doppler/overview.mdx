@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { doppler } from '@corsair-dev/doppler';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		doppler(),
 	],

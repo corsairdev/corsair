@@ -20,7 +20,8 @@ Download images and videos from one or more tweets
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.media.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.media.download({});
 ```
 
 **Input**
@@ -57,7 +58,8 @@ Upload public media URLs for use in Xquik tweet creation
 **Risk:** `write`
 
 ```ts
-await corsair.xquik.api.media.uploadFromUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.media.uploadFromUrl({});
 ```
 
 **Input**
@@ -92,7 +94,8 @@ Get trending X topics by WOEID region
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.trends.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.trends.get({});
 ```
 
 **Input**
@@ -141,7 +144,8 @@ Fetch up to 100 tweets by ID
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.tweets.batch({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.tweets.batch({});
 ```
 
 **Input**
@@ -225,7 +229,8 @@ Create a tweet or reply from a connected X account
 **Risk:** `write`
 
 ```ts
-await corsair.xquik.api.tweets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.tweets.create({});
 ```
 
 **Input**
@@ -275,7 +280,8 @@ Delete a tweet from a connected X account
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.xquik.api.tweets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.tweets.delete({});
 ```
 
 **Input**
@@ -306,7 +312,8 @@ Get a tweet with full text, author, metrics, and media
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.tweets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.tweets.get({});
 ```
 
 **Input**
@@ -381,7 +388,8 @@ Like a tweet from a connected X account
 **Risk:** `write`
 
 ```ts
-await corsair.xquik.api.tweets.like({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.tweets.like({});
 ```
 
 **Input**
@@ -412,7 +420,8 @@ Retweet a tweet from a connected X account
 **Risk:** `write`
 
 ```ts
-await corsair.xquik.api.tweets.retweet({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.tweets.retweet({});
 ```
 
 **Input**
@@ -443,7 +452,8 @@ Search tweets with X query operators and pagination
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.tweets.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.tweets.search({});
 ```
 
 **Input**
@@ -557,7 +567,8 @@ Remove a like from a connected X account
 **Risk:** `write`
 
 ```ts
-await corsair.xquik.api.tweets.unlike({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.tweets.unlike({});
 ```
 
 **Input**
@@ -590,7 +601,8 @@ Look up up to 100 X users by ID
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.users.batch({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.users.batch({});
 ```
 
 **Input**
@@ -644,7 +656,8 @@ Follow an X user from a connected account
 **Risk:** `write`
 
 ```ts
-await corsair.xquik.api.users.follow({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.users.follow({});
 ```
 
 **Input**
@@ -675,7 +688,8 @@ List followers of an X user
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.users.followers({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.users.followers({});
 ```
 
 **Input**
@@ -731,7 +745,8 @@ List accounts an X user follows
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.users.following({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.users.following({});
 ```
 
 **Input**
@@ -787,7 +802,8 @@ Get an X user profile by username or user ID
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.users.get({});
 ```
 
 **Input**
@@ -828,7 +844,8 @@ Search X users by name or username
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.users.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.users.search({});
 ```
 
 **Input**
@@ -883,7 +900,8 @@ List recent tweets posted by an X user
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.users.tweets({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.users.tweets({});
 ```
 
 **Input**
@@ -996,7 +1014,8 @@ Unfollow an X user from a connected account
 **Risk:** `write`
 
 ```ts
-await corsair.xquik.api.users.unfollow({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.users.unfollow({});
 ```
 
 **Input**
@@ -1029,7 +1048,8 @@ Create an Xquik webhook endpoint subscription
 **Risk:** `write`
 
 ```ts
-await corsair.xquik.api.webhooks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.webhooks.create({});
 ```
 
 **Input**
@@ -1065,7 +1085,8 @@ Deactivate an Xquik webhook endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.xquik.api.webhooks.deactivate({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.webhooks.deactivate({});
 ```
 
 **Input**
@@ -1095,7 +1116,8 @@ List delivery attempts for an Xquik webhook endpoint
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.webhooks.deliveries({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.webhooks.deliveries({});
 ```
 
 **Input**
@@ -1143,7 +1165,8 @@ List configured Xquik webhook endpoints
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.webhooks.list({});
 ```
 
 **Input:** _empty object_
@@ -1183,7 +1206,8 @@ Send a test delivery to an Xquik webhook endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.xquik.api.webhooks.test({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.webhooks.test({});
 ```
 
 **Input**
@@ -1215,7 +1239,8 @@ Update a Xquik webhook URL, event types, or active state
 **Risk:** `write`
 
 ```ts
-await corsair.xquik.api.webhooks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.webhooks.update({});
 ```
 
 **Input**
@@ -1254,7 +1279,8 @@ Check the status of a pending Xquik write action
 **Risk:** `read`
 
 ```ts
-await corsair.xquik.api.writeActions.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.writeActions.get({});
 ```
 
 **Input**

@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { apilabz } from '@corsair-dev/apilabz';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		apilabz(),
 	],

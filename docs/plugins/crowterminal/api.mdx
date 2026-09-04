@@ -20,7 +20,8 @@ Self-register an agent and receive a new API key
 **Risk:** `write`
 
 ```ts
-await corsair.crowterminal.api.agent.register({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.agent.register({});
 ```
 
 **Input**
@@ -56,7 +57,8 @@ List the analytics data types each platform accepts
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.data.getTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.data.getTypes({});
 ```
 
 **Input:** _empty object_
@@ -92,7 +94,8 @@ Ingest one platform analytics data point
 **Risk:** `write`
 
 ```ts
-await corsair.crowterminal.api.data.ingest({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.data.ingest({});
 ```
 
 **Input**
@@ -137,7 +140,8 @@ Ingest up to 50 analytics data points at once
 **Risk:** `write`
 
 ```ts
-await corsair.crowterminal.api.data.ingestBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.data.ingestBulk({});
 ```
 
 **Input**
@@ -188,7 +192,8 @@ Get raw algorithm context without LLM inference charges
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.intelligence.getByokPlatform({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.intelligence.getByokPlatform({});
 ```
 
 **Input:** _empty object_
@@ -215,7 +220,8 @@ Get TikTok, Instagram and YouTube algorithm insights
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.intelligence.getPlatform({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.intelligence.getPlatform({});
 ```
 
 **Input:** _empty object_
@@ -243,7 +249,8 @@ Diff an agent markdown against all stored versions
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.memory.compareMd({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.memory.compareMd({});
 ```
 
 **Input**
@@ -290,7 +297,8 @@ Correlate every agent field with historical engagement
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.memory.engagementAnalysis({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.memory.engagementAnalysis({});
 ```
 
 **Input**
@@ -347,7 +355,8 @@ Get the stored skill for one client
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.memory.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.memory.get({});
 ```
 
 **Input**
@@ -403,7 +412,8 @@ Read stored skills for up to 50 clients
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.memory.getBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.memory.getBulk({});
 ```
 
 **Input**
@@ -460,7 +470,8 @@ Read the change history of a client skill
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.memory.getChangelog({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.memory.getChangelog({});
 ```
 
 **Input**
@@ -493,7 +504,8 @@ Trend one skill field across stored versions
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.memory.getPattern({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.memory.getPattern({});
 ```
 
 **Input**
@@ -529,7 +541,8 @@ Check proposed edits against historical outcomes
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.memory.validateChanges({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.memory.validateChanges({});
 ```
 
 **Input**
@@ -580,7 +593,8 @@ Run a mock engagement analysis
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.sandbox.engagementAnalysis({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.sandbox.engagementAnalysis({});
 ```
 
 **Input**
@@ -633,7 +647,8 @@ Get mock client data for testing
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.sandbox.getClient({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.sandbox.getClient({});
 ```
 
 **Input:** _empty object_
@@ -683,7 +698,8 @@ Get mock skill data for testing
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.sandbox.getMemory({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.sandbox.getMemory({});
 ```
 
 **Input:** _empty object_
@@ -733,7 +749,8 @@ Run a mock validation
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.sandbox.validate({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.sandbox.validate({});
 ```
 
 **Input**
@@ -781,7 +798,8 @@ Get CrowTerminal service health
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.status.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.status.get({});
 ```
 
 **Input:** _empty object_
@@ -837,7 +855,8 @@ Get per-component health and latency
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.status.getComponents({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.status.getComponents({});
 ```
 
 **Input:** _empty object_
@@ -886,7 +905,8 @@ Get seven days of uptime points for charting
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.status.getHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.status.getHistory({});
 ```
 
 **Input:** _empty object_
@@ -934,7 +954,8 @@ List recent incidents and affected components
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.status.getIncidents({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.status.getIncidents({});
 ```
 
 **Input:** _empty object_
@@ -975,7 +996,8 @@ Get 24h and 7d uptime percentages
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.status.getUptime({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.status.getUptime({});
 ```
 
 **Input:** _empty object_
@@ -1013,7 +1035,8 @@ Check that CrowTerminal is responding
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.status.ping({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.status.ping({});
 ```
 
 **Input:** _empty object_
@@ -1041,7 +1064,8 @@ Register a CrowTerminal webhook
 **Risk:** `write`
 
 ```ts
-await corsair.crowterminal.api.webhooks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.webhooks.create({});
 ```
 
 **Input**
@@ -1075,7 +1099,8 @@ Delete a CrowTerminal webhook
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.crowterminal.api.webhooks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.webhooks.delete({});
 ```
 
 **Input**
@@ -1105,7 +1130,8 @@ List registered CrowTerminal webhooks
 **Risk:** `read`
 
 ```ts
-await corsair.crowterminal.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.webhooks.list({});
 ```
 
 **Input:** _empty object_
@@ -1142,7 +1168,8 @@ Send a test delivery to a webhook URL
 **Risk:** `write`
 
 ```ts
-await corsair.crowterminal.api.webhooks.test({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.webhooks.test({});
 ```
 
 **Input**
@@ -1173,7 +1200,8 @@ Update a CrowTerminal webhook
 **Risk:** `write`
 
 ```ts
-await corsair.crowterminal.api.webhooks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.crowterminal.api.webhooks.update({});
 ```
 
 **Input**

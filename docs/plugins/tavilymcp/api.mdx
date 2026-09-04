@@ -20,7 +20,8 @@ Crawl a site from a start URL with configurable depth and breadth
 **Risk:** `read`
 
 ```ts
-await corsair.tavilymcp.api.tavily.crawl({});
+const tenant = corsair.withTenant('acme');
+await tenant.tavilymcp.api.tavily.crawl({});
 ```
 
 **Input**
@@ -105,7 +106,8 @@ Extract page content from one or more URLs as markdown or plain text
 **Risk:** `read`
 
 ```ts
-await corsair.tavilymcp.api.tavily.extract({});
+const tenant = corsair.withTenant('acme');
+await tenant.tavilymcp.api.tavily.extract({});
 ```
 
 **Input**
@@ -181,7 +183,8 @@ Map a site's structure from a start URL and return its URLs
 **Risk:** `read`
 
 ```ts
-await corsair.tavilymcp.api.tavily.map({});
+const tenant = corsair.withTenant('acme');
+await tenant.tavilymcp.api.tavily.map({});
 ```
 
 **Input**
@@ -238,7 +241,8 @@ Run comprehensive multi-source research on a topic and return a cited report
 **Risk:** `read`
 
 ```ts
-await corsair.tavilymcp.api.tavily.research({});
+const tenant = corsair.withTenant('acme');
+await tenant.tavilymcp.api.tavily.research({});
 ```
 
 **Input**
@@ -336,7 +340,8 @@ Search the web with Tavily and return ranked snippets with source URLs
 **Risk:** `read`
 
 ```ts
-await corsair.tavilymcp.api.tavily.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.tavilymcp.api.tavily.search({});
 ```
 
 **Input**

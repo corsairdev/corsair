@@ -14,7 +14,8 @@ The Cursor plugin syncs data locally. Use `corsair.cursor.db.<entity>.search({ d
 Path: `cursor.db.agents.search`
 
 ```ts
-const rows = await corsair.cursor.db.agents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cursor.db.agents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -46,7 +47,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cursor.db.apiKeys.search`
 
 ```ts
-const rows = await corsair.cursor.db.apiKeys.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cursor.db.apiKeys.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -72,7 +74,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cursor.db.models.search`
 
 ```ts
-const rows = await corsair.cursor.db.models.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cursor.db.models.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -95,7 +98,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cursor.db.repositories.search`
 
 ```ts
-const rows = await corsair.cursor.db.repositories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cursor.db.repositories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

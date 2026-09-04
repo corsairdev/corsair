@@ -20,7 +20,8 @@ List accounts available to the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.accounts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.accounts.list({});
 ```
 
 **Input**
@@ -98,7 +99,8 @@ Create a dependency from one workspace asset to another
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.assetDependencies.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assetDependencies.create({});
 ```
 
 **Input**
@@ -167,7 +169,8 @@ List dependencies belonging to an asset
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.assetDependencies.forAsset({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assetDependencies.forAsset({});
 ```
 
 **Input**
@@ -234,7 +237,8 @@ Get one asset dependency by ID
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.assetDependencies.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assetDependencies.get({});
 ```
 
 **Input**
@@ -301,7 +305,8 @@ List workspace asset dependencies
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.assetDependencies.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assetDependencies.list({});
 ```
 
 **Input**
@@ -374,7 +379,8 @@ Delete an asset dependency by ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.blazemeter.api.assetDependencies.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assetDependencies.remove({});
 ```
 
 **Input**
@@ -427,7 +433,8 @@ Delete asset dependencies matching source, target, and type filters
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.blazemeter.api.assetDependencies.removeMatching({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assetDependencies.removeMatching({});
 ```
 
 **Input**
@@ -484,7 +491,8 @@ Replace dependencies for an asset
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.assetDependencies.updateForAsset({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assetDependencies.updateForAsset({});
 ```
 
 **Input**
@@ -554,7 +562,8 @@ Create an Asset Repository asset
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.assets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assets.create({});
 ```
 
 **Input**
@@ -653,7 +662,8 @@ Get stored data for an asset
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.assets.data({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assets.data({});
 ```
 
 **Input**
@@ -719,7 +729,8 @@ Get a workspace asset by ID
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.assets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assets.get({});
 ```
 
 **Input**
@@ -799,7 +810,8 @@ List Asset Repository assets in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.assets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assets.list({});
 ```
 
 **Input**
@@ -884,7 +896,8 @@ Delete a workspace asset
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.blazemeter.api.assets.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assets.remove({});
 ```
 
 **Input**
@@ -937,7 +950,8 @@ Update a workspace asset
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.assets.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assets.update({});
 ```
 
 **Input**
@@ -1046,7 +1060,8 @@ Upload data content to an asset
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.assets.uploadData({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.assets.uploadData({});
 ```
 
 **Input**
@@ -1144,7 +1159,8 @@ List available credit-card issuer generators
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.generator.cardIssuers({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.generator.cardIssuers({});
 ```
 
 **Input**
@@ -1212,7 +1228,8 @@ List available synthetic-data generator functions
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.generator.functions({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.generator.functions({});
 ```
 
 **Input**
@@ -1282,7 +1299,8 @@ List available generator seed lists
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.generator.seedLists({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.generator.seedLists({});
 ```
 
 **Input**
@@ -1352,7 +1370,8 @@ Get Asset Repository service health
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.info.health({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.info.health({});
 ```
 
 **Input**
@@ -1415,7 +1434,8 @@ Get Asset Repository build information
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.info.version({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.info.version({});
 ```
 
 **Input**
@@ -1482,7 +1502,8 @@ Gracefully stop a running master execution
 **Risk:** `destructive`
 
 ```ts
-await corsair.blazemeter.api.masters.stop({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.masters.stop({});
 ```
 
 **Input**
@@ -1539,7 +1560,8 @@ Get request statistics for a master test run
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.masters.summary({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.masters.summary({});
 ```
 
 **Input**
@@ -1629,7 +1651,8 @@ Create a multi-test in a project
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.multiTests.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.multiTests.create({});
 ```
 
 **Input**
@@ -1709,7 +1732,8 @@ Get a multi-test by ID
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.multiTests.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.multiTests.get({});
 ```
 
 **Input**
@@ -1788,7 +1812,8 @@ List multi-tests in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.multiTests.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.multiTests.list({});
 ```
 
 **Input**
@@ -1872,7 +1897,8 @@ Create an Asset Repository package
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.packages.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.packages.create({});
 ```
 
 **Input**
@@ -1956,7 +1982,8 @@ List package dependencies
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.packages.dependencies({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.packages.dependencies({});
 ```
 
 **Input**
@@ -2023,7 +2050,8 @@ Export one package as a zip archive
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.packages.export({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.packages.export({});
 ```
 
 **Input**
@@ -2089,7 +2117,8 @@ Export multiple workspace packages as a zip archive
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.packages.exportMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.packages.exportMany({});
 ```
 
 **Input**
@@ -2155,7 +2184,8 @@ Get a workspace package
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.packages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.packages.get({});
 ```
 
 **Input**
@@ -2229,7 +2259,8 @@ Import a package zip into a workspace
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.packages.import({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.packages.import({});
 ```
 
 **Input**
@@ -2312,7 +2343,8 @@ List packages in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.packages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.packages.list({});
 ```
 
 **Input**
@@ -2389,7 +2421,8 @@ Delete a workspace package
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.blazemeter.api.packages.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.packages.remove({});
 ```
 
 **Input**
@@ -2442,7 +2475,8 @@ Update a workspace package
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.packages.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.packages.update({});
 ```
 
 **Input**
@@ -2527,7 +2561,8 @@ Replace package dependencies
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.packages.updateDependencies({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.packages.updateDependencies({});
 ```
 
 **Input**
@@ -2597,7 +2632,8 @@ Create a private execution location
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.privateLocations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.privateLocations.create({});
 ```
 
 **Input**
@@ -2695,7 +2731,8 @@ Create an agent in a private location
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.privateLocations.createAgent({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.privateLocations.createAgent({});
 ```
 
 **Input**
@@ -2770,7 +2807,8 @@ List private execution locations
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.privateLocations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.privateLocations.list({});
 ```
 
 **Input**
@@ -2860,7 +2898,8 @@ Remove a workspace from a private location
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.blazemeter.api.privateLocations.removeWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.privateLocations.removeWorkspace({});
 ```
 
 **Input**
@@ -2920,7 +2959,8 @@ Create a project in a workspace
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.projects.create({});
 ```
 
 **Input**
@@ -2997,7 +3037,8 @@ Get project details
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.projects.get({});
 ```
 
 **Input**
@@ -3072,7 +3113,8 @@ List projects in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.projects.list({});
 ```
 
 **Input**
@@ -3152,7 +3194,8 @@ Delete a project, optionally forcing removal of contained data
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.blazemeter.api.projects.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.projects.remove({});
 ```
 
 **Input**
@@ -3210,7 +3253,8 @@ Update a project
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.projects.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.projects.update({});
 ```
 
 **Input**
@@ -3290,7 +3334,8 @@ List execution regions and locations
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.regions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.regions.list({});
 ```
 
 **Input**
@@ -3362,7 +3407,8 @@ Create a cron schedule for a test or multi-test
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.schedules.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.schedules.create({});
 ```
 
 **Input**
@@ -3443,7 +3489,8 @@ Get a schedule by ID
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.schedules.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.schedules.get({});
 ```
 
 **Input**
@@ -3522,7 +3569,8 @@ List schedules with scope and pagination filters
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.schedules.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.schedules.list({});
 ```
 
 **Input**
@@ -3608,7 +3656,8 @@ Delete a test schedule
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.blazemeter.api.schedules.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.schedules.remove({});
 ```
 
 **Input**
@@ -3665,7 +3714,8 @@ Enable or disable a schedule
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.schedules.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.schedules.update({});
 ```
 
 **Input**
@@ -3747,7 +3797,8 @@ Search BlazeMeter entities using filters, selected fields, and ordering
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.search.execute({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.search.execute({});
 ```
 
 **Input**
@@ -3834,7 +3885,8 @@ Get searchable entities, fields, relations, and operators
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.search.metadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.search.metadata({});
 ```
 
 **Input**
@@ -3908,7 +3960,8 @@ Get a virtual-service template by ID
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.serviceMockTemplates.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.serviceMockTemplates.get({});
 ```
 
 **Input**
@@ -3991,7 +4044,8 @@ List virtual-service templates in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.serviceMockTemplates.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.serviceMockTemplates.list({});
 ```
 
 **Input**
@@ -4073,7 +4127,8 @@ Update a virtual-service template
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.serviceMockTemplates.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.serviceMockTemplates.update({});
 ```
 
 **Input**
@@ -4165,7 +4220,8 @@ List shared folders in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.sharedFolders.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.sharedFolders.list({});
 ```
 
 **Input**
@@ -4237,7 +4293,8 @@ Create a workspace tag
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.tags.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tags.create({});
 ```
 
 **Input**
@@ -4308,7 +4365,8 @@ List Mock Services tags
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.tags.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tags.list({});
 ```
 
 **Input**
@@ -4382,7 +4440,8 @@ Generate test data from an inline model
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.testData.generate({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.testData.generate({});
 ```
 
 **Input**
@@ -4459,7 +4518,8 @@ Generate synthetic records from a stored data model
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.testData.generateFromModel({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.testData.generateFromModel({});
 ```
 
 **Input**
@@ -4528,7 +4588,8 @@ Get a data model by ID
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.testData.getModel({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.testData.getModel({});
 ```
 
 **Input**
@@ -4606,7 +4667,8 @@ Publish generated data through a Test Data orchestration target
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.testData.publish({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.testData.publish({});
 ```
 
 **Input**
@@ -4687,7 +4749,8 @@ Validate a workspace data model
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.testData.validateModel({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.testData.validateModel({});
 ```
 
 **Input**
@@ -4760,7 +4823,8 @@ Create a performance or functional test
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.tests.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.create({});
 ```
 
 **Input**
@@ -4860,7 +4924,8 @@ Duplicate a test and its configuration
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.tests.duplicate({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.duplicate({});
 ```
 
 **Input**
@@ -4950,7 +5015,8 @@ List files attached to a test
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.tests.files({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.files({});
 ```
 
 **Input**
@@ -5023,7 +5089,8 @@ Get test details
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.tests.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.get({});
 ```
 
 **Input**
@@ -5137,7 +5204,8 @@ List tests by workspace or project
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.tests.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.list({});
 ```
 
 **Input**
@@ -5235,7 +5303,8 @@ Delete a test
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.blazemeter.api.tests.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.remove({});
 ```
 
 **Input**
@@ -5292,7 +5361,8 @@ Delete an uploaded test asset file
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.blazemeter.api.tests.removeFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.removeFile({});
 ```
 
 **Input**
@@ -5350,7 +5420,8 @@ Start a configured test
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.tests.start({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.start({});
 ```
 
 **Input**
@@ -5430,7 +5501,8 @@ Stop every active execution for a test
 **Risk:** `destructive`
 
 ```ts
-await corsair.blazemeter.api.tests.stop({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.stop({});
 ```
 
 **Input**
@@ -5487,7 +5559,8 @@ Update a test configuration
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.tests.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.update({});
 ```
 
 **Input**
@@ -5587,7 +5660,8 @@ Upload a script, data file, or configuration to a test
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.tests.uploadFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.uploadFile({});
 ```
 
 **Input**
@@ -5683,7 +5757,8 @@ Start validation for a test configuration
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.tests.validate({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.validate({});
 ```
 
 **Input**
@@ -5753,7 +5828,8 @@ Get test-file validation results
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.tests.validations({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.tests.validations({});
 ```
 
 **Input**
@@ -5825,7 +5901,8 @@ Convert Swagger, HAR, YAML, or other transaction input to BlazeMeter DSL
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.transactions.convert({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.transactions.convert({});
 ```
 
 **Input**
@@ -5959,7 +6036,8 @@ Create service-virtualization transactions in a workspace
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.transactions.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.transactions.create({});
 ```
 
 **Input**
@@ -6047,7 +6125,8 @@ List service-virtualization transactions in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.transactions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.transactions.list({});
 ```
 
 **Input**
@@ -6125,7 +6204,8 @@ List active test sessions for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.user.activeSessions({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.user.activeSessions({});
 ```
 
 **Input**
@@ -6196,7 +6276,8 @@ Get the authenticated user profile
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.user.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.user.get({});
 ```
 
 **Input**
@@ -6271,7 +6352,8 @@ List pending user invitations
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.user.invites({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.user.invites({});
 ```
 
 **Input**
@@ -6340,7 +6422,8 @@ List projects available to the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.user.projects({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.user.projects({});
 ```
 
 **Input**
@@ -6414,7 +6497,8 @@ Register a BlazeMeter user account
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.user.register({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.user.register({});
 ```
 
 **Input**
@@ -6493,7 +6577,8 @@ Immediately terminate selected active sessions
 **Risk:** `destructive`
 
 ```ts
-await corsair.blazemeter.api.user.terminateSessions({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.user.terminateSessions({});
 ```
 
 **Input**
@@ -6552,7 +6637,8 @@ Get workspace details
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.workspaces.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.workspaces.get({});
 ```
 
 **Input**
@@ -6670,7 +6756,8 @@ List workspaces for an account
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.workspaces.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.workspaces.list({});
 ```
 
 **Input**
@@ -6792,7 +6879,8 @@ Delete master execution logs from a workspace
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.blazemeter.api.workspaces.removeLogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.workspaces.removeLogs({});
 ```
 
 **Input**
@@ -6850,7 +6938,8 @@ Remove managers from a workspace
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.blazemeter.api.workspaces.removeManagers({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.workspaces.removeManagers({});
 ```
 
 **Input**
@@ -6908,7 +6997,8 @@ Terminate active master executions in a workspace
 **Risk:** `destructive`
 
 ```ts
-await corsair.blazemeter.api.workspaces.terminateMasters({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.workspaces.terminateMasters({});
 ```
 
 **Input**
@@ -6966,7 +7056,8 @@ Update a workspace user role and enabled status
 **Risk:** `write`
 
 ```ts
-await corsair.blazemeter.api.workspaces.updateUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.workspaces.updateUser({});
 ```
 
 **Input**
@@ -7047,7 +7138,8 @@ List users in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.blazemeter.api.workspaces.users({});
+const tenant = corsair.withTenant('acme');
+await tenant.blazemeter.api.workspaces.users({});
 ```
 
 **Input**

@@ -14,7 +14,8 @@ The Reddit plugin syncs data locally. Use `corsair.reddit.db.<entity>.search({ d
 Path: `reddit.db.comments.search`
 
 ```ts
-const rows = await corsair.reddit.db.comments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.reddit.db.comments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -46,7 +47,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `reddit.db.posts.search`
 
 ```ts
-const rows = await corsair.reddit.db.posts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.reddit.db.posts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -87,7 +89,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `reddit.db.subreddits.search`
 
 ```ts
-const rows = await corsair.reddit.db.subreddits.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.reddit.db.subreddits.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -119,7 +122,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `reddit.db.users.search`
 
 ```ts
-const rows = await corsair.reddit.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.reddit.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

@@ -14,7 +14,8 @@ The Sharepoint plugin syncs data locally. Use `corsair.sharepoint.db.<entity>.se
 Path: `sharepoint.db.files.search`
 
 ```ts
-const rows = await corsair.sharepoint.db.files.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sharepoint.db.files.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -48,7 +49,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `sharepoint.db.folders.search`
 
 ```ts
-const rows = await corsair.sharepoint.db.folders.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sharepoint.db.folders.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -78,7 +80,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `sharepoint.db.items.search`
 
 ```ts
-const rows = await corsair.sharepoint.db.items.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sharepoint.db.items.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -112,7 +115,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `sharepoint.db.lists.search`
 
 ```ts
-const rows = await corsair.sharepoint.db.lists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sharepoint.db.lists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -147,7 +151,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `sharepoint.db.sites.search`
 
 ```ts
-const rows = await corsair.sharepoint.db.sites.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sharepoint.db.sites.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -178,7 +183,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `sharepoint.db.users.search`
 
 ```ts
-const rows = await corsair.sharepoint.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.sharepoint.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

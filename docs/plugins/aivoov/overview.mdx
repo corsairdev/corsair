@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { aivoov } from '@corsair-dev/aivoov';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		aivoov(),
 	],

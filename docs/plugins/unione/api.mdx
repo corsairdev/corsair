@@ -20,7 +20,8 @@ Tool to delete a sender domain from the account. Use only when you are certain: 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.unione.api.domain.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.domain.delete({});
 ```
 
 **Input**
@@ -50,7 +51,8 @@ Tool to inspect and verify sender domains: fetch DNS records, trigger a verifica
 **Risk:** `write`
 
 ```ts
-await corsair.unione.api.domain.manage({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.domain.manage({});
 ```
 
 **Input**
@@ -106,7 +108,8 @@ Tool to start an export of email events in a time range. Creates an asynchronous
 **Risk:** `write`
 
 ```ts
-await corsair.unione.api.email.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.email.list({});
 ```
 
 **Input**
@@ -160,7 +163,8 @@ Tool to send a transactional email at a future time, at most 24 hours ahead. Sam
 **Risk:** `write`
 
 ```ts
-await corsair.unione.api.email.schedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.email.schedule({});
 ```
 
 **Input**
@@ -259,7 +263,8 @@ Tool to send a transactional email immediately. Requires recipients, from_email,
 **Risk:** `write`
 
 ```ts
-await corsair.unione.api.email.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.email.send({});
 ```
 
 **Input**
@@ -357,7 +362,8 @@ Tool to start a per-day aggregate export of send statistics. Creates an asynchro
 **Risk:** `write`
 
 ```ts
-await corsair.unione.api.email.statistics({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.email.statistics({});
 ```
 
 **Input**
@@ -389,7 +395,8 @@ Tool to resubscribe a recipient who previously unsubscribed. Use when you need t
 **Risk:** `write`
 
 ```ts
-await corsair.unione.api.email.subscribe({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.email.subscribe({});
 ```
 
 **Input**
@@ -421,7 +428,8 @@ Tool to unsubscribe an email from future emails. Use when you need to stop all f
 **Risk:** `write`
 
 ```ts
-await corsair.unione.api.email.unsubscribe({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.email.unsubscribe({});
 ```
 
 **Input**
@@ -454,7 +462,8 @@ Tool to validate a list of email addresses. UniOne has no bulk method, so each a
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.emailValidation.batch({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.emailValidation.batch({});
 ```
 
 **Input**
@@ -508,7 +517,8 @@ Tool to create an asynchronous CSV event dump. Use when you need to export trans
 **Risk:** `write`
 
 ```ts
-await corsair.unione.api.eventDump.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.eventDump.create({});
 ```
 
 **Input**
@@ -564,7 +574,8 @@ Tool to export the delivery events of one send job. UniOne has no method that re
 **Risk:** `write`
 
 ```ts
-await corsair.unione.api.eventDump.createForJob({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.eventDump.createForJob({});
 ```
 
 **Input**
@@ -599,7 +610,8 @@ Tool to delete an event dump file and remove it from the queue or storage. Use w
 **Risk:** `destructive`
 
 ```ts
-await corsair.unione.api.eventDump.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.eventDump.delete({});
 ```
 
 **Input**
@@ -629,7 +641,8 @@ Tool to retrieve the status and download URLs of an event dump. Use when you nee
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.eventDump.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.eventDump.get({});
 ```
 
 **Input**
@@ -676,7 +689,8 @@ Tool to retrieve the full list of event dumps. Use when you need to view all exi
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.eventDump.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.eventDump.list({});
 ```
 
 **Input:** _empty object_
@@ -720,7 +734,8 @@ Tool to remove an email from the suppression list. Use when you need to re-enabl
 **Risk:** `write`
 
 ```ts
-await corsair.unione.api.suppression.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.suppression.delete({});
 ```
 
 **Input**
@@ -750,7 +765,8 @@ Tool to check if an email is suppressed and retrieve the reason and date. Use wh
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.suppression.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.suppression.get({});
 ```
 
 **Input**
@@ -799,7 +815,8 @@ Tool to return the suppression list since a given date. Use when auditing bounce
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.suppression.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.suppression.list({});
 ```
 
 **Input**
@@ -854,7 +871,8 @@ Tool to retrieve account details and the current billing period: emails included
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.system.info({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.system.info({});
 ```
 
 **Input:** _empty object_
@@ -912,7 +930,8 @@ Tool to check API connectivity and that the API key is accepted. Use as a health
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.system.ping({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.system.ping({});
 ```
 
 **Input:** _empty object_
@@ -939,7 +958,8 @@ Tool to delete a specific tag. Use when you have confirmed the tag ID you wish t
 **Risk:** `destructive`
 
 ```ts
-await corsair.unione.api.tag.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.tag.delete({});
 ```
 
 **Input**
@@ -969,7 +989,8 @@ Tool to retrieve all user-defined tags. Use when you need to fetch the full list
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.tag.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.tag.list({});
 ```
 
 **Input:** _empty object_
@@ -1009,7 +1030,8 @@ Tool to delete a template by ID. Use when you need to permanently remove a templ
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.unione.api.template.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.template.delete({});
 ```
 
 **Input**
@@ -1039,7 +1061,8 @@ Tool to get template properties by ID. Use when you need to retrieve the full te
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.template.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.template.get({});
 ```
 
 **Input**
@@ -1112,7 +1135,8 @@ Tool to list email templates. Use when you need to retrieve available templates 
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.template.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.template.list({});
 ```
 
 **Input**
@@ -1186,7 +1210,8 @@ Tool to set or update an email template. Use when you need to create or modify t
 **Risk:** `write`
 
 ```ts
-await corsair.unione.api.template.set({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.template.set({});
 ```
 
 **Input**
@@ -1303,7 +1328,8 @@ Tool to delete a webhook event notification handler by its URL. Use when you nee
 **Risk:** `destructive`
 
 ```ts
-await corsair.unione.api.webhook.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.webhook.delete({});
 ```
 
 **Input**
@@ -1333,7 +1359,8 @@ Tool to retrieve webhook configuration by its URL. Use when you need to check th
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.webhook.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.webhook.get({});
 ```
 
 **Input**
@@ -1386,7 +1413,8 @@ Tool to list every webhook configured on the account. Use when you need to see a
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.webhook.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.webhook.list({});
 ```
 
 **Input:** _empty object_
@@ -1434,7 +1462,8 @@ Tool to set or edit a webhook event notification handler. Use when you need to c
 **Risk:** `write`
 
 ```ts
-await corsair.unione.api.webhook.set({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.webhook.set({});
 ```
 
 **Input**
@@ -1505,7 +1534,8 @@ Tool to list the event names accepted by webhook.set. Returns a static list publ
 **Risk:** `read`
 
 ```ts
-await corsair.unione.api.webhook.types({});
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.webhook.types({});
 ```
 
 **Input:** _empty object_

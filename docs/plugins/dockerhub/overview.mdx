@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { dockerhub } from '@corsair-dev/dockerhub';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		dockerhub(),
 	],

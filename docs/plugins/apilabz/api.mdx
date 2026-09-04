@@ -20,7 +20,8 @@ List Airtable tables for a base
 **Risk:** `read`
 
 ```ts
-await corsair.apilabz.api.airtable.listTables({});
+const tenant = corsair.withTenant('acme');
+await tenant.apilabz.api.airtable.listTables({});
 ```
 
 **Input**
@@ -53,7 +54,8 @@ Integrate a deal into API Labz
 **Risk:** `write`
 
 ```ts
-await corsair.apilabz.api.deals.integrate({});
+const tenant = corsair.withTenant('acme');
+await tenant.apilabz.api.deals.integrate({});
 ```
 
 **Input**
@@ -101,7 +103,8 @@ Validate an IBAN
 **Risk:** `read`
 
 ```ts
-await corsair.apilabz.api.iban.validate({});
+const tenant = corsair.withTenant('acme');
+await tenant.apilabz.api.iban.validate({});
 ```
 
 **Input**
@@ -146,7 +149,8 @@ Run AI search across Trello data
 **Risk:** `read`
 
 ```ts
-await corsair.apilabz.api.trello.aiSearchEngine({});
+const tenant = corsair.withTenant('acme');
+await tenant.apilabz.api.trello.aiSearchEngine({});
 ```
 
 **Input**

@@ -1,0 +1,2300 @@
+---
+title: API
+description: "API reference for CalendarHero: every `calendarhero.api.*` operation with input and output types."
+---
+
+Every `calendarhero.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contact
+
+### deleteContactId
+
+`contact.deleteContactId`
+
+deletes a contact
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.contact.deleteContactId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getContact
+
+`contact.getContact`
+
+searches for contacts that match search/filter criteria
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.contact.getContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `all` | `boolean` | No | — |
+| `includeTeams` | `boolean` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getContactCount
+
+`contact.getContactCount`
+
+returns the number of contacts
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.contact.getContactCount({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string`
+
+
+---
+
+### getContactId
+
+`contact.getContactId`
+
+returns a contact
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.contact.getContactId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `basic` | `boolean` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### postContact
+
+`contact.postContact`
+
+creates a new contact
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.contact.postContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name?: string,
+  title?: string,
+  organization?: string,
+  email?: string[],
+  defaultEmail?: string,
+  telephone?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+### putContactId
+
+`contact.putContactId`
+
+updates a contact
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.contact.putContactId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name?: string,
+  title?: string,
+  organization?: string,
+  email?: string[],
+  defaultEmail?: string,
+  telephone?: string[],
+  userId?: string,
+  providerId?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+## Meeting
+
+### deleteMeetingTasksId
+
+`meeting.deleteMeetingTasksId`
+
+deletes a task/request
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.meeting.deleteMeetingTasksId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getMeeting
+
+`meeting.getMeeting`
+
+return the user's meetings within a timeframe
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.meeting.getMeeting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getMeetingCategories
+
+`meeting.getMeetingCategories`
+
+retrieves the user's meeting categories' stats
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.meeting.getMeetingCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `month` | `string` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getMeetingTasks
+
+`meeting.getMeetingTasks`
+
+returns the user's requests/tasks
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.meeting.getMeetingTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `string` | No | — |
+| `tally` | `boolean` | No | — |
+| `skip` | `number` | No | — |
+| `take` | `number` | No | — |
+| `type` | `string` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### postMeetingTasks
+
+`meeting.postMeetingTasks`
+
+create a meeting request
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.meeting.postMeetingTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  locations?: {
+    name?: string
+  }[],
+  capacity?: number,
+  contacts?: {
+    id?: string
+  }[],
+  contactEmails?: string[],
+  subject?: string,
+  type?: string,
+  dateStart?: string,
+  dateEnd?: string,
+  meetingLength?: number,
+  location?: string,
+  room?: {
+    capacity?: number
+  },
+  roomCapacity?: number,
+  description?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+### putMeetingTasksIdRemind
+
+`meeting.putMeetingTasksIdRemind`
+
+remind the contact(s) about the meeting
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.meeting.putMeetingTasksIdRemind({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+## Msg
+
+### getMsgWeb
+
+`msg.getMsgWeb`
+
+returns a reply message for the user
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.msg.getMsgWeb({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string`
+
+
+---
+
+### postMsgWeb
+
+`msg.postMsgWeb`
+
+send a user's message into the assistant
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.msg.postMsgWeb({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  text?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+## Provider
+
+### getProvider
+
+`provider.getProvider`
+
+getProvider
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.provider.getProvider({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `org` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  userId?: string,
+  orgId?: string,
+  categoryType?: string[],
+  providerType?: string,
+  name?: string,
+  dateLastImport?: string,
+  auth?: {
+  },
+  calendar?: {
+  },
+  contacts?: {
+  },
+  faq?: {
+  },
+  group?: {
+  },
+  mail?: {
+  },
+  rooms?: {
+  },
+  xref?: string,
+  dateUpdated?: string,
+  dateAdded?: string,
+  e_auth?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Search
+
+### getSearch
+
+`search.getSearch`
+
+searches all of the user's integrations for a query term
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.search.getSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dateStart` | `string` | No | — |
+| `dateEnd` | `string` | No | — |
+| `query` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getSearchId
+
+`search.getSearchId`
+
+Gets the search result
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.search.getSearchId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+## User
+
+### deleteUserDirectoriesUuid
+
+`user.deleteUserDirectoriesUuid`
+
+delete a directory
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.deleteUserDirectoriesUuid({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### deleteUserMeetingType
+
+`user.deleteUserMeetingType`
+
+delete a meeting type
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.deleteUserMeetingType({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getUser
+
+`user.getUser`
+
+returns the user object
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.getUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vendastaLegacyUserId` | `string` | No | — |
+| `vendastaUserId` | `string` | No | — |
+| `vendastaTopNavUrl` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `dateLastLogin` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `country` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `language` | `string` | No | — |
+| `hideAutomatedAssistant` | `boolean` | No | — |
+| `email_footer` | `string` | No | — |
+| `location` | `object` | No | — |
+| `avatar` | `string` | No | — |
+| `telephones` | `string[]` | No | — |
+| `preferredNotificationType` | `string` | No | — |
+| `preferredNotificationIndex` | `number` | No | — |
+| `logoUrl` | `string` | No | — |
+| `branding` | `object` | No | — |
+| `templates` | `object` | No | — |
+| `plan` | `string` | No | — |
+| `datePlanChanged` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `stats` | `object` | No | — |
+| `restrictedApps` | `string[]` | No | — |
+| `managed` | `object` | No | — |
+| `messaging` | `string[]` | No | — |
+| `directories` | `object` | No | — |
+| `meeting` | `object` | No | — |
+| `showcontact` | `object` | No | — |
+| `weather` | `object` | No | — |
+| `inactiveUntilDate` | `string` | No | — |
+| `orgId` | `string` | No | — |
+| `associatedOrgId` | `string` | No | — |
+| `extraEmails` | `string[]` | No | — |
+| `versions.nlp` | `string` | No | — |
+| `versions.beta` | `boolean` | No | — |
+| `versions.trial.expiry` | `string` | No | — |
+| `versions.trial.trialPeriodDuration` | `number` | No | — |
+| `versions.plan.isDowngrading` | `boolean` | No | — |
+| `versions.plan.billingCycleDate` | `string` | No | — |
+| `versions.appSumo` | `string` | No | — |
+| `crm.logActivityAfterMeeting` | `string` | No | — |
+| `crm.defaultProviderId` | `string` | No | — |
+| `rooms.favourite` | `string[]` | No | — |
+| `rooms.buildings` | `string[]` | No | — |
+| `ticket.defaultProviderId` | `string` | No | — |
+| `hideNegativeWhoIs` | `boolean` | No | — |
+| `collaborators` | `string[]` | No | — |
+| `dateUpdated` | `string` | No | — |
+| `dateAdded` | `string` | No | — |
+| `password` | `string` | No | — |
+| `address` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  work?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="branding full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="templates full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  current?: {
+  },
+  historical?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="managed full type">
+
+```ts
+{
+  named?: {
+    lunch?: boolean,
+    coffee?: boolean,
+    breakfast?: boolean,
+    dinner?: boolean,
+    drinks?: boolean,
+    call?: boolean
+  },
+  timezone?: boolean,
+  meeting_length?: boolean,
+  days?: boolean,
+  workday?: boolean,
+  hourly_offsets?: boolean,
+  cc_meeting?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="directories full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meeting full type">
+
+```ts
+{
+  emailHour?: number,
+  defaultMeetingMinutes?: number,
+  startOffsets?: {
+  },
+  days?: {
+  },
+  defaultTimes?: {
+  },
+  workDay?: {
+  },
+  dailyFreeRatio?: number,
+  notifyForOverlap?: boolean,
+  disableTravelTime?: boolean,
+  ondemand?: {
+  },
+  noticePeriod?: {
+  },
+  meetingCalendarDisplay?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="showcontact full type">
+
+```ts
+{
+  twitter_posts?: number,
+  photos?: boolean,
+  websites?: boolean,
+  organizations?: boolean,
+  socialProfiles?: boolean,
+  location?: boolean,
+  email?: boolean,
+  crunchbase?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="weather full type">
+
+```ts
+{
+  unit?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserCalendly
+
+`user.getUserCalendly`
+
+imports user's Calendly event types
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.getUserCalendly({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getUserDirectories
+
+`user.getUserDirectories`
+
+get user's directories
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.getUserDirectories({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string`
+
+
+---
+
+### getUserDirectoriesUuid
+
+`user.getUserDirectoriesUuid`
+
+get user's directory by directory id
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.getUserDirectoriesUuid({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getUserMeeting
+
+`user.getUserMeeting`
+
+get user's meeting types
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.getUserMeeting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `onlyTypes` | `boolean` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getUserOrg
+
+`user.getUserOrg`
+
+returns the user's organization
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.getUserOrg({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `returnBillingUserInfo` | `boolean` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getUserSavings
+
+`user.getUserSavings`
+
+returns the user's savings information
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.getUserSavings({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string`
+
+
+---
+
+### postUserDirectories
+
+`user.postUserDirectories`
+
+add a new directory
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.postUserDirectories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  directory?: {
+    directoryName?: string,
+    title?: string,
+    code?: string,
+    meetingTypes?: {
+      name?: string,
+      userId?: string
+    }[],
+    isDefault?: boolean,
+    instructions?: string,
+    locked?: boolean,
+    googleTrackingIds?: {
+      type?: string,
+      id?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+### postUserMeetingType
+
+`user.postUserMeetingType`
+
+add a new meeting type
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.postUserMeetingType({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### postUserMeetingTypeShare
+
+`user.postUserMeetingTypeShare`
+
+share a meeting type
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.postUserMeetingTypeShare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+### putUser
+
+`user.putUser`
+
+updates the user's object
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.putUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vendastaLegacyUserId` | `string` | No | — |
+| `vendastaUserId` | `string` | No | — |
+| `vendastaTopNavUrl` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `dateLastLogin` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `country` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `language` | `string` | No | — |
+| `hideAutomatedAssistant` | `boolean` | No | — |
+| `email_footer` | `string` | No | — |
+| `location` | `object` | No | — |
+| `avatar` | `string` | No | — |
+| `telephones` | `string[]` | No | — |
+| `preferredNotificationType` | `string` | No | — |
+| `preferredNotificationIndex` | `number` | No | — |
+| `logoUrl` | `string` | No | — |
+| `branding` | `object` | No | — |
+| `templates` | `object` | No | — |
+| `plan` | `string` | No | — |
+| `datePlanChanged` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `stats` | `object` | No | — |
+| `restrictedApps` | `string[]` | No | — |
+| `managed` | `object` | No | — |
+| `messaging` | `string[]` | No | — |
+| `directories` | `object` | No | — |
+| `meeting` | `object` | No | — |
+| `showcontact` | `object` | No | — |
+| `weather` | `object` | No | — |
+| `inactiveUntilDate` | `string` | No | — |
+| `orgId` | `string` | No | — |
+| `associatedOrgId` | `string` | No | — |
+| `extraEmails` | `string[]` | No | — |
+| `versions.nlp` | `string` | No | — |
+| `versions.beta` | `boolean` | No | — |
+| `versions.trial.expiry` | `string` | No | — |
+| `versions.trial.trialPeriodDuration` | `number` | No | — |
+| `versions.plan.isDowngrading` | `boolean` | No | — |
+| `versions.plan.billingCycleDate` | `string` | No | — |
+| `versions.appSumo` | `string` | No | — |
+| `crm.logActivityAfterMeeting` | `string` | No | — |
+| `crm.defaultProviderId` | `string` | No | — |
+| `rooms.favourite` | `string[]` | No | — |
+| `rooms.buildings` | `string[]` | No | — |
+| `ticket.defaultProviderId` | `string` | No | — |
+| `hideNegativeWhoIs` | `boolean` | No | — |
+| `collaborators` | `string[]` | No | — |
+| `dateUpdated` | `string` | No | — |
+| `dateAdded` | `string` | No | — |
+| `password` | `string` | No | — |
+| `address` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  work?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="branding full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="templates full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  current?: {
+  },
+  historical?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="managed full type">
+
+```ts
+{
+  named?: {
+    lunch?: boolean,
+    coffee?: boolean,
+    breakfast?: boolean,
+    dinner?: boolean,
+    drinks?: boolean,
+    call?: boolean
+  },
+  timezone?: boolean,
+  meeting_length?: boolean,
+  days?: boolean,
+  workday?: boolean,
+  hourly_offsets?: boolean,
+  cc_meeting?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="directories full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meeting full type">
+
+```ts
+{
+  emailHour?: number,
+  defaultMeetingMinutes?: number,
+  startOffsets?: {
+  },
+  days?: {
+  },
+  defaultTimes?: {
+  },
+  workDay?: {
+  },
+  dailyFreeRatio?: number,
+  notifyForOverlap?: boolean,
+  disableTravelTime?: boolean,
+  ondemand?: {
+  },
+  noticePeriod?: {
+  },
+  meetingCalendarDisplay?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="showcontact full type">
+
+```ts
+{
+  twitter_posts?: number,
+  photos?: boolean,
+  websites?: boolean,
+  organizations?: boolean,
+  socialProfiles?: boolean,
+  location?: boolean,
+  email?: boolean,
+  crunchbase?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="weather full type">
+
+```ts
+{
+  unit?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### putUserDirectoriesUuid
+
+`user.putUserDirectoriesUuid`
+
+update the user's directory
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.putUserDirectoriesUuid({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  directory?: {
+    directoryId?: string,
+    directoryName?: string,
+    title?: string,
+    code?: string,
+    meetingTypes?: {
+      name?: string,
+      userId?: string
+    }[],
+    isDefault?: boolean,
+    instructions?: string,
+    locked?: boolean,
+    googleTrackingIds?: {
+      type?: string,
+      id?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+### putUserMeeting
+
+`user.putUserMeeting`
+
+updates the user's meeting type
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.putUserMeeting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  meetingTypes?: {
+    name?: string,
+    meetingType?: {
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+### putUserSettingsAddress
+
+`user.putUserSettingsAddress`
+
+putUserSettingsAddress
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.putUserSettingsAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  lat?: string,
+  lng?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vendastaLegacyUserId` | `string` | No | — |
+| `vendastaUserId` | `string` | No | — |
+| `vendastaTopNavUrl` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `dateLastLogin` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `country` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `language` | `string` | No | — |
+| `hideAutomatedAssistant` | `boolean` | No | — |
+| `email_footer` | `string` | No | — |
+| `location` | `object` | No | — |
+| `avatar` | `string` | No | — |
+| `telephones` | `string[]` | No | — |
+| `preferredNotificationType` | `string` | No | — |
+| `preferredNotificationIndex` | `number` | No | — |
+| `logoUrl` | `string` | No | — |
+| `branding` | `object` | No | — |
+| `templates` | `object` | No | — |
+| `plan` | `string` | No | — |
+| `datePlanChanged` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `stats` | `object` | No | — |
+| `restrictedApps` | `string[]` | No | — |
+| `managed` | `object` | No | — |
+| `messaging` | `string[]` | No | — |
+| `directories` | `object` | No | — |
+| `meeting` | `object` | No | — |
+| `showcontact` | `object` | No | — |
+| `weather` | `object` | No | — |
+| `inactiveUntilDate` | `string` | No | — |
+| `orgId` | `string` | No | — |
+| `associatedOrgId` | `string` | No | — |
+| `extraEmails` | `string[]` | No | — |
+| `versions.nlp` | `string` | No | — |
+| `versions.beta` | `boolean` | No | — |
+| `versions.trial.expiry` | `string` | No | — |
+| `versions.trial.trialPeriodDuration` | `number` | No | — |
+| `versions.plan.isDowngrading` | `boolean` | No | — |
+| `versions.plan.billingCycleDate` | `string` | No | — |
+| `versions.appSumo` | `string` | No | — |
+| `crm.logActivityAfterMeeting` | `string` | No | — |
+| `crm.defaultProviderId` | `string` | No | — |
+| `rooms.favourite` | `string[]` | No | — |
+| `rooms.buildings` | `string[]` | No | — |
+| `ticket.defaultProviderId` | `string` | No | — |
+| `hideNegativeWhoIs` | `boolean` | No | — |
+| `collaborators` | `string[]` | No | — |
+| `dateUpdated` | `string` | No | — |
+| `dateAdded` | `string` | No | — |
+| `password` | `string` | No | — |
+| `address` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  work?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="branding full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="templates full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  current?: {
+  },
+  historical?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="managed full type">
+
+```ts
+{
+  named?: {
+    lunch?: boolean,
+    coffee?: boolean,
+    breakfast?: boolean,
+    dinner?: boolean,
+    drinks?: boolean,
+    call?: boolean
+  },
+  timezone?: boolean,
+  meeting_length?: boolean,
+  days?: boolean,
+  workday?: boolean,
+  hourly_offsets?: boolean,
+  cc_meeting?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="directories full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meeting full type">
+
+```ts
+{
+  emailHour?: number,
+  defaultMeetingMinutes?: number,
+  startOffsets?: {
+  },
+  days?: {
+  },
+  defaultTimes?: {
+  },
+  workDay?: {
+  },
+  dailyFreeRatio?: number,
+  notifyForOverlap?: boolean,
+  disableTravelTime?: boolean,
+  ondemand?: {
+  },
+  noticePeriod?: {
+  },
+  meetingCalendarDisplay?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="showcontact full type">
+
+```ts
+{
+  twitter_posts?: number,
+  photos?: boolean,
+  websites?: boolean,
+  organizations?: boolean,
+  socialProfiles?: boolean,
+  location?: boolean,
+  email?: boolean,
+  crunchbase?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="weather full type">
+
+```ts
+{
+  unit?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### putUserSettingsInfo
+
+`user.putUserSettingsInfo`
+
+putUserSettingsInfo
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.putUserSettingsInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vendastaLegacyUserId` | `string` | No | — |
+| `vendastaUserId` | `string` | No | — |
+| `vendastaTopNavUrl` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `dateLastLogin` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `country` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `language` | `string` | No | — |
+| `hideAutomatedAssistant` | `boolean` | No | — |
+| `email_footer` | `string` | No | — |
+| `location` | `object` | No | — |
+| `avatar` | `string` | No | — |
+| `telephones` | `string[]` | No | — |
+| `preferredNotificationType` | `string` | No | — |
+| `preferredNotificationIndex` | `number` | No | — |
+| `logoUrl` | `string` | No | — |
+| `branding` | `object` | No | — |
+| `templates` | `object` | No | — |
+| `plan` | `string` | No | — |
+| `datePlanChanged` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `stats` | `object` | No | — |
+| `restrictedApps` | `string[]` | No | — |
+| `managed` | `object` | No | — |
+| `messaging` | `string[]` | No | — |
+| `directories` | `object` | No | — |
+| `meeting` | `object` | No | — |
+| `showcontact` | `object` | No | — |
+| `weather` | `object` | No | — |
+| `inactiveUntilDate` | `string` | No | — |
+| `orgId` | `string` | No | — |
+| `associatedOrgId` | `string` | No | — |
+| `extraEmails` | `string[]` | No | — |
+| `versions.nlp` | `string` | No | — |
+| `versions.beta` | `boolean` | No | — |
+| `versions.trial.expiry` | `string` | No | — |
+| `versions.trial.trialPeriodDuration` | `number` | No | — |
+| `versions.plan.isDowngrading` | `boolean` | No | — |
+| `versions.plan.billingCycleDate` | `string` | No | — |
+| `versions.appSumo` | `string` | No | — |
+| `crm.logActivityAfterMeeting` | `string` | No | — |
+| `crm.defaultProviderId` | `string` | No | — |
+| `rooms.favourite` | `string[]` | No | — |
+| `rooms.buildings` | `string[]` | No | — |
+| `ticket.defaultProviderId` | `string` | No | — |
+| `hideNegativeWhoIs` | `boolean` | No | — |
+| `collaborators` | `string[]` | No | — |
+| `dateUpdated` | `string` | No | — |
+| `dateAdded` | `string` | No | — |
+| `password` | `string` | No | — |
+| `address` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  work?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="branding full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="templates full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  current?: {
+  },
+  historical?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="managed full type">
+
+```ts
+{
+  named?: {
+    lunch?: boolean,
+    coffee?: boolean,
+    breakfast?: boolean,
+    dinner?: boolean,
+    drinks?: boolean,
+    call?: boolean
+  },
+  timezone?: boolean,
+  meeting_length?: boolean,
+  days?: boolean,
+  workday?: boolean,
+  hourly_offsets?: boolean,
+  cc_meeting?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="directories full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meeting full type">
+
+```ts
+{
+  emailHour?: number,
+  defaultMeetingMinutes?: number,
+  startOffsets?: {
+  },
+  days?: {
+  },
+  defaultTimes?: {
+  },
+  workDay?: {
+  },
+  dailyFreeRatio?: number,
+  notifyForOverlap?: boolean,
+  disableTravelTime?: boolean,
+  ondemand?: {
+  },
+  noticePeriod?: {
+  },
+  meetingCalendarDisplay?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="showcontact full type">
+
+```ts
+{
+  twitter_posts?: number,
+  photos?: boolean,
+  websites?: boolean,
+  organizations?: boolean,
+  socialProfiles?: boolean,
+  location?: boolean,
+  email?: boolean,
+  crunchbase?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="weather full type">
+
+```ts
+{
+  unit?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### putUserSettingsRestrictedapps
+
+`user.putUserSettingsRestrictedapps`
+
+putUserSettingsRestrictedapps
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.putUserSettingsRestrictedapps({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  restrictedApps?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vendastaLegacyUserId` | `string` | No | — |
+| `vendastaUserId` | `string` | No | — |
+| `vendastaTopNavUrl` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `dateLastLogin` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `country` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `language` | `string` | No | — |
+| `hideAutomatedAssistant` | `boolean` | No | — |
+| `email_footer` | `string` | No | — |
+| `location` | `object` | No | — |
+| `avatar` | `string` | No | — |
+| `telephones` | `string[]` | No | — |
+| `preferredNotificationType` | `string` | No | — |
+| `preferredNotificationIndex` | `number` | No | — |
+| `logoUrl` | `string` | No | — |
+| `branding` | `object` | No | — |
+| `templates` | `object` | No | — |
+| `plan` | `string` | No | — |
+| `datePlanChanged` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `stats` | `object` | No | — |
+| `restrictedApps` | `string[]` | No | — |
+| `managed` | `object` | No | — |
+| `messaging` | `string[]` | No | — |
+| `directories` | `object` | No | — |
+| `meeting` | `object` | No | — |
+| `showcontact` | `object` | No | — |
+| `weather` | `object` | No | — |
+| `inactiveUntilDate` | `string` | No | — |
+| `orgId` | `string` | No | — |
+| `associatedOrgId` | `string` | No | — |
+| `extraEmails` | `string[]` | No | — |
+| `versions.nlp` | `string` | No | — |
+| `versions.beta` | `boolean` | No | — |
+| `versions.trial.expiry` | `string` | No | — |
+| `versions.trial.trialPeriodDuration` | `number` | No | — |
+| `versions.plan.isDowngrading` | `boolean` | No | — |
+| `versions.plan.billingCycleDate` | `string` | No | — |
+| `versions.appSumo` | `string` | No | — |
+| `crm.logActivityAfterMeeting` | `string` | No | — |
+| `crm.defaultProviderId` | `string` | No | — |
+| `rooms.favourite` | `string[]` | No | — |
+| `rooms.buildings` | `string[]` | No | — |
+| `ticket.defaultProviderId` | `string` | No | — |
+| `hideNegativeWhoIs` | `boolean` | No | — |
+| `collaborators` | `string[]` | No | — |
+| `dateUpdated` | `string` | No | — |
+| `dateAdded` | `string` | No | — |
+| `password` | `string` | No | — |
+| `address` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  work?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="branding full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="templates full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  current?: {
+  },
+  historical?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="managed full type">
+
+```ts
+{
+  named?: {
+    lunch?: boolean,
+    coffee?: boolean,
+    breakfast?: boolean,
+    dinner?: boolean,
+    drinks?: boolean,
+    call?: boolean
+  },
+  timezone?: boolean,
+  meeting_length?: boolean,
+  days?: boolean,
+  workday?: boolean,
+  hourly_offsets?: boolean,
+  cc_meeting?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="directories full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meeting full type">
+
+```ts
+{
+  emailHour?: number,
+  defaultMeetingMinutes?: number,
+  startOffsets?: {
+  },
+  days?: {
+  },
+  defaultTimes?: {
+  },
+  workDay?: {
+  },
+  dailyFreeRatio?: number,
+  notifyForOverlap?: boolean,
+  disableTravelTime?: boolean,
+  ondemand?: {
+  },
+  noticePeriod?: {
+  },
+  meetingCalendarDisplay?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="showcontact full type">
+
+```ts
+{
+  twitter_posts?: number,
+  photos?: boolean,
+  websites?: boolean,
+  organizations?: boolean,
+  socialProfiles?: boolean,
+  location?: boolean,
+  email?: boolean,
+  crunchbase?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="weather full type">
+
+```ts
+{
+  unit?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### putUserSettingsWorklocation
+
+`user.putUserSettingsWorklocation`
+
+putUserSettingsWorklocation
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.user.putUserSettingsWorklocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vendastaLegacyUserId` | `string` | No | — |
+| `vendastaUserId` | `string` | No | — |
+| `vendastaTopNavUrl` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `dateLastLogin` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `country` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `language` | `string` | No | — |
+| `hideAutomatedAssistant` | `boolean` | No | — |
+| `email_footer` | `string` | No | — |
+| `location` | `object` | No | — |
+| `avatar` | `string` | No | — |
+| `telephones` | `string[]` | No | — |
+| `preferredNotificationType` | `string` | No | — |
+| `preferredNotificationIndex` | `number` | No | — |
+| `logoUrl` | `string` | No | — |
+| `branding` | `object` | No | — |
+| `templates` | `object` | No | — |
+| `plan` | `string` | No | — |
+| `datePlanChanged` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `stats` | `object` | No | — |
+| `restrictedApps` | `string[]` | No | — |
+| `managed` | `object` | No | — |
+| `messaging` | `string[]` | No | — |
+| `directories` | `object` | No | — |
+| `meeting` | `object` | No | — |
+| `showcontact` | `object` | No | — |
+| `weather` | `object` | No | — |
+| `inactiveUntilDate` | `string` | No | — |
+| `orgId` | `string` | No | — |
+| `associatedOrgId` | `string` | No | — |
+| `extraEmails` | `string[]` | No | — |
+| `versions.nlp` | `string` | No | — |
+| `versions.beta` | `boolean` | No | — |
+| `versions.trial.expiry` | `string` | No | — |
+| `versions.trial.trialPeriodDuration` | `number` | No | — |
+| `versions.plan.isDowngrading` | `boolean` | No | — |
+| `versions.plan.billingCycleDate` | `string` | No | — |
+| `versions.appSumo` | `string` | No | — |
+| `crm.logActivityAfterMeeting` | `string` | No | — |
+| `crm.defaultProviderId` | `string` | No | — |
+| `rooms.favourite` | `string[]` | No | — |
+| `rooms.buildings` | `string[]` | No | — |
+| `ticket.defaultProviderId` | `string` | No | — |
+| `hideNegativeWhoIs` | `boolean` | No | — |
+| `collaborators` | `string[]` | No | — |
+| `dateUpdated` | `string` | No | — |
+| `dateAdded` | `string` | No | — |
+| `password` | `string` | No | — |
+| `address` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  work?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="branding full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="templates full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  current?: {
+  },
+  historical?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="managed full type">
+
+```ts
+{
+  named?: {
+    lunch?: boolean,
+    coffee?: boolean,
+    breakfast?: boolean,
+    dinner?: boolean,
+    drinks?: boolean,
+    call?: boolean
+  },
+  timezone?: boolean,
+  meeting_length?: boolean,
+  days?: boolean,
+  workday?: boolean,
+  hourly_offsets?: boolean,
+  cc_meeting?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="directories full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meeting full type">
+
+```ts
+{
+  emailHour?: number,
+  defaultMeetingMinutes?: number,
+  startOffsets?: {
+  },
+  days?: {
+  },
+  defaultTimes?: {
+  },
+  workDay?: {
+  },
+  dailyFreeRatio?: number,
+  notifyForOverlap?: boolean,
+  disableTravelTime?: boolean,
+  ondemand?: {
+  },
+  noticePeriod?: {
+  },
+  meetingCalendarDisplay?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="showcontact full type">
+
+```ts
+{
+  twitter_posts?: number,
+  photos?: boolean,
+  websites?: boolean,
+  organizations?: boolean,
+  socialProfiles?: boolean,
+  location?: boolean,
+  email?: boolean,
+  crunchbase?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="weather full type">
+
+```ts
+{
+  unit?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook
+
+### deleteWebhookEvent
+
+`webhook.deleteWebhookEvent`
+
+deleteWebhookEvent
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.webhook.deleteWebhookEvent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  hookUrl?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+
+### postWebhookEvent
+
+`webhook.postWebhookEvent`
+
+postWebhookEvent
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.calendarhero.api.webhook.postWebhookEvent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  hookUrl?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string`
+
+
+---
+

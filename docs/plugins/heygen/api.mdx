@@ -20,7 +20,8 @@ Create an AI clipping job that turns a long video into short highlight clips
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.aiClipping.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.aiClipping.create({});
 ```
 
 **Input**
@@ -94,7 +95,8 @@ Soft-delete an AI clipping job and its clips
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.aiClipping.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.aiClipping.delete({});
 ```
 
 **Input**
@@ -134,7 +136,8 @@ Retrieve the status and generated clips of an AI clipping job
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.aiClipping.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.aiClipping.get({});
 ```
 
 **Input**
@@ -194,7 +197,8 @@ Retrieve a cursor-paginated list of AI clipping jobs
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.aiClipping.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.aiClipping.list({});
 ```
 
 **Input**
@@ -259,7 +263,8 @@ Finalize a presigned direct-upload session into a usable asset
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.assets.completeUpload({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.completeUpload({});
 ```
 
 **Input**
@@ -305,7 +310,8 @@ Create a new folder to organize videos and assets
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.assets.createFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.createFolder({});
 ```
 
 **Input**
@@ -348,7 +354,8 @@ Create a presigned direct-upload session for a large asset
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.assets.createUploadSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.createUploadSession({});
 ```
 
 **Input**
@@ -398,7 +405,8 @@ Permanently delete a specific media asset by ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.assets.deleteAsset({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.deleteAsset({});
 ```
 
 **Input**
@@ -439,7 +447,8 @@ Permanently delete an asset via the v3 API
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.assets.deleteAssetV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.deleteAssetV3({});
 ```
 
 **Input**
@@ -480,7 +489,8 @@ Retrieve metadata for an asset via the v3 API
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.assets.getAsset({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.getAsset({});
 ```
 
 **Input**
@@ -528,7 +538,8 @@ Retrieve structure, placeholders, and avatar settings of a specific template
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.assets.getTemplate({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.getTemplate({});
 ```
 
 **Input**
@@ -570,7 +581,8 @@ Retrieve a paginated list of assets with type/folder filtering
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.assets.listAssets({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.listAssets({});
 ```
 
 **Input**
@@ -616,7 +628,8 @@ Retrieve a list of uploaded assets with cursor/page pagination
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.assets.listAssets2({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.listAssets2({});
 ```
 
 **Input**
@@ -661,7 +674,8 @@ Retrieve a paginated list of folders in the account
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.assets.listFolders({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.listFolders({});
 ```
 
 **Input**
@@ -705,7 +719,8 @@ Retrieve a list of pre-designed avatar templates
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.assets.listTemplates({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.listTemplates({});
 ```
 
 **Input:** _empty object_
@@ -743,7 +758,8 @@ Recover a previously trashed folder
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.assets.restoreFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.restoreFolder({});
 ```
 
 **Input**
@@ -784,7 +800,8 @@ Soft-delete a folder by moving it to trash (recoverable via restoreFolder)
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.assets.trashFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.trashFolder({});
 ```
 
 **Input**
@@ -825,7 +842,8 @@ Rename an existing folder by ID
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.assets.updateFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.updateFolder({});
 ```
 
 **Input**
@@ -867,7 +885,8 @@ Upload an image, video, or audio file asset to the platform
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.assets.uploadAsset({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.uploadAsset({});
 ```
 
 **Input**
@@ -911,7 +930,8 @@ Upload an image, video, audio, or PDF asset via the v3 API
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.assets.uploadAssetV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.assets.uploadAssetV3({});
 ```
 
 **Input**
@@ -958,7 +978,8 @@ Search HeyGen's library of background music and sound effects
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.audio.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.audio.search({});
 ```
 
 **Input**
@@ -1006,7 +1027,8 @@ Append streamed text to an active text_stream avatar realtime session
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.avatarRealtime.appendText({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatarRealtime.appendText({});
 ```
 
 **Input**
@@ -1050,7 +1072,8 @@ Cancel an active avatar realtime streaming session
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.avatarRealtime.cancelSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatarRealtime.cancelSession({});
 ```
 
 **Input**
@@ -1092,7 +1115,8 @@ Create a low-latency HLS streaming session with an interactive avatar
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.avatarRealtime.createSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatarRealtime.createSession({});
 ```
 
 **Input:** `object`
@@ -1161,7 +1185,8 @@ Retrieve the status and playback URL of an avatar realtime session
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatarRealtime.getSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatarRealtime.getSession({});
 ```
 
 **Input**
@@ -1208,7 +1233,8 @@ Add up to 4 image look variations to an existing photo avatar group
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.avatars.addLooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.addLooks({});
 ```
 
 **Input**
@@ -1253,7 +1279,8 @@ Animate a still photo avatar into a moving lifelike motion avatar
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.avatars.addMotion({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.addMotion({});
 ```
 
 **Input**
@@ -1295,7 +1322,8 @@ Monitor the generation status/progress of photo avatar looks
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatars.checkLookStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.checkLookStatus({});
 ```
 
 **Input**
@@ -1339,7 +1367,8 @@ Create a new avatar from a prompt, digital twin video, or photo
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.avatars.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.create({});
 ```
 
 **Input:** `object`
@@ -1468,7 +1497,8 @@ Start the consent verification flow required for a custom avatar group
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.avatars.createConsent({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.createConsent({});
 ```
 
 **Input**
@@ -1527,7 +1557,8 @@ Create an avatar group for AI-generated and user-uploaded photos
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.avatars.createPhotoGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.createPhotoGroup({});
 ```
 
 **Input**
@@ -1574,7 +1605,8 @@ Permanently delete an avatar group by ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.avatars.deleteGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.deleteGroup({});
 ```
 
 **Input**
@@ -1615,7 +1647,8 @@ Permanently delete a photo avatar or digital twin look
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.avatars.deleteLook({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.deleteLook({});
 ```
 
 **Input**
@@ -1656,7 +1689,8 @@ Delete a photo avatar by ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.avatars.deletePhoto({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.deletePhoto({});
 ```
 
 **Input**
@@ -1697,7 +1731,8 @@ Delete a photo avatar group by ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.avatars.deletePhotoGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.deletePhotoGroup({});
 ```
 
 **Input**
@@ -1738,7 +1773,8 @@ Permanently delete a specific talking photo resource
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.avatars.deleteTalkingPhoto({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.deleteTalkingPhoto({});
 ```
 
 **Input**
@@ -1779,7 +1815,8 @@ Generate AI avatar photos based on text prompts and attributes
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.avatars.generatePhotos({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.generatePhotos({});
 ```
 
 **Input**
@@ -1828,7 +1865,8 @@ Retrieve comprehensive details, display properties, and preview media for an ava
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatars.getDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.getDetails({});
 ```
 
 **Input**
@@ -1870,7 +1908,8 @@ Retrieve details for a specific avatar group
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatars.getGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.getGroup({});
 ```
 
 **Input**
@@ -1924,7 +1963,8 @@ Retrieve details for a specific avatar look
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatars.getLook({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.getLook({});
 ```
 
 **Input**
@@ -1982,7 +2022,8 @@ Retrieve comprehensive metadata and configuration for a photo avatar/look
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatars.getPhotoDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.getPhotoDetails({});
 ```
 
 **Input**
@@ -2024,7 +2065,8 @@ Monitor the training progress of a photo avatar training job
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatars.getTrainingStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.getTrainingStatus({});
 ```
 
 **Input**
@@ -2066,7 +2108,8 @@ Retrieve a list of available public and private avatars with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatars.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.list({});
 ```
 
 **Input**
@@ -2110,7 +2153,8 @@ Retrieve all avatars within a specific avatar group
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatars.listGroupAvatars({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.listGroupAvatars({});
 ```
 
 **Input**
@@ -2153,7 +2197,8 @@ Retrieve a list of all avatar groups in the account
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatars.listGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.listGroups({});
 ```
 
 **Input:** _empty object_
@@ -2191,7 +2236,8 @@ Retrieve a paginated list of avatar looks (outfits, poses, styles)
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatars.listLooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.listLooks({});
 ```
 
 **Input**
@@ -2255,7 +2301,8 @@ Retrieve a list of existing interactive talking photo projects
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatars.listTalkingPhotos({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.listTalkingPhotos({});
 ```
 
 **Input:** _empty object_
@@ -2291,7 +2338,8 @@ Search public avatar groups with filters and pagination
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.avatars.searchPublicGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.searchPublicGroups({});
 ```
 
 **Input**
@@ -2336,7 +2384,8 @@ Rename a photo avatar or digital twin look
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.avatars.updateLook({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.updateLook({});
 ```
 
 **Input**
@@ -2395,7 +2444,8 @@ Create an interactive talking photo from an uploaded JPEG/PNG binary image
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.avatars.uploadTalkingPhoto({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.uploadTalkingPhoto({});
 ```
 
 **Input**
@@ -2438,7 +2488,8 @@ Enhance the resolution and quality of an existing motion avatar
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.avatars.upscale({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.avatars.upscale({});
 ```
 
 **Input**
@@ -2482,7 +2533,8 @@ Retrieve a paginated list of brand glossaries for custom term translation
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.brand.listGlossaries({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.brand.listGlossaries({});
 ```
 
 **Input**
@@ -2529,7 +2581,8 @@ Retrieve a paginated list of brand kits (logos, colors, fonts)
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.brand.listKits({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.brand.listKits({});
 ```
 
 **Input**
@@ -2578,7 +2631,8 @@ Create a HyperFrames cloud render from an HTML/motion-graphics project
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.hyperframes.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.hyperframes.create({});
 ```
 
 **Input**
@@ -2656,7 +2710,8 @@ Permanently delete a HyperFrames render
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.hyperframes.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.hyperframes.delete({});
 ```
 
 **Input**
@@ -2697,7 +2752,8 @@ Retrieve the status and details of a HyperFrames render
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.hyperframes.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.hyperframes.get({});
 ```
 
 **Input**
@@ -2753,7 +2809,8 @@ Retrieve a cursor-paginated list of HyperFrames renders
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.hyperframes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.hyperframes.list({});
 ```
 
 **Input**
@@ -2814,7 +2871,8 @@ Create a knowledge base with a custom name, opening line, and prompt for interac
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.knowledgeBases.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.knowledgeBases.create({});
 ```
 
 **Input**
@@ -2858,7 +2916,8 @@ Permanently remove a knowledge base by ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.knowledgeBases.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.knowledgeBases.delete({});
 ```
 
 **Input**
@@ -2899,7 +2958,8 @@ Retrieve a list of all existing knowledge bases
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.knowledgeBases.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.knowledgeBases.list({});
 ```
 
 **Input:** _empty object_
@@ -2937,7 +2997,8 @@ Modify the opening line, prompt, or name of an existing knowledge base
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.knowledgeBases.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.knowledgeBases.update({});
 ```
 
 **Input**
@@ -2983,7 +3044,8 @@ Create a lipsync job that syncs a video to a separate audio track
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.lipsync.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.lipsync.create({});
 ```
 
 **Input**
@@ -3067,7 +3129,8 @@ Permanently delete a lipsync job and its output
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.lipsync.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.lipsync.delete({});
 ```
 
 **Input**
@@ -3108,7 +3171,8 @@ Retrieve the status and details of a lipsync job
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.lipsync.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.lipsync.get({});
 ```
 
 **Input**
@@ -3157,7 +3221,8 @@ Retrieve a cursor-paginated list of lipsync jobs
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.lipsync.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.lipsync.list({});
 ```
 
 **Input**
@@ -3209,7 +3274,8 @@ Update the display title of a lipsync job
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.lipsync.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.lipsync.update({});
 ```
 
 **Input**
@@ -3261,7 +3327,8 @@ Create a proofread session for reviewing a video translation before rendering
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.proofread.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.proofread.create({});
 ```
 
 **Input**
@@ -3343,7 +3410,8 @@ Retrieve presigned download URLs for a proofread session's SRT files
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.proofread.downloadSrt({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.proofread.downloadSrt({});
 ```
 
 **Input**
@@ -3385,7 +3453,8 @@ Render the final translated video from a completed proofread session
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.proofread.generateVideo({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.proofread.generateVideo({});
 ```
 
 **Input**
@@ -3431,7 +3500,8 @@ Retrieve the status and details of a proofread session
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.proofread.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.proofread.get({});
 ```
 
 **Input**
@@ -3479,7 +3549,8 @@ Replace a proofread session's subtitles with an edited SRT file
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.proofread.uploadSrt({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.proofread.uploadSrt({});
 ```
 
 **Input**
@@ -3545,7 +3616,8 @@ Generate a time-limited authentication token for streaming sessions
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.streaming.createToken({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.streaming.createToken({});
 ```
 
 **Input:** _empty object_
@@ -3582,7 +3654,8 @@ Submit ICE candidate information for WebRTC peer-to-peer negotiation
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.streaming.ice({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.streaming.ice({});
 ```
 
 **Input**
@@ -3638,7 +3711,8 @@ Abruptly interrupt an avatar's ongoing action/speech for instant control
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.streaming.interrupt({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.streaming.interrupt({});
 ```
 
 **Input**
@@ -3679,7 +3753,8 @@ Reset the idle timeout counter for an active streaming session
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.streaming.keepAlive({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.streaming.keepAlive({});
 ```
 
 **Input**
@@ -3720,7 +3795,8 @@ Retrieve a list of active or available streaming sessions
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.streaming.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.streaming.list({});
 ```
 
 **Input:** _empty object_
@@ -3758,7 +3834,8 @@ Retrieve a list of public and custom interactive avatars available for streaming
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.streaming.listAvatars({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.streaming.listAvatars({});
 ```
 
 **Input:** _empty object_
@@ -3794,7 +3871,8 @@ Retrieve a paginated history and metadata of past streaming sessions
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.streaming.listSessionHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.streaming.listSessionHistory({});
 ```
 
 **Input**
@@ -3838,7 +3916,8 @@ Initiate a streaming session with specified quality settings
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.streaming.new({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.streaming.new({});
 ```
 
 **Input**
@@ -3881,7 +3960,8 @@ Initiate a streaming session with an Interactive Avatar to get a WebSocket URL, 
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.streaming.newSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.streaming.newSession({});
 ```
 
 **Input**
@@ -3942,7 +4022,8 @@ Establish a WebRTC SDP offer connection for real-time video/audio streaming
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.streaming.start({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.streaming.start({});
 ```
 
 **Input**
@@ -3997,7 +4078,8 @@ Terminate an active WebRTC streaming session and free resources
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.streaming.stop({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.streaming.stop({});
 ```
 
 **Input**
@@ -4038,7 +4120,8 @@ Send a real-time text speaking task to an active streaming avatar
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.streaming.task({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.streaming.task({});
 ```
 
 **Input**
@@ -4084,7 +4167,8 @@ Create a video agent session that generates a video from a text prompt
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.videoAgents.createSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videoAgents.createSession({});
 ```
 
 **Input**
@@ -4159,7 +4243,8 @@ Retrieve a specific resource generated within a video agent session
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.videoAgents.getResource({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videoAgents.getResource({});
 ```
 
 **Input**
@@ -4209,7 +4294,8 @@ Retrieve the status, progress, and chat history of a video agent session
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.videoAgents.getSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videoAgents.getSession({});
 ```
 
 **Input**
@@ -4262,7 +4348,8 @@ Retrieve a paginated list of video agent sessions
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.videoAgents.listSessions({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videoAgents.listSessions({});
 ```
 
 **Input**
@@ -4308,7 +4395,8 @@ Retrieve a paginated list of available video agent styles
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.videoAgents.listStyles({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videoAgents.listStyles({});
 ```
 
 **Input**
@@ -4358,7 +4446,8 @@ Retrieve the videos generated within a video agent session
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.videoAgents.listVideos({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videoAgents.listVideos({});
 ```
 
 **Input**
@@ -4402,7 +4491,8 @@ Send a chat message or revision request to an active video agent session
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.videoAgents.sendMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videoAgents.sendMessage({});
 ```
 
 **Input**
@@ -4471,7 +4561,8 @@ Stop an in-progress video agent session
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.videoAgents.stopSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videoAgents.stopSession({});
 ```
 
 **Input**
@@ -4514,7 +4605,8 @@ Create a WebM format video with transparent background featuring studio avatars
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.videos.createWebm({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.createWebm({});
 ```
 
 **Input**
@@ -4563,7 +4655,8 @@ Delete a generated or translated video by ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.videos.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.delete({});
 ```
 
 **Input**
@@ -4604,7 +4697,8 @@ Permanently delete a video and its associated files via the v3 API
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.videos.deleteV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.deleteV3({});
 ```
 
 **Input**
@@ -4646,7 +4740,8 @@ Generate a customized avatar video with voices and character configs
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.videos.generate({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.generate({});
 ```
 
 **Input**
@@ -4695,7 +4790,8 @@ Generate a public, shareable URL for a video without authentication requirements
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.videos.getSharableUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.getSharableUrl({});
 ```
 
 **Input**
@@ -4737,7 +4833,8 @@ Retrieve asynchronous video processing status and time-limited download URLs
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.videos.getStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.getStatus({});
 ```
 
 **Input**
@@ -4793,7 +4890,8 @@ Retrieve a paginated list of videos associated with the account
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.videos.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.list({});
 ```
 
 **Input**
@@ -4838,7 +4936,8 @@ Retrieve a cursor-paginated list of videos via the v3 API
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.videos.listV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.listV3({});
 ```
 
 **Input**
@@ -4885,7 +4984,8 @@ Add recipient contacts (name/email) to a personalized video project
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.videos.personalizedAddContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.personalizedAddContact({});
 ```
 
 **Input**
@@ -4939,7 +5039,8 @@ Retrieve details, status, and metadata for a personalized video project
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.videos.personalizedProjectDetail({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.personalizedProjectDetail({});
 ```
 
 **Input**
@@ -4982,7 +5083,8 @@ Generate a customized video from a pre-existing template using variable definiti
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.videos.templateGenerate({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.templateGenerate({});
 ```
 
 **Input**
@@ -5050,7 +5152,8 @@ Translate video content or audio tracks across 77+ languages
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.videos.translate({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.translate({});
 ```
 
 **Input**
@@ -5130,7 +5233,8 @@ Retrieve current progress/status of a video translation job
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.videos.translateStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.translateStatus({});
 ```
 
 **Input**
@@ -5184,7 +5288,8 @@ Retrieve the list of all supported target languages for video translation
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.videos.translateTargetLanguages({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videos.translateTargetLanguages({});
 ```
 
 **Input:** _empty object_
@@ -5222,7 +5327,8 @@ Permanently delete a video translation and its associated files
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.videoTranslations.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videoTranslations.delete({});
 ```
 
 **Input**
@@ -5263,7 +5369,8 @@ Retrieve a cursor-paginated list of video translation jobs
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.videoTranslations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videoTranslations.list({});
 ```
 
 **Input**
@@ -5320,7 +5427,8 @@ Update the display title of a video translation job
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.videoTranslations.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.videoTranslations.update({});
 ```
 
 **Input**
@@ -5377,7 +5485,8 @@ Clone a custom voice from a reference audio sample
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.voices.clone({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.clone({});
 ```
 
 **Input**
@@ -5440,7 +5549,8 @@ Permanently delete a voice via the v3 API
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.voices.deleteV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.deleteV3({});
 ```
 
 **Input**
@@ -5481,7 +5591,8 @@ Generate up to 3 candidate synthetic voices from a text description
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.voices.design({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.design({});
 ```
 
 **Input**
@@ -5535,7 +5646,8 @@ Generate a short audio preview clip (Enterprise Beta)
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.voices.generatePreview({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.generatePreview({});
 ```
 
 **Input**
@@ -5578,7 +5690,8 @@ Generate a speech audio file from text input using the Starfish TTS model
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.voices.generateSpeech({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.generateSpeech({});
 ```
 
 **Input**
@@ -5626,7 +5739,8 @@ Generate a speech audio file from text via the v3 Starfish TTS engine
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.voices.generateSpeechV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.generateSpeechV3({});
 ```
 
 **Input**
@@ -5679,7 +5793,8 @@ Retrieve the status and details of a voice via the v3 API
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.voices.getV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.getV3({});
 ```
 
 **Input**
@@ -5729,7 +5844,8 @@ Retrieve brand glossaries maintaining consistent terminology/pronunciation
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.voices.listBrandVoices({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.listBrandVoices({});
 ```
 
 **Input:** _empty object_
@@ -5767,7 +5883,8 @@ Retrieve available locales/dialects for multilingual voices
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.voices.listLocales({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.listLocales({});
 ```
 
 **Input:** _empty object_
@@ -5805,7 +5922,8 @@ Retrieve public and custom voices compatible with the Starfish model
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.voices.listTts({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.listTts({});
 ```
 
 **Input**
@@ -5849,7 +5967,8 @@ Retrieve a metadata list of all available studio voices
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.voices.listV1({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.listV1({});
 ```
 
 **Input:** _empty object_
@@ -5887,7 +6006,8 @@ Retrieve a comprehensive list of available voice models and characteristics
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.voices.listV2({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.listV2({});
 ```
 
 **Input:** _empty object_
@@ -5925,7 +6045,8 @@ Retrieve a cursor-paginated list of voices via the v3 API
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.voices.listV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.voices.listV3({});
 ```
 
 **Input**
@@ -5982,7 +6103,8 @@ Configure a new webhook URL to receive notifications for specified events
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.webhooksQuota.addEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.addEndpoint({});
 ```
 
 **Input**
@@ -6025,7 +6147,8 @@ Register a new v3 webhook endpoint URL to receive event notifications
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.webhooksQuota.addEndpointV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.addEndpointV3({});
 ```
 
 **Input**
@@ -6073,7 +6196,8 @@ Permanently delete a webhook endpoint configuration
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.webhooksQuota.deleteEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.deleteEndpoint({});
 ```
 
 **Input**
@@ -6114,7 +6238,8 @@ Permanently delete a v3 webhook endpoint configuration
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.heygen.api.webhooksQuota.deleteEndpointV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.deleteEndpointV3({});
 ```
 
 **Input**
@@ -6154,7 +6279,8 @@ Retrieve the authenticated user profile, quotas, and subscription details
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.webhooksQuota.getCurrentUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.getCurrentUser({});
 ```
 
 **Input:** _empty object_
@@ -6200,7 +6326,8 @@ Retrieve a list of configured webhook endpoints and status
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.webhooksQuota.listEndpoints({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.listEndpoints({});
 ```
 
 **Input:** _empty object_
@@ -6236,7 +6363,8 @@ Retrieve a paginated list of configured v3 webhook endpoints
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.webhooksQuota.listEndpointsV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.listEndpointsV3({});
 ```
 
 **Input**
@@ -6285,7 +6413,8 @@ Retrieve a paginated log of delivered v3 webhook events
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.webhooksQuota.listEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.listEvents({});
 ```
 
 **Input**
@@ -6335,7 +6464,8 @@ Retrieve a complete list of supported webhook event types
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.webhooksQuota.listEventTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.listEventTypes({});
 ```
 
 **Input:** _empty object_
@@ -6371,7 +6501,8 @@ Retrieve all available v3 webhook event types with descriptions
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.webhooksQuota.listEventTypesV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.listEventTypesV3({});
 ```
 
 **Input:** _empty object_
@@ -6410,7 +6541,8 @@ Retrieve the current remaining API credit quota and available resources
 **Risk:** `read`
 
 ```ts
-await corsair.heygen.api.webhooksQuota.remainingQuota({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.remainingQuota({});
 ```
 
 **Input:** _empty object_
@@ -6447,7 +6579,8 @@ Rotate the signing secret for a v3 webhook endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.webhooksQuota.rotateSecret({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.rotateSecret({});
 ```
 
 **Input**
@@ -6489,7 +6622,8 @@ Modify the URL or subscribed events of an existing webhook endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.webhooksQuota.updateEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.updateEndpoint({});
 ```
 
 **Input**
@@ -6532,7 +6666,8 @@ Modify the URL or subscribed events of an existing v3 webhook endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.heygen.api.webhooksQuota.updateEndpointV3({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.webhooksQuota.updateEndpointV3({});
 ```
 
 **Input**

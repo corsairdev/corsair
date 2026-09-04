@@ -14,7 +14,8 @@ The Addresszen plugin syncs data locally. Use `corsair.addresszen.db.<entity>.se
 Path: `addresszen.db.autocompleteResults.search`
 
 ```ts
-const rows = await corsair.addresszen.db.autocompleteResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.addresszen.db.autocompleteResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `addresszen.db.keyAvailability.search`
 
 ```ts
-const rows = await corsair.addresszen.db.keyAvailability.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.addresszen.db.keyAvailability.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -67,7 +69,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `addresszen.db.resolvedAddresses.search`
 
 ```ts
-const rows = await corsair.addresszen.db.resolvedAddresses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.addresszen.db.resolvedAddresses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -93,7 +96,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `addresszen.db.verifiedAddresses.search`
 
 ```ts
-const rows = await corsair.addresszen.db.verifiedAddresses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.addresszen.db.verifiedAddresses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

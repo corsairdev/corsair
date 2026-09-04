@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { outlook } from '@corsair-dev/outlook';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		outlook({
 			authType: 'managed',

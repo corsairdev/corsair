@@ -20,7 +20,8 @@ Delete an asset [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.canva.api.assets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.assets.delete({});
 ```
 
 **Input**
@@ -50,7 +51,8 @@ Get metadata for an asset
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.assets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.assets.get({});
 ```
 
 **Input**
@@ -105,7 +107,8 @@ Update an asset name or tags
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.assets.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.assets.update({});
 ```
 
 **Input**
@@ -164,7 +167,8 @@ Start a job to upload an asset from binary content
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.assetUploads.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.assetUploads.create({});
 ```
 
 **Input**
@@ -228,7 +232,8 @@ Start a job to upload an asset from a URL
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.assetUploads.createFromUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.assetUploads.createFromUrl({});
 ```
 
 **Input**
@@ -292,7 +297,8 @@ Get the status of an asset upload job
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.assetUploads.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.assetUploads.get({});
 ```
 
 **Input**
@@ -355,7 +361,8 @@ Get the status of a URL asset upload job
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.assetUploads.getFromUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.assetUploads.getFromUrl({});
 ```
 
 **Input**
@@ -420,7 +427,8 @@ Start a job to autofill a brand template with data
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.autofills.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.autofills.create({});
 ```
 
 **Input**
@@ -492,7 +500,8 @@ Get the status of a design autofill job
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.autofills.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.autofills.get({});
 ```
 
 **Input**
@@ -554,7 +563,8 @@ Get metadata for a brand template
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.brandTemplates.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.brandTemplates.get({});
 ```
 
 **Input**
@@ -605,7 +615,8 @@ Get the autofill dataset definition for a brand template
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.brandTemplates.getDataset({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.brandTemplates.getDataset({});
 ```
 
 **Input**
@@ -645,7 +656,8 @@ List the user's brand templates
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.brandTemplates.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.brandTemplates.list({});
 ```
 
 **Input**
@@ -704,7 +716,8 @@ Reply to a comment thread on a design
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.comments.createReply({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.comments.createReply({});
 ```
 
 **Input**
@@ -759,7 +772,8 @@ Create a new comment thread on a design
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.comments.createThread({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.comments.createThread({});
 ```
 
 **Input**
@@ -820,7 +834,8 @@ Get a reply to a comment thread on a design
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.comments.getReply({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.comments.getReply({});
 ```
 
 **Input**
@@ -875,7 +890,8 @@ Get a comment thread on a design
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.comments.getThread({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.comments.getThread({});
 ```
 
 **Input**
@@ -935,7 +951,8 @@ List replies to a comment thread on a design
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.comments.listReplies({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.comments.listReplies({});
 ```
 
 **Input**
@@ -994,7 +1011,8 @@ Create a new Canva design
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.designs.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.designs.create({});
 ```
 
 **Input**
@@ -1072,7 +1090,8 @@ Get metadata for a design
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.designs.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.designs.get({});
 ```
 
 **Input**
@@ -1131,7 +1150,8 @@ Get the export formats available for a design
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.designs.getExportFormats({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.designs.getExportFormats({});
 ```
 
 **Input**
@@ -1171,7 +1191,8 @@ Get pages for a design
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.designs.getPages({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.designs.getPages({});
 ```
 
 **Input**
@@ -1226,7 +1247,8 @@ List designs in the user projects
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.designs.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.designs.list({});
 ```
 
 **Input**
@@ -1292,7 +1314,8 @@ Start a design export job
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.exports.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.exports.create({});
 ```
 
 **Input**
@@ -1391,7 +1414,8 @@ Get the status of an export job
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.exports.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.exports.get({});
 ```
 
 **Input**
@@ -1440,7 +1464,8 @@ Create a folder
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.folders.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.folders.create({});
 ```
 
 **Input**
@@ -1490,7 +1515,8 @@ Delete a folder [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.canva.api.folders.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.folders.delete({});
 ```
 
 **Input**
@@ -1520,7 +1546,8 @@ Get metadata for a folder
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.folders.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.folders.get({});
 ```
 
 **Input**
@@ -1569,7 +1596,8 @@ List items in a folder
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.folders.listItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.folders.listItems({});
 ```
 
 **Input**
@@ -1687,7 +1715,8 @@ Move an item to another folder
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.folders.moveItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.folders.moveItem({});
 ```
 
 **Input**
@@ -1718,7 +1747,8 @@ Update a folder name
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.folders.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.folders.update({});
 ```
 
 **Input**
@@ -1770,7 +1800,8 @@ Start a job to import a design from binary content
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.imports.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.imports.create({});
 ```
 
 **Input**
@@ -1830,7 +1861,8 @@ Start a job to import a design from a URL
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.imports.createFromUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.imports.createFromUrl({});
 ```
 
 **Input**
@@ -1890,7 +1922,8 @@ Get the status of a design import job
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.imports.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.imports.get({});
 ```
 
 **Input**
@@ -1948,7 +1981,8 @@ Get the status of a URL design import job
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.imports.getFromUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.imports.getFromUrl({});
 ```
 
 **Input**
@@ -2008,7 +2042,8 @@ Start a job to resize a design
 **Risk:** `write`
 
 ```ts
-await corsair.canva.api.resizes.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.resizes.create({});
 ```
 
 **Input**
@@ -2094,7 +2129,8 @@ Get the status of a design resize job
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.resizes.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.resizes.get({});
 ```
 
 **Input**
@@ -2165,7 +2201,8 @@ Get the authenticated user's capabilities
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.users.getCapabilities({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.users.getCapabilities({});
 ```
 
 **Input:** _empty object_
@@ -2190,7 +2227,8 @@ Get the authenticated user ID and team ID
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.users.getMe({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.users.getMe({});
 ```
 
 **Input:** _empty object_
@@ -2227,7 +2265,8 @@ Get the authenticated user profile
 **Risk:** `read`
 
 ```ts
-await corsair.canva.api.users.getProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.canva.api.users.getProfile({});
 ```
 
 **Input:** _empty object_

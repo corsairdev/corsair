@@ -14,7 +14,8 @@ The Tally plugin syncs data locally. Use `corsair.tally.db.<entity>.search({ dat
 Path: `tally.db.forms.search`
 
 ```ts
-const rows = await corsair.tally.db.forms.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tally.db.forms.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `tally.db.submissions.search`
 
 ```ts
-const rows = await corsair.tally.db.submissions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tally.db.submissions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -69,7 +71,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `tally.db.workspaces.search`
 
 ```ts
-const rows = await corsair.tally.db.workspaces.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.tally.db.workspaces.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

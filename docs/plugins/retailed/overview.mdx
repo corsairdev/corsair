@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { retailed } from '@corsair-dev/retailed';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		retailed(),
 	],

@@ -20,7 +20,8 @@ Create a Razorpay customer
 **Risk:** `write`
 
 ```ts
-await corsair.razorpay.api.customers.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.customers.create({});
 ```
 
 **Input**
@@ -82,7 +83,8 @@ Fetch a Razorpay customer by ID
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.customers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.customers.get({});
 ```
 
 **Input**
@@ -129,7 +131,8 @@ List Razorpay customers
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.customers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.customers.list({});
 ```
 
 **Input**
@@ -181,7 +184,8 @@ Update a Razorpay customer
 **Risk:** `write`
 
 ```ts
-await corsair.razorpay.api.customers.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.customers.update({});
 ```
 
 **Input**
@@ -245,7 +249,8 @@ Create a Razorpay order
 **Risk:** `write`
 
 ```ts
-await corsair.razorpay.api.orders.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.orders.create({});
 ```
 
 **Input**
@@ -309,7 +314,8 @@ Fetch a Razorpay order by ID
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.orders.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.orders.get({});
 ```
 
 **Input**
@@ -360,7 +366,8 @@ List Razorpay orders
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.orders.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.orders.list({});
 ```
 
 **Input**
@@ -422,7 +429,8 @@ Capture an authorized Razorpay payment
 **Risk:** `write`
 
 ```ts
-await corsair.razorpay.api.payments.capture({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.payments.capture({});
 ```
 
 **Input**
@@ -477,7 +485,8 @@ Fetch a Razorpay payment by ID
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.payments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.payments.get({});
 ```
 
 **Input**
@@ -530,7 +539,8 @@ List Razorpay payments
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.payments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.payments.list({});
 ```
 
 **Input**
@@ -592,7 +602,8 @@ Create a Razorpay payout
 **Risk:** `write`
 
 ```ts
-await corsair.razorpay.api.payouts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.payouts.create({});
 ```
 
 **Input**
@@ -680,7 +691,8 @@ Fetch a Razorpay payout by ID
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.payouts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.payouts.get({});
 ```
 
 **Input**
@@ -749,7 +761,8 @@ List Razorpay payouts
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.payouts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.payouts.list({});
 ```
 
 **Input**
@@ -826,7 +839,8 @@ Create a refund for a Razorpay payment
 **Risk:** `write`
 
 ```ts
-await corsair.razorpay.api.refunds.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.refunds.create({});
 ```
 
 **Input**
@@ -890,7 +904,8 @@ Fetch a specific refund for a Razorpay payment
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.refunds.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.refunds.get({});
 ```
 
 **Input**
@@ -941,7 +956,8 @@ List refunds for a Razorpay payment
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.refunds.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.refunds.list({});
 ```
 
 **Input**
@@ -1001,7 +1017,8 @@ Fetch a Razorpay settlement by ID
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.settlements.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.settlements.get({});
 ```
 
 **Input**
@@ -1038,7 +1055,8 @@ List Razorpay settlements
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.settlements.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.settlements.list({});
 ```
 
 **Input**
@@ -1093,7 +1111,8 @@ Cancel a Razorpay subscription [DESTRUCTIVE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.razorpay.api.subscriptions.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.subscriptions.cancel({});
 ```
 
 **Input**
@@ -1158,7 +1177,8 @@ Create a Razorpay subscription
 **Risk:** `write`
 
 ```ts
-await corsair.razorpay.api.subscriptions.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.subscriptions.create({});
 ```
 
 **Input**
@@ -1240,7 +1260,8 @@ Fetch a Razorpay subscription by ID
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.subscriptions.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.subscriptions.get({});
 ```
 
 **Input**
@@ -1304,7 +1325,8 @@ List Razorpay subscriptions
 **Risk:** `read`
 
 ```ts
-await corsair.razorpay.api.subscriptions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.subscriptions.list({});
 ```
 
 **Input**
@@ -1376,7 +1398,8 @@ Pause a Razorpay subscription
 **Risk:** `write`
 
 ```ts
-await corsair.razorpay.api.subscriptions.pause({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.subscriptions.pause({});
 ```
 
 **Input**
@@ -1441,7 +1464,8 @@ Resume a paused Razorpay subscription
 **Risk:** `write`
 
 ```ts
-await corsair.razorpay.api.subscriptions.resume({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.subscriptions.resume({});
 ```
 
 **Input**
@@ -1506,7 +1530,8 @@ Update a Razorpay subscription
 **Risk:** `write`
 
 ```ts
-await corsair.razorpay.api.subscriptions.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.razorpay.api.subscriptions.update({});
 ```
 
 **Input**

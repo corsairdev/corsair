@@ -20,7 +20,8 @@ Generate an image from a text prompt
 **Risk:** `write`
 
 ```ts
-await corsair.jigsawstack.api.ai.imageGeneration({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.ai.imageGeneration({});
 ```
 
 **Input**
@@ -91,7 +92,8 @@ Forecast a time series from dated values
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.ai.prediction({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.ai.prediction({});
 ```
 
 **Input**
@@ -161,7 +163,8 @@ Analyze sentiment and emotion in text
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.ai.sentiment({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.ai.sentiment({});
 ```
 
 **Input**
@@ -225,7 +228,8 @@ Summarize text or a PDF as a paragraph or bullet points
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.ai.summary({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.ai.summary({});
 ```
 
 **Input**
@@ -277,7 +281,8 @@ Translate text into a target language
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.ai.translate({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.ai.translate({});
 ```
 
 **Input**
@@ -328,7 +333,8 @@ Clone a voice from an audio sample for later TTS
 **Risk:** `write`
 
 ```ts
-await corsair.jigsawstack.api.audio.createVoiceClone({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.audio.createVoiceClone({});
 ```
 
 **Input**
@@ -377,7 +383,8 @@ Transcribe audio or video to text
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.audio.speechToText({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.audio.speechToText({});
 ```
 
 **Input**
@@ -436,7 +443,8 @@ Convert text to speech audio
 **Risk:** `write`
 
 ```ts
-await corsair.jigsawstack.api.audio.textToSpeech({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.audio.textToSpeech({});
 ```
 
 **Input**
@@ -474,7 +482,8 @@ Classify text or images with custom labels
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.classification.classify({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.classification.classify({});
 ```
 
 **Input**
@@ -548,7 +557,8 @@ Create v2 embeddings from text, image, audio, or PDF
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.embedding.createV2({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.embedding.createV2({});
 ```
 
 **Input**
@@ -607,7 +617,8 @@ Create a reusable Prompt Engine template
 **Risk:** `write`
 
 ```ts
-await corsair.jigsawstack.api.promptEngine.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.promptEngine.create({});
 ```
 
 **Input**
@@ -673,7 +684,8 @@ List Prompt Engine templates
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.promptEngine.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.promptEngine.list({});
 ```
 
 **Input**
@@ -724,7 +736,8 @@ Run a stored Prompt Engine by id
 **Risk:** `write`
 
 ```ts
-await corsair.jigsawstack.api.promptEngine.run({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.promptEngine.run({});
 ```
 
 **Input**
@@ -786,7 +799,8 @@ Detect NSFW content in an image
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.validate.nsfw({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.validate.nsfw({});
 ```
 
 **Input**
@@ -839,7 +853,8 @@ Check text for profanity and return a cleaned copy
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.validate.profanity({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.validate.profanity({});
 ```
 
 **Input**
@@ -901,7 +916,8 @@ Score text for spam likelihood
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.validate.spamCheck({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.validate.spamCheck({});
 ```
 
 **Input**
@@ -961,7 +977,8 @@ Detect and auto-correct spelling mistakes
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.validate.spellCheck({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.validate.spellCheck({});
 ```
 
 **Input**
@@ -1026,7 +1043,8 @@ Detect objects and GUI elements in an image
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.vision.detectObjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.vision.detectObjects({});
 ```
 
 **Input**
@@ -1084,7 +1102,8 @@ Extract text and fields from an image or PDF
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.vision.vocr({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.vision.vocr({});
 ```
 
 **Input**
@@ -1154,7 +1173,8 @@ Convert HTML or a URL to PNG, JPEG, WEBP, or PDF
 **Risk:** `write`
 
 ```ts
-await corsair.jigsawstack.api.web.htmlToAny({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.web.htmlToAny({});
 ```
 
 **Input**
@@ -1213,7 +1233,8 @@ Scrape a page into structured data with AI prompts
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.web.scrape({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.web.scrape({});
 ```
 
 **Input**
@@ -1291,7 +1312,8 @@ Search the web with optional AI overview
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.web.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.web.search({});
 ```
 
 **Input**
@@ -1352,7 +1374,8 @@ Get search autocomplete suggestions for a query
 **Risk:** `read`
 
 ```ts
-await corsair.jigsawstack.api.web.searchSuggestions({});
+const tenant = corsair.withTenant('acme');
+await tenant.jigsawstack.api.web.searchSuggestions({});
 ```
 
 **Input**

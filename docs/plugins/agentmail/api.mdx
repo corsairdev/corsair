@@ -20,7 +20,8 @@ Retrieve the complete details of an AgentMail message
 **Risk:** `read`
 
 ```ts
-await corsair.agentmail.api.messages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.agentmail.api.messages.get({});
 ```
 
 **Input**
@@ -97,7 +98,8 @@ List messages from an AgentMail inbox
 **Risk:** `read`
 
 ```ts
-await corsair.agentmail.api.messages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.agentmail.api.messages.list({});
 ```
 
 **Input**
@@ -179,7 +181,8 @@ Send an email using AgentMail
 **Risk:** `write`
 
 ```ts
-await corsair.agentmail.api.messages.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.agentmail.api.messages.send({});
 ```
 
 **Input**

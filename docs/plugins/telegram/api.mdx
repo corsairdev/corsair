@@ -20,7 +20,8 @@ Answer callback query
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.callback.answerCallbackQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.callback.answerCallbackQuery({});
 ```
 
 **Input:** `unknown`
@@ -40,7 +41,8 @@ Answer inline query
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.callback.answerInlineQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.callback.answerInlineQuery({});
 ```
 
 **Input:** `unknown`
@@ -62,7 +64,8 @@ Get chat information
 **Risk:** `read`
 
 ```ts
-await corsair.telegram.api.chat.getChat({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.chat.getChat({});
 ```
 
 **Input:** `unknown`
@@ -82,7 +85,8 @@ Get chat administrators
 **Risk:** `read`
 
 ```ts
-await corsair.telegram.api.chat.getChatAdministrators({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.chat.getChatAdministrators({});
 ```
 
 **Input:** `unknown`
@@ -102,7 +106,8 @@ Get chat member information
 **Risk:** `read`
 
 ```ts
-await corsair.telegram.api.chat.getChatMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.chat.getChatMember({});
 ```
 
 **Input:** `unknown`
@@ -124,7 +129,8 @@ Get a file
 **Risk:** `read`
 
 ```ts
-await corsair.telegram.api.file.getFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.file.getFile({});
 ```
 
 **Input:** `unknown`
@@ -146,7 +152,8 @@ Get bot info
 **Risk:** `read`
 
 ```ts
-await corsair.telegram.api.me.getMe({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.me.getMe({});
 ```
 
 **Input:** `unknown`
@@ -168,7 +175,8 @@ Delete a message
 **Risk:** `destructive`
 
 ```ts
-await corsair.telegram.api.messages.deleteMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.deleteMessage({});
 ```
 
 **Input:** `unknown`
@@ -188,7 +196,8 @@ Edit message text
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.editMessageText({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.editMessageText({});
 ```
 
 **Input:** `unknown`
@@ -208,7 +217,8 @@ Pin a chat message
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.pinChatMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.pinChatMessage({});
 ```
 
 **Input:** `unknown`
@@ -228,7 +238,8 @@ Send animation
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.sendAnimation({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.sendAnimation({});
 ```
 
 **Input:** `unknown`
@@ -248,7 +259,8 @@ Send audio
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.sendAudio({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.sendAudio({});
 ```
 
 **Input:** `unknown`
@@ -268,7 +280,8 @@ Send a chat action
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.sendChatAction({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.sendChatAction({});
 ```
 
 **Input:** `unknown`
@@ -288,7 +301,8 @@ Send document
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.sendDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.sendDocument({});
 ```
 
 **Input:** `unknown`
@@ -308,7 +322,8 @@ Send location
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.sendLocation({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.sendLocation({});
 ```
 
 **Input:** `unknown`
@@ -328,7 +343,8 @@ Send media group
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.sendMediaGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.sendMediaGroup({});
 ```
 
 **Input:** `unknown`
@@ -348,7 +364,8 @@ Send a message
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.sendMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.sendMessage({});
 ```
 
 **Input:** `unknown`
@@ -368,7 +385,8 @@ Send photo
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.sendPhoto({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.sendPhoto({});
 ```
 
 **Input:** `unknown`
@@ -388,7 +406,8 @@ Send sticker
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.sendSticker({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.sendSticker({});
 ```
 
 **Input:** `unknown`
@@ -408,7 +427,8 @@ Send video
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.sendVideo({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.sendVideo({});
 ```
 
 **Input:** `unknown`
@@ -428,7 +448,8 @@ Unpin a chat message
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.messages.unpinChatMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.messages.unpinChatMessage({});
 ```
 
 **Input:** `unknown`
@@ -450,7 +471,8 @@ Get updates
 **Risk:** `read`
 
 ```ts
-await corsair.telegram.api.updates.getUpdates({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.updates.getUpdates({});
 ```
 
 **Input:** `unknown`
@@ -472,7 +494,8 @@ Delete webhook
 **Risk:** `destructive`
 
 ```ts
-await corsair.telegram.api.webhook.deleteWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.webhook.deleteWebhook({});
 ```
 
 **Input:** `unknown`
@@ -492,7 +515,8 @@ Set webhook
 **Risk:** `write`
 
 ```ts
-await corsair.telegram.api.webhook.setWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.telegram.api.webhook.setWebhook({});
 ```
 
 **Input:** `unknown`

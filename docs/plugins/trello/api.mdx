@@ -20,7 +20,8 @@ Create a new board
 **Risk:** `write`
 
 ```ts
-await corsair.trello.api.boards.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.boards.create({});
 ```
 
 **Input**
@@ -114,7 +115,8 @@ Delete a board [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.trello.api.boards.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.boards.delete({});
 ```
 
 **Input**
@@ -144,7 +146,8 @@ Get a board by ID
 **Risk:** `read`
 
 ```ts
-await corsair.trello.api.boards.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.boards.get({});
 ```
 
 **Input**
@@ -224,7 +227,8 @@ List boards for a member
 **Risk:** `read`
 
 ```ts
-await corsair.trello.api.boards.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.boards.list({});
 ```
 
 **Input**
@@ -295,7 +299,8 @@ Update a board
 **Risk:** `write`
 
 ```ts
-await corsair.trello.api.boards.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.boards.update({});
 ```
 
 **Input**
@@ -385,7 +390,8 @@ Create a new card
 **Risk:** `write`
 
 ```ts
-await corsair.trello.api.cards.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.cards.create({});
 ```
 
 **Input**
@@ -486,7 +492,8 @@ Delete a card [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.trello.api.cards.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.cards.delete({});
 ```
 
 **Input**
@@ -516,7 +523,8 @@ Get a card by ID
 **Risk:** `read`
 
 ```ts
-await corsair.trello.api.cards.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.cards.get({});
 ```
 
 **Input**
@@ -608,7 +616,8 @@ List cards in a list
 **Risk:** `read`
 
 ```ts
-await corsair.trello.api.cards.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.cards.list({});
 ```
 
 **Input**
@@ -694,7 +703,8 @@ Move a card to a different list or board
 **Risk:** `write`
 
 ```ts
-await corsair.trello.api.cards.move({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.cards.move({});
 ```
 
 **Input**
@@ -788,7 +798,8 @@ Update a card
 **Risk:** `write`
 
 ```ts
-await corsair.trello.api.cards.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.cards.update({});
 ```
 
 **Input**
@@ -894,7 +905,8 @@ Create a checklist on a card
 **Risk:** `write`
 
 ```ts
-await corsair.trello.api.checklists.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.checklists.create({});
 ```
 
 **Input**
@@ -951,7 +963,8 @@ Delete a checklist [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.trello.api.checklists.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.checklists.delete({});
 ```
 
 **Input**
@@ -981,7 +994,8 @@ Get a checklist by ID
 **Risk:** `read`
 
 ```ts
-await corsair.trello.api.checklists.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.checklists.get({});
 ```
 
 **Input**
@@ -1040,7 +1054,8 @@ Create a label on a board
 **Risk:** `write`
 
 ```ts
-await corsair.trello.api.labels.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.labels.create({});
 ```
 
 **Input**
@@ -1075,7 +1090,8 @@ Delete a label [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.trello.api.labels.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.labels.delete({});
 ```
 
 **Input**
@@ -1105,7 +1121,8 @@ List labels on a board
 **Risk:** `read`
 
 ```ts
-await corsair.trello.api.labels.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.labels.list({});
 ```
 
 **Input**
@@ -1146,7 +1163,8 @@ Update a label
 **Risk:** `write`
 
 ```ts
-await corsair.trello.api.labels.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.labels.update({});
 ```
 
 **Input**
@@ -1183,7 +1201,8 @@ Archive (close) a list
 **Risk:** `write`
 
 ```ts
-await corsair.trello.api.lists.archive({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.lists.archive({});
 ```
 
 **Input**
@@ -1219,7 +1238,8 @@ Create a new list on a board
 **Risk:** `write`
 
 ```ts
-await corsair.trello.api.lists.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.lists.create({});
 ```
 
 **Input**
@@ -1258,7 +1278,8 @@ Get a list by ID
 **Risk:** `read`
 
 ```ts
-await corsair.trello.api.lists.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.lists.get({});
 ```
 
 **Input**
@@ -1295,7 +1316,8 @@ List all lists on a board
 **Risk:** `read`
 
 ```ts
-await corsair.trello.api.lists.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.lists.list({});
 ```
 
 **Input**
@@ -1338,7 +1360,8 @@ Update a list
 **Risk:** `write`
 
 ```ts
-await corsair.trello.api.lists.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.lists.update({});
 ```
 
 **Input**
@@ -1381,7 +1404,8 @@ Get a member by ID or username
 **Risk:** `read`
 
 ```ts
-await corsair.trello.api.members.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.members.get({});
 ```
 
 **Input**
@@ -1429,7 +1453,8 @@ List members of a board
 **Risk:** `read`
 
 ```ts
-await corsair.trello.api.members.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.trello.api.members.list({});
 ```
 
 **Input**

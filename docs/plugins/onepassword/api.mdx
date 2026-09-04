@@ -20,7 +20,8 @@ Create a new item in a vault
 **Risk:** `write`
 
 ```ts
-await corsair.onepassword.api.items.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.onepassword.api.items.create({});
 ```
 
 **Input**
@@ -122,7 +123,8 @@ Delete an item from a vault [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.onepassword.api.items.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.onepassword.api.items.delete({});
 ```
 
 **Input**
@@ -153,7 +155,8 @@ Get details of a vault item (e.g. login credentials, notes)
 **Risk:** `read`
 
 ```ts
-await corsair.onepassword.api.items.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.onepassword.api.items.get({});
 ```
 
 **Input**
@@ -225,7 +228,8 @@ List all items inside a specific vault
 **Risk:** `read`
 
 ```ts
-await corsair.onepassword.api.items.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.onepassword.api.items.list({});
 ```
 
 **Input**
@@ -281,7 +285,8 @@ Update details of an existing vault item
 **Risk:** `write`
 
 ```ts
-await corsair.onepassword.api.items.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.onepassword.api.items.update({});
 ```
 
 **Input**
@@ -386,7 +391,8 @@ Get details of a specific vault by ID
 **Risk:** `read`
 
 ```ts
-await corsair.onepassword.api.vaults.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.onepassword.api.vaults.get({});
 ```
 
 **Input**
@@ -421,7 +427,8 @@ List all vaults the integration can access
 **Risk:** `read`
 
 ```ts
-await corsair.onepassword.api.vaults.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.onepassword.api.vaults.list({});
 ```
 
 **Input:** _empty object_

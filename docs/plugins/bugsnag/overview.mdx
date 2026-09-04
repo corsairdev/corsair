@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { bugsnag } from '@corsair-dev/bugsnag';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		bugsnag(),
 	],

@@ -14,7 +14,8 @@ The Google BigQuery plugin syncs data locally. Use `corsair.googlebigquery.db.<e
 Path: `googlebigquery.db.datasets.search`
 
 ```ts
-const rows = await corsair.googlebigquery.db.datasets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlebigquery.db.datasets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googlebigquery.db.jobs.search`
 
 ```ts
-const rows = await corsair.googlebigquery.db.jobs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlebigquery.db.jobs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -71,7 +73,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googlebigquery.db.models.search`
 
 ```ts
-const rows = await corsair.googlebigquery.db.models.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlebigquery.db.models.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -100,7 +103,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googlebigquery.db.routines.search`
 
 ```ts
-const rows = await corsair.googlebigquery.db.routines.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlebigquery.db.routines.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -130,7 +134,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googlebigquery.db.tables.search`
 
 ```ts
-const rows = await corsair.googlebigquery.db.tables.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlebigquery.db.tables.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

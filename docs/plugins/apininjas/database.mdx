@@ -14,7 +14,8 @@ The API Ninjas plugin syncs data locally. Use `corsair.apininjas.db.<entity>.sea
 Path: `apininjas.db.aircraft.search`
 
 ```ts
-const rows = await corsair.apininjas.db.aircraft.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.aircraft.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apininjas.db.airlines.search`
 
 ```ts
-const rows = await corsair.apininjas.db.airlines.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.airlines.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -74,7 +76,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apininjas.db.airports.search`
 
 ```ts
-const rows = await corsair.apininjas.db.airports.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.airports.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -115,7 +118,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apininjas.db.animals.search`
 
 ```ts
-const rows = await corsair.apininjas.db.animals.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.animals.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -140,7 +144,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apininjas.db.cities.search`
 
 ```ts
-const rows = await corsair.apininjas.db.cities.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.cities.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -166,7 +171,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apininjas.db.countries.search`
 
 ```ts
-const rows = await corsair.apininjas.db.countries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.countries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -194,7 +200,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apininjas.db.emoji.search`
 
 ```ts
-const rows = await corsair.apininjas.db.emoji.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.emoji.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -224,7 +231,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apininjas.db.planets.search`
 
 ```ts
-const rows = await corsair.apininjas.db.planets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.planets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -249,7 +257,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apininjas.db.sp500.search`
 
 ```ts
-const rows = await corsair.apininjas.db.sp500.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.sp500.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -280,7 +289,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apininjas.db.stars.search`
 
 ```ts
-const rows = await corsair.apininjas.db.stars.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.stars.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -309,7 +319,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apininjas.db.stockExchanges.search`
 
 ```ts
-const rows = await corsair.apininjas.db.stockExchanges.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.stockExchanges.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -347,7 +358,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apininjas.db.universities.search`
 
 ```ts
-const rows = await corsair.apininjas.db.universities.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.universities.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -388,7 +400,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apininjas.db.vehicles.search`
 
 ```ts
-const rows = await corsair.apininjas.db.vehicles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apininjas.db.vehicles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

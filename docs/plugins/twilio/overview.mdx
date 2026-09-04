@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { twilio } from '@corsair-dev/twilio';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		twilio(),
 	],

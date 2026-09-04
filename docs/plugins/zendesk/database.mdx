@@ -14,7 +14,8 @@ The Zendesk plugin syncs data locally. Use `corsair.zendesk.db.<entity>.search({
 Path: `zendesk.db.comments.search`
 
 ```ts
-const rows = await corsair.zendesk.db.comments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zendesk.db.comments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zendesk.db.tickets.search`
 
 ```ts
-const rows = await corsair.zendesk.db.tickets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zendesk.db.tickets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -75,7 +77,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zendesk.db.users.search`
 
 ```ts
-const rows = await corsair.zendesk.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zendesk.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

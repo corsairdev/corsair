@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { amara } from '@corsair-dev/amara';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		amara(),
 	],

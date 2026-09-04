@@ -46,6 +46,7 @@ import { createCorsair } from 'corsair';
 import { bettercontact } from '@corsair-dev/bettercontact';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		bettercontact(),
 	],

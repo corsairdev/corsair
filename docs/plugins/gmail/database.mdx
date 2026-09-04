@@ -14,7 +14,8 @@ The Gmail plugin syncs data locally. Use `corsair.gmail.db.<entity>.search({ dat
 Path: `gmail.db.drafts.search`
 
 ```ts
-const rows = await corsair.gmail.db.drafts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gmail.db.drafts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gmail.db.labels.search`
 
 ```ts
-const rows = await corsair.gmail.db.labels.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gmail.db.labels.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -68,7 +70,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gmail.db.messages.search`
 
 ```ts
-const rows = await corsair.gmail.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gmail.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -102,7 +105,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gmail.db.threads.search`
 
 ```ts
-const rows = await corsair.gmail.db.threads.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gmail.db.threads.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

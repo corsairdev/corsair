@@ -14,7 +14,8 @@ The GitHub plugin syncs data locally. Use `corsair.github.db.<entity>.search({ d
 Path: `github.db.branches.search`
 
 ```ts
-const rows = await corsair.github.db.branches.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.branches.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `github.db.comments.search`
 
 ```ts
-const rows = await corsair.github.db.comments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.comments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -74,7 +76,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `github.db.discussions.search`
 
 ```ts
-const rows = await corsair.github.db.discussions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.discussions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -113,7 +116,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `github.db.events.search`
 
 ```ts
-const rows = await corsair.github.db.events.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.events.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -135,7 +139,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `github.db.forks.search`
 
 ```ts
-const rows = await corsair.github.db.forks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.forks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -171,7 +176,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `github.db.issues.search`
 
 ```ts
-const rows = await corsair.github.db.issues.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.issues.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -211,7 +217,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `github.db.pullRequests.search`
 
 ```ts
-const rows = await corsair.github.db.pullRequests.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.pullRequests.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -258,7 +265,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `github.db.releases.search`
 
 ```ts
-const rows = await corsair.github.db.releases.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.releases.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -297,7 +305,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `github.db.repositories.search`
 
 ```ts
-const rows = await corsair.github.db.repositories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.repositories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -340,7 +349,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `github.db.users.search`
 
 ```ts
-const rows = await corsair.github.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -362,7 +372,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `github.db.workflows.search`
 
 ```ts
-const rows = await corsair.github.db.workflows.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.workflows.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

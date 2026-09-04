@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { securitytrails } from '@corsair-dev/securitytrails';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		securitytrails(),
 	],

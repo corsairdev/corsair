@@ -20,7 +20,8 @@ Fetch historical weather data for a specific Ambient Weather device
 **Risk:** `read`
 
 ```ts
-await corsair.ambientweather.api.devices.getData({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambientweather.api.devices.getData({});
 ```
 
 **Input**
@@ -87,7 +88,8 @@ List all Ambient Weather devices for the connected account with their latest rea
 **Risk:** `read`
 
 ```ts
-await corsair.ambientweather.api.devices.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambientweather.api.devices.list({});
 ```
 
 **Input:** _empty object_

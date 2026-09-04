@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { huggingface } from '@corsair-dev/huggingface';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		huggingface(),
 	],

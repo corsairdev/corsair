@@ -14,7 +14,8 @@ The BlazeMeter plugin syncs data locally. Use `corsair.blazemeter.db.<entity>.se
 Path: `blazemeter.db.accounts.search`
 
 ```ts
-const rows = await corsair.blazemeter.db.accounts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.blazemeter.db.accounts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -38,7 +39,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `blazemeter.db.assets.search`
 
 ```ts
-const rows = await corsair.blazemeter.db.assets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.blazemeter.db.assets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -71,7 +73,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `blazemeter.db.packages.search`
 
 ```ts
-const rows = await corsair.blazemeter.db.packages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.blazemeter.db.packages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -101,7 +104,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `blazemeter.db.projects.search`
 
 ```ts
-const rows = await corsair.blazemeter.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.blazemeter.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -131,7 +135,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `blazemeter.db.tests.search`
 
 ```ts
-const rows = await corsair.blazemeter.db.tests.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.blazemeter.db.tests.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -167,7 +172,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `blazemeter.db.users.search`
 
 ```ts
-const rows = await corsair.blazemeter.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.blazemeter.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -197,7 +203,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `blazemeter.db.workspaces.search`
 
 ```ts
-const rows = await corsair.blazemeter.db.workspaces.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.blazemeter.db.workspaces.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -229,7 +236,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `blazemeter.db.workspaceUsers.search`
 
 ```ts
-const rows = await corsair.blazemeter.db.workspaceUsers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.blazemeter.db.workspaceUsers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

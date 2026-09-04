@@ -14,7 +14,8 @@ The Kaggle plugin syncs data locally. Use `corsair.kaggle.db.<entity>.search({ d
 Path: `kaggle.db.competitions.search`
 
 ```ts
-const rows = await corsair.kaggle.db.competitions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.kaggle.db.competitions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -38,7 +39,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `kaggle.db.datasets.search`
 
 ```ts
-const rows = await corsair.kaggle.db.datasets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.kaggle.db.datasets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -62,7 +64,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `kaggle.db.kernels.search`
 
 ```ts
-const rows = await corsair.kaggle.db.kernels.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.kaggle.db.kernels.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -86,7 +89,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `kaggle.db.models.search`
 
 ```ts
-const rows = await corsair.kaggle.db.models.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.kaggle.db.models.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

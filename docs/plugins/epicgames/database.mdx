@@ -14,7 +14,8 @@ The Epic Games plugin syncs data locally. Use `corsair.epicgames.db.<entity>.sea
 Path: `epicgames.db.islands.search`
 
 ```ts
-const rows = await corsair.epicgames.db.islands.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.epicgames.db.islands.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

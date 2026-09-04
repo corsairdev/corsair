@@ -20,7 +20,8 @@ Get a single API key by ID
 **Risk:** `read`
 
 ```ts
-await corsair.anthropicadministrator.api.apiKeys.getApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.apiKeys.getApiKey({});
 ```
 
 **Input**
@@ -81,7 +82,8 @@ List organization API keys, optionally filtered by status
 **Risk:** `read`
 
 ```ts
-await corsair.anthropicadministrator.api.apiKeys.listApiKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.apiKeys.listApiKeys({});
 ```
 
 **Input**
@@ -145,7 +147,8 @@ Rename an API key or change its active status
 **Risk:** `write`
 
 ```ts
-await corsair.anthropicadministrator.api.apiKeys.updateApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.apiKeys.updateApiKey({});
 ```
 
 **Input**
@@ -210,7 +213,8 @@ Invite someone to the organization with a given role
 **Risk:** `write`
 
 ```ts
-await corsair.anthropicadministrator.api.invites.createInvite({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.invites.createInvite({});
 ```
 
 **Input**
@@ -250,7 +254,8 @@ Delete a pending organization invite
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.anthropicadministrator.api.invites.deleteInvite({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.invites.deleteInvite({});
 ```
 
 **Input**
@@ -281,7 +286,8 @@ Get a single invite by ID
 **Risk:** `read`
 
 ```ts
-await corsair.anthropicadministrator.api.invites.getInvite({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.invites.getInvite({});
 ```
 
 **Input**
@@ -319,7 +325,8 @@ List organization invites
 **Risk:** `read`
 
 ```ts
-await corsair.anthropicadministrator.api.invites.listInvites({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.invites.listInvites({});
 ```
 
 **Input**
@@ -378,7 +385,8 @@ Get the organization associated with the Admin API key
 **Risk:** `read`
 
 ```ts
-await corsair.anthropicadministrator.api.organization.getOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.organization.getOrganization({});
 ```
 
 **Input:** _empty object_
@@ -407,7 +415,8 @@ Get a single organization member by user ID
 **Risk:** `read`
 
 ```ts
-await corsair.anthropicadministrator.api.users.getUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.users.getUser({});
 ```
 
 **Input**
@@ -442,7 +451,8 @@ List organization members, optionally filtered by email or role
 **Risk:** `read`
 
 ```ts
-await corsair.anthropicadministrator.api.users.listUsers({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.users.listUsers({});
 ```
 
 **Input**
@@ -495,7 +505,8 @@ Remove a member from the organization
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.anthropicadministrator.api.users.removeUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.users.removeUser({});
 ```
 
 **Input**
@@ -526,7 +537,8 @@ Change an organization member's role
 **Risk:** `write`
 
 ```ts
-await corsair.anthropicadministrator.api.users.updateUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.users.updateUser({});
 ```
 
 **Input**
@@ -564,7 +576,8 @@ Add an organization member to a workspace with a role
 **Risk:** `write`
 
 ```ts
-await corsair.anthropicadministrator.api.workspaceMembers.createWorkspaceMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.workspaceMembers.createWorkspaceMember({});
 ```
 
 **Input**
@@ -599,7 +612,8 @@ Remove a member from a workspace
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.anthropicadministrator.api.workspaceMembers.deleteWorkspaceMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.workspaceMembers.deleteWorkspaceMember({});
 ```
 
 **Input**
@@ -632,7 +646,8 @@ Get a single workspace member
 **Risk:** `read`
 
 ```ts
-await corsair.anthropicadministrator.api.workspaceMembers.getWorkspaceMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.workspaceMembers.getWorkspaceMember({});
 ```
 
 **Input**
@@ -666,7 +681,8 @@ List members of a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.anthropicadministrator.api.workspaceMembers.listWorkspaceMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.workspaceMembers.listWorkspaceMembers({});
 ```
 
 **Input**
@@ -716,7 +732,8 @@ Change a workspace member's role
 **Risk:** `write`
 
 ```ts
-await corsair.anthropicadministrator.api.workspaceMembers.updateWorkspaceMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.workspaceMembers.updateWorkspaceMember({});
 ```
 
 **Input**
@@ -753,7 +770,8 @@ Archive a workspace
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.anthropicadministrator.api.workspaces.archiveWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.workspaces.archiveWorkspace({});
 ```
 
 **Input**
@@ -810,7 +828,8 @@ Create a workspace
 **Risk:** `write`
 
 ```ts
-await corsair.anthropicadministrator.api.workspaces.createWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.workspaces.createWorkspace({});
 ```
 
 **Input**
@@ -888,7 +907,8 @@ Get a single workspace by ID
 **Risk:** `read`
 
 ```ts
-await corsair.anthropicadministrator.api.workspaces.getWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.workspaces.getWorkspace({});
 ```
 
 **Input**
@@ -945,7 +965,8 @@ List workspaces, optionally including archived ones
 **Risk:** `read`
 
 ```ts
-await corsair.anthropicadministrator.api.workspaces.listWorkspaces({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.workspaces.listWorkspaces({});
 ```
 
 **Input**
@@ -1003,7 +1024,8 @@ Update a workspace name, tags or data residency
 **Risk:** `write`
 
 ```ts
-await corsair.anthropicadministrator.api.workspaces.updateWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.anthropicadministrator.api.workspaces.updateWorkspace({});
 ```
 
 **Input**

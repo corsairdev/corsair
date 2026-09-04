@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { gmail } from '@corsair-dev/gmail';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		gmail(),
 	],
@@ -129,15 +130,23 @@ Synced entities: `drafts`, `labels`, `messages`, `threads`. See [Database](/plug
 Fires when a Gmail message is received, deleted, or has its labels changed.
 
 ```ts
-gmail({
-    webhookHooks: {
-        messageChanged: {
-            after: async (ctx, result) => {
-                console.log('Gmail event:', result.data);
-            }
-        },
-    },
-})
+import { createCorsair } from 'corsair';
+import { gmail } from '@corsair-dev/gmail';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+		gmail({
+			webhookHooks: {
+				messageChanged: {
+					after: async (ctx, result) => {
+						console.log('Gmail event:', result.data);
+					}
+				},
+			},
+		)
+	],
+});
 ```
 
 Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/gmail/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).

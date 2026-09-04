@@ -20,7 +20,8 @@ Remove a collaborator, revoking access to every project in the organization
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.collaborators.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.delete({});
 ```
 
 **Input**
@@ -53,7 +54,8 @@ Get a single collaborator
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.collaborators.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.get({});
 ```
 
 **Input**
@@ -111,7 +113,8 @@ Get a collaborator in the context of a project
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.collaborators.getOnProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.getOnProject({});
 ```
 
 **Input**
@@ -169,7 +172,8 @@ Get how one collaborator reaches one project
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.collaborators.getProjectAccess({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.getProjectAccess({});
 ```
 
 **Input**
@@ -220,7 +224,8 @@ Invite a collaborator to an organization by email address
 **Risk:** `write`
 
 ```ts
-await corsair.bugsnag.api.collaborators.invite({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.invite({});
 ```
 
 **Input**
@@ -281,7 +286,8 @@ List the collaborators on an organization
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.collaborators.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.list({});
 ```
 
 **Input**
@@ -337,7 +343,8 @@ List the collaborators who can reach a project
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.collaborators.listOnProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.listOnProject({});
 ```
 
 **Input**
@@ -393,7 +400,8 @@ List how a collaborator reaches each project, with the granting role
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.collaborators.listProjectAccesses({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.listProjectAccesses({});
 ```
 
 **Input**
@@ -444,7 +452,8 @@ List the projects a collaborator can reach
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.collaborators.listProjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.listProjects({});
 ```
 
 **Input**
@@ -524,7 +533,8 @@ Count how many projects each named collaborator can reach
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.collaborators.projectAccessCounts({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.projectAccessCounts({});
 ```
 
 **Input**
@@ -563,7 +573,8 @@ Change a collaborator's project access or admin status
 **Risk:** `write`
 
 ```ts
-await corsair.bugsnag.api.collaborators.updatePermissions({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.collaborators.updatePermissions({});
 ```
 
 **Input**
@@ -636,7 +647,8 @@ Confirm a project event data deletion, irreversibly erasing the matched data
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.dataDeletions.confirmForProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.dataDeletions.confirmForProject({});
 ```
 
 **Input**
@@ -674,7 +686,8 @@ Create a request to erase matching event data across an organization
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.dataDeletions.createForOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.dataDeletions.createForOrganization({});
 ```
 
 **Input**
@@ -722,7 +735,8 @@ Create a request to erase matching event data in a project
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.dataDeletions.createForProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.dataDeletions.createForProject({});
 ```
 
 **Input**
@@ -770,7 +784,8 @@ Check the status of an organization event data deletion
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.dataDeletions.getForOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.dataDeletions.getForOrganization({});
 ```
 
 **Input**
@@ -808,7 +823,8 @@ Check the status of a project event data deletion
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.dataDeletions.getForProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.dataDeletions.getForProject({});
 ```
 
 **Input**
@@ -848,7 +864,8 @@ Request an export of an organization's event data for a subject access request
 **Risk:** `write`
 
 ```ts
-await corsair.bugsnag.api.dataRequests.createForOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.dataRequests.createForOrganization({});
 ```
 
 **Input**
@@ -897,7 +914,8 @@ Request an export of a project's event data for a subject access request
 **Risk:** `write`
 
 ```ts
-await corsair.bugsnag.api.dataRequests.createForProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.dataRequests.createForProject({});
 ```
 
 **Input**
@@ -946,7 +964,8 @@ Check the status of an organization event data export
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.dataRequests.getForOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.dataRequests.getForOrganization({});
 ```
 
 **Input**
@@ -984,7 +1003,8 @@ Check the status of a project event data export
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.dataRequests.getForProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.dataRequests.getForProject({});
 ```
 
 **Input**
@@ -1024,7 +1044,8 @@ Apply one operation to many errors at once, including delete and discard
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.errors.bulkUpdate({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.errors.bulkUpdate({});
 ```
 
 **Input**
@@ -1072,7 +1093,8 @@ Permanently delete every error and event in a project
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.errors.deleteAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.errors.deleteAll({});
 ```
 
 **Input**
@@ -1104,7 +1126,8 @@ List the error groups on a project
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.errors.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.errors.list({});
 ```
 
 **Input**
@@ -1189,7 +1212,8 @@ Create a custom event field from a path inside event metadata
 **Risk:** `write`
 
 ```ts
-await corsair.bugsnag.api.eventFields.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.eventFields.create({});
 ```
 
 **Input**
@@ -1237,7 +1261,8 @@ Delete a custom event field
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.eventFields.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.eventFields.delete({});
 ```
 
 **Input**
@@ -1270,7 +1295,8 @@ List the fields a project can filter and pivot on
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.eventFields.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.eventFields.list({});
 ```
 
 **Input**
@@ -1316,7 +1342,8 @@ List the individual event occurrences on a project
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.events.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.events.list({});
 ```
 
 **Input**
@@ -1388,7 +1415,8 @@ List the individual events belonging to one error
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.events.listForError({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.events.listForError({});
 ```
 
 **Input**
@@ -1463,7 +1491,8 @@ List the feature flags seen on a project in a release stage
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.featureFlags.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.featureFlags.list({});
 ```
 
 **Input**
@@ -1512,7 +1541,8 @@ List feature flag summaries for a project
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.featureFlags.listSummaries({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.featureFlags.listSummaries({});
 ```
 
 **Input**
@@ -1555,7 +1585,8 @@ Configure an integration on a project
 **Risk:** `write`
 
 ```ts
-await corsair.bugsnag.api.integrations.configure({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.integrations.configure({});
 ```
 
 **Input**
@@ -1605,7 +1636,8 @@ Delete a configured integration
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.integrations.deleteConfigured({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.integrations.deleteConfigured({});
 ```
 
 **Input**
@@ -1637,7 +1669,8 @@ Get a single configured integration
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.integrations.getConfigured({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.integrations.getConfigured({});
 ```
 
 **Input**
@@ -1675,7 +1708,8 @@ List the integrations configured on a project
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.integrations.listConfigured({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.integrations.listConfigured({});
 ```
 
 **Input**
@@ -1721,7 +1755,8 @@ List every integration BugSnag supports
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.integrations.listSupported({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.integrations.listSupported({});
 ```
 
 **Input**
@@ -1768,7 +1803,8 @@ Test an integration configuration before creating it
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.integrations.test({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.integrations.test({});
 ```
 
 **Input**
@@ -1813,7 +1849,8 @@ Delete an organization with all of its projects, errors and collaborator access
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.organizations.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.organizations.delete({});
 ```
 
 **Input**
@@ -1845,7 +1882,8 @@ Get a single organization
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.organizations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.organizations.get({});
 ```
 
 **Input**
@@ -1903,7 +1941,8 @@ List the organizations the token's owner belongs to
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.organizations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.organizations.list({});
 ```
 
 **Input**
@@ -1961,7 +2000,8 @@ List the pivot definitions available on a project
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.pivots.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.pivots.list({});
 ```
 
 **Input**
@@ -2014,7 +2054,8 @@ List one pivot's values with each value's share of events
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.pivots.values({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.pivots.values({});
 ```
 
 **Input**
@@ -2074,7 +2115,8 @@ Create a project in an organization
 **Risk:** `write`
 
 ```ts
-await corsair.bugsnag.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.projects.create({});
 ```
 
 **Input**
@@ -2161,7 +2203,8 @@ Delete a project and its entire error history
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.projects.delete({});
 ```
 
 **Input**
@@ -2193,7 +2236,8 @@ Get a single project
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.projects.get({});
 ```
 
 **Input**
@@ -2278,7 +2322,8 @@ List the projects in an organization
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.projects.list({});
 ```
 
 **Input**
@@ -2358,7 +2403,8 @@ Get a project's network span grouping ruleset
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.projects.networkGroupingRuleset({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.projects.networkGroupingRuleset({});
 ```
 
 **Input**
@@ -2389,7 +2435,8 @@ Rotate a project's notifier API key, stopping every deployed notifier until rede
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.projects.regenerateApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.projects.regenerateApiKey({});
 ```
 
 **Input**
@@ -2476,7 +2523,8 @@ List the releases of a project
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.releases.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.releases.list({});
 ```
 
 **Input**
@@ -2536,7 +2584,8 @@ List the release groups of a project within a release stage
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.releases.listGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.releases.listGroups({});
 ```
 
 **Input**
@@ -2596,7 +2645,8 @@ Create a saved search from a filter configuration
 **Risk:** `write`
 
 ```ts
-await corsair.bugsnag.api.savedSearches.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.savedSearches.create({});
 ```
 
 **Input**
@@ -2664,7 +2714,8 @@ Delete a saved search
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.savedSearches.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.savedSearches.delete({});
 ```
 
 **Input**
@@ -2696,7 +2747,8 @@ Get a single saved search
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.savedSearches.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.savedSearches.get({});
 ```
 
 **Input**
@@ -2749,7 +2801,8 @@ List the saved searches on a project
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.savedSearches.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.savedSearches.list({});
 ```
 
 **Input**
@@ -2811,7 +2864,8 @@ Report what depends on a saved search, to check before deleting it
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.savedSearches.usageSummary({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.savedSearches.usageSummary({});
 ```
 
 **Input**
@@ -2846,7 +2900,8 @@ Add a collaborator to teams, or to all of them
 **Risk:** `write`
 
 ```ts
-await corsair.bugsnag.api.teams.addCollaboratorMemberships({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.teams.addCollaboratorMemberships({});
 ```
 
 **Input**
@@ -2906,7 +2961,8 @@ Add collaborators to a team, or add all of them
 **Risk:** `write`
 
 ```ts
-await corsair.bugsnag.api.teams.addMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.teams.addMembers({});
 ```
 
 **Input**
@@ -2942,7 +2998,8 @@ Create a team in an organization
 **Risk:** `write`
 
 ```ts
-await corsair.bugsnag.api.teams.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.teams.create({});
 ```
 
 **Input**
@@ -2976,7 +3033,8 @@ Delete a team, removing the grouping but not its members
 **Risk:** `destructive`
 
 ```ts
-await corsair.bugsnag.api.teams.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.teams.delete({});
 ```
 
 **Input**
@@ -3009,7 +3067,8 @@ Get a single team
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.teams.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.teams.get({});
 ```
 
 **Input**
@@ -3043,7 +3102,8 @@ List the teams in an organization
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.teams.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.teams.list({});
 ```
 
 **Input**
@@ -3087,7 +3147,8 @@ Get a project's event counts split into time buckets
 **Risk:** `read`
 
 ```ts
-await corsair.bugsnag.api.trends.projectBuckets({});
+const tenant = corsair.withTenant('acme');
+await tenant.bugsnag.api.trends.projectBuckets({});
 ```
 
 **Input**

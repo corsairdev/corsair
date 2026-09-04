@@ -20,7 +20,8 @@ Count tokens in text using Gemini tokenization, for cost estimation and input li
 **Risk:** `read`
 
 ```ts
-await corsair.gemini.api.content.countTokens({});
+const tenant = corsair.withTenant('acme');
+await tenant.gemini.api.content.countTokens({});
 ```
 
 **Input**
@@ -70,7 +71,8 @@ Generate a numerical vector embedding for text, for semantic search and similari
 **Risk:** `read`
 
 ```ts
-await corsair.gemini.api.content.embedContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.gemini.api.content.embedContent({});
 ```
 
 **Input**
@@ -132,7 +134,8 @@ Generate text or speech audio from a prompt using a Gemini Flash/Pro model
 **Risk:** `read`
 
 ```ts
-await corsair.gemini.api.content.generateContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.gemini.api.content.generateContent({});
 ```
 
 **Input**
@@ -264,7 +267,8 @@ Generate a raster image (JPG/PNG/WebP) from a prompt using a Nano Banana image m
 **Risk:** `write`
 
 ```ts
-await corsair.gemini.api.images.generateImage({});
+const tenant = corsair.withTenant('acme');
+await tenant.gemini.api.images.generateImage({});
 ```
 
 **Input**
@@ -373,7 +377,8 @@ List available Gemini and Veo models and their capabilities/limits
 **Risk:** `read`
 
 ```ts
-await corsair.gemini.api.models.listModels({});
+const tenant = corsair.withTenant('acme');
+await tenant.gemini.api.models.listModels({});
 ```
 
 **Input**
@@ -428,7 +433,8 @@ Generate a text-to-video clip using a Veo model; returns an operation name for s
 **Risk:** `write`
 
 ```ts
-await corsair.gemini.api.videos.generateVideos({});
+const tenant = corsair.withTenant('acme');
+await tenant.gemini.api.videos.generateVideos({});
 ```
 
 **Input**
@@ -487,7 +493,8 @@ await corsair.gemini.api.videos.generateVideos({});
 **Risk:** `read`
 
 ```ts
-await corsair.gemini.api.videos.getVideosOperation({});
+const tenant = corsair.withTenant('acme');
+await tenant.gemini.api.videos.getVideosOperation({});
 ```
 
 **Input**
@@ -548,7 +555,8 @@ Poll a Veo video generation operation until it completes and return the generate
 **Risk:** `write`
 
 ```ts
-await corsair.gemini.api.videos.waitForVideo({});
+const tenant = corsair.withTenant('acme');
+await tenant.gemini.api.videos.waitForVideo({});
 ```
 
 **Input**

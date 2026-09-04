@@ -20,7 +20,8 @@ Get a single activity item by id
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.activity.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.activity.get({});
 ```
 
 **Input**
@@ -74,7 +75,8 @@ List platform activity with optional filters
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.activity.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.activity.list({});
 ```
 
 **Input**
@@ -154,7 +156,8 @@ List all supported Amara language codes
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.languages.listAvailable({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.languages.listAvailable({});
 ```
 
 **Input:** _empty object_
@@ -191,7 +194,8 @@ Send a message to a user or team
 **Risk:** `write`
 
 ```ts
-await corsair.amara.api.messages.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.messages.send({});
 ```
 
 **Input**
@@ -221,7 +225,8 @@ Get team details by slug
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.teams.getDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.teams.getDetails({});
 ```
 
 **Input**
@@ -266,7 +271,8 @@ Get preferred/blacklisted language URIs for a team
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.teams.getLanguages({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.teams.getLanguages({});
 ```
 
 **Input**
@@ -297,7 +303,8 @@ List teams
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.teams.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.teams.list({});
 ```
 
 **Input**
@@ -370,7 +377,8 @@ List activity for a user
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.users.getActivity({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.users.getActivity({});
 ```
 
 **Input**
@@ -442,7 +450,8 @@ Get a user profile by identifier (or "me")
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.users.getData({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.users.getData({});
 ```
 
 **Input**
@@ -487,7 +496,8 @@ Add an editor note to a subtitle set
 **Risk:** `write`
 
 ```ts
-await corsair.amara.api.videos.addSubtitleNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.addSubtitleNote({});
 ```
 
 **Input**
@@ -534,7 +544,8 @@ Add a URL to a video
 **Risk:** `write`
 
 ```ts
-await corsair.amara.api.videos.addUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.addUrl({});
 ```
 
 **Input**
@@ -573,7 +584,8 @@ Create a video from a public URL
 **Risk:** `write`
 
 ```ts
-await corsair.amara.api.videos.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.create({});
 ```
 
 **Input**
@@ -661,7 +673,8 @@ Create a subtitle language on a video
 **Risk:** `write`
 
 ```ts
-await corsair.amara.api.videos.createSubtitleLanguage({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.createSubtitleLanguage({});
 ```
 
 **Input**
@@ -743,7 +756,8 @@ Create or update subtitles for a language
 **Risk:** `write`
 
 ```ts
-await corsair.amara.api.videos.createSubtitles({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.createSubtitles({});
 ```
 
 **Input**
@@ -851,7 +865,8 @@ Delete a video URL
 **Risk:** `write`
 
 ```ts
-await corsair.amara.api.videos.deleteUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.deleteUrl({});
 ```
 
 **Input**
@@ -882,7 +897,8 @@ Fetch subtitles for a video language
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.videos.fetchSubtitlesData({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.fetchSubtitlesData({});
 ```
 
 **Input**
@@ -975,7 +991,8 @@ Get details for a subtitle language
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.videos.getSubtitleLanguageDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.getSubtitleLanguageDetails({});
 ```
 
 **Input**
@@ -1050,7 +1067,8 @@ Get a single video URL by id
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.videos.getUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.getUrl({});
 ```
 
 **Input**
@@ -1088,7 +1106,8 @@ Look up a video by its public URL
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.videos.getUrlDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.getUrlDetails({});
 ```
 
 **Input**
@@ -1167,7 +1186,8 @@ List videos with optional filters and pagination
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.videos.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.list({});
 ```
 
 **Input**
@@ -1255,7 +1275,8 @@ List activity for a video
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.videos.listActivity({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.listActivity({});
 ```
 
 **Input**
@@ -1327,7 +1348,8 @@ List available subtitle actions
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.videos.listSubtitleActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.listSubtitleActions({});
 ```
 
 **Input**
@@ -1366,7 +1388,8 @@ List subtitle languages for a video
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.videos.listSubtitleLanguages({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.listSubtitleLanguages({});
 ```
 
 **Input**
@@ -1451,7 +1474,8 @@ List editor notes on a subtitle set
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.videos.listSubtitleNotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.listSubtitleNotes({});
 ```
 
 **Input**
@@ -1515,7 +1539,8 @@ List URLs associated with a video
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.videos.listUrls({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.listUrls({});
 ```
 
 **Input**
@@ -1579,7 +1604,8 @@ Set a video URL as primary
 **Risk:** `write`
 
 ```ts
-await corsair.amara.api.videos.makeUrlPrimary({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.makeUrlPrimary({});
 ```
 
 **Input**
@@ -1618,7 +1644,8 @@ Perform a subtitle action (publish, save-draft, …)
 **Risk:** `write`
 
 ```ts
-await corsair.amara.api.videos.performSubtitleAction({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.performSubtitleAction({});
 ```
 
 **Input**
@@ -1650,7 +1677,8 @@ Update video metadata
 **Risk:** `write`
 
 ```ts
-await corsair.amara.api.videos.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.update({});
 ```
 
 **Input**
@@ -1738,7 +1766,8 @@ Update subtitle language settings
 **Risk:** `write`
 
 ```ts
-await corsair.amara.api.videos.updateSubtitleLanguage({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.updateSubtitleLanguage({});
 ```
 
 **Input**
@@ -1820,7 +1849,8 @@ Get details for a single video by id
 **Risk:** `read`
 
 ```ts
-await corsair.amara.api.videos.viewDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.amara.api.videos.viewDetails({});
 ```
 
 **Input**

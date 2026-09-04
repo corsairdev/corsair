@@ -14,7 +14,8 @@ The Zoho Mail plugin syncs data locally. Use `corsair.zohomail.db.<entity>.searc
 Path: `zohomail.db.folders.search`
 
 ```ts
-const rows = await corsair.zohomail.db.folders.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zohomail.db.folders.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zohomail.db.messages.search`
 
 ```ts
-const rows = await corsair.zohomail.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zohomail.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

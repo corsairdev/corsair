@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { epicgames } from '@corsair-dev/epicgames';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		epicgames(),
 	],

@@ -14,7 +14,8 @@ The Zoom plugin syncs data locally. Use `corsair.zoom.db.<entity>.search({ data,
 Path: `zoom.db.archiveFiles.search`
 
 ```ts
-const rows = await corsair.zoom.db.archiveFiles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoom.db.archiveFiles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zoom.db.devices.search`
 
 ```ts
-const rows = await corsair.zoom.db.devices.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoom.db.devices.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -77,7 +79,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zoom.db.meetings.search`
 
 ```ts
-const rows = await corsair.zoom.db.meetings.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoom.db.meetings.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -112,7 +115,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zoom.db.participants.search`
 
 ```ts
-const rows = await corsair.zoom.db.participants.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoom.db.participants.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -153,7 +157,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zoom.db.recordings.search`
 
 ```ts
-const rows = await corsair.zoom.db.recordings.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoom.db.recordings.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -185,7 +190,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zoom.db.webinars.search`
 
 ```ts
-const rows = await corsair.zoom.db.webinars.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoom.db.webinars.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

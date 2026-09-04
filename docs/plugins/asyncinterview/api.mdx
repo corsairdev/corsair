@@ -20,7 +20,8 @@ Deletes an interview job permanently.
 **Risk:** `destructive`
 
 ```ts
-await corsair.asyncinterview.api.jobs.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.asyncinterview.api.jobs.delete({});
 ```
 
 **Input**
@@ -50,7 +51,8 @@ Retrieves a list of all interview jobs.
 **Risk:** `read`
 
 ```ts
-await corsair.asyncinterview.api.jobs.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.asyncinterview.api.jobs.list({});
 ```
 
 **Input:** _empty object_
@@ -93,7 +95,8 @@ Retrieves all interview responses with candidate details.
 **Risk:** `read`
 
 ```ts
-await corsair.asyncinterview.api.jobs.listResponses({});
+const tenant = corsair.withTenant('acme');
+await tenant.asyncinterview.api.jobs.listResponses({});
 ```
 
 **Input**
@@ -152,7 +155,8 @@ Updates an existing interview job's details after creation.
 **Risk:** `write`
 
 ```ts
-await corsair.asyncinterview.api.jobs.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.asyncinterview.api.jobs.update({});
 ```
 
 **Input**

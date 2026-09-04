@@ -20,7 +20,8 @@ Baidu (Chinese search engine) results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.engines.baiduSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.engines.baiduSearch({});
 ```
 
 **Input**
@@ -85,7 +86,8 @@ Bing Maps search for places and businesses
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.engines.bingMaps({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.engines.bingMaps({});
 ```
 
 **Input**
@@ -152,7 +154,8 @@ Bing search engine results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.engines.bingSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.engines.bingSearch({});
 ```
 
 **Input**
@@ -221,7 +224,8 @@ Fast, lightweight DuckDuckGo search
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.engines.duckDuckGoLightSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.engines.duckDuckGoLightSearch({});
 ```
 
 **Input**
@@ -289,7 +293,8 @@ DuckDuckGo Maps search for places and businesses
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.engines.duckDuckGoMaps({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.engines.duckDuckGoMaps({});
 ```
 
 **Input**
@@ -355,7 +360,8 @@ DuckDuckGo search engine results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.engines.duckDuckGoSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.engines.duckDuckGoSearch({});
 ```
 
 **Input**
@@ -421,7 +427,8 @@ Naver (South Korea's leading search engine) results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.engines.naverSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.engines.naverSearch({});
 ```
 
 **Input**
@@ -488,7 +495,8 @@ Yahoo! search engine results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.engines.yahooSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.engines.yahooSearch({});
 ```
 
 **Input**
@@ -555,7 +563,8 @@ Yahoo! Videos search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.engines.yahooVideos({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.engines.yahooVideos({});
 ```
 
 **Input**
@@ -620,7 +629,8 @@ Yandex Images search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.engines.yandexImagesSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.engines.yandexImagesSearch({});
 ```
 
 **Input**
@@ -688,7 +698,8 @@ Yandex search engine results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.engines.yandexSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.engines.yandexSearch({});
 ```
 
 **Input**
@@ -754,7 +765,8 @@ YouTube video search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.engines.youtubeSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.engines.youtubeSearch({});
 ```
 
 **Input**
@@ -823,7 +835,8 @@ Apple App Store search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.marketplace.appleAppStoreSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.marketplace.appleAppStoreSearch({});
 ```
 
 **Input**
@@ -889,7 +902,8 @@ eBay product listing search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.marketplace.ebaySearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.marketplace.ebaySearch({});
 ```
 
 **Input**
@@ -955,7 +969,8 @@ Public information from a Facebook profile or page
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.marketplace.facebookProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.marketplace.facebookProfile({});
 ```
 
 **Input**
@@ -1020,7 +1035,8 @@ Customer reviews for an OpenTable restaurant
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.marketplace.openTableReviews({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.marketplace.openTableReviews({});
 ```
 
 **Input**
@@ -1085,7 +1101,8 @@ Customer reviews for a Walmart product
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.marketplace.walmartProductReviews({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.marketplace.walmartProductReviews({});
 ```
 
 **Input**
@@ -1151,7 +1168,8 @@ Walmart product listing search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.marketplace.walmartSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.marketplace.walmartSearch({});
 ```
 
 **Input**
@@ -1218,7 +1236,8 @@ Yelp business search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.marketplace.yelpSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.marketplace.yelpSearch({});
 ```
 
 **Input**
@@ -1286,7 +1305,8 @@ Google's "About this result" details for a URL
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.aboutThisResult({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.aboutThisResult({});
 ```
 
 **Input**
@@ -1353,7 +1373,8 @@ Google Events search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.eventSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.eventSearch({});
 ```
 
 **Input**
@@ -1421,7 +1442,8 @@ Google Finance data for a company or ticker
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.financeSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.financeSearch({});
 ```
 
 **Input**
@@ -1487,7 +1509,8 @@ Google Forums discussion search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.forumsSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.forumsSearch({});
 ```
 
 **Input**
@@ -1560,7 +1583,8 @@ Autocomplete suggestions for Google Hotels destinations
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.hotelsAutocomplete({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.hotelsAutocomplete({});
 ```
 
 **Input**
@@ -1626,7 +1650,8 @@ Google Hotels search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.hotelSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.hotelSearch({});
 ```
 
 **Input**
@@ -1703,7 +1728,8 @@ Google Images search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.imageSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.imageSearch({});
 ```
 
 **Input**
@@ -1776,7 +1802,8 @@ Fast, lightweight Google Images search
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.imagesLightSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.imagesLightSearch({});
 ```
 
 **Input**
@@ -1849,7 +1876,8 @@ Related content for a Google Images result
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.imagesRelatedContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.imagesRelatedContent({});
 ```
 
 **Input**
@@ -1916,7 +1944,8 @@ Google Jobs search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.jobsSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.jobsSearch({});
 ```
 
 **Input**
@@ -1986,7 +2015,8 @@ Reverse image search via Google Lens
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.lensSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.lensSearch({});
 ```
 
 **Input**
@@ -2053,7 +2083,8 @@ Fast, lightweight Google Search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.lightSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.lightSearch({});
 ```
 
 **Input**
@@ -2126,7 +2157,8 @@ Google's guaranteed local service providers
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.localServicesSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.localServicesSearch({});
 ```
 
 **Input**
@@ -2194,7 +2226,8 @@ Posts published by a business on its Google Maps listing
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.mapsPosts({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.mapsPosts({});
 ```
 
 **Input**
@@ -2261,7 +2294,8 @@ Google Maps search for places and businesses
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.mapsSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.mapsSearch({});
 ```
 
 **Input**
@@ -2336,7 +2370,8 @@ Google News article search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.newsSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.newsSearch({});
 ```
 
 **Input**
@@ -2409,7 +2444,8 @@ Detailed information for a specific Google Patent
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.patentDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.patentDetails({});
 ```
 
 **Input**
@@ -2475,7 +2511,8 @@ Details for a specific Google Play Store item
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.playProduct({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.playProduct({});
 ```
 
 **Input**
@@ -2543,7 +2580,8 @@ Google Play Store search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.playSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.playSearch({});
 ```
 
 **Input**
@@ -2610,7 +2648,8 @@ A researcher's full Google Scholar author profile
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.scholarAuthor({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.scholarAuthor({});
 ```
 
 **Input**
@@ -2676,7 +2715,8 @@ Formatted citations for a Google Scholar paper
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.scholarCite({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.scholarCite({});
 ```
 
 **Input**
@@ -2741,7 +2781,8 @@ Google Scholar academic search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.scholarSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.scholarSearch({});
 ```
 
 **Input**
@@ -2810,7 +2851,8 @@ Real-time Google search results
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.search({});
 ```
 
 **Input**
@@ -2883,7 +2925,8 @@ Google Shopping product listings
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.shoppingSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.shoppingSearch({});
 ```
 
 **Input**
@@ -2951,7 +2994,8 @@ Google Trends relative interest data
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.trendsSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.trendsSearch({});
 ```
 
 **Input**
@@ -3020,7 +3064,8 @@ Fast, lightweight Google Videos search
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.search.videosLightSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.search.videosLightSearch({});
 ```
 
 **Input**
@@ -3095,7 +3140,8 @@ The list of supported Google domains
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.utilities.domainsList({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.utilities.domainsList({});
 ```
 
 **Input:** _empty object_
@@ -3129,7 +3175,8 @@ Valid location values for a Google search's location parameter
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.utilities.locationOptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.utilities.locationOptions({});
 ```
 
 **Input**
@@ -3175,7 +3222,8 @@ Results from a previously run async search, by search id
 **Risk:** `read`
 
 ```ts
-await corsair.serpapi.api.utilities.searchArchive({});
+const tenant = corsair.withTenant('acme');
+await tenant.serpapi.api.utilities.searchArchive({});
 ```
 
 **Input**

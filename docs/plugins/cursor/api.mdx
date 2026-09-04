@@ -20,7 +20,8 @@ Retrieve API key information including name, creation date, and owner email
 **Risk:** `read`
 
 ```ts
-await corsair.cursor.api.account.getMe({});
+const tenant = corsair.withTenant('acme');
+await tenant.cursor.api.account.getMe({});
 ```
 
 **Input:** _empty object_
@@ -49,7 +50,8 @@ Retrieve the conversation history for a specific cloud agent
 **Risk:** `read`
 
 ```ts
-await corsair.cursor.api.agents.getConversation({});
+const tenant = corsair.withTenant('acme');
+await tenant.cursor.api.agents.getConversation({});
 ```
 
 **Input**
@@ -93,7 +95,8 @@ Retrieve a paginated list of Cursor Cloud agents
 **Risk:** `read`
 
 ```ts
-await corsair.cursor.api.agents.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.cursor.api.agents.list({});
 ```
 
 **Input**
@@ -154,7 +157,8 @@ Retrieve the list of available AI models in Cursor
 **Risk:** `read`
 
 ```ts
-await corsair.cursor.api.models.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.cursor.api.models.list({});
 ```
 
 **Input:** _empty object_
@@ -181,7 +185,8 @@ List GitHub repositories accessible to the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.cursor.api.repositories.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.cursor.api.repositories.list({});
 ```
 
 **Input:** _empty object_

@@ -20,7 +20,8 @@ Check the authenticated API key and account configuration
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.auth.me({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.auth.me({});
 ```
 
 **Input:** _empty object_
@@ -52,7 +53,8 @@ Create a brand property
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.brandProperties.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.brandProperties.create({});
 ```
 
 **Input**
@@ -91,7 +93,8 @@ Permanently delete a brand property
 **Risk:** `destructive`
 
 ```ts
-await corsair.bigmailer.api.brandProperties.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.brandProperties.delete({});
 ```
 
 **Input**
@@ -117,7 +120,8 @@ Retrieve a brand property
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.brandProperties.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.brandProperties.get({});
 ```
 
 **Input**
@@ -153,7 +157,8 @@ List a brand's custom merge-tag properties
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.brandProperties.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.brandProperties.list({});
 ```
 
 **Input**
@@ -204,7 +209,8 @@ Update a brand property
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.brandProperties.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.brandProperties.update({});
 ```
 
 **Input**
@@ -246,7 +252,8 @@ Create a brand
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.brands.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.brands.create({});
 ```
 
 **Input**
@@ -312,7 +319,8 @@ Retrieve a brand
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.brands.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.brands.get({});
 ```
 
 **Input**
@@ -369,7 +377,8 @@ List brands in the account
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.brands.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.brands.list({});
 ```
 
 **Input**
@@ -432,7 +441,8 @@ Update a brand's settings
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.brands.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.brands.update({});
 ```
 
 **Input**
@@ -501,7 +511,8 @@ Create a bulk campaign
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.bulkCampaigns.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.bulkCampaigns.create({});
 ```
 
 **Input**
@@ -636,7 +647,8 @@ Retrieve a bulk campaign, including its send metrics
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.bulkCampaigns.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.bulkCampaigns.get({});
 ```
 
 **Input**
@@ -726,7 +738,8 @@ List a brand's bulk (marketing) campaigns
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.bulkCampaigns.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.bulkCampaigns.list({});
 ```
 
 **Input**
@@ -815,7 +828,8 @@ Update a bulk campaign - set ready:true to activate sending or scheduling
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.bulkCampaigns.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.bulkCampaigns.update({});
 ```
 
 **Input**
@@ -953,7 +967,8 @@ List a brand's email-delivery connections
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.connections.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.connections.list({});
 ```
 
 **Input**
@@ -1003,7 +1018,8 @@ Create a contact
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.contacts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.contacts.create({});
 ```
 
 **Input**
@@ -1077,7 +1093,8 @@ Upload up to 1,000 contacts for asynchronous processing
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.contacts.createBatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.contacts.createBatch({});
 ```
 
 **Input**
@@ -1154,7 +1171,8 @@ Permanently delete a contact
 **Risk:** `destructive`
 
 ```ts
-await corsair.bigmailer.api.contacts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.contacts.delete({});
 ```
 
 **Input**
@@ -1185,7 +1203,8 @@ Retrieve a contact by id or email address
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.contacts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.contacts.get({});
 ```
 
 **Input**
@@ -1240,7 +1259,8 @@ Check a contact batch's processing status
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.contacts.getBatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.contacts.getBatch({});
 ```
 
 **Input**
@@ -1295,7 +1315,8 @@ List a brand's contacts
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.contacts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.contacts.list({});
 ```
 
 **Input**
@@ -1357,7 +1378,8 @@ Update a contact
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.contacts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.contacts.update({});
 ```
 
 **Input**
@@ -1434,7 +1456,8 @@ Create or update a contact by id or email address
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.contacts.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.contacts.upsert({});
 ```
 
 **Input**
@@ -1510,7 +1533,8 @@ Create a custom contact field
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.fields.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.fields.create({});
 ```
 
 **Input**
@@ -1549,7 +1573,8 @@ Permanently delete a custom contact field
 **Risk:** `destructive`
 
 ```ts
-await corsair.bigmailer.api.fields.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.fields.delete({});
 ```
 
 **Input**
@@ -1575,7 +1600,8 @@ Retrieve a custom contact field
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.fields.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.fields.get({});
 ```
 
 **Input**
@@ -1611,7 +1637,8 @@ List a brand's custom contact fields
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.fields.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.fields.list({});
 ```
 
 **Input**
@@ -1662,7 +1689,8 @@ Update a custom contact field's name or sample value
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.fields.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.fields.update({});
 ```
 
 **Input**
@@ -1703,7 +1731,8 @@ Create a contact list
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.lists.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.lists.create({});
 ```
 
 **Input**
@@ -1753,7 +1782,8 @@ Delete a contact list (its contacts are not deleted)
 **Risk:** `destructive`
 
 ```ts
-await corsair.bigmailer.api.lists.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.lists.delete({});
 ```
 
 **Input**
@@ -1779,7 +1809,8 @@ Retrieve a contact list
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.lists.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.lists.get({});
 ```
 
 **Input**
@@ -1829,7 +1860,8 @@ List a brand's contact lists
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.lists.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.lists.list({});
 ```
 
 **Input**
@@ -1885,7 +1917,8 @@ Rename a contact list
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.lists.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.lists.update({});
 ```
 
 **Input**
@@ -1938,7 +1971,8 @@ List a brand's message-type categories
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.messageTypes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.messageTypes.list({});
 ```
 
 **Input**
@@ -1990,7 +2024,8 @@ Create a segment
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.segments.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.segments.create({});
 ```
 
 **Input**
@@ -2037,7 +2072,8 @@ Permanently delete a segment
 **Risk:** `destructive`
 
 ```ts
-await corsair.bigmailer.api.segments.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.segments.delete({});
 ```
 
 **Input**
@@ -2068,7 +2104,8 @@ Retrieve a segment
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.segments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.segments.get({});
 ```
 
 **Input**
@@ -2103,7 +2140,8 @@ List a brand's segments
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.segments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.segments.list({});
 ```
 
 **Input**
@@ -2153,7 +2191,8 @@ Update a segment
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.segments.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.segments.update({});
 ```
 
 **Input**
@@ -2203,7 +2242,8 @@ List a brand's verified sender identities
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.senders.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.senders.list({});
 ```
 
 **Input**
@@ -2260,7 +2300,8 @@ Upload a campaign suppression list
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.suppressionLists.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.suppressionLists.create({});
 ```
 
 **Input**
@@ -2294,7 +2335,8 @@ Retrieve a campaign suppression list
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.suppressionLists.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.suppressionLists.get({});
 ```
 
 **Input**
@@ -2328,7 +2370,8 @@ List a brand's campaign suppression lists
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.suppressionLists.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.suppressionLists.list({});
 ```
 
 **Input**
@@ -2379,7 +2422,8 @@ Create a template
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.templates.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.templates.create({});
 ```
 
 **Input**
@@ -2418,7 +2462,8 @@ Permanently delete a template
 **Risk:** `destructive`
 
 ```ts
-await corsair.bigmailer.api.templates.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.templates.delete({});
 ```
 
 **Input**
@@ -2449,7 +2494,8 @@ Retrieve a template
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.templates.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.templates.get({});
 ```
 
 **Input**
@@ -2485,7 +2531,8 @@ List a brand's templates
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.templates.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.templates.list({});
 ```
 
 **Input**
@@ -2536,7 +2583,8 @@ Update a template
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.templates.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.templates.update({});
 ```
 
 **Input**
@@ -2578,7 +2626,8 @@ Create a transactional campaign
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.transactionalCampaigns.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.transactionalCampaigns.create({});
 ```
 
 **Input**
@@ -2696,7 +2745,8 @@ Retrieve a transactional campaign, including its send metrics
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.transactionalCampaigns.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.transactionalCampaigns.get({});
 ```
 
 **Input**
@@ -2776,7 +2826,8 @@ List a brand's transactional campaigns
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.transactionalCampaigns.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.transactionalCampaigns.list({});
 ```
 
 **Input**
@@ -2855,7 +2906,8 @@ Update a transactional campaign - set ready:true to activate it
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.transactionalCampaigns.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.transactionalCampaigns.update({});
 ```
 
 **Input**
@@ -2976,7 +3028,8 @@ Invite a new user to the account
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.users.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.users.create({});
 ```
 
 **Input**
@@ -3015,7 +3068,8 @@ Remove a user from the account
 **Risk:** `destructive`
 
 ```ts
-await corsair.bigmailer.api.users.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.users.delete({});
 ```
 
 **Input**
@@ -3040,7 +3094,8 @@ Retrieve an account user
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.users.get({});
 ```
 
 **Input**
@@ -3076,7 +3131,8 @@ List account users
 **Risk:** `read`
 
 ```ts
-await corsair.bigmailer.api.users.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.users.list({});
 ```
 
 **Input**
@@ -3127,7 +3183,8 @@ Update a user's email, role, or allowed brands
 **Risk:** `write`
 
 ```ts
-await corsair.bigmailer.api.users.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigmailer.api.users.update({});
 ```
 
 **Input**

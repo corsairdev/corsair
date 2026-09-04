@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { cloudflare } from '@corsair-dev/cloudflare';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		cloudflare(),
 	],

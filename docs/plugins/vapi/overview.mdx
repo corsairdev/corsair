@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { vapi } from '@corsair-dev/vapi';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		vapi(),
 	],

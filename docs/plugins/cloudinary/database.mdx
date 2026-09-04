@@ -14,7 +14,8 @@ The Cloudinary plugin syncs data locally. Use `corsair.cloudinary.db.<entity>.se
 Path: `cloudinary.db.folders.search`
 
 ```ts
-const rows = await corsair.cloudinary.db.folders.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudinary.db.folders.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudinary.db.liveStreams.search`
 
 ```ts
-const rows = await corsair.cloudinary.db.liveStreams.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudinary.db.liveStreams.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -67,7 +69,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudinary.db.metadataFields.search`
 
 ```ts
-const rows = await corsair.cloudinary.db.metadataFields.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudinary.db.metadataFields.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -93,7 +96,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudinary.db.metadataRules.search`
 
 ```ts
-const rows = await corsair.cloudinary.db.metadataRules.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudinary.db.metadataRules.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -117,7 +121,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudinary.db.resources.search`
 
 ```ts
-const rows = await corsair.cloudinary.db.resources.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudinary.db.resources.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -153,7 +158,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudinary.db.transformations.search`
 
 ```ts
-const rows = await corsair.cloudinary.db.transformations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudinary.db.transformations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -179,7 +185,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudinary.db.triggers.search`
 
 ```ts
-const rows = await corsair.cloudinary.db.triggers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudinary.db.triggers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -206,7 +213,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudinary.db.uploadMappings.search`
 
 ```ts
-const rows = await corsair.cloudinary.db.uploadMappings.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudinary.db.uploadMappings.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -230,7 +238,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudinary.db.uploadPresets.search`
 
 ```ts
-const rows = await corsair.cloudinary.db.uploadPresets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudinary.db.uploadPresets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -254,7 +263,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudinary.db.usage.search`
 
 ```ts
-const rows = await corsair.cloudinary.db.usage.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudinary.db.usage.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

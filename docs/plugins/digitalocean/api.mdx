@@ -20,7 +20,8 @@ Creates a new managed database cluster on DigitalOcean. Provisions a database wi
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.databases.createDatabaseCluster({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.databases.createDatabaseCluster({});
 ```
 
 **Input**
@@ -96,7 +97,8 @@ Tool to delete a database cluster by UUID. Use when you have confirmed the clust
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.digitalocean.api.databases.deleteDatabaseCluster({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.databases.deleteDatabaseCluster({});
 ```
 
 **Input**
@@ -142,7 +144,8 @@ Tool to list all managed database clusters on your account. Supports pagination 
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.databases.listAllDatabases({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.databases.listAllDatabases({});
 ```
 
 **Input**
@@ -190,7 +193,8 @@ Lists all available configuration options for DigitalOcean managed database clus
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.databases.listDatabaseOptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.databases.listDatabaseOptions({});
 ```
 
 **Input**
@@ -237,7 +241,8 @@ Tool to create a new DNS record for a domain. Use after confirming domain exists
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.domainRecords.createNewDomainRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.domainRecords.createNewDomainRecord({});
 ```
 
 **Input**
@@ -292,7 +297,8 @@ Tool to delete a DNS record by its record ID for a domain. Use when you need to 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.digitalocean.api.domainRecords.deleteDomainRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.domainRecords.deleteDomainRecord({});
 ```
 
 **Input**
@@ -339,7 +345,8 @@ Tool to list all DNS records for a domain. Use when you need to inspect or filte
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.domainRecords.listDomainRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.domainRecords.listDomainRecords({});
 ```
 
 **Input**
@@ -389,7 +396,8 @@ Tool to retrieve a specific DNS record for a domain by its record ID. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.domainRecords.retrieveDomainRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.domainRecords.retrieveDomainRecord({});
 ```
 
 **Input**
@@ -436,7 +444,8 @@ Tool to update an existing DNS record for a domain. Use when you need to modify 
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.domainRecords.updateDomainRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.domainRecords.updateDomainRecord({});
 ```
 
 **Input**
@@ -494,7 +503,8 @@ Creates a new domain in DigitalOcean's DNS management system. This adds the doma
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.domains.createNewDomain({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.domains.createNewDomain({});
 ```
 
 **Input**
@@ -541,7 +551,8 @@ Deletes a domain from DigitalOcean DNS. This action is permanent and cannot be u
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.digitalocean.api.domains.deleteDomain({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.domains.deleteDomain({});
 ```
 
 **Input**
@@ -587,7 +598,8 @@ Lists all DNS domains configured in your DigitalOcean account. Returns domain na
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.domains.listAllDomains({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.domains.listAllDomains({});
 ```
 
 **Input**
@@ -634,7 +646,8 @@ Retrieves complete details about a specific domain including its TTL and DNS zon
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.domains.retrieveDomain({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.domains.retrieveDomain({});
 ```
 
 **Input**
@@ -682,7 +695,8 @@ Tool to create a new Droplet. Use when you need to provision a VM with name, reg
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.droplets.createNewDroplet({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.droplets.createNewDroplet({});
 ```
 
 **Input**
@@ -741,7 +755,8 @@ Tool to delete a Droplet by ID. Deletion is irreversible — all data is permane
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.digitalocean.api.droplets.deleteExistingDroplet({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.droplets.deleteExistingDroplet({});
 ```
 
 **Input**
@@ -787,7 +802,8 @@ Lists all Droplets (virtual machines) in your DigitalOcean account with paginati
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.droplets.listAllDroplets({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.droplets.listAllDroplets({});
 ```
 
 **Input**
@@ -835,7 +851,8 @@ Retrieve detailed information about a specific DigitalOcean Droplet by its uniqu
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.droplets.retrieveExistingDroplet({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.droplets.retrieveExistingDroplet({});
 ```
 
 **Input**
@@ -883,7 +900,8 @@ Creates a new cloud firewall with custom inbound and outbound rules. Use this ac
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.firewalls.createNewFirewall({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.firewalls.createNewFirewall({});
 ```
 
 **Input**
@@ -934,7 +952,8 @@ Tool to delete a firewall by ID. Use when you have confirmed the firewall is no 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.digitalocean.api.firewalls.deleteFirewall({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.firewalls.deleteFirewall({});
 ```
 
 **Input**
@@ -980,7 +999,8 @@ List all cloud firewalls configured in your DigitalOcean account. Returns compre
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.firewalls.listAllFirewalls({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.firewalls.listAllFirewalls({});
 ```
 
 **Input**
@@ -1029,7 +1049,8 @@ Creates a custom image in DigitalOcean by importing a Linux VM disk image from a
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.images.createCustomImage({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.images.createCustomImage({});
 ```
 
 **Input**
@@ -1080,7 +1101,8 @@ Deletes a user-created custom image or snapshot from your DigitalOcean account b
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.digitalocean.api.images.deleteImage({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.images.deleteImage({});
 ```
 
 **Input**
@@ -1126,7 +1148,8 @@ Tool to list all images available on your account. Use after obtaining a valid A
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.images.listAllImages({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.images.listAllImages({});
 ```
 
 **Input**
@@ -1176,7 +1199,8 @@ Tool to retrieve information about an image by ID or slug. Use when you need det
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.images.retrieveExistingImage({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.images.retrieveExistingImage({});
 ```
 
 **Input**
@@ -1224,7 +1248,8 @@ Creates a new DigitalOcean Kubernetes (DOKS) cluster with managed control plane.
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.kubernetes.createNewKubernetesCluster({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.kubernetes.createNewKubernetesCluster({});
 ```
 
 **Input**
@@ -1284,7 +1309,8 @@ Tool to list all Kubernetes clusters on your account. Use when you need to enume
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.kubernetes.listAllKubernetesClusters({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.kubernetes.listAllKubernetesClusters({});
 ```
 
 **Input**
@@ -1333,7 +1359,8 @@ Tool to create a new load balancer. Use after specifying region, forwarding rule
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.loadBalancers.createNewLoadBalancer({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.loadBalancers.createNewLoadBalancer({});
 ```
 
 **Input**
@@ -1407,7 +1434,8 @@ Tool to delete a load balancer instance by ID. Use when you need to permanently 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.digitalocean.api.loadBalancers.deleteLoadBalancer({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.loadBalancers.deleteLoadBalancer({});
 ```
 
 **Input**
@@ -1453,7 +1481,8 @@ List all load balancers in your DigitalOcean account with pagination support. Re
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.loadBalancers.listAllLoadBalancers({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.loadBalancers.listAllLoadBalancers({});
 ```
 
 **Input**
@@ -1502,7 +1531,8 @@ Tool to list all snapshots available on your DigitalOcean account. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.snapshots.listAllSnapshots({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.snapshots.listAllSnapshots({});
 ```
 
 **Input**
@@ -1552,7 +1582,8 @@ Registers a new SSH public key with your DigitalOcean account. The registered ke
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.sshKeys.createNewSshKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.sshKeys.createNewSshKey({});
 ```
 
 **Input**
@@ -1599,7 +1630,8 @@ Tool to delete a public SSH key. Use when you need to remove an SSH key from you
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.digitalocean.api.sshKeys.deleteSshKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.sshKeys.deleteSshKey({});
 ```
 
 **Input**
@@ -1645,7 +1677,8 @@ Lists all SSH keys associated with your DigitalOcean account. Returns SSH key de
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.sshKeys.listAllSshKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.sshKeys.listAllSshKeys({});
 ```
 
 **Input**
@@ -1694,7 +1727,8 @@ Creates a new tag in DigitalOcean for organizing and grouping resources. Tags ca
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.tags.createNewTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.tags.createNewTag({});
 ```
 
 **Input**
@@ -1740,7 +1774,8 @@ Deletes a tag from your DigitalOcean account. When a tag is deleted, it is autom
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.digitalocean.api.tags.deleteTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.tags.deleteTag({});
 ```
 
 **Input**
@@ -1786,7 +1821,8 @@ Tool to list all tags in your account. Use when you need to retrieve available t
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.tags.listAllTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.tags.listAllTags({});
 ```
 
 **Input**
@@ -1833,7 +1869,8 @@ Tool to retrieve an individual tag by name. Use when you need to inspect the res
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.tags.retrieveTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.tags.retrieveTag({});
 ```
 
 **Input**
@@ -1879,7 +1916,8 @@ Tool to tag resources by name. Use when you need to assign an existing tag to on
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.tags.tagResource({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.tags.tagResource({});
 ```
 
 **Input**
@@ -1926,7 +1964,8 @@ Tool to untag resources by tag name. Use when you need to remove an existing tag
 **Risk:** `destructive`
 
 ```ts
-await corsair.digitalocean.api.tags.untagResource({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.tags.untagResource({});
 ```
 
 **Input**
@@ -1975,7 +2014,8 @@ Tool to create a new block storage volume. Use when you need to provision persis
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.volumes.createNewBlockStorageVolume({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.volumes.createNewBlockStorageVolume({});
 ```
 
 **Input**
@@ -2028,7 +2068,8 @@ Permanently deletes a block storage volume by its unique ID. Use this tool when 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.digitalocean.api.volumes.deleteBlockStorageVolume({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.volumes.deleteBlockStorageVolume({});
 ```
 
 **Input**
@@ -2074,7 +2115,8 @@ Tool to list all block storage volumes available on your account. Use when you n
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.volumes.listAllVolumes({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.volumes.listAllVolumes({});
 ```
 
 **Input**
@@ -2125,7 +2167,8 @@ Creates a new Virtual Private Cloud (VPC) in a specified DigitalOcean region. VP
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.vpcs.createNewVpc({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.vpcs.createNewVpc({});
 ```
 
 **Input**
@@ -2175,7 +2218,8 @@ Delete a VPC (Virtual Private Cloud) by its unique identifier. Use this tool whe
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.digitalocean.api.vpcs.deleteVpc({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.vpcs.deleteVpc({});
 ```
 
 **Input**
@@ -2221,7 +2265,8 @@ Tool to list all VPCs on your account. Use when you need an inventory of your VP
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.vpcs.listAllVpcs({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.vpcs.listAllVpcs({});
 ```
 
 **Input**
@@ -2268,7 +2313,8 @@ Tool to retrieve details about a specific VPC by its ID. Use when you need to in
 **Risk:** `read`
 
 ```ts
-await corsair.digitalocean.api.vpcs.retrieveVpc({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.vpcs.retrieveVpc({});
 ```
 
 **Input**
@@ -2314,7 +2360,8 @@ Tool to update information about a VPC. Use when you need to modify the name, de
 **Risk:** `write`
 
 ```ts
-await corsair.digitalocean.api.vpcs.updateVpc({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.vpcs.updateVpc({});
 ```
 
 **Input**

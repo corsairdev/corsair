@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { brandfetch } from '@corsair-dev/brandfetch';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		brandfetch(),
 	],

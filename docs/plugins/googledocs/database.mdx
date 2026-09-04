@@ -14,7 +14,8 @@ The Google Docs plugin syncs data locally. Use `corsair.googledocs.db.<entity>.s
 Path: `googledocs.db.documents.search`
 
 ```ts
-const rows = await corsair.googledocs.db.documents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googledocs.db.documents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

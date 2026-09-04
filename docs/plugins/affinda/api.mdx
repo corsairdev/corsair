@@ -20,7 +20,8 @@ Batch update multiple document annotations in a single API call. Use this action
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.annotations.batchUpdateAnnotations({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.annotations.batchUpdateAnnotations({});
 ```
 
 **Input**
@@ -66,7 +67,8 @@ Batch create multiple document annotations in a single API call. Use this action
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.annotations.createBatchAnnotations({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.annotations.createBatchAnnotations({});
 ```
 
 **Input**
@@ -112,7 +114,8 @@ Batch delete multiple document annotations in a single API call. Use this action
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.annotations.deleteAnnotationsBatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.annotations.deleteAnnotationsBatch({});
 ```
 
 **Input**
@@ -158,7 +161,8 @@ Retrieves all annotations for a specific document. Annotations are extracted dat
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.annotations.getAnnotations({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.annotations.getAnnotations({});
 ```
 
 **Input**
@@ -204,7 +208,8 @@ Tool to update data of a single annotation in Affinda. Use when you need to corr
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.annotations.updateAnnotation({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.annotations.updateAnnotation({});
 ```
 
 **Input**
@@ -262,7 +267,8 @@ Tool to create a new API user within an organization. Use when you need to gener
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.apiUsers.createApiUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.apiUsers.createApiUser({});
 ```
 
 **Input**
@@ -312,7 +318,8 @@ Tool to retrieve a list of all API users. Use when you need to list API users, o
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.apiUsers.getAllApiUsers({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.apiUsers.getAllApiUsers({});
 ```
 
 **Input**
@@ -362,7 +369,8 @@ Tool to create a new collection. Use after you have a valid workspace ID and wan
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.collections.createCollection({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.collections.createCollection({});
 ```
 
 **Input**
@@ -410,7 +418,8 @@ Tool to create a data field for a collection along with a new data point. Use wh
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.collections.createDataFieldForCollection({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.collections.createDataFieldForCollection({});
 ```
 
 **Input**
@@ -475,7 +484,8 @@ Permanently delete a collection from Affinda by its identifier. This is a destru
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.collections.deleteCollection({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.collections.deleteCollection({});
 ```
 
 **Input**
@@ -521,7 +531,8 @@ Tool to retrieve details of a specific collection by its ID. Use when you need f
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.collections.getCollection({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.collections.getCollection({});
 ```
 
 **Input**
@@ -567,7 +578,8 @@ Tool to retrieve data field configuration for a collection associated with a dat
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.collections.getCollectionFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.collections.getCollectionFields({});
 ```
 
 **Input**
@@ -614,7 +626,8 @@ Tool to retrieve a list of all collections. Use when you need to list collection
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.collections.getCollections({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.collections.getCollections({});
 ```
 
 **Input**
@@ -662,7 +675,8 @@ Retrieves monthly credits consumption statistics for a specific collection. Retu
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.collections.getCollectionUsage({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.collections.getCollectionUsage({});
 ```
 
 **Input**
@@ -710,7 +724,8 @@ Tool to update specific fields of a collection. Use when you need to rename or r
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.collections.updateCollection({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.collections.updateCollection({});
 ```
 
 **Input**
@@ -757,7 +772,8 @@ Tool to update a data field configuration for a collection's data point. Use whe
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.collections.updateDataFieldForCollection({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.collections.updateDataFieldForCollection({});
 ```
 
 **Input**
@@ -816,7 +832,8 @@ Tool to create a custom data point choice. Use when you need to add a new choice
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.dataPointChoices.createDataPointChoice({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataPointChoices.createDataPointChoice({});
 ```
 
 **Input**
@@ -868,7 +885,8 @@ Tool to return a specific data point choice by its ID. Use when you need details
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.dataPointChoices.getDataPointChoice({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataPointChoices.getDataPointChoice({});
 ```
 
 **Input**
@@ -914,7 +932,8 @@ Tool to retrieve available choices for a specific enum data point. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.dataPointChoices.listDataPointChoices({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataPointChoices.listDataPointChoices({});
 ```
 
 **Input**
@@ -964,7 +983,8 @@ Tool to completely replace all choices for a data point. Use when you need to bu
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.dataPointChoices.replaceDataPointChoices({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataPointChoices.replaceDataPointChoices({});
 ```
 
 **Input**
@@ -1013,7 +1033,8 @@ Tool to update data of a data point choice by its ID. Use when you need to modif
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.dataPointChoices.updateDataPointChoice({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataPointChoices.updateDataPointChoice({});
 ```
 
 **Input**
@@ -1068,7 +1089,8 @@ Tool to create a custom data point for document extraction. Use when you need to
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.dataPoints.createDataPoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataPoints.createDataPoint({});
 ```
 
 **Input**
@@ -1124,7 +1146,8 @@ Tool to permanently delete a data point by its identifier. Use when you need to 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.dataPoints.deleteDataPoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataPoints.deleteDataPoint({});
 ```
 
 **Input**
@@ -1170,7 +1193,8 @@ Tool to retrieve details of a specific data point by its identifier. Use when yo
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.dataPoints.getDataPoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataPoints.getDataPoint({});
 ```
 
 **Input**
@@ -1216,7 +1240,8 @@ Tool to retrieve all data points. Returns both custom data points and Affinda's 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.dataPoints.listDataPoints({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataPoints.listDataPoints({});
 ```
 
 **Input**
@@ -1270,7 +1295,8 @@ Tool to update data of a data point by its identifier. Use when you need to modi
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.dataPoints.updateDataPoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataPoints.updateDataPoint({});
 ```
 
 **Input**
@@ -1323,7 +1349,8 @@ Tool to create a custom mapping data source. Use when you need to set up a new d
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.dataSources.createDataSource({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataSources.createDataSource({});
 ```
 
 **Input**
@@ -1384,7 +1411,8 @@ Tool to add a new value to a mapping data source. Use when you need to add entri
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.dataSources.createDataSourceValue({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataSources.createDataSourceValue({});
 ```
 
 **Input**
@@ -1433,7 +1461,8 @@ Permanently delete a mapping data source from the database by its identifier. Th
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.dataSources.deleteDataSource({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataSources.deleteDataSource({});
 ```
 
 **Input**
@@ -1479,7 +1508,8 @@ Tool to delete a specific value from a mapping data source. Use when you need to
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.dataSources.deleteDataSourceValue({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataSources.deleteDataSourceValue({});
 ```
 
 **Input**
@@ -1526,7 +1556,8 @@ Tool to retrieve details of a specific mapping data source by its identifier. Us
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.dataSources.getDataSource({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataSources.getDataSource({});
 ```
 
 **Input**
@@ -1572,7 +1603,8 @@ Tool to retrieve a specific value from a mapping data source. Use when you need 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.dataSources.getDataSourceValue({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataSources.getDataSourceValue({});
 ```
 
 **Input**
@@ -1619,7 +1651,8 @@ Tool to retrieve all values from a mapping data source. Use when you need to lis
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.dataSources.getDataSourceValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataSources.getDataSourceValues({});
 ```
 
 **Input**
@@ -1670,7 +1703,8 @@ Tool to retrieve the list of all custom mapping data sources. Use when you need 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.dataSources.listDataSources({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataSources.listDataSources({});
 ```
 
 **Input**
@@ -1721,7 +1755,8 @@ Tool to completely replace all values in a mapping data source. Use when you nee
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.dataSources.replaceDataSourceValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataSources.replaceDataSourceValues({});
 ```
 
 **Input**
@@ -1768,7 +1803,8 @@ Tool to update an existing value in a mapping data source. Use when you need to 
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.dataSources.updateDataSourceValue({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.dataSources.updateDataSourceValue({});
 ```
 
 **Input**
@@ -1819,7 +1855,8 @@ Tool to add a tag to multiple documents in a single operation. Use when you need
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.documents.addTagToDocuments({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documents.addTagToDocuments({});
 ```
 
 **Input**
@@ -1866,7 +1903,8 @@ Upload a document to Affinda for parsing and data extraction. Use this action wh
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.documents.createDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documents.createDocument({});
 ```
 
 **Input**
@@ -1930,7 +1968,8 @@ Create a document from structured resume or job description data for Search & Ma
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.documents.createFromDataDocuments({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documents.createFromDataDocuments({});
 ```
 
 **Input**
@@ -1985,7 +2024,8 @@ Tool to delete a specific document by its ID. Use when you need to remove a docu
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.documents.deleteDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documents.deleteDocument({});
 ```
 
 **Input**
@@ -2031,7 +2071,8 @@ Retrieve full details and parsed data for a specific document by its identifier.
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.documents.getDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documents.getDocument({});
 ```
 
 **Input**
@@ -2077,7 +2118,8 @@ Tool to retrieve the redacted version of a document as a PDF file. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.documents.getDocumentRedacted({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documents.getDocumentRedacted({});
 ```
 
 **Input**
@@ -2123,7 +2165,8 @@ Tool to retrieve a list of all documents. Use when you need to list documents in
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.documents.getDocuments({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documents.getDocuments({});
 ```
 
 **Input**
@@ -2180,7 +2223,8 @@ Remove a tag from multiple documents in a single batch operation. Use this actio
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.documents.removeTagFromDocuments({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documents.removeTagFromDocuments({});
 ```
 
 **Input**
@@ -2227,7 +2271,8 @@ Tool to update specific fields of a document. Use when you need to rename, reass
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.documents.updateDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documents.updateDocument({});
 ```
 
 **Input**
@@ -2290,7 +2335,8 @@ Update parsed data for a resume or job description document in Affinda. This end
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.documents.updateDocumentData({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documents.updateDocumentData({});
 ```
 
 **Input**
@@ -2347,7 +2393,8 @@ Tool to get a list of all document splitters. Use when you need to retrieve docu
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.documentSplitters.getAllDocumentSplitters({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documentSplitters.getAllDocumentSplitters({});
 ```
 
 **Input**
@@ -2396,7 +2443,8 @@ Tool to retrieve details of a specific document splitter by its identifier. Use 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.documentSplitters.getDocumentSplitter({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documentSplitters.getDocumentSplitter({});
 ```
 
 **Input**
@@ -2444,7 +2492,8 @@ Tool to create a new document type in the specified organization. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.documentTypes.createDocumentType({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documentTypes.createDocumentType({});
 ```
 
 **Input**
@@ -2492,7 +2541,8 @@ Tool to permanently delete a document type by its identifier. Use when you need 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.documentTypes.deleteDocumentType({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documentTypes.deleteDocumentType({});
 ```
 
 **Input**
@@ -2538,7 +2588,8 @@ Tool to retrieve details of a specific document type by its ID. Use when you nee
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.documentTypes.getDocumentType({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documentTypes.getDocumentType({});
 ```
 
 **Input**
@@ -2584,7 +2635,8 @@ Tool to generate a JSON schema from a document type by its identifier. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.documentTypes.getDocumentTypeJsonSchema({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documentTypes.getDocumentTypeJsonSchema({});
 ```
 
 **Input**
@@ -2631,7 +2683,8 @@ Tool to generate Pydantic model code from a document type's schema. Use when you
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.documentTypes.getDocumentTypePydanticModels({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documentTypes.getDocumentTypePydanticModels({});
 ```
 
 **Input**
@@ -2678,7 +2731,8 @@ Retrieve all document types accessible to the authenticated user. Returns a list
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.documentTypes.getDocumentTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documentTypes.getDocumentTypes({});
 ```
 
 **Input**
@@ -2723,7 +2777,8 @@ Tool to update a document type by its identifier. Use when you need to modify th
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.documentTypes.updateDocumentType({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.documentTypes.updateDocumentType({});
 ```
 
 **Input**
@@ -2773,7 +2828,8 @@ Tool to create a new extractor. Use when you need to define a custom document pa
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.extractors.createExtractor({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.extractors.createExtractor({});
 ```
 
 **Input**
@@ -2825,7 +2881,8 @@ Permanently delete an extractor from Affinda by its identifier. This is a destru
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.extractors.deleteExtractor({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.extractors.deleteExtractor({});
 ```
 
 **Input**
@@ -2871,7 +2928,8 @@ Tool to retrieve detailed information about a specific extractor by its identifi
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.extractors.getExtractor({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.extractors.getExtractor({});
 ```
 
 **Input**
@@ -2917,7 +2975,8 @@ Retrieve all extractors available for an organization. Extractors are document p
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.extractors.getExtractors({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.extractors.getExtractors({});
 ```
 
 **Input**
@@ -2966,7 +3025,8 @@ Tool to update specific fields of an extractor. Use when you need to modify an e
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.extractors.updateExtractor({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.extractors.updateExtractor({});
 ```
 
 **Input**
@@ -3020,7 +3080,8 @@ Tool to create a new index for search and match functionality. Use when you need
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.indexes.createIndex({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.indexes.createIndex({});
 ```
 
 **Input**
@@ -3067,7 +3128,8 @@ Tool to permanently delete an index from Affinda by its name. Use when you need 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.indexes.deleteIndex({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.indexes.deleteIndex({});
 ```
 
 **Input**
@@ -3113,7 +3175,8 @@ Tool to retrieve all indexed documents for a specific index. Use when you need t
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.indexes.getIndexDocuments({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.indexes.getIndexDocuments({});
 ```
 
 **Input**
@@ -3161,7 +3224,8 @@ Tool to retrieve a list of all search indexes. Use when you need to view availab
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.indexes.listIndexes({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.indexes.listIndexes({});
 ```
 
 **Input**
@@ -3210,7 +3274,8 @@ Tool to update the name of an existing search index. Use when you need to rename
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.indexes.updateIndex({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.indexes.updateIndex({});
 ```
 
 **Input**
@@ -3259,7 +3324,8 @@ Tool to create a new organization invitation. Use when you need to invite a user
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.invitations.createInvitation({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.invitations.createInvitation({});
 ```
 
 **Input**
@@ -3307,7 +3373,8 @@ Tool to delete an invitation by its identifier. Use when you need to remove or r
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.invitations.deleteInvitation({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.invitations.deleteInvitation({});
 ```
 
 **Input**
@@ -3353,7 +3420,8 @@ Tool to retrieve all invitations you created or sent to you. Use when you need t
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.invitations.getAllInvitations({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.invitations.getAllInvitations({});
 ```
 
 **Input**
@@ -3403,7 +3471,8 @@ Tool to retrieve details of a specific organization invitation by its identifier
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.invitations.getInvitation({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.invitations.getInvitation({});
 ```
 
 **Input**
@@ -3449,7 +3518,8 @@ Tool to update an organization invitation's role. Use when you need to change th
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.invitations.updateInvitation({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.invitations.updateInvitation({});
 ```
 
 **Input**
@@ -3498,7 +3568,8 @@ Search through parsed job descriptions using custom criteria or resume matching.
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.jobDescriptionSearch.createJobDescriptionSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.jobDescriptionSearch.createJobDescriptionSearch({});
 ```
 
 **Input**
@@ -3575,7 +3646,8 @@ Tool to create and return a signed URL for the embeddable job description search
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.jobDescriptionSearch.createJobDescriptionSearchEmbedUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.jobDescriptionSearch.createJobDescriptionSearchEmbedUrl({});
 ```
 
 **Input**
@@ -3629,7 +3701,8 @@ Tool to get the configuration for the logged in user's embeddable job descriptio
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.jobDescriptionSearch.getJobDescriptionSearchConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.jobDescriptionSearch.getJobDescriptionSearchConfig({});
 ```
 
 **Input**
@@ -3674,7 +3747,8 @@ Tool to update the configuration for the logged in user's embeddable job descrip
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.jobDescriptionSearch.updateJobDescriptionSearchConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.jobDescriptionSearch.updateJobDescriptionSearchConfig({});
 ```
 
 **Input**
@@ -3759,7 +3833,8 @@ Tool to create a custom mapping for a data source. Use when you need to configur
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.mappings.createMapping({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.mappings.createMapping({});
 ```
 
 **Input**
@@ -3808,7 +3883,8 @@ Tool to delete a specific mapping by its identifier. Use when you need to remove
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.mappings.deleteMapping({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.mappings.deleteMapping({});
 ```
 
 **Input**
@@ -3854,7 +3930,8 @@ Tool to retrieve a specific mapping by its identifier. Use when you need to fetc
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.mappings.getMapping({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.mappings.getMapping({});
 ```
 
 **Input**
@@ -3900,7 +3977,8 @@ Tool to retrieve the list of all custom data mappings. Use when you need to list
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.mappings.listMappings({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.mappings.listMappings({});
 ```
 
 **Input**
@@ -3948,7 +4026,8 @@ Tool to update a specific mapping's settings. Use when you need to adjust score 
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.mappings.updateMapping({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.mappings.updateMapping({});
 ```
 
 **Input**
@@ -3998,7 +4077,8 @@ Tool to retrieve the list of searchable occupation groups. Use when you need to 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.occupationGroups.listOccupationGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.occupationGroups.listOccupationGroups({});
 ```
 
 **Input**
@@ -4045,7 +4125,8 @@ Retrieve all organization memberships across the account. Returns paginated resu
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.organizationMemberships.getAllOrganizationMemberships({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.organizationMemberships.getAllOrganizationMemberships({});
 ```
 
 **Input**
@@ -4094,7 +4175,8 @@ Tool to retrieve details of a specific organization membership by its ID. Use wh
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.organizationMemberships.getOrganizationMembership({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.organizationMemberships.getOrganizationMembership({});
 ```
 
 **Input**
@@ -4140,7 +4222,8 @@ Tool to update an organization membership's role. Use when you need to change a 
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.organizationMemberships.updateOrganizationMembership({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.organizationMemberships.updateOrganizationMembership({});
 ```
 
 **Input**
@@ -4189,7 +4272,8 @@ Tool to create a new organization. Use when you have a unique organization name 
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.organizations.createOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.organizations.createOrganization({});
 ```
 
 **Input**
@@ -4235,7 +4319,8 @@ Permanently deletes an organization from Affinda. This action is destructive and
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.organizations.deleteOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.organizations.deleteOrganization({});
 ```
 
 **Input**
@@ -4281,7 +4366,8 @@ Tool to retrieve details of a specific organization by its ID. Use when you need
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.organizations.getOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.organizations.getOrganization({});
 ```
 
 **Input**
@@ -4327,7 +4413,8 @@ Retrieves all organizations accessible to the authenticated user. Returns a list
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.organizations.getOrganizations({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.organizations.getOrganizations({});
 ```
 
 **Input**
@@ -4372,7 +4459,8 @@ Tool to update specific fields of an organization. Use when you need to modify a
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.organizations.updateOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.organizations.updateOrganization({});
 ```
 
 **Input**
@@ -4432,7 +4520,8 @@ Tool to create a new RESTHook subscription. Use after confirming your webhook en
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.resthooks.createResthookSubscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.resthooks.createResthookSubscription({});
 ```
 
 **Input**
@@ -4480,7 +4569,8 @@ Tool to delete a specific resthook subscription by ID. Use after confirming the 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.resthooks.deleteResthookSubscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.resthooks.deleteResthookSubscription({});
 ```
 
 **Input**
@@ -4526,7 +4616,8 @@ Tool to retrieve details of a specific resthook subscription by its ID. Use afte
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.resthooks.getResthookSubscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.resthooks.getResthookSubscription({});
 ```
 
 **Input**
@@ -4572,7 +4663,8 @@ Tool to retrieve a list of all RESTHook subscriptions. Use after authenticating 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.resthooks.getResthookSubscriptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.resthooks.getResthookSubscriptions({});
 ```
 
 **Input**
@@ -4619,7 +4711,8 @@ Tool to update an existing RESTHook subscription. Use after confirming the subsc
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.resthooks.updateResthookSubscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.resthooks.updateResthookSubscription({});
 ```
 
 **Input**
@@ -4670,7 +4763,8 @@ Tool to search through parsed resumes using three methods: match to a job descri
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.resumeSearch.createResumeSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.resumeSearch.createResumeSearch({});
 ```
 
 **Input**
@@ -4756,7 +4850,8 @@ Tool to create and return a signed URL for the embeddable resume search tool. Us
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.resumeSearch.createResumeSearchEmbedUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.resumeSearch.createResumeSearchEmbedUrl({});
 ```
 
 **Input**
@@ -4810,7 +4905,8 @@ Tool to get the configuration for the logged in user's embeddable resume search 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.resumeSearch.listResumeSearchConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.resumeSearch.listResumeSearchConfig({});
 ```
 
 **Input**
@@ -4855,7 +4951,8 @@ Tool to get job title suggestions based on provided job title(s). Use when you n
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.resumeSearch.listResumeSearchJobTitleSuggestions({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.resumeSearch.listResumeSearchJobTitleSuggestions({});
 ```
 
 **Input**
@@ -4901,7 +4998,8 @@ Tool to get skill suggestions based on provided skills. Use when you need to fin
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.resumeSearch.listResumeSearchSkillSuggestions({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.resumeSearch.listResumeSearchSkillSuggestions({});
 ```
 
 **Input**
@@ -4947,7 +5045,8 @@ Tool to update the configuration for the logged in user's embeddable resume sear
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.resumeSearch.updateResumeSearchConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.resumeSearch.updateResumeSearchConfig({});
 ```
 
 **Input**
@@ -5032,7 +5131,8 @@ Creates a new tag in the specified workspace. Tags can be used to categorize and
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.tags.createTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.tags.createTag({});
 ```
 
 **Input**
@@ -5079,7 +5179,8 @@ Permanently delete a tag from Affinda by its ID. This is a destructive operation
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.tags.deleteTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.tags.deleteTag({});
 ```
 
 **Input**
@@ -5125,7 +5226,8 @@ Tool to list all tags. Use after confirming authentication to fetch tags across 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.tags.getAllTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.tags.getAllTags({});
 ```
 
 **Input**
@@ -5174,7 +5276,8 @@ Tool to retrieve details of a specific tag by its ID. Use when you need to fetch
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.tags.getTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.tags.getTag({});
 ```
 
 **Input**
@@ -5220,7 +5323,8 @@ Tool to update data of a tag. Use when you need to modify a tag's name or reassi
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.tags.updateTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.tags.updateTag({});
 ```
 
 **Input**
@@ -5270,7 +5374,8 @@ Split a document into multiple documents by dividing its pages. Use when you nee
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.validation.splitDocumentPages({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.validation.splitDocumentPages({});
 ```
 
 **Input**
@@ -5319,7 +5424,8 @@ Create a validation result for document annotations in Affinda. Use this tool to
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.validationResults.createValidationResult({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.validationResults.createValidationResult({});
 ```
 
 **Input**
@@ -5369,7 +5475,8 @@ Batch create multiple validation results for document annotations in a single AP
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.validationResults.createValidationResultsBatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.validationResults.createValidationResultsBatch({});
 ```
 
 **Input**
@@ -5415,7 +5522,8 @@ Delete multiple validation results in a single API call. Use this action to effi
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.validationResults.deleteValidationResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.validationResults.deleteValidationResults({});
 ```
 
 **Input**
@@ -5461,7 +5569,8 @@ Tool to list validation results for documents. Use after processing documents to
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.validationResults.getAllValidationResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.validationResults.getAllValidationResults({});
 ```
 
 **Input**
@@ -5511,7 +5620,8 @@ Tool to add a user to a workspace by creating a membership. Use when you need to
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.workspaceMemberships.createWorkspaceMembership({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.workspaceMemberships.createWorkspaceMembership({});
 ```
 
 **Input**
@@ -5558,7 +5668,8 @@ Tool to remove a user from a workspace by membership ID. Use after confirming th
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.workspaceMemberships.deleteWorkspaceMembership({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.workspaceMemberships.deleteWorkspaceMembership({});
 ```
 
 **Input**
@@ -5604,7 +5715,8 @@ Retrieve all workspace memberships across the account. Returns paginated results
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.workspaceMemberships.getAllWorkspaceMemberships({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.workspaceMemberships.getAllWorkspaceMemberships({});
 ```
 
 **Input**
@@ -5653,7 +5765,8 @@ Tool to retrieve details of a specific workspace membership by its ID. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.workspaceMemberships.getWorkspaceMembership({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.workspaceMemberships.getWorkspaceMembership({});
 ```
 
 **Input**
@@ -5701,7 +5814,8 @@ Tool to create a new workspace. Use when you need to programmatically create a w
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.workspaces.createWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.workspaces.createWorkspace({});
 ```
 
 **Input**
@@ -5750,7 +5864,8 @@ Tool to delete a specific workspace by its ID. Use when you need to remove an un
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.affinda.api.workspaces.deleteWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.workspaces.deleteWorkspace({});
 ```
 
 **Input**
@@ -5796,7 +5911,8 @@ Retrieves monthly document processing usage statistics for a specific workspace.
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.workspaces.getUsageByWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.workspaces.getUsageByWorkspace({});
 ```
 
 **Input**
@@ -5844,7 +5960,8 @@ Tool to retrieve details of a specific workspace by its ID. Use when you need fu
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.workspaces.getWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.workspaces.getWorkspace({});
 ```
 
 **Input**
@@ -5890,7 +6007,8 @@ Tool to retrieve a list of all workspaces. Use when you need to list workspaces 
 **Risk:** `read`
 
 ```ts
-await corsair.affinda.api.workspaces.getWorkspaces({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.workspaces.getWorkspaces({});
 ```
 
 **Input**
@@ -5937,7 +6055,8 @@ Tool to update specific fields of a workspace. Use when you need to modify a wor
 **Risk:** `write`
 
 ```ts
-await corsair.affinda.api.workspaces.updateWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.affinda.api.workspaces.updateWorkspace({});
 ```
 
 **Input**

@@ -14,7 +14,8 @@ The Algolia plugin syncs data locally. Use `corsair.algolia.db.<entity>.search({
 Path: `algolia.db.indices.search`
 
 ```ts
-const rows = await corsair.algolia.db.indices.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.algolia.db.indices.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `algolia.db.records.search`
 
 ```ts
-const rows = await corsair.algolia.db.records.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.algolia.db.records.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -66,7 +68,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `algolia.db.tasks.search`
 
 ```ts
-const rows = await corsair.algolia.db.tasks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.algolia.db.tasks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

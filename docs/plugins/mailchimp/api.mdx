@@ -20,7 +20,8 @@ Health-check the API.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.account.ping({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.account.ping({});
 ```
 
 **Input:** _empty object_
@@ -45,7 +46,8 @@ Get account and API root information.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.account.root({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.account.root({});
 ```
 
 **Input**
@@ -78,7 +80,8 @@ Create a campaign.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.campaigns.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.campaigns.create({});
 ```
 
 **Input**
@@ -138,7 +141,8 @@ Get a campaign.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.campaigns.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.campaigns.get({});
 ```
 
 **Input**
@@ -168,7 +172,8 @@ Get campaign content.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.campaigns.getContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.campaigns.getContent({});
 ```
 
 **Input**
@@ -199,7 +204,8 @@ List campaigns.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.campaigns.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.campaigns.list({});
 ```
 
 **Input**
@@ -246,7 +252,8 @@ Delete a campaign.
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailchimp.api.campaigns.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.campaigns.remove({});
 ```
 
 **Input**
@@ -271,7 +278,8 @@ Schedule a campaign.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.campaigns.schedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.campaigns.schedule({});
 ```
 
 **Input**
@@ -309,7 +317,8 @@ Send a campaign to its audience.
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailchimp.api.campaigns.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.campaigns.send({});
 ```
 
 **Input**
@@ -334,7 +343,8 @@ Send a test email.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.campaigns.sendTest({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.campaigns.sendTest({});
 ```
 
 **Input**
@@ -361,7 +371,8 @@ Set campaign content.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.campaigns.setContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.campaigns.setContent({});
 ```
 
 **Input**
@@ -405,7 +416,8 @@ Unschedule a campaign.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.campaigns.unschedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.campaigns.unschedule({});
 ```
 
 **Input**
@@ -430,7 +442,8 @@ Update campaign settings.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.campaigns.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.campaigns.update({});
 ```
 
 **Input**
@@ -492,7 +505,8 @@ Create an interest category.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.interestCategories.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.interestCategories.create({});
 ```
 
 **Input**
@@ -527,7 +541,8 @@ Get an interest category.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.interestCategories.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.interestCategories.get({});
 ```
 
 **Input**
@@ -560,7 +575,8 @@ List interest categories (groups).
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.interestCategories.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.interestCategories.list({});
 ```
 
 **Input**
@@ -606,7 +622,8 @@ Delete an interest category.
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailchimp.api.interestCategories.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.interestCategories.remove({});
 ```
 
 **Input**
@@ -632,7 +649,8 @@ Update an interest category.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.interestCategories.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.interestCategories.update({});
 ```
 
 **Input**
@@ -670,7 +688,8 @@ Create an interest.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.interests.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.interests.create({});
 ```
 
 **Input**
@@ -705,7 +724,8 @@ Get an interest.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.interests.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.interests.get({});
 ```
 
 **Input**
@@ -739,7 +759,8 @@ List interests in a category.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.interests.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.interests.list({});
 ```
 
 **Input**
@@ -786,7 +807,8 @@ Delete an interest.
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailchimp.api.interests.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.interests.remove({});
 ```
 
 **Input**
@@ -813,7 +835,8 @@ Update an interest.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.interests.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.interests.update({});
 ```
 
 **Input**
@@ -851,7 +874,8 @@ Create an audience.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.lists.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.lists.create({});
 ```
 
 **Input**
@@ -920,7 +944,8 @@ Get an audience by id.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.lists.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.lists.get({});
 ```
 
 **Input**
@@ -954,7 +979,8 @@ List all audiences.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.lists.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.lists.list({});
 ```
 
 **Input**
@@ -1001,7 +1027,8 @@ Delete an audience.
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailchimp.api.lists.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.lists.remove({});
 ```
 
 **Input**
@@ -1026,7 +1053,8 @@ Update audience settings.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.lists.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.lists.update({});
 ```
 
 **Input**
@@ -1095,7 +1123,8 @@ Add a new member.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.members.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.members.add({});
 ```
 
 **Input**
@@ -1152,7 +1181,8 @@ Archive a member.
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailchimp.api.members.archive({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.members.archive({});
 ```
 
 **Input**
@@ -1178,7 +1208,8 @@ Get a member.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.members.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.members.get({});
 ```
 
 **Input**
@@ -1212,7 +1243,8 @@ List members of an audience.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.members.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.members.list({});
 ```
 
 **Input**
@@ -1262,7 +1294,8 @@ List a member's tags.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.members.listTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.members.listTags({});
 ```
 
 **Input**
@@ -1307,7 +1340,8 @@ Permanently delete a member.
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailchimp.api.members.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.members.remove({});
 ```
 
 **Input**
@@ -1333,7 +1367,8 @@ Search members.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.members.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.members.search({});
 ```
 
 **Input**
@@ -1365,7 +1400,8 @@ Update a member.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.members.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.members.update({});
 ```
 
 **Input**
@@ -1421,7 +1457,8 @@ Add or remove a member's tags.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.members.updateTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.members.updateTags({});
 ```
 
 **Input**
@@ -1460,7 +1497,8 @@ Add or update a member (idempotent).
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.members.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.members.upsert({});
 ```
 
 **Input**
@@ -1520,7 +1558,8 @@ Create a merge field.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.mergeFields.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.mergeFields.create({});
 ```
 
 **Input**
@@ -1569,7 +1608,8 @@ Get a merge field.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.mergeFields.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.mergeFields.get({});
 ```
 
 **Input**
@@ -1602,7 +1642,8 @@ List merge fields.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.mergeFields.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.mergeFields.list({});
 ```
 
 **Input**
@@ -1648,7 +1689,8 @@ Delete a merge field.
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailchimp.api.mergeFields.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.mergeFields.remove({});
 ```
 
 **Input**
@@ -1674,7 +1716,8 @@ Update a merge field.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.mergeFields.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.mergeFields.update({});
 ```
 
 **Input**
@@ -1724,7 +1767,8 @@ Add a member to a segment.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.segments.addMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.segments.addMember({});
 ```
 
 **Input**
@@ -1759,7 +1803,8 @@ Create a segment.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.segments.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.segments.create({});
 ```
 
 **Input**
@@ -1804,7 +1849,8 @@ Get a segment.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.segments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.segments.get({});
 ```
 
 **Input**
@@ -1837,7 +1883,8 @@ List segments.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.segments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.segments.list({});
 ```
 
 **Input**
@@ -1883,7 +1930,8 @@ List members in a segment.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.segments.listMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.segments.listMembers({});
 ```
 
 **Input**
@@ -1931,7 +1979,8 @@ Delete a segment.
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailchimp.api.segments.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.segments.remove({});
 ```
 
 **Input**
@@ -1957,7 +2006,8 @@ Remove a member from a segment.
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailchimp.api.segments.removeMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.segments.removeMember({});
 ```
 
 **Input**
@@ -1984,7 +2034,8 @@ Update a segment.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.segments.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.segments.update({});
 ```
 
 **Input**
@@ -2032,7 +2083,8 @@ Create a webhook.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.webhooks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.webhooks.create({});
 ```
 
 **Input**
@@ -2093,7 +2145,8 @@ Get a webhook.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.webhooks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.webhooks.get({});
 ```
 
 **Input**
@@ -2125,7 +2178,8 @@ List list webhooks.
 **Risk:** `read`
 
 ```ts
-await corsair.mailchimp.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.webhooks.list({});
 ```
 
 **Input**
@@ -2168,7 +2222,8 @@ Delete a webhook.
 **Risk:** `destructive`
 
 ```ts
-await corsair.mailchimp.api.webhooks.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.webhooks.remove({});
 ```
 
 **Input**
@@ -2194,7 +2249,8 @@ Update a webhook.
 **Risk:** `write`
 
 ```ts
-await corsair.mailchimp.api.webhooks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.mailchimp.api.webhooks.update({});
 ```
 
 **Input**

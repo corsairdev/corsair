@@ -20,7 +20,8 @@ Adds multiple annotations to a commit report in bulk. Use when you need to add c
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.createRepositoriesCommitReportsAnnotations({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.createRepositoriesCommitReportsAnnotations({});
 ```
 
 **Input**
@@ -70,7 +71,8 @@ Tool to list commits from a revision using POST method. Identical to GET endpoin
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.createRepositoriesCommits2({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.createRepositoriesCommits2({});
 ```
 
 **Input**
@@ -121,7 +123,8 @@ Permanently deletes a specific comment on a commit. Use when removing outdated, 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.deleteCommitComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.deleteCommitComment({});
 ```
 
 **Input**
@@ -149,7 +152,8 @@ Deletes a single annotation matching the provided ID from a commit report. Use w
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.deleteRepositoriesCommitReportsAnnotations({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.deleteRepositoriesCommitReportsAnnotations({});
 ```
 
 **Input**
@@ -178,7 +182,8 @@ Get a specific build status for a commit in Bitbucket. Use when you need to chec
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.getCommitBuildStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.getCommitBuildStatus({});
 ```
 
 **Input**
@@ -216,7 +221,8 @@ Tool to retrieve a page of changes made in a specified commit, showing all chang
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.getCommitChanges({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.getCommitChanges({});
 ```
 
 **Input**
@@ -260,7 +266,8 @@ Retrieves a specific comment from a commit by its ID. Use when you need to fetch
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.getCommitComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.getCommitComment({});
 ```
 
 **Input**
@@ -298,7 +305,8 @@ Tool to retrieve the unified diff between two provided revisions or for a single
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.getCommitDiff({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.getCommitDiff({});
 ```
 
 **Input**
@@ -332,7 +340,8 @@ Tool to retrieve detailed information about a specific commit in a Bitbucket rep
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommit({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.getRepositoriesCommit({});
 ```
 
 **Input**
@@ -369,7 +378,8 @@ Retrieves all comments on a specific commit in a Bitbucket repository. Returns b
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitComments({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.getRepositoriesCommitComments({});
 ```
 
 **Input**
@@ -410,7 +420,8 @@ Returns a single report matching the provided ID from a commit. Use when you nee
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitReport({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.getRepositoriesCommitReport({});
 ```
 
 **Input**
@@ -448,7 +459,8 @@ Tool to get reports linked to a specific commit. Use when you need to retrieve a
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitReports({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.getRepositoriesCommitReports({});
 ```
 
 **Input**
@@ -487,7 +499,8 @@ Returns a single annotation matching the provided ID from a commit report. Use w
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitReportsAnnotations({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.getRepositoriesCommitReportsAnnotations({});
 ```
 
 **Input**
@@ -526,7 +539,8 @@ Returns all build statuses (e.g., CI/CD pipeline results) for a specific commit.
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitStatuses({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.getRepositoriesCommitStatuses({});
 ```
 
 **Input**
@@ -568,7 +582,8 @@ Get the merge base (best common ancestor) between two commits in a Bitbucket rep
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.getRepositoriesMergeBase({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.getRepositoriesMergeBase({});
 ```
 
 **Input**
@@ -605,7 +620,8 @@ Tool to retrieve the git patch content for a Bitbucket repository at a specified
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.getRepositoryPatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.getRepositoryPatch({});
 ```
 
 **Input**
@@ -632,7 +648,8 @@ Tool to retrieve a page of commits from a Bitbucket repository. Returns commits 
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.listCommits({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.listCommits({});
 ```
 
 **Input**
@@ -670,7 +687,8 @@ Tool to list commits starting from a specific revision in a Bitbucket repository
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.listCommitsFromRevision({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.listCommitsFromRevision({});
 ```
 
 **Input**
@@ -709,7 +727,8 @@ Lists commits on the master branch of a Bitbucket repository. Use when you need 
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.listCommitsOnMaster({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.listCommitsOnMaster({});
 ```
 
 **Input**
@@ -747,7 +766,8 @@ Create or update an insight report for a commit. Creates a new report if it does
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.updateInsightsProjectsReposCommitsReports({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.updateInsightsProjectsReposCommitsReports({});
 ```
 
 **Input**
@@ -797,7 +817,8 @@ Updates the contents of a comment on a commit. Use when you need to modify an ex
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.updateRepositoriesCommitComments({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.updateRepositoriesCommitComments({});
 ```
 
 **Input**
@@ -847,7 +868,8 @@ Creates or updates an individual annotation for a commit report. Use when you ne
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.commitsAndInsights.updateRepositoriesCommitReportsAnnotations({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.commitsAndInsights.updateRepositoriesCommitReportsAnnotations({});
 ```
 
 **Input**
@@ -900,7 +922,8 @@ Creates a new issue in a Bitbucket repository, setting the authenticated user as
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.issues.createIssue({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.issues.createIssue({});
 ```
 
 **Input**
@@ -948,7 +971,8 @@ Adds a new comment with markdown support to an existing Bitbucket issue.
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.issues.createIssueComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.issues.createIssueComment({});
 ```
 
 **Input**
@@ -997,7 +1021,8 @@ Permanently deletes a specific issue, identified by its `issue_id`, from the rep
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.bitbucket.api.issues.deleteIssue({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.issues.deleteIssue({});
 ```
 
 **Input**
@@ -1024,7 +1049,8 @@ Tool to check whether the authenticated user has voted for a specific issue in a
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.issues.getRepositoriesIssuesVote({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.issues.getRepositoriesIssuesVote({});
 ```
 
 **Input**
@@ -1061,7 +1087,8 @@ Lists issues in a Bitbucket repository with optional filtering by state, priorit
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.issues.listIssues({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.issues.listIssues({});
 ```
 
 **Input**
@@ -1099,7 +1126,8 @@ Lists versions (milestones) in a Bitbucket repository's issue tracker. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.issues.listVersions({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.issues.listVersions({});
 ```
 
 **Input**
@@ -1137,7 +1165,8 @@ Updates an existing issue in a Bitbucket repository by modifying specified attri
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.issues.updateIssue({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.issues.updateIssue({});
 ```
 
 **Input**
@@ -1202,7 +1231,8 @@ Creates a team-level pipeline configuration variable in Bitbucket. Use when you 
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.createTeamsPipelinesConfigVariables({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.createTeamsPipelinesConfigVariables({});
 ```
 
 **Input**
@@ -1249,7 +1279,8 @@ Creates a user-level pipeline variable for Bitbucket pipelines. Use when you nee
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.createUsersPipelinesConfigVariables({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.createUsersPipelinesConfigVariables({});
 ```
 
 **Input**
@@ -1296,7 +1327,8 @@ Permanently deletes a user-level pipeline configuration variable identified by i
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.deleteUserPipelineVariable({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.deleteUserPipelineVariable({});
 ```
 
 **Input**
@@ -1322,7 +1354,8 @@ Retrieves deployment environment level variables for a specific Bitbucket reposi
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.getDeploymentEnvironmentVariables({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.getDeploymentEnvironmentVariables({});
 ```
 
 **Input**
@@ -1361,7 +1394,8 @@ Retrieves the OpenID Connect discovery configuration for Bitbucket Pipelines OID
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.getOpenidConfiguration({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.getOpenidConfiguration({});
 ```
 
 **Input**
@@ -1396,7 +1430,8 @@ Retrieve detailed information about a specific deployment environment in a Bitbu
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesEnvironments2({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.getRepositoriesEnvironments2({});
 ```
 
 **Input**
@@ -1433,7 +1468,8 @@ Retrieve a specified pipeline from a Bitbucket repository. Use when you need to 
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelines2({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelines2({});
 ```
 
 **Input**
@@ -1470,7 +1506,8 @@ Retrieves the repository pipelines caches. Use when you need to list all caches 
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigCaches({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigCaches({});
 ```
 
 **Input**
@@ -1508,7 +1545,8 @@ Retrieves the list of self-hosted runners configured for a repository's pipeline
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigRunners({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigRunners({});
 ```
 
 **Input**
@@ -1546,7 +1584,8 @@ Retrieves configured pipeline schedules for a Bitbucket repository. Use when you
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigSchedules({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigSchedules({});
 ```
 
 **Input**
@@ -1584,7 +1623,8 @@ Retrieves repository-level SSH known hosts configured for Bitbucket Pipelines. U
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigSshKnownHosts({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigSshKnownHosts({});
 ```
 
 **Input**
@@ -1622,7 +1662,8 @@ Retrieves repository-level pipeline variables for a specific Bitbucket repositor
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigVariables({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigVariables({});
 ```
 
 **Input**
@@ -1660,7 +1701,8 @@ Retrieves all steps for a given pipeline. Use when you need to inspect the indiv
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesSteps({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesSteps({});
 ```
 
 **Input**
@@ -1699,7 +1741,8 @@ Lists deployments for a specified Bitbucket repository. Use when you need to vie
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.listDeployments({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.listDeployments({});
 ```
 
 **Input**
@@ -1737,7 +1780,8 @@ Tool to find pipelines in a Bitbucket repository. Returns pipeline metadata incl
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.listPipelines({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.listPipelines({});
 ```
 
 **Input**
@@ -1786,7 +1830,8 @@ List all deployment environments configured for a Bitbucket repository. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.listRepositoriesEnvironments({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.listRepositoriesEnvironments({});
 ```
 
 **Input**
@@ -1824,7 +1869,8 @@ Updates a team-level pipeline configuration variable in Bitbucket. Use when you 
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.updateTeamsPipelinesConfigVariables({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.updateTeamsPipelinesConfigVariables({});
 ```
 
 **Input**
@@ -1872,7 +1918,8 @@ Updates a user-level pipeline variable for Bitbucket pipelines. Use when you nee
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.pipelinesAndDeployments.updateUsersPipelinesConfigVariables({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pipelinesAndDeployments.updateUsersPipelinesConfigVariables({});
 ```
 
 **Input**
@@ -1922,7 +1969,8 @@ Tool to approve a pull request as the authenticated user. Use when you need to f
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.approvePullRequest({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.approvePullRequest({});
 ```
 
 **Input**
@@ -1959,7 +2007,8 @@ Creates a new pull request in a specified Bitbucket repository, ensuring the sou
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.createPullRequest({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.createPullRequest({});
 ```
 
 **Input**
@@ -2012,7 +2061,8 @@ Creates a new comment on a Bitbucket pull request. Supports top-level comments, 
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.createPullRequestComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.createPullRequestComment({});
 ```
 
 **Input**
@@ -2061,7 +2111,8 @@ Get a single pull request by ID with complete details.
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.getPullRequest({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.getPullRequest({});
 ```
 
 **Input**
@@ -2098,7 +2149,8 @@ Tool to retrieve a specific comment from a pull request by its ID. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.getPullRequestComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.getPullRequestComment({});
 ```
 
 **Input**
@@ -2136,7 +2188,8 @@ Tool to retrieve commits for a specified pull request. Use when reviewing the co
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.getPullRequestCommits({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.getPullRequestCommits({});
 ```
 
 **Input**
@@ -2175,7 +2228,8 @@ Tool to fetch the unified diff for a Bitbucket pull request (follows 302 redirec
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.getPullRequestDiff({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.getPullRequestDiff({});
 ```
 
 **Input**
@@ -2202,7 +2256,8 @@ Tool to get the diffstat for a Bitbucket pull request, showing all changed files
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.getPullRequestDiffstat({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.getPullRequestDiffstat({});
 ```
 
 **Input**
@@ -2241,7 +2296,8 @@ Get paginated activity log for all pull requests in a repository. Returns commen
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.getRepositoriesPullrequestsActivity({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.getRepositoriesPullrequestsActivity({});
 ```
 
 **Input**
@@ -2279,7 +2335,8 @@ Retrieves a paginated list of comments on a specific pull request in a Bitbucket
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.getRepositoriesPullrequestsComments({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.getRepositoriesPullrequestsComments({});
 ```
 
 **Input**
@@ -2318,7 +2375,8 @@ Returns all build statuses (e.g., CI/CD pipeline results) for a specific pull re
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.getRepositoriesPullrequestsStatuses({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.getRepositoriesPullrequestsStatuses({});
 ```
 
 **Input**
@@ -2359,7 +2417,8 @@ Lists pull requests in a specified, accessible Bitbucket repository, optionally 
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.listPullRequests({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.listPullRequests({});
 ```
 
 **Input**
@@ -2398,7 +2457,8 @@ Lists all tasks associated with a pull request in a Bitbucket repository. Use wh
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.listPullRequestTasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.listPullRequestTasks({});
 ```
 
 **Input**
@@ -2439,7 +2499,8 @@ Tool to request changes on a pull request as the authenticated user. Use when yo
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.pullRequests.requestPullRequestChanges({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.pullRequests.requestPullRequestChanges({});
 ```
 
 **Input**
@@ -2478,7 +2539,8 @@ Creates a new Bitbucket 'git' repository in a specified workspace, defaulting to
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.repositories.createRepository({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.repositories.createRepository({});
 ```
 
 **Input**
@@ -2526,7 +2588,8 @@ Permanently deletes a specified Bitbucket repository; this action is irreversibl
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.bitbucket.api.repositories.deleteRepository({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.repositories.deleteRepository({});
 ```
 
 **Input**
@@ -2553,7 +2616,8 @@ Retrieves a paginated list of all the watchers on the specified repository. Use 
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.repositories.getRepositoriesWatchers({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.repositories.getRepositoriesWatchers({});
 ```
 
 **Input**
@@ -2591,7 +2655,8 @@ Retrieves detailed information about a specific repository in a Bitbucket worksp
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.repositories.getRepository({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.repositories.getRepository({});
 ```
 
 **Input**
@@ -2627,7 +2692,8 @@ Retrieves a paginated list of all public repositories on Bitbucket. Use when you
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.repositories.listRepositories({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.repositories.listRepositories({});
 ```
 
 **Input**
@@ -2667,7 +2733,8 @@ Lists repositories in a specified Bitbucket workspace, accessible to the authent
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.repositories.listRepositoriesInWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.repositories.listRepositoriesInWorkspace({});
 ```
 
 **Input**
@@ -2709,7 +2776,8 @@ Retrieves a paginated list of all valid webhook events for a specified entity ty
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.searchAndDiscovery.getHookEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.searchAndDiscovery.getHookEvents({});
 ```
 
 **Input**
@@ -2746,7 +2814,8 @@ Tool to search for code in the repositories of the specified workspace. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.searchAndDiscovery.getWorkspacesSearchCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.searchAndDiscovery.getWorkspacesSearchCode({});
 ```
 
 **Input**
@@ -2784,7 +2853,8 @@ Search for code in repositories of a specified team. Matches can occur in file c
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.searchAndDiscovery.searchTeamCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.searchAndDiscovery.searchTeamCode({});
 ```
 
 **Input**
@@ -2822,7 +2892,8 @@ Tool to search for code in the repositories of a specified user. Use when you ne
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.searchAndDiscovery.searchUserRepositoriesCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.searchAndDiscovery.searchUserRepositoriesCode({});
 ```
 
 **Input**
@@ -2862,7 +2933,8 @@ Posts a new top-level comment or a threaded reply to an existing comment on a sp
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.snippets.createSnippetComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.snippets.createSnippetComment({});
 ```
 
 **Input**
@@ -2910,7 +2982,8 @@ Stops watching a specific snippet. Use when you want to unsubscribe from notific
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.snippets.deleteSnippetsWatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.snippets.deleteSnippetsWatch({});
 ```
 
 **Input**
@@ -2936,7 +3009,8 @@ Retrieves a specific Bitbucket snippet by its encoded ID from an existing worksp
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.snippets.getSnippet({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.snippets.getSnippet({});
 ```
 
 **Input**
@@ -2972,7 +3046,8 @@ Checks if the current user is watching a specific snippet. Use when you need to 
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.snippets.getSnippetsWatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.snippets.getSnippetsWatch({});
 ```
 
 **Input**
@@ -3008,7 +3083,8 @@ Returns all snippets accessible to the authenticated user. Use when you need to 
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.snippets.listSnippets({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.snippets.listSnippets({});
 ```
 
 **Input**
@@ -3047,7 +3123,8 @@ Tool to retrieve content for a file path or browse directory contents at a speci
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.browseRepositoryPath({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.browseRepositoryPath({});
 ```
 
 **Input**
@@ -3091,7 +3168,8 @@ Creates a new branch in a Bitbucket repository from a target commit hash; the br
 **Risk:** `write`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.createBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.createBranch({});
 ```
 
 **Input**
@@ -3142,7 +3220,8 @@ Retrieves detailed information about a specific branch in a Bitbucket repository
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.getBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.getBranch({});
 ```
 
 **Input**
@@ -3179,7 +3258,8 @@ Retrieves a specific file's content from a Bitbucket repository at a given commi
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.getFileFromRepository({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.getFileFromRepository({});
 ```
 
 **Input**
@@ -3223,7 +3303,8 @@ Tool to retrieve the raw content of a file from a Bitbucket repository at a spec
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.getRawFileContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.getRawFileContent({});
 ```
 
 **Input**
@@ -3255,7 +3336,8 @@ Return the branching model as applied to the repository. Use when you need to un
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.getRepositoriesBranchingModel({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.getRepositoriesBranchingModel({});
 ```
 
 **Input**
@@ -3291,7 +3373,8 @@ Retrieves the effective branching model for a Bitbucket repository, showing whic
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.getRepositoriesEffectiveBranchingModel({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.getRepositoriesEffectiveBranchingModel({});
 ```
 
 **Input**
@@ -3327,7 +3410,8 @@ Returns a paginated list of commits that modified the specified file. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.getRepositoriesFilehistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.getRepositoriesFilehistory({});
 ```
 
 **Input**
@@ -3370,7 +3454,8 @@ Returns the branches and tags in the repository. Use when you need to list all r
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.getRepositoriesRefs({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.getRepositoriesRefs({});
 ```
 
 **Input**
@@ -3410,7 +3495,8 @@ Retrieves detailed information about a specific tag in a Bitbucket repository. U
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.getRepositoriesRefsTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.getRepositoriesRefsTags({});
 ```
 
 **Input**
@@ -3447,7 +3533,8 @@ Lists the contents of the root directory on the repository's main branch without
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.getRepositoriesSrc({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.getRepositoriesSrc({});
 ```
 
 **Input**
@@ -3486,7 +3573,8 @@ Lists branches in a Bitbucket repository with optional server-side filtering by 
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.listBranches({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.listBranches({});
 ```
 
 **Input**
@@ -3526,7 +3614,8 @@ Lists file and directory entries under a repository path at a given revision, wi
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.listRepositoryPaths({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.listRepositoryPaths({});
 ```
 
 **Input**
@@ -3570,7 +3659,8 @@ Lists tags in a Bitbucket repository with optional server-side filtering by name
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.sourceAndRefs.listTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.sourceAndRefs.listTags({});
 ```
 
 **Input**
@@ -3612,7 +3702,8 @@ Tool to retrieve complete profile information for the currently authenticated Bi
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.usersAndPermissions.getCurrentUser2({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.usersAndPermissions.getCurrentUser2({});
 ```
 
 **Input:** _empty object_
@@ -3642,7 +3733,8 @@ Retrieves a paginated list of SSH keys for a specified Bitbucket user. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.usersAndPermissions.getSshLatestKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.usersAndPermissions.getSshLatestKeys({});
 ```
 
 **Input**
@@ -3679,7 +3771,8 @@ Retrieves public profile information for a specific Bitbucket user by username o
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.usersAndPermissions.getUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.usersAndPermissions.getUser({});
 ```
 
 **Input**
@@ -3714,7 +3807,8 @@ Returns all the authenticated user's email addresses, both confirmed and unconfi
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.usersAndPermissions.getUserEmails({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.usersAndPermissions.getUserEmails({});
 ```
 
 **Input:** _empty object_
@@ -3744,7 +3838,8 @@ Retrieves details about a specific email address for the authenticated user. Use
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.usersAndPermissions.getUserEmails2({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.usersAndPermissions.getUserEmails2({});
 ```
 
 **Input**
@@ -3779,7 +3874,8 @@ Returns an object for each repository the caller has explicit access to, includi
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.usersAndPermissions.getUserPermissionsRepositories({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.usersAndPermissions.getUserPermissionsRepositories({});
 ```
 
 **Input**
@@ -3817,7 +3913,8 @@ Retrieves workspace memberships and permission levels for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.usersAndPermissions.getUserPermissionsWorkspaces({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.usersAndPermissions.getUserPermissionsWorkspaces({});
 ```
 
 **Input**
@@ -3855,7 +3952,8 @@ Tool to retrieve all workspaces accessible to the authenticated user. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.usersAndPermissions.getUserWorkspaces({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.usersAndPermissions.getUserWorkspaces({});
 ```
 
 **Input**
@@ -3895,7 +3993,8 @@ Retrieves repositories from a project in a Bitbucket workspace. Use when you nee
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.workspacesAndProjects.getProjectsRepos({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.workspacesAndProjects.getProjectsRepos({});
 ```
 
 **Input**
@@ -3936,7 +4035,8 @@ Retrieves detailed information about a specific Bitbucket workspace. Use when yo
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.workspacesAndProjects.getWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.workspacesAndProjects.getWorkspace({});
 ```
 
 **Input**
@@ -3971,7 +4071,8 @@ Tool to get all workspace pull requests authored by a specified user. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.workspacesAndProjects.getWorkspacesPullrequests({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.workspacesAndProjects.getWorkspacesPullrequests({});
 ```
 
 **Input**
@@ -4010,7 +4111,8 @@ Lists all members of a specified Bitbucket workspace; the workspace must exist.
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.workspacesAndProjects.listWorkspaceMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.workspacesAndProjects.listWorkspaceMembers({});
 ```
 
 **Input**
@@ -4047,7 +4149,8 @@ Lists projects in a specified Bitbucket workspace. Use when you need to retrieve
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.workspacesAndProjects.listWorkspaceProjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.workspacesAndProjects.listWorkspaceProjects({});
 ```
 
 **Input**
@@ -4084,7 +4187,8 @@ Lists Bitbucket workspaces accessible to the authenticated user, optionally filt
 **Risk:** `read`
 
 ```ts
-await corsair.bitbucket.api.workspacesAndProjects.listWorkspaces({});
+const tenant = corsair.withTenant('acme');
+await tenant.bitbucket.api.workspacesAndProjects.listWorkspaces({});
 ```
 
 **Input**

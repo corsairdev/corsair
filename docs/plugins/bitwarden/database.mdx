@@ -14,7 +14,8 @@ The Bitwarden plugin syncs data locally. Use `corsair.bitwarden.db.<entity>.sear
 Path: `bitwarden.db.ciphers.search`
 
 ```ts
-const rows = await corsair.bitwarden.db.ciphers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitwarden.db.ciphers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitwarden.db.collections.search`
 
 ```ts
-const rows = await corsair.bitwarden.db.collections.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitwarden.db.collections.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -68,7 +70,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitwarden.db.members.search`
 
 ```ts
-const rows = await corsair.bitwarden.db.members.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitwarden.db.members.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -98,7 +101,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitwarden.db.organizations.search`
 
 ```ts
-const rows = await corsair.bitwarden.db.organizations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitwarden.db.organizations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { bart } from '@corsair-dev/bart';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		bart(),
 	],

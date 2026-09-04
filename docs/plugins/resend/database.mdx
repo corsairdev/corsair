@@ -14,7 +14,8 @@ The Resend plugin syncs data locally. Use `corsair.resend.db.<entity>.search({ d
 Path: `resend.db.contacts.search`
 
 ```ts
-const rows = await corsair.resend.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.resend.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `resend.db.domains.search`
 
 ```ts
-const rows = await corsair.resend.db.domains.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.resend.db.domains.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -68,7 +70,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `resend.db.emails.search`
 
 ```ts
-const rows = await corsair.resend.db.emails.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.resend.db.emails.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

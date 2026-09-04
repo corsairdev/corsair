@@ -20,7 +20,8 @@ Append new blocks to a block or page
 **Risk:** `write`
 
 ```ts
-await corsair.notion.api.blocks.appendBlock({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.blocks.appendBlock({});
 ```
 
 **Input**
@@ -141,7 +142,8 @@ Retrieve child blocks of a block or page
 **Risk:** `read`
 
 ```ts
-await corsair.notion.api.blocks.getManyChildBlocks({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.blocks.getManyChildBlocks({});
 ```
 
 **Input**
@@ -227,7 +229,8 @@ Create a new page in a database
 **Risk:** `write`
 
 ```ts
-await corsair.notion.api.databasePages.createDatabasePage({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.databasePages.createDatabasePage({});
 ```
 
 **Input**
@@ -359,7 +362,8 @@ Get a page from a database
 **Risk:** `read`
 
 ```ts
-await corsair.notion.api.databasePages.getDatabasePage({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.databasePages.getDatabasePage({});
 ```
 
 **Input**
@@ -480,7 +484,8 @@ List and filter pages in a database
 **Risk:** `read`
 
 ```ts
-await corsair.notion.api.databasePages.getManyDatabasePages({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.databasePages.getManyDatabasePages({});
 ```
 
 **Input**
@@ -586,7 +591,8 @@ Update properties of a database page
 **Risk:** `write`
 
 ```ts
-await corsair.notion.api.databasePages.updateDatabasePage({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.databasePages.updateDatabasePage({});
 ```
 
 **Input**
@@ -721,7 +727,8 @@ Get info about a database
 **Risk:** `read`
 
 ```ts
-await corsair.notion.api.databases.getDatabase({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.databases.getDatabase({});
 ```
 
 **Input**
@@ -891,7 +898,8 @@ List databases accessible to the integration
 **Risk:** `read`
 
 ```ts
-await corsair.notion.api.databases.getManyDatabases({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.databases.getManyDatabases({});
 ```
 
 **Input**
@@ -1029,7 +1037,8 @@ Search and filter databases
 **Risk:** `read`
 
 ```ts
-await corsair.notion.api.databases.searchDatabase({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.databases.searchDatabase({});
 ```
 
 **Input**
@@ -1172,7 +1181,8 @@ Archive (trash) a page [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.notion.api.pages.archivePage({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.pages.archivePage({});
 ```
 
 **Input**
@@ -1293,7 +1303,8 @@ Create a new page
 **Risk:** `write`
 
 ```ts
-await corsair.notion.api.pages.createPage({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.pages.createPage({});
 ```
 
 **Input**
@@ -1478,7 +1489,8 @@ Search pages and databases by title
 **Risk:** `read`
 
 ```ts
-await corsair.notion.api.pages.searchPage({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.pages.searchPage({});
 ```
 
 **Input**
@@ -1672,7 +1684,8 @@ List all users in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.notion.api.users.getManyUsers({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.users.getManyUsers({});
 ```
 
 **Input**
@@ -1732,7 +1745,8 @@ Get info about a user
 **Risk:** `read`
 
 ```ts
-await corsair.notion.api.users.getUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.notion.api.users.getUser({});
 ```
 
 **Input**

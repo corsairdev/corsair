@@ -20,7 +20,8 @@ Query a panel on a public Grafana dashboard
 **Risk:** `read`
 
 ```ts
-await corsair.grafana.api.dashboards.queryPublic({});
+const tenant = corsair.withTenant('acme');
+await tenant.grafana.api.dashboards.queryPublic({});
 ```
 
 **Input**
@@ -74,7 +75,8 @@ Check Grafana server health and database connectivity
 **Risk:** `read`
 
 ```ts
-await corsair.grafana.api.health.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.grafana.api.health.get({});
 ```
 
 **Input:** _empty object_
@@ -117,7 +119,8 @@ Retrieve JWKS public keys for token verification
 **Risk:** `read`
 
 ```ts
-await corsair.grafana.api.jwks.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.grafana.api.jwks.retrieve({});
 ```
 
 **Input:** _empty object_
@@ -166,7 +169,8 @@ Send OTLP v1 logs to Grafana Loki for ingestion
 **Risk:** `write`
 
 ```ts
-await corsair.grafana.api.logs.createOtlp({});
+const tenant = corsair.withTenant('acme');
+await tenant.grafana.api.logs.createOtlp({});
 ```
 
 **Input**
@@ -302,7 +306,8 @@ Get distributor HA tracker ring status
 **Risk:** `read`
 
 ```ts
-await corsair.grafana.api.ring.getDistributorHaTracker({});
+const tenant = corsair.withTenant('acme');
+await tenant.grafana.api.ring.getDistributorHaTracker({});
 ```
 
 **Input:** _empty object_
@@ -341,7 +346,8 @@ Get index gateway hash ring status
 **Risk:** `read`
 
 ```ts
-await corsair.grafana.api.ring.getIndexGateway({});
+const tenant = corsair.withTenant('acme');
+await tenant.grafana.api.ring.getIndexGateway({});
 ```
 
 **Input:** _empty object_
@@ -380,7 +386,8 @@ Get overrides-exporter hash ring status
 **Risk:** `read`
 
 ```ts
-await corsair.grafana.api.ring.getOverridesExporter({});
+const tenant = corsair.withTenant('acme');
+await tenant.grafana.api.ring.getOverridesExporter({});
 ```
 
 **Input:** _empty object_
@@ -418,7 +425,8 @@ Get ruler ring status from Grafana Mimir
 **Risk:** `read`
 
 ```ts
-await corsair.grafana.api.ring.getRuler({});
+const tenant = corsair.withTenant('acme');
+await tenant.grafana.api.ring.getRuler({});
 ```
 
 **Input:** _empty object_
@@ -459,7 +467,8 @@ Process a SAML Assertion Consumer Service authentication response
 **Risk:** `write`
 
 ```ts
-await corsair.grafana.api.saml.postAcs({});
+const tenant = corsair.withTenant('acme');
+await tenant.grafana.api.saml.postAcs({});
 ```
 
 **Input**
@@ -507,7 +516,8 @@ Check Grafana Enterprise license availability
 **Risk:** `read`
 
 ```ts
-await corsair.grafana.api.status.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.grafana.api.status.get({});
 ```
 
 **Input:** _empty object_
@@ -547,7 +557,8 @@ List tenants with blocks in the store-gateway storage
 **Risk:** `read`
 
 ```ts
-await corsair.grafana.api.storeGateway.getTenants({});
+const tenant = corsair.withTenant('acme');
+await tenant.grafana.api.storeGateway.getTenants({});
 ```
 
 **Input:** _empty object_

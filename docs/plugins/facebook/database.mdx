@@ -14,7 +14,8 @@ The Facebook plugin syncs data locally. Use `corsair.facebook.db.<entity>.search
 Path: `facebook.db.albums.search`
 
 ```ts
-const rows = await corsair.facebook.db.albums.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.facebook.db.albums.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `facebook.db.comments.search`
 
 ```ts
-const rows = await corsair.facebook.db.comments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.facebook.db.comments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -75,7 +77,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `facebook.db.conversations.search`
 
 ```ts
-const rows = await corsair.facebook.db.conversations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.facebook.db.conversations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -105,7 +108,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `facebook.db.insights.search`
 
 ```ts
-const rows = await corsair.facebook.db.insights.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.facebook.db.insights.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -134,7 +138,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `facebook.db.messages.search`
 
 ```ts
-const rows = await corsair.facebook.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.facebook.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -165,7 +170,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `facebook.db.pageRoles.search`
 
 ```ts
-const rows = await corsair.facebook.db.pageRoles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.facebook.db.pageRoles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -193,7 +199,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `facebook.db.pages.search`
 
 ```ts
-const rows = await corsair.facebook.db.pages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.facebook.db.pages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -225,7 +232,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `facebook.db.photos.search`
 
 ```ts
-const rows = await corsair.facebook.db.photos.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.facebook.db.photos.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -256,7 +264,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `facebook.db.posts.search`
 
 ```ts
-const rows = await corsair.facebook.db.posts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.facebook.db.posts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -287,7 +296,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `facebook.db.reactions.search`
 
 ```ts
-const rows = await corsair.facebook.db.reactions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.facebook.db.reactions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -315,7 +325,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `facebook.db.users.search`
 
 ```ts
-const rows = await corsair.facebook.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.facebook.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -342,7 +353,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `facebook.db.videos.search`
 
 ```ts
-const rows = await corsair.facebook.db.videos.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.facebook.db.videos.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

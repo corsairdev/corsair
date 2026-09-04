@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { alphavantage } from '@corsair-dev/alphavantage';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		alphavantage(),
 	],

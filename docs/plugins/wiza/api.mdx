@@ -20,7 +20,8 @@ Get the number of remaining API credits (emails, phones, exports) in your Wiza a
 **Risk:** `read`
 
 ```ts
-await corsair.wiza.api.credits.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.wiza.api.credits.get({});
 ```
 
 **Input:** _empty object_
@@ -61,7 +62,8 @@ Get the status and enriched results of an individual reveal by ID
 **Risk:** `read`
 
 ```ts
-await corsair.wiza.api.individualReveals.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.wiza.api.individualReveals.get({});
 ```
 
 **Input**
@@ -145,7 +147,8 @@ Start an individual reveal to enrich a single contact in real time (consumes cre
 **Risk:** `write`
 
 ```ts
-await corsair.wiza.api.individualReveals.start({});
+const tenant = corsair.withTenant('acme');
+await tenant.wiza.api.individualReveals.start({});
 ```
 
 **Input**
@@ -230,7 +233,8 @@ Get the processing status and details of a list by ID
 **Risk:** `read`
 
 ```ts
-await corsair.wiza.api.lists.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.wiza.api.lists.get({});
 ```
 
 **Input**
@@ -293,7 +297,8 @@ Search for prospects matching filters (job title, location, company, industry)
 **Risk:** `read`
 
 ```ts
-await corsair.wiza.api.prospects.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.wiza.api.prospects.search({});
 ```
 
 **Input**

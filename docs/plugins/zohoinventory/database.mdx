@@ -1,0 +1,216 @@
+---
+title: Database
+description: "Zoho Inventory local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Zoho Inventory plugin syncs data locally. Use `corsair.zohoinventory.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Contacts
+
+Path: `zohoinventory.db.contacts.search`
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zohoinventory.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `company_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `outstanding_receivable_amount` | `number` | equals, gt, gte, lt, lte, in |
+| `outstanding_payable_amount` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Credit Notes
+
+Path: `zohoinventory.db.creditNotes.search`
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zohoinventory.db.creditNotes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `creditnote_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `creditnote_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `customer_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `total` | `number` | equals, gt, gte, lt, lte, in |
+| `balance` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Invoices
+
+Path: `zohoinventory.db.invoices.search`
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zohoinventory.db.invoices.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `invoice_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `invoice_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `customer_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `customer_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `total` | `number` | equals, gt, gte, lt, lte, in |
+| `balance` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Items
+
+Path: `zohoinventory.db.items.search`
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zohoinventory.db.items.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `item_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `sku` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `rate` | `number` | equals, gt, gte, lt, lte, in |
+| `purchase_rate` | `number` | equals, gt, gte, lt, lte, in |
+| `item_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `product_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `stock_on_hand` | `number` | equals, gt, gte, lt, lte, in |
+| `available_stock` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Organizations
+
+Path: `zohoinventory.db.organizations.search`
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zohoinventory.db.organizations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_default_org` | `boolean` | equals |
+| `language_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `fiscal_year_start_month` | `number` | equals, gt, gte, lt, lte, in |
+| `account_created_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `time_zone` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_org_active` | `boolean` | equals |
+| `currency_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency_symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency_format` | `string` | equals, contains, startsWith, endsWith, in |
+| `price_precision` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sales Orders
+
+Path: `zohoinventory.db.salesOrders.search`
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zohoinventory.db.salesOrders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `salesorder_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `salesorder_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `customer_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `customer_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `total` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

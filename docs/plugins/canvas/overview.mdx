@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { canvas } from '@corsair-dev/canvas';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		canvas(),
 	],

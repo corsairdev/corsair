@@ -1,0 +1,207 @@
+---
+title: API
+description: "API reference for BrowserTool: every `browsertool.api.*` operation with input and output types."
+---
+
+Every `browsertool.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Files
+
+### get
+
+`files.get`
+
+Get a download URL for a task output file
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.browsertool.api.files.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `session_info` | `any` | No | — |
+| `log_id` | `string` | No | — |
+
+
+
+---
+
+## Sessions
+
+### get
+
+`sessions.get`
+
+Get the live URL for a browser session
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.browsertool.api.sessions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `session_info` | `any` | No | — |
+| `log_id` | `string` | No | — |
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Run an AI-powered browser automation task
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.browsertool.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `string` | Yes | — |
+| `secrets` | `object` | No | — |
+| `startUrl` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="secrets full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `session_info` | `any` | No | — |
+| `log_id` | `string` | No | — |
+
+
+
+---
+
+### stop
+
+`tasks.stop`
+
+Stop a running browser task and its session
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.browsertool.api.tasks.stop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `session_info` | `any` | No | — |
+| `log_id` | `string` | No | — |
+
+
+
+---
+
+### watch
+
+`tasks.watch`
+
+Poll a browser task for progress and results
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.browsertool.api.tasks.watch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `lastStepSeen` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+| `session_info` | `any` | No | — |
+| `log_id` | `string` | No | — |
+
+
+
+---
+

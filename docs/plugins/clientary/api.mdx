@@ -20,7 +20,8 @@ Create a client
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.clients.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.clients.create({});
 ```
 
 **Input**
@@ -71,7 +72,8 @@ Delete a client and all associated projects, invoices, estimates, and contacts [
 **Risk:** `destructive`
 
 ```ts
-await corsair.clientary.api.clients.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.clients.delete({});
 ```
 
 **Input**
@@ -102,7 +104,8 @@ Get a client by ID
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.clients.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.clients.get({});
 ```
 
 **Input**
@@ -143,7 +146,8 @@ List clients
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.clients.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.clients.list({});
 ```
 
 **Input**
@@ -201,7 +205,8 @@ Update a client
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.clients.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.clients.update({});
 ```
 
 **Input**
@@ -255,7 +260,8 @@ Create a contact
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.contacts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.contacts.create({});
 ```
 
 **Input**
@@ -299,7 +305,8 @@ Delete a contact [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.clientary.api.contacts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.contacts.delete({});
 ```
 
 **Input**
@@ -330,7 +337,8 @@ Get a contact by ID
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.contacts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.contacts.get({});
 ```
 
 **Input**
@@ -368,7 +376,8 @@ List contacts
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.contacts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.contacts.list({});
 ```
 
 **Input**
@@ -421,7 +430,8 @@ List contacts belonging to a client
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.contacts.listForClient({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.contacts.listForClient({});
 ```
 
 **Input**
@@ -475,7 +485,8 @@ Update a contact
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.contacts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.contacts.update({});
 ```
 
 **Input**
@@ -521,7 +532,8 @@ Create an estimate
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.estimates.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.estimates.create({});
 ```
 
 **Input**
@@ -615,7 +627,8 @@ Delete an estimate [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.clientary.api.estimates.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.estimates.delete({});
 ```
 
 **Input**
@@ -646,7 +659,8 @@ Get an estimate by ID
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.estimates.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.estimates.get({});
 ```
 
 **Input**
@@ -709,7 +723,8 @@ List estimates
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.estimates.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.estimates.list({});
 ```
 
 **Input**
@@ -777,7 +792,8 @@ List estimates belonging to a client
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.estimates.listForClient({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.estimates.listForClient({});
 ```
 
 **Input**
@@ -847,7 +863,8 @@ List estimates belonging to a project
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.estimates.listForProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.estimates.listForProject({});
 ```
 
 **Input**
@@ -917,7 +934,8 @@ Send an estimate via email
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.estimates.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.estimates.send({});
 ```
 
 **Input**
@@ -953,7 +971,8 @@ Update an estimate
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.estimates.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.estimates.update({});
 ```
 
 **Input**
@@ -1050,7 +1069,8 @@ Create an expense
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.expenses.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.expenses.create({});
 ```
 
 **Input**
@@ -1092,7 +1112,8 @@ Delete an expense [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.clientary.api.expenses.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.expenses.delete({});
 ```
 
 **Input**
@@ -1123,7 +1144,8 @@ Get an expense by ID
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.expenses.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.expenses.get({});
 ```
 
 **Input**
@@ -1161,7 +1183,8 @@ List expenses
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.expenses.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.expenses.list({});
 ```
 
 **Input**
@@ -1214,7 +1237,8 @@ List expenses belonging to a client
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.expenses.listForClient({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.expenses.listForClient({});
 ```
 
 **Input**
@@ -1268,7 +1292,8 @@ List expenses belonging to a project
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.expenses.listForProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.expenses.listForProject({});
 ```
 
 **Input**
@@ -1322,7 +1347,8 @@ Update an expense
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.expenses.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.expenses.update({});
 ```
 
 **Input**
@@ -1367,7 +1393,8 @@ Log hours to a project
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.hours.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.hours.create({});
 ```
 
 **Input**
@@ -1410,7 +1437,8 @@ Delete an hours entry [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.clientary.api.hours.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.hours.delete({});
 ```
 
 **Input**
@@ -1441,7 +1469,8 @@ Get an hours entry by ID
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.hours.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.hours.get({});
 ```
 
 **Input**
@@ -1480,7 +1509,8 @@ List hours logged against a project
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.hours.listForProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.hours.listForProject({});
 ```
 
 **Input**
@@ -1533,7 +1563,8 @@ Update an hours entry
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.hours.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.hours.update({});
 ```
 
 **Input**
@@ -1578,7 +1609,8 @@ Create an invoice
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.invoices.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.invoices.create({});
 ```
 
 **Input**
@@ -1703,7 +1735,8 @@ Delete an invoice [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.clientary.api.invoices.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.invoices.delete({});
 ```
 
 **Input**
@@ -1734,7 +1767,8 @@ Get an invoice by ID
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.invoices.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.invoices.get({});
 ```
 
 **Input**
@@ -1826,7 +1860,8 @@ List invoices
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.invoices.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.invoices.list({});
 ```
 
 **Input**
@@ -1911,7 +1946,8 @@ List invoices belonging to a client
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.invoices.listForClient({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.invoices.listForClient({});
 ```
 
 **Input**
@@ -1996,7 +2032,8 @@ List invoices belonging to a project
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.invoices.listForProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.invoices.listForProject({});
 ```
 
 **Input**
@@ -2081,7 +2118,8 @@ List invoices generated by a recurring schedule
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.invoices.listForRecurring({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.invoices.listForRecurring({});
 ```
 
 **Input**
@@ -2166,7 +2204,8 @@ Send an invoice via email
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.invoices.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.invoices.send({});
 ```
 
 **Input**
@@ -2202,7 +2241,8 @@ Update an invoice
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.invoices.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.invoices.update({});
 ```
 
 **Input**
@@ -2330,7 +2370,8 @@ Create a lead
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.leads.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.leads.create({});
 ```
 
 **Input**
@@ -2381,7 +2422,8 @@ Delete a lead [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.clientary.api.leads.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.leads.delete({});
 ```
 
 **Input**
@@ -2412,7 +2454,8 @@ Get a lead by ID
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.leads.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.leads.get({});
 ```
 
 **Input**
@@ -2453,7 +2496,8 @@ List leads
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.leads.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.leads.list({});
 ```
 
 **Input**
@@ -2510,7 +2554,8 @@ Update a lead
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.leads.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.leads.update({});
 ```
 
 **Input**
@@ -2564,7 +2609,8 @@ Create a payment profile for a client
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.paymentProfiles.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.paymentProfiles.create({});
 ```
 
 **Input**
@@ -2617,7 +2663,8 @@ Delete a payment profile [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.clientary.api.paymentProfiles.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.paymentProfiles.delete({});
 ```
 
 **Input**
@@ -2649,7 +2696,8 @@ List payment profiles for a client
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.paymentProfiles.listForClient({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.paymentProfiles.listForClient({});
 ```
 
 **Input**
@@ -2709,7 +2757,8 @@ Record a payment
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.payments.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.payments.create({});
 ```
 
 **Input**
@@ -2748,7 +2797,8 @@ Delete (void) a payment [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.clientary.api.payments.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.payments.delete({});
 ```
 
 **Input**
@@ -2780,7 +2830,8 @@ List payments
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.payments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.payments.list({});
 ```
 
 **Input**
@@ -2834,7 +2885,8 @@ Create a project
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.projects.create({});
 ```
 
 **Input**
@@ -2912,7 +2964,8 @@ Delete a project [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.clientary.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.projects.delete({});
 ```
 
 **Input**
@@ -2943,7 +2996,8 @@ Get a project by ID
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.projects.get({});
 ```
 
 **Input**
@@ -3010,7 +3064,8 @@ List projects
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.projects.list({});
 ```
 
 **Input**
@@ -3084,7 +3139,8 @@ List projects belonging to a client
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.projects.listForClient({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.projects.listForClient({});
 ```
 
 **Input**
@@ -3158,7 +3214,8 @@ Update a project
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.projects.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.projects.update({});
 ```
 
 **Input**
@@ -3239,7 +3296,8 @@ Create a recurring schedule
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.recurring.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.recurring.create({});
 ```
 
 **Input**
@@ -3353,7 +3411,8 @@ Delete a recurring schedule [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.clientary.api.recurring.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.recurring.delete({});
 ```
 
 **Input**
@@ -3384,7 +3443,8 @@ Get a recurring schedule by ID
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.recurring.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.recurring.get({});
 ```
 
 **Input**
@@ -3461,7 +3521,8 @@ List recurring schedules
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.recurring.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.recurring.list({});
 ```
 
 **Input**
@@ -3543,7 +3604,8 @@ Update a recurring schedule
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.recurring.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.recurring.update({});
 ```
 
 **Input**
@@ -3660,7 +3722,8 @@ Get a staff member by ID
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.staff.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.staff.get({});
 ```
 
 **Input**
@@ -3698,7 +3761,8 @@ List staff members
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.staff.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.staff.list({});
 ```
 
 **Input:** _empty object_
@@ -3744,7 +3808,8 @@ Create a task
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.tasks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.tasks.create({});
 ```
 
 **Input**
@@ -3789,7 +3854,8 @@ Delete a task [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.clientary.api.tasks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.tasks.delete({});
 ```
 
 **Input**
@@ -3820,7 +3886,8 @@ Get a task by ID
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.tasks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.tasks.get({});
 ```
 
 **Input**
@@ -3861,7 +3928,8 @@ List tasks
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.tasks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.tasks.list({});
 ```
 
 **Input**
@@ -3917,7 +3985,8 @@ List tasks belonging to a project
 **Risk:** `read`
 
 ```ts
-await corsair.clientary.api.tasks.listForProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.tasks.listForProject({});
 ```
 
 **Input**
@@ -3974,7 +4043,8 @@ Update a task
 **Risk:** `write`
 
 ```ts
-await corsair.clientary.api.tasks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.clientary.api.tasks.update({});
 ```
 
 **Input**

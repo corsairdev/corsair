@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { activecampaign } from '@corsair-dev/activecampaign';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		activecampaign(),
 	],

@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { bluesky } from '@corsair-dev/bluesky';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		bluesky(),
 	],

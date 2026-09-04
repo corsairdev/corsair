@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { perplexityai } from '@corsair-dev/perplexityai';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		perplexityai(),
 	],

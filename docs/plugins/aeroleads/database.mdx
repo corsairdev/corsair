@@ -14,7 +14,8 @@ The Aeroleads plugin syncs data locally. Use `corsair.aeroleads.db.<entity>.sear
 Path: `aeroleads.db.linkedinDetails.search`
 
 ```ts
-const rows = await corsair.aeroleads.db.linkedinDetails.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.aeroleads.db.linkedinDetails.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

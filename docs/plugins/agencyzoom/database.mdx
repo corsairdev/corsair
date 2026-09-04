@@ -14,7 +14,8 @@ The AgencyZoom plugin syncs data locally. Use `corsair.agencyzoom.db.<entity>.se
 Path: `agencyzoom.db.customers.search`
 
 ```ts
-const rows = await corsair.agencyzoom.db.customers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agencyzoom.db.customers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agencyzoom.db.leads.search`
 
 ```ts
-const rows = await corsair.agencyzoom.db.leads.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agencyzoom.db.leads.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -64,7 +66,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agencyzoom.db.tasks.search`
 
 ```ts
-const rows = await corsair.agencyzoom.db.tasks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agencyzoom.db.tasks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

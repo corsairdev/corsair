@@ -20,7 +20,8 @@ Create a robot monitor
 **Risk:** `write`
 
 ```ts
-await corsair.browseai.api.monitors.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.browseai.api.monitors.create({});
 ```
 
 **Input**
@@ -106,7 +107,8 @@ Delete a robot monitor
 **Risk:** `write`
 
 ```ts
-await corsair.browseai.api.monitors.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.browseai.api.monitors.delete({});
 ```
 
 **Input**
@@ -140,7 +142,8 @@ Start a bulk run of robot tasks
 **Risk:** `write`
 
 ```ts
-await corsair.browseai.api.robots.bulkRun({});
+const tenant = corsair.withTenant('acme');
+await tenant.browseai.api.robots.bulkRun({});
 ```
 
 **Input**
@@ -204,7 +207,8 @@ List robots on the account
 **Risk:** `read`
 
 ```ts
-await corsair.browseai.api.robots.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.browseai.api.robots.list({});
 ```
 
 **Input:** _empty object_
@@ -263,7 +267,8 @@ Start a robot task
 **Risk:** `write`
 
 ```ts
-await corsair.browseai.api.robots.run({});
+const tenant = corsair.withTenant('acme');
+await tenant.browseai.api.robots.run({});
 ```
 
 **Input**
@@ -345,7 +350,8 @@ Check Browse AI task-queue status
 **Risk:** `read`
 
 ```ts
-await corsair.browseai.api.system.getStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.browseai.api.system.getStatus({});
 ```
 
 **Input:** _empty object_
@@ -374,7 +380,8 @@ Get a robot task by id
 **Risk:** `read`
 
 ```ts
-await corsair.browseai.api.tasks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.browseai.api.tasks.get({});
 ```
 
 **Input**
@@ -443,7 +450,8 @@ List tasks for a robot
 **Risk:** `read`
 
 ```ts
-await corsair.browseai.api.tasks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.browseai.api.tasks.list({});
 ```
 
 **Input**
@@ -528,7 +536,8 @@ Create a robot webhook
 **Risk:** `write`
 
 ```ts
-await corsair.browseai.api.webhooks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.browseai.api.webhooks.create({});
 ```
 
 **Input**
@@ -576,7 +585,8 @@ List webhooks for a robot
 **Risk:** `read`
 
 ```ts
-await corsair.browseai.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.browseai.api.webhooks.list({});
 ```
 
 **Input**

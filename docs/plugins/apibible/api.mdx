@@ -20,7 +20,8 @@ Get a specific audio Bible version
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.audioBibles.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.audioBibles.get({});
 ```
 
 **Input**
@@ -84,7 +85,8 @@ List audio Bible versions
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.audioBibles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.audioBibles.list({});
 ```
 
 **Input**
@@ -150,7 +152,8 @@ Get a specific book of an audio Bible
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.audioBooks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.audioBooks.get({});
 ```
 
 **Input**
@@ -196,7 +199,8 @@ List all books of an audio Bible
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.audioBooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.audioBooks.list({});
 ```
 
 **Input**
@@ -243,7 +247,8 @@ Get an audio chapter (includes an mp3 resource URL)
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.audioChapters.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.audioChapters.get({});
 ```
 
 **Input**
@@ -304,7 +309,8 @@ List all chapters of an audio book
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.audioChapters.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.audioChapters.list({});
 ```
 
 **Input**
@@ -352,7 +358,8 @@ Get details for a specific Bible version
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.bibles.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.bibles.get({});
 ```
 
 **Input**
@@ -418,7 +425,8 @@ List supported Bible versions
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.bibles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.bibles.list({});
 ```
 
 **Input**
@@ -486,7 +494,8 @@ Get a specific book of a Bible version
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.books.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.books.get({});
 ```
 
 **Input**
@@ -540,7 +549,8 @@ List all books of a Bible version
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.books.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.books.list({});
 ```
 
 **Input**
@@ -594,7 +604,8 @@ Get a chapter with its text content
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.chapters.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.chapters.get({});
 ```
 
 **Input**
@@ -670,7 +681,8 @@ List all chapters of a book
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.chapters.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.chapters.list({});
 ```
 
 **Input**
@@ -716,7 +728,8 @@ List sections (usfm headings) within a chapter
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.chapters.listSections({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.chapters.listSections({});
 ```
 
 **Input**
@@ -767,7 +780,8 @@ Get one or more verses of scripture text by passage reference
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.passages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.passages.get({});
 ```
 
 **Input**
@@ -834,7 +848,8 @@ Search for verses within a Bible version
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.search.query({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.search.query({});
 ```
 
 **Input**
@@ -904,7 +919,8 @@ Get a section with its text content
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.sections.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.sections.get({});
 ```
 
 **Input**
@@ -984,7 +1000,8 @@ List sections (usfm headings) of a book
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.sections.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.sections.list({});
 ```
 
 **Input**
@@ -1035,7 +1052,8 @@ Get a single verse with its text content
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.verses.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.verses.get({});
 ```
 
 **Input**
@@ -1112,7 +1130,8 @@ List all verses of a chapter
 **Risk:** `read`
 
 ```ts
-await corsair.apibible.api.verses.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apibible.api.verses.list({});
 ```
 
 **Input**

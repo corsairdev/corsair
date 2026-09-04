@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { xquik } from '@corsair-dev/xquik';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		xquik(),
 	],

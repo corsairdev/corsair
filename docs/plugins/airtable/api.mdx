@@ -20,7 +20,8 @@ List all accessible bases
 **Risk:** `read`
 
 ```ts
-await corsair.airtable.api.bases.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.bases.getMany({});
 ```
 
 **Input**
@@ -64,7 +65,8 @@ Get the schema (tables, fields, views) of a base
 **Risk:** `read`
 
 ```ts
-await corsair.airtable.api.bases.getSchema({});
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.bases.getSchema({});
 ```
 
 **Input**
@@ -125,7 +127,8 @@ Create a record in a table
 **Risk:** `write`
 
 ```ts
-await corsair.airtable.api.records.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.records.create({});
 ```
 
 **Input**
@@ -182,7 +185,8 @@ Create or update a record using upsert
 **Risk:** `write`
 
 ```ts
-await corsair.airtable.api.records.createOrUpdate({});
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.records.createOrUpdate({});
 ```
 
 **Input**
@@ -240,7 +244,8 @@ Delete a record from a table [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.airtable.api.records.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.records.delete({});
 ```
 
 **Input**
@@ -273,7 +278,8 @@ Get a single record by ID
 **Risk:** `read`
 
 ```ts
-await corsair.airtable.api.records.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.records.get({});
 ```
 
 **Input**
@@ -318,7 +324,8 @@ Search and list records with optional filters
 **Risk:** `read`
 
 ```ts
-await corsair.airtable.api.records.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.records.search({});
 ```
 
 **Input**
@@ -387,7 +394,8 @@ Update fields on an existing record
 **Risk:** `write`
 
 ```ts
-await corsair.airtable.api.records.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.records.update({});
 ```
 
 **Input**
@@ -447,7 +455,8 @@ Get webhook payloads
 **Risk:** `read`
 
 ```ts
-await corsair.airtable.api.webhooks.getPayloads({});
+const tenant = corsair.withTenant('acme');
+await tenant.airtable.api.webhooks.getPayloads({});
 ```
 
 **Input:** `unknown`

@@ -20,7 +20,8 @@ Get a drive by ID
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.drive.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.drive.get({});
 ```
 
 **Input**
@@ -95,7 +96,8 @@ Get a group's drive
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.drive.getGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.drive.getGroup({});
 ```
 
 **Input**
@@ -169,7 +171,8 @@ Get the user's drive and quota information
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.drive.getQuota({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.drive.getQuota({});
 ```
 
 **Input**
@@ -242,7 +245,8 @@ Get recently accessed drive items
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.drive.getRecentItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.drive.getRecentItems({});
 ```
 
 **Input**
@@ -402,7 +406,8 @@ Get the root folder of the user's drive
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.drive.getRoot({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.drive.getRoot({});
 ```
 
 **Input**
@@ -543,7 +548,8 @@ Get items shared with the user
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.drive.getSharedItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.drive.getSharedItems({});
 ```
 
 **Input**
@@ -701,7 +707,8 @@ Get a special folder (documents, photos, cameraroll)
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.drive.getSpecialFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.drive.getSpecialFolder({});
 ```
 
 **Input**
@@ -901,7 +908,8 @@ List available drives
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.drive.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.drive.list({});
 ```
 
 **Input**
@@ -977,7 +985,8 @@ List activities across the drive
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.drive.listActivities({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.drive.listActivities({});
 ```
 
 **Input**
@@ -1058,7 +1067,8 @@ List bundles in a drive
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.drive.listBundles({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.drive.listBundles({});
 ```
 
 **Input**
@@ -1223,7 +1233,8 @@ List changes to drive items using delta
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.drive.listChanges({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.drive.listChanges({});
 ```
 
 **Input**
@@ -1388,7 +1399,8 @@ Create a new folder
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.files.createFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.files.createFolder({});
 ```
 
 **Input**
@@ -1423,7 +1435,8 @@ Create a new text file with content
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.files.createTextFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.files.createTextFile({});
 ```
 
 **Input**
@@ -1471,7 +1484,8 @@ Find a file by name
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.files.findFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.files.findFile({});
 ```
 
 **Input**
@@ -1633,7 +1647,8 @@ Find a folder by name
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.files.findFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.files.findFolder({});
 ```
 
 **Input**
@@ -1799,7 +1814,8 @@ List files in the root drive
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.files.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.files.list({});
 ```
 
 **Input**
@@ -1960,7 +1976,8 @@ Upload a file to OneDrive
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.files.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.files.upload({});
 ```
 
 **Input**
@@ -2039,7 +2056,8 @@ Check in a checked-out drive item
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.items.checkin({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.checkin({});
 ```
 
 **Input**
@@ -2072,7 +2090,8 @@ Check out a drive item for editing
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.items.checkout({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.checkout({});
 ```
 
 **Input**
@@ -2103,7 +2122,8 @@ Copy a drive item
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.items.copy({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.copy({});
 ```
 
 **Input**
@@ -2159,7 +2179,8 @@ Delete a drive item [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.onedrive.api.items.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.delete({});
 ```
 
 **Input**
@@ -2190,7 +2211,8 @@ Permanently delete a drive item [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.onedrive.api.items.deletePermanently({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.deletePermanently({});
 ```
 
 **Input**
@@ -2221,7 +2243,8 @@ Discard the checkout of a drive item
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.items.discardCheckout({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.discardCheckout({});
 ```
 
 **Input**
@@ -2252,7 +2275,8 @@ Download a file
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.download({});
 ```
 
 **Input**
@@ -2287,7 +2311,8 @@ Download a file converted to a different format
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.downloadAsFormat({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.downloadAsFormat({});
 ```
 
 **Input**
@@ -2319,7 +2344,8 @@ Download a file by path
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.downloadByPath({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.downloadByPath({});
 ```
 
 **Input**
@@ -2350,7 +2376,8 @@ Download a specific version of a file
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.downloadVersion({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.downloadVersion({});
 ```
 
 **Input**
@@ -2383,7 +2410,8 @@ Follow a drive item
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.items.follow({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.follow({});
 ```
 
 **Input**
@@ -2419,7 +2447,8 @@ Get a drive item by ID
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.get({});
 ```
 
 **Input**
@@ -2620,7 +2649,8 @@ Get a drive item by sharing URL
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.getDriveItemBySharingUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.getDriveItemBySharingUrl({});
 ```
 
 **Input**
@@ -2698,7 +2728,8 @@ Get a followed drive item
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.getFollowed({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.getFollowed({});
 ```
 
 **Input**
@@ -2755,7 +2786,8 @@ Get thumbnails for a drive item
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.getThumbnails({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.getThumbnails({});
 ```
 
 **Input**
@@ -2826,7 +2858,8 @@ Get versions of a drive item
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.getVersions({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.getVersions({});
 ```
 
 **Input**
@@ -2891,7 +2924,8 @@ List activities on a drive item
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.listActivities({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.listActivities({});
 ```
 
 **Input**
@@ -2979,7 +3013,8 @@ List children of a folder
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.listFolderChildren({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.listFolderChildren({});
 ```
 
 **Input**
@@ -3148,7 +3183,8 @@ Move a drive item to a new location
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.items.move({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.move({});
 ```
 
 **Input**
@@ -3214,7 +3250,8 @@ Get a preview URL for a drive item
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.preview({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.preview({});
 ```
 
 **Input**
@@ -3253,7 +3290,8 @@ Restore a deleted drive item
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.items.restore({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.restore({});
 ```
 
 **Input**
@@ -3334,7 +3372,8 @@ Search for drive items
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.items.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.search({});
 ```
 
 **Input**
@@ -3505,7 +3544,8 @@ Unfollow a drive item
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.items.unfollow({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.unfollow({});
 ```
 
 **Input**
@@ -3535,7 +3575,8 @@ Update the content of a file
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.items.updateContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.updateContent({});
 ```
 
 **Input**
@@ -3613,7 +3654,8 @@ Update metadata for a drive item
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.items.updateMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.items.updateMetadata({});
 ```
 
 **Input**
@@ -3706,7 +3748,8 @@ Create a permission for a drive item
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.permissions.createForItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.permissions.createForItem({});
 ```
 
 **Input**
@@ -3848,7 +3891,8 @@ Create a sharing link for a drive item
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.permissions.createLink({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.permissions.createLink({});
 ```
 
 **Input**
@@ -3910,7 +3954,8 @@ Delete a permission from a drive item [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.onedrive.api.permissions.deleteFromItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.permissions.deleteFromItem({});
 ```
 
 **Input**
@@ -3945,7 +3990,8 @@ Delete a share permission [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.onedrive.api.permissions.deleteSharePermission({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.permissions.deleteSharePermission({});
 ```
 
 **Input**
@@ -3975,7 +4021,8 @@ Get permissions for a drive item
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.permissions.getForItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.permissions.getForItem({});
 ```
 
 **Input**
@@ -4096,7 +4143,8 @@ Get a shared item by share ID or encoded URL
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.permissions.getShare({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.permissions.getShare({});
 ```
 
 **Input**
@@ -4415,7 +4463,8 @@ Grant a permission on a shared item
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.permissions.grantSharePermission({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.permissions.grantSharePermission({});
 ```
 
 **Input**
@@ -4540,7 +4589,8 @@ Invite a user to access a drive item
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.permissions.inviteUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.permissions.inviteUser({});
 ```
 
 **Input**
@@ -4675,7 +4725,8 @@ List permissions on a shared drive item
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.permissions.listSharePermissions({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.permissions.listSharePermissions({});
 ```
 
 **Input**
@@ -4727,7 +4778,8 @@ Update a permission on a drive item
 **Risk:** `write`
 
 ```ts
-await corsair.onedrive.api.permissions.updateForItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.permissions.updateForItem({});
 ```
 
 **Input**
@@ -4860,7 +4912,8 @@ Get items from a SharePoint list
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.sharepoint.getListItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.sharepoint.getListItems({});
 ```
 
 **Input**
@@ -4949,7 +5002,8 @@ Get a SharePoint site by ID
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.sharepoint.getSite({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.sharepoint.getSite({});
 ```
 
 **Input**
@@ -5019,7 +5073,8 @@ Get a page from a SharePoint site
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.sharepoint.getSitePage({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.sharepoint.getSitePage({});
 ```
 
 **Input**
@@ -5055,7 +5110,8 @@ List changes to SharePoint list items using delta
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.sharepoint.listListItemsDelta({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.sharepoint.listListItemsDelta({});
 ```
 
 **Input**
@@ -5141,7 +5197,8 @@ List site columns in a SharePoint site
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.sharepoint.listSiteColumns({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.sharepoint.listSiteColumns({});
 ```
 
 **Input**
@@ -5227,7 +5284,8 @@ List changes to all drive items in a site using delta
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.sharepoint.listSiteItemsDelta({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.sharepoint.listSiteItemsDelta({});
 ```
 
 **Input**
@@ -5391,7 +5449,8 @@ List all lists in a SharePoint site
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.sharepoint.listSiteLists({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.sharepoint.listSiteLists({});
 ```
 
 **Input**
@@ -5480,7 +5539,8 @@ List subsites of a SharePoint site
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.sharepoint.listSiteSubsites({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.sharepoint.listSiteSubsites({});
 ```
 
 **Input**
@@ -5554,7 +5614,8 @@ List all active subscriptions
 **Risk:** `read`
 
 ```ts
-await corsair.onedrive.api.subscriptions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.onedrive.api.subscriptions.list({});
 ```
 
 **Input:** _empty object_

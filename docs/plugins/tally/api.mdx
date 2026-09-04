@@ -20,7 +20,8 @@ Create a new form
 **Risk:** `write`
 
 ```ts
-await corsair.tally.api.forms.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.forms.create({});
 ```
 
 **Input**
@@ -97,7 +98,8 @@ Delete a form [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.tally.api.forms.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.forms.delete({});
 ```
 
 **Input**
@@ -122,7 +124,8 @@ Retrieve a form by ID
 **Risk:** `read`
 
 ```ts
-await corsair.tally.api.forms.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.forms.get({});
 ```
 
 **Input**
@@ -177,7 +180,8 @@ List all forms with optional pagination and workspace filter
 **Risk:** `read`
 
 ```ts
-await corsair.tally.api.forms.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.forms.list({});
 ```
 
 **Input**
@@ -233,7 +237,8 @@ Update an existing form
 **Risk:** `write`
 
 ```ts
-await corsair.tally.api.forms.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.forms.update({});
 ```
 
 **Input**
@@ -312,7 +317,8 @@ Cancel a pending organization invite [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.tally.api.organizations.cancelInvite({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.organizations.cancelInvite({});
 ```
 
 **Input**
@@ -338,7 +344,8 @@ Invite users to an organization
 **Risk:** `write`
 
 ```ts
-await corsair.tally.api.organizations.createInvite({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.organizations.createInvite({});
 ```
 
 **Input**
@@ -365,7 +372,8 @@ List pending invites for an organization
 **Risk:** `read`
 
 ```ts
-await corsair.tally.api.organizations.listInvites({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.organizations.listInvites({});
 ```
 
 **Input**
@@ -405,7 +413,8 @@ List all users in an organization
 **Risk:** `read`
 
 ```ts
-await corsair.tally.api.organizations.listUsers({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.organizations.listUsers({});
 ```
 
 **Input**
@@ -444,7 +453,8 @@ Remove a user from an organization [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.tally.api.organizations.removeUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.organizations.removeUser({});
 ```
 
 **Input**
@@ -472,7 +482,8 @@ List all questions for a form
 **Risk:** `read`
 
 ```ts
-await corsair.tally.api.questions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.questions.list({});
 ```
 
 **Input**
@@ -526,7 +537,8 @@ Delete a form submission [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.tally.api.submissions.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.submissions.delete({});
 ```
 
 **Input**
@@ -552,7 +564,8 @@ Retrieve a specific form submission
 **Risk:** `read`
 
 ```ts
-await corsair.tally.api.submissions.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.submissions.get({});
 ```
 
 **Input**
@@ -630,7 +643,8 @@ List form submissions with optional filters
 **Risk:** `read`
 
 ```ts
-await corsair.tally.api.submissions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.submissions.list({});
 ```
 
 **Input**
@@ -727,7 +741,8 @@ Retrieve the current authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.tally.api.users.getMe({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.users.getMe({});
 ```
 
 **Input:** _empty object_
@@ -757,7 +772,8 @@ Create a new webhook subscription
 **Risk:** `write`
 
 ```ts
-await corsair.tally.api.webhookManagement.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.webhookManagement.create({});
 ```
 
 **Input**
@@ -809,7 +825,8 @@ Delete a webhook subscription [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.tally.api.webhookManagement.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.webhookManagement.delete({});
 ```
 
 **Input**
@@ -834,7 +851,8 @@ List all webhooks
 **Risk:** `read`
 
 ```ts
-await corsair.tally.api.webhookManagement.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.webhookManagement.list({});
 ```
 
 **Input**
@@ -885,7 +903,8 @@ List delivery events for a webhook
 **Risk:** `read`
 
 ```ts
-await corsair.tally.api.webhookManagement.listEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.webhookManagement.listEvents({});
 ```
 
 **Input**
@@ -940,7 +959,8 @@ Retry a failed webhook event delivery
 **Risk:** `write`
 
 ```ts
-await corsair.tally.api.webhookManagement.retryEvent({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.webhookManagement.retryEvent({});
 ```
 
 **Input**
@@ -966,7 +986,8 @@ Update a webhook subscription
 **Risk:** `write`
 
 ```ts
-await corsair.tally.api.webhookManagement.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.webhookManagement.update({});
 ```
 
 **Input**
@@ -1011,7 +1032,8 @@ Create a new workspace (Pro subscription required)
 **Risk:** `write`
 
 ```ts
-await corsair.tally.api.workspaces.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.workspaces.create({});
 ```
 
 **Input**
@@ -1046,7 +1068,8 @@ Delete a workspace [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.tally.api.workspaces.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.workspaces.delete({});
 ```
 
 **Input**
@@ -1071,7 +1094,8 @@ Retrieve a workspace by ID
 **Risk:** `read`
 
 ```ts
-await corsair.tally.api.workspaces.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.workspaces.get({});
 ```
 
 **Input**
@@ -1106,7 +1130,8 @@ List all workspaces
 **Risk:** `read`
 
 ```ts
-await corsair.tally.api.workspaces.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.workspaces.list({});
 ```
 
 **Input**
@@ -1156,7 +1181,8 @@ Update a workspace name
 **Risk:** `write`
 
 ```ts
-await corsair.tally.api.workspaces.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.tally.api.workspaces.update({});
 ```
 
 **Input**

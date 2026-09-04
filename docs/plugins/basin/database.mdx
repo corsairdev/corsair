@@ -14,7 +14,8 @@ The Basin plugin syncs data locally. Use `corsair.basin.db.<entity>.search({ dat
 Path: `basin.db.domains.search`
 
 ```ts
-const rows = await corsair.basin.db.domains.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.basin.db.domains.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -37,7 +38,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `basin.db.forms.search`
 
 ```ts
-const rows = await corsair.basin.db.forms.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.basin.db.forms.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -71,7 +73,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `basin.db.formViews.search`
 
 ```ts
-const rows = await corsair.basin.db.formViews.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.basin.db.formViews.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -97,7 +100,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `basin.db.projects.search`
 
 ```ts
-const rows = await corsair.basin.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.basin.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -120,7 +124,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `basin.db.submissions.search`
 
 ```ts
-const rows = await corsair.basin.db.submissions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.basin.db.submissions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -151,7 +156,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `basin.db.webhooks.search`
 
 ```ts
-const rows = await corsair.basin.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.basin.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

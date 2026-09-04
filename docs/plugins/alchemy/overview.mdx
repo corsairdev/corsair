@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { alchemy } from '@corsair-dev/alchemy';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		alchemy(),
 	],

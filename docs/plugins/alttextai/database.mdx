@@ -14,7 +14,8 @@ The AltText.ai plugin syncs data locally. Use `corsair.alttextai.db.<entity>.sea
 Path: `alttextai.db.images.search`
 
 ```ts
-const rows = await corsair.alttextai.db.images.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.alttextai.db.images.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

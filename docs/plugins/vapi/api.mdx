@@ -20,7 +20,8 @@ Create a new Vapi assistant
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.assistants.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.assistants.create({});
 ```
 
 **Input**
@@ -196,7 +197,8 @@ Delete a Vapi assistant [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.vapi.api.assistants.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.assistants.delete({});
 ```
 
 **Input**
@@ -226,7 +228,8 @@ Retrieve a Vapi assistant by ID
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.assistants.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.assistants.get({});
 ```
 
 **Input**
@@ -304,7 +307,8 @@ List all Vapi assistants
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.assistants.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.assistants.list({});
 ```
 
 **Input**
@@ -366,7 +370,8 @@ Update a Vapi assistant
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.assistants.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.assistants.update({});
 ```
 
 **Input**
@@ -545,7 +550,8 @@ Create (initiate) a new Vapi call
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.calls.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.calls.create({});
 ```
 
 **Input**
@@ -686,7 +692,8 @@ Delete a Vapi call [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.vapi.api.calls.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.calls.delete({});
 ```
 
 **Input**
@@ -716,7 +723,8 @@ Retrieve a Vapi call by ID
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.calls.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.calls.get({});
 ```
 
 **Input**
@@ -796,7 +804,8 @@ List all Vapi calls with optional filters
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.calls.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.calls.list({});
 ```
 
 **Input**
@@ -863,7 +872,8 @@ Update a Vapi call
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.calls.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.calls.update({});
 ```
 
 **Input**
@@ -966,7 +976,8 @@ Delete a Vapi file [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.vapi.api.files.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.files.delete({});
 ```
 
 **Input**
@@ -996,7 +1007,8 @@ Retrieve a Vapi file by ID
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.files.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.files.get({});
 ```
 
 **Input**
@@ -1046,7 +1058,8 @@ List all Vapi files
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.files.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.files.list({});
 ```
 
 **Input**
@@ -1101,7 +1114,8 @@ Update a Vapi file
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.files.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.files.update({});
 ```
 
 **Input**
@@ -1154,7 +1168,8 @@ Create a new Vapi knowledge base
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.knowledgeBases.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.knowledgeBases.create({});
 ```
 
 **Input**
@@ -1213,7 +1228,8 @@ Delete a Vapi knowledge base [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.vapi.api.knowledgeBases.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.knowledgeBases.delete({});
 ```
 
 **Input**
@@ -1243,7 +1259,8 @@ Retrieve a Vapi knowledge base by ID
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.knowledgeBases.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.knowledgeBases.get({});
 ```
 
 **Input**
@@ -1289,7 +1306,8 @@ List all Vapi knowledge bases
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.knowledgeBases.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.knowledgeBases.list({});
 ```
 
 **Input**
@@ -1340,7 +1358,8 @@ Update a Vapi knowledge base
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.knowledgeBases.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.knowledgeBases.update({});
 ```
 
 **Input**
@@ -1388,7 +1407,8 @@ Create a new Vapi phone number
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.phoneNumbers.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.phoneNumbers.create({});
 ```
 
 **Input**
@@ -1437,7 +1457,8 @@ Delete a Vapi phone number [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.vapi.api.phoneNumbers.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.phoneNumbers.delete({});
 ```
 
 **Input**
@@ -1467,7 +1488,8 @@ Retrieve a Vapi phone number by ID
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.phoneNumbers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.phoneNumbers.get({});
 ```
 
 **Input**
@@ -1506,7 +1528,8 @@ List all Vapi phone numbers
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.phoneNumbers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.phoneNumbers.list({});
 ```
 
 **Input**
@@ -1559,7 +1582,8 @@ Update a Vapi phone number
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.phoneNumbers.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.phoneNumbers.update({});
 ```
 
 **Input**
@@ -1605,7 +1629,8 @@ Create a new Vapi squad
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.squads.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.squads.create({});
 ```
 
 **Input**
@@ -1688,7 +1713,8 @@ Delete a Vapi squad [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.vapi.api.squads.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.squads.delete({});
 ```
 
 **Input**
@@ -1718,7 +1744,8 @@ Retrieve a Vapi squad by ID
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.squads.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.squads.get({});
 ```
 
 **Input**
@@ -1772,7 +1799,8 @@ List all Vapi squads
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.squads.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.squads.list({});
 ```
 
 **Input**
@@ -1824,7 +1852,8 @@ Update a Vapi squad
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.squads.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.squads.update({});
 ```
 
 **Input**
@@ -1910,7 +1939,8 @@ Create a new Vapi tool
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.tools.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.tools.create({});
 ```
 
 **Input**
@@ -2012,7 +2042,8 @@ Delete a Vapi tool [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.vapi.api.tools.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.tools.delete({});
 ```
 
 **Input**
@@ -2042,7 +2073,8 @@ Retrieve a Vapi tool by ID
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.tools.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.tools.get({});
 ```
 
 **Input**
@@ -2105,7 +2137,8 @@ List all Vapi tools
 **Risk:** `read`
 
 ```ts
-await corsair.vapi.api.tools.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.tools.list({});
 ```
 
 **Input**
@@ -2159,7 +2192,8 @@ Update a Vapi tool
 **Risk:** `write`
 
 ```ts
-await corsair.vapi.api.tools.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.vapi.api.tools.update({});
 ```
 
 **Input**

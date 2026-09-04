@@ -14,7 +14,8 @@ The Oura plugin syncs data locally. Use `corsair.oura.db.<entity>.search({ data,
 Path: `oura.db.dailyActivity.search`
 
 ```ts
-const rows = await corsair.oura.db.dailyActivity.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.oura.db.dailyActivity.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -48,7 +49,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `oura.db.dailyReadiness.search`
 
 ```ts
-const rows = await corsair.oura.db.dailyReadiness.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.oura.db.dailyReadiness.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -76,7 +78,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `oura.db.dailySleep.search`
 
 ```ts
-const rows = await corsair.oura.db.dailySleep.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.oura.db.dailySleep.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -102,7 +105,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `oura.db.personalInfo.search`
 
 ```ts
-const rows = await corsair.oura.db.personalInfo.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.oura.db.personalInfo.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

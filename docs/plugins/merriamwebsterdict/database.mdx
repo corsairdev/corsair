@@ -14,7 +14,8 @@ The Merriam-Webster Dictionary plugin syncs data locally. Use `corsair.merriamwe
 Path: `merriamwebsterdict.db.entries.search`
 
 ```ts
-const rows = await corsair.merriamwebsterdict.db.entries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.merriamwebsterdict.db.entries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

@@ -14,7 +14,8 @@ The Gitlab plugin syncs data locally. Use `corsair.gitlab.db.<entity>.search({ d
 Path: `gitlab.db.branches.search`
 
 ```ts
-const rows = await corsair.gitlab.db.branches.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gitlab.db.branches.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gitlab.db.commits.search`
 
 ```ts
-const rows = await corsair.gitlab.db.commits.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gitlab.db.commits.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -77,7 +79,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gitlab.db.groups.search`
 
 ```ts
-const rows = await corsair.gitlab.db.groups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gitlab.db.groups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -108,7 +111,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gitlab.db.issues.search`
 
 ```ts
-const rows = await corsair.gitlab.db.issues.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gitlab.db.issues.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -145,7 +149,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gitlab.db.labels.search`
 
 ```ts
-const rows = await corsair.gitlab.db.labels.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gitlab.db.labels.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -176,7 +181,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gitlab.db.mergeRequests.search`
 
 ```ts
-const rows = await corsair.gitlab.db.mergeRequests.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gitlab.db.mergeRequests.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -217,7 +223,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gitlab.db.milestones.search`
 
 ```ts
-const rows = await corsair.gitlab.db.milestones.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gitlab.db.milestones.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -250,7 +257,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gitlab.db.pipelines.search`
 
 ```ts
-const rows = await corsair.gitlab.db.pipelines.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gitlab.db.pipelines.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -285,7 +293,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gitlab.db.projects.search`
 
 ```ts
-const rows = await corsair.gitlab.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gitlab.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -325,7 +334,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gitlab.db.releases.search`
 
 ```ts
-const rows = await corsair.gitlab.db.releases.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gitlab.db.releases.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -353,7 +363,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `gitlab.db.users.search`
 
 ```ts
-const rows = await corsair.gitlab.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gitlab.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

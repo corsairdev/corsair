@@ -14,7 +14,8 @@ The AgentQL plugin syncs data locally. Use `corsair.agentql.db.<entity>.search({
 Path: `agentql.db.accountUsage.search`
 
 ```ts
-const rows = await corsair.agentql.db.accountUsage.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agentql.db.accountUsage.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -37,7 +38,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agentql.db.browserSessions.search`
 
 ```ts
-const rows = await corsair.agentql.db.browserSessions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agentql.db.browserSessions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -70,7 +72,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agentql.db.documentQueryResults.search`
 
 ```ts
-const rows = await corsair.agentql.db.documentQueryResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agentql.db.documentQueryResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -98,7 +101,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agentql.db.queryResults.search`
 
 ```ts
-const rows = await corsair.agentql.db.queryResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agentql.db.queryResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

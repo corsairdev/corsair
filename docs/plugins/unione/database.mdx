@@ -14,7 +14,8 @@ The UniOne plugin syncs data locally. Use `corsair.unione.db.<entity>.search({ d
 Path: `unione.db.account.search`
 
 ```ts
-const rows = await corsair.unione.db.account.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.unione.db.account.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -45,7 +46,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `unione.db.domains.search`
 
 ```ts
-const rows = await corsair.unione.db.domains.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.unione.db.domains.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -72,7 +74,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `unione.db.eventDumps.search`
 
 ```ts
-const rows = await corsair.unione.db.eventDumps.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.unione.db.eventDumps.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -96,7 +99,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `unione.db.suppressions.search`
 
 ```ts
-const rows = await corsair.unione.db.suppressions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.unione.db.suppressions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -125,7 +129,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `unione.db.tags.search`
 
 ```ts
-const rows = await corsair.unione.db.tags.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.unione.db.tags.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -149,7 +154,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `unione.db.templates.search`
 
 ```ts
-const rows = await corsair.unione.db.templates.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.unione.db.templates.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -178,7 +184,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `unione.db.webhooks.search`
 
 ```ts
-const rows = await corsair.unione.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.unione.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

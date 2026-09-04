@@ -14,7 +14,8 @@ The Cal.com plugin syncs data locally. Use `corsair.cal.db.<entity>.search({ dat
 Path: `cal.db.bookings.search`
 
 ```ts
-const rows = await corsair.cal.db.bookings.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cal.db.bookings.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

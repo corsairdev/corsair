@@ -20,7 +20,8 @@ Add followers to a project
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.projects.addFollowers({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.addFollowers({});
 ```
 
 **Input**
@@ -70,7 +71,8 @@ Add members to a project
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.projects.addMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.addMembers({});
 ```
 
 **Input**
@@ -120,7 +122,8 @@ Create a project
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.create({});
 ```
 
 **Input**
@@ -230,7 +233,8 @@ Create a project for a team
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.projects.createForTeam({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.createForTeam({});
 ```
 
 **Input**
@@ -337,7 +341,8 @@ Create a project for a workspace
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.projects.createForWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.createForWorkspace({});
 ```
 
 **Input**
@@ -445,7 +450,8 @@ Delete a project [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.asana.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.delete({});
 ```
 
 **Input**
@@ -486,7 +492,8 @@ Duplicate a project
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.projects.duplicate({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.duplicate({});
 ```
 
 **Input**
@@ -560,7 +567,8 @@ Get a project by GID
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.get({});
 ```
 
 **Input**
@@ -646,7 +654,8 @@ Get task counts for a project
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.projects.getTaskCounts({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.getTaskCounts({});
 ```
 
 **Input**
@@ -694,7 +703,8 @@ Get tasks in a project
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.projects.getTasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.getTasks({});
 ```
 
 **Input**
@@ -808,7 +818,8 @@ List projects
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.list({});
 ```
 
 **Input**
@@ -910,7 +921,8 @@ List projects in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.projects.listForWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.listForWorkspace({});
 ```
 
 **Input**
@@ -1011,7 +1023,8 @@ Remove followers from a project
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.projects.removeFollowers({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.removeFollowers({});
 ```
 
 **Input**
@@ -1056,7 +1069,8 @@ Remove members from a project
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.projects.removeMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.removeMembers({});
 ```
 
 **Input**
@@ -1101,7 +1115,8 @@ Update a project
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.projects.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.projects.update({});
 ```
 
 **Input**
@@ -1211,7 +1226,8 @@ Create a section in a project
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.sections.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.sections.create({});
 ```
 
 **Input**
@@ -1281,7 +1297,8 @@ Delete a section [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.asana.api.sections.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.sections.delete({});
 ```
 
 **Input**
@@ -1322,7 +1339,8 @@ Get a section by GID
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.sections.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.sections.get({});
 ```
 
 **Input**
@@ -1378,7 +1396,8 @@ Insert a section at a specific position
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.sections.insert({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.sections.insert({});
 ```
 
 **Input**
@@ -1433,7 +1452,8 @@ List sections in a project
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.sections.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.sections.list({});
 ```
 
 **Input**
@@ -1503,7 +1523,8 @@ Update a section
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.sections.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.sections.update({});
 ```
 
 **Input**
@@ -1573,7 +1594,8 @@ Create a comment on a task
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.stories.createComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.stories.createComment({});
 ```
 
 **Input**
@@ -1649,7 +1671,8 @@ Delete a story [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.asana.api.stories.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.stories.delete({});
 ```
 
 **Input**
@@ -1690,7 +1713,8 @@ Get a story by GID
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.stories.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.stories.get({});
 ```
 
 **Input**
@@ -1752,7 +1776,8 @@ List stories for a task
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.stories.listForTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.stories.listForTask({});
 ```
 
 **Input**
@@ -1827,7 +1852,8 @@ Update a story
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.stories.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.stories.update({});
 ```
 
 **Input**
@@ -1905,7 +1931,8 @@ Create a tag
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tags.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tags.create({});
 ```
 
 **Input**
@@ -1979,7 +2006,8 @@ Create a tag in a workspace
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tags.createInWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tags.createInWorkspace({});
 ```
 
 **Input**
@@ -2053,7 +2081,8 @@ Delete a tag [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.asana.api.tags.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tags.delete({});
 ```
 
 **Input**
@@ -2094,7 +2123,8 @@ Get a tag by GID
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.tags.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tags.get({});
 ```
 
 **Input**
@@ -2153,7 +2183,8 @@ Get tasks with a specific tag
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.tags.getTasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tags.getTasks({});
 ```
 
 **Input**
@@ -2266,7 +2297,8 @@ List tags
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.tags.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tags.list({});
 ```
 
 **Input**
@@ -2339,7 +2371,8 @@ List tags on a task
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.tags.listForTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tags.listForTask({});
 ```
 
 **Input**
@@ -2412,7 +2445,8 @@ List tags in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.tags.listForWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tags.listForWorkspace({});
 ```
 
 **Input**
@@ -2485,7 +2519,8 @@ Update a tag
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tags.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tags.update({});
 ```
 
 **Input**
@@ -2560,7 +2595,8 @@ Add task dependencies
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.addDependencies({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.addDependencies({});
 ```
 
 **Input**
@@ -2605,7 +2641,8 @@ Add followers to a task
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.addFollowers({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.addFollowers({});
 ```
 
 **Input**
@@ -2651,7 +2688,8 @@ Add a task to a project
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.addProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.addProject({});
 ```
 
 **Input**
@@ -2696,7 +2734,8 @@ Add a tag to a task
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.addTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.addTag({});
 ```
 
 **Input**
@@ -2738,7 +2777,8 @@ Add a task to a section
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.addToSection({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.addToSection({});
 ```
 
 **Input**
@@ -2782,7 +2822,8 @@ Create a new task
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.create({});
 ```
 
 **Input**
@@ -2910,7 +2951,8 @@ Create a subtask
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.createSubtask({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.createSubtask({});
 ```
 
 **Input**
@@ -3026,7 +3068,8 @@ Delete a task [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.asana.api.tasks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.delete({});
 ```
 
 **Input**
@@ -3067,7 +3110,8 @@ Duplicate a task
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.duplicate({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.duplicate({});
 ```
 
 **Input**
@@ -3135,7 +3179,8 @@ Get a task by GID
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.tasks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.get({});
 ```
 
 **Input**
@@ -3234,7 +3279,8 @@ Get attachments for a task
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.tasks.getAttachments({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.getAttachments({});
 ```
 
 **Input**
@@ -3292,7 +3338,8 @@ Get stories (activity) for a task
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.tasks.getStories({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.getStories({});
 ```
 
 **Input**
@@ -3367,7 +3414,8 @@ Get subtasks of a task
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.tasks.getSubtasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.getSubtasks({});
 ```
 
 **Input**
@@ -3480,7 +3528,8 @@ Get tags on a task
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.tasks.getTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.getTags({});
 ```
 
 **Input**
@@ -3552,7 +3601,8 @@ List tasks
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.tasks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.list({});
 ```
 
 **Input**
@@ -3672,7 +3722,8 @@ Remove a follower from a task
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.removeFollower({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.removeFollower({});
 ```
 
 **Input**
@@ -3718,7 +3769,8 @@ Remove a task from a project
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.removeProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.removeProject({});
 ```
 
 **Input**
@@ -3760,7 +3812,8 @@ Remove a tag from a task
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.removeTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.removeTag({});
 ```
 
 **Input**
@@ -3802,7 +3855,8 @@ Search tasks in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.tasks.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.search({});
 ```
 
 **Input**
@@ -3926,7 +3980,8 @@ Set the parent of a task
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.setParent({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.setParent({});
 ```
 
 **Input**
@@ -4027,7 +4082,8 @@ Update a task
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.tasks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.update({});
 ```
 
 **Input**
@@ -4156,7 +4212,8 @@ Add a user to a team
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.teams.addUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.teams.addUser({});
 ```
 
 **Input**
@@ -4214,7 +4271,8 @@ Create a team
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.teams.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.teams.create({});
 ```
 
 **Input**
@@ -4283,7 +4341,8 @@ Get a team by GID
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.teams.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.teams.get({});
 ```
 
 **Input**
@@ -4337,7 +4396,8 @@ List teams for a user
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.teams.listForUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.teams.listForUser({});
 ```
 
 **Input**
@@ -4404,7 +4464,8 @@ List teams in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.teams.listForWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.teams.listForWorkspace({});
 ```
 
 **Input**
@@ -4472,7 +4533,8 @@ Get a team membership
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.teams.membershipsGet({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.teams.membershipsGet({});
 ```
 
 **Input**
@@ -4529,7 +4591,8 @@ List team memberships
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.teams.membershipsList({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.teams.membershipsList({});
 ```
 
 **Input**
@@ -4602,7 +4665,8 @@ List memberships for a team
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.teams.membershipsListForTeam({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.teams.membershipsListForTeam({});
 ```
 
 **Input**
@@ -4673,7 +4737,8 @@ List team memberships for a user
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.teams.membershipsListForUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.teams.membershipsListForUser({});
 ```
 
 **Input**
@@ -4745,7 +4810,8 @@ Remove a user from a team
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.teams.removeUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.teams.removeUser({});
 ```
 
 **Input**
@@ -4787,7 +4853,8 @@ Update a team
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.teams.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.teams.update({});
 ```
 
 **Input**
@@ -4858,7 +4925,8 @@ Get a user by GID
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.users.get({});
 ```
 
 **Input**
@@ -4911,7 +4979,8 @@ Get the currently authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.users.getCurrent({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.users.getCurrent({});
 ```
 
 **Input**
@@ -4963,7 +5032,8 @@ Get a user's favorites
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.users.getFavorites({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.users.getFavorites({});
 ```
 
 **Input**
@@ -5010,7 +5080,8 @@ Get a user's task list
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.users.getTaskList({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.users.getTaskList({});
 ```
 
 **Input**
@@ -5066,7 +5137,8 @@ Get a user task list by GID
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.users.getUserTaskList({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.users.getUserTaskList({});
 ```
 
 **Input**
@@ -5121,7 +5193,8 @@ List users
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.users.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.users.list({});
 ```
 
 **Input**
@@ -5189,7 +5262,8 @@ List users in a team
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.users.listForTeam({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.users.listForTeam({});
 ```
 
 **Input**
@@ -5255,7 +5329,8 @@ List users in a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.users.listForWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.users.listForWorkspace({});
 ```
 
 **Input**
@@ -5324,7 +5399,8 @@ Register a new webhook
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.webhookManagement.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.webhookManagement.create({});
 ```
 
 **Input**
@@ -5399,7 +5475,8 @@ Delete a webhook [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.asana.api.webhookManagement.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.webhookManagement.delete({});
 ```
 
 **Input**
@@ -5425,7 +5502,8 @@ List webhooks
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.webhookManagement.getList({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.webhookManagement.getList({});
 ```
 
 **Input**
@@ -5497,7 +5575,8 @@ Update a webhook
 **Risk:** `write`
 
 ```ts
-await corsair.asana.api.webhookManagement.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.webhookManagement.update({});
 ```
 
 **Input**
@@ -5573,7 +5652,8 @@ Get a workspace by GID
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.workspaces.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.workspaces.get({});
 ```
 
 **Input**
@@ -5620,7 +5700,8 @@ List workspaces
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.workspaces.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.workspaces.list({});
 ```
 
 **Input**
@@ -5680,7 +5761,8 @@ Get a workspace membership
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.workspaces.membershipsGet({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.workspaces.membershipsGet({});
 ```
 
 **Input**
@@ -5741,7 +5823,8 @@ List workspace memberships
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.workspaces.membershipsList({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.workspaces.membershipsList({});
 ```
 
 **Input**
@@ -5817,7 +5900,8 @@ List workspace memberships for a user
 **Risk:** `read`
 
 ```ts
-await corsair.asana.api.workspaces.membershipsListForUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.workspaces.membershipsListForUser({});
 ```
 
 **Input**

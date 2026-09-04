@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { googlecloudvision } from '@corsair-dev/googlecloudvision';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		googlecloudvision(),
 	],

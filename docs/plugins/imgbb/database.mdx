@@ -14,7 +14,8 @@ The ImgBB plugin syncs data locally. Use `corsair.imgbb.db.<entity>.search({ dat
 Path: `imgbb.db.images.search`
 
 ```ts
-const rows = await corsair.imgbb.db.images.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.imgbb.db.images.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

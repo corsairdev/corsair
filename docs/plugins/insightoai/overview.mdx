@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { insightoai } from '@corsair-dev/insightoai';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		insightoai(),
 	],

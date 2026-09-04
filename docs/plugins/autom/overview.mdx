@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { autom } from '@corsair-dev/autom';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		autom(),
 	],

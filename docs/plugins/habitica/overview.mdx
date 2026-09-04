@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { habitica } from '@corsair-dev/habitica';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		habitica(),
 	],

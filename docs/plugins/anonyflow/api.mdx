@@ -20,7 +20,8 @@ Anonymize sensitive data in text
 **Risk:** `write`
 
 ```ts
-await corsair.anonyflow.api.core.anonymize({});
+const tenant = corsair.withTenant('acme');
+await tenant.anonyflow.api.core.anonymize({});
 ```
 
 **Input**
@@ -50,7 +51,8 @@ Encrypt field values within a data packet based on keys
 **Risk:** `write`
 
 ```ts
-await corsair.anonyflow.api.core.anonymizePacket({});
+const tenant = corsair.withTenant('acme');
+await tenant.anonyflow.api.core.anonymizePacket({});
 ```
 
 **Input**
@@ -102,7 +104,8 @@ Restore original text from anonymized mapping
 **Risk:** `write`
 
 ```ts
-await corsair.anonyflow.api.core.deanonymize({});
+const tenant = corsair.withTenant('acme');
+await tenant.anonyflow.api.core.deanonymize({});
 ```
 
 **Input**
@@ -132,7 +135,8 @@ Decrypt field values within a data packet based on keys
 **Risk:** `write`
 
 ```ts
-await corsair.anonyflow.api.core.deanonymizePacket({});
+const tenant = corsair.withTenant('acme');
+await tenant.anonyflow.api.core.deanonymizePacket({});
 ```
 
 **Input**
@@ -184,7 +188,8 @@ Verify API key and connectivity
 **Risk:** `read`
 
 ```ts
-await corsair.anonyflow.api.core.testConnection({});
+const tenant = corsair.withTenant('acme');
+await tenant.anonyflow.api.core.testConnection({});
 ```
 
 **Input:** _empty object_

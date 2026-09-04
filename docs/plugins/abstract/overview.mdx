@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { abstract } from '@corsair-dev/abstract';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		abstract(),
 	],

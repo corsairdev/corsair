@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { figma } from '@corsair-dev/figma';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		figma(),
 	],

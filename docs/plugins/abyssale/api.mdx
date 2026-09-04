@@ -20,7 +20,8 @@ Test Abyssale API key authentication validity
 **Risk:** `read`
 
 ```ts
-await corsair.abyssale.api.auth.test({});
+const tenant = corsair.withTenant('acme');
+await tenant.abyssale.api.auth.test({});
 ```
 
 **Input:** _empty object_
@@ -48,7 +49,8 @@ Get a list of designs in Abyssale
 **Risk:** `read`
 
 ```ts
-await corsair.abyssale.api.designs.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.abyssale.api.designs.list({});
 ```
 
 **Input**
@@ -98,7 +100,8 @@ Get a list of available fonts in Abyssale
 **Risk:** `read`
 
 ```ts
-await corsair.abyssale.api.fonts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.abyssale.api.fonts.list({});
 ```
 
 **Input**
@@ -141,7 +144,8 @@ Start an asynchronous multi-format generation from an Abyssale design
 **Risk:** `write`
 
 ```ts
-await corsair.abyssale.api.generation.batch({});
+const tenant = corsair.withTenant('acme');
+await tenant.abyssale.api.generation.batch({});
 ```
 
 **Input**
@@ -242,7 +246,8 @@ Synchronously generate a single image from an Abyssale design
 **Risk:** `write`
 
 ```ts
-await corsair.abyssale.api.generation.image({});
+const tenant = corsair.withTenant('acme');
+await tenant.abyssale.api.generation.image({});
 ```
 
 **Input**
@@ -342,7 +347,8 @@ Poll the status of an asynchronous generation request
 **Risk:** `read`
 
 ```ts
-await corsair.abyssale.api.generation.status({});
+const tenant = corsair.withTenant('acme');
+await tenant.abyssale.api.generation.status({});
 ```
 
 **Input**
@@ -423,7 +429,8 @@ Create a new project in Abyssale
 **Risk:** `write`
 
 ```ts
-await corsair.abyssale.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.abyssale.api.projects.create({});
 ```
 
 **Input**

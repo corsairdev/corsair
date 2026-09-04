@@ -14,7 +14,8 @@ The Habitica plugin syncs data locally. Use `corsair.habitica.db.<entity>.search
 Path: `habitica.db.challenges.search`
 
 ```ts
-const rows = await corsair.habitica.db.challenges.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.habitica.db.challenges.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -48,7 +49,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `habitica.db.groups.search`
 
 ```ts
-const rows = await corsair.habitica.db.groups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.habitica.db.groups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -84,7 +86,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `habitica.db.tags.search`
 
 ```ts
-const rows = await corsair.habitica.db.tags.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.habitica.db.tags.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -110,7 +113,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `habitica.db.tasks.search`
 
 ```ts
-const rows = await corsair.habitica.db.tasks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.habitica.db.tasks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -159,7 +163,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `habitica.db.webhooks.search`
 
 ```ts
-const rows = await corsair.habitica.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.habitica.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

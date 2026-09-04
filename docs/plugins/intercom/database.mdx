@@ -14,7 +14,8 @@ The Intercom plugin syncs data locally. Use `corsair.intercom.db.<entity>.search
 Path: `intercom.db.admins.search`
 
 ```ts
-const rows = await corsair.intercom.db.admins.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.intercom.db.admins.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -45,7 +46,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `intercom.db.articles.search`
 
 ```ts
-const rows = await corsair.intercom.db.articles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.intercom.db.articles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -81,7 +83,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `intercom.db.companies.search`
 
 ```ts
-const rows = await corsair.intercom.db.companies.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.intercom.db.companies.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -118,7 +121,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `intercom.db.contacts.search`
 
 ```ts
-const rows = await corsair.intercom.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.intercom.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -161,7 +165,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `intercom.db.conversations.search`
 
 ```ts
-const rows = await corsair.intercom.db.conversations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.intercom.db.conversations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

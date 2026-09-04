@@ -14,7 +14,8 @@ The Jira plugin syncs data locally. Use `corsair.jira.db.<entity>.search({ data,
 Path: `jira.db.boards.search`
 
 ```ts
-const rows = await corsair.jira.db.boards.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.jira.db.boards.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `jira.db.comments.search`
 
 ```ts
-const rows = await corsair.jira.db.comments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.jira.db.comments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -73,7 +75,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `jira.db.issues.search`
 
 ```ts
-const rows = await corsair.jira.db.issues.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.jira.db.issues.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -111,7 +114,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `jira.db.projects.search`
 
 ```ts
-const rows = await corsair.jira.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.jira.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -141,7 +145,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `jira.db.sprints.search`
 
 ```ts
-const rows = await corsair.jira.db.sprints.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.jira.db.sprints.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -171,7 +176,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `jira.db.users.search`
 
 ```ts
-const rows = await corsair.jira.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.jira.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

@@ -20,7 +20,8 @@ Create a comment on a Page post or other object.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.comments.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.comments.create({});
 ```
 
 **Input**
@@ -52,7 +53,8 @@ Delete a comment.
 **Risk:** `write` · **Irreversible**
 
 ```ts
-await corsair.facebook.api.comments.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.comments.delete({});
 ```
 
 **Input**
@@ -83,7 +85,8 @@ Retrieve a single comment by ID.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.comments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.comments.get({});
 ```
 
 **Input**
@@ -133,7 +136,8 @@ List comments on a Page post or other object.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.comments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.comments.list({});
 ```
 
 **Input**
@@ -204,7 +208,8 @@ Update or hide a comment.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.comments.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.comments.update({});
 ```
 
 **Input**
@@ -239,7 +244,8 @@ List messages in a Messenger conversation.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.conversations.getMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.conversations.getMessages({});
 ```
 
 **Input**
@@ -318,7 +324,8 @@ List Messenger conversations for a Page (optional platform filter).
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.conversations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.conversations.list({});
 ```
 
 **Input**
@@ -393,7 +400,8 @@ Retrieve a single Messenger message by ID.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.messages.getDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.messages.getDetails({});
 ```
 
 **Input**
@@ -466,7 +474,8 @@ Mark the most recent messages in a conversation as seen.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.messages.markSeen({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.messages.markSeen({});
 ```
 
 **Input**
@@ -498,7 +507,8 @@ Send a text Messenger message from a Page.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.messages.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.messages.send({});
 ```
 
 **Input**
@@ -533,7 +543,8 @@ Send a media Messenger message from a Page.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.messages.sendMedia({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.messages.sendMedia({});
 ```
 
 **Input**
@@ -569,7 +580,8 @@ Show or hide the Messenger typing indicator.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.messages.toggleTyping({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.messages.toggleTyping({});
 ```
 
 **Input**
@@ -604,7 +616,8 @@ Assign Page tasks to a business/system user via /assigned_users.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.pages.assignTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.pages.assignTask({});
 ```
 
 **Input**
@@ -637,7 +650,8 @@ Retrieve metadata for a Facebook Page.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.pages.getDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.pages.getDetails({});
 ```
 
 **Input**
@@ -702,7 +716,8 @@ Retrieve Page insights for the given metrics and period.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.pages.getInsights({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.pages.getInsights({});
 ```
 
 **Input**
@@ -771,7 +786,8 @@ List users and their roles on a Facebook Page.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.pages.getRoles({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.pages.getRoles({});
 ```
 
 **Input**
@@ -834,7 +850,8 @@ List Facebook Pages the authenticated user manages, including page access tokens
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.pages.listManaged({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.pages.listManaged({});
 ```
 
 **Input**
@@ -911,7 +928,8 @@ Remove a business/system user from Page task assignments.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.pages.removeTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.pages.removeTask({});
 ```
 
 **Input**
@@ -943,7 +961,8 @@ Search Pages via /pages/search (deprecated for most apps; Workplace-only). Prefe
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.pages.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.pages.search({});
 ```
 
 **Input**
@@ -1020,7 +1039,8 @@ Update editable settings on a Facebook Page.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.pages.updateSettings({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.pages.updateSettings({});
 ```
 
 **Input**
@@ -1058,7 +1078,8 @@ Add a photo to an existing album.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.photos.addToAlbum({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.photos.addToAlbum({});
 ```
 
 **Input**
@@ -1092,7 +1113,8 @@ Create a photo album on a Page.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.photos.createAlbum({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.photos.createAlbum({});
 ```
 
 **Input**
@@ -1125,7 +1147,8 @@ Create and publish a photo post on a Page (uses caption per Graph docs).
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.photos.createPost({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.photos.createPost({});
 ```
 
 **Input**
@@ -1160,7 +1183,8 @@ List Page photos via /photos (defaults to type=uploaded).
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.photos.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.photos.list({});
 ```
 
 **Input**
@@ -1230,7 +1254,8 @@ Upload a photo to a Page.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.photos.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.photos.upload({});
 ```
 
 **Input**
@@ -1265,7 +1290,8 @@ Upload multiple photos using the Graph API batch endpoint.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.photos.uploadBatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.photos.uploadBatch({});
 ```
 
 **Input**
@@ -1322,7 +1348,8 @@ Publish or schedule a Page feed post (supports attached_media for multi-photo).
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.posts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.posts.create({});
 ```
 
 **Input**
@@ -1378,7 +1405,8 @@ Delete a Page post.
 **Risk:** `write` · **Irreversible**
 
 ```ts
-await corsair.facebook.api.posts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.posts.delete({});
 ```
 
 **Input**
@@ -1409,7 +1437,8 @@ Retrieve a single Page post by ID.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.posts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.posts.get({});
 ```
 
 **Input**
@@ -1449,7 +1478,8 @@ Retrieve insights for a Page post.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.posts.getInsights({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.posts.getInsights({});
 ```
 
 **Input**
@@ -1516,7 +1546,8 @@ List reactions on a Page post.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.posts.getReactions({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.posts.getReactions({});
 ```
 
 **Input**
@@ -1579,7 +1610,8 @@ List Page timeline content via /feed (page posts + visitor posts + tagged posts)
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.posts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.posts.list({});
 ```
 
 **Input**
@@ -1647,7 +1679,8 @@ List scheduled but unpublished Page posts.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.posts.listScheduled({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.posts.listScheduled({});
 ```
 
 **Input**
@@ -1715,7 +1748,8 @@ List posts in which the Page is tagged.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.posts.listTagged({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.posts.listTagged({});
 ```
 
 **Input**
@@ -1783,7 +1817,8 @@ Publish a previously scheduled post immediately.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.posts.publishScheduled({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.posts.publishScheduled({});
 ```
 
 **Input**
@@ -1814,7 +1849,8 @@ Change the scheduled publish time of a post.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.posts.reschedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.posts.reschedule({});
 ```
 
 **Input**
@@ -1846,7 +1882,8 @@ Update an existing Page post.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.posts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.posts.update({});
 ```
 
 **Input**
@@ -1881,7 +1918,8 @@ Add a LIKE to a post or comment via /likes (Graph only allows LIKE programmatica
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.reactions.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.reactions.add({});
 ```
 
 **Input**
@@ -1913,7 +1951,8 @@ Remove a LIKE from a post or comment via DELETE /likes.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.reactions.unlike({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.reactions.unlike({});
 ```
 
 **Input**
@@ -1946,7 +1985,8 @@ Get the authenticated Facebook user via /me.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.users.getCurrentUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.users.getCurrentUser({});
 ```
 
 **Input**
@@ -1978,7 +2018,8 @@ Deprecated. List Facebook Pages for the authenticated user via /me/accounts.
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.users.getUserPages({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.users.getUserPages({});
 ```
 
 **Input**
@@ -2057,7 +2098,8 @@ Create a video post on a Page using file_url.
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.videos.createPost({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.videos.createPost({});
 ```
 
 **Input**
@@ -2092,7 +2134,8 @@ List Page videos via GET /{page-id}/videos (Video API; needs pages_read_engageme
 **Risk:** `read`
 
 ```ts
-await corsair.facebook.api.videos.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.videos.list({});
 ```
 
 **Input**
@@ -2162,7 +2205,8 @@ Publish a Page video from file_url (same edge as createPost; not resumable/chunk
 **Risk:** `write`
 
 ```ts
-await corsair.facebook.api.videos.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.facebook.api.videos.upload({});
 ```
 
 **Input**

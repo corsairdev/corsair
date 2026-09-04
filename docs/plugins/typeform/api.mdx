@@ -20,7 +20,8 @@ Create a new form
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.forms.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.forms.create({});
 ```
 
 **Input**
@@ -422,7 +423,8 @@ Permanently delete a form [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.typeform.api.forms.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.forms.delete({});
 ```
 
 **Input**
@@ -447,7 +449,8 @@ Get a form by ID
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.forms.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.forms.get({});
 ```
 
 **Input**
@@ -693,7 +696,8 @@ Get custom messages for a form
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.forms.getMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.forms.getMessages({});
 ```
 
 **Input**
@@ -724,7 +728,8 @@ List all forms in the account
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.forms.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.forms.list({});
 ```
 
 **Input**
@@ -783,7 +788,8 @@ Partially update a form using JSON Patch operations
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.forms.patch({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.forms.patch({});
 ```
 
 **Input**
@@ -823,7 +829,8 @@ Replace a form with a new version (PUT)
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.forms.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.forms.update({});
 ```
 
 **Input**
@@ -1236,7 +1243,8 @@ Update custom messages for a form
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.forms.updateMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.forms.updateMessages({});
 ```
 
 **Input**
@@ -1274,7 +1282,8 @@ Upload a new image
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.images.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.images.create({});
 ```
 
 **Input**
@@ -1313,7 +1322,8 @@ Permanently delete an image [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.typeform.api.images.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.images.delete({});
 ```
 
 **Input**
@@ -1338,7 +1348,8 @@ Get a background image at a specific size
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.images.getBackgroundBySize({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.images.getBackgroundBySize({});
 ```
 
 **Input**
@@ -1376,7 +1387,8 @@ Get an image at a specific size
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.images.getBySize({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.images.getBySize({});
 ```
 
 **Input**
@@ -1414,7 +1426,8 @@ Get a choice image at a specific size
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.images.getChoiceImageBySize({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.images.getChoiceImageBySize({});
 ```
 
 **Input**
@@ -1452,7 +1465,8 @@ List all images in the account
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.images.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.images.list({});
 ```
 
 **Input:** _empty object_
@@ -1492,7 +1506,8 @@ Get information about the authenticated Typeform account
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.me.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.me.get({});
 ```
 
 **Input:** _empty object_
@@ -1529,7 +1544,8 @@ Delete specific responses from a form [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.typeform.api.responses.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.responses.delete({});
 ```
 
 **Input**
@@ -1561,7 +1577,8 @@ Get a ZIP archive of all files uploaded in responses
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.responses.getAllFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.responses.getAllFiles({});
 ```
 
 **Input**
@@ -1586,7 +1603,8 @@ List responses submitted to a form
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.responses.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.responses.list({});
 ```
 
 **Input**
@@ -1696,7 +1714,8 @@ Create a new theme
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.themes.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.themes.create({});
 ```
 
 **Input**
@@ -1819,7 +1838,8 @@ Permanently delete a theme [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.typeform.api.themes.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.themes.delete({});
 ```
 
 **Input**
@@ -1844,7 +1864,8 @@ Get a theme by ID
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.themes.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.themes.get({});
 ```
 
 **Input**
@@ -1926,7 +1947,8 @@ List all themes
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.themes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.themes.list({});
 ```
 
 **Input**
@@ -1992,7 +2014,8 @@ Partially update a theme
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.themes.patch({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.themes.patch({});
 ```
 
 **Input**
@@ -2127,7 +2150,8 @@ Replace a theme with a new version (PUT)
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.themes.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.themes.update({});
 ```
 
 **Input**
@@ -2264,7 +2288,8 @@ Get a signed URL to upload a video for a form field
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.videos.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.videos.upload({});
 ```
 
 **Input**
@@ -2300,7 +2325,8 @@ Create or update a webhook configuration
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.webhooksConfig.createOrUpdate({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.webhooksConfig.createOrUpdate({});
 ```
 
 **Input**
@@ -2345,7 +2371,8 @@ Delete a webhook configuration [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.typeform.api.webhooksConfig.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.webhooksConfig.delete({});
 ```
 
 **Input**
@@ -2376,7 +2403,8 @@ Get a webhook configuration by tag
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.webhooksConfig.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.webhooksConfig.get({});
 ```
 
 **Input**
@@ -2416,7 +2444,8 @@ List all webhook configurations for a form
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.webhooksConfig.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.webhooksConfig.list({});
 ```
 
 **Input**
@@ -2468,7 +2497,8 @@ Create a new workspace
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.workspaces.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.workspaces.create({});
 ```
 
 **Input**
@@ -2537,7 +2567,8 @@ Create a new workspace within a specific account
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.workspaces.createForAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.workspaces.createForAccount({});
 ```
 
 **Input**
@@ -2607,7 +2638,8 @@ Permanently delete a workspace [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.typeform.api.workspaces.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.workspaces.delete({});
 ```
 
 **Input**
@@ -2632,7 +2664,8 @@ Get a workspace by ID
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.workspaces.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.workspaces.get({});
 ```
 
 **Input**
@@ -2692,7 +2725,8 @@ List all workspaces
 **Risk:** `read`
 
 ```ts
-await corsair.typeform.api.workspaces.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.workspaces.list({});
 ```
 
 **Input**
@@ -2749,7 +2783,8 @@ Update a workspace using JSON Patch operations
 **Risk:** `write`
 
 ```ts
-await corsair.typeform.api.workspaces.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.typeform.api.workspaces.update({});
 ```
 
 **Input**

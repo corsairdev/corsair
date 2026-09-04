@@ -14,7 +14,8 @@ The Better Stack plugin syncs data locally. Use `corsair.betterstack.db.<entity>
 Path: `betterstack.db.heartbeatGroups.search`
 
 ```ts
-const rows = await corsair.betterstack.db.heartbeatGroups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.betterstack.db.heartbeatGroups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `betterstack.db.heartbeats.search`
 
 ```ts
-const rows = await corsair.betterstack.db.heartbeats.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.betterstack.db.heartbeats.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -82,7 +84,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `betterstack.db.monitorGroups.search`
 
 ```ts
-const rows = await corsair.betterstack.db.monitorGroups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.betterstack.db.monitorGroups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -111,7 +114,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `betterstack.db.monitors.search`
 
 ```ts
-const rows = await corsair.betterstack.db.monitors.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.betterstack.db.monitors.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -160,7 +164,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `betterstack.db.onCallSchedules.search`
 
 ```ts
-const rows = await corsair.betterstack.db.onCallSchedules.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.betterstack.db.onCallSchedules.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -186,7 +191,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `betterstack.db.policies.search`
 
 ```ts
-const rows = await corsair.betterstack.db.policies.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.betterstack.db.policies.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -214,7 +220,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `betterstack.db.statusPages.search`
 
 ```ts
-const rows = await corsair.betterstack.db.statusPages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.betterstack.db.statusPages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -258,7 +265,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `betterstack.db.urgencies.search`
 
 ```ts
-const rows = await corsair.betterstack.db.urgencies.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.betterstack.db.urgencies.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

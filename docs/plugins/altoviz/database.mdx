@@ -14,7 +14,8 @@ The Altoviz plugin syncs data locally. Use `corsair.altoviz.db.<entity>.search({
 Path: `altoviz.db.classifications.search`
 
 ```ts
-const rows = await corsair.altoviz.db.classifications.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.altoviz.db.classifications.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `altoviz.db.contacts.search`
 
 ```ts
-const rows = await corsair.altoviz.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.altoviz.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -79,7 +81,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `altoviz.db.customerFamilies.search`
 
 ```ts
-const rows = await corsair.altoviz.db.customerFamilies.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.altoviz.db.customerFamilies.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -105,7 +108,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `altoviz.db.customers.search`
 
 ```ts
-const rows = await corsair.altoviz.db.customers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.altoviz.db.customers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -141,7 +145,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `altoviz.db.productFamilies.search`
 
 ```ts
-const rows = await corsair.altoviz.db.productFamilies.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.altoviz.db.productFamilies.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -166,7 +171,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `altoviz.db.products.search`
 
 ```ts
-const rows = await corsair.altoviz.db.products.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.altoviz.db.products.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -201,7 +207,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `altoviz.db.units.search`
 
 ```ts
-const rows = await corsair.altoviz.db.units.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.altoviz.db.units.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -229,7 +236,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `altoviz.db.vats.search`
 
 ```ts
-const rows = await corsair.altoviz.db.vats.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.altoviz.db.vats.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

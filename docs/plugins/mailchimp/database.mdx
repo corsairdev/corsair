@@ -14,7 +14,8 @@ The Mailchimp plugin syncs data locally. Use `corsair.mailchimp.db.<entity>.sear
 Path: `mailchimp.db.campaigns.search`
 
 ```ts
-const rows = await corsair.mailchimp.db.campaigns.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.mailchimp.db.campaigns.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `mailchimp.db.lists.search`
 
 ```ts
-const rows = await corsair.mailchimp.db.lists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.mailchimp.db.lists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -67,7 +69,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `mailchimp.db.members.search`
 
 ```ts
-const rows = await corsair.mailchimp.db.members.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.mailchimp.db.members.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

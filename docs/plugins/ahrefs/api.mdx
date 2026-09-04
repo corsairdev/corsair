@@ -20,7 +20,8 @@ Get keyword metrics such as volume, difficulty, CPC, clicks, and traffic potenti
 **Risk:** `read`
 
 ```ts
-await corsair.ahrefs.api.keywordsExplorer.overview({});
+const tenant = corsair.withTenant('acme');
+await tenant.ahrefs.api.keywordsExplorer.overview({});
 ```
 
 **Input**
@@ -104,7 +105,8 @@ Get Rank Tracker keyword overview data for a project and device
 **Risk:** `read`
 
 ```ts
-await corsair.ahrefs.api.rankTracker.overview({});
+const tenant = corsair.withTenant('acme');
+await tenant.ahrefs.api.rankTracker.overview({});
 ```
 
 **Input**
@@ -166,7 +168,8 @@ Get SERP positions for a keyword and country, including ranking page metrics
 **Risk:** `read`
 
 ```ts
-await corsair.ahrefs.api.serp.overview({});
+const tenant = corsair.withTenant('acme');
+await tenant.ahrefs.api.serp.overview({});
 ```
 
 **Input**
@@ -224,7 +227,8 @@ Get live and all-time backlink and referring-domain counts for a target
 **Risk:** `read`
 
 ```ts
-await corsair.ahrefs.api.siteExplorer.backlinksStats({});
+const tenant = corsair.withTenant('acme');
+await tenant.ahrefs.api.siteExplorer.backlinksStats({});
 ```
 
 **Input**
@@ -272,7 +276,8 @@ Get Ahrefs Domain Rating and Ahrefs Rank for a target
 **Risk:** `read`
 
 ```ts
-await corsair.ahrefs.api.siteExplorer.getDomainRating({});
+const tenant = corsair.withTenant('acme');
+await tenant.ahrefs.api.siteExplorer.getDomainRating({});
 ```
 
 **Input**
@@ -317,7 +322,8 @@ List organic keywords a target ranks for, including positions and traffic metric
 **Risk:** `read`
 
 ```ts
-await corsair.ahrefs.api.siteExplorer.organicKeywords({});
+const tenant = corsair.withTenant('acme');
+await tenant.ahrefs.api.siteExplorer.organicKeywords({});
 ```
 
 **Input**
@@ -380,7 +386,8 @@ List referring domains linking to a target
 **Risk:** `read`
 
 ```ts
-await corsair.ahrefs.api.siteExplorer.refdomains({});
+const tenant = corsair.withTenant('acme');
+await tenant.ahrefs.api.siteExplorer.refdomains({});
 ```
 
 **Input**
@@ -438,7 +445,8 @@ List top organic pages for a target with traffic, keyword, and link metrics
 **Risk:** `read`
 
 ```ts
-await corsair.ahrefs.api.siteExplorer.topPages({});
+const tenant = corsair.withTenant('acme');
+await tenant.ahrefs.api.siteExplorer.topPages({});
 ```
 
 **Input**
@@ -499,7 +507,8 @@ Get Ahrefs subscription limits and API unit usage
 **Risk:** `read`
 
 ```ts
-await corsair.ahrefs.api.subscriptionInfo.limitsAndUsage({});
+const tenant = corsair.withTenant('acme');
+await tenant.ahrefs.api.subscriptionInfo.limitsAndUsage({});
 ```
 
 **Input**

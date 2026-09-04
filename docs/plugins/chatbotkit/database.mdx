@@ -14,7 +14,8 @@ The Chatbotkit plugin syncs data locally. Use `corsair.chatbotkit.db.<entity>.se
 Path: `chatbotkit.db.blueprints.search`
 
 ```ts
-const rows = await corsair.chatbotkit.db.blueprints.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.chatbotkit.db.blueprints.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `chatbotkit.db.bots.search`
 
 ```ts
-const rows = await corsair.chatbotkit.db.bots.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.chatbotkit.db.bots.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -79,7 +81,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `chatbotkit.db.conversations.search`
 
 ```ts
-const rows = await corsair.chatbotkit.db.conversations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.chatbotkit.db.conversations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -114,7 +117,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `chatbotkit.db.datasets.search`
 
 ```ts
-const rows = await corsair.chatbotkit.db.datasets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.chatbotkit.db.datasets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -151,7 +155,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `chatbotkit.db.files.search`
 
 ```ts
-const rows = await corsair.chatbotkit.db.files.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.chatbotkit.db.files.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -181,7 +186,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `chatbotkit.db.secrets.search`
 
 ```ts
-const rows = await corsair.chatbotkit.db.secrets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.chatbotkit.db.secrets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -213,7 +219,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `chatbotkit.db.skillsets.search`
 
 ```ts
-const rows = await corsair.chatbotkit.db.skillsets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.chatbotkit.db.skillsets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -244,7 +251,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `chatbotkit.db.tasks.search`
 
 ```ts
-const rows = await corsair.chatbotkit.db.tasks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.chatbotkit.db.tasks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

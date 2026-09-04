@@ -20,7 +20,8 @@ Returns a list of holiday entries for a given country and year [premium plan req
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.calendar.holidays({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.calendar.holidays({});
 ```
 
 **Input**
@@ -64,7 +65,8 @@ Returns whether a given date is a public holiday for a given country
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.calendar.isPublicHoliday({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.calendar.isPublicHoliday({});
 ```
 
 **Input**
@@ -98,7 +100,8 @@ Returns whether a given date is a working day for a given country
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.calendar.isWorkingDay({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.calendar.isWorkingDay({});
 ```
 
 **Input**
@@ -136,7 +139,8 @@ Returns a list of public holidays for a given country and year [premium plan req
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.calendar.publicHolidays({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.calendar.publicHolidays({});
 ```
 
 **Input**
@@ -179,7 +183,8 @@ Get timezone info by city/state/country or location coordinates (latitude/longit
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.calendar.timezone({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.calendar.timezone({});
 ```
 
 **Input**
@@ -217,7 +222,8 @@ Returns a list of working days and non-working days for a given country and year
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.calendar.workingDays({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.calendar.workingDays({});
 ```
 
 **Input**
@@ -268,7 +274,8 @@ Get the current date and time by city/state/country, location coordinates (latit
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.calendar.worldTime({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.calendar.worldTime({});
 ```
 
 **Input**
@@ -314,7 +321,8 @@ Get GDP data from given parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.gdp({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.gdp({});
 ```
 
 **Input**
@@ -358,7 +366,8 @@ Returns comprehensive income tax information including tax brackets and rates at
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.incomeTax({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.incomeTax({});
 ```
 
 **Input**
@@ -433,7 +442,8 @@ Returns comprehensive annual tax calculations including federal, state/provincia
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.incomeTaxCalculator({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.incomeTaxCalculator({});
 ```
 
 **Input**
@@ -489,7 +499,8 @@ Returns current monthly and annual inflation percentages [premium plan required]
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.inflation({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.inflation({});
 ```
 
 **Input**
@@ -531,7 +542,8 @@ Get a specific interest rate by name
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.interestRate({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.interestRate({});
 ```
 
 **Input**
@@ -563,7 +575,8 @@ Returns monthly payment, annual payment, and interest rate information based on 
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.mortgageCalculator({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.mortgageCalculator({});
 ```
 
 **Input**
@@ -630,7 +643,8 @@ Returns the daily 30-year and 15-year fixed-rate mortgage (FRM) data
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.mortgageRate({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.mortgageRate({});
 ```
 
 **Input**
@@ -670,7 +684,8 @@ Get population data from given parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.population({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.population({});
 ```
 
 **Input**
@@ -758,7 +773,8 @@ Returns a list of regions and corresponding 25th, 50th (median), and 75th percen
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.propertyTax({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.propertyTax({});
 ```
 
 **Input**
@@ -803,7 +819,8 @@ Returns one or more sales tax breakdowns by ZIP code according to the specified 
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.salesTax({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.salesTax({});
 ```
 
 **Input**
@@ -848,7 +865,8 @@ Calculates sales tax for a given amount and location
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.salesTaxCalculator({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.salesTaxCalculator({});
 ```
 
 **Input**
@@ -901,7 +919,8 @@ Get unemployment data for a given country
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.unemployment({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.unemployment({});
 ```
 
 **Input**
@@ -940,7 +959,8 @@ Returns VAT rates for a specified EU country
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.economics.vatRates({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.economics.vatRates({});
 ```
 
 **Input**
@@ -987,7 +1007,8 @@ Returns a random piece of life advice
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.advice({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.advice({});
 ```
 
 **Input:** _empty object_
@@ -1012,7 +1033,8 @@ Returns a random bucket list idea
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.bucketList({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.bucketList({});
 ```
 
 **Input:** _empty object_
@@ -1037,7 +1059,8 @@ Returns a Chuck Norris joke
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.chuckNorris({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.chuckNorris({});
 ```
 
 **Input:** _empty object_
@@ -1062,7 +1085,8 @@ Returns one (or more) random dad jokes
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.dadJokes({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.dadJokes({});
 ```
 
 **Input**
@@ -1098,7 +1122,8 @@ Returns a single fact for the current day
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.factOfTheDay({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.factOfTheDay({});
 ```
 
 **Input:** _empty object_
@@ -1129,7 +1154,8 @@ Returns one (or more) random facts
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.facts({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.facts({});
 ```
 
 **Input**
@@ -1165,7 +1191,8 @@ Generate a new Sudoku puzzle with specified parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.generateSudoku({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.generateSudoku({});
 ```
 
 **Input**
@@ -1199,7 +1226,8 @@ Returns a random hobby and a Wikipedia link detailing the hobby
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.hobbies({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.hobbies({});
 ```
 
 **Input**
@@ -1231,7 +1259,8 @@ Returns the daily horoscope for a specific zodiac sign
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.horoscope({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.horoscope({});
 ```
 
 **Input**
@@ -1264,7 +1293,8 @@ Returns a single joke for the current day
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.jokeOfTheDay({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.jokeOfTheDay({});
 ```
 
 **Input:** _empty object_
@@ -1295,7 +1325,8 @@ Returns one (or more) random funny jokes
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.jokes({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.jokes({});
 ```
 
 **Input**
@@ -1331,7 +1362,8 @@ Returns a single aphoristic quote for the current day
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.quoteOfTheDay({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.quoteOfTheDay({});
 ```
 
 **Input:** _empty object_
@@ -1365,7 +1397,8 @@ Returns high-quality quotes with advanced filtering by categories (include/exclu
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.quotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.quotes({});
 ```
 
 **Input**
@@ -1409,7 +1442,8 @@ Returns random high-quality quotes with advanced filtering by categories (includ
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.randomQuotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.randomQuotes({});
 ```
 
 **Input**
@@ -1452,7 +1486,8 @@ Returns one or more random riddles
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.riddles({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.riddles({});
 ```
 
 **Input**
@@ -1490,7 +1525,8 @@ Solve an existing Sudoku puzzle
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.solveSudoku({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.solveSudoku({});
 ```
 
 **Input**
@@ -1523,7 +1559,8 @@ Returns a random trivia question and answer
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.trivia({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.trivia({});
 ```
 
 **Input**
@@ -1562,7 +1599,8 @@ Returns a single trivia question and answer for the current day
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.entertainment.triviaOfTheDay({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.entertainment.triviaOfTheDay({});
 ```
 
 **Input:** _empty object_
@@ -1597,7 +1635,8 @@ Returns the calories burned per hour and total calories burned according to give
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.health.caloriesBurned({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.health.caloriesBurned({});
 ```
 
 **Input**
@@ -1638,7 +1677,8 @@ Returns up to 10 cocktail recipes matching the search parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.health.cocktails({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.health.cocktails({});
 ```
 
 **Input**
@@ -1677,7 +1717,8 @@ Returns up to 5 exercises that satisfy the given parameters [premium plan requir
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.health.exercises({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.health.exercises({});
 ```
 
 **Input**
@@ -1724,7 +1765,8 @@ This endpoint uses AI to automatically read any text and extract every food item
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.health.nutrition({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.health.nutrition({});
 ```
 
 **Input**
@@ -1780,7 +1822,8 @@ Get a list of recipes for a given recipe name or ingredient(s)
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.health.recipes({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.health.recipes({});
 ```
 
 **Input**
@@ -1829,7 +1872,8 @@ Returns a list of DNS records associated with a particular domain
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.internet.dnsRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.internet.dnsRecords({});
 ```
 
 **Input**
@@ -1890,7 +1934,8 @@ Returns availability, registration lifecycle, and email/hosting intelligence for
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.internet.domain({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.internet.domain({});
 ```
 
 **Input**
@@ -1937,7 +1982,8 @@ Returns the location of the IP address specified
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.internet.ipLookup({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.internet.ipLookup({});
 ```
 
 **Input**
@@ -1990,7 +2036,8 @@ Returns a list of MX records associated with a particular domain
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.internet.mxRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.internet.mxRecords({});
 ```
 
 **Input**
@@ -2027,7 +2074,8 @@ Returns the HTML or plaintext data scraped from a given URL
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.internet.scrape({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.internet.scrape({});
 ```
 
 **Input**
@@ -2059,7 +2107,8 @@ Returns the location of the IP address hosting the URL domain
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.internet.urlLookup({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.internet.urlLookup({});
 ```
 
 **Input**
@@ -2100,7 +2149,8 @@ Generates a realistic user agent string based on optional parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.internet.userAgent({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.internet.userAgent({});
 ```
 
 **Input**
@@ -2133,7 +2183,8 @@ Returns the URL information and web page metadata from a given URL
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.internet.webpage({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.internet.webpage({});
 ```
 
 **Input**
@@ -2189,7 +2240,8 @@ Returns domain registration details (e.g. registrar, contact information, expira
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.internet.whois({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.internet.whois({});
 ```
 
 **Input**
@@ -2230,7 +2282,8 @@ Get air quality by city or location coordinates (latitude/longitude)
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.airQuality({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.airQuality({});
 ```
 
 **Input**
@@ -2332,7 +2385,8 @@ Get city data from either a name or population range
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.cities({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.cities({});
 ```
 
 **Input**
@@ -2382,7 +2436,8 @@ Get country data from given parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.country({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.country({});
 ```
 
 **Input**
@@ -2477,7 +2532,8 @@ Returns details for one or more counties matching the input parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.county({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.county({});
 ```
 
 **Input**
@@ -2526,7 +2582,8 @@ find ev charging stations
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.evChargers({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.evChargers({});
 ```
 
 **Input**
@@ -2585,7 +2642,8 @@ Get current city coordinates by city and country name
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.geocode({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.geocode({});
 ```
 
 **Input**
@@ -2628,7 +2686,8 @@ Get hospital data based on given parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.hospitals({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.hospitals({});
 ```
 
 **Input**
@@ -2695,7 +2754,8 @@ Returns a list of postal code details matching the input parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.postalCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.postalCode({});
 ```
 
 **Input**
@@ -2739,7 +2799,8 @@ Returns a list of cities that contain a given latitude and longitude
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.reverseGeocode({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.reverseGeocode({});
 ```
 
 **Input**
@@ -2778,7 +2839,8 @@ Returns information about universities matching the provided filters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.universities({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.universities({});
 ```
 
 **Input**
@@ -2843,7 +2905,8 @@ Get current weather, wind speed and direction, humidity, and temperature data by
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.weather({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.weather({});
 ```
 
 **Input**
@@ -2887,7 +2950,8 @@ Returns a 5-day weather forecast in 3-hour intervals for a given city [premium p
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.weatherForecast({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.weatherForecast({});
 ```
 
 **Input**
@@ -2937,7 +3001,8 @@ Returns a list of ZIP Code details matching the input parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.location.zipCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.location.zipCode({});
 ```
 
 **Input**
@@ -2986,7 +3051,8 @@ Returns the latest Bitcoin price in USD and 24-hour market data
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.bitcoin({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.bitcoin({});
 ```
 
 **Input:** _empty object_
@@ -3017,7 +3083,8 @@ Returns the current price information for one or more commodities
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.commodityPrice({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.commodityPrice({});
 ```
 
 **Input**
@@ -3062,7 +3129,8 @@ Converts an existing currency and amount into a new currency [premium plan requi
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.convertCurrency({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.convertCurrency({});
 ```
 
 **Input**
@@ -3098,7 +3166,8 @@ Returns the current price and current time (in UNIX timestamp in seconds) for an
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.cryptoPrice({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.cryptoPrice({});
 ```
 
 **Input**
@@ -3130,7 +3199,8 @@ Returns a JSON array of detailed earnings reports, each with comprehensive finan
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.earnings({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.earnings({});
 ```
 
 **Input**
@@ -3232,7 +3302,8 @@ Returns a list of past earnings results and upcoming earnings dates
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.earningsCalendar({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.earningsCalendar({});
 ```
 
 **Input**
@@ -3301,7 +3372,8 @@ Returns the earnings transcript for a given company earning quarter [premium pla
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.earningsTranscript({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.earningsTranscript({});
 ```
 
 **Input**
@@ -3349,7 +3421,8 @@ Returns comprehensive information about any ETF by its ticker
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.etf({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.etf({});
 ```
 
 **Input**
@@ -3391,7 +3464,8 @@ Returns the exchange rate for a given currency pair [premium plan required]
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.exchangeRate({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.exchangeRate({});
 ```
 
 **Input**
@@ -3423,7 +3497,8 @@ Returns a list of insider trading transactions that match the specified filters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.insiderTransactions({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.insiderTransactions({});
 ```
 
 **Input**
@@ -3490,7 +3565,8 @@ Returns the current market cap data for any given company ticker
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.marketCap({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.marketCap({});
 ```
 
 **Input**
@@ -3524,7 +3600,8 @@ Returns comprehensive information about any Mutual Fund by its ticker
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.mutualFund({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.mutualFund({});
 ```
 
 **Input**
@@ -3563,7 +3640,8 @@ Returns a list of SEC filing information (including the submission URL) correspo
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.secFilings({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.secFilings({});
 ```
 
 **Input**
@@ -3606,7 +3684,8 @@ Returns S&P 500 index constituents, filterable by ticker, company name, sector o
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.sp500({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.sp500({});
 ```
 
 **Input**
@@ -3651,7 +3730,8 @@ Returns detailed information about stock exchanges matching the specified criter
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.stockExchanges({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.stockExchanges({});
 ```
 
 **Input**
@@ -3707,7 +3787,8 @@ Returns price information for any given ticker symbol
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.stockPrice({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.stockPrice({});
 ```
 
 **Input**
@@ -3743,7 +3824,8 @@ Returns comprehensive company profile information including company name, CEO, a
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.ticker({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.ticker({});
 ```
 
 **Input**
@@ -3815,7 +3897,8 @@ Returns a list of all available companies and their ticker symbols
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.markets.tickerList({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.markets.tickerList({});
 ```
 
 **Input**
@@ -3855,7 +3938,8 @@ Returns up to 10 results matching the input name parameter
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.reference.animals({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.reference.animals({});
 ```
 
 **Input**
@@ -3927,7 +4011,8 @@ Returns 10 baby name results
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.reference.babyNames({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.reference.babyNames({});
 ```
 
 **Input**
@@ -3953,7 +4038,8 @@ Get a list of cat breeds matching specified parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.reference.cats({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.reference.cats({});
 ```
 
 **Input**
@@ -4017,7 +4103,8 @@ Returns a list of up to 30 celebrities that match the search parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.reference.celebrities({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.reference.celebrities({});
 ```
 
 **Input**
@@ -4067,7 +4154,8 @@ Returns historical events that occurred on a specific date [premium plan require
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.reference.dayInHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.reference.dayInHistory({});
 ```
 
 **Input**
@@ -4109,7 +4197,8 @@ Get a list of dog breeds matching specified parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.reference.dogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.reference.dogs({});
 ```
 
 **Input**
@@ -4180,7 +4269,8 @@ Returns a list of up to 10 events that match the search parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.reference.historicalEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.reference.historicalEvents({});
 ```
 
 **Input**
@@ -4223,7 +4313,8 @@ Returns a list of up to 10 people that match the search parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.reference.historicalFigures({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.reference.historicalFigures({});
 ```
 
 **Input**
@@ -4302,7 +4393,8 @@ Get a list of planets matching specified parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.reference.planets({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.reference.planets({});
 ```
 
 **Input**
@@ -4359,7 +4451,8 @@ Get a list of stars matching specified parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.reference.stars({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.reference.stars({});
 ```
 
 **Input**
@@ -4412,7 +4505,8 @@ Returns a string containing definitions for a given word
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.text.dictionary({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.text.dictionary({});
 ```
 
 **Input**
@@ -4444,7 +4538,8 @@ Returns a 768-dimensional vector as an array that encodes the meaning of any giv
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.text.embeddings({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.text.embeddings({});
 ```
 
 **Input**
@@ -4474,7 +4569,8 @@ Returns the language name and 2-letter ISO language code for a given block of te
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.text.language({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.text.language({});
 ```
 
 **Input**
@@ -4505,7 +4601,8 @@ Returns one or more paragraphs of lorem ipsum placeholder text
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.text.loremIpsum({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.text.loremIpsum({});
 ```
 
 **Input**
@@ -4538,7 +4635,8 @@ Returns the censored version (bad words replaced with asterisks) of any given te
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.text.profanityFilter({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.text.profanityFilter({});
 ```
 
 **Input**
@@ -4570,7 +4668,8 @@ Returns a random word [premium plan required]
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.text.randomWord({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.text.randomWord({});
 ```
 
 **Input**
@@ -4596,7 +4695,8 @@ Returns a list of rhyming words for any given word
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.text.rhymes({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.text.rhymes({});
 ```
 
 **Input**
@@ -4621,7 +4721,8 @@ Returns sentiment analysis score and overall sentiment for a given block of text
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.text.sentiment({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.text.sentiment({});
 ```
 
 **Input**
@@ -4653,7 +4754,8 @@ Returns a similarity score between 0 and 1 (1 is similar and 0 is dissimilar) of
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.text.similarity({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.text.similarity({});
 ```
 
 **Input**
@@ -4684,7 +4786,8 @@ Returns spelling corrections and suggestions for any given text
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.text.spellCheck({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.text.spellCheck({});
 ```
 
 **Input**
@@ -4733,7 +4836,8 @@ Returns a list of synonyms and a list of antonyms for a given word
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.text.thesaurus({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.text.thesaurus({});
 ```
 
 **Input**
@@ -4767,7 +4871,8 @@ Returns a list of aircrafts that match the given parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.transport.aircraft({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.transport.aircraft({});
 ```
 
 **Input**
@@ -4830,7 +4935,8 @@ Returns airline details including fleet composition, base airport and branding a
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.transport.airlines({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.transport.airlines({});
 ```
 
 **Input**
@@ -4888,7 +4994,8 @@ Returns a list of up to 10 airport results
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.transport.airports({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.transport.airports({});
 ```
 
 **Input**
@@ -4984,7 +5091,8 @@ Get car data from given parameters [deprecated by the provider]
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.transport.cars({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.transport.cars({});
 ```
 
 **Input**
@@ -5033,7 +5141,8 @@ Get electric vehicle data from given parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.transport.electricVehicles({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.transport.electricVehicles({});
 ```
 
 **Input**
@@ -5126,7 +5235,8 @@ Get helicopter technical specifications that match the given parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.transport.helicopters({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.transport.helicopters({});
 ```
 
 **Input**
@@ -5190,7 +5300,8 @@ Returns up to 30 motorcycle results matching the input name parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.transport.motorcycles({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.transport.motorcycles({});
 ```
 
 **Input**
@@ -5269,7 +5380,8 @@ Returns key vehicle information including manufacturer, country of origin, and m
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.transport.vin({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.transport.vin({});
 ```
 
 **Input**
@@ -5310,7 +5422,8 @@ Returns a barcode image binary specified by input parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.utility.barcode({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.utility.barcode({});
 ```
 
 **Input**
@@ -5345,7 +5458,8 @@ Returns conversions between different units of the same measurement type
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.utility.convertUnit({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.utility.convertUnit({});
 ```
 
 **Input**
@@ -5403,7 +5517,8 @@ Fetch and possibly update a counter
 **Risk:** `write`
 
 ```ts
-await corsair.apininjas.api.utility.counter({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.utility.counter({});
 ```
 
 **Input**
@@ -5436,7 +5551,8 @@ Get a country's flag as SVG image URLs
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.utility.countryFlag({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.utility.countryFlag({});
 ```
 
 **Input**
@@ -5468,7 +5584,8 @@ Returns a list of emojis according to input parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.utility.emoji({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.utility.emoji({});
 ```
 
 **Input**
@@ -5513,7 +5630,8 @@ Get a list of company names, ticker symbols, and logo image URLs matching the in
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.utility.logo({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.utility.logo({});
 ```
 
 **Input**
@@ -5552,7 +5670,8 @@ Returns a random password string adhering to the specified parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.utility.password({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.utility.password({});
 ```
 
 **Input**
@@ -5584,7 +5703,8 @@ Returns a QRCode image binary specified by input parameters
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.utility.qrCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.utility.qrCode({});
 ```
 
 **Input**
@@ -5620,7 +5740,8 @@ Returns a random image in JPEG format [premium plan required]
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.utility.randomImage({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.utility.randomImage({});
 ```
 
 **Input**
@@ -5654,7 +5775,8 @@ Returns fake random user profiles
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.utility.randomUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.utility.randomUser({});
 ```
 
 **Input**
@@ -5742,7 +5864,8 @@ Returns detailed information about a bank based on the BIN number provided
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.validation.bin({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.validation.bin({});
 ```
 
 **Input**
@@ -5785,7 +5908,8 @@ Returns metadata for a given email address, including whether it is from a dispo
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.validation.disposableEmail({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.validation.disposableEmail({});
 ```
 
 **Input**
@@ -5817,7 +5941,8 @@ Returns metadata (including whether it is valid) for a given email address
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.validation.email({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.validation.email({});
 ```
 
 **Input**
@@ -5854,7 +5979,8 @@ Returns detailed information on a given IBAN
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.validation.iban({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.validation.iban({});
 ```
 
 **Input**
@@ -5894,7 +6020,8 @@ Returns metadata (including whether it is valid) for a given phone number
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.validation.phone({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.validation.phone({});
 ```
 
 **Input**
@@ -5937,7 +6064,8 @@ Returns detailed information about a bank based on its routing number
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.validation.routingNumber({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.validation.routingNumber({});
 ```
 
 **Input**
@@ -5987,7 +6115,8 @@ Returns a list of bank information (including SWIFT/BIC Code) that match the inp
 **Risk:** `read`
 
 ```ts
-await corsair.apininjas.api.validation.swiftCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.apininjas.api.validation.swiftCode({});
 ```
 
 **Input**

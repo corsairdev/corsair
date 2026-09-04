@@ -20,7 +20,8 @@ Create a new data exchange
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.analyticsHub.createDataExchange({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.analyticsHub.createDataExchange({});
 ```
 
 **Input**
@@ -61,7 +62,8 @@ Create a new listing (shareable dataset) in a data exchange
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.analyticsHub.createListing({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.analyticsHub.createListing({});
 ```
 
 **Input**
@@ -135,7 +137,8 @@ Create a new query template in a data exchange
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.analyticsHub.createQueryTemplate({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.analyticsHub.createQueryTemplate({});
 ```
 
 **Input**
@@ -175,7 +178,8 @@ List data exchanges in a location
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.analyticsHub.listDataexchangesListings({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.analyticsHub.listDataexchangesListings({});
 ```
 
 **Input**
@@ -225,7 +229,8 @@ List listings in a data exchange
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.analyticsHub.listListings({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.analyticsHub.listListings({});
 ```
 
 **Input**
@@ -284,7 +289,8 @@ List data exchanges across an organization
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.analyticsHub.listOrganizationDataExchanges({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.analyticsHub.listOrganizationDataExchanges({});
 ```
 
 **Input**
@@ -334,7 +340,8 @@ List query templates in a data exchange
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.analyticsHub.listQueryTemplates({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.analyticsHub.listQueryTemplates({});
 ```
 
 **Input**
@@ -381,7 +388,8 @@ Create a new external data source connection
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.connections.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.connections.create({});
 ```
 
 **Input**
@@ -532,7 +540,8 @@ List BigQuery connections across all locations
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.connections.listBigQueryConnections({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.connections.listBigQueryConnections({});
 ```
 
 **Input**
@@ -608,7 +617,8 @@ List BigQuery connections in a specific location
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.connections.listLocationsConnections({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.connections.listLocationsConnections({});
 ```
 
 **Input**
@@ -684,7 +694,8 @@ Update an existing connection
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.connections.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.connections.update({});
 ```
 
 **Input**
@@ -823,7 +834,8 @@ Create a new dataset
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.datasets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.datasets.create({});
 ```
 
 **Input**
@@ -977,7 +989,8 @@ Permanently delete a dataset [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.googlebigquery.api.datasets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.datasets.delete({});
 ```
 
 **Input**
@@ -1004,7 +1017,8 @@ Get a dataset by ID
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.datasets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.datasets.get({});
 ```
 
 **Input**
@@ -1101,7 +1115,8 @@ List datasets in a project
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.datasets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.datasets.list({});
 ```
 
 **Input**
@@ -1158,7 +1173,8 @@ Partially update a dataset
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.datasets.patch({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.datasets.patch({});
 ```
 
 **Input**
@@ -1308,7 +1324,8 @@ Restore a recently deleted dataset
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.datasets.undelete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.datasets.undelete({});
 ```
 
 **Input**
@@ -1405,7 +1422,8 @@ Replace a dataset (full update)
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.datasets.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.datasets.update({});
 ```
 
 **Input**
@@ -1557,7 +1575,8 @@ Create a column-level security / data masking policy
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.iam.createLocationsDatapolicies({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.iam.createLocationsDatapolicies({});
 ```
 
 **Input**
@@ -1618,7 +1637,8 @@ Get a connection's IAM policy
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.iam.getConnectionIamPolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.iam.getConnectionIamPolicy({});
 ```
 
 **Input**
@@ -1671,7 +1691,8 @@ Get a routine's IAM policy
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.iam.getRoutineIamPolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.iam.getRoutineIamPolicy({});
 ```
 
 **Input**
@@ -1724,7 +1745,8 @@ Get the project's BigQuery service account email
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.iam.getServiceAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.iam.getServiceAccount({});
 ```
 
 **Input**
@@ -1755,7 +1777,8 @@ Get a table's IAM policy
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.iam.getTableIamPolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.iam.getTableIamPolicy({});
 ```
 
 **Input**
@@ -1808,7 +1831,8 @@ List data policies in a location
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.iam.listLocationsDatapolicies({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.iam.listLocationsDatapolicies({});
 ```
 
 **Input**
@@ -1860,7 +1884,8 @@ List a table's row-level access policies
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.iam.listRowAccessPolicies({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.iam.listRowAccessPolicies({});
 ```
 
 **Input**
@@ -1915,7 +1940,8 @@ Replace a routine's IAM policy
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.iam.setRoutineIamPolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.iam.setRoutineIamPolicy({});
 ```
 
 **Input**
@@ -1991,7 +2017,8 @@ Test which permissions the caller has on a routine
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.iam.testRoutineIamPermissions({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.iam.testRoutineIamPermissions({});
 ```
 
 **Input**
@@ -2026,7 +2053,8 @@ Permanently delete a model [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.googlebigquery.api.ml.deleteModel({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.ml.deleteModel({});
 ```
 
 **Input**
@@ -2053,7 +2081,8 @@ Get a BigQuery ML model by ID
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.ml.getBigqueryModel({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.ml.getBigqueryModel({});
 ```
 
 **Input**
@@ -2148,7 +2177,8 @@ List available BigQuery locations for a project
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.ml.listLocations({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.ml.listLocations({});
 ```
 
 **Input**
@@ -2195,7 +2225,8 @@ List BigQuery ML models in a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.ml.listModels({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.ml.listModels({});
 ```
 
 **Input**
@@ -2266,7 +2297,8 @@ List projects visible to the caller
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.ml.listProjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.ml.listProjects({});
 ```
 
 **Input**
@@ -2318,7 +2350,8 @@ Partially update a model's metadata
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.ml.patchModel({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.ml.patchModel({});
 ```
 
 **Input**
@@ -2429,7 +2462,8 @@ Request cancellation of a running job [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.googlebigquery.api.queries.cancelJob({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.queries.cancelJob({});
 ```
 
 **Input**
@@ -2593,7 +2627,8 @@ Delete a job's metadata [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.googlebigquery.api.queries.deleteJobMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.queries.deleteJobMetadata({});
 ```
 
 **Input**
@@ -2620,7 +2655,8 @@ Get a job by ID
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.queries.getJob({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.queries.getJob({});
 ```
 
 **Input**
@@ -2802,7 +2838,8 @@ Fetch additional pages of results for a running/completed query job
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.queries.getQueryResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.queries.getQueryResults({});
 ```
 
 **Input**
@@ -2900,7 +2937,8 @@ Stream rows into a table (supports insertId-based deduplication)
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.queries.insertAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.queries.insertAll({});
 ```
 
 **Input**
@@ -2967,7 +3005,8 @@ Start a query, load, extract, or copy job (supports dry-run)
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.queries.insertJob({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.queries.insertJob({});
 ```
 
 **Input**
@@ -3262,7 +3301,8 @@ Start a load job that uploads an inline file as the data source
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.queries.insertJobWithUpload({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.queries.insertJobWithUpload({});
 ```
 
 **Input**
@@ -3560,7 +3600,8 @@ List jobs for a project
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.queries.listJobs({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.queries.listJobs({});
 ```
 
 **Input**
@@ -3732,7 +3773,8 @@ Run a SQL query and return inline results
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.queries.query({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.queries.query({});
 ```
 
 **Input**
@@ -3869,7 +3911,8 @@ Create a new slot reservation (has billing impact)
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.reservations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.reservations.create({});
 ```
 
 **Input**
@@ -3936,7 +3979,8 @@ Assign a project/folder/org to a reservation
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.reservations.createAssignment({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.reservations.createAssignment({});
 ```
 
 **Input**
@@ -3973,7 +4017,8 @@ Purchase a new capacity commitment (has billing impact)
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.reservations.createCapacityCommitment({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.reservations.createCapacityCommitment({});
 ```
 
 **Input**
@@ -4013,7 +4058,8 @@ List slot reservations in a location
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.reservations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.reservations.list({});
 ```
 
 **Input**
@@ -4069,7 +4115,8 @@ List a reservation's assignments
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.reservations.listAssignments({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.reservations.listAssignments({});
 ```
 
 **Input**
@@ -4118,7 +4165,8 @@ List capacity commitments in a location
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.reservations.listCapacityCommitments({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.reservations.listCapacityCommitments({});
 ```
 
 **Input**
@@ -4168,7 +4216,8 @@ List reservation groups in a location
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.reservations.listGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.reservations.listGroups({});
 ```
 
 **Input**
@@ -4213,7 +4262,8 @@ Search assignments across a location
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.reservations.searchAllAssignments({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.reservations.searchAllAssignments({});
 ```
 
 **Input**
@@ -4264,7 +4314,8 @@ Create a new routine (UDF or stored procedure)
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.routines.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.routines.create({});
 ```
 
 **Input**
@@ -4382,7 +4433,8 @@ Permanently delete a routine [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.googlebigquery.api.routines.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.routines.delete({});
 ```
 
 **Input**
@@ -4409,7 +4461,8 @@ Get a routine by ID
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.routines.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.routines.get({});
 ```
 
 **Input**
@@ -4487,7 +4540,8 @@ List routines (UDFs/stored procedures) in a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.routines.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.routines.list({});
 ```
 
 **Input**
@@ -4556,7 +4610,8 @@ Replace a routine (full update)
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.routines.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.routines.update({});
 ```
 
 **Input**
@@ -4669,7 +4724,8 @@ Create a new table or view
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.tables.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.tables.create({});
 ```
 
 **Input**
@@ -4900,7 +4956,8 @@ Permanently delete a table [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.googlebigquery.api.tables.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.tables.delete({});
 ```
 
 **Input**
@@ -4927,7 +4984,8 @@ Get a table's schema and metadata
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.tables.getSchema({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.tables.getSchema({});
 ```
 
 **Input**
@@ -5066,7 +5124,8 @@ List tables in a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.tables.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.tables.list({});
 ```
 
 **Input**
@@ -5130,7 +5189,8 @@ List a table's row data
 **Risk:** `read`
 
 ```ts
-await corsair.googlebigquery.api.tables.listTableData({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.tables.listTableData({});
 ```
 
 **Input**
@@ -5183,7 +5243,8 @@ Partially update a table
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.tables.patch({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.tables.patch({});
 ```
 
 **Input**
@@ -5386,7 +5447,8 @@ Replace a table (full update)
 **Risk:** `write`
 
 ```ts
-await corsair.googlebigquery.api.tables.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlebigquery.api.tables.update({});
 ```
 
 **Input**

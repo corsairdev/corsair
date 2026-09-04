@@ -20,7 +20,8 @@ Synthesise speech from one or more voice and text pairs, returning Base64-encode
 **Risk:** `write`
 
 ```ts
-await corsair.aivoov.api.audio.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.aivoov.api.audio.create({});
 ```
 
 **Input**
@@ -58,7 +59,8 @@ List available text-to-speech voices, optionally filtered by BCP-47 language cod
 **Risk:** `read`
 
 ```ts
-await corsair.aivoov.api.voices.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.aivoov.api.voices.list({});
 ```
 
 **Input**

@@ -14,7 +14,8 @@ The Boloforms plugin syncs data locally. Use `corsair.boloforms.db.<entity>.sear
 Path: `boloforms.db.documents.search`
 
 ```ts
-const rows = await corsair.boloforms.db.documents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.boloforms.db.documents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

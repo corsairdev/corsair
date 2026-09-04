@@ -20,7 +20,8 @@ Create a new contact
 **Risk:** `write`
 
 ```ts
-await corsair.resend.api.contacts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.contacts.create({});
 ```
 
 **Input**
@@ -86,7 +87,8 @@ Delete a contact [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.resend.api.contacts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.contacts.delete({});
 ```
 
 **Input**
@@ -119,7 +121,8 @@ Get info about a contact
 **Risk:** `read`
 
 ```ts
-await corsair.resend.api.contacts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.contacts.get({});
 ```
 
 **Input**
@@ -155,7 +158,8 @@ List all contacts
 **Risk:** `read`
 
 ```ts
-await corsair.resend.api.contacts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.contacts.list({});
 ```
 
 **Input**
@@ -205,7 +209,8 @@ Update an existing contact
 **Risk:** `write`
 
 ```ts
-await corsair.resend.api.contacts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.contacts.update({});
 ```
 
 **Input**
@@ -252,7 +257,8 @@ Add a new sending domain
 **Risk:** `write`
 
 ```ts
-await corsair.resend.api.domains.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.domains.create({});
 ```
 
 **Input**
@@ -287,7 +293,8 @@ Remove a sending domain [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.resend.api.domains.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.domains.delete({});
 ```
 
 **Input**
@@ -319,7 +326,8 @@ Get info about a sending domain
 **Risk:** `read`
 
 ```ts
-await corsair.resend.api.domains.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.domains.get({});
 ```
 
 **Input**
@@ -353,7 +361,8 @@ List all sending domains
 **Risk:** `read`
 
 ```ts
-await corsair.resend.api.domains.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.domains.list({});
 ```
 
 **Input**
@@ -401,7 +410,8 @@ Trigger DNS verification for a domain
 **Risk:** `write`
 
 ```ts
-await corsair.resend.api.domains.verify({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.domains.verify({});
 ```
 
 **Input**
@@ -455,7 +465,8 @@ Send up to 100 emails in a single API call
 **Risk:** `write`
 
 ```ts
-await corsair.resend.api.emails.batch({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.emails.batch({});
 ```
 
 **Input**
@@ -521,7 +532,8 @@ Cancel a scheduled email
 **Risk:** `write`
 
 ```ts
-await corsair.resend.api.emails.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.emails.cancel({});
 ```
 
 **Input**
@@ -553,7 +565,8 @@ Get info about a sent email
 **Risk:** `read`
 
 ```ts
-await corsair.resend.api.emails.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.emails.get({});
 ```
 
 **Input**
@@ -587,7 +600,8 @@ List sent emails
 **Risk:** `read`
 
 ```ts
-await corsair.resend.api.emails.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.emails.list({});
 ```
 
 **Input**
@@ -635,7 +649,8 @@ Send an email to one or more recipients
 **Risk:** `write`
 
 ```ts
-await corsair.resend.api.emails.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.resend.api.emails.send({});
 ```
 
 **Input**

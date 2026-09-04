@@ -20,7 +20,8 @@ Verify the configured SecurityTrails API key is accepted and the API is reachabl
 **Risk:** `read`
 
 ```ts
-await corsair.securitytrails.api.account.ping({});
+const tenant = corsair.withTenant('acme');
+await tenant.securitytrails.api.account.ping({});
 ```
 
 **Input:** _empty object_
@@ -45,7 +46,8 @@ Return the current and allowed monthly API usage for the account.
 **Risk:** `read`
 
 ```ts
-await corsair.securitytrails.api.account.usage({});
+const tenant = corsair.withTenant('acme');
+await tenant.securitytrails.api.account.usage({});
 ```
 
 **Input:** _empty object_
@@ -73,7 +75,8 @@ List the CIDR blocks associated with a company domain. Paginated.
 **Risk:** `read`
 
 ```ts
-await corsair.securitytrails.api.company.associatedIps({});
+const tenant = corsair.withTenant('acme');
+await tenant.securitytrails.api.company.associatedIps({});
 ```
 
 **Input**
@@ -124,7 +127,8 @@ Get current DNS records (A, AAAA, MX, NS, SOA, TXT) and co-occurrence statistics
 **Risk:** `read`
 
 ```ts
-await corsair.securitytrails.api.domain.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.securitytrails.api.domain.get({});
 ```
 
 **Input**
@@ -209,7 +213,8 @@ List current and historical SSL/TLS certificates for a hostname, optionally incl
 **Risk:** `read`
 
 ```ts
-await corsair.securitytrails.api.domain.ssl({});
+const tenant = corsair.withTenant('acme');
+await tenant.securitytrails.api.domain.ssl({});
 ```
 
 **Input**
@@ -285,7 +290,8 @@ Search the IP dataset with a DSL query, returning matching addresses, PTR record
 **Risk:** `read`
 
 ```ts
-await corsair.securitytrails.api.ips.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.securitytrails.api.ips.search({});
 ```
 
 **Input**
@@ -344,7 +350,8 @@ Return aggregate open-port and PTR-pattern statistics for a DSL query over the I
 **Risk:** `read`
 
 ```ts
-await corsair.securitytrails.api.ips.stats({});
+const tenant = corsair.withTenant('acme');
+await tenant.securitytrails.api.ips.stats({});
 ```
 
 **Input**
@@ -401,7 +408,8 @@ Add or remove static asset rules for an ASI project, changing which assets are i
 **Risk:** `write`
 
 ```ts
-await corsair.securitytrails.api.projects.bulkStaticAssetRules({});
+const tenant = corsair.withTenant('acme');
+await tenant.securitytrails.api.projects.bulkStaticAssetRules({});
 ```
 
 **Input**
@@ -510,7 +518,8 @@ List the Attack Surface Intelligence projects the API key can access.
 **Risk:** `read`
 
 ```ts
-await corsair.securitytrails.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.securitytrails.api.projects.list({});
 ```
 
 **Input**
@@ -580,7 +589,8 @@ Fetch the next page of a DSL search using a scroll cursor from a previous respon
 **Risk:** `read`
 
 ```ts
-await corsair.securitytrails.api.scroll.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.securitytrails.api.scroll.get({});
 ```
 
 **Input**
@@ -617,7 +627,8 @@ Run a SQL-like query against the hosts or ips tables. Returns up to 100 records 
 **Risk:** `read`
 
 ```ts
-await corsair.securitytrails.api.sql.query({});
+const tenant = corsair.withTenant('acme');
+await tenant.securitytrails.api.sql.query({});
 ```
 
 **Input**
@@ -671,7 +682,8 @@ Fetch the next 100 records for an open SQL API scroll cursor.
 **Risk:** `read`
 
 ```ts
-await corsair.securitytrails.api.sql.scroll({});
+const tenant = corsair.withTenant('acme');
+await tenant.securitytrails.api.sql.scroll({});
 ```
 
 **Input**

@@ -14,7 +14,8 @@ The Vapi plugin syncs data locally. Use `corsair.vapi.db.<entity>.search({ data,
 Path: `vapi.db.assistants.search`
 
 ```ts
-const rows = await corsair.vapi.db.assistants.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vapi.db.assistants.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `vapi.db.calls.search`
 
 ```ts
-const rows = await corsair.vapi.db.calls.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vapi.db.calls.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -79,7 +81,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `vapi.db.files.search`
 
 ```ts
-const rows = await corsair.vapi.db.files.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vapi.db.files.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -111,7 +114,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `vapi.db.knowledgeBases.search`
 
 ```ts
-const rows = await corsair.vapi.db.knowledgeBases.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vapi.db.knowledgeBases.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -139,7 +143,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `vapi.db.phoneNumbers.search`
 
 ```ts
-const rows = await corsair.vapi.db.phoneNumbers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vapi.db.phoneNumbers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -170,7 +175,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `vapi.db.squads.search`
 
 ```ts
-const rows = await corsair.vapi.db.squads.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vapi.db.squads.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -197,7 +203,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `vapi.db.tools.search`
 
 ```ts
-const rows = await corsair.vapi.db.tools.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vapi.db.tools.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

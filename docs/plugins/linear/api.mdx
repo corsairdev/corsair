@@ -20,7 +20,8 @@ Post a comment on an issue
 **Risk:** `write`
 
 ```ts
-await corsair.linear.api.comments.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.comments.create({});
 ```
 
 **Input**
@@ -92,7 +93,8 @@ Delete a comment [DESTRUCTIVE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.linear.api.comments.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.comments.delete({});
 ```
 
 **Input**
@@ -117,7 +119,8 @@ List comments on an issue
 **Risk:** `read`
 
 ```ts
-await corsair.linear.api.comments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.comments.list({});
 ```
 
 **Input**
@@ -363,7 +366,8 @@ Update a comment
 **Risk:** `write`
 
 ```ts
-await corsair.linear.api.comments.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.comments.update({});
 ```
 
 **Input**
@@ -447,7 +451,8 @@ Create a new issue
 **Risk:** `write`
 
 ```ts
-await corsair.linear.api.issues.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.issues.create({});
 ```
 
 **Input**
@@ -553,7 +558,8 @@ Permanently delete an issue [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.linear.api.issues.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.issues.delete({});
 ```
 
 **Input**
@@ -578,7 +584,8 @@ Get a specific issue
 **Risk:** `read`
 
 ```ts
-await corsair.linear.api.issues.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.issues.get({});
 ```
 
 **Input**
@@ -733,7 +740,8 @@ List issues in a team
 **Risk:** `read`
 
 ```ts
-await corsair.linear.api.issues.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.issues.list({});
 ```
 
 **Input**
@@ -856,7 +864,8 @@ Update an existing issue
 **Risk:** `write`
 
 ```ts
-await corsair.linear.api.issues.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.issues.update({});
 ```
 
 **Input**
@@ -975,7 +984,8 @@ Create a new project
 **Risk:** `write`
 
 ```ts
-await corsair.linear.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.projects.create({});
 ```
 
 **Input**
@@ -1057,7 +1067,8 @@ Permanently delete a project [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.linear.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.projects.delete({});
 ```
 
 **Input**
@@ -1082,7 +1093,8 @@ Get a specific project
 **Risk:** `read`
 
 ```ts
-await corsair.linear.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.projects.get({});
 ```
 
 **Input**
@@ -1154,7 +1166,8 @@ List projects in a team
 **Risk:** `read`
 
 ```ts
-await corsair.linear.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.projects.list({});
 ```
 
 **Input**
@@ -1235,7 +1248,8 @@ Update an existing project
 **Risk:** `write`
 
 ```ts
-await corsair.linear.api.projects.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.projects.update({});
 ```
 
 **Input**
@@ -1331,7 +1345,8 @@ Get a specific team
 **Risk:** `read`
 
 ```ts
-await corsair.linear.api.teams.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.teams.get({});
 ```
 
 **Input**
@@ -1370,7 +1385,8 @@ List teams in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.linear.api.teams.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.teams.list({});
 ```
 
 **Input**
@@ -1436,7 +1452,8 @@ Get a specific user
 **Risk:** `read`
 
 ```ts
-await corsair.linear.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.users.get({});
 ```
 
 **Input**
@@ -1474,7 +1491,8 @@ List users in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.linear.api.users.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.linear.api.users.list({});
 ```
 
 **Input**

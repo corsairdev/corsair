@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { unione } from '@corsair-dev/unione';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		unione(),
 	],

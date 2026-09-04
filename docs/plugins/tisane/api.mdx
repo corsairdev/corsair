@@ -20,7 +20,8 @@ Extract named entities and topics from text
 **Risk:** `read`
 
 ```ts
-await corsair.tisane.api.text.extractEntities({});
+const tenant = corsair.withTenant('acme');
+await tenant.tisane.api.text.extractEntities({});
 ```
 
 **Input**
@@ -77,7 +78,8 @@ Content moderation for abuse, hate speech, and harassment
 **Risk:** `read`
 
 ```ts
-await corsair.tisane.api.text.moderate({});
+const tenant = corsair.withTenant('acme');
+await tenant.tisane.api.text.moderate({});
 ```
 
 **Input**
@@ -126,7 +128,8 @@ Comprehensive natural language parsing and text analysis
 **Risk:** `read`
 
 ```ts
-await corsair.tisane.api.text.parse({});
+const tenant = corsair.withTenant('acme');
+await tenant.tisane.api.text.parse({});
 ```
 
 **Input**
@@ -239,7 +242,8 @@ Aspect-based sentiment analysis and tone evaluation
 **Risk:** `read`
 
 ```ts
-await corsair.tisane.api.text.sentiment({});
+const tenant = corsair.withTenant('acme');
+await tenant.tisane.api.text.sentiment({});
 ```
 
 **Input**

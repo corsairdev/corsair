@@ -20,7 +20,8 @@ Create app
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.apps.createDatabricksApp({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.apps.createDatabricksApp({});
 ```
 
 **Input**
@@ -61,7 +62,8 @@ Delete app
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.apps.deleteDatabricksApp({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.apps.deleteDatabricksApp({});
 ```
 
 **Input**
@@ -91,7 +93,8 @@ Deploy app
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.apps.deployDatabricksApp({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.apps.deployDatabricksApp({});
 ```
 
 **Input**
@@ -124,7 +127,8 @@ Assign metastore to workspace
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.catalog.assignMetastoreToWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.assignMetastoreToWorkspace({});
 ```
 
 **Input**
@@ -156,7 +160,8 @@ Batch create access requests
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.catalog.batchCreateAccessRequests({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.batchCreateAccessRequests({});
 ```
 
 **Input**
@@ -199,7 +204,8 @@ Check table existence
 **Risk:** `read`
 
 ```ts
-await corsair.databricks.api.catalog.checkTableExists({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.checkTableExists({});
 ```
 
 **Input**
@@ -231,7 +237,8 @@ Create catalog connection
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.catalog.createCatalogConnection({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.createCatalogConnection({});
 ```
 
 **Input**
@@ -273,7 +280,8 @@ Create catalog credential
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.catalog.createCatalogCredential({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.createCatalogCredential({});
 ```
 
 **Input**
@@ -339,7 +347,8 @@ Create external location
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.catalog.createExternalLocation({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.createExternalLocation({});
 ```
 
 **Input**
@@ -371,7 +380,8 @@ Create Unity Catalog metastore
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.catalog.createMetastore({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.createMetastore({});
 ```
 
 **Input**
@@ -403,7 +413,8 @@ Create storage credential
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.catalog.createStorageCredential({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.createStorageCredential({});
 ```
 
 **Input**
@@ -457,7 +468,8 @@ Delete catalog
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.catalog.deleteCatalog({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.deleteCatalog({});
 ```
 
 **Input**
@@ -488,7 +500,8 @@ Delete catalog connection
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.catalog.deleteCatalogConnection({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.deleteCatalogConnection({});
 ```
 
 **Input**
@@ -518,7 +531,8 @@ Delete catalog credential
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.catalog.deleteCatalogCredential({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.deleteCatalogCredential({});
 ```
 
 **Input**
@@ -549,7 +563,8 @@ Delete catalog table
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.catalog.deleteCatalogTable({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.deleteCatalogTable({});
 ```
 
 **Input**
@@ -579,7 +594,8 @@ Delete external location
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.catalog.deleteExternalLocation({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.deleteExternalLocation({});
 ```
 
 **Input**
@@ -610,7 +626,8 @@ Delete metastore
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.catalog.deleteMetastore({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.deleteMetastore({});
 ```
 
 **Input**
@@ -641,7 +658,8 @@ Delete online table
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.catalog.deleteOnlineTable({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.deleteOnlineTable({});
 ```
 
 **Input**
@@ -671,7 +689,8 @@ Delete storage credential
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.catalog.deleteStorageCredential({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.deleteStorageCredential({});
 ```
 
 **Input**
@@ -702,7 +721,8 @@ Disable system schema
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.catalog.disableSystemSchema({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.catalog.disableSystemSchema({});
 ```
 
 **Input**
@@ -735,7 +755,8 @@ Create clean room
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.cleanrooms.createCleanRoom({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.cleanrooms.createCleanRoom({});
 ```
 
 **Input**
@@ -778,7 +799,8 @@ Create clean room auto approval rule
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.cleanrooms.createCleanRoomAutoApprovalRule({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.cleanrooms.createCleanRoomAutoApprovalRule({});
 ```
 
 **Input**
@@ -812,7 +834,8 @@ Add compute instance profile
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.compute.addComputeInstanceProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.compute.addComputeInstanceProfile({});
 ```
 
 **Input**
@@ -844,7 +867,8 @@ Create cluster policy
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.compute.createComputeClusterPolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.compute.createComputeClusterPolicy({});
 ```
 
 **Input**
@@ -876,7 +900,8 @@ Create instance pool
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.compute.createComputeInstancePool({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.compute.createComputeInstancePool({});
 ```
 
 **Input**
@@ -910,7 +935,8 @@ Create Spark cluster
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.compute.createDatabricksCluster({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.compute.createDatabricksCluster({});
 ```
 
 **Input**
@@ -957,7 +983,8 @@ Create global init script
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.compute.createGlobalInitScript({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.compute.createGlobalInitScript({});
 ```
 
 **Input**
@@ -990,7 +1017,8 @@ Delete cluster policy
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.compute.deleteComputeClusterPolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.compute.deleteComputeClusterPolicy({});
 ```
 
 **Input**
@@ -1020,7 +1048,8 @@ Delete instance pool
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.compute.deleteComputeInstancePool({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.compute.deleteComputeInstancePool({});
 ```
 
 **Input**
@@ -1050,7 +1079,8 @@ Terminate Spark cluster
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.compute.deleteDatabricksCluster({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.compute.deleteDatabricksCluster({});
 ```
 
 **Input**
@@ -1080,7 +1110,8 @@ Delete global init script
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.compute.deleteGlobalInitScript({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.compute.deleteGlobalInitScript({});
 ```
 
 **Input**
@@ -1112,7 +1143,8 @@ Create Genie message
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.dashboards.createGenieMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.dashboards.createGenieMessage({});
 ```
 
 **Input**
@@ -1145,7 +1177,8 @@ Create Genie space
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.dashboards.createGenieSpace({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.dashboards.createGenieSpace({});
 ```
 
 **Input**
@@ -1176,7 +1209,8 @@ Create Lakeview dashboard
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.dashboards.createLakeviewDashboard({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.dashboards.createLakeviewDashboard({});
 ```
 
 **Input**
@@ -1207,7 +1241,8 @@ Delete Genie conversation
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.dashboards.deleteGenieConversation({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.dashboards.deleteGenieConversation({});
 ```
 
 **Input**
@@ -1238,7 +1273,8 @@ Delete Genie message
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.dashboards.deleteGenieConversationMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.dashboards.deleteGenieConversationMessage({});
 ```
 
 **Input**
@@ -1270,7 +1306,8 @@ Delete Lakeview schedule
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.dashboards.deleteLakeviewDashboardSchedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.dashboards.deleteLakeviewDashboardSchedule({});
 ```
 
 **Input**
@@ -1303,7 +1340,8 @@ Create database instance
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.database.createDatabaseInstance({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.database.createDatabaseInstance({});
 ```
 
 **Input**
@@ -1335,7 +1373,8 @@ Delete database instance
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.database.deleteDatabaseInstance({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.database.deleteDatabaseInstance({});
 ```
 
 **Input**
@@ -1365,7 +1404,8 @@ Delete synced database table
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.database.deleteSyncedDatabaseTable({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.database.deleteSyncedDatabaseTable({});
 ```
 
 **Input**
@@ -1397,7 +1437,8 @@ Create data quality monitor
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.dataquality.createDataQualityMonitor({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.dataquality.createDataQualityMonitor({});
 ```
 
 **Input**
@@ -1429,7 +1470,8 @@ Create quality monitor V2
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.dataquality.createQualityMonitorV2({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.dataquality.createQualityMonitorV2({});
 ```
 
 **Input**
@@ -1463,7 +1505,8 @@ Add block to DBFS stream
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.dbfs.addBlockToDbfsStream({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.dbfs.addBlockToDbfsStream({});
 ```
 
 **Input**
@@ -1494,7 +1537,8 @@ Create DBFS file stream
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.dbfs.createDbfsFileStream({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.dbfs.createDbfsFileStream({});
 ```
 
 **Input**
@@ -1525,7 +1569,8 @@ Delete file or directory from DBFS
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.dbfs.deleteDbfsFileOrDirectory({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.dbfs.deleteDbfsFileOrDirectory({});
 ```
 
 **Input**
@@ -1558,7 +1603,8 @@ Add member to security group
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.iam.addMemberToSecurityGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.iam.addMemberToSecurityGroup({});
 ```
 
 **Input**
@@ -1589,7 +1635,8 @@ Create IAM group
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.iam.createIamGroupV2({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.iam.createIamGroupV2({});
 ```
 
 **Input**
@@ -1632,7 +1679,8 @@ Create IAM service principal
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.iam.createIamServicePrincipalV2({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.iam.createIamServicePrincipalV2({});
 ```
 
 **Input**
@@ -1664,7 +1712,8 @@ Create IAM user
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.iam.createIamUserV2({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.iam.createIamUserV2({});
 ```
 
 **Input**
@@ -1697,7 +1746,8 @@ Create IP access list
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.iam.createIpAccessList({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.iam.createIpAccessList({});
 ```
 
 **Input**
@@ -1740,7 +1790,8 @@ Delete IAM group
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.iam.deleteIamGroupV2({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.iam.deleteIamGroupV2({});
 ```
 
 **Input**
@@ -1770,7 +1821,8 @@ Delete service principal
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.iam.deleteIamServicePrincipalV2({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.iam.deleteIamServicePrincipalV2({});
 ```
 
 **Input**
@@ -1800,7 +1852,8 @@ Delete user
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.iam.deleteIamUserV2({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.iam.deleteIamUserV2({});
 ```
 
 **Input**
@@ -1832,7 +1885,8 @@ Cancel all job runs
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.jobs.cancelAllJobRuns({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.jobs.cancelAllJobRuns({});
 ```
 
 **Input**
@@ -1863,7 +1917,8 @@ Cancel job run
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.jobs.cancelJobRun({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.jobs.cancelJobRun({});
 ```
 
 **Input**
@@ -1893,7 +1948,8 @@ Delete job run
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.jobs.deleteDatabricksJobRun({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.jobs.deleteDatabricksJobRun({});
 ```
 
 **Input**
@@ -1925,7 +1981,8 @@ Batch get consumer listings
 **Risk:** `read`
 
 ```ts
-await corsair.databricks.api.marketplace.batchGetMarketplaceConsumerListings({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.marketplace.batchGetMarketplaceConsumerListings({});
 ```
 
 **Input**
@@ -1965,7 +2022,8 @@ Batch get consumer providers
 **Risk:** `read`
 
 ```ts
-await corsair.databricks.api.marketplace.batchGetMarketplaceConsumerProviders({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.marketplace.batchGetMarketplaceConsumerProviders({});
 ```
 
 **Input**
@@ -2005,7 +2063,8 @@ Create marketplace consumer installation
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.marketplace.createMarketplaceConsumerInstallation({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.marketplace.createMarketplaceConsumerInstallation({});
 ```
 
 **Input**
@@ -2036,7 +2095,8 @@ Create marketplace provider listing
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.marketplace.createMarketplaceProviderListing({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.marketplace.createMarketplaceProviderListing({});
 ```
 
 **Input**
@@ -2068,7 +2128,8 @@ Create provider analytics dashboard
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.marketplace.createProviderAnalyticsDashboard({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.marketplace.createProviderAnalyticsDashboard({});
 ```
 
 **Input**
@@ -2098,7 +2159,8 @@ Delete listing from exchange
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.marketplace.deleteListingFromExchange({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.marketplace.deleteListingFromExchange({});
 ```
 
 **Input**
@@ -2129,7 +2191,8 @@ Delete marketplace consumer installation
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.marketplace.deleteMarketplaceConsumerInstallation({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.marketplace.deleteMarketplaceConsumerInstallation({});
 ```
 
 **Input**
@@ -2161,7 +2224,8 @@ Create logged model
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.ml.createLoggedModel({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.createLoggedModel({});
 ```
 
 **Input**
@@ -2192,7 +2256,8 @@ Create ML experiment
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.ml.createMlExperiment({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.createMlExperiment({});
 ```
 
 **Input**
@@ -2223,7 +2288,8 @@ Create ML online feature store
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.ml.createMlFeatureStoreOnlineStore({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.createMlFeatureStoreOnlineStore({});
 ```
 
 **Input**
@@ -2254,7 +2320,8 @@ Create MLflow experiment run
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.ml.createMlflowExperimentRun({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.createMlflowExperimentRun({});
 ```
 
 **Input**
@@ -2285,7 +2352,8 @@ Create ML forecasting experiment
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.ml.createMlForecastingExperiment({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.createMlForecastingExperiment({});
 ```
 
 **Input**
@@ -2316,7 +2384,8 @@ Delete logged model
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.ml.deleteLoggedModel({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.deleteLoggedModel({});
 ```
 
 **Input**
@@ -2346,7 +2415,8 @@ Delete logged model tag
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.ml.deleteLoggedModelTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.deleteLoggedModelTag({});
 ```
 
 **Input**
@@ -2377,7 +2447,8 @@ Delete ML experiment
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.ml.deleteMlExperiment({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.deleteMlExperiment({});
 ```
 
 **Input**
@@ -2407,7 +2478,8 @@ Delete ML run
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.ml.deleteMlExperimentRun({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.deleteMlExperimentRun({});
 ```
 
 **Input**
@@ -2437,7 +2509,8 @@ Delete ML runs
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.ml.deleteMlExperimentRuns({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.deleteMlExperimentRuns({});
 ```
 
 **Input**
@@ -2468,7 +2541,8 @@ Delete ML run tag
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.ml.deleteMlExperimentRunTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.deleteMlExperimentRunTag({});
 ```
 
 **Input**
@@ -2499,7 +2573,8 @@ Delete Kafka config
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.ml.deleteMlFeatureEngKafkaConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.deleteMlFeatureEngKafkaConfig({});
 ```
 
 **Input**
@@ -2529,7 +2604,8 @@ Delete ML online store
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.ml.deleteMlFeatureStoreOnlineStore({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.deleteMlFeatureStoreOnlineStore({});
 ```
 
 **Input**
@@ -2559,7 +2635,8 @@ Delete ML feature tag
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.ml.deleteMlFeatureTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.ml.deleteMlFeatureTag({});
 ```
 
 **Input**
@@ -2593,7 +2670,8 @@ Create notification destination
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.security.createNotificationDestination({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.security.createNotificationDestination({});
 ```
 
 **Input**
@@ -2634,7 +2712,8 @@ Create OAuth SP secret
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.security.createOAuthServicePrincipalSecret({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.security.createOAuthServicePrincipalSecret({});
 ```
 
 **Input**
@@ -2666,7 +2745,8 @@ Create personal access token
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.security.createPersonalAccessToken({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.security.createPersonalAccessToken({});
 ```
 
 **Input**
@@ -2708,7 +2788,8 @@ Delete notification destination
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.security.deleteNotificationDestination({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.security.deleteNotificationDestination({});
 ```
 
 **Input**
@@ -2738,7 +2819,8 @@ Delete OAuth SP secret
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.security.deleteOAuth2ServicePrincipalSecret({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.security.deleteOAuth2ServicePrincipalSecret({});
 ```
 
 **Input**
@@ -2770,7 +2852,8 @@ Delete token management
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.security.deleteTokenManagement({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.security.deleteTokenManagement({});
 ```
 
 **Input**
@@ -2802,7 +2885,8 @@ Create provisioned throughput endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.serving.createProvisionedThroughputEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.serving.createProvisionedThroughputEndpoint({});
 ```
 
 **Input**
@@ -2843,7 +2927,8 @@ Create vector search endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.serving.createVectorSearchEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.serving.createVectorSearchEndpoint({});
 ```
 
 **Input**
@@ -2874,7 +2959,8 @@ Delete serving endpoint
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.serving.deleteServingEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.serving.deleteServingEndpoint({});
 ```
 
 **Input**
@@ -2904,7 +2990,8 @@ Delete vector search index
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.serving.deleteVectorSearchIndex({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.serving.deleteVectorSearchIndex({});
 ```
 
 **Input**
@@ -2936,7 +3023,8 @@ Create share
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.sharing.createShare({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sharing.createShare({});
 ```
 
 **Input**
@@ -2966,7 +3054,8 @@ Create sharing provider
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.sharing.createSharingProvider({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sharing.createSharingProvider({});
 ```
 
 **Input**
@@ -2997,7 +3086,8 @@ Create sharing recipient
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.sharing.createSharingRecipient({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sharing.createSharingRecipient({});
 ```
 
 **Input**
@@ -3028,7 +3118,8 @@ Delete share
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.sharing.deleteShare({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sharing.deleteShare({});
 ```
 
 **Input**
@@ -3058,7 +3149,8 @@ Delete sharing recipient
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.sharing.deleteSharingRecipient({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sharing.deleteSharingRecipient({});
 ```
 
 **Input**
@@ -3090,7 +3182,8 @@ Cancel SQL statement execution
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.sql.cancelSqlStatementExecution({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.cancelSqlStatementExecution({});
 ```
 
 **Input**
@@ -3120,7 +3213,8 @@ Create legacy SQL alert
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.sql.createLegacySqlAlert({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.createLegacySqlAlert({});
 ```
 
 **Input**
@@ -3162,7 +3256,8 @@ Create legacy SQL query
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.sql.createLegacySqlQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.createLegacySqlQuery({});
 ```
 
 **Input**
@@ -3194,7 +3289,8 @@ Create legacy SQL visualization
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.sql.createLegacySqlQueryVisualization({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.createLegacySqlQueryVisualization({});
 ```
 
 **Input**
@@ -3237,7 +3333,8 @@ Create SQL alert
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.sql.createSqlAlert({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.createSqlAlert({});
 ```
 
 **Input**
@@ -3279,7 +3376,8 @@ Create SQL query
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.sql.createSqlQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.createSqlQuery({});
 ```
 
 **Input**
@@ -3311,7 +3409,8 @@ Create SQL query visualization
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.sql.createSqlQueryVisualization({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.createSqlQueryVisualization({});
 ```
 
 **Input**
@@ -3354,7 +3453,8 @@ Delete legacy SQL alert
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.sql.deleteLegacySqlAlert({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.deleteLegacySqlAlert({});
 ```
 
 **Input**
@@ -3384,7 +3484,8 @@ Delete legacy SQL query
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.sql.deleteLegacySqlQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.deleteLegacySqlQuery({});
 ```
 
 **Input**
@@ -3414,7 +3515,8 @@ Delete legacy SQL visualization
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.sql.deleteLegacySqlQueryVisualization({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.deleteLegacySqlQueryVisualization({});
 ```
 
 **Input**
@@ -3444,7 +3546,8 @@ Delete SQL alert
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.sql.deleteSqlAlert({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.deleteSqlAlert({});
 ```
 
 **Input**
@@ -3474,7 +3577,8 @@ Delete SQL dashboard
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.sql.deleteSqlDashboard({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.deleteSqlDashboard({});
 ```
 
 **Input**
@@ -3504,7 +3608,8 @@ Delete SQL query
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.sql.deleteSqlQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.deleteSqlQuery({});
 ```
 
 **Input**
@@ -3534,7 +3639,8 @@ Delete SQL warehouse
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.sql.deleteSqlWarehouse({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.sql.deleteSqlWarehouse({});
 ```
 
 **Input**
@@ -3566,7 +3672,8 @@ Create secret scope
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.workspace.createSecretScope({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.createSecretScope({});
 ```
 
 **Input**
@@ -3597,7 +3704,8 @@ Create tag policy
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.workspace.createTagPolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.createTagPolicy({});
 ```
 
 **Input**
@@ -3628,7 +3736,8 @@ Create workspace directory
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.workspace.createWorkspaceDirectory({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.createWorkspaceDirectory({});
 ```
 
 **Input**
@@ -3658,7 +3767,8 @@ Create workspace git credentials
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.workspace.createWorkspaceGitCredentials({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.createWorkspaceGitCredentials({});
 ```
 
 **Input**
@@ -3690,7 +3800,8 @@ Create workspace repo
 **Risk:** `write`
 
 ```ts
-await corsair.databricks.api.workspace.createWorkspaceRepo({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.createWorkspaceRepo({});
 ```
 
 **Input**
@@ -3722,7 +3833,8 @@ Delete AI/BI dashboard embedding access policy
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteAibiDashboardEmbeddingAccessPolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteAibiDashboardEmbeddingAccessPolicy({});
 ```
 
 **Input:** _empty object_
@@ -3747,7 +3859,8 @@ Delete AI/BI embedding approved domains
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteAibiDashboardEmbeddingApprovedDomains({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteAibiDashboardEmbeddingApprovedDomains({});
 ```
 
 **Input:** _empty object_
@@ -3772,7 +3885,8 @@ Delete custom LLM agent
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteCustomLlmAgent({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteCustomLlmAgent({});
 ```
 
 **Input**
@@ -3802,7 +3916,8 @@ Delete dashboard email subscriptions setting
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteDashboardEmailSubscriptionsSetting({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteDashboardEmailSubscriptionsSetting({});
 ```
 
 **Input:** _empty object_
@@ -3827,7 +3942,8 @@ Delete Databricks pipeline
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteDatabricksPipeline({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteDatabricksPipeline({});
 ```
 
 **Input**
@@ -3857,7 +3973,8 @@ Delete default namespace setting
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteDefaultNamespaceSetting({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteDefaultNamespaceSetting({});
 ```
 
 **Input:** _empty object_
@@ -3882,7 +3999,8 @@ Delete default warehouse ID setting
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteDefaultWarehouseIdSetting({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteDefaultWarehouseIdSetting({});
 ```
 
 **Input:** _empty object_
@@ -3907,7 +4025,8 @@ Delete disable legacy access setting
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteDisableLegacyAccessSetting({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteDisableLegacyAccessSetting({});
 ```
 
 **Input:** _empty object_
@@ -3932,7 +4051,8 @@ Delete disable legacy DBFS setting
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteDisableLegacyDbfsSetting({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteDisableLegacyDbfsSetting({});
 ```
 
 **Input:** _empty object_
@@ -3957,7 +4077,8 @@ Delete LLM proxy partner setting
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteLlmProxyPartnerSetting({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteLlmProxyPartnerSetting({});
 ```
 
 **Input:** _empty object_
@@ -3982,7 +4103,8 @@ Delete restrict workspace admins setting
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteRestrictWorkspaceAdminsSetting({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteRestrictWorkspaceAdminsSetting({});
 ```
 
 **Input:** _empty object_
@@ -4007,7 +4129,8 @@ Delete secrets ACL
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteSecretsAcl({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteSecretsAcl({});
 ```
 
 **Input**
@@ -4038,7 +4161,8 @@ Delete secret scope
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteSecretScope({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteSecretScope({});
 ```
 
 **Input**
@@ -4068,7 +4192,8 @@ Delete SQL results download setting
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteSqlResultsDownloadSetting({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteSqlResultsDownloadSetting({});
 ```
 
 **Input:** _empty object_
@@ -4093,7 +4218,8 @@ Delete tag policy
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteTagPolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteTagPolicy({});
 ```
 
 **Input**
@@ -4123,7 +4249,8 @@ Delete workspace git credentials
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteWorkspaceGitCredentials({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteWorkspaceGitCredentials({});
 ```
 
 **Input**
@@ -4153,7 +4280,8 @@ Delete workspace object
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteWorkspaceObject({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteWorkspaceObject({});
 ```
 
 **Input**
@@ -4184,7 +4312,8 @@ Delete workspace repo
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteWorkspaceRepo({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteWorkspaceRepo({});
 ```
 
 **Input**
@@ -4214,7 +4343,8 @@ Delete workspace secret
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databricks.api.workspace.deleteWorkspaceSecret({});
+const tenant = corsair.withTenant('acme');
+await tenant.databricks.api.workspace.deleteWorkspaceSecret({});
 ```
 
 **Input**

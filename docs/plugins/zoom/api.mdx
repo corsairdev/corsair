@@ -20,7 +20,8 @@ List all archived meeting or webinar files
 **Risk:** `read`
 
 ```ts
-await corsair.zoom.api.archiveFiles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.archiveFiles.list({});
 ```
 
 **Input**
@@ -82,7 +83,8 @@ List all Zoom devices
 **Risk:** `read`
 
 ```ts
-await corsair.zoom.api.devices.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.devices.list({});
 ```
 
 **Input**
@@ -144,7 +146,8 @@ Add a registrant to a meeting
 **Risk:** `write`
 
 ```ts
-await corsair.zoom.api.meetings.addRegistrant({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.meetings.addRegistrant({});
 ```
 
 **Input**
@@ -182,7 +185,8 @@ Create a new meeting for the authenticated user
 **Risk:** `write`
 
 ```ts
-await corsair.zoom.api.meetings.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.meetings.create({});
 ```
 
 **Input**
@@ -276,7 +280,8 @@ Get details of a specific meeting
 **Risk:** `read`
 
 ```ts
-await corsair.zoom.api.meetings.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.meetings.get({});
 ```
 
 **Input**
@@ -341,7 +346,8 @@ Get the AI-generated summary of a meeting
 **Risk:** `read`
 
 ```ts
-await corsair.zoom.api.meetings.getSummary({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.meetings.getSummary({});
 ```
 
 **Input**
@@ -404,7 +410,8 @@ List all meetings for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.zoom.api.meetings.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.meetings.list({});
 ```
 
 **Input**
@@ -479,7 +486,8 @@ Update a meeting
 **Risk:** `write`
 
 ```ts
-await corsair.zoom.api.meetings.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.meetings.update({});
 ```
 
 **Input**
@@ -536,7 +544,8 @@ Get participants of a past meeting
 **Risk:** `read`
 
 ```ts
-await corsair.zoom.api.participants.getPastMeeting({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.participants.getPastMeeting({});
 ```
 
 **Input**
@@ -603,7 +612,8 @@ Delete cloud recordings for a meeting [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.zoom.api.recordings.deleteMeeting({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.recordings.deleteMeeting({});
 ```
 
 **Input**
@@ -629,7 +639,8 @@ Get cloud recordings for a specific meeting
 **Risk:** `read`
 
 ```ts
-await corsair.zoom.api.recordings.getMeeting({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.recordings.getMeeting({});
 ```
 
 **Input**
@@ -692,7 +703,8 @@ List all cloud recordings for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.zoom.api.recordings.listAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.recordings.listAll({});
 ```
 
 **Input**
@@ -768,7 +780,8 @@ Get the daily usage report for a given month
 **Risk:** `read`
 
 ```ts
-await corsair.zoom.api.reports.dailyUsage({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.reports.dailyUsage({});
 ```
 
 **Input**
@@ -818,7 +831,8 @@ Add a registrant to a webinar
 **Risk:** `write`
 
 ```ts
-await corsair.zoom.api.webinars.addRegistrant({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.webinars.addRegistrant({});
 ```
 
 **Input**
@@ -856,7 +870,8 @@ Get details of a specific webinar
 **Risk:** `read`
 
 ```ts
-await corsair.zoom.api.webinars.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.webinars.get({});
 ```
 
 **Input**
@@ -919,7 +934,8 @@ List all webinars for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.zoom.api.webinars.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.webinars.list({});
 ```
 
 **Input**
@@ -990,7 +1006,8 @@ List participants of a past webinar
 **Risk:** `read`
 
 ```ts
-await corsair.zoom.api.webinars.listParticipants({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoom.api.webinars.listParticipants({});
 ```
 
 **Input**

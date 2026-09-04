@@ -20,7 +20,8 @@ Create a context (REST)
 **Risk:** `write`
 
 ```ts
-await corsair.circleci.api.contexts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contexts.create({});
 ```
 
 **Input**
@@ -54,7 +55,8 @@ Add a restriction to a context
 **Risk:** `write`
 
 ```ts
-await corsair.circleci.api.contexts.createRestriction({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contexts.createRestriction({});
 ```
 
 **Input**
@@ -91,7 +93,8 @@ Remove a restriction from a context
 **Risk:** `destructive`
 
 ```ts
-await corsair.circleci.api.contexts.deleteRestriction({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contexts.deleteRestriction({});
 ```
 
 **Input**
@@ -127,7 +130,8 @@ Retrieve a context by id
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.contexts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contexts.get({});
 ```
 
 **Input**
@@ -159,7 +163,8 @@ List a context's environment variables
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.contexts.listEnvVars({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contexts.listEnvVars({});
 ```
 
 **Input**
@@ -206,7 +211,8 @@ Add or update a context environment variable (REST)
 **Risk:** `write`
 
 ```ts
-await corsair.circleci.api.contexts.upsertEnvVar({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contexts.upsertEnvVar({});
 ```
 
 **Input**
@@ -244,7 +250,8 @@ Create a context (GraphQL)
 **Risk:** `write`
 
 ```ts
-await corsair.circleci.api.contextsGraphQL.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contextsGraphQL.create({});
 ```
 
 **Input**
@@ -278,7 +285,8 @@ Permanently delete a context and its environment variables (GraphQL)
 **Risk:** `destructive`
 
 ```ts
-await corsair.circleci.api.contextsGraphQL.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contextsGraphQL.delete({});
 ```
 
 **Input**
@@ -313,7 +321,8 @@ Retrieve a context by id (GraphQL)
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.contextsGraphQL.query({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contextsGraphQL.query({});
 ```
 
 **Input**
@@ -345,7 +354,8 @@ Remove a context environment variable (GraphQL)
 **Risk:** `destructive`
 
 ```ts
-await corsair.circleci.api.contextsGraphQL.removeEnvVar({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contextsGraphQL.removeEnvVar({});
 ```
 
 **Input**
@@ -381,7 +391,8 @@ Add or update a context environment variable (GraphQL)
 **Risk:** `write`
 
 ```ts
-await corsair.circleci.api.contextsGraphQL.storeEnvVar({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contextsGraphQL.storeEnvVar({});
 ```
 
 **Input**
@@ -420,7 +431,8 @@ Create an organization group
 **Risk:** `write`
 
 ```ts
-await corsair.circleci.api.groups.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.groups.create({});
 ```
 
 **Input**
@@ -454,7 +466,8 @@ Permanently delete an organization group
 **Risk:** `destructive`
 
 ```ts
-await corsair.circleci.api.groups.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.groups.delete({});
 ```
 
 **Input**
@@ -490,7 +503,8 @@ Retrieve an organization group
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.groups.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.groups.get({});
 ```
 
 **Input**
@@ -523,7 +537,8 @@ List an organization's groups
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.groups.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.groups.list({});
 ```
 
 **Input**
@@ -572,7 +587,8 @@ List branches with workflow runs
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.insights.branches({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.insights.branches({});
 ```
 
 **Input**
@@ -608,7 +624,8 @@ Get flaky tests for a project
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.insights.flakyTests({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.insights.flakyTests({});
 ```
 
 **Input**
@@ -643,7 +660,8 @@ Get org-wide summary metrics with trends
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.insights.orgSummary({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.insights.orgSummary({});
 ```
 
 **Input**
@@ -680,7 +698,8 @@ Get summary metrics and trends for a project
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.insights.pagesSummary({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.insights.pagesSummary({});
 ```
 
 **Input**
@@ -718,7 +737,8 @@ Get plan/credit-usage metrics by project and org for a date range (same route as
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.insights.planMetrics({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.insights.planMetrics({});
 ```
 
 **Input**
@@ -755,7 +775,8 @@ Get summary metrics for all of a project's workflows
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.insights.projectWorkflows({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.insights.projectWorkflows({});
 ```
 
 **Input**
@@ -796,7 +817,8 @@ List a job's stored artifacts by number
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.jobs.getArtifacts({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.jobs.getArtifacts({});
 ```
 
 **Input**
@@ -838,7 +860,8 @@ Fetch a job's status, timing and executor by number
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.jobs.getDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.jobs.getDetails({});
 ```
 
 **Input**
@@ -889,7 +912,8 @@ Fetch a job's stored test results by number
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.jobs.getTestMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.jobs.getTestMetadata({});
 ```
 
 **Input**
@@ -936,7 +960,8 @@ Permanently delete a namespace and all its orbs
 **Risk:** `destructive`
 
 ```ts
-await corsair.circleci.api.namespace.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.namespace.delete({});
 ```
 
 **Input**
@@ -971,7 +996,8 @@ Remove a namespace alias (GraphQL)
 **Risk:** `destructive`
 
 ```ts
-await corsair.circleci.api.namespace.deleteAlias({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.namespace.deleteAlias({});
 ```
 
 **Input**
@@ -1006,7 +1032,8 @@ Check whether a namespace name exists
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.namespace.queryExists({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.namespace.queryExists({});
 ```
 
 **Input**
@@ -1036,7 +1063,8 @@ Rename a namespace
 **Risk:** `write`
 
 ```ts
-await corsair.circleci.api.namespace.rename({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.namespace.rename({});
 ```
 
 **Input**
@@ -1070,7 +1098,8 @@ Add a URL orb allow-list entry
 **Risk:** `write`
 
 ```ts
-await corsair.circleci.api.orbAllowlist.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbAllowlist.create({});
 ```
 
 **Input**
@@ -1104,7 +1133,8 @@ Remove a URL orb allow-list entry
 **Risk:** `destructive`
 
 ```ts
-await corsair.circleci.api.orbAllowlist.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbAllowlist.delete({});
 ```
 
 **Input**
@@ -1142,7 +1172,8 @@ Fetch an orb's metadata and versions
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.orbs.getDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbs.getDetails({});
 ```
 
 **Input**
@@ -1187,7 +1218,8 @@ Fetch one orb version
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.orbs.getVersion({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbs.getVersion({});
 ```
 
 **Input**
@@ -1219,7 +1251,8 @@ List orb categories
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.orbs.listCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbs.listCategories({});
 ```
 
 **Input**
@@ -1273,7 +1306,8 @@ List orbs in a namespace
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.orbs.listNamespaceOrbs({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbs.listNamespaceOrbs({});
 ```
 
 **Input**
@@ -1331,7 +1365,8 @@ List orbs across the registry
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.orbs.listOrbs({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbs.listOrbs({});
 ```
 
 **Input**
@@ -1390,7 +1425,8 @@ Fetch a category's id by name
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.orbs.queryCategoryId({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbs.queryCategoryId({});
 ```
 
 **Input**
@@ -1421,7 +1457,8 @@ Check whether an orb exists
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.orbs.queryExists({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbs.queryExists({});
 ```
 
 **Input**
@@ -1452,7 +1489,8 @@ Fetch an orb's id by name
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.orbs.queryId({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbs.queryId({});
 ```
 
 **Input**
@@ -1497,7 +1535,8 @@ Fetch an orb's latest published version
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.orbs.queryLatestVersion({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbs.queryLatestVersion({});
 ```
 
 **Input**
@@ -1528,7 +1567,8 @@ Fetch an orb version's source YAML
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.orbs.querySource({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbs.querySource({});
 ```
 
 **Input**
@@ -1560,7 +1600,8 @@ Validate orb YAML
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.orbs.validateConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.orbs.validateConfig({});
 ```
 
 **Input**
@@ -1605,7 +1646,8 @@ Retrieve an organization by id (GraphQL)
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.organization.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.organization.get({});
 ```
 
 **Input**
@@ -1638,7 +1680,8 @@ Retrieve a pipeline definition
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.pipelineDefinitions.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.pipelineDefinitions.get({});
 ```
 
 **Input**
@@ -1703,7 +1746,8 @@ List a project's pipeline definitions
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.pipelineDefinitions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.pipelineDefinitions.list({});
 ```
 
 **Input**
@@ -1759,7 +1803,8 @@ Fetch a pipeline's config
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.pipelines.getConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.pipelines.getConfig({});
 ```
 
 **Input**
@@ -1794,7 +1839,8 @@ List pipelines for an organization
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.pipelines.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.pipelines.list({});
 ```
 
 **Input**
@@ -1849,7 +1895,8 @@ List a project's pipelines
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.pipelines.listForProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.pipelines.listForProject({});
 ```
 
 **Input**
@@ -1904,7 +1951,8 @@ Start a new pipeline run on a branch or tag
 **Risk:** `write`
 
 ```ts
-await corsair.circleci.api.pipelines.trigger({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.pipelines.trigger({});
 ```
 
 **Input**
@@ -1983,7 +2031,8 @@ Create a project environment variable
 **Risk:** `write`
 
 ```ts
-await corsair.circleci.api.projectEnvVars.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.projectEnvVars.create({});
 ```
 
 **Input**
@@ -2018,7 +2067,8 @@ Delete a project environment variable
 **Risk:** `destructive`
 
 ```ts
-await corsair.circleci.api.projectEnvVars.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.projectEnvVars.delete({});
 ```
 
 **Input**
@@ -2054,7 +2104,8 @@ List a project's environment variables
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.projectEnvVars.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.projectEnvVars.list({});
 ```
 
 **Input**
@@ -2101,7 +2152,8 @@ Follow a repository as a new project
 **Risk:** `write`
 
 ```ts
-await corsair.circleci.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.projects.create({});
 ```
 
 **Input**
@@ -2151,7 +2203,8 @@ Permanently remove a project and its settings
 **Risk:** `destructive`
 
 ```ts
-await corsair.circleci.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.projects.delete({});
 ```
 
 **Input**
@@ -2186,7 +2239,8 @@ Retrieve a project by slug
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.projects.get({});
 ```
 
 **Input**
@@ -2237,7 +2291,8 @@ List self-hosted runners
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.runners.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.runners.list({});
 ```
 
 **Input**
@@ -2284,7 +2339,8 @@ List a project's scheduled pipeline triggers
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.schedules.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.schedules.list({});
 ```
 
 **Input**
@@ -2349,7 +2405,8 @@ Create a usage export job
 **Risk:** `write`
 
 ```ts
-await corsair.circleci.api.usageExport.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.usageExport.create({});
 ```
 
 **Input**
@@ -2387,7 +2444,8 @@ Retrieve a usage export job
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.usageExport.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.usageExport.get({});
 ```
 
 **Input**
@@ -2425,7 +2483,8 @@ Read the authenticated user's own profile
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.user.getCurrent({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.user.getCurrent({});
 ```
 
 **Input:** _empty object_
@@ -2453,7 +2512,8 @@ Read another user's profile by id
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.user.getInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.user.getInfo({});
 ```
 
 **Input**
@@ -2486,7 +2546,8 @@ List organizations the caller can collaborate on
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.user.listCollaborations({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.user.listCollaborations({});
 ```
 
 **Input:** _empty object_
@@ -2523,7 +2584,8 @@ Get metrics and trends for a workflow
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.workflows.getSummary({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.workflows.getSummary({});
 ```
 
 **Input**
@@ -2561,7 +2623,8 @@ List a pipeline's workflows
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.workflows.listByPipelineId({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.workflows.listByPipelineId({});
 ```
 
 **Input**
@@ -2612,7 +2675,8 @@ Get summary metrics for a workflow's jobs
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.workflows.listJobs({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.workflows.listJobs({});
 ```
 
 **Input**
@@ -2653,7 +2717,8 @@ Get test metrics for a workflow
 **Risk:** `read`
 
 ```ts
-await corsair.circleci.api.workflows.listTestMetrics({});
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.workflows.listTestMetrics({});
 ```
 
 **Input**

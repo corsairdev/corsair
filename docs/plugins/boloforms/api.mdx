@@ -20,7 +20,8 @@ Retrieve a list of documents from a Boloforms workspace, with optional filtering
 **Risk:** `read`
 
 ```ts
-await corsair.boloforms.api.documents.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.boloforms.api.documents.list({});
 ```
 
 **Input**

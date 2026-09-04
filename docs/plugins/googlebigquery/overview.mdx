@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { googlebigquery } from '@corsair-dev/googlebigquery';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		googlebigquery(),
 	],

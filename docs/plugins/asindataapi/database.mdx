@@ -14,7 +14,8 @@ The AsinDataApi plugin syncs data locally. Use `corsair.asindataapi.db.<entity>.
 Path: `asindataapi.db.collections.search`
 
 ```ts
-const rows = await corsair.asindataapi.db.collections.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asindataapi.db.collections.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -58,7 +59,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `asindataapi.db.destinations.search`
 
 ```ts
-const rows = await corsair.asindataapi.db.destinations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asindataapi.db.destinations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -96,7 +98,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `asindataapi.db.requests.search`
 
 ```ts
-const rows = await corsair.asindataapi.db.requests.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asindataapi.db.requests.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -135,7 +138,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `asindataapi.db.resultSets.search`
 
 ```ts
-const rows = await corsair.asindataapi.db.resultSets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asindataapi.db.resultSets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

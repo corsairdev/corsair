@@ -20,7 +20,8 @@ Archive a live property (sets isArchived to true)
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.properties.archive({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.properties.archive({});
 ```
 
 **Input**
@@ -50,7 +51,8 @@ Clone a property, creating a new property with inventory and rate plans
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.properties.clone({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.properties.clone({});
 ```
 
 **Input**
@@ -145,7 +147,8 @@ Return total count of properties
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.properties.count({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.properties.count({});
 ```
 
 **Input**
@@ -177,7 +180,8 @@ List ISO country codes that can be used to create properties
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.properties.countries({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.properties.countries({});
 ```
 
 **Input:** _empty object_
@@ -202,7 +206,8 @@ Create a new property
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.properties.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.properties.create({});
 ```
 
 **Input**
@@ -296,7 +301,8 @@ Check if a property exists by id
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.properties.exists({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.properties.exists({});
 ```
 
 **Input**
@@ -326,7 +332,8 @@ Get a property by id
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.properties.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.properties.get({});
 ```
 
 **Input**
@@ -439,7 +446,8 @@ Get the list of properties
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.properties.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.properties.list({});
 ```
 
 **Input**
@@ -525,7 +533,8 @@ Delete transactional data for a property in Test status
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.properties.reset({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.properties.reset({});
 ```
 
 **Input**
@@ -555,7 +564,8 @@ Move a test property to Live status
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.properties.setLive({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.properties.setLive({});
 ```
 
 **Input**
@@ -587,7 +597,8 @@ Create a new unit attribute
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.unitAttributes.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.unitAttributes.create({});
 ```
 
 **Input**
@@ -618,7 +629,8 @@ Delete a unit attribute
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.unitAttributes.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.unitAttributes.delete({});
 ```
 
 **Input**
@@ -648,7 +660,8 @@ Check if a unit attribute exists
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.unitAttributes.exists({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.unitAttributes.exists({});
 ```
 
 **Input**
@@ -678,7 +691,8 @@ Get a unit attribute by id
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.unitAttributes.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.unitAttributes.get({});
 ```
 
 **Input**
@@ -710,7 +724,8 @@ Get the unit attribute list
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.unitAttributes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.unitAttributes.list({});
 ```
 
 **Input**
@@ -757,7 +772,8 @@ Return number of unit groups matching the filter
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.unitGroups.count({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.unitGroups.count({});
 ```
 
 **Input**
@@ -788,7 +804,8 @@ Create a new unit group
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.unitGroups.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.unitGroups.create({});
 ```
 
 **Input**
@@ -853,7 +870,8 @@ Delete a unit group
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.unitGroups.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.unitGroups.delete({});
 ```
 
 **Input**
@@ -883,7 +901,8 @@ Check if a unit group exists by id
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.unitGroups.exists({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.unitGroups.exists({});
 ```
 
 **Input**
@@ -913,7 +932,8 @@ Get a unit group by id
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.unitGroups.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.unitGroups.get({});
 ```
 
 **Input**
@@ -995,7 +1015,8 @@ Get the list of unit groups
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.unitGroups.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.unitGroups.list({});
 ```
 
 **Input**
@@ -1063,7 +1084,8 @@ Replace a unit group
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.unitGroups.replace({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.unitGroups.replace({});
 ```
 
 **Input**
@@ -1128,7 +1150,8 @@ Return number of units matching the filter
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.units.count({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.units.count({});
 ```
 
 **Input**
@@ -1166,7 +1189,8 @@ Create a new unit
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.units.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.units.create({});
 ```
 
 **Input**
@@ -1231,7 +1255,8 @@ Create multiple units
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.units.createBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.units.createBulk({});
 ```
 
 **Input**
@@ -1284,7 +1309,8 @@ Delete a unit
 **Risk:** `write`
 
 ```ts
-await corsair.apaleo.api.units.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.units.delete({});
 ```
 
 **Input**
@@ -1314,7 +1340,8 @@ Check if a unit exists by id
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.units.exists({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.units.exists({});
 ```
 
 **Input**
@@ -1344,7 +1371,8 @@ Get a unit by id
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.units.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.units.get({});
 ```
 
 **Input**
@@ -1490,7 +1518,8 @@ Get the list of units
 **Risk:** `read`
 
 ```ts
-await corsair.apaleo.api.units.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apaleo.api.units.list({});
 ```
 
 **Input**

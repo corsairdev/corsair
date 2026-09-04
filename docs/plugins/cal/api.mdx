@@ -20,7 +20,8 @@ Cancel a booking [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.cal.api.bookings.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.cal.api.bookings.cancel({});
 ```
 
 **Input**
@@ -103,7 +104,8 @@ Confirm a pending booking
 **Risk:** `write`
 
 ```ts
-await corsair.cal.api.bookings.confirm({});
+const tenant = corsair.withTenant('acme');
+await tenant.cal.api.bookings.confirm({});
 ```
 
 **Input**
@@ -184,7 +186,8 @@ Create a new booking
 **Risk:** `write`
 
 ```ts
-await corsair.cal.api.bookings.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.cal.api.bookings.create({});
 ```
 
 **Input**
@@ -300,7 +303,8 @@ Decline a pending booking
 **Risk:** `write`
 
 ```ts
-await corsair.cal.api.bookings.decline({});
+const tenant = corsair.withTenant('acme');
+await tenant.cal.api.bookings.decline({});
 ```
 
 **Input**
@@ -382,7 +386,8 @@ Get a booking by UID
 **Risk:** `read`
 
 ```ts
-await corsair.cal.api.bookings.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.cal.api.bookings.get({});
 ```
 
 **Input**
@@ -463,7 +468,8 @@ List all bookings
 **Risk:** `read`
 
 ```ts
-await corsair.cal.api.bookings.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.cal.api.bookings.list({});
 ```
 
 **Input**
@@ -557,7 +563,8 @@ Reschedule a booking to a new time
 **Risk:** `write`
 
 ```ts
-await corsair.cal.api.bookings.reschedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.cal.api.bookings.reschedule({});
 ```
 
 **Input**

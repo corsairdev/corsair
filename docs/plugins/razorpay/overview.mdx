@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { razorpay } from '@corsair-dev/razorpay';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		razorpay(),
 	],

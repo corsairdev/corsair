@@ -14,7 +14,8 @@ The CollegeFootballData plugin syncs data locally. Use `corsair.collegefootballd
 Path: `collegefootballdata.db.coaches.search`
 
 ```ts
-const rows = await corsair.collegefootballdata.db.coaches.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.collegefootballdata.db.coaches.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `collegefootballdata.db.conferences.search`
 
 ```ts
-const rows = await corsair.collegefootballdata.db.conferences.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.collegefootballdata.db.conferences.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -68,7 +70,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `collegefootballdata.db.teams.search`
 
 ```ts
-const rows = await corsair.collegefootballdata.db.teams.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.collegefootballdata.db.teams.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -100,7 +103,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `collegefootballdata.db.venues.search`
 
 ```ts
-const rows = await corsair.collegefootballdata.db.venues.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.collegefootballdata.db.venues.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

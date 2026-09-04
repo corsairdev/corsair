@@ -20,7 +20,8 @@ Create a new blueprint configuration template
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.blueprints.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.blueprints.create({});
 ```
 
 **Input**
@@ -72,7 +73,8 @@ Permanently delete a blueprint template
 **Risk:** `destructive`
 
 ```ts
-await corsair.chatbotkit.api.blueprints.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.blueprints.delete({});
 ```
 
 **Input**
@@ -102,7 +104,8 @@ Fetch a blueprint template by ID
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.blueprints.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.blueprints.get({});
 ```
 
 **Input**
@@ -158,7 +161,8 @@ List blueprint templates, cursor-paginated
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.blueprints.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.blueprints.list({});
 ```
 
 **Input**
@@ -212,7 +216,8 @@ Update an existing blueprint template
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.blueprints.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.blueprints.update({});
 ```
 
 **Input**
@@ -267,7 +272,8 @@ Create a new AI bot
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.bots.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.bots.create({});
 ```
 
 **Input**
@@ -317,7 +323,8 @@ Permanently delete a bot
 **Risk:** `destructive`
 
 ```ts
-await corsair.chatbotkit.api.bots.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.bots.delete({});
 ```
 
 **Input**
@@ -347,7 +354,8 @@ Register a downvote for a bot
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.bots.downvote({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.bots.downvote({});
 ```
 
 **Input**
@@ -377,7 +385,8 @@ Fetch a single bot by ID or alias
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.bots.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.bots.get({});
 ```
 
 **Input**
@@ -431,7 +440,8 @@ List bots on the ChatBotKit account, cursor-paginated
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.bots.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.bots.list({});
 ```
 
 **Input**
@@ -490,7 +500,8 @@ Update an existing bot configuration
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.bots.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.bots.update({});
 ```
 
 **Input**
@@ -539,7 +550,8 @@ Register an upvote for a bot
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.bots.upvote({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.bots.upvote({});
 ```
 
 **Input**
@@ -571,7 +583,8 @@ Send message to conversation and get AI response
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.conversations.complete({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.conversations.complete({});
 ```
 
 **Input**
@@ -616,7 +629,8 @@ Create a new conversation chat session
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.conversations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.conversations.create({});
 ```
 
 **Input**
@@ -663,7 +677,8 @@ Permanently delete a conversation session
 **Risk:** `destructive`
 
 ```ts
-await corsair.chatbotkit.api.conversations.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.conversations.delete({});
 ```
 
 **Input**
@@ -693,7 +708,8 @@ Fetch a conversation by ID
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.conversations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.conversations.get({});
 ```
 
 **Input**
@@ -746,7 +762,8 @@ List conversations, cursor-paginated
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.conversations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.conversations.list({});
 ```
 
 **Input**
@@ -804,7 +821,8 @@ Update conversation metadata or bot association
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.conversations.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.conversations.update({});
 ```
 
 **Input**
@@ -851,7 +869,8 @@ Create a new knowledge dataset
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.datasets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.datasets.create({});
 ```
 
 **Input**
@@ -895,7 +914,8 @@ Permanently delete a dataset
 **Risk:** `destructive`
 
 ```ts
-await corsair.chatbotkit.api.datasets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.datasets.delete({});
 ```
 
 **Input**
@@ -925,7 +945,8 @@ Fetch a dataset by ID
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.datasets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.datasets.get({});
 ```
 
 **Input**
@@ -981,7 +1002,8 @@ List knowledge datasets, cursor-paginated
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.datasets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.datasets.list({});
 ```
 
 **Input**
@@ -1042,7 +1064,8 @@ Search a dataset for relevant knowledge records
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.datasets.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.datasets.search({});
 ```
 
 **Input**
@@ -1089,7 +1112,8 @@ Update dataset configuration
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.datasets.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.datasets.update({});
 ```
 
 **Input**
@@ -1136,7 +1160,8 @@ Create a new file record
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.files.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.files.create({});
 ```
 
 **Input**
@@ -1180,7 +1205,8 @@ Permanently delete a file resource
 **Risk:** `destructive`
 
 ```ts
-await corsair.chatbotkit.api.files.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.files.delete({});
 ```
 
 **Input**
@@ -1210,7 +1236,8 @@ Fetch file metadata by ID
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.files.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.files.get({});
 ```
 
 **Input**
@@ -1258,7 +1285,8 @@ List uploaded file resources, cursor-paginated
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.files.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.files.list({});
 ```
 
 **Input**
@@ -1313,7 +1341,8 @@ Create a new integration secret credential
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.secrets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.secrets.create({});
 ```
 
 **Input**
@@ -1367,7 +1396,8 @@ Permanently delete a secret credential
 **Risk:** `destructive`
 
 ```ts
-await corsair.chatbotkit.api.secrets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.secrets.delete({});
 ```
 
 **Input**
@@ -1397,7 +1427,8 @@ Fetch a secret credential by ID
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.secrets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.secrets.get({});
 ```
 
 **Input**
@@ -1456,7 +1487,8 @@ List integration secrets, cursor-paginated
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.secrets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.secrets.list({});
 ```
 
 **Input**
@@ -1513,7 +1545,8 @@ Update an existing integration secret credential
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.secrets.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.secrets.update({});
 ```
 
 **Input**
@@ -1568,7 +1601,8 @@ Create a new skillset container
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.skillsets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.skillsets.create({});
 ```
 
 **Input**
@@ -1612,7 +1646,8 @@ Permanently delete a skillset
 **Risk:** `destructive`
 
 ```ts
-await corsair.chatbotkit.api.skillsets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.skillsets.delete({});
 ```
 
 **Input**
@@ -1642,7 +1677,8 @@ Fetch a skillset by ID
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.skillsets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.skillsets.get({});
 ```
 
 **Input**
@@ -1691,7 +1727,8 @@ List skillsets on the account, cursor-paginated
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.skillsets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.skillsets.list({});
 ```
 
 **Input**
@@ -1745,7 +1782,8 @@ Update skillset configuration or state
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.skillsets.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.skillsets.update({});
 ```
 
 **Input**
@@ -1792,7 +1830,8 @@ Create a new background execution task
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.tasks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.tasks.create({});
 ```
 
 **Input**
@@ -1837,7 +1876,8 @@ Permanently delete a background task
 **Risk:** `destructive`
 
 ```ts
-await corsair.chatbotkit.api.tasks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.tasks.delete({});
 ```
 
 **Input**
@@ -1867,7 +1907,8 @@ Fetch a task by ID
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.tasks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.tasks.get({});
 ```
 
 **Input**
@@ -1916,7 +1957,8 @@ List background tasks, cursor-paginated
 **Risk:** `read`
 
 ```ts
-await corsair.chatbotkit.api.tasks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.tasks.list({});
 ```
 
 **Input**
@@ -1970,7 +2012,8 @@ Update task schedule or bot assignment
 **Risk:** `write`
 
 ```ts
-await corsair.chatbotkit.api.tasks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.chatbotkit.api.tasks.update({});
 ```
 
 **Input**

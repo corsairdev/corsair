@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { notion } from '@corsair-dev/notion';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		notion({
 			authType: 'managed',

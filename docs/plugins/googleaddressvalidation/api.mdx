@@ -20,7 +20,8 @@ Report the outcome of a previous address validation sequence back to Google
 **Risk:** `write`
 
 ```ts
-await corsair.googleaddressvalidation.api.address.provideFeedback({});
+const tenant = corsair.withTenant('acme');
+await tenant.googleaddressvalidation.api.address.provideFeedback({});
 ```
 
 **Input**
@@ -46,7 +47,8 @@ Validate a postal address and get standardized results
 **Risk:** `read`
 
 ```ts
-await corsair.googleaddressvalidation.api.address.validate({});
+const tenant = corsair.withTenant('acme');
+await tenant.googleaddressvalidation.api.address.validate({});
 ```
 
 **Input**

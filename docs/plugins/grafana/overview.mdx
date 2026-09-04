@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { grafana } from '@corsair-dev/grafana';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		grafana(),
 	],

@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { onedrive } from '@corsair-dev/onedrive';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		onedrive({
 			authType: 'managed',

@@ -20,7 +20,8 @@ Check remaining API credits balance
 **Risk:** `read`
 
 ```ts
-await corsair.bettercontact.api.credits.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bettercontact.api.credits.get({});
 ```
 
 **Input:** _empty object_
@@ -49,7 +50,8 @@ Submit lead enrichment request for work emails and phone numbers
 **Risk:** `write`
 
 ```ts
-await corsair.bettercontact.api.enrichment.enrich({});
+const tenant = corsair.withTenant('acme');
+await tenant.bettercontact.api.enrichment.enrich({});
 ```
 
 **Input**
@@ -107,7 +109,8 @@ Retrieve results for a submitted enrichment request
 **Risk:** `read`
 
 ```ts
-await corsair.bettercontact.api.enrichment.getResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.bettercontact.api.enrichment.getResults({});
 ```
 
 **Input**
@@ -163,7 +166,8 @@ Create a new Lead Finder search to discover leads based on criteria
 **Risk:** `write`
 
 ```ts
-await corsair.bettercontact.api.leadFinder.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bettercontact.api.leadFinder.create({});
 ```
 
 **Input**
@@ -307,7 +311,8 @@ Retrieve results from a submitted Lead Finder search
 **Risk:** `read`
 
 ```ts
-await corsair.bettercontact.api.leadFinder.getResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.bettercontact.api.leadFinder.getResults({});
 ```
 
 **Input**

@@ -20,7 +20,8 @@ Get a HackerNews item by numeric ID
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.items.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.items.get({});
 ```
 
 **Input**
@@ -64,7 +65,8 @@ Get the current maximum item ID
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.items.getMaxId({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.items.getMaxId({});
 ```
 
 **Input**
@@ -94,7 +96,8 @@ Get a HackerNews item with nested comments
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.items.getWithId({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.items.getWithId({});
 ```
 
 **Input**
@@ -159,7 +162,8 @@ Get current HackerNews frontpage posts
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.search.getFrontpage({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.search.getFrontpage({});
 ```
 
 **Input**
@@ -209,7 +213,8 @@ Get latest HackerNews posts
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.search.getLatest({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.search.getLatest({});
 ```
 
 **Input**
@@ -269,7 +274,8 @@ Get today's HackerNews posts
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.search.getTodays({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.search.getTodays({});
 ```
 
 **Input**
@@ -323,7 +329,8 @@ Full-text search HackerNews posts
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.search.posts({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.search.posts({});
 ```
 
 **Input**
@@ -387,7 +394,8 @@ Get Ask HN story IDs
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.stories.getAsk({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.stories.getAsk({});
 ```
 
 **Input**
@@ -417,7 +425,8 @@ Get best HackerNews story IDs
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.stories.getBest({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.stories.getBest({});
 ```
 
 **Input**
@@ -448,7 +457,8 @@ Get HackerNews job story IDs
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.stories.getJobs({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.stories.getJobs({});
 ```
 
 **Input**
@@ -478,7 +488,8 @@ Get newest HackerNews story IDs
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.stories.getNew({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.stories.getNew({});
 ```
 
 **Input**
@@ -508,7 +519,8 @@ Get Show HN story IDs
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.stories.getShow({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.stories.getShow({});
 ```
 
 **Input**
@@ -538,7 +550,8 @@ Get top HackerNews story IDs
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.stories.getTop({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.stories.getTop({});
 ```
 
 **Input**
@@ -571,7 +584,8 @@ Get recently changed HackerNews items and profiles
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.updates.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.updates.get({});
 ```
 
 **Input**
@@ -604,7 +618,8 @@ Get a HackerNews user profile via Algolia
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.users.get({});
 ```
 
 **Input**
@@ -636,7 +651,8 @@ Get a HackerNews user profile via Firebase
 **Risk:** `read`
 
 ```ts
-await corsair.hackernews.api.users.getByUsername({});
+const tenant = corsair.withTenant('acme');
+await tenant.hackernews.api.users.getByUsername({});
 ```
 
 **Input**

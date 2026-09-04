@@ -14,7 +14,8 @@ The Anthropic Admin API plugin syncs data locally. Use `corsair.anthropicadminis
 Path: `anthropicadministrator.db.apiKeys.search`
 
 ```ts
-const rows = await corsair.anthropicadministrator.db.apiKeys.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.anthropicadministrator.db.apiKeys.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `anthropicadministrator.db.invites.search`
 
 ```ts
-const rows = await corsair.anthropicadministrator.db.invites.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.anthropicadministrator.db.invites.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -69,7 +71,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `anthropicadministrator.db.users.search`
 
 ```ts
-const rows = await corsair.anthropicadministrator.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.anthropicadministrator.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -95,7 +98,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `anthropicadministrator.db.workspaceMembers.search`
 
 ```ts
-const rows = await corsair.anthropicadministrator.db.workspaceMembers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.anthropicadministrator.db.workspaceMembers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -119,7 +123,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `anthropicadministrator.db.workspaces.search`
 
 ```ts
-const rows = await corsair.anthropicadministrator.db.workspaces.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.anthropicadministrator.db.workspaces.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

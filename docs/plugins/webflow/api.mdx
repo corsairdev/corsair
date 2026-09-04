@@ -20,7 +20,8 @@ Create a new asset folder within a site
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.assets.createAssetFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.assets.createAssetFolder({});
 ```
 
 **Input**
@@ -76,7 +77,8 @@ Permanently delete an asset from a site
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.webflow.api.assets.deleteAsset({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.assets.deleteAsset({});
 ```
 
 **Input**
@@ -132,7 +134,8 @@ Get details about a specific asset including content type, size, and hosted URLs
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.assets.getAsset({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.assets.getAsset({});
 ```
 
 **Input**
@@ -188,7 +191,8 @@ Get details about a specific asset folder including its assets and parent folder
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.assets.getAssetFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.assets.getAssetFolder({});
 ```
 
 **Input**
@@ -244,7 +248,8 @@ List all asset folders within a site
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.assets.listAssetFolders({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.assets.listAssetFolders({});
 ```
 
 **Input**
@@ -300,7 +305,8 @@ List all assets uploaded to a site with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.assets.listAssets({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.assets.listAssets({});
 ```
 
 **Input**
@@ -356,7 +362,8 @@ Register an asset upload and receive a pre-signed S3 upload URL. The file itself
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.assets.uploadAsset({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.assets.uploadAsset({});
 ```
 
 **Input**
@@ -414,7 +421,8 @@ Create a custom field in a collection. Fields must be created one at a time
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collectionFields.createCollectionField({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionFields.createCollectionField({});
 ```
 
 **Input**
@@ -470,7 +478,8 @@ Permanently delete a custom field from a collection schema
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.webflow.api.collectionFields.deleteCollectionField({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionFields.deleteCollectionField({});
 ```
 
 **Input**
@@ -526,7 +535,8 @@ Update a custom field's display name, help text, or required status
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collectionFields.updateCollectionField({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionFields.updateCollectionField({});
 ```
 
 **Input**
@@ -584,7 +594,8 @@ Create up to 100 collection items in a single request across multiple locales
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collectionItems.createBulkCollectionItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.createBulkCollectionItems({});
 ```
 
 **Input**
@@ -640,7 +651,8 @@ Create a staged item in a collection. Field data keys must use the collection sc
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collectionItems.createCollectionItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.createCollectionItem({});
 ```
 
 **Input**
@@ -696,7 +708,8 @@ Create an item published immediately to the live site, bypassing the staged work
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collectionItems.createLiveCollectionItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.createLiveCollectionItem({});
 ```
 
 **Input**
@@ -752,7 +765,8 @@ Permanently delete a single item from a collection
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.webflow.api.collectionItems.deleteCollectionItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.deleteCollectionItem({});
 ```
 
 **Input**
@@ -808,7 +822,8 @@ Delete multiple collection items in a single request
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.webflow.api.collectionItems.deleteCollectionItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.deleteCollectionItems({});
 ```
 
 **Input**
@@ -864,7 +879,8 @@ Get a single staged collection item by id
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.collectionItems.getCollectionItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.getCollectionItem({});
 ```
 
 **Input**
@@ -920,7 +936,8 @@ Get the published version of a collection item
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.collectionItems.getLiveCollectionItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.getLiveCollectionItem({});
 ```
 
 **Input**
@@ -976,7 +993,8 @@ List items in a collection with pagination and filtering
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.collectionItems.listCollectionItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.listCollectionItems({});
 ```
 
 **Input**
@@ -1032,7 +1050,8 @@ Publish staged collection items to the live site
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collectionItems.publishCollectionItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.publishCollectionItems({});
 ```
 
 **Input**
@@ -1088,7 +1107,8 @@ Unpublish a live item and revert it to draft status. The item stays in the colle
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collectionItems.unpublishLiveCollectionItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.unpublishLiveCollectionItem({});
 ```
 
 **Input**
@@ -1144,7 +1164,8 @@ Unpublish up to 100 live items and set them to draft. Items stay in the collecti
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collectionItems.unpublishLiveCollectionItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.unpublishLiveCollectionItems({});
 ```
 
 **Input**
@@ -1200,7 +1221,8 @@ Update a staged collection item's field values, draft status, or archive status
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collectionItems.updateCollectionItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.updateCollectionItem({});
 ```
 
 **Input**
@@ -1256,7 +1278,8 @@ Deprecated: update staged collection items via the bulk items endpoint. Use upda
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collectionItems.updateCollectionItemLegacy({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.updateCollectionItemLegacy({});
 ```
 
 **Input**
@@ -1312,7 +1335,8 @@ Update a live collection item, publishing changes immediately to the production 
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collectionItems.updateLiveCollectionItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.updateLiveCollectionItem({});
 ```
 
 **Input**
@@ -1368,7 +1392,8 @@ Update up to 100 published items in a collection
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collectionItems.updateLiveCollectionItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collectionItems.updateLiveCollectionItems({});
 ```
 
 **Input**
@@ -1426,7 +1451,8 @@ Create a new CMS collection in a site
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.collections.createCollection({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collections.createCollection({});
 ```
 
 **Input**
@@ -1482,7 +1508,8 @@ Permanently delete a collection and all its items
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.webflow.api.collections.deleteCollection({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collections.deleteCollection({});
 ```
 
 **Input**
@@ -1538,7 +1565,8 @@ Get a collection including its full field schema
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.collections.getCollection({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collections.getCollection({});
 ```
 
 **Input**
@@ -1594,7 +1622,8 @@ List all CMS collections for a site
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.collections.listCollections({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.collections.listCollections({});
 ```
 
 **Input**
@@ -1652,7 +1681,8 @@ List all comment threads for a site. New comments may take up to 5 minutes to ap
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.comments.listCommentThreads({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.comments.listCommentThreads({});
 ```
 
 **Input**
@@ -1710,7 +1740,8 @@ Get the default property values of a component definition
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.components.getComponentProperties({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.components.getComponentProperties({});
 ```
 
 **Input**
@@ -1768,7 +1799,8 @@ Mark an order as fulfilled
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.ecommerce.fulfillOrder({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.ecommerce.fulfillOrder({});
 ```
 
 **Input**
@@ -1824,7 +1856,8 @@ Get current inventory levels for a SKU item
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.ecommerce.getItemInventory({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.ecommerce.getItemInventory({});
 ```
 
 **Input**
@@ -1880,7 +1913,8 @@ Get detailed information about a specific order including customer, items, and p
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.ecommerce.getOrder({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.ecommerce.getOrder({});
 ```
 
 **Input**
@@ -1936,7 +1970,8 @@ List all orders for a site with status filtering and pagination
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.ecommerce.listOrders({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.ecommerce.listOrders({});
 ```
 
 **Input**
@@ -1992,7 +2027,8 @@ Refund an order, reversing the Stripe charge and setting the order status to ref
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.webflow.api.ecommerce.refundOrder({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.ecommerce.refundOrder({});
 ```
 
 **Input**
@@ -2048,7 +2084,8 @@ Mark a previously fulfilled order as unfulfilled
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.ecommerce.unfulfillOrder({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.ecommerce.unfulfillOrder({});
 ```
 
 **Input**
@@ -2104,7 +2141,8 @@ Update inventory levels for a SKU item, either directly or incrementally
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.ecommerce.updateItemInventory({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.ecommerce.updateItemInventory({});
 ```
 
 **Input**
@@ -2160,7 +2198,8 @@ Update specific fields of an existing order such as fulfillment details and inte
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.ecommerce.updateOrder({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.ecommerce.updateOrder({});
 ```
 
 **Input**
@@ -2218,7 +2257,8 @@ List form submissions for a site with pagination and optional filtering by form 
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.forms.listFormSubmissions({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.forms.listFormSubmissions({});
 ```
 
 **Input**
@@ -2276,7 +2316,8 @@ Get page metadata including title, slug, SEO and Open Graph settings
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.pages.getPage({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.pages.getPage({});
 ```
 
 **Input**
@@ -2332,7 +2373,8 @@ Get page content nodes for a static page, including text, image, form, search-bu
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.pages.getPageDom({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.pages.getPageDom({});
 ```
 
 **Input**
@@ -2388,7 +2430,8 @@ List all static and CMS-driven pages for a site
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.pages.listPages({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.pages.listPages({});
 ```
 
 **Input**
@@ -2444,7 +2487,8 @@ Update page-level metadata including SEO and Open Graph fields
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.pages.updatePageMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.pages.updatePageMetadata({});
 ```
 
 **Input**
@@ -2502,7 +2546,8 @@ List all custom domains configured for a site
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.sites.getCustomDomains({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.sites.getCustomDomains({});
 ```
 
 **Input**
@@ -2558,7 +2603,8 @@ Get detailed information about a specific site
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.sites.getSite({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.sites.getSite({});
 ```
 
 **Input**
@@ -2614,7 +2660,8 @@ List all Webflow sites accessible to the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.sites.listSites({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.sites.listSites({});
 ```
 
 **Input**
@@ -2670,7 +2717,8 @@ Publish a site, making staged changes live. Rate limited to 1 successful publish
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.sites.publishSite({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.sites.publishSite({});
 ```
 
 **Input**
@@ -2726,7 +2774,8 @@ Update site properties such as name and parent folder (Enterprise workspaces onl
 **Risk:** `write`
 
 ```ts
-await corsair.webflow.api.sites.updateSite({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.sites.updateSite({});
 ```
 
 **Input**
@@ -2784,7 +2833,8 @@ Get information about the user who authorized the access token
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.token.getTokenAuthorizedBy({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.token.getTokenAuthorizedBy({});
 ```
 
 **Input**
@@ -2842,7 +2892,8 @@ Remove a webhook by id
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.webflow.api.webhooks.deleteWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.webhooks.deleteWebhook({});
 ```
 
 **Input**
@@ -2898,7 +2949,8 @@ List all app-created webhooks registered for a site
 **Risk:** `read`
 
 ```ts
-await corsair.webflow.api.webhooks.listWebhooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.webflow.api.webhooks.listWebhooks({});
 ```
 
 **Input**

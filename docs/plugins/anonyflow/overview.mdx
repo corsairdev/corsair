@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { anonyflow } from '@corsair-dev/anonyflow';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		anonyflow(),
 	],

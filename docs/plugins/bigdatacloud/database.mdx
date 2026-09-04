@@ -14,7 +14,8 @@ The BigDataCloud plugin syncs data locally. Use `corsair.bigdatacloud.db.<entity
 Path: `bigdatacloud.db.asns.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.asns.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.asns.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -53,7 +54,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigdatacloud.db.bgpPrefixes.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.bgpPrefixes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.bgpPrefixes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -83,7 +85,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigdatacloud.db.countries.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.countries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.countries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -118,7 +121,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigdatacloud.db.emailValidations.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.emailValidations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.emailValidations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -147,7 +151,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigdatacloud.db.hazardReports.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.hazardReports.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.hazardReports.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -187,7 +192,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigdatacloud.db.networks.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.networks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.networks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -223,7 +229,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigdatacloud.db.phoneValidations.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.phoneValidations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.phoneValidations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -254,7 +261,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigdatacloud.db.reverseGeocodes.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.reverseGeocodes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.reverseGeocodes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -289,7 +297,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigdatacloud.db.roamingStatuses.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.roamingStatuses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.roamingStatuses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -316,7 +325,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigdatacloud.db.timezones.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.timezones.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.timezones.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -347,7 +357,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigdatacloud.db.torExitNodes.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.torExitNodes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.torExitNodes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -375,7 +386,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigdatacloud.db.userAgents.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.userAgents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.userAgents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -409,7 +421,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigdatacloud.db.userRisks.search`
 
 ```ts
-const rows = await corsair.bigdatacloud.db.userRisks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigdatacloud.db.userRisks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

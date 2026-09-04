@@ -20,7 +20,8 @@ Get AFL Game Player Statistics
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.afl.getAflGamePlayerStatistics({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.afl.getAflGamePlayerStatistics({});
 ```
 
 **Input:** `object`
@@ -88,7 +89,8 @@ Get AFL Games
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.afl.getAflGames({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.afl.getAflGames({});
 ```
 
 **Input:** `object`
@@ -156,7 +158,8 @@ Get AFL Games Quarters
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.afl.getAflGamesQuarters({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.afl.getAflGamesQuarters({});
 ```
 
 **Input:** `object`
@@ -224,7 +227,8 @@ Get AFL Seasons
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.afl.getAflSeasons({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.afl.getAflSeasons({});
 ```
 
 **Input:** `object`
@@ -292,7 +296,8 @@ Get AFL Standings
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.afl.getAflStandings({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.afl.getAflStandings({});
 ```
 
 **Input:** `object`
@@ -362,7 +367,8 @@ Get Baseball Games Head-to-Head
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.baseball.getBaseballGamesHeadToHead({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.baseball.getBaseballGamesHeadToHead({});
 ```
 
 **Input:** `object`
@@ -432,7 +438,8 @@ Get Basketball Bets
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.basketball.getBasketballBets({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.basketball.getBasketballBets({});
 ```
 
 **Input:** `object`
@@ -500,7 +507,8 @@ Get Basketball Bookmakers
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.basketball.getBasketballBookmakers({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.basketball.getBasketballBookmakers({});
 ```
 
 **Input:** `object`
@@ -568,7 +576,8 @@ Get Basketball Statistics
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.basketball.getBasketballStatistics({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.basketball.getBasketballStatistics({});
 ```
 
 **Input:** `object`
@@ -636,7 +645,8 @@ Get Games Events
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.basketball.getGamesEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.basketball.getGamesEvents({});
 ```
 
 **Input:** `object`
@@ -704,7 +714,8 @@ Get Game Statistics by Teams
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.basketball.getGameStatisticsByTeams({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.basketball.getGameStatisticsByTeams({});
 ```
 
 **Input:** `object`
@@ -772,7 +783,8 @@ Get NBA Game Statistics
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.basketball.getNbaGameStatistics({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.basketball.getNbaGameStatistics({});
 ```
 
 **Input:** `object`
@@ -840,7 +852,8 @@ Get Player Statistics
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.basketball.getPlayerStatistics({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.basketball.getPlayerStatistics({});
 ```
 
 **Input:** `object`
@@ -910,7 +923,8 @@ Get Coaches
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getCoaches({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getCoaches({});
 ```
 
 **Input:** `object`
@@ -978,7 +992,8 @@ Get Countries
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getCountries({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getCountries({});
 ```
 
 **Input:** `object`
@@ -1046,7 +1061,8 @@ Get Injuries
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getInjuries({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getInjuries({});
 ```
 
 **Input:** `object`
@@ -1114,7 +1130,8 @@ Get Leagues
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getLeagues({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getLeagues({});
 ```
 
 **Input:** `object`
@@ -1182,7 +1199,8 @@ Get League Seasons
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getLeagueSeasons({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getLeagueSeasons({});
 ```
 
 **Input:** `object`
@@ -1250,7 +1268,8 @@ Get Predictions
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getPredictions({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getPredictions({});
 ```
 
 **Input:** `object`
@@ -1318,7 +1337,8 @@ Get Sidelined
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getSidelined({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getSidelined({});
 ```
 
 **Input:** `object`
@@ -1386,7 +1406,8 @@ Get Teams
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getTeams({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getTeams({});
 ```
 
 **Input:** `object`
@@ -1454,7 +1475,8 @@ Get Team Seasons
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getTeamSeasons({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getTeamSeasons({});
 ```
 
 **Input:** `object`
@@ -1522,7 +1544,8 @@ Get Team Statistics
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getTeamStatistics({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getTeamStatistics({});
 ```
 
 **Input:** `object`
@@ -1590,7 +1613,8 @@ Get Timezone
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getTimezone({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getTimezone({});
 ```
 
 **Input:** `object`
@@ -1658,7 +1682,8 @@ Get Transfers
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getTransfers({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getTransfers({});
 ```
 
 **Input:** `object`
@@ -1726,7 +1751,8 @@ Get Trophies
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getTrophies({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getTrophies({});
 ```
 
 **Input:** `object`
@@ -1794,7 +1820,8 @@ Get Venues
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.core.getVenues({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.core.getVenues({});
 ```
 
 **Input:** `object`
@@ -1864,7 +1891,8 @@ Get Fixture Lineups
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.fixtures.getFixtureLineups({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.fixtures.getFixtureLineups({});
 ```
 
 **Input:** `object`
@@ -1932,7 +1960,8 @@ Get Fixtures
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.fixtures.getFixtures({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.fixtures.getFixtures({});
 ```
 
 **Input:** `object`
@@ -2000,7 +2029,8 @@ Get Fixtures Events
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.fixtures.getFixturesEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.fixtures.getFixturesEvents({});
 ```
 
 **Input:** `object`
@@ -2068,7 +2098,8 @@ Get Fixtures Players
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.fixtures.getFixturesPlayers({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.fixtures.getFixturesPlayers({});
 ```
 
 **Input:** `object`
@@ -2136,7 +2167,8 @@ Get Fixtures Rounds
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.fixtures.getFixturesRounds({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.fixtures.getFixturesRounds({});
 ```
 
 **Input:** `object`
@@ -2204,7 +2236,8 @@ Get Fixture Statistics
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.fixtures.getFixtureStatistics({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.fixtures.getFixtureStatistics({});
 ```
 
 **Input:** `object`
@@ -2272,7 +2305,8 @@ Get Head-to-Head Fixtures
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.fixtures.getHeadToHeadFixtures({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.fixtures.getHeadToHeadFixtures({});
 ```
 
 **Input:** `object`
@@ -2342,7 +2376,8 @@ Get Fastest Laps Rankings
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.formula1.getFastestLapsRankings({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.formula1.getFastestLapsRankings({});
 ```
 
 **Input:** `object`
@@ -2410,7 +2445,8 @@ Get Formula 1 Circuits
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.formula1.getFormula1Circuits({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.formula1.getFormula1Circuits({});
 ```
 
 **Input:** `object`
@@ -2478,7 +2514,8 @@ Get Formula 1 Competitions
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.formula1.getFormula1Competitions({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.formula1.getFormula1Competitions({});
 ```
 
 **Input:** `object`
@@ -2546,7 +2583,8 @@ Get Formula 1 Driver Rankings
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.formula1.getFormula1DriverRankings({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.formula1.getFormula1DriverRankings({});
 ```
 
 **Input:** `object`
@@ -2614,7 +2652,8 @@ Get Formula 1 Races
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.formula1.getFormula1Races({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.formula1.getFormula1Races({});
 ```
 
 **Input:** `object`
@@ -2682,7 +2721,8 @@ Get Formula 1 Starting Grid
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.formula1.getFormula1StartingGrid({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.formula1.getFormula1StartingGrid({});
 ```
 
 **Input:** `object`
@@ -2750,7 +2790,8 @@ Get Formula 1 Team Rankings
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.formula1.getFormula1TeamRankings({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.formula1.getFormula1TeamRankings({});
 ```
 
 **Input:** `object`
@@ -2818,7 +2859,8 @@ Get Race Rankings
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.formula1.getRaceRankings({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.formula1.getRaceRankings({});
 ```
 
 **Input:** `object`
@@ -2888,7 +2930,8 @@ Get Fighters Records
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.mma.getFightersRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.mma.getFightersRecords({});
 ```
 
 **Input:** `object`
@@ -2956,7 +2999,8 @@ Get MMA Categories
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.mma.getMmaCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.mma.getMmaCategories({});
 ```
 
 **Input:** `object`
@@ -3024,7 +3068,8 @@ Get MMA Fighters
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.mma.getMmaFighters({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.mma.getMmaFighters({});
 ```
 
 **Input:** `object`
@@ -3092,7 +3137,8 @@ Get MMA Fighter Statistics
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.mma.getMmaFighterStatistics({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.mma.getMmaFighterStatistics({});
 ```
 
 **Input:** `object`
@@ -3160,7 +3206,8 @@ Get MMA Fight Results
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.mma.getMmaFightResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.mma.getMmaFightResults({});
 ```
 
 **Input:** `object`
@@ -3228,7 +3275,8 @@ Get MMA Fights
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.mma.getMmaFights({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.mma.getMmaFights({});
 ```
 
 **Input:** `object`
@@ -3298,7 +3346,8 @@ Get In-Play Odds
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.odds.getInPlayOdds({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.odds.getInPlayOdds({});
 ```
 
 **Input:** `object`
@@ -3366,7 +3415,8 @@ Get Live Odds Bets
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.odds.getLiveOddsBets({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.odds.getLiveOddsBets({});
 ```
 
 **Input:** `object`
@@ -3434,7 +3484,8 @@ Get Odds
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.odds.getOdds({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.odds.getOdds({});
 ```
 
 **Input:** `object`
@@ -3502,7 +3553,8 @@ Get Odds Bets
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.odds.getOddsBets({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.odds.getOddsBets({});
 ```
 
 **Input:** `object`
@@ -3570,7 +3622,8 @@ Get Odds Bookmakers
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.odds.getOddsBookmakers({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.odds.getOddsBookmakers({});
 ```
 
 **Input:** `object`
@@ -3638,7 +3691,8 @@ Get Odds Mapping
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.odds.getOddsMapping({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.odds.getOddsMapping({});
 ```
 
 **Input:** `object`
@@ -3708,7 +3762,8 @@ Get Players
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.players.getPlayers({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.players.getPlayers({});
 ```
 
 **Input:** `object`
@@ -3776,7 +3831,8 @@ Get Players Profiles
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.players.getPlayersProfiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.players.getPlayersProfiles({});
 ```
 
 **Input:** `object`
@@ -3844,7 +3900,8 @@ Get Players Seasons
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.players.getPlayersSeasons({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.players.getPlayersSeasons({});
 ```
 
 **Input:** `object`
@@ -3912,7 +3969,8 @@ Get Players Squads
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.players.getPlayersSquads({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.players.getPlayersSquads({});
 ```
 
 **Input:** `object`
@@ -3980,7 +4038,8 @@ Get Players Teams
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.players.getPlayersTeams({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.players.getPlayersTeams({});
 ```
 
 **Input:** `object`
@@ -4048,7 +4107,8 @@ Get Players Top Assists
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.players.getPlayersTopAssists({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.players.getPlayersTopAssists({});
 ```
 
 **Input:** `object`
@@ -4116,7 +4176,8 @@ Get Players Top Red Cards
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.players.getPlayersTopRedCards({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.players.getPlayersTopRedCards({});
 ```
 
 **Input:** `object`
@@ -4184,7 +4245,8 @@ Get Players Top Scorers
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.players.getPlayersTopScorers({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.players.getPlayersTopScorers({});
 ```
 
 **Input:** `object`
@@ -4252,7 +4314,8 @@ Get Players Top Yellow Cards
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.players.getPlayersTopYellowCards({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.players.getPlayersTopYellowCards({});
 ```
 
 **Input:** `object`
@@ -4322,7 +4385,8 @@ Get NFL Standings Conferences
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.standings.getNflStandingsConferences({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.standings.getNflStandingsConferences({});
 ```
 
 **Input:** `object`
@@ -4390,7 +4454,8 @@ Get Standings Divisions
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.standings.getStandingsDivisions({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.standings.getStandingsDivisions({});
 ```
 
 **Input:** `object`
@@ -4458,7 +4523,8 @@ Get Standings Groups
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.standings.getStandingsGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.standings.getStandingsGroups({});
 ```
 
 **Input:** `object`
@@ -4526,7 +4592,8 @@ Get Standings Stages
 **Risk:** `read`
 
 ```ts
-await corsair.apisports.api.standings.getStandingsStages({});
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.standings.getStandingsStages({});
 ```
 
 **Input:** `object`

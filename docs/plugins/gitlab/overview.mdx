@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { gitlab } from '@corsair-dev/gitlab';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		gitlab({
 			authType: 'managed',

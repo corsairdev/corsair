@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { customgpt } from '@corsair-dev/customgpt';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		customgpt(),
 	],

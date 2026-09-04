@@ -14,7 +14,8 @@ The OnePassword plugin syncs data locally. Use `corsair.onepassword.db.<entity>.
 Path: `onepassword.db.items.search`
 
 ```ts
-const rows = await corsair.onepassword.db.items.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.onepassword.db.items.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `onepassword.db.vaults.search`
 
 ```ts
-const rows = await corsair.onepassword.db.vaults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.onepassword.db.vaults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

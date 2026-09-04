@@ -20,7 +20,8 @@ List active auto-post schedules, including titles, UTC times, weekday filters, a
 **Risk:** `read`
 
 ```ts
-await corsair.ayrshare.api.autoSchedule.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.ayrshare.api.autoSchedule.list({});
 ```
 
 **Input:** _empty object_
@@ -56,7 +57,8 @@ Create or replace an auto-post schedule. Its case-sensitive title is the join ke
 **Risk:** `write`
 
 ```ts
-await corsair.ayrshare.api.autoSchedule.set({});
+const tenant = corsair.withTenant('acme');
+await tenant.ayrshare.api.autoSchedule.set({});
 ```
 
 **Input**
@@ -97,7 +99,8 @@ Delete an Ayrshare post by id. Published Instagram and TikTok posts cannot be de
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.ayrshare.api.posts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.ayrshare.api.posts.delete({});
 ```
 
 **Input**
@@ -129,7 +132,8 @@ Fetch Ayrshare post history, filterable by date, status, network, and record cou
 **Risk:** `read`
 
 ```ts
-await corsair.ayrshare.api.posts.history({});
+const tenant = corsair.withTenant('acme');
+await tenant.ayrshare.api.posts.history({});
 ```
 
 **Input**

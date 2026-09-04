@@ -14,7 +14,8 @@ The Browse AI plugin syncs data locally. Use `corsair.browseai.db.<entity>.searc
 Path: `browseai.db.bulkRun.search`
 
 ```ts
-const rows = await corsair.browseai.db.bulkRun.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.browseai.db.bulkRun.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `browseai.db.monitor.search`
 
 ```ts
-const rows = await corsair.browseai.db.monitor.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.browseai.db.monitor.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -77,7 +79,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `browseai.db.robot.search`
 
 ```ts
-const rows = await corsair.browseai.db.robot.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.browseai.db.robot.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -102,7 +105,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `browseai.db.robotTask.search`
 
 ```ts
-const rows = await corsair.browseai.db.robotTask.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.browseai.db.robotTask.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -142,7 +146,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `browseai.db.systemStatus.search`
 
 ```ts
-const rows = await corsair.browseai.db.systemStatus.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.browseai.db.systemStatus.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -167,7 +172,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `browseai.db.webhook.search`
 
 ```ts
-const rows = await corsair.browseai.db.webhook.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.browseai.db.webhook.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

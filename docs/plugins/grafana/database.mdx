@@ -14,7 +14,8 @@ The Grafana plugin syncs data locally. Use `corsair.grafana.db.<entity>.search({
 Path: `grafana.db.dashboardQueries.search`
 
 ```ts
-const rows = await corsair.grafana.db.dashboardQueries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.grafana.db.dashboardQueries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `grafana.db.healthStatus.search`
 
 ```ts
-const rows = await corsair.grafana.db.healthStatus.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.grafana.db.healthStatus.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -73,7 +75,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `grafana.db.jwksKeys.search`
 
 ```ts
-const rows = await corsair.grafana.db.jwksKeys.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.grafana.db.jwksKeys.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -100,7 +103,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `grafana.db.logs.search`
 
 ```ts
-const rows = await corsair.grafana.db.logs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.grafana.db.logs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -134,7 +138,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `grafana.db.ringStatus.search`
 
 ```ts
-const rows = await corsair.grafana.db.ringStatus.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.grafana.db.ringStatus.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -161,7 +166,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `grafana.db.samlSessions.search`
 
 ```ts
-const rows = await corsair.grafana.db.samlSessions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.grafana.db.samlSessions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

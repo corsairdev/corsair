@@ -1,0 +1,159 @@
+---
+title: Overview
+description: "Track stock, manage orders, and sync inventory across sales channels"
+---
+
+Use **Zoho Inventory** through Corsair: one client, typed API calls, local DB sync.
+
+Zoho Inventory uses regional datacenters. Pass `region` (`us` default, plus `eu`,
+`in`, `au`, `jp`, `ca`, `cn`, `sa`). API hosts are `www.zohoapis.*`. OAuth hosts
+are `accounts.zoho.*` except Canada, which uses `accounts.zohocloud.ca`.
+
+```ts
+zohoinventory({ region: 'eu' })
+```
+
+Org-scoped calls send `organization_id` as a query parameter. Discover orgs with
+`organizations.list`, or use post-OAuth tenant linking (`tenant_external_id`).
+Optional `apiDomain` must be an HTTPS `zohoapis.*` origin.
+
+**What you get:**
+
+- 58 typed API operations
+- 6 synced entities (`contacts`, `creditNotes`, `invoices`, `items`, `organizations`, `salesOrders`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/zohoinventory
+```
+```bash yarn
+yarn add corsair @corsair-dev/zohoinventory
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/zohoinventory
+```
+```bash bun
+bun add corsair @corsair-dev/zohoinventory
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { zohoinventory } from '@corsair-dev/zohoinventory';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+		zohoinventory({
+			authType: 'managed',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="Managed OAuth (Recommended)">
+
+No setup required. Corsair hosts the OAuth app for **Zoho Inventory** — your tenants connect through Hub when they sign in.
+
+```ts
+zohoinventory({
+	authType: 'managed',
+})
+```
+
+More: [Managed OAuth](/concepts/auth#managed)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Zoho Inventory OAuth app.
+
+```ts
+zohoinventory()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'zohoinventory',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`bills.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.bills.list({});
+```
+
+
+**`bills.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.bills.create({});
+```
+
+
+See the full list on the [API](/plugins/zohoinventory/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.zohoinventory.db.<entity>.search()` and `.list()`: `contacts`, `creditNotes`, `invoices`, `items`, `organizations`, `salesOrders`.
+
+See [Database](/plugins/zohoinventory/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/zohoinventory/api">
+    Every `zohoinventory.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/zohoinventory/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

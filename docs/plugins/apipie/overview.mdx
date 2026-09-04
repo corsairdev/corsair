@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { apipie } from '@corsair-dev/apipie';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		apipie(),
 	],

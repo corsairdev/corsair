@@ -20,7 +20,8 @@ List API key metadata
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.apiKeys.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.apiKeys.list({});
 ```
 
 **Input**
@@ -79,7 +80,8 @@ List AWS integration accounts
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.aws.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.aws.list({});
 ```
 
 **Input:** _empty object_
@@ -121,7 +123,8 @@ Create a dashboard
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.dashboards.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.dashboards.create({});
 ```
 
 **Input**
@@ -214,7 +217,8 @@ Delete a dashboard [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.datadog.api.dashboards.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.dashboards.delete({});
 ```
 
 **Input**
@@ -244,7 +248,8 @@ Get a dashboard with its widgets
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.dashboards.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.dashboards.get({});
 ```
 
 **Input**
@@ -313,7 +318,8 @@ List dashboards
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.dashboards.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.dashboards.list({});
 ```
 
 **Input**
@@ -365,7 +371,8 @@ Update a dashboard
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.dashboards.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.dashboards.update({});
 ```
 
 **Input**
@@ -461,7 +468,8 @@ Schedule a downtime (suppresses monitor alerts)
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.downtimes.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.downtimes.create({});
 ```
 
 **Input**
@@ -519,7 +527,8 @@ List downtimes
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.downtimes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.downtimes.list({});
 ```
 
 **Input**
@@ -579,7 +588,8 @@ Post an event
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.events.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.events.create({});
 ```
 
 **Input**
@@ -637,7 +647,8 @@ List events in a time window
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.events.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.events.list({});
 ```
 
 **Input**
@@ -694,7 +705,8 @@ List infrastructure hosts
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.hosts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.hosts.list({});
 ```
 
 **Input**
@@ -751,7 +763,8 @@ Get host totals (active/up)
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.hosts.totals({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.hosts.totals({});
 ```
 
 **Input:** _empty object_
@@ -779,7 +792,8 @@ List incidents
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.incidents.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.incidents.list({});
 ```
 
 **Input**
@@ -837,7 +851,8 @@ Aggregate log analytics
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.logs.aggregate({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.logs.aggregate({});
 ```
 
 **Input**
@@ -891,7 +906,8 @@ List log indexes
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.logs.listIndexes({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.logs.listIndexes({});
 ```
 
 **Input:** _empty object_
@@ -932,7 +948,8 @@ Search logs
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.logs.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.logs.search({});
 ```
 
 **Input**
@@ -998,7 +1015,8 @@ List actively reporting metrics
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.metrics.listActive({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.metrics.listActive({});
 ```
 
 **Input**
@@ -1031,7 +1049,8 @@ Query timeseries points
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.metrics.query({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.metrics.query({});
 ```
 
 **Input**
@@ -1083,7 +1102,8 @@ Submit metric series points
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.metrics.submit({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.metrics.submit({});
 ```
 
 **Input**
@@ -1130,7 +1150,8 @@ Create a monitor
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.monitors.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.monitors.create({});
 ```
 
 **Input**
@@ -1208,7 +1229,8 @@ Delete a monitor [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.datadog.api.monitors.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.monitors.delete({});
 ```
 
 **Input**
@@ -1238,7 +1260,8 @@ Get a monitor
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.monitors.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.monitors.get({});
 ```
 
 **Input**
@@ -1301,7 +1324,8 @@ List monitors
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.monitors.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.monitors.list({});
 ```
 
 **Input**
@@ -1358,7 +1382,8 @@ Mute a monitor (suppresses alerting)
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.monitors.mute({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.monitors.mute({});
 ```
 
 **Input**
@@ -1422,7 +1447,8 @@ Search monitors
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.monitors.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.monitors.search({});
 ```
 
 **Input**
@@ -1495,7 +1521,8 @@ Unmute a monitor
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.monitors.unmute({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.monitors.unmute({});
 ```
 
 **Input**
@@ -1559,7 +1586,8 @@ Update a monitor
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.monitors.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.monitors.update({});
 ```
 
 **Input**
@@ -1639,7 +1667,8 @@ List roles
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.roles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.roles.list({});
 ```
 
 **Input**
@@ -1698,7 +1727,8 @@ List APM service definitions
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.services.listDefinitions({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.services.listDefinitions({});
 ```
 
 **Input**
@@ -1746,7 +1776,8 @@ Create an SLO
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.slos.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.slos.create({});
 ```
 
 **Input**
@@ -1833,7 +1864,8 @@ List SLOs
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.slos.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.slos.list({});
 ```
 
 **Input**
@@ -1909,7 +1941,8 @@ Aggregate APM span analytics
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.spans.aggregate({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.spans.aggregate({});
 ```
 
 **Input**
@@ -1967,7 +2000,8 @@ Search APM spans
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.spans.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.spans.search({});
 ```
 
 **Input**
@@ -2025,7 +2059,8 @@ Create a synthetic API test
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.synthetics.createApiTest({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.synthetics.createApiTest({});
 ```
 
 **Input**
@@ -2106,7 +2141,8 @@ Get a synthetic API test
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.synthetics.getApiTest({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.synthetics.getApiTest({});
 ```
 
 **Input**
@@ -2163,7 +2199,8 @@ List synthetic test locations
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.synthetics.listLocations({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.synthetics.listLocations({});
 ```
 
 **Input:** _empty object_
@@ -2202,7 +2239,8 @@ List synthetic tests
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.synthetics.listTests({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.synthetics.listTests({});
 ```
 
 **Input**
@@ -2257,7 +2295,8 @@ Get tags for a host
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.tags.getHost({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.tags.getHost({});
 ```
 
 **Input**
@@ -2289,7 +2328,8 @@ List host tags
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.tags.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.tags.list({});
 ```
 
 **Input**
@@ -2329,7 +2369,8 @@ Replace tags for a host
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.tags.updateHost({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.tags.updateHost({});
 ```
 
 **Input**
@@ -2364,7 +2405,8 @@ Get usage summary across products
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.usage.getSummary({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.usage.getSummary({});
 ```
 
 **Input**
@@ -2410,7 +2452,8 @@ List organization users
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.users.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.users.list({});
 ```
 
 **Input**
@@ -2469,7 +2512,8 @@ Create a webhook integration
 **Risk:** `write`
 
 ```ts
-await corsair.datadog.api.webhooks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.webhooks.create({});
 ```
 
 **Input**
@@ -2507,7 +2551,8 @@ Get a webhook integration by name
 **Risk:** `read`
 
 ```ts
-await corsair.datadog.api.webhooks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.datadog.api.webhooks.get({});
 ```
 
 **Input**

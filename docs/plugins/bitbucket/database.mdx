@@ -14,7 +14,8 @@ The Bitbucket Cloud OAuth 2.0 plugin syncs data locally. Use `corsair.bitbucket.
 Path: `bitbucket.db.branches.search`
 
 ```ts
-const rows = await corsair.bitbucket.db.branches.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitbucket.db.branches.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitbucket.db.commits.search`
 
 ```ts
-const rows = await corsair.bitbucket.db.commits.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitbucket.db.commits.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -65,7 +67,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitbucket.db.issues.search`
 
 ```ts
-const rows = await corsair.bitbucket.db.issues.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitbucket.db.issues.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -97,7 +100,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitbucket.db.pipelines.search`
 
 ```ts
-const rows = await corsair.bitbucket.db.pipelines.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitbucket.db.pipelines.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -125,7 +129,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitbucket.db.projects.search`
 
 ```ts
-const rows = await corsair.bitbucket.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitbucket.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -156,7 +161,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitbucket.db.pullRequests.search`
 
 ```ts
-const rows = await corsair.bitbucket.db.pullRequests.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitbucket.db.pullRequests.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -190,7 +196,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitbucket.db.repositories.search`
 
 ```ts
-const rows = await corsair.bitbucket.db.repositories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitbucket.db.repositories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -229,7 +236,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitbucket.db.snippets.search`
 
 ```ts
-const rows = await corsair.bitbucket.db.snippets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitbucket.db.snippets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -258,7 +266,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitbucket.db.tags.search`
 
 ```ts
-const rows = await corsair.bitbucket.db.tags.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitbucket.db.tags.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -284,7 +293,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitbucket.db.users.search`
 
 ```ts
-const rows = await corsair.bitbucket.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitbucket.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -316,7 +326,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bitbucket.db.workspaces.search`
 
 ```ts
-const rows = await corsair.bitbucket.db.workspaces.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bitbucket.db.workspaces.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

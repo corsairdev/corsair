@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { bouncer } from '@corsair-dev/bouncer';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		bouncer(),
 	],

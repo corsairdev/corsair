@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { linear } from '@corsair-dev/linear';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		linear({
 			authType: 'managed',
@@ -161,17 +162,26 @@ Synced entities: `comments`, `issues`, `projects`, `teams`, `users`. See [Databa
 Fires when a new issue is created in Linear.
 
 ```ts
-linear({
-    webhookHooks: {
-        issues: {
-            create: {
-                after: async (ctx, result) => {
-                    console.log('Linear issue created:', result.data);
-                }
-            },
-        },
-    },
-})
+import { createCorsair } from 'corsair';
+import { linear } from '@corsair-dev/linear';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+		linear({
+			authType: 'managed',
+			webhookHooks: {
+				issues: {
+					create: {
+						after: async (ctx, result) => {
+							console.log('Linear issue created:', result.data);
+						}
+					},
+				},
+			},
+		)
+	],
+});
 ```
 
 Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/linear/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).

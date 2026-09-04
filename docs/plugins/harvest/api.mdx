@@ -20,7 +20,8 @@ Create a client
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.clients.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.clients.create({});
 ```
 
 **Input**
@@ -60,7 +61,8 @@ Delete a client
 **Risk:** `destructive`
 
 ```ts
-await corsair.harvest.api.clients.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.clients.delete({});
 ```
 
 **Input**
@@ -91,7 +93,8 @@ Get a client by id
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.clients.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.clients.get({});
 ```
 
 **Input**
@@ -128,7 +131,8 @@ List clients
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.clients.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.clients.list({});
 ```
 
 **Input**
@@ -198,7 +202,8 @@ Update a client
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.clients.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.clients.update({});
 ```
 
 **Input**
@@ -241,7 +246,8 @@ Get company settings
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.company.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.company.get({});
 ```
 
 **Input:** _empty object_
@@ -289,7 +295,8 @@ Update the writable company settings
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.company.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.company.update({});
 ```
 
 **Input**
@@ -345,7 +352,8 @@ Create a client contact
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.contacts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.contacts.create({});
 ```
 
 **Input**
@@ -408,7 +416,8 @@ Delete a client contact
 **Risk:** `destructive`
 
 ```ts
-await corsair.harvest.api.contacts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.contacts.delete({});
 ```
 
 **Input**
@@ -439,7 +448,8 @@ List client contacts
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.contacts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.contacts.list({});
 ```
 
 **Input**
@@ -518,7 +528,8 @@ Update a client contact
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.contacts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.contacts.update({});
 ```
 
 **Input**
@@ -584,7 +595,8 @@ Create a draft estimate
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.estimates.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.estimates.create({});
 ```
 
 **Input**
@@ -713,7 +725,8 @@ Create an estimate item category
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.estimates.createItemCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.estimates.createItemCategory({});
 ```
 
 **Input**
@@ -746,7 +759,8 @@ Create an estimate message; event_type "send" emails the client
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.estimates.createMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.estimates.createMessage({});
 ```
 
 **Input**
@@ -816,7 +830,8 @@ Delete an estimate
 **Risk:** `destructive`
 
 ```ts
-await corsair.harvest.api.estimates.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.estimates.delete({});
 ```
 
 **Input**
@@ -847,7 +862,8 @@ Delete an estimate message
 **Risk:** `destructive`
 
 ```ts
-await corsair.harvest.api.estimates.deleteMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.estimates.deleteMessage({});
 ```
 
 **Input**
@@ -879,7 +895,8 @@ Get an estimate by id
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.estimates.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.estimates.get({});
 ```
 
 **Input**
@@ -980,7 +997,8 @@ List the messages recorded against an estimate
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.estimates.listMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.estimates.listMessages({});
 ```
 
 **Input**
@@ -1057,7 +1075,8 @@ Update an estimate
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.estimates.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.estimates.update({});
 ```
 
 **Input**
@@ -1187,7 +1206,8 @@ Rename an estimate item category
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.estimates.updateItemCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.estimates.updateItemCategory({});
 ```
 
 **Input**
@@ -1223,7 +1243,8 @@ Record an expense against a project
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.expenses.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.expenses.create({});
 ```
 
 **Input**
@@ -1371,7 +1392,8 @@ List expense categories
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.expenses.listCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.expenses.listCategories({});
 ```
 
 **Input**
@@ -1440,7 +1462,8 @@ Update an expense
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.expenses.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.expenses.update({});
 ```
 
 **Input**
@@ -1591,7 +1614,8 @@ Create a draft invoice
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.invoices.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.create({});
 ```
 
 **Input**
@@ -1759,7 +1783,8 @@ Create an invoice item category
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.invoices.createItemCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.createItemCategory({});
 ```
 
 **Input**
@@ -1794,7 +1819,8 @@ Create an invoice message; event_type "send" emails the client
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.invoices.createMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.createMessage({});
 ```
 
 **Input**
@@ -1872,7 +1898,8 @@ Record a payment against an invoice
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.invoices.createPayment({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.createPayment({});
 ```
 
 **Input**
@@ -1931,7 +1958,8 @@ Delete an invoice
 **Risk:** `destructive`
 
 ```ts
-await corsair.harvest.api.invoices.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.delete({});
 ```
 
 **Input**
@@ -1962,7 +1990,8 @@ Delete an unused invoice item category
 **Risk:** `destructive`
 
 ```ts
-await corsair.harvest.api.invoices.deleteItemCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.deleteItemCategory({});
 ```
 
 **Input**
@@ -1993,7 +2022,8 @@ Delete an invoice message
 **Risk:** `destructive`
 
 ```ts
-await corsair.harvest.api.invoices.deleteMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.deleteMessage({});
 ```
 
 **Input**
@@ -2025,7 +2055,8 @@ Delete a recorded payment
 **Risk:** `destructive`
 
 ```ts
-await corsair.harvest.api.invoices.deletePayment({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.deletePayment({});
 ```
 
 **Input**
@@ -2057,7 +2088,8 @@ Get an invoice by id
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.invoices.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.get({});
 ```
 
 **Input**
@@ -2192,7 +2224,8 @@ List invoices
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.invoices.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.list({});
 ```
 
 **Input**
@@ -2327,7 +2360,8 @@ List invoice item categories
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.invoices.listItemCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.listItemCategories({});
 ```
 
 **Input**
@@ -2394,7 +2428,8 @@ List the messages recorded against an invoice
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.invoices.listMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.listMessages({});
 ```
 
 **Input**
@@ -2476,7 +2511,8 @@ List payments recorded against an invoice
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.invoices.listPayments({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.listPayments({});
 ```
 
 **Input**
@@ -2554,7 +2590,8 @@ Update an invoice
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.invoices.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.invoices.update({});
 ```
 
 **Input**
@@ -2725,7 +2762,8 @@ Create a project
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.projects.create({});
 ```
 
 **Input**
@@ -2812,7 +2850,8 @@ Delete a project and its time entries and expenses
 **Risk:** `destructive`
 
 ```ts
-await corsair.harvest.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.projects.delete({});
 ```
 
 **Input**
@@ -2843,7 +2882,8 @@ Get a project by id
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.projects.get({});
 ```
 
 **Input**
@@ -2911,7 +2951,8 @@ List projects
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.projects.list({});
 ```
 
 **Input**
@@ -3004,7 +3045,8 @@ Update a project
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.projects.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.projects.update({});
 ```
 
 **Input**
@@ -3094,7 +3136,8 @@ Create a task
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.tasks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.tasks.create({});
 ```
 
 **Input**
@@ -3135,7 +3178,8 @@ Delete a task
 **Risk:** `destructive`
 
 ```ts
-await corsair.harvest.api.tasks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.tasks.delete({});
 ```
 
 **Input**
@@ -3166,7 +3210,8 @@ Get a task by id
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.tasks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.tasks.get({});
 ```
 
 **Input**
@@ -3203,7 +3248,8 @@ List tasks
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.tasks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.tasks.list({});
 ```
 
 **Input**
@@ -3273,7 +3319,8 @@ Update a task
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.tasks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.tasks.update({});
 ```
 
 **Input**
@@ -3317,7 +3364,8 @@ Log time against a project and task
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.timeEntries.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.timeEntries.create({});
 ```
 
 **Input**
@@ -3505,7 +3553,8 @@ Delete a time entry
 **Risk:** `destructive`
 
 ```ts
-await corsair.harvest.api.timeEntries.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.timeEntries.delete({});
 ```
 
 **Input**
@@ -3536,7 +3585,8 @@ Get a time entry by id
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.timeEntries.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.timeEntries.get({});
 ```
 
 **Input**
@@ -3702,7 +3752,8 @@ List time entries
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.timeEntries.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.timeEntries.list({});
 ```
 
 **Input**
@@ -3852,7 +3903,8 @@ Update a time entry
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.timeEntries.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.timeEntries.update({});
 ```
 
 **Input**
@@ -4042,7 +4094,8 @@ Create a team member and email them an invitation
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.users.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.users.create({});
 ```
 
 **Input**
@@ -4106,7 +4159,8 @@ Delete a team member
 **Risk:** `destructive`
 
 ```ts
-await corsair.harvest.api.users.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.users.delete({});
 ```
 
 **Input**
@@ -4137,7 +4191,8 @@ Get a team member by id
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.users.get({});
 ```
 
 **Input**
@@ -4189,7 +4244,8 @@ List team members
 **Risk:** `read`
 
 ```ts
-await corsair.harvest.api.users.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.users.list({});
 ```
 
 **Input**
@@ -4274,7 +4330,8 @@ Update a team member
 **Risk:** `write`
 
 ```ts
-await corsair.harvest.api.users.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.harvest.api.users.update({});
 ```
 
 **Input**

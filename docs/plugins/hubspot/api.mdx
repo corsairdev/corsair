@@ -20,7 +20,8 @@ Create a new company
 **Risk:** `write`
 
 ```ts
-await corsair.hubspot.api.companies.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.companies.create({});
 ```
 
 **Input**
@@ -99,7 +100,8 @@ Permanently delete a company [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.hubspot.api.companies.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.companies.delete({});
 ```
 
 **Input**
@@ -124,7 +126,8 @@ Get a specific company
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.companies.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.companies.get({});
 ```
 
 **Input**
@@ -182,7 +185,8 @@ Get multiple companies
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.companies.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.companies.getMany({});
 ```
 
 **Input**
@@ -251,7 +255,8 @@ List recently created companies
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.companies.getRecentlyCreated({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.companies.getRecentlyCreated({});
 ```
 
 **Input**
@@ -317,7 +322,8 @@ List recently updated companies
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.companies.getRecentlyUpdated({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.companies.getRecentlyUpdated({});
 ```
 
 **Input**
@@ -383,7 +389,8 @@ Search companies by domain name
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.companies.searchByDomain({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.companies.searchByDomain({});
 ```
 
 **Input**
@@ -448,7 +455,8 @@ Update an existing company
 **Risk:** `write`
 
 ```ts
-await corsair.hubspot.api.companies.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.companies.update({});
 ```
 
 **Input**
@@ -514,7 +522,8 @@ Add a contact to a static contact list
 **Risk:** `write`
 
 ```ts
-await corsair.hubspot.api.contactLists.addContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contactLists.addContact({});
 ```
 
 **Input**
@@ -549,7 +558,8 @@ Remove a contact from a static contact list
 **Risk:** `write`
 
 ```ts
-await corsair.hubspot.api.contactLists.removeContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contactLists.removeContact({});
 ```
 
 **Input**
@@ -586,7 +596,8 @@ Create a new contact
 **Risk:** `write`
 
 ```ts
-await corsair.hubspot.api.contacts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contacts.create({});
 ```
 
 **Input**
@@ -665,7 +676,8 @@ Permanently delete a contact [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.hubspot.api.contacts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contacts.delete({});
 ```
 
 **Input**
@@ -690,7 +702,8 @@ Get a specific contact
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.contacts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contacts.get({});
 ```
 
 **Input**
@@ -748,7 +761,8 @@ Get multiple contacts
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.contacts.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contacts.getMany({});
 ```
 
 **Input**
@@ -817,7 +831,8 @@ List recently created contacts
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.contacts.getRecentlyCreated({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contacts.getRecentlyCreated({});
 ```
 
 **Input**
@@ -883,7 +898,8 @@ List recently updated contacts
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.contacts.getRecentlyUpdated({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contacts.getRecentlyUpdated({});
 ```
 
 **Input**
@@ -949,7 +965,8 @@ Search contacts
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.contacts.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contacts.search({});
 ```
 
 **Input**
@@ -1045,7 +1062,8 @@ Update an existing contact
 **Risk:** `write`
 
 ```ts
-await corsair.hubspot.api.contacts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contacts.update({});
 ```
 
 **Input**
@@ -1111,7 +1129,8 @@ Create a new deal
 **Risk:** `write`
 
 ```ts
-await corsair.hubspot.api.deals.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.deals.create({});
 ```
 
 **Input**
@@ -1190,7 +1209,8 @@ Permanently delete a deal [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.hubspot.api.deals.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.deals.delete({});
 ```
 
 **Input**
@@ -1215,7 +1235,8 @@ Get a specific deal
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.deals.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.deals.get({});
 ```
 
 **Input**
@@ -1273,7 +1294,8 @@ Get multiple deals
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.deals.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.deals.getMany({});
 ```
 
 **Input**
@@ -1342,7 +1364,8 @@ List recently created deals
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.deals.getRecentlyCreated({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.deals.getRecentlyCreated({});
 ```
 
 **Input**
@@ -1408,7 +1431,8 @@ List recently updated deals
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.deals.getRecentlyUpdated({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.deals.getRecentlyUpdated({});
 ```
 
 **Input**
@@ -1474,7 +1498,8 @@ Search deals
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.deals.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.deals.search({});
 ```
 
 **Input**
@@ -1570,7 +1595,8 @@ Update an existing deal
 **Risk:** `write`
 
 ```ts
-await corsair.hubspot.api.deals.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.deals.update({});
 ```
 
 **Input**
@@ -1636,7 +1662,8 @@ Create a new engagement
 **Risk:** `write`
 
 ```ts
-await corsair.hubspot.api.engagements.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.engagements.create({});
 ```
 
 **Input**
@@ -1740,7 +1767,8 @@ Permanently delete an engagement [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.hubspot.api.engagements.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.engagements.delete({});
 ```
 
 **Input**
@@ -1765,7 +1793,8 @@ Get a specific engagement
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.engagements.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.engagements.get({});
 ```
 
 **Input**
@@ -1834,7 +1863,8 @@ Get multiple engagements
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.engagements.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.engagements.getMany({});
 ```
 
 **Input**
@@ -1909,7 +1939,8 @@ Create a new support ticket
 **Risk:** `write`
 
 ```ts
-await corsair.hubspot.api.tickets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.tickets.create({});
 ```
 
 **Input**
@@ -1988,7 +2019,8 @@ Permanently delete a ticket [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.hubspot.api.tickets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.tickets.delete({});
 ```
 
 **Input**
@@ -2013,7 +2045,8 @@ Get a specific ticket
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.tickets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.tickets.get({});
 ```
 
 **Input**
@@ -2071,7 +2104,8 @@ Get multiple tickets
 **Risk:** `read`
 
 ```ts
-await corsair.hubspot.api.tickets.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.tickets.getMany({});
 ```
 
 **Input**
@@ -2139,7 +2173,8 @@ Update an existing ticket
 **Risk:** `write`
 
 ```ts
-await corsair.hubspot.api.tickets.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.tickets.update({});
 ```
 
 **Input**

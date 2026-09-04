@@ -14,7 +14,8 @@ The Backendless plugin syncs data locally. Use `corsair.backendless.db.<entity>.
 Path: `backendless.db.dataObjects.search`
 
 ```ts
-const rows = await corsair.backendless.db.dataObjects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.backendless.db.dataObjects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `backendless.db.files.search`
 
 ```ts
-const rows = await corsair.backendless.db.files.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.backendless.db.files.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -68,7 +70,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `backendless.db.messages.search`
 
 ```ts
-const rows = await corsair.backendless.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.backendless.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -93,7 +96,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `backendless.db.users.search`
 
 ```ts
-const rows = await corsair.backendless.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.backendless.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

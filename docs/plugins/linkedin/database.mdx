@@ -14,7 +14,8 @@ The LinkedIn plugin syncs data locally. Use `corsair.linkedin.db.<entity>.search
 Path: `linkedin.db.users.search`
 
 ```ts
-const rows = await corsair.linkedin.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.linkedin.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

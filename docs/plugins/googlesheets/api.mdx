@@ -20,7 +20,8 @@ Append a new row or update an existing one
 **Risk:** `write`
 
 ```ts
-await corsair.googlesheets.api.sheets.appendOrUpdateRow({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlesheets.api.sheets.appendOrUpdateRow({});
 ```
 
 **Input**
@@ -76,7 +77,8 @@ Append a new row to a sheet
 **Risk:** `write`
 
 ```ts
-await corsair.googlesheets.api.sheets.appendRow({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlesheets.api.sheets.appendRow({});
 ```
 
 **Input**
@@ -131,7 +133,8 @@ Clear all data from a sheet [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.googlesheets.api.sheets.clearSheet({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlesheets.api.sheets.clearSheet({});
 ```
 
 **Input**
@@ -164,7 +167,8 @@ Add a new sheet tab to a spreadsheet
 **Risk:** `write`
 
 ```ts
-await corsair.googlesheets.api.sheets.createSheet({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlesheets.api.sheets.createSheet({});
 ```
 
 **Input**
@@ -215,7 +219,8 @@ Delete rows or columns from a sheet [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.googlesheets.api.sheets.deleteRowsOrColumns({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlesheets.api.sheets.deleteRowsOrColumns({});
 ```
 
 **Input**
@@ -269,7 +274,8 @@ Delete a sheet tab and all its data [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.googlesheets.api.sheets.deleteSheet({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlesheets.api.sheets.deleteSheet({});
 ```
 
 **Input**
@@ -320,7 +326,8 @@ Read rows from a sheet
 **Risk:** `read`
 
 ```ts
-await corsair.googlesheets.api.sheets.getRows({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlesheets.api.sheets.getRows({});
 ```
 
 **Input**
@@ -356,7 +363,8 @@ List all sheet tabs in a spreadsheet
 **Risk:** `read`
 
 ```ts
-await corsair.googlesheets.api.sheets.listSheetsInSpreadsheet({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlesheets.api.sheets.listSheetsInSpreadsheet({});
 ```
 
 **Input**
@@ -402,7 +410,8 @@ Update an existing row in a sheet
 **Risk:** `write`
 
 ```ts
-await corsair.googlesheets.api.sheets.updateRow({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlesheets.api.sheets.updateRow({});
 ```
 
 **Input**
@@ -459,7 +468,8 @@ Create a new spreadsheet
 **Risk:** `write`
 
 ```ts
-await corsair.googlesheets.api.spreadsheets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlesheets.api.spreadsheets.create({});
 ```
 
 **Input**
@@ -518,7 +528,8 @@ Permanently delete a spreadsheet [DESTRUCTIVE · IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.googlesheets.api.spreadsheets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlesheets.api.spreadsheets.delete({});
 ```
 
 **Input**
@@ -543,7 +554,8 @@ List all spreadsheets in Google Drive
 **Risk:** `read`
 
 ```ts
-await corsair.googlesheets.api.spreadsheets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlesheets.api.spreadsheets.list({});
 ```
 
 **Input**

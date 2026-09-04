@@ -20,7 +20,8 @@ Generate an AI response via OpenRouter with automatic multi-provider routing, re
 **Risk:** `write`
 
 ```ts
-await corsair.openrouter.api.chatCompletions.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.chatCompletions.create({});
 ```
 
 **Input**
@@ -302,7 +303,8 @@ Get the account credit balance and usage with a management API key
 **Risk:** `read`
 
 ```ts
-await corsair.openrouter.api.credits.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.credits.list({});
 ```
 
 **Input:** _empty object_
@@ -346,7 +348,8 @@ Generate vector embeddings for one or more input strings using a supported embed
 **Risk:** `write`
 
 ```ts
-await corsair.openrouter.api.embeddings.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.embeddings.create({});
 ```
 
 **Input**
@@ -435,7 +438,8 @@ Fetch request and usage metadata for a previous generation by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.openrouter.api.generations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.generations.get({});
 ```
 
 **Input**
@@ -496,7 +500,8 @@ Get metadata about the current API key, including usage, limits, and rate limits
 **Risk:** `read`
 
 ```ts
-await corsair.openrouter.api.key.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.key.get({});
 ```
 
 **Input:** _empty object_
@@ -556,7 +561,8 @@ Create a message via OpenRouter's Anthropic Messages API, with support for syste
 **Risk:** `write`
 
 ```ts
-await corsair.openrouter.api.messages.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.messages.create({});
 ```
 
 **Input**
@@ -768,7 +774,8 @@ List the individual endpoints serving a model, with per-provider pricing, latenc
 **Risk:** `read`
 
 ```ts
-await corsair.openrouter.api.modelEndpoints.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.modelEndpoints.list({});
 ```
 
 **Input**
@@ -849,7 +856,8 @@ Get the total count of models available on OpenRouter
 **Risk:** `read`
 
 ```ts
-await corsair.openrouter.api.models.count({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.models.count({});
 ```
 
 **Input:** _empty object_
@@ -885,7 +893,8 @@ List all models available on OpenRouter, including pricing, context length, and 
 **Risk:** `read`
 
 ```ts
-await corsair.openrouter.api.models.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.models.list({});
 ```
 
 **Input**
@@ -961,7 +970,8 @@ List all embedding models available on OpenRouter
 **Risk:** `read`
 
 ```ts
-await corsair.openrouter.api.models.listEmbeddings({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.models.listEmbeddings({});
 ```
 
 **Input**
@@ -1037,7 +1047,8 @@ List models filtered by the authenticated user’s provider preferences, privacy
 **Risk:** `read`
 
 ```ts
-await corsair.openrouter.api.models.listUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.models.listUser({});
 ```
 
 **Input**
@@ -1115,7 +1126,8 @@ List the providers available on OpenRouter with their privacy policies and data-
 **Risk:** `read`
 
 ```ts
-await corsair.openrouter.api.providers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.providers.list({});
 ```
 
 **Input:** _empty object_
@@ -1159,7 +1171,8 @@ List the Zero-Data Residency (ZDR) endpoint specification for the account
 **Risk:** `read`
 
 ```ts
-await corsair.openrouter.api.zdr.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openrouter.api.zdr.list({});
 ```
 
 **Input:** _empty object_

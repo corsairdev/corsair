@@ -20,7 +20,8 @@ Tool to retrieve a list of contractors connected to a selected Base Connect inte
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.connect.getConnectIntegrationContractors({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.connect.getConnectIntegrationContractors({});
 ```
 
 **Input**
@@ -61,7 +62,8 @@ Tool to retrieve a list of all Base Connect integrations on this account. Return
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.connect.getConnectIntegrations({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.connect.getConnectIntegrations({});
 ```
 
 **Input:** _empty object_
@@ -99,7 +101,8 @@ Tool to register shipping details for orders when shipments are created outside 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.couriers.createPackageManual({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.couriers.createPackageManual({});
 ```
 
 **Input**
@@ -135,7 +138,8 @@ Tool to retrieve the list of accounts connected to a given courier. Use when you
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.couriers.getCourierAccounts({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.couriers.getCourierAccounts({});
 ```
 
 **Input**
@@ -176,7 +180,8 @@ Tool to retrieve the form fields required for creating shipments with a specific
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.couriers.getCourierFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.couriers.getCourierFields({});
 ```
 
 **Input**
@@ -227,7 +232,8 @@ Tool to retrieve the history of status changes for courier packages. Use when yo
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.couriers.getCourierPackagesStatusHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.couriers.getCourierPackagesStatusHistory({});
 ```
 
 **Input**
@@ -278,7 +284,8 @@ Tool to retrieve a list of available couriers from BaseLinker. Use when you need
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.couriers.getCouriersList({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.couriers.getCouriersList({});
 ```
 
 **Input:** _empty object_
@@ -314,7 +321,8 @@ Tool to download shipments previously created for a selected order. Use when you
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.couriers.getOrderPackages({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.couriers.getOrderPackages({});
 ```
 
 **Input**
@@ -355,7 +363,8 @@ Tool to get detailed information about a package. If the package contains multip
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.couriers.getPackageDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.couriers.getPackageDetails({});
 ```
 
 **Input**
@@ -396,7 +405,8 @@ Tool to download a parcel protocol for selected shipments. Use when you need to 
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.couriers.getProtocol({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.couriers.getProtocol({});
 ```
 
 **Input**
@@ -449,7 +459,8 @@ Tool to retrieve additional fields for a parcel pickup request from a specific c
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.couriers.getRequestParcelPickupFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.couriers.getRequestParcelPickupFields({});
 ```
 
 **Input**
@@ -490,7 +501,8 @@ Tool to request a parcel pickup for previously created shipments. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.couriers.runRequestParcelPickup({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.couriers.runRequestParcelPickup({});
 ```
 
 **Input**
@@ -553,7 +565,8 @@ Tool to issue an order invoice in BaseLinker. Use when you need to generate an i
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.documents.addInvoice({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.documents.addInvoice({});
 ```
 
 **Input**
@@ -586,7 +599,8 @@ Tool to issue an order invoice correction. Use when correcting pricing errors, h
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.documents.addInvoiceCorrection({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.documents.addInvoiceCorrection({});
 ```
 
 **Input**
@@ -644,7 +658,8 @@ Tool to retrieve an invoice file from BaseLinker in base64-encoded format. Use w
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.documents.getInvoiceFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.documents.getInvoiceFile({});
 ```
 
 **Input**
@@ -677,7 +692,8 @@ Download invoices from BaseLinker order manager with optional filtering. Use thi
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.documents.getInvoices({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.documents.getInvoices({});
 ```
 
 **Input**
@@ -724,7 +740,8 @@ Tool to retrieve receipts waiting to be issued. Use after confirming fiscal prin
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.documents.getNewReceipts({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.documents.getNewReceipts({});
 ```
 
 **Input**
@@ -782,7 +799,8 @@ Tool to retrieve issued receipts from BaseLinker. Use when you need to fetch his
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.documents.getReceipts({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.documents.getReceipts({});
 ```
 
 **Input**
@@ -826,7 +844,8 @@ Tool to download invoice/receipt numbering series. Use when you need to retrieve
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.documents.getSeries({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.documents.getSeries({});
 ```
 
 **Input:** _empty object_
@@ -862,7 +881,8 @@ Tool to mark orders with a receipt already issued. Use after printing receipts r
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.documents.setOrderReceipt({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.documents.setOrderReceipt({});
 ```
 
 **Input**
@@ -898,7 +918,8 @@ Tool to add a new category to BaseLinker storage (shops, warehouses, or BaseLink
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.externalStorages.addCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.externalStorages.addCategory({});
 ```
 
 **Input**
@@ -933,7 +954,8 @@ Retrieve stock quantities from an external storage (shop/wholesaler) connected t
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.externalStorages.getExternalStorageProductsQuantity({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.externalStorages.getExternalStorageProductsQuantity({});
 ```
 
 **Input**
@@ -976,7 +998,8 @@ Retrieve a list of external storages (shops, warehouses, wholesalers) connected 
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.externalStorages.getExternalStoragesList({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.externalStorages.getExternalStoragesList({});
 ```
 
 **Input:** _empty object_
@@ -1012,7 +1035,8 @@ Tool to download a list of available storages accessible via API. Use when you n
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.externalStorages.getStoragesList({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.externalStorages.getStoragesList({});
 ```
 
 **Input:** _empty object_
@@ -1050,7 +1074,8 @@ Tool to add or update a BaseLinker catalog (inventory). Use when you need to cre
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.inventory.addInventory({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.addInventory({});
 ```
 
 **Input**
@@ -1116,7 +1141,8 @@ Tool to add or update a category in the BaseLinker catalog. Use when you need to
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.inventory.addInventoryCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.addInventoryCategory({});
 ```
 
 **Input**
@@ -1150,7 +1176,8 @@ Tool to add or update a manufacturer in the BaseLinker catalog. Use when you nee
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.inventory.addInventoryManufacturer({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.addInventoryManufacturer({});
 ```
 
 **Input**
@@ -1192,7 +1219,8 @@ Tool to add a new payer or update an existing one in BaseLinker storage. Use whe
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.inventory.addInventoryPayer({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.addInventoryPayer({});
 ```
 
 **Input**
@@ -1228,7 +1256,8 @@ Tool to create or update a price group in BaseLinker storage. Use when you need 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.inventory.addInventoryPriceGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.addInventoryPriceGroup({});
 ```
 
 **Input**
@@ -1269,7 +1298,8 @@ Add a new product to BaseLinker catalog or update an existing product. Use when 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.inventory.addInventoryProduct({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.addInventoryProduct({});
 ```
 
 **Input**
@@ -1436,7 +1466,8 @@ Tool to add a new supplier or update an existing one in BaseLinker storage. Use 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.inventory.addInventorySupplier({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.addInventorySupplier({});
 ```
 
 **Input**
@@ -1478,7 +1509,8 @@ Tool to add a new warehouse or update an existing warehouse in BaseLinker invent
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.inventory.addInventoryWarehouse({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.addInventoryWarehouse({});
 ```
 
 **Input**
@@ -1516,7 +1548,8 @@ Tool to delete a catalog from BaseLinker storage. Use when you need to permanent
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.baselinker.api.inventory.deleteInventory({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.deleteInventory({});
 ```
 
 **Input**
@@ -1546,7 +1579,8 @@ Tool to remove categories from BaseLinker warehouse. Along with the category, th
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.baselinker.api.inventory.deleteInventoryCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.deleteInventoryCategory({});
 ```
 
 **Input**
@@ -1576,7 +1610,8 @@ Tool to remove a manufacturer from the BaseLinker catalog. Use when you need to 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.baselinker.api.inventory.deleteInventoryManufacturer({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.deleteInventoryManufacturer({});
 ```
 
 **Input**
@@ -1606,7 +1641,8 @@ Tool to remove a payer from BaseLinker storage. Use when you need to delete an e
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.baselinker.api.inventory.deleteInventoryPayer({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.deleteInventoryPayer({});
 ```
 
 **Input**
@@ -1636,7 +1672,8 @@ Tool to remove a price group from BaseLinker storage. Use when you need to delet
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.baselinker.api.inventory.deleteInventoryPriceGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.deleteInventoryPriceGroup({});
 ```
 
 **Input**
@@ -1666,7 +1703,8 @@ Tool to remove a product from the BaseLinker catalog. Use when you need to perma
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.baselinker.api.inventory.deleteInventoryProduct({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.deleteInventoryProduct({});
 ```
 
 **Input**
@@ -1696,7 +1734,8 @@ Tool to remove a warehouse from BaseLinker inventories. Use when you need to del
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.baselinker.api.inventory.deleteInventoryWarehouse({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.deleteInventoryWarehouse({});
 ```
 
 **Input**
@@ -1726,7 +1765,8 @@ Tool to retrieve a list of catalogs (inventories) available in the BaseLinker st
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventories({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventories({});
 ```
 
 **Input:** _empty object_
@@ -1762,7 +1802,8 @@ Tool to retrieve a list of product text fields that can be overwritten for a spe
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryAvailableTextFieldKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryAvailableTextFieldKeys({});
 ```
 
 **Input**
@@ -1803,7 +1844,8 @@ Tool to retrieve a list of categories for a BaseLinker catalog. Use when you nee
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryCategories({});
 ```
 
 **Input**
@@ -1844,7 +1886,8 @@ Tool to retrieve extra fields defined for BaseLinker catalog inventory items. Us
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryExtraFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryExtraFields({});
 ```
 
 **Input:** _empty object_
@@ -1880,7 +1923,8 @@ Tool to retrieve a list of integrations where text values in the catalog can be 
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryIntegrations({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryIntegrations({});
 ```
 
 **Input**
@@ -1921,7 +1965,8 @@ Tool to retrieve a list of manufacturers from the BaseLinker catalog. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryManufacturers({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryManufacturers({});
 ```
 
 **Input**
@@ -1962,7 +2007,8 @@ Tool to retrieve a list of payers available in BaseLinker storage. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryPayers({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryPayers({});
 ```
 
 **Input**
@@ -2004,7 +2050,8 @@ Tool to retrieve price groups existing in BaseLinker storage. Use when you need 
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryPriceGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryPriceGroups({});
 ```
 
 **Input:** _empty object_
@@ -2040,7 +2087,8 @@ Tool to retrieve a list of all configured printout templates available for inven
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryPrintoutTemplates({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryPrintoutTemplates({});
 ```
 
 **Input:** _empty object_
@@ -2076,7 +2124,8 @@ Tool to retrieve a list of events related to product changes in the BaseLinker c
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryProductLogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryProductLogs({});
 ```
 
 **Input**
@@ -2122,7 +2171,8 @@ Tool to retrieve detailed data for selected products from the BaseLinker invento
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryProductsData({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryProductsData({});
 ```
 
 **Input**
@@ -2181,7 +2231,8 @@ Tool to retrieve basic data of chosen products from BaseLinker catalogs. Use whe
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryProductsList({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryProductsList({});
 ```
 
 **Input**
@@ -2235,7 +2286,8 @@ Retrieve gross prices of products from BaseLinker inventories. Use when you need
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryProductsPrices({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryProductsPrices({});
 ```
 
 **Input**
@@ -2277,7 +2329,8 @@ Tool to retrieve stock data of products from BaseLinker catalogs. Use when you n
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryProductsStock({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryProductsStock({});
 ```
 
 **Input**
@@ -2329,7 +2382,8 @@ Tool to retrieve a list of suppliers available in BaseLinker storage. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventorySuppliers({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventorySuppliers({});
 ```
 
 **Input**
@@ -2371,7 +2425,8 @@ Tool to retrieve a list of tags for a BaseLinker catalog. Use when you need to v
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryTags({});
 ```
 
 **Input:** _empty object_
@@ -2407,7 +2462,8 @@ Tool to retrieve a list of warehouses available in BaseLinker inventories. Use w
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventory.getInventoryWarehouses({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.getInventoryWarehouses({});
 ```
 
 **Input:** _empty object_
@@ -2443,7 +2499,8 @@ Tool to execute a personal trigger for products automatic actions. Use when you 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.inventory.runProductMacroTrigger({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.runProductMacroTrigger({});
 ```
 
 **Input**
@@ -2474,7 +2531,8 @@ Tool to update stocks of products and their variants in BaseLinker catalog. Use 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.inventory.updateInventoryProductsStock({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventory.updateInventoryProductsStock({});
 ```
 
 **Input**
@@ -2529,7 +2587,8 @@ Tool to create a new inventory document in BaseLinker storage. Use when you need
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.inventoryDocuments.addInventoryDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventoryDocuments.addInventoryDocument({});
 ```
 
 **Input**
@@ -2568,7 +2627,8 @@ Tool to retrieve items from inventory documents in BaseLinker. Use when you need
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventoryDocuments.getInventoryDocumentItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventoryDocuments.getInventoryDocumentItems({});
 ```
 
 **Input**
@@ -2610,7 +2670,8 @@ Tool to retrieve a list of inventory documents. Use when you need to fetch inven
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventoryDocuments.getInventoryDocuments({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventoryDocuments.getInventoryDocuments({});
 ```
 
 **Input**
@@ -2659,7 +2720,8 @@ Tool to retrieve available inventory document series. Use when you need to assig
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.inventoryDocuments.getInventoryDocumentSeries({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.inventoryDocuments.getInventoryDocumentSeries({});
 ```
 
 **Input**
@@ -2702,7 +2764,8 @@ Tool to add a new order to the BaseLinker order manager. Use when you need to cr
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.orders.addOrder({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.addOrder({});
 ```
 
 **Input**
@@ -2789,7 +2852,8 @@ Tool to create a new order by splitting selected products from an existing order
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.orders.addOrderBySplit({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.addOrderBySplit({});
 ```
 
 **Input**
@@ -2832,7 +2896,8 @@ Tool to add a new order by duplicating an existing order in BaseLinker. The new 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.orders.addOrderDuplicate({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.addOrderDuplicate({});
 ```
 
 **Input**
@@ -2863,7 +2928,8 @@ Tool to remove a specific product from an order in BaseLinker. Use when you need
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.baselinker.api.orders.deleteOrderProduct({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.deleteOrderProduct({});
 ```
 
 **Input**
@@ -2894,7 +2960,8 @@ Tool to delete multiple orders from BaseLinker order manager. Use when you need 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.baselinker.api.orders.deleteOrders({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.deleteOrders({});
 ```
 
 **Input**
@@ -2945,7 +3012,8 @@ Tool to download order event logs from the last 3 days. Use when you need to tra
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.orders.getJournalList({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.getJournalList({});
 ```
 
 **Input**
@@ -2998,7 +3066,8 @@ Tool to retrieve extra fields defined for orders. Use before fetching orders wit
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.orders.getOrderExtraFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.getOrderExtraFields({});
 ```
 
 **Input:** _empty object_
@@ -3034,7 +3103,8 @@ Tool to retrieve payment history for a selected order, including external paymen
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.orders.getOrderPaymentsHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.getOrderPaymentsHistory({});
 ```
 
 **Input**
@@ -3076,7 +3146,8 @@ Tool to retrieve pick and pack history for a selected order. Use when you need t
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.orders.getOrderPickPackHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.getOrderPickPackHistory({});
 ```
 
 **Input**
@@ -3118,7 +3189,8 @@ Tool to retrieve a list of all configured printout templates available for order
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.orders.getOrderPrintoutTemplates({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.getOrderPrintoutTemplates({});
 ```
 
 **Input:** _empty object_
@@ -3154,7 +3226,8 @@ Download orders from BaseLinker order manager with optional filtering. Use this 
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.orders.getOrders({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.getOrders({});
 ```
 
 **Input**
@@ -3209,7 +3282,8 @@ Search for orders associated with a specific phone number in BaseLinker. Use whe
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.orders.getOrdersByPhone({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.getOrdersByPhone({});
 ```
 
 **Input**
@@ -3250,7 +3324,8 @@ Tool to retrieve types of order sources along with their IDs from BaseLinker. Us
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.orders.getOrderSources({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.getOrderSources({});
 ```
 
 **Input:** _empty object_
@@ -3286,7 +3361,8 @@ Tool to retrieve a list of order statuses created in the BaseLinker order manage
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.orders.getOrderStatusList({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.getOrderStatusList({});
 ```
 
 **Input:** _empty object_
@@ -3322,7 +3398,8 @@ Tool to retrieve transaction details for a selected order. Use when you need mar
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.orders.getOrderTransactionData({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.getOrderTransactionData({});
 ```
 
 **Input**
@@ -3383,7 +3460,8 @@ Tool to retrieve a list of all PickPack carts belonging to the authenticated use
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.orders.getPickPackCarts({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.getPickPackCarts({});
 ```
 
 **Input:** _empty object_
@@ -3419,7 +3497,8 @@ Tool to run personal trigger for orders automatic actions. Use when you need to 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.orders.runOrderMacroTrigger({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.runOrderMacroTrigger({});
 ```
 
 **Input**
@@ -3450,7 +3529,8 @@ Tool to edit selected fields of a specific order in BaseLinker. Use when you nee
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.orders.setOrderFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.setOrderFields({});
 ```
 
 **Input**
@@ -3526,7 +3606,8 @@ Tool to add a payment to an order in BaseLinker. Use when recording a payment fo
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.orders.setOrderPayment({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.setOrderPayment({});
 ```
 
 **Input**
@@ -3560,7 +3641,8 @@ Tool to edit data of selected items in a specific BaseLinker order. Use when you
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.orders.setOrderProductFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.setOrderProductFields({});
 ```
 
 **Input**
@@ -3606,7 +3688,8 @@ Tool to merge multiple orders into one, based on the selected merge mode. Use wh
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.baselinker.api.orders.setOrdersMerge({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.setOrdersMerge({});
 ```
 
 **Input**
@@ -3650,7 +3733,8 @@ Tool to change the status of an existing order in BaseLinker. Use when you need 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.orders.setOrderStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.setOrderStatus({});
 ```
 
 **Input**
@@ -3681,7 +3765,8 @@ Tool to batch update order statuses in BaseLinker. Use when you need to set the 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.orders.setOrderStatuses({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.orders.setOrderStatuses({});
 ```
 
 **Input**
@@ -3724,7 +3809,8 @@ Tool to create a new purchase order in BaseLinker storage. Orders are created as
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.purchaseOrders.addInventoryPurchaseOrder({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.purchaseOrders.addInventoryPurchaseOrder({});
 ```
 
 **Input**
@@ -3783,7 +3869,8 @@ Tool to add items to an existing purchase order in BaseLinker. Use when you need
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.purchaseOrders.addInventoryPurchaseOrderItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.purchaseOrders.addInventoryPurchaseOrderItems({});
 ```
 
 **Input**
@@ -3835,7 +3922,8 @@ Tool to retrieve items from a specific purchase order in BaseLinker. Use when yo
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrderItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.purchaseOrders.getInventoryPurchaseOrderItems({});
 ```
 
 **Input**
@@ -3877,7 +3965,8 @@ Tool to retrieve a list of purchase orders from BaseLinker storage. Use when you
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrders({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.purchaseOrders.getInventoryPurchaseOrders({});
 ```
 
 **Input**
@@ -3925,7 +4014,8 @@ Tool to retrieve a list of purchase order document series. Use when you need to 
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrderSeries({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.purchaseOrders.getInventoryPurchaseOrderSeries({});
 ```
 
 **Input**
@@ -3966,7 +4056,8 @@ Tool to change the status of a purchase order in BaseLinker inventory. Use when 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.purchaseOrders.setInventoryPurchaseOrderStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.purchaseOrders.setInventoryPurchaseOrderStatus({});
 ```
 
 **Input**
@@ -4010,7 +4101,8 @@ Tool to add a new order return to BaseLinker. Use when creating a return for an 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.returns.addOrderReturn({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.addOrderReturn({});
 ```
 
 **Input**
@@ -4084,7 +4176,8 @@ Tool to add a new product to an existing order return in BaseLinker. Use when a 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.returns.addOrderReturnProduct({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.addOrderReturnProduct({});
 ```
 
 **Input**
@@ -4133,7 +4226,8 @@ Tool to remove a specific product from an order return in BaseLinker. Use when y
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.baselinker.api.returns.deleteOrderReturnProduct({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.deleteOrderReturnProduct({});
 ```
 
 **Input**
@@ -4164,7 +4258,8 @@ Tool to retrieve extra fields defined for order returns. Use before calling getO
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.returns.getOrderReturnExtraFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.getOrderReturnExtraFields({});
 ```
 
 **Input:** _empty object_
@@ -4200,7 +4295,8 @@ Tool to download return event logs from the last 3 days in BaseLinker. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.returns.getOrderReturnJournalList({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.getOrderReturnJournalList({});
 ```
 
 **Input**
@@ -4253,7 +4349,8 @@ Tool to retrieve payment history for a selected order return, including external
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.returns.getOrderReturnPaymentsHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.getOrderReturnPaymentsHistory({});
 ```
 
 **Input**
@@ -4295,7 +4392,8 @@ Tool to retrieve a list of order return product statuses from BaseLinker. Use wh
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.returns.getOrderReturnProductStatuses({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.getOrderReturnProductStatuses({});
 ```
 
 **Input:** _empty object_
@@ -4331,7 +4429,8 @@ Tool to retrieve a list of order return reasons. Use when you need to discover a
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.returns.getOrderReturnReasonsList({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.getOrderReturnReasonsList({});
 ```
 
 **Input:** _empty object_
@@ -4367,7 +4466,8 @@ Download order returns from BaseLinker return manager with optional filtering. U
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.returns.getOrderReturns({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.getOrderReturns({});
 ```
 
 **Input**
@@ -4416,7 +4516,8 @@ Tool to retrieve order return statuses created in the BaseLinker order manager. 
 **Risk:** `read`
 
 ```ts
-await corsair.baselinker.api.returns.getOrderReturnStatusList({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.getOrderReturnStatusList({});
 ```
 
 **Input:** _empty object_
@@ -4452,7 +4553,8 @@ Tool to edit selected fields of a specific order return. Use when updating retur
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.returns.setOrderReturnFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.setOrderReturnFields({});
 ```
 
 **Input**
@@ -4507,7 +4609,8 @@ Tool to edit data of selected items (e.g., prices, quantities, attributes) of a 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.returns.setOrderReturnProductFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.setOrderReturnProductFields({});
 ```
 
 **Input**
@@ -4555,7 +4658,8 @@ Tool to mark an order return as refunded in BaseLinker. Use when recording that 
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.returns.setOrderReturnRefund({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.setOrderReturnRefund({});
 ```
 
 **Input**
@@ -4589,7 +4693,8 @@ Tool to change order return status in BaseLinker. Use when you need to update th
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.returns.setOrderReturnStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.setOrderReturnStatus({});
 ```
 
 **Input**
@@ -4620,7 +4725,8 @@ Tool to batch set order return statuses in BaseLinker. Use when you need to upda
 **Risk:** `write`
 
 ```ts
-await corsair.baselinker.api.returns.setOrderReturnStatuses({});
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.returns.setOrderReturnStatuses({});
 ```
 
 **Input**

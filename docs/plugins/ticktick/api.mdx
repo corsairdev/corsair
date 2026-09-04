@@ -20,7 +20,8 @@ Generate TickTick OAuth2 authorization URL
 **Risk:** `read`
 
 ```ts
-await corsair.ticktick.api.oauth.generateAuthUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.oauth.generateAuthUrl({});
 ```
 
 **Input:** _empty object_
@@ -48,7 +49,8 @@ Create a new project
 **Risk:** `write`
 
 ```ts
-await corsair.ticktick.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.projects.create({});
 ```
 
 **Input**
@@ -90,7 +92,8 @@ Permanently delete a project and its tasks
 **Risk:** `destructive`
 
 ```ts
-await corsair.ticktick.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.projects.delete({});
 ```
 
 **Input**
@@ -120,7 +123,8 @@ Get a project by ID
 **Risk:** `read`
 
 ```ts
-await corsair.ticktick.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.projects.get({});
 ```
 
 **Input**
@@ -158,7 +162,8 @@ Get a project with its tasks
 **Risk:** `read`
 
 ```ts
-await corsair.ticktick.api.projects.getData({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.projects.getData({});
 ```
 
 **Input**
@@ -253,7 +258,8 @@ Get user projects (TickTick omits Inbox)
 **Risk:** `read`
 
 ```ts
-await corsair.ticktick.api.projects.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.projects.getMany({});
 ```
 
 **Input:** _empty object_
@@ -292,7 +298,8 @@ Update project details
 **Risk:** `write`
 
 ```ts
-await corsair.ticktick.api.projects.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.projects.update({});
 ```
 
 **Input**
@@ -337,7 +344,8 @@ Mark a task as complete
 **Risk:** `write`
 
 ```ts
-await corsair.ticktick.api.tasks.complete({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.tasks.complete({});
 ```
 
 **Input**
@@ -368,7 +376,8 @@ Create a new task
 **Risk:** `write`
 
 ```ts
-await corsair.ticktick.api.tasks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.tasks.create({});
 ```
 
 **Input**
@@ -455,7 +464,8 @@ Permanently delete a task
 **Risk:** `destructive`
 
 ```ts
-await corsair.ticktick.api.tasks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.tasks.delete({});
 ```
 
 **Input**
@@ -486,7 +496,8 @@ Get a task by project and ID
 **Risk:** `read`
 
 ```ts
-await corsair.ticktick.api.tasks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.tasks.get({});
 ```
 
 **Input**
@@ -550,7 +561,8 @@ List open tasks across listed user projects (excludes Inbox)
 **Risk:** `read`
 
 ```ts
-await corsair.ticktick.api.tasks.listAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.tasks.listAll({});
 ```
 
 **Input:** _empty object_
@@ -605,7 +617,8 @@ Update an existing task
 **Risk:** `write`
 
 ```ts
-await corsair.ticktick.api.tasks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.ticktick.api.tasks.update({});
 ```
 
 **Input**

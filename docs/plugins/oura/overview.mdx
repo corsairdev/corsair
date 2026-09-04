@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { oura } from '@corsair-dev/oura';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		oura(),
 	],

@@ -14,7 +14,8 @@ The Anchor Browser plugin syncs data locally. Use `corsair.anchorbrowser.db.<ent
 Path: `anchorbrowser.db.profiles.search`
 
 ```ts
-const rows = await corsair.anchorbrowser.db.profiles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.anchorbrowser.db.profiles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `anchorbrowser.db.sessions.search`
 
 ```ts
-const rows = await corsair.anchorbrowser.db.sessions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.anchorbrowser.db.sessions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -76,7 +78,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `anchorbrowser.db.tasks.search`
 
 ```ts
-const rows = await corsair.anchorbrowser.db.tasks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.anchorbrowser.db.tasks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

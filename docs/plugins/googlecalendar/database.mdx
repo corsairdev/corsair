@@ -14,7 +14,8 @@ The Google Calendar plugin syncs data locally. Use `corsair.googlecalendar.db.<e
 Path: `googlecalendar.db.calendars.search`
 
 ```ts
-const rows = await corsair.googlecalendar.db.calendars.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlecalendar.db.calendars.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googlecalendar.db.events.search`
 
 ```ts
-const rows = await corsair.googlecalendar.db.events.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlecalendar.db.events.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

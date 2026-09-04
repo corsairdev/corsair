@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { teams } from '@corsair-dev/teams';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		teams({
 			authType: 'managed',

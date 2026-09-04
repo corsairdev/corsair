@@ -14,7 +14,8 @@ The Slack plugin syncs data locally. Use `corsair.slack.db.<entity>.search({ dat
 Path: `slack.db.channels.search`
 
 ```ts
-const rows = await corsair.slack.db.channels.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.slack.db.channels.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -51,7 +52,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `slack.db.files.search`
 
 ```ts
-const rows = await corsair.slack.db.files.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.slack.db.files.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -87,7 +89,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `slack.db.messages.search`
 
 ```ts
-const rows = await corsair.slack.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.slack.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -126,7 +129,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `slack.db.userGroups.search`
 
 ```ts
-const rows = await corsair.slack.db.userGroups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.slack.db.userGroups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -158,7 +162,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `slack.db.users.search`
 
 ```ts
-const rows = await corsair.slack.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.slack.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

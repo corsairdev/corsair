@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { browseai } from '@corsair-dev/browseai';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		browseai(),
 	],

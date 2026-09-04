@@ -20,7 +20,8 @@ List comments on a post
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.comments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.comments.list({});
 ```
 
 **Input**
@@ -103,7 +104,8 @@ Create a new draft
 **Risk:** `write`
 
 ```ts
-await corsair.hashnode.api.drafts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.drafts.create({});
 ```
 
 **Input**
@@ -258,7 +260,8 @@ Delete a draft [DESTRUCTIVE - IRREVERSIBLE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.hashnode.api.drafts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.drafts.delete({});
 ```
 
 **Input**
@@ -301,7 +304,8 @@ Get a draft by ID
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.drafts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.drafts.get({});
 ```
 
 **Input**
@@ -392,7 +396,8 @@ Publish a draft as a post
 **Risk:** `write`
 
 ```ts
-await corsair.hashnode.api.drafts.publish({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.drafts.publish({});
 ```
 
 **Input**
@@ -500,7 +505,8 @@ Update an existing draft
 **Risk:** `write`
 
 ```ts
-await corsair.hashnode.api.drafts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.drafts.update({});
 ```
 
 **Input**
@@ -657,7 +663,8 @@ Get the global feed of posts
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.feed.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.feed.list({});
 ```
 
 **Input**
@@ -790,7 +797,8 @@ Create a presigned image upload URL
 **Risk:** `write`
 
 ```ts
-await corsair.hashnode.api.images.createUploadURL({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.images.createUploadURL({});
 ```
 
 **Input**
@@ -837,7 +845,8 @@ Get the current authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.me({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.me({});
 ```
 
 **Input:** _empty object_
@@ -893,7 +902,8 @@ Get a static page by slug
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.pages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.pages.get({});
 ```
 
 **Input**
@@ -952,7 +962,8 @@ List static pages in a publication
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.pages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.pages.list({});
 ```
 
 **Input**
@@ -1023,7 +1034,8 @@ Get a single post by ID
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.posts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.posts.get({});
 ```
 
 **Input**
@@ -1129,7 +1141,8 @@ Get a post by publication host and slug
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.posts.getBySlug({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.posts.getBySlug({});
 ```
 
 **Input**
@@ -1238,7 +1251,8 @@ List posts in a publication
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.posts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.posts.list({});
 ```
 
 **Input**
@@ -1370,7 +1384,8 @@ Publish a new post
 **Risk:** `write`
 
 ```ts
-await corsair.hashnode.api.posts.publish({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.posts.publish({});
 ```
 
 **Input**
@@ -1507,7 +1522,8 @@ Search posts within a publication
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.posts.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.posts.search({});
 ```
 
 **Input**
@@ -1640,7 +1656,8 @@ Update an existing post
 **Risk:** `write`
 
 ```ts
-await corsair.hashnode.api.posts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.posts.update({});
 ```
 
 **Input**
@@ -1779,7 +1796,8 @@ Get a publication by host
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.publications.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.publications.get({});
 ```
 
 **Input**
@@ -1864,7 +1882,8 @@ List publications for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.publications.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.publications.list({});
 ```
 
 **Input**
@@ -1963,7 +1982,8 @@ Get a series by slug
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.series.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.series.get({});
 ```
 
 **Input**
@@ -2032,7 +2052,8 @@ List series in a publication
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.series.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.series.list({});
 ```
 
 **Input**
@@ -2116,7 +2137,8 @@ Get a tag by slug
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.tags.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.tags.get({});
 ```
 
 **Input**
@@ -2165,7 +2187,8 @@ Get a user by username
 **Risk:** `read`
 
 ```ts
-await corsair.hashnode.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hashnode.api.users.get({});
 ```
 
 **Input**

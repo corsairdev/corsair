@@ -20,7 +20,8 @@ Retrieve current credit balance for the Bouncer account
 **Risk:** `read`
 
 ```ts
-await corsair.bouncer.api.account.getCredits({});
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.account.getCredits({});
 ```
 
 **Input:** _empty object_
@@ -47,7 +48,8 @@ Initiate an asynchronous batch email verification request
 **Risk:** `write`
 
 ```ts
-await corsair.bouncer.api.email.createBatchRequest({});
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.email.createBatchRequest({});
 ```
 
 **Input**
@@ -95,7 +97,8 @@ Permanently delete a batch email verification request and its data
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.bouncer.api.email.deleteBatchRequest({});
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.email.deleteBatchRequest({});
 ```
 
 **Input**
@@ -120,7 +123,8 @@ Mark a batch verification process as finished early
 **Risk:** `write`
 
 ```ts
-await corsair.bouncer.api.email.finishBatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.email.finishBatch({});
 ```
 
 **Input**
@@ -145,7 +149,8 @@ Retrieve the results of a batch email verification process
 **Risk:** `read`
 
 ```ts
-await corsair.bouncer.api.email.getBatchResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.email.getBatchResults({});
 ```
 
 **Input**
@@ -205,7 +210,8 @@ Check the processing status of a batch, optionally with per-status stats
 **Risk:** `read`
 
 ```ts
-await corsair.bouncer.api.email.getBatchStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.email.getBatchStatus({});
 ```
 
 **Input**
@@ -259,7 +265,8 @@ Verify domain MX records and catch-all setup
 **Risk:** `read`
 
 ```ts
-await corsair.bouncer.api.email.verifyDomain({});
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.email.verifyDomain({});
 ```
 
 **Input**
@@ -316,7 +323,8 @@ Verify a single email address in real-time
 **Risk:** `read`
 
 ```ts
-await corsair.bouncer.api.email.verifyEmail({});
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.email.verifyEmail({});
 ```
 
 **Input**
@@ -395,7 +403,8 @@ Check the status and results of a toxicity list job
 **Risk:** `read`
 
 ```ts
-await corsair.bouncer.api.toxicity.checkToxicityListJobStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.toxicity.checkToxicityListJobStatus({});
 ```
 
 **Input**
@@ -427,7 +436,8 @@ Create a toxicity analysis job for a list of email addresses
 **Risk:** `write`
 
 ```ts
-await corsair.bouncer.api.toxicity.createToxicityListJob({});
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.toxicity.createToxicityListJob({});
 ```
 
 **Input**
@@ -459,7 +469,8 @@ Delete a specific toxicity list job by ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.bouncer.api.toxicity.deleteToxicityListJob({});
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.toxicity.deleteToxicityListJob({});
 ```
 
 **Input**
@@ -484,7 +495,8 @@ Download the per-address toxicity scores of a completed job
 **Risk:** `read`
 
 ```ts
-await corsair.bouncer.api.toxicity.getToxicityListResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.toxicity.getToxicityListResults({});
 ```
 
 **Input**

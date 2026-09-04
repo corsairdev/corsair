@@ -20,7 +20,8 @@ Tool to create or update person records using a unique attribute to search for e
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.assertPerson({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.assertPerson({});
 ```
 
 **Input:** `object`
@@ -60,7 +61,8 @@ Creates or updates a user record in Attio using a unique attribute to search for
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.assertUserRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.assertUserRecord({});
 ```
 
 **Input:** `object`
@@ -100,7 +102,8 @@ Creates or updates a workspace record in Attio using a unique attribute to searc
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.assertWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.assertWorkspace({});
 ```
 
 **Input:** `object`
@@ -140,7 +143,8 @@ Tool to create a new attribute on an object or list in Attio. Use when you need 
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createAttribute({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createAttribute({});
 ```
 
 **Input:** `object`
@@ -180,7 +184,8 @@ Tool to create a new comment on a thread, record, or list entry in Attio. Use wh
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createComment({});
 ```
 
 **Input:** `object`
@@ -220,7 +225,8 @@ Creates a new company record in Attio. This endpoint will throw an error on conf
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createCompany({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createCompany({});
 ```
 
 **Input:** `object`
@@ -260,7 +266,8 @@ Tool to create a new deal record in Attio. Use when you need to track a new sale
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createDealRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createDealRecord({});
 ```
 
 **Input:** `object`
@@ -300,7 +307,8 @@ DEPRECATED: Use ATTIO_ATTIO_POST_V2_LISTS_LIST_ENTRIES instead. Tool to add a re
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createEntry({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createEntry({});
 ```
 
 **Input:** `object`
@@ -340,7 +348,8 @@ Tool to create a new list in Attio. Use when you need to organize records into c
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createList({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createList({});
 ```
 
 **Input:** `object`
@@ -380,7 +389,8 @@ This tool creates a new note on a given record in Attio. The note can be attache
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createNote({});
 ```
 
 **Input:** `object`
@@ -420,7 +430,8 @@ Tool to create a new custom object in your Attio workspace. Use when you need to
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createObject({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createObject({});
 ```
 
 **Input:** `object`
@@ -460,7 +471,8 @@ Creates a new person record in Attio. This endpoint will throw an error on confl
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createPerson({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createPerson({});
 ```
 
 **Input:** `object`
@@ -500,7 +512,8 @@ This tool creates a new record in Attio for a specified object type (people, com
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createRecord({});
 ```
 
 **Input:** `object`
@@ -540,7 +553,8 @@ Tool to add a new select option to a select or multiselect attribute in Attio. U
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createSelectOption({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createSelectOption({});
 ```
 
 **Input:** `object`
@@ -580,7 +594,8 @@ Tool to add a new status to a status attribute on either an object or a list. Us
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createStatus({});
 ```
 
 **Input:** `object`
@@ -620,7 +635,8 @@ Tool to create a new task in Attio. Use when you need to add a task with content
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createTask({});
 ```
 
 **Input:** `object`
@@ -660,7 +676,8 @@ Creates a new user record in Attio. User records represent workspace members or 
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createUserRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createUserRecord({});
 ```
 
 **Input:** `object`
@@ -700,7 +717,8 @@ Tool to create a webhook and subscribe to events in Attio. Use when you need to 
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createWebhook({});
 ```
 
 **Input:** `object`
@@ -740,7 +758,8 @@ Creates a new workspace record in Attio. The workspace_id field is required and 
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.createWorkspaceRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.createWorkspaceRecord({});
 ```
 
 **Input:** `object`
@@ -780,7 +799,8 @@ Tool to delete a comment by its comment_id. Use when you need to remove a commen
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.deleteComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.deleteComment({});
 ```
 
 **Input:** `object`
@@ -820,7 +840,8 @@ Tool to delete a company record from Attio by its record_id. Use when you need t
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.deleteCompany({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.deleteCompany({});
 ```
 
 **Input:** `object`
@@ -860,7 +881,8 @@ Tool to delete a deal record from Attio by its record_id. Use when you need to p
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.deleteDeal({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.deleteDeal({});
 ```
 
 **Input:** `object`
@@ -900,7 +922,8 @@ Tool to delete a single list entry by its entry_id in Attio. Use when you need t
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.deleteEntry({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.deleteEntry({});
 ```
 
 **Input:** `object`
@@ -940,7 +963,8 @@ This tool allows users to delete a specific note in Attio by its ID. It is imple
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.deleteNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.deleteNote({});
 ```
 
 **Input:** `object`
@@ -980,7 +1004,8 @@ Tool to delete a person record from Attio by its record_id. Use when you need to
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.deletePerson({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.deletePerson({});
 ```
 
 **Input:** `object`
@@ -1020,7 +1045,8 @@ This tool allows you to delete a record from Attio permanently. The deletion is 
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.deleteRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.deleteRecord({});
 ```
 
 **Input:** `object`
@@ -1060,7 +1086,8 @@ Tool to delete a single record (e.g. a company or person) by ID. Use when you ne
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.deleteRecordById({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.deleteRecordById({});
 ```
 
 **Input:** `object`
@@ -1100,7 +1127,8 @@ Tool to delete a task by its task_id. Use when you need to remove a task from At
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.deleteTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.deleteTask({});
 ```
 
 **Input:** `object`
@@ -1140,7 +1168,8 @@ Tool to delete a user record from Attio by its record_id. Use when you need to p
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.deleteUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.deleteUser({});
 ```
 
 **Input:** `object`
@@ -1180,7 +1209,8 @@ Tool to delete a webhook by its webhook_id. Use when you need to remove a webhoo
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.deleteWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.deleteWebhook({});
 ```
 
 **Input:** `object`
@@ -1220,7 +1250,8 @@ Tool to delete a workspace record from Attio by its record_id. Use when you need
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.deleteWorkspaceRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.deleteWorkspaceRecord({});
 ```
 
 **Input:** `object`
@@ -1260,7 +1291,8 @@ This tool allows users to find a record in Attio by either its unique ID or by s
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.findRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.findRecord({});
 ```
 
 **Input:** `object`
@@ -1300,7 +1332,8 @@ Tool to get information about a single attribute on either an object or a list. 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getAttribute({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getAttribute({});
 ```
 
 **Input:** `object`
@@ -1340,7 +1373,8 @@ Tool to get a single comment by its comment_id in Attio. Use when you need to re
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getComment({});
 ```
 
 **Input:** `object`
@@ -1380,7 +1414,8 @@ Tool to get a single company record by its record_id in Attio. Use when you need
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getCompany({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getCompany({});
 ```
 
 **Input:** `object`
@@ -1420,7 +1455,8 @@ Tool to get a single deal record by its record_id in Attio. Use when you need to
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getDealRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getDealRecord({});
 ```
 
 **Input:** `object`
@@ -1460,7 +1496,8 @@ Tool to retrieve details of a single list in your Attio workspace. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getList({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getList({});
 ```
 
 **Input:** `object`
@@ -1500,7 +1537,8 @@ Tool to get a single list entry by its entry_id. Use when you need to retrieve d
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getListEntry({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getListEntry({});
 ```
 
 **Input:** `object`
@@ -1540,7 +1578,8 @@ Tool to get a single note by its note_id in Attio. Use when you need to retrieve
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getNote({});
 ```
 
 **Input:** `object`
@@ -1580,7 +1619,8 @@ Tool to get a single object by its object_id or slug. Use to retrieve detailed s
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getObject({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getObject({});
 ```
 
 **Input:** `object`
@@ -1620,7 +1660,8 @@ Tool to get a single person, company, or other record by its record_id in Attio.
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getRecord({});
 ```
 
 **Input:** `object`
@@ -1660,7 +1701,8 @@ Tool to get all values for a given attribute on a record in Attio. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getRecordAttributeValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getRecordAttributeValues({});
 ```
 
 **Input:** `object`
@@ -1700,7 +1742,8 @@ Tool to list all entries, across all lists, for which a record is the parent. Us
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getRecordEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getRecordEntries({});
 ```
 
 **Input:** `object`
@@ -1740,7 +1783,8 @@ Tool to identify the current access token, the workspace it is linked to, and an
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getSelf({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getSelf({});
 ```
 
 **Input:** `object`
@@ -1780,7 +1824,8 @@ Tool to get a single task by its task_id in Attio. Use when you need to retrieve
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getTask({});
 ```
 
 **Input:** `object`
@@ -1820,7 +1865,8 @@ Tool to get a single person, company or other record by its record_id. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getV2ObjectsObjectRecordsRecordId({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getV2ObjectsObjectRecordsRecordId({});
 ```
 
 **Input:** `object`
@@ -1860,7 +1906,8 @@ Tool to list all tasks in the workspace. Use when you need to retrieve tasks, op
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getV2Tasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getV2Tasks({});
 ```
 
 **Input:** `object`
@@ -1900,7 +1947,8 @@ DEPRECATED: Use ATTIO_LIST_WORKSPACE_MEMBERS instead. Tool to list all workspace
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getV2WorkspaceMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getV2WorkspaceMembers({});
 ```
 
 **Input:** `object`
@@ -1940,7 +1988,8 @@ Tool to get a single webhook by its webhook_id in Attio. Use when you need to re
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getWebhook({});
 ```
 
 **Input:** `object`
@@ -1980,7 +2029,8 @@ Tool to get a single workspace member by their workspace_member_id. Use when you
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getWorkspaceMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getWorkspaceMember({});
 ```
 
 **Input:** `object`
@@ -2020,7 +2070,8 @@ Tool to get a single workspace record by its record_id. Use when you need to ret
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.getWorkspaceRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.getWorkspaceRecord({});
 ```
 
 **Input:** `object`
@@ -2060,7 +2111,8 @@ Tool to list all select options for a particular attribute on either an object o
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listAttributeOptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listAttributeOptions({});
 ```
 
 **Input:** `object`
@@ -2100,7 +2152,8 @@ Tool to list the attribute schema for an Attio object or list (including slugs, 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listAttributes({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listAttributes({});
 ```
 
 **Input:** `object`
@@ -2140,7 +2193,8 @@ Tool to list all statuses for a particular status attribute on either an object 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listAttributeStatuses({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listAttributeStatuses({});
 ```
 
 **Input:** `object`
@@ -2180,7 +2234,8 @@ Tool to list all call recordings for a meeting in Attio. Use when you need to re
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listCallRecordings({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listCallRecordings({});
 ```
 
 **Input:** `object`
@@ -2220,7 +2275,8 @@ Tool to list company records in Attio with optional filtering and sorting. Use w
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listCompanies({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listCompanies({});
 ```
 
 **Input:** `object`
@@ -2260,7 +2316,8 @@ Tool to get all values for a given attribute on a company record. Historic value
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listCompanyAttributeValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listCompanyAttributeValues({});
 ```
 
 **Input:** `object`
@@ -2300,7 +2357,8 @@ Tool to list all entries across all lists for which a company record is the pare
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listCompanyRecordEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listCompanyRecordEntries({});
 ```
 
 **Input:** `object`
@@ -2340,7 +2398,8 @@ Tool to list all entries across all lists for which a deal record is the parent 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listDealEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listDealEntries({});
 ```
 
 **Input:** `object`
@@ -2380,7 +2439,8 @@ Tool to retrieve all values for a specified attribute on a deal record in Attio.
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listDealRecordAttributeValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listDealRecordAttributeValues({});
 ```
 
 **Input:** `object`
@@ -2420,7 +2480,8 @@ Tool to list deal records in Attio with the option to filter and sort results. U
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listDealRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listDealRecords({});
 ```
 
 **Input:** `object`
@@ -2460,7 +2521,8 @@ DEPRECATED: Use ATTIO_ATTIO_POST_V2_LISTS_LIST_ENTRIES_QUERY instead. Tool to li
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listEntries({});
 ```
 
 **Input:** `object`
@@ -2500,7 +2562,8 @@ DEPRECATED: Use ATTIO_ATTIO_POST_V2_LISTS_LIST_ENTRIES_QUERY instead. Tool to re
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listListEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listListEntries({});
 ```
 
 **Input:** `object`
@@ -2540,7 +2603,8 @@ Tool to retrieve all values for a specified attribute on a list entry in Attio. 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listListEntryAttributeValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listListEntryAttributeValues({});
 ```
 
 **Input:** `object`
@@ -2580,7 +2644,8 @@ This tool retrieves all lists available in the Attio workspace, sorted as they a
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listLists({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listLists({});
 ```
 
 **Input:** `object`
@@ -2620,7 +2685,8 @@ Tool to list all meetings in the workspace using a deterministic sort order. Use
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listMeetings({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listMeetings({});
 ```
 
 **Input:** `object`
@@ -2660,7 +2726,8 @@ Lists notes in Attio. Can list all notes in the workspace, or filter by parent o
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listNotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listNotes({});
 ```
 
 **Input:** `object`
@@ -2700,7 +2767,8 @@ This tool retrieves a list of all available objects (both system-defined and use
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listObjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listObjects({});
 ```
 
 **Input:** `object`
@@ -2740,7 +2808,8 @@ Tool to get all values for a given attribute on a person record. Use when you ne
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listPeopleAttributeValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listPeopleAttributeValues({});
 ```
 
 **Input:** `object`
@@ -2780,7 +2849,8 @@ Tool to list all entries across all lists for which a person record is the paren
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listPeopleRecordEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listPeopleRecordEntries({});
 ```
 
 **Input:** `object`
@@ -2820,7 +2890,8 @@ Tool to retrieve all values for a specified attribute on a record in Attio. Use 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listRecordAttributeValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listRecordAttributeValues({});
 ```
 
 **Input:** `object`
@@ -2860,7 +2931,8 @@ Tool to list all entries across all lists for which a record is the parent in At
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listRecordEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listRecordEntries({});
 ```
 
 **Input:** `object`
@@ -2900,7 +2972,8 @@ This tool lists records from a specific object type in Attio. It provides simple
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listRecords({});
 ```
 
 **Input:** `object`
@@ -2940,7 +3013,8 @@ Tool to list threads of comments on a record or list entry in Attio. Use when yo
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listThreads({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listThreads({});
 ```
 
 **Input:** `object`
@@ -2980,7 +3054,8 @@ Tool to list all entries across all lists for which a user record is the parent 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listUserRecordEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listUserRecordEntries({});
 ```
 
 **Input:** `object`
@@ -3020,7 +3095,8 @@ Tool to list user records in Attio with optional filtering and sorting. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listUserRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listUserRecords({});
 ```
 
 **Input:** `object`
@@ -3060,7 +3136,8 @@ Tool to get all webhooks in your Attio workspace. Use when you need to retrieve 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listWebhooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listWebhooks({});
 ```
 
 **Input:** `object`
@@ -3100,7 +3177,8 @@ Tool to list workspace members (actors) so agents can reliably assign owners and
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listWorkspaceMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listWorkspaceMembers({});
 ```
 
 **Input:** `object`
@@ -3140,7 +3218,8 @@ Tool to retrieve all values for a specified attribute on a workspace record in A
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listWorkspaceRecordAttributeValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listWorkspaceRecordAttributeValues({});
 ```
 
 **Input:** `object`
@@ -3180,7 +3259,8 @@ Tool to list all entries across all lists for which a workspace record is the pa
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listWorkspaceRecordEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listWorkspaceRecordEntries({});
 ```
 
 **Input:** `object`
@@ -3220,7 +3300,8 @@ Tool to list workspace records with filtering and sorting options. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.listWorkspaceRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.listWorkspaceRecords({});
 ```
 
 **Input:** `object`
@@ -3260,7 +3341,8 @@ Tool to update people, companies, and other records by record_id using PATCH met
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.patchRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.patchRecord({});
 ```
 
 **Input:** `object`
@@ -3300,7 +3382,8 @@ Tool to update list entries by entry_id in Attio. Use when you need to modify at
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.patchV2ListsListEntriesEntryId({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.patchV2ListsListEntriesEntryId({});
 ```
 
 **Input:** `object`
@@ -3340,7 +3423,8 @@ Tool to get a single person record by its record_id in Attio. Use when you need 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.peopleGetPerson({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.peopleGetPerson({});
 ```
 
 **Input:** `object`
@@ -3380,7 +3464,8 @@ Tool to list person records from Attio with optional filtering and sorting. Use 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.peopleListPersons({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.peopleListPersons({});
 ```
 
 **Input:** `object`
@@ -3420,7 +3505,8 @@ Tool to add a record to a list as a new list entry in Attio. Use when you need t
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.postV2ListsListEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.postV2ListsListEntries({});
 ```
 
 **Input:** `object`
@@ -3460,7 +3546,8 @@ Tool to list entries in a given list, with the option to filter and sort results
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.postV2ListsListEntriesQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.postV2ListsListEntriesQuery({});
 ```
 
 **Input:** `object`
@@ -3500,7 +3587,8 @@ Creates a new person, company or other record. This endpoint will throw on confl
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.postV2ObjectsObjectRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.postV2ObjectsObjectRecords({});
 ```
 
 **Input:** `object`
@@ -3540,7 +3628,8 @@ Tool to list people, company or other records in Attio with the option to filter
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.postV2ObjectsObjectRecordsQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.postV2ObjectsObjectRecordsQuery({});
 ```
 
 **Input:** `object`
@@ -3580,7 +3669,8 @@ Tool to fuzzy search for records across one or more objects in Attio. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.postV2ObjectsRecordsSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.postV2ObjectsRecordsSearch({});
 ```
 
 **Input:** `object`
@@ -3620,7 +3710,8 @@ Tool to create or update a list entry for a given parent record in Attio. If an 
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.putV2ListsListEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.putV2ListsListEntries({});
 ```
 
 **Input:** `object`
@@ -3660,7 +3751,8 @@ Tool to update list entries by entry_id in Attio using PUT method. Use when you 
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.putV2ListsListEntriesEntryId({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.putV2ListsListEntriesEntryId({});
 ```
 
 **Input:** `object`
@@ -3700,7 +3792,8 @@ Tool to create or update people, companies and other records in Attio using a ma
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.putV2ObjectsObjectRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.putV2ObjectsObjectRecords({});
 ```
 
 **Input:** `object`
@@ -3740,7 +3833,8 @@ Tool to update people, companies, and other records by record_id using PUT metho
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.putV2ObjectsObjectRecordsRecordId({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.putV2ObjectsObjectRecordsRecordId({});
 ```
 
 **Input:** `object`
@@ -3780,7 +3874,8 @@ Tool to query records for a specific Attio object using server-side filtering op
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.queryRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.queryRecords({});
 ```
 
 **Input:** `object`
@@ -3820,7 +3915,8 @@ Tool to fuzzy search for records across multiple objects in Attio. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.attio.api.generated.searchRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.searchRecords({});
 ```
 
 **Input:** `object`
@@ -3860,7 +3956,8 @@ Tool to update an existing attribute by its attribute_id or slug. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateAttribute({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateAttribute({});
 ```
 
 **Input:** `object`
@@ -3900,7 +3997,8 @@ Tool to update a company record in Attio by its record_id. Use when you need to 
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateCompany({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateCompany({});
 ```
 
 **Input:** `object`
@@ -3940,7 +4038,8 @@ Tool to update an existing deal record in Attio by record ID. Uses PATCH to part
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateDealRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateDealRecord({});
 ```
 
 **Input:** `object`
@@ -3980,7 +4079,8 @@ DEPRECATED: Use ATTIO_ATTIO_PATCH_V2_LISTS_LIST_ENTRIES_ENTRY_ID instead. Tool t
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateEntry({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateEntry({});
 ```
 
 **Input:** `object`
@@ -4020,7 +4120,8 @@ Tool to update an existing list in Attio. Use when you need to modify list prope
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateList({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateList({});
 ```
 
 **Input:** `object`
@@ -4060,7 +4161,8 @@ Tool to update a single object's configuration in Attio. Use when you need to mo
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateObject({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateObject({});
 ```
 
 **Input:** `object`
@@ -4100,7 +4202,8 @@ Tool to update a person record in Attio by its record_id. Use when you need to m
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updatePerson({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updatePerson({});
 ```
 
 **Input:** `object`
@@ -4140,7 +4243,8 @@ This tool updates an existing record in Attio for a specified object type (peopl
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateRecord({});
 ```
 
 **Input:** `object`
@@ -4180,7 +4284,8 @@ Tool to update an existing select option for a select or multiselect attribute i
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateSelectOption({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateSelectOption({});
 ```
 
 **Input:** `object`
@@ -4220,7 +4325,8 @@ Tool to update a status on a status attribute on either an object or a list in A
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateStatus({});
 ```
 
 **Input:** `object`
@@ -4260,7 +4366,8 @@ Tool to update an existing task in Attio by its task_id. Use when you need to mo
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateTask({});
 ```
 
 **Input:** `object`
@@ -4300,7 +4407,8 @@ Tool to update a user record in Attio by its record_id. Use when you need to mod
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateUserRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateUserRecord({});
 ```
 
 **Input:** `object`
@@ -4340,7 +4448,8 @@ Tool to update a webhook's target URL and/or event subscriptions. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateWebhook({});
 ```
 
 **Input:** `object`
@@ -4380,7 +4489,8 @@ Tool to update a workspace record by ID using PATCH method. Only the attributes 
 **Risk:** `write`
 
 ```ts
-await corsair.attio.api.generated.updateWorkspaceRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.attio.api.generated.updateWorkspaceRecord({});
 ```
 
 **Input:** `object`

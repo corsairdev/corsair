@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { botpress } from '@corsair-dev/botpress';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		botpress(),
 	],

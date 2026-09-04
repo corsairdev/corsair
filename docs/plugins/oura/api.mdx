@@ -20,7 +20,8 @@ Get the authenticated user Oura profile and personal info
 **Risk:** `read`
 
 ```ts
-await corsair.oura.api.profile.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.oura.api.profile.get({});
 ```
 
 **Input:** _empty object_
@@ -52,7 +53,8 @@ Get daily activity summary data for a date range
 **Risk:** `read`
 
 ```ts
-await corsair.oura.api.summary.getActivity({});
+const tenant = corsair.withTenant('acme');
+await tenant.oura.api.summary.getActivity({});
 ```
 
 **Input**
@@ -127,7 +129,8 @@ Get daily readiness summary data for a date range
 **Risk:** `read`
 
 ```ts
-await corsair.oura.api.summary.getReadiness({});
+const tenant = corsair.withTenant('acme');
+await tenant.oura.api.summary.getReadiness({});
 ```
 
 **Input**
@@ -186,7 +189,8 @@ Get daily sleep summary data for a date range
 **Risk:** `read`
 
 ```ts
-await corsair.oura.api.summary.getSleep({});
+const tenant = corsair.withTenant('acme');
+await tenant.oura.api.summary.getSleep({});
 ```
 
 **Input**

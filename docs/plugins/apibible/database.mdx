@@ -14,7 +14,8 @@ The API.Bible plugin syncs data locally. Use `corsair.apibible.db.<entity>.searc
 Path: `apibible.db.audioBibles.search`
 
 ```ts
-const rows = await corsair.apibible.db.audioBibles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apibible.db.audioBibles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -46,7 +47,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apibible.db.audioChapters.search`
 
 ```ts
-const rows = await corsair.apibible.db.audioChapters.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apibible.db.audioChapters.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -77,7 +79,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apibible.db.bibles.search`
 
 ```ts
-const rows = await corsair.apibible.db.bibles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apibible.db.bibles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -112,7 +115,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apibible.db.books.search`
 
 ```ts
-const rows = await corsair.apibible.db.books.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apibible.db.books.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -140,7 +144,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apibible.db.chapters.search`
 
 ```ts
-const rows = await corsair.apibible.db.chapters.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apibible.db.chapters.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -168,7 +173,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apibible.db.passages.search`
 
 ```ts
-const rows = await corsair.apibible.db.passages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apibible.db.passages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -199,7 +205,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apibible.db.sections.search`
 
 ```ts
-const rows = await corsair.apibible.db.sections.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apibible.db.sections.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -228,7 +235,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apibible.db.verses.search`
 
 ```ts
-const rows = await corsair.apibible.db.verses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apibible.db.verses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

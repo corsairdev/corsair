@@ -20,7 +20,8 @@ Generate a response via DeepSeek's Anthropic-compatible Messages API, with suppo
 **Risk:** `write`
 
 ```ts
-await corsair.deepseek.api.anthropic.createMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.deepseek.api.anthropic.createMessage({});
 ```
 
 **Input**
@@ -215,7 +216,8 @@ Generate an AI chat response using deepseek-chat or deepseek-reasoner, with supp
 **Risk:** `write`
 
 ```ts
-await corsair.deepseek.api.chat.createCompletion({});
+const tenant = corsair.withTenant('acme');
+await tenant.deepseek.api.chat.createCompletion({});
 ```
 
 **Input**
@@ -370,7 +372,8 @@ List the DeepSeek models currently available to the account
 **Risk:** `read`
 
 ```ts
-await corsair.deepseek.api.models.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.deepseek.api.models.list({});
 ```
 
 **Input:** _empty object_
@@ -411,7 +414,8 @@ Get the current account balance, including granted and topped-up amounts broken 
 **Risk:** `read`
 
 ```ts
-await corsair.deepseek.api.user.getBalance({});
+const tenant = corsair.withTenant('acme');
+await tenant.deepseek.api.user.getBalance({});
 ```
 
 **Input:** _empty object_

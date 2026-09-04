@@ -20,7 +20,8 @@ List accounting classifications, optionally filtered by type (Sale | Expense | O
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.account.getClassifications({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.account.getClassifications({});
 ```
 
 **Input**
@@ -70,7 +71,8 @@ Get the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.account.getCurrentUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.account.getCurrentUser({});
 ```
 
 **Input:** _empty object_
@@ -102,7 +104,8 @@ Get accounting, company, emailing, sales, social and VAT settings
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.account.getSettings({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.account.getSettings({});
 ```
 
 **Input:** _empty object_
@@ -132,7 +135,8 @@ List measurement units - reference data, mirrored
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.account.getUnits({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.account.getUnits({});
 ```
 
 **Input:** _empty object_
@@ -168,7 +172,8 @@ List VAT rates - reference data, mirrored
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.account.getVats({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.account.getVats({});
 ```
 
 **Input:** _empty object_
@@ -203,7 +208,8 @@ Verify the API key and get the account identity - takes no parameters
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.account.testApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.account.testApiKey({});
 ```
 
 **Input:** _empty object_
@@ -234,7 +240,8 @@ Delete a colleague [DESTRUCTIVE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.altoviz.api.colleagues.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.colleagues.delete({});
 ```
 
 **Input**
@@ -265,7 +272,8 @@ Get a colleague by id
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.colleagues.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.colleagues.get({});
 ```
 
 **Input**
@@ -319,7 +327,8 @@ List colleagues, paged
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.colleagues.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.colleagues.list({});
 ```
 
 **Input**
@@ -373,7 +382,8 @@ Update a colleague. Read-modify-write internally - a partial body is a 500 on th
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.colleagues.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.colleagues.update({});
 ```
 
 **Input**
@@ -453,7 +463,8 @@ Create a standalone contact. There is no customerId field on this route - it can
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.contacts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.contacts.create({});
 ```
 
 **Input**
@@ -507,7 +518,8 @@ Find contacts by email or internalId - returns an array, possibly empty
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.contacts.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.contacts.find({});
 ```
 
 **Input**
@@ -557,7 +569,8 @@ Get a contact by id
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.contacts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.contacts.get({});
 ```
 
 **Input**
@@ -600,7 +613,8 @@ List contacts, paged. Includes shadow contacts auto-created by customer/supplier
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.contacts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.contacts.list({});
 ```
 
 **Input**
@@ -654,7 +668,8 @@ Create a customer family (segment)
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.customerFamilies.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.customerFamilies.create({});
 ```
 
 **Input**
@@ -689,7 +704,8 @@ Delete a customer family [DESTRUCTIVE]. Refused with a conflict if it still has 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.altoviz.api.customerFamilies.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.customerFamilies.delete({});
 ```
 
 **Input**
@@ -720,7 +736,8 @@ Get a customer family by id
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.customerFamilies.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.customerFamilies.get({});
 ```
 
 **Input**
@@ -753,7 +770,8 @@ List customer families, paged
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.customerFamilies.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.customerFamilies.list({});
 ```
 
 **Input**
@@ -797,7 +815,8 @@ Create a customer. type is Business | Consumer | Government - NOT the Company/In
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.customers.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.customers.create({});
 ```
 
 **Input**
@@ -964,7 +983,8 @@ Delete a customer [DESTRUCTIVE]. Evicts the auto-created contact from the mirror
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.altoviz.api.customers.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.customers.delete({});
 ```
 
 **Input**
@@ -995,7 +1015,8 @@ Find customers by email, internalId or number - returns an array, possibly empty
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.customers.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.customers.find({});
 ```
 
 **Input**
@@ -1073,7 +1094,8 @@ Get a customer by id
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.customers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.customers.get({});
 ```
 
 **Input**
@@ -1180,7 +1202,8 @@ Get a customer by the caller-supplied internalId
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.customers.getByInternalId({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.customers.getByInternalId({});
 ```
 
 **Input**
@@ -1287,7 +1310,8 @@ List a customer's contacts, including the one auto-created when the customer was
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.customers.getContacts({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.customers.getContacts({});
 ```
 
 **Input**
@@ -1336,7 +1360,8 @@ List customers, paged (PageIndex is 1-based)
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.customers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.customers.list({});
 ```
 
 **Input**
@@ -1415,7 +1440,8 @@ Update a customer. Read-modify-write internally, because Altoviz PUT clears any 
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.customers.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.customers.update({});
 ```
 
 **Input**
@@ -1585,7 +1611,8 @@ Create a product family
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.productFamilies.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.productFamilies.create({});
 ```
 
 **Input**
@@ -1618,7 +1645,8 @@ Delete a product family [DESTRUCTIVE]. Refused with a conflict if it still has m
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.altoviz.api.productFamilies.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.productFamilies.delete({});
 ```
 
 **Input**
@@ -1649,7 +1677,8 @@ Get a product family by id
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.productFamilies.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.productFamilies.get({});
 ```
 
 **Input**
@@ -1681,7 +1710,8 @@ List product families, paged
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.productFamilies.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.productFamilies.list({});
 ```
 
 **Input**
@@ -1724,7 +1754,8 @@ Create a product. unit/vat/family are resolved from an id to their value form be
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.products.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.products.create({});
 ```
 
 **Input**
@@ -1822,7 +1853,8 @@ Delete a product [DESTRUCTIVE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.altoviz.api.products.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.products.delete({});
 ```
 
 **Input**
@@ -1853,7 +1885,8 @@ Find a product by number - returns an array
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.products.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.products.find({});
 ```
 
 **Input**
@@ -1921,7 +1954,8 @@ Find a product by number or internalId - same route as products.find, superset o
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.products.findByNumberOrId({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.products.findByNumberOrId({});
 ```
 
 **Input**
@@ -1990,7 +2024,8 @@ Get a product by id
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.products.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.products.get({});
 ```
 
 **Input**
@@ -2077,7 +2112,8 @@ Download a purchase invoice as PDF
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.purchaseInvoices.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.purchaseInvoices.download({});
 ```
 
 **Input**
@@ -2108,7 +2144,8 @@ Upload a purchase invoice file (PDF or image). There is no delete for this anywh
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.purchaseInvoices.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.purchaseInvoices.upload({});
 ```
 
 **Input**
@@ -2152,7 +2189,8 @@ Create a receipt. links to a draft document are refused - the document must be f
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.receipts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.receipts.create({});
 ```
 
 **Input**
@@ -2245,7 +2283,8 @@ Delete a receipt [DESTRUCTIVE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.altoviz.api.receipts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.receipts.delete({});
 ```
 
 **Input**
@@ -2276,7 +2315,8 @@ Find receipts by the receipt's own internalId - returns an array
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.receipts.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.receipts.find({});
 ```
 
 **Input**
@@ -2327,7 +2367,8 @@ Get a receipt by id
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.receipts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.receipts.get({});
 ```
 
 **Input**
@@ -2388,7 +2429,8 @@ List receipts, paged
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.receipts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.receipts.list({});
 ```
 
 **Input**
@@ -2442,7 +2484,8 @@ Update a receipt. Read-modify-write internally; a customer reference is required
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.receipts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.receipts.update({});
 ```
 
 **Input**
@@ -2525,7 +2568,8 @@ Create a draft credit note (avoir)
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.saleCredits.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleCredits.create({});
 ```
 
 **Input**
@@ -2850,7 +2894,8 @@ Delete a draft sale credit [DESTRUCTIVE]. Drafts only.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.altoviz.api.saleCredits.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleCredits.delete({});
 ```
 
 **Input**
@@ -2881,7 +2926,8 @@ Download a sale credit as PDF. May not be byte-exact - see the core text-decodin
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.saleCredits.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleCredits.download({});
 ```
 
 **Input**
@@ -2912,7 +2958,8 @@ Find sale credits by internalId - returns an array
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.saleCredits.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleCredits.find({});
 ```
 
 **Input**
@@ -3129,7 +3176,8 @@ Get a sale credit by id
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.saleCredits.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleCredits.get({});
 ```
 
 **Input**
@@ -3405,7 +3453,8 @@ List sale credits, paged, filterable by date range and customer
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.saleCredits.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleCredits.list({});
 ```
 
 **Input**
@@ -3628,7 +3677,8 @@ Update a draft credit note. Drafts only; lines must be resent in full or the cre
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.saleCredits.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleCredits.update({});
 ```
 
 **Input**
@@ -3931,7 +3981,8 @@ Create a draft sale invoice. Lines use taxExcludedPrice, never unitPrice - unitP
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.saleInvoices.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleInvoices.create({});
 ```
 
 **Input**
@@ -4262,7 +4313,8 @@ Delete a draft sale invoice [DESTRUCTIVE]. Drafts only.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.altoviz.api.saleInvoices.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleInvoices.delete({});
 ```
 
 **Input**
@@ -4293,7 +4345,8 @@ Download a sale invoice as PDF. May not be byte-exact - see the core text-decodi
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.saleInvoices.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleInvoices.download({});
 ```
 
 **Input**
@@ -4324,7 +4377,8 @@ Find sale invoices by internalId - returns an array
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.saleInvoices.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleInvoices.find({});
 ```
 
 **Input**
@@ -4545,7 +4599,8 @@ Get a sale invoice by id
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.saleInvoices.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleInvoices.get({});
 ```
 
 **Input**
@@ -4825,7 +4880,8 @@ List sale invoices, paged, filterable by date range, customer and status
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.saleInvoices.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleInvoices.list({});
 ```
 
 **Input**
@@ -5056,7 +5112,8 @@ Delete a sale quote [DESTRUCTIVE]. Deleting a quote that does not exist also ret
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.altoviz.api.saleQuotes.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleQuotes.delete({});
 ```
 
 **Input**
@@ -5087,7 +5144,8 @@ Find sale quotes by internalId - returns an array
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.saleQuotes.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleQuotes.find({});
 ```
 
 **Input**
@@ -5304,7 +5362,8 @@ List sale quotes, paged, filterable by date range and customer. No working statu
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.saleQuotes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.saleQuotes.list({});
 ```
 
 **Input**
@@ -5529,7 +5588,8 @@ Delete a supplier [DESTRUCTIVE]. Evicts the auto-created contact from the mirror
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.altoviz.api.suppliers.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.suppliers.delete({});
 ```
 
 **Input**
@@ -5560,7 +5620,8 @@ Get a supplier by id
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.suppliers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.suppliers.get({});
 ```
 
 **Input**
@@ -5633,7 +5694,8 @@ List a supplier's contacts
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.suppliers.getContacts({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.suppliers.getContacts({});
 ```
 
 **Input**
@@ -5682,7 +5744,8 @@ List suppliers, paged
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.suppliers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.suppliers.list({});
 ```
 
 **Input**
@@ -5748,7 +5811,8 @@ Update a supplier. Read-modify-write internally, same clearing-PUT behaviour as 
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.suppliers.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.suppliers.update({});
 ```
 
 **Input**
@@ -5850,7 +5914,8 @@ List registered webhook subscriptions
 **Risk:** `read`
 
 ```ts
-await corsair.altoviz.api.webhookSubscriptions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.webhookSubscriptions.list({});
 ```
 
 **Input:** _empty object_
@@ -5885,7 +5950,8 @@ Register a webhook subscription. The response id is 0 - list immediately after t
 **Risk:** `write`
 
 ```ts
-await corsair.altoviz.api.webhookSubscriptions.register({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.webhookSubscriptions.register({});
 ```
 
 **Input**
@@ -5922,7 +5988,8 @@ Unregister a webhook subscription by id or url [DESTRUCTIVE]. Exactly one of the
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.altoviz.api.webhookSubscriptions.unregister({});
+const tenant = corsair.withTenant('acme');
+await tenant.altoviz.api.webhookSubscriptions.unregister({});
 ```
 
 **Input**

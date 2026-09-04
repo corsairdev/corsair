@@ -20,7 +20,8 @@ Create account (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.accounts.accountCreationWithContentTypeOption({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.accounts.accountCreationWithContentTypeOption({});
 ```
 
 **Input**
@@ -51,7 +52,8 @@ Create account in Salesforce
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.accounts.createAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.accounts.createAccount({});
 ```
 
 **Input**
@@ -103,7 +105,8 @@ Delete account
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.accounts.deleteAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.accounts.deleteAccount({});
 ```
 
 **Input**
@@ -133,7 +136,8 @@ Fetch account by ID with query (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.accounts.fetchAccountByIdWithQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.accounts.fetchAccountByIdWithQuery({});
 ```
 
 **Input**
@@ -164,7 +168,8 @@ Get account by ID
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.accounts.getAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.accounts.getAccount({});
 ```
 
 **Input**
@@ -196,7 +201,8 @@ List accounts
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.accounts.listAccounts({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.accounts.listAccounts({});
 ```
 
 **Input**
@@ -242,7 +248,8 @@ Remove account by unique identifier (deprecated)
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.accounts.removeAccountByUniqueIdentifier({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.accounts.removeAccountByUniqueIdentifier({});
 ```
 
 **Input**
@@ -272,7 +279,8 @@ Retrieve account data and error responses (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.accounts.retrieveAccountDataAndErrorResponses({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.accounts.retrieveAccountDataAndErrorResponses({});
 ```
 
 **Input**
@@ -312,7 +320,8 @@ Search accounts
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.accounts.searchAccounts({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.accounts.searchAccounts({});
 ```
 
 **Input**
@@ -356,7 +365,8 @@ Update account
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.accounts.updateAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.accounts.updateAccount({});
 ```
 
 **Input**
@@ -407,7 +417,8 @@ Update account by id (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.accounts.updateAccountObjectById({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.accounts.updateAccountObjectById({});
 ```
 
 **Input**
@@ -460,7 +471,8 @@ Get dashboard metadata
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.analyticsReports.getDashboard({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.analyticsReports.getDashboard({});
 ```
 
 **Input**
@@ -495,7 +507,8 @@ Get report metadata (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.analyticsReports.getReport({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.analyticsReports.getReport({});
 ```
 
 **Input**
@@ -530,7 +543,8 @@ Get report instance results (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.analyticsReports.getReportInstance({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.analyticsReports.getReportInstance({});
 ```
 
 **Input**
@@ -566,7 +580,8 @@ List CRM Analytics templates
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.analyticsReports.listAnalyticsTemplates({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.analyticsReports.listAnalyticsTemplates({});
 ```
 
 **Input:** _empty object_
@@ -601,7 +616,8 @@ List all dashboards
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.analyticsReports.listDashboards({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.analyticsReports.listDashboards({});
 ```
 
 **Input:** _empty object_
@@ -636,7 +652,8 @@ List email templates
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.analyticsReports.listEmailTemplates({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.analyticsReports.listEmailTemplates({});
 ```
 
 **Input**
@@ -678,7 +695,8 @@ List all reports
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.analyticsReports.listReports({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.analyticsReports.listReports({});
 ```
 
 **Input:** _empty object_
@@ -713,7 +731,8 @@ Query report (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.analyticsReports.queryReport({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.analyticsReports.queryReport({});
 ```
 
 **Input**
@@ -749,7 +768,8 @@ Run report and return results
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.analyticsReports.runReport({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.analyticsReports.runReport({});
 ```
 
 **Input**
@@ -786,7 +806,8 @@ Add contact to campaign
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.campaigns.addContactToCampaign({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.addContactToCampaign({});
 ```
 
 **Input**
@@ -818,7 +839,8 @@ Add lead to campaign
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.campaigns.addLeadToCampaign({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.addLeadToCampaign({});
 ```
 
 **Input**
@@ -850,7 +872,8 @@ Create campaign
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.campaigns.createCampaign({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.createCampaign({});
 ```
 
 **Input**
@@ -887,7 +910,8 @@ Create campaign record via POST (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.campaigns.createCampaignRecordViaPost({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.createCampaignRecordViaPost({});
 ```
 
 **Input**
@@ -919,7 +943,8 @@ Delete campaign
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.campaigns.deleteCampaign({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.deleteCampaign({});
 ```
 
 **Input**
@@ -949,7 +974,8 @@ Get campaign by ID
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.campaigns.getCampaign({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.getCampaign({});
 ```
 
 **Input**
@@ -979,7 +1005,8 @@ List campaigns
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.campaigns.listCampaigns({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.listCampaigns({});
 ```
 
 **Input**
@@ -1022,7 +1049,8 @@ Remove campaign object by ID (deprecated)
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.campaigns.removeCampaignObjectById({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.removeCampaignObjectById({});
 ```
 
 **Input**
@@ -1052,7 +1080,8 @@ Remove member from campaign
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.campaigns.removeFromCampaign({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.removeFromCampaign({});
 ```
 
 **Input**
@@ -1084,7 +1113,8 @@ Retrieve campaign data (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.campaigns.retrieveCampaignDataWithErrorHandling({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.retrieveCampaignDataWithErrorHandling({});
 ```
 
 **Input**
@@ -1124,7 +1154,8 @@ Retrieve specific campaign details (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.campaigns.retrieveSpecificCampaignObjectDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.retrieveSpecificCampaignObjectDetails({});
 ```
 
 **Input**
@@ -1155,7 +1186,8 @@ Search campaigns
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.campaigns.searchCampaigns({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.searchCampaigns({});
 ```
 
 **Input**
@@ -1198,7 +1230,8 @@ Update campaign
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.campaigns.updateCampaign({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.updateCampaign({});
 ```
 
 **Input**
@@ -1235,7 +1268,8 @@ Update campaign by id (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.campaigns.updateCampaignByIdWithJson({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.campaigns.updateCampaignByIdWithJson({});
 ```
 
 **Input**
@@ -1274,7 +1308,8 @@ Execute composite graph (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.composite.compositeGraphAction({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.composite.compositeGraphAction({});
 ```
 
 **Input**
@@ -1324,7 +1359,8 @@ Create sObject tree
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.composite.createSobjectTree({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.composite.createSobjectTree({});
 ```
 
 **Input**
@@ -1376,7 +1412,8 @@ Delete sObject collections
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.composite.deleteSobjectCollections({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.composite.deleteSobjectCollections({});
 ```
 
 **Input**
@@ -1412,7 +1449,8 @@ Get batch of UI API records
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.composite.getABatchOfRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.composite.getABatchOfRecords({});
 ```
 
 **Input**
@@ -1453,7 +1491,8 @@ Get composite resources
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.composite.getCompositeResources({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.composite.getCompositeResources({});
 ```
 
 **Input:** _empty object_
@@ -1483,7 +1522,8 @@ Get composite sObjects
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.composite.getCompositeSobjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.composite.getCompositeSobjects({});
 ```
 
 **Input**
@@ -1519,7 +1559,8 @@ Get sObject collections
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.composite.getSobjectCollections({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.composite.getSobjectCollections({});
 ```
 
 **Input**
@@ -1555,7 +1596,8 @@ Upsert records using external ID
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.composite.patchCompositeSobjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.composite.patchCompositeSobjects({});
 ```
 
 **Input**
@@ -1596,7 +1638,8 @@ Execute composite graph
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.composite.postCompositeGraph({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.composite.postCompositeGraph({});
 ```
 
 **Input**
@@ -1646,7 +1689,8 @@ Create records using sObject Collections
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.composite.postCompositeSobjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.composite.postCompositeSobjects({});
 ```
 
 **Input**
@@ -1694,7 +1738,8 @@ Associate contact to account
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.contacts.associateContactToAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.associateContactToAccount({});
 ```
 
 **Input**
@@ -1725,7 +1770,8 @@ Create contact
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.contacts.createContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.createContact({});
 ```
 
 **Input**
@@ -1772,7 +1818,8 @@ Create new contact with JSON header (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.contacts.createNewContactWithJsonHeader({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.createNewContactWithJsonHeader({});
 ```
 
 **Input**
@@ -1803,7 +1850,8 @@ Delete contact
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.contacts.deleteContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.deleteContact({});
 ```
 
 **Input**
@@ -1833,7 +1881,8 @@ Get contact by ID
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.contacts.getContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.getContact({});
 ```
 
 **Input**
@@ -1865,7 +1914,8 @@ Get contact by ID
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.contacts.getContactById({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.getContactById({});
 ```
 
 **Input**
@@ -1895,7 +1945,8 @@ List contacts
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.contacts.listContacts({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.listContacts({});
 ```
 
 **Input**
@@ -1941,7 +1992,8 @@ Query contacts by name (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.contacts.queryContactsByName({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.queryContactsByName({});
 ```
 
 **Input**
@@ -1981,7 +2033,8 @@ Remove contact by ID (deprecated)
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.contacts.removeASpecificContactById({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.removeASpecificContactById({});
 ```
 
 **Input**
@@ -2011,7 +2064,8 @@ Retrieve contact info (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.contacts.retrieveContactInfoWithStandardResponses({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.retrieveContactInfoWithStandardResponses({});
 ```
 
 **Input**
@@ -2051,7 +2105,8 @@ Search contacts
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.contacts.searchContacts({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.searchContacts({});
 ```
 
 **Input**
@@ -2096,7 +2151,8 @@ Update contact
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.contacts.updateContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.updateContact({});
 ```
 
 **Input**
@@ -2143,7 +2199,8 @@ Update contact by id (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.contacts.updateContactById({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.contacts.updateContactById({});
 ```
 
 **Input**
@@ -2192,7 +2249,8 @@ Delete file permanently
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.files.deleteFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.files.deleteFile({});
 ```
 
 **Input**
@@ -2222,7 +2280,8 @@ Get binary file content
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.files.getFileContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.files.getFileContent({});
 ```
 
 **Input**
@@ -2252,7 +2311,8 @@ Get file metadata information
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.files.getFileInformation({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.files.getFileInformation({});
 ```
 
 **Input**
@@ -2287,7 +2347,8 @@ Get file shares information
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.files.getFileShares({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.files.getFileShares({});
 ```
 
 **Input**
@@ -2327,7 +2388,8 @@ Upload a file to Salesforce Files
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.files.uploadFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.files.uploadFile({});
 ```
 
 **Input**
@@ -2363,7 +2425,8 @@ Close or abort bulk job
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.jobs.closeOrAbortJob({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.jobs.closeOrAbortJob({});
 ```
 
 **Input**
@@ -2395,7 +2458,8 @@ Delete query job
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.jobs.deleteJobQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.jobs.deleteJobQuery({});
 ```
 
 **Input**
@@ -2425,7 +2489,8 @@ Get job failed record results
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.jobs.getJobFailedRecordResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.jobs.getJobFailedRecordResults({});
 ```
 
 **Input**
@@ -2465,7 +2530,8 @@ Get job successful record results
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.jobs.getJobSuccessfulRecordResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.jobs.getJobSuccessfulRecordResults({});
 ```
 
 **Input**
@@ -2505,7 +2571,8 @@ Get job unprocessed record results
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.jobs.getJobUnprocessedRecordResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.jobs.getJobUnprocessedRecordResults({});
 ```
 
 **Input**
@@ -2545,7 +2612,8 @@ Get query job info
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.jobs.getQueryJobInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.jobs.getQueryJobInfo({});
 ```
 
 **Input**
@@ -2576,7 +2644,8 @@ Get query job results
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.jobs.getQueryJobResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.jobs.getQueryJobResults({});
 ```
 
 **Input**
@@ -2618,7 +2687,8 @@ Upload CSV data to a bulk ingest job
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.jobs.uploadJobData({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.jobs.uploadJobData({});
 ```
 
 **Input**
@@ -2651,7 +2721,8 @@ Apply lead assignment rules
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.leads.applyLeadAssignmentRules({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.leads.applyLeadAssignmentRules({});
 ```
 
 **Input**
@@ -2682,7 +2753,8 @@ Create lead
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.leads.createLead({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.leads.createLead({});
 ```
 
 **Input**
@@ -2730,7 +2802,8 @@ Create lead with content type (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.leads.createLeadWithSpecifiedContentType({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.leads.createLeadWithSpecifiedContentType({});
 ```
 
 **Input**
@@ -2761,7 +2834,8 @@ Delete lead object by ID (deprecated)
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.leads.deleteALeadObjectByItsId({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.leads.deleteALeadObjectByItsId({});
 ```
 
 **Input**
@@ -2791,7 +2865,8 @@ Delete lead
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.leads.deleteLead({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.leads.deleteLead({});
 ```
 
 **Input**
@@ -2821,7 +2896,8 @@ Get lead by ID
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.leads.getLead({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.leads.getLead({});
 ```
 
 **Input**
@@ -2851,7 +2927,8 @@ List leads
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.leads.listLeads({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.leads.listLeads({});
 ```
 
 **Input**
@@ -2896,7 +2973,8 @@ Retrieve lead by ID
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.leads.retrieveLeadById({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.leads.retrieveLeadById({});
 ```
 
 **Input**
@@ -2926,7 +3004,8 @@ Retrieve lead data (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.leads.retrieveLeadDataWithVariousResponses({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.leads.retrieveLeadDataWithVariousResponses({});
 ```
 
 **Input**
@@ -2966,7 +3045,8 @@ Search leads
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.leads.searchLeads({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.leads.searchLeads({});
 ```
 
 **Input**
@@ -3012,7 +3092,8 @@ Update lead
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.leads.updateLead({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.leads.updateLead({});
 ```
 
 **Input**
@@ -3060,7 +3141,8 @@ Update lead by id (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.leads.updateLeadByIdWithJsonPayload({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.leads.updateLeadByIdWithJsonPayload({});
 ```
 
 **Input**
@@ -3110,7 +3192,8 @@ Clone record
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.metadata.cloneRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.cloneRecord({});
 ```
 
 **Input**
@@ -3152,7 +3235,8 @@ Create custom field via Tooling API
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.metadata.createCustomField({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.createCustomField({});
 ```
 
 **Input**
@@ -3187,7 +3271,8 @@ Create custom object via Metadata API
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.metadata.createCustomObject({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.createCustomObject({});
 ```
 
 **Input**
@@ -3220,7 +3305,8 @@ Create sObject record
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.metadata.createSObjectRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.createSObjectRecord({});
 ```
 
 **Input**
@@ -3262,7 +3348,8 @@ Delete sObject record
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.metadata.deleteSobject({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.deleteSobject({});
 ```
 
 **Input**
@@ -3293,7 +3380,8 @@ Delete sObject rows
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.metadata.deleteSobjectRows({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.deleteSobjectRows({});
 ```
 
 **Input**
@@ -3324,7 +3412,8 @@ Execute sObject quick action
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.metadata.executeSobjectQuickAction({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.executeSobjectQuickAction({});
 ```
 
 **Input**
@@ -3368,7 +3457,8 @@ Get all custom objects
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getAllCustomObjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getAllCustomObjects({});
 ```
 
 **Input:** _empty object_
@@ -3403,7 +3493,8 @@ Get all fields for object
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getAllFieldsForObject({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getAllFieldsForObject({});
 ```
 
 **Input**
@@ -3443,7 +3534,8 @@ Get API resources by version
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getApi({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getApi({});
 ```
 
 **Input**
@@ -3478,7 +3570,8 @@ Get Chatter resources
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getChatterResources({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getChatterResources({});
 ```
 
 **Input:** _empty object_
@@ -3508,7 +3601,8 @@ Get child records
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getChildRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getChildRecords({});
 ```
 
 **Input**
@@ -3549,7 +3643,8 @@ Get consent action preferences
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getConsentAction({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getConsentAction({});
 ```
 
 **Input**
@@ -3585,7 +3680,8 @@ Get global actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getGlobalActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getGlobalActions({});
 ```
 
 **Input:** _empty object_
@@ -3620,7 +3716,8 @@ Get org limits
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getOrgLimits({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getOrgLimits({});
 ```
 
 **Input:** _empty object_
@@ -3650,7 +3747,8 @@ Get picklist values by record type
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getPicklistValuesByRecordType({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getPicklistValuesByRecordType({});
 ```
 
 **Input**
@@ -3686,7 +3784,8 @@ Get quick actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getQuickActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getQuickActions({});
 ```
 
 **Input:** _empty object_
@@ -3721,7 +3820,8 @@ Get record counts
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getRecordCounts({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getRecordCounts({});
 ```
 
 **Input**
@@ -3761,7 +3861,8 @@ Get approval layouts for sObject
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSobjectApprovalLayouts({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSobjectApprovalLayouts({});
 ```
 
 **Input**
@@ -3796,7 +3897,8 @@ Get sObject by external ID
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSobjectByExternalId({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSobjectByExternalId({});
 ```
 
 **Input**
@@ -3833,7 +3935,8 @@ Get PlatformAction metadata
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSobjectPlatformaction({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSobjectPlatformaction({});
 ```
 
 **Input:** _empty object_
@@ -3863,7 +3966,8 @@ Get quick action default values
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSobjectQuickActionDefaultValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSobjectQuickActionDefaultValues({});
 ```
 
 **Input**
@@ -3899,7 +4003,8 @@ Get quick action default values
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSObjectQuickActionDefaultValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSObjectQuickActionDefaultValues({});
 ```
 
 **Input**
@@ -3935,7 +4040,8 @@ Get sObject record by ID
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSObjectRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSObjectRecord({});
 ```
 
 **Input**
@@ -3972,7 +4078,8 @@ Get sObject relationship
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSobjectRelationship({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSobjectRelationship({});
 ```
 
 **Input**
@@ -4009,7 +4116,8 @@ Describe global sObjects
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSobjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSobjects({});
 ```
 
 **Input:** _empty object_
@@ -4046,7 +4154,8 @@ Get layouts for object with record type
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSObjectsDescribeLayoutsRecordTypeId({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSObjectsDescribeLayoutsRecordTypeId({});
 ```
 
 **Input**
@@ -4082,7 +4191,8 @@ Get approval layouts for object
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSobjectsSobjectDescribeApprovallayouts({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSobjectsSobjectDescribeApprovallayouts({});
 ```
 
 **Input**
@@ -4117,7 +4227,8 @@ Get updated sObject records
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSObjectsUpdated({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSObjectsUpdated({});
 ```
 
 **Input**
@@ -4150,7 +4261,8 @@ Get support knowledge root
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSupport({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSupport({});
 ```
 
 **Input:** _empty object_
@@ -4180,7 +4292,8 @@ Get supported objects directory
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSupportedObjectsDirectory({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSupportedObjectsDirectory({});
 ```
 
 **Input:** _empty object_
@@ -4210,7 +4323,8 @@ Get support knowledge articles
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getSupportKnowledgeArticles({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getSupportKnowledgeArticles({});
 ```
 
 **Input:** _empty object_
@@ -4240,7 +4354,8 @@ Get theme metadata
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getTheme({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getTheme({});
 ```
 
 **Input:** _empty object_
@@ -4270,7 +4385,8 @@ Get user info
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.getUserInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.getUserInfo({});
 ```
 
 **Input**
@@ -4305,7 +4421,8 @@ Head custom actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.headActionsCustom({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.headActionsCustom({});
 ```
 
 **Input:** _empty object_
@@ -4330,7 +4447,8 @@ Head standard actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.headActionsStandard({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.headActionsStandard({});
 ```
 
 **Input:** _empty object_
@@ -4355,7 +4473,8 @@ Head process rules for sObject
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.headProcessRulesSObject({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.headProcessRulesSObject({});
 ```
 
 **Input**
@@ -4385,7 +4504,8 @@ Head Quick Actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.headQuickActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.headQuickActions({});
 ```
 
 **Input:** _empty object_
@@ -4410,7 +4530,8 @@ Head quick action default values
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.headSobjectQuickActionDefaultValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.headSobjectQuickActionDefaultValues({});
 ```
 
 **Input**
@@ -4442,7 +4563,8 @@ Head global describe layouts
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.headSobjectsGlobalDescribeLayouts({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.headSobjectsGlobalDescribeLayouts({});
 ```
 
 **Input:** _empty object_
@@ -4467,7 +4589,8 @@ Head sObject quick action
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.headSobjectsQuickAction({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.headSobjectsQuickAction({});
 ```
 
 **Input**
@@ -4498,7 +4621,8 @@ Head user password status
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.headSobjectsUserPassword({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.headSobjectsUserPassword({});
 ```
 
 **Input**
@@ -4528,7 +4652,8 @@ List custom invocable actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.listCustomInvocableActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.listCustomInvocableActions({});
 ```
 
 **Input:** _empty object_
@@ -4563,7 +4688,8 @@ List standard invocable actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.listStandardInvocableActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.listStandardInvocableActions({});
 ```
 
 **Input:** _empty object_
@@ -4598,7 +4724,8 @@ Mass transfer record ownership
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.metadata.massTransferOwnership({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.massTransferOwnership({});
 ```
 
 **Input**
@@ -4645,7 +4772,8 @@ Set user password
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.metadata.setUserPassword({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.setUserPassword({});
 ```
 
 **Input**
@@ -4676,7 +4804,8 @@ Update sObject rows
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.metadata.sobjectRowsUpdate({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.sobjectRowsUpdate({});
 ```
 
 **Input**
@@ -4718,7 +4847,8 @@ Check user password expiration status
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.metadata.sobjectUserPassword({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.sobjectUserPassword({});
 ```
 
 **Input**
@@ -4748,7 +4878,8 @@ Update sObject fields
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.metadata.updateSobject({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.updateSobject({});
 ```
 
 **Input**
@@ -4790,7 +4921,8 @@ Upsert sObject by external ID
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.metadata.upsertSobjectByExternalId({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.metadata.upsertSobjectByExternalId({});
 ```
 
 **Input**
@@ -4837,7 +4969,8 @@ Create note
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.notes.createNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.notes.createNote({});
 ```
 
 **Input**
@@ -4871,7 +5004,8 @@ Create note record (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.notes.createNoteRecordWithContentTypeHeader({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.notes.createNoteRecordWithContentTypeHeader({});
 ```
 
 **Input**
@@ -4903,7 +5037,8 @@ Delete note
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.notes.deleteNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.notes.deleteNote({});
 ```
 
 **Input**
@@ -4933,7 +5068,8 @@ Get note by ID
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.notes.getNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.notes.getNote({});
 ```
 
 **Input**
@@ -4965,7 +5101,8 @@ Get note by ID with fields (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.notes.getNoteByIdWithFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.notes.getNoteByIdWithFields({});
 ```
 
 **Input**
@@ -4996,7 +5133,8 @@ List notes
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.notes.listNotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.notes.listNotes({});
 ```
 
 **Input**
@@ -5038,7 +5176,8 @@ Remove note object by ID (deprecated)
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.notes.removeNoteObjectById({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.notes.removeNoteObjectById({});
 ```
 
 **Input**
@@ -5068,7 +5207,8 @@ Retrieve note object info (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.notes.retrieveNoteObjectInformation({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.notes.retrieveNoteObjectInformation({});
 ```
 
 **Input**
@@ -5108,7 +5248,8 @@ Search notes
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.notes.searchNotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.notes.searchNotes({});
 ```
 
 **Input**
@@ -5151,7 +5292,8 @@ Update note
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.notes.updateNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.notes.updateNote({});
 ```
 
 **Input**
@@ -5185,7 +5327,8 @@ Update note by id (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.notes.updateSpecificNoteById({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.notes.updateSpecificNoteById({});
 ```
 
 **Input**
@@ -5221,7 +5364,8 @@ Add line item to opportunity
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.opportunities.addOpportunityLineItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.addOpportunityLineItem({});
 ```
 
 **Input**
@@ -5255,7 +5399,8 @@ Clone opportunity with products
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.opportunities.cloneOpportunityWithProducts({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.cloneOpportunityWithProducts({});
 ```
 
 **Input**
@@ -5287,7 +5432,8 @@ Create opportunity
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.opportunities.createOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.createOpportunity({});
 ```
 
 **Input**
@@ -5334,7 +5480,8 @@ Create opportunity record (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.opportunities.createOpportunityRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.createOpportunityRecord({});
 ```
 
 **Input**
@@ -5366,7 +5513,8 @@ Delete opportunity
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.opportunities.deleteOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.deleteOpportunity({});
 ```
 
 **Input**
@@ -5396,7 +5544,8 @@ Get opportunity by ID
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.opportunities.getOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.getOpportunity({});
 ```
 
 **Input**
@@ -5426,7 +5575,8 @@ List opportunities
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.opportunities.listOpportunities({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.listOpportunities({});
 ```
 
 **Input**
@@ -5471,7 +5621,8 @@ List pricebook entries
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.opportunities.listPricebookEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.listPricebookEntries({});
 ```
 
 **Input**
@@ -5513,7 +5664,8 @@ List pricebooks
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.opportunities.listPricebooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.listPricebooks({});
 ```
 
 **Input**
@@ -5554,7 +5706,8 @@ Remove opportunity by ID (deprecated)
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.salesforce.api.opportunities.removeOpportunityById({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.removeOpportunityById({});
 ```
 
 **Input**
@@ -5584,7 +5737,8 @@ Retrieve opportunities data
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.opportunities.retrieveOpportunitiesData({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.retrieveOpportunitiesData({});
 ```
 
 **Input**
@@ -5625,7 +5779,8 @@ Retrieve opportunity by ID with fields (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.opportunities.retrieveOpportunityByIdWithOptionalFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.retrieveOpportunityByIdWithOptionalFields({});
 ```
 
 **Input**
@@ -5656,7 +5811,8 @@ Search opportunities
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.opportunities.searchOpportunities({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.searchOpportunities({});
 ```
 
 **Input**
@@ -5700,7 +5856,8 @@ Update opportunity
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.opportunities.updateOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.updateOpportunity({});
 ```
 
 **Input**
@@ -5747,7 +5904,8 @@ Update opportunity by id (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.opportunities.updateOpportunityById({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.opportunities.updateOpportunityById({});
 ```
 
 **Input**
@@ -5796,7 +5954,8 @@ Execute SOQL query (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.executeSoqlQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.executeSoqlQuery({});
 ```
 
 **Input**
@@ -5837,7 +5996,8 @@ Execute SOSL search
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.executeSoslSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.executeSoslSearch({});
 ```
 
 **Input**
@@ -5877,7 +6037,8 @@ Parameterized search via GET
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.getParameterizedSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.getParameterizedSearch({});
 ```
 
 **Input**
@@ -5928,7 +6089,8 @@ Get search layout
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.getSearchLayout({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.getSearchLayout({});
 ```
 
 **Input**
@@ -5963,7 +6125,8 @@ Get search suggestions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.getSearchSuggestions({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.getSearchSuggestions({});
 ```
 
 **Input**
@@ -5994,7 +6157,8 @@ Run parameterized search
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.parameterizedSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.parameterizedSearch({});
 ```
 
 **Input**
@@ -6045,7 +6209,8 @@ Post parameterized search
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.postParameterizedSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.postParameterizedSearch({});
 ```
 
 **Input**
@@ -6086,7 +6251,8 @@ Execute SOQL query (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.query({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.query({});
 ```
 
 **Input**
@@ -6127,7 +6293,8 @@ Run queryAll including deleted records
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.queryAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.queryAll({});
 ```
 
 **Input**
@@ -6169,7 +6336,8 @@ Run SOQL query
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.runSoqlQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.runSoqlQuery({});
 ```
 
 **Input**
@@ -6212,7 +6380,8 @@ Run SOSL search
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.search({});
 ```
 
 **Input**
@@ -6252,7 +6421,8 @@ Search knowledge articles
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.searchKnowledgeArticles({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.searchKnowledgeArticles({});
 ```
 
 **Input**
@@ -6282,7 +6452,8 @@ Run Tooling API SOQL query
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.soqlSosl.toolingQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.soqlSosl.toolingQuery({});
 ```
 
 **Input**
@@ -6326,7 +6497,8 @@ Complete task
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.tasks.completeTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.tasks.completeTask({});
 ```
 
 **Input**
@@ -6357,7 +6529,8 @@ Create task
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.tasks.createTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.tasks.createTask({});
 ```
 
 **Input**
@@ -6395,7 +6568,8 @@ Log phone call activity
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.tasks.logCall({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.tasks.logCall({});
 ```
 
 **Input**
@@ -6431,7 +6605,8 @@ Log email activity
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.tasks.logEmailActivity({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.tasks.logEmailActivity({});
 ```
 
 **Input**
@@ -6466,7 +6641,8 @@ Search tasks
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.tasks.searchTasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.tasks.searchTasks({});
 ```
 
 **Input**
@@ -6511,7 +6687,8 @@ Send email
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.tasks.sendEmail({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.tasks.sendEmail({});
 ```
 
 **Input**
@@ -6544,7 +6721,8 @@ Send email from template
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.tasks.sendEmailFromTemplate({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.tasks.sendEmailFromTemplate({});
 ```
 
 **Input**
@@ -6577,7 +6755,8 @@ Send mass email
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.tasks.sendMassEmail({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.tasks.sendMassEmail({});
 ```
 
 **Input**
@@ -6610,7 +6789,8 @@ Update task
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.tasks.updateTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.tasks.updateTask({});
 ```
 
 **Input**
@@ -6650,7 +6830,8 @@ Create record via UI API
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.uiApi.createARecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.createARecord({});
 ```
 
 **Input**
@@ -6692,7 +6873,8 @@ Create record using UI API
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.uiApi.createRecordUiApi({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.createRecordUiApi({});
 ```
 
 **Input**
@@ -6734,7 +6916,8 @@ Get all navigation items
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getAllNavigationItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getAllNavigationItems({});
 ```
 
 **Input:** _empty object_
@@ -6764,7 +6947,8 @@ Get app metadata
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getApp({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getApp({});
 ```
 
 **Input**
@@ -6799,7 +6983,8 @@ Get apps metadata
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getApps({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getApps({});
 ```
 
 **Input:** _empty object_
@@ -6829,7 +7014,8 @@ Get compact layouts
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getCompactLayouts({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getCompactLayouts({});
 ```
 
 **Input**
@@ -6864,7 +7050,8 @@ Get last selected app
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getLastSelectedApp({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getLastSelectedApp({});
 ```
 
 **Input:** _empty object_
@@ -6894,7 +7081,8 @@ Get list view actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getListViewActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getListViewActions({});
 ```
 
 **Input**
@@ -6929,7 +7117,8 @@ Get batch list view metadata
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getListViewMetadataBatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getListViewMetadataBatch({});
 ```
 
 **Input**
@@ -6964,7 +7153,8 @@ Get list view metadata by API name
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getListViewMetadataByName({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getListViewMetadataByName({});
 ```
 
 **Input**
@@ -7000,7 +7190,8 @@ Get list view records by ID
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getListViewRecordsById({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getListViewRecordsById({});
 ```
 
 **Input**
@@ -7035,7 +7226,8 @@ Get list view records by API name
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getListViewRecordsByName({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getListViewRecordsByName({});
 ```
 
 **Input**
@@ -7071,7 +7263,8 @@ Get list view results by sObject
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getListViewResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getListViewResults({});
 ```
 
 **Input**
@@ -7107,7 +7300,8 @@ Get lookup field suggestions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getLookupFieldSuggestions({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getLookupFieldSuggestions({});
 ```
 
 **Input**
@@ -7144,7 +7338,8 @@ Get lookup field suggestions for Case ContactId with POST
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getLookupSuggestionsCaseContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getLookupSuggestionsCaseContact({});
 ```
 
 **Input**
@@ -7179,7 +7374,8 @@ Get lookup field suggestions for Opportunity AccountId with POST
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getLookupSuggestionsOpportunityAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getLookupSuggestionsOpportunityAccount({});
 ```
 
 **Input**
@@ -7214,7 +7410,8 @@ Get MRU list view metadata
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getMruListViewMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getMruListViewMetadata({});
 ```
 
 **Input**
@@ -7249,7 +7446,8 @@ Get MRU list view records
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getMruListViewRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getMruListViewRecords({});
 ```
 
 **Input**
@@ -7284,7 +7482,8 @@ Get list views for an object
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getObjectListViews({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getObjectListViews({});
 ```
 
 **Input**
@@ -7319,7 +7518,8 @@ Get photo actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getPhotoActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getPhotoActions({});
 ```
 
 **Input**
@@ -7354,7 +7554,8 @@ Get record edit page actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getRecordEditPageActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getRecordEditPageActions({});
 ```
 
 **Input**
@@ -7390,7 +7591,8 @@ Get record UI data and metadata
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getRecordUiDataAndMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getRecordUiDataAndMetadata({});
 ```
 
 **Input**
@@ -7425,7 +7627,8 @@ Get related list actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getRelatedListActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getRelatedListActions({});
 ```
 
 **Input**
@@ -7461,7 +7664,8 @@ Get batch related list user preferences
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getRelatedListPreferencesBatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getRelatedListPreferencesBatch({});
 ```
 
 **Input**
@@ -7496,7 +7700,8 @@ Get related list records for Contacts
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getRelatedListRecordsContacts({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getRelatedListRecordsContacts({});
 ```
 
 **Input**
@@ -7531,7 +7736,8 @@ Get sObject list view information
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getSobjectListView({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getSobjectListView({});
 ```
 
 **Input**
@@ -7567,7 +7773,8 @@ Get list views for sObject
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getSobjectListViews({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getSobjectListViews({});
 ```
 
 **Input**
@@ -7602,7 +7809,8 @@ Get lookup field actions for Account
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getUiApiActionsLookupAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getUiApiActionsLookupAccount({});
 ```
 
 **Input:** _empty object_
@@ -7632,7 +7840,8 @@ Get MRU list view actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getUiapiActionsMruListAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getUiapiActionsMruListAccount({});
 ```
 
 **Input:** _empty object_
@@ -7662,7 +7871,8 @@ Get record related list actions
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getUiApiActionsRecordRelatedList({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getUiApiActionsRecordRelatedList({});
 ```
 
 **Input**
@@ -7698,7 +7908,8 @@ Get user navigation items
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getUiApiAppsUserNavItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getUiApiAppsUserNavItems({});
 ```
 
 **Input**
@@ -7733,7 +7944,8 @@ Get Account AllAccounts list view metadata
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getUiapiListInfoAccountAllAccounts({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getUiapiListInfoAccountAllAccounts({});
 ```
 
 **Input:** _empty object_
@@ -7763,7 +7975,8 @@ Get Account Recent list view metadata
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getUiapiListInfoAccountRecent({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getUiapiListInfoAccountRecent({});
 ```
 
 **Input:** _empty object_
@@ -7793,7 +8006,8 @@ Get Account SearchResult list view metadata
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getUiapiListInfoAccountSearchResult({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getUiapiListInfoAccountSearchResult({});
 ```
 
 **Input:** _empty object_
@@ -7823,7 +8037,8 @@ Get Recent list view metadata for object
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getUiApiListInfoRecent({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getUiApiListInfoRecent({});
 ```
 
 **Input**
@@ -7858,7 +8073,8 @@ Get lookup field suggestions for Opportunity AccountId
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getUiapiLookupsOpportunityAccountId({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getUiapiLookupsOpportunityAccountId({});
 ```
 
 **Input:** _empty object_
@@ -7888,7 +8104,8 @@ Get MRU list info for Account (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getUiapimruListInfoAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getUiapimruListInfoAccount({});
 ```
 
 **Input:** _empty object_
@@ -7918,7 +8135,8 @@ Get MRU list records for Account (deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getUiApiMruListRecordsAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getUiApiMruListRecordsAccount({});
 ```
 
 **Input:** _empty object_
@@ -7948,7 +8166,8 @@ Get related list user preferences
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.getUiapiRelatedListPreferences({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.getUiapiRelatedListPreferences({});
 ```
 
 **Input**
@@ -7984,7 +8203,8 @@ Head AppMenu Salesforce1
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.headAppmenuSalesforce1({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.headAppmenuSalesforce1({});
 ```
 
 **Input:** _empty object_
@@ -8009,7 +8229,8 @@ Get list view results
 **Risk:** `read`
 
 ```ts
-await corsair.salesforce.api.uiApi.listViewResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.listViewResults({});
 ```
 
 **Input**
@@ -8044,7 +8265,8 @@ Update a favorite
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.uiApi.updateFavorite({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.updateFavorite({});
 ```
 
 **Input**
@@ -8085,7 +8307,8 @@ Update list view preferences
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.uiApi.updateListViewPreferences({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.updateListViewPreferences({});
 ```
 
 **Input**
@@ -8127,7 +8350,8 @@ Update a record via UI API
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.uiApi.updateRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.updateRecord({});
 ```
 
 **Input**
@@ -8170,7 +8394,8 @@ Update related list preferences
 **Risk:** `write`
 
 ```ts
-await corsair.salesforce.api.uiApi.updateRelatedListPreferences({});
+const tenant = corsair.withTenant('acme');
+await tenant.salesforce.api.uiApi.updateRelatedListPreferences({});
 ```
 
 **Input**

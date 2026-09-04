@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { stripe } from '@corsair-dev/stripe';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		stripe(),
 	],
@@ -144,18 +145,26 @@ Synced entities: `balance`, `charges`, `coupons`, `customers`, `paymentIntents`,
 Fires when a payment intent transitions to `succeeded`. Use this to fulfil orders.
 
 ```ts
-stripe({
-    webhookHooks: {
-        paymentIntent: {
-            succeeded: {
-                after: async (ctx, result) => {
-                    const intent = result.data.data.object;
-                    console.log('Payment succeeded:', intent.id, intent.amount, intent.currency);
-                }
-            },
-        },
-    },
-})
+import { createCorsair } from 'corsair';
+import { stripe } from '@corsair-dev/stripe';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+		stripe({
+			webhookHooks: {
+				paymentIntent: {
+					succeeded: {
+						after: async (ctx, result) => {
+							const intent = result.data.data.object;
+							console.log('Payment succeeded:', intent.id, intent.amount, intent.currency);
+						}
+					},
+				},
+			},
+		)
+	],
+});
 ```
 
 Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/stripe/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).

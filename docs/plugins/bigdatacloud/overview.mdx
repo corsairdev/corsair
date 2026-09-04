@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { bigdatacloud } from '@corsair-dev/bigdatacloud';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		bigdatacloud(),
 	],

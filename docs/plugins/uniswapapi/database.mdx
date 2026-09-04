@@ -14,7 +14,8 @@ The Uniswap Trading API plugin syncs data locally. Use `corsair.uniswapapi.db.<e
 Path: `uniswapapi.db.approval.search`
 
 ```ts
-const rows = await corsair.uniswapapi.db.approval.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.uniswapapi.db.approval.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `uniswapapi.db.gaslessOrder.search`
 
 ```ts
-const rows = await corsair.uniswapapi.db.gaslessOrder.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.uniswapapi.db.gaslessOrder.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -69,7 +71,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `uniswapapi.db.quote.search`
 
 ```ts
-const rows = await corsair.uniswapapi.db.quote.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.uniswapapi.db.quote.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -104,7 +107,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `uniswapapi.db.swapStatus.search`
 
 ```ts
-const rows = await corsair.uniswapapi.db.swapStatus.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.uniswapapi.db.swapStatus.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -128,7 +132,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `uniswapapi.db.token.search`
 
 ```ts
-const rows = await corsair.uniswapapi.db.token.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.uniswapapi.db.token.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

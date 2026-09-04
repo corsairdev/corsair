@@ -20,7 +20,8 @@ List Confluence pages
 **Risk:** `read`
 
 ```ts
-await corsair.confluence.api.pages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.confluence.api.pages.get({});
 ```
 
 **Input**
@@ -107,7 +108,8 @@ Search Confluence pages via CQL
 **Risk:** `read`
 
 ```ts
-await corsair.confluence.api.pages.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.confluence.api.pages.search({});
 ```
 
 **Input**
@@ -204,7 +206,8 @@ List Confluence spaces
 **Risk:** `read`
 
 ```ts
-await corsair.confluence.api.spaces.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.confluence.api.spaces.list({});
 ```
 
 **Input**

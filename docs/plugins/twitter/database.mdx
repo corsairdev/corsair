@@ -14,7 +14,8 @@ The Twitter plugin syncs data locally. Use `corsair.twitter.db.<entity>.search({
 Path: `twitter.db.tweets.search`
 
 ```ts
-const rows = await corsair.twitter.db.tweets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twitter.db.tweets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

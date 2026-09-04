@@ -20,7 +20,8 @@ Crawl a website starting from a root URL
 **Risk:** `read`
 
 ```ts
-await corsair.tavily.api.crawl.crawl({});
+const tenant = corsair.withTenant('acme');
+await tenant.tavily.api.crawl.crawl({});
 ```
 
 **Input**
@@ -94,7 +95,8 @@ Extract content from one or more URLs
 **Risk:** `read`
 
 ```ts
-await corsair.tavily.api.extract.extract({});
+const tenant = corsair.withTenant('acme');
+await tenant.tavily.api.extract.extract({});
 ```
 
 **Input**
@@ -157,7 +159,8 @@ Map all URLs on a website starting from a root URL
 **Risk:** `read`
 
 ```ts
-await corsair.tavily.api.map.map({});
+const tenant = corsair.withTenant('acme');
+await tenant.tavily.api.map.map({});
 ```
 
 **Input**
@@ -202,7 +205,8 @@ Search the web using Tavily
 **Risk:** `read`
 
 ```ts
-await corsair.tavily.api.search.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.tavily.api.search.search({});
 ```
 
 **Input**

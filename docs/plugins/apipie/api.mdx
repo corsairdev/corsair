@@ -20,7 +20,8 @@ Generate a chat completion using an APIpie model, with optional provider routing
 **Risk:** `write`
 
 ```ts
-await corsair.apipie.api.chat.createCompletion({});
+const tenant = corsair.withTenant('acme');
+await tenant.apipie.api.chat.createCompletion({});
 ```
 
 **Input**
@@ -111,7 +112,8 @@ Create embeddings for the given input text(s).
 **Risk:** `write`
 
 ```ts
-await corsair.apipie.api.embeddings.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.apipie.api.embeddings.create({});
 ```
 
 **Input**
@@ -169,7 +171,8 @@ Generate image(s) from a text prompt.
 **Risk:** `write`
 
 ```ts
-await corsair.apipie.api.images.generate({});
+const tenant = corsair.withTenant('acme');
+await tenant.apipie.api.images.generate({});
 ```
 
 **Input**
@@ -231,7 +234,8 @@ List APIpie models available to the account, filterable by type, subtype, provid
 **Risk:** `read`
 
 ```ts
-await corsair.apipie.api.models.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.apipie.api.models.list({});
 ```
 
 **Input**
@@ -314,7 +318,8 @@ List APIpie models with detailed metadata including capabilities, limits, and pr
 **Risk:** `read`
 
 ```ts
-await corsair.apipie.api.models.listDetailed({});
+const tenant = corsair.withTenant('acme');
+await tenant.apipie.api.models.listDetailed({});
 ```
 
 **Input**

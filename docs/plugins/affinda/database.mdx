@@ -14,7 +14,8 @@ The Affinda plugin syncs data locally. Use `corsair.affinda.db.<entity>.search({
 Path: `affinda.db.collections.search`
 
 ```ts
-const rows = await corsair.affinda.db.collections.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.affinda.db.collections.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `affinda.db.documents.search`
 
 ```ts
-const rows = await corsair.affinda.db.documents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.affinda.db.documents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -65,7 +67,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `affinda.db.workspaces.search`
 
 ```ts
-const rows = await corsair.affinda.db.workspaces.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.affinda.db.workspaces.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

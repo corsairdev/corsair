@@ -14,7 +14,8 @@ The TwoChat plugin syncs data locally. Use `corsair.twochat.db.<entity>.search({
 Path: `twochat.db.accounts.search`
 
 ```ts
-const rows = await corsair.twochat.db.accounts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twochat.db.accounts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `twochat.db.contacts.search`
 
 ```ts
-const rows = await corsair.twochat.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twochat.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -68,7 +70,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `twochat.db.webhookSubscriptions.search`
 
 ```ts
-const rows = await corsair.twochat.db.webhookSubscriptions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twochat.db.webhookSubscriptions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

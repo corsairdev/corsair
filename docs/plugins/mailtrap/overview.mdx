@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { mailtrap } from '@corsair-dev/mailtrap';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		mailtrap(),
 	],

@@ -14,7 +14,8 @@ The Apify plugin syncs data locally. Use `corsair.apify.db.<entity>.search({ dat
 Path: `apify.db.actorBuilds.search`
 
 ```ts
-const rows = await corsair.apify.db.actorBuilds.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apify.db.actorBuilds.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apify.db.actorOutputs.search`
 
 ```ts
-const rows = await corsair.apify.db.actorOutputs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apify.db.actorOutputs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -67,7 +69,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apify.db.actorRuns.search`
 
 ```ts
-const rows = await corsair.apify.db.actorRuns.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apify.db.actorRuns.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -97,7 +100,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apify.db.actors.search`
 
 ```ts
-const rows = await corsair.apify.db.actors.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apify.db.actors.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -124,7 +128,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apify.db.actorTasks.search`
 
 ```ts
-const rows = await corsair.apify.db.actorTasks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apify.db.actorTasks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -153,7 +158,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apify.db.datasets.search`
 
 ```ts
-const rows = await corsair.apify.db.datasets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apify.db.datasets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -181,7 +187,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apify.db.keyValueStores.search`
 
 ```ts
-const rows = await corsair.apify.db.keyValueStores.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apify.db.keyValueStores.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -209,7 +216,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apify.db.requestQueues.search`
 
 ```ts
-const rows = await corsair.apify.db.requestQueues.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apify.db.requestQueues.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -239,7 +247,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apify.db.schedules.search`
 
 ```ts
-const rows = await corsair.apify.db.schedules.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apify.db.schedules.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -269,7 +278,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apify.db.users.search`
 
 ```ts
-const rows = await corsair.apify.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apify.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -295,7 +305,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apify.db.webhooks.search`
 
 ```ts
-const rows = await corsair.apify.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apify.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

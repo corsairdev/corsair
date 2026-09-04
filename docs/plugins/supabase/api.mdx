@@ -20,7 +20,8 @@ Get performance advisors
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.advisors.getPerformanceAdvisors({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.advisors.getPerformanceAdvisors({});
 ```
 
 **Input**
@@ -84,7 +85,8 @@ Get security advisors
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.advisors.getSecurityAdvisors({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.advisors.getSecurityAdvisors({});
 ```
 
 **Input**
@@ -150,7 +152,8 @@ Get project logs
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.analytics.getProjectLogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.analytics.getProjectLogs({});
 ```
 
 **Input**
@@ -216,7 +219,8 @@ Create a project signing key
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.auth.createProjectSigningKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.createProjectSigningKey({});
 ```
 
 **Input**
@@ -280,7 +284,8 @@ Create an SSO provider
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.auth.createSsoProvider({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.createSsoProvider({});
 ```
 
 **Input**
@@ -344,7 +349,8 @@ Create a third-party auth integration
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.auth.createThirdPartyAuthIntegration({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.createThirdPartyAuthIntegration({});
 ```
 
 **Input**
@@ -408,7 +414,8 @@ Remove an SSO provider
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.auth.deleteSsoProvider({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.deleteSsoProvider({});
 ```
 
 **Input**
@@ -472,7 +479,8 @@ Delete a third-party auth integration
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.auth.deleteThirdPartyAuthIntegration({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.deleteThirdPartyAuthIntegration({});
 ```
 
 **Input**
@@ -536,7 +544,8 @@ Get legacy signing key
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.getLegacySigningKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.getLegacySigningKey({});
 ```
 
 **Input**
@@ -600,7 +609,8 @@ Get project auth config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.getProjectAuthConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.getProjectAuthConfig({});
 ```
 
 **Input**
@@ -664,7 +674,8 @@ Get project signing keys
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.getProjectSigningKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.getProjectSigningKeys({});
 ```
 
 **Input**
@@ -728,7 +739,8 @@ Get an SSO provider
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.getSsoProvider({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.getSsoProvider({});
 ```
 
 **Input**
@@ -792,7 +804,8 @@ Get a third-party auth integration
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.getThirdPartyIntegration({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.getThirdPartyIntegration({});
 ```
 
 **Input**
@@ -856,7 +869,8 @@ List SSO providers
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.listSsoProviders({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.listSsoProviders({});
 ```
 
 **Input**
@@ -920,7 +934,8 @@ List third-party auth integrations
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.listThirdPartyAuthIntegrations({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.listThirdPartyAuthIntegrations({});
 ```
 
 **Input**
@@ -984,7 +999,8 @@ Update project auth config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.auth.updateProjectAuthConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.updateProjectAuthConfig({});
 ```
 
 **Input**
@@ -1048,7 +1064,8 @@ Update an SSO provider
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.auth.updateSsoProvider({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.auth.updateSsoProvider({});
 ```
 
 **Input**
@@ -1114,7 +1131,8 @@ Apply a database migration
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.applyMigration({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.applyMigration({});
 ```
 
 **Input**
@@ -1178,7 +1196,8 @@ Create a CLI login role
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.createLoginRole({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.createLoginRole({});
 ```
 
 **Input**
@@ -1242,7 +1261,8 @@ Set up a read replica
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.createReadReplica({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.createReadReplica({});
 ```
 
 **Input**
@@ -1306,7 +1326,8 @@ Delete CLI login roles
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.database.deleteLoginRoles({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.deleteLoginRoles({});
 ```
 
 **Input**
@@ -1370,7 +1391,8 @@ Temporarily disable project read-only mode
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.disableProjectReadonly({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.disableProjectReadonly({});
 ```
 
 **Input**
@@ -1434,7 +1456,8 @@ Enable database webhooks
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.enableDatabaseWebhooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.enableDatabaseWebhooks({});
 ```
 
 **Input**
@@ -1498,7 +1521,8 @@ Generate TypeScript database types
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.generateTypescriptTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.generateTypescriptTypes({});
 ```
 
 **Input**
@@ -1562,7 +1586,8 @@ Get database metadata
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getDatabaseMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.getDatabaseMetadata({});
 ```
 
 **Input**
@@ -1626,7 +1651,8 @@ Get JIT access config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getJitAccessConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.getJitAccessConfig({});
 ```
 
 **Input**
@@ -1690,7 +1716,8 @@ Get a migration
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getMigration({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.getMigration({});
 ```
 
 **Input**
@@ -1754,7 +1781,8 @@ Get project PgBouncer config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getProjectPgbouncerConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.getProjectPgbouncerConfig({});
 ```
 
 **Input**
@@ -1818,7 +1846,8 @@ Get project postgres config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getProjectPostgresConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.getProjectPostgresConfig({});
 ```
 
 **Input**
@@ -1882,7 +1911,8 @@ Get project read-only mode status
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getProjectReadonlyModeStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.getProjectReadonlyModeStatus({});
 ```
 
 **Input**
@@ -1946,7 +1976,8 @@ Get project SSL enforcement config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getProjectSslEnforcementConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.getProjectSslEnforcementConfig({});
 ```
 
 **Input**
@@ -2010,7 +2041,8 @@ Get project Supavisor config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getProjectSupavisorConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.getProjectSupavisorConfig({});
 ```
 
 **Input**
@@ -2074,7 +2106,8 @@ Get a SQL snippet
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getSqlSnippet({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.getSqlSnippet({});
 ```
 
 **Input**
@@ -2138,7 +2171,8 @@ Get database table schemas
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getTableSchemas({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.getTableSchemas({});
 ```
 
 **Input**
@@ -2202,7 +2236,8 @@ List project database backups
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.listBackups({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.listBackups({});
 ```
 
 **Input**
@@ -2266,7 +2301,8 @@ List migration history
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.listMigrationHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.listMigrationHistory({});
 ```
 
 **Input**
@@ -2330,7 +2366,8 @@ List SQL snippets
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.listSqlSnippets({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.listSqlSnippets({});
 ```
 
 **Input**
@@ -2394,7 +2431,8 @@ List database tables
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.listTables({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.listTables({});
 ```
 
 **Input**
@@ -2458,7 +2496,8 @@ Patch a migration
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.patchMigration({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.patchMigration({});
 ```
 
 **Input**
@@ -2522,7 +2561,8 @@ Remove a read replica
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.database.removeReadReplica({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.removeReadReplica({});
 ```
 
 **Input**
@@ -2586,7 +2626,8 @@ Restore database PITR backup
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.database.restorePitrBackup({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.restorePitrBackup({});
 ```
 
 **Input**
@@ -2650,7 +2691,8 @@ Execute a read-only database query
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.runReadOnlyQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.runReadOnlyQuery({});
 ```
 
 **Input**
@@ -2714,7 +2756,8 @@ Execute a project database query
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.runSqlQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.runSqlQuery({});
 ```
 
 **Input**
@@ -2778,7 +2821,8 @@ Select rows from a database table
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.selectFromTable({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.selectFromTable({});
 ```
 
 **Input**
@@ -2842,7 +2886,8 @@ Update database password
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.updateDatabasePassword({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.updateDatabasePassword({});
 ```
 
 **Input**
@@ -2906,7 +2951,8 @@ Update JIT access config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.updateJitAccessConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.updateJitAccessConfig({});
 ```
 
 **Input**
@@ -2970,7 +3016,8 @@ Update project postgres config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.updateProjectPostgresConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.updateProjectPostgresConfig({});
 ```
 
 **Input**
@@ -3034,7 +3081,8 @@ Update project Supavisor config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.updateProjectSupavisorConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.updateProjectSupavisorConfig({});
 ```
 
 **Input**
@@ -3098,7 +3146,8 @@ Update SSL enforcement config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.updateSslEnforcementConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.updateSslEnforcementConfig({});
 ```
 
 **Input**
@@ -3162,7 +3211,8 @@ Upsert a migration
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.upsertMigration({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.database.upsertMigration({});
 ```
 
 **Input**
@@ -3228,7 +3278,8 @@ Activate a configured custom hostname
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.domains.activateCustomHostname({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.domains.activateCustomHostname({});
 ```
 
 **Input**
@@ -3292,7 +3343,8 @@ Activate a vanity subdomain for a project
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.domains.activateVanitySubdomain({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.domains.activateVanitySubdomain({});
 ```
 
 **Input**
@@ -3356,7 +3408,8 @@ Check vanity subdomain availability
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.domains.checkVanitySubdomainAvailability({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.domains.checkVanitySubdomainAvailability({});
 ```
 
 **Input**
@@ -3420,7 +3473,8 @@ Delete custom hostname configuration
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.domains.deleteCustomHostnameConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.domains.deleteCustomHostnameConfig({});
 ```
 
 **Input**
@@ -3484,7 +3538,8 @@ Delete a project vanity subdomain
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.domains.deleteProjectVanitySubdomain({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.domains.deleteProjectVanitySubdomain({});
 ```
 
 **Input**
@@ -3548,7 +3603,8 @@ Get a project custom hostname configuration
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.domains.getProjectCustomHostnameConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.domains.getProjectCustomHostnameConfig({});
 ```
 
 **Input**
@@ -3612,7 +3668,8 @@ Get current vanity subdomain config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.domains.getVanitySubdomainConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.domains.getVanitySubdomainConfig({});
 ```
 
 **Input**
@@ -3676,7 +3733,8 @@ Update project custom hostname
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.domains.updateProjectCustomHostname({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.domains.updateProjectCustomHostname({});
 ```
 
 **Input**
@@ -3740,7 +3798,8 @@ Reverify custom hostname DNS
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.domains.verifyCustomHostnameDns({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.domains.verifyCustomHostnameDns({});
 ```
 
 **Input**
@@ -3806,7 +3865,8 @@ Create an Edge Function
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.createFunction({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.edgeFunctions.createFunction({});
 ```
 
 **Input**
@@ -3870,7 +3930,8 @@ Delete an Edge Function
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.edgeFunctions.deleteFunction({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.edgeFunctions.deleteFunction({});
 ```
 
 **Input**
@@ -3934,7 +3995,8 @@ Deploy an Edge Function
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.deployFunction({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.edgeFunctions.deployFunction({});
 ```
 
 **Input**
@@ -3998,7 +4060,8 @@ Retrieve an Edge Function
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.getFunction({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.edgeFunctions.getFunction({});
 ```
 
 **Input**
@@ -4062,7 +4125,8 @@ Retrieve an Edge Function body
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.getFunctionBody({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.edgeFunctions.getFunctionBody({});
 ```
 
 **Input**
@@ -4126,7 +4190,8 @@ Invoke an Edge Function
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.invokeEdgeFunction({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.edgeFunctions.invokeEdgeFunction({});
 ```
 
 **Input**
@@ -4190,7 +4255,8 @@ List Edge Functions
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.listFunctions({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.edgeFunctions.listFunctions({});
 ```
 
 **Input**
@@ -4254,7 +4320,8 @@ Update an Edge Function
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.updateFunction({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.edgeFunctions.updateFunction({});
 ```
 
 **Input**
@@ -4318,7 +4385,8 @@ Bulk update Edge Functions
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.updateFunctions({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.edgeFunctions.updateFunctions({});
 ```
 
 **Input**
@@ -4384,7 +4452,8 @@ Count action runs
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.environments.countActionRuns({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.environments.countActionRuns({});
 ```
 
 **Input**
@@ -4448,7 +4517,8 @@ Create a database branch
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.environments.createDatabaseBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.environments.createDatabaseBranch({});
 ```
 
 **Input**
@@ -4512,7 +4582,8 @@ Delete a database branch
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.environments.deleteDatabaseBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.environments.deleteDatabaseBranch({});
 ```
 
 **Input**
@@ -4576,7 +4647,8 @@ Disable preview branching
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.environments.disablePreviewBranching({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.environments.disablePreviewBranching({});
 ```
 
 **Input**
@@ -4640,7 +4712,8 @@ Get action run status
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.environments.getActionRun({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.environments.getActionRun({});
 ```
 
 **Input**
@@ -4704,7 +4777,8 @@ Get action run logs
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.environments.getActionRunLogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.environments.getActionRunLogs({});
 ```
 
 **Input**
@@ -4768,7 +4842,8 @@ Get a database branch by name
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.environments.getBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.environments.getBranch({});
 ```
 
 **Input**
@@ -4832,7 +4907,8 @@ Get database branch config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.environments.getDatabaseBranchConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.environments.getDatabaseBranchConfig({});
 ```
 
 **Input**
@@ -4896,7 +4972,8 @@ List database branches
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.environments.listDatabaseBranches({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.environments.listDatabaseBranches({});
 ```
 
 **Input**
@@ -4960,7 +5037,8 @@ Push a database branch
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.environments.pushBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.environments.pushBranch({});
 ```
 
 **Input**
@@ -5024,7 +5102,8 @@ Reset a database branch
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.environments.resetDatabaseBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.environments.resetDatabaseBranch({});
 ```
 
 **Input**
@@ -5088,7 +5167,8 @@ Update database branch config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.environments.updateDatabaseBranchConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.environments.updateDatabaseBranchConfig({});
 ```
 
 **Input**
@@ -5154,7 +5234,8 @@ Generate a Supabase OAuth authorization URL
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.oauth.authorizeUserThroughOauth({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.oauth.authorizeUserThroughOauth({});
 ```
 
 **Input**
@@ -5218,7 +5299,8 @@ Exchange an OAuth authorization code or refresh token
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.oauth.exchangeOauthToken({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.oauth.exchangeOauthToken({});
 ```
 
 **Input**
@@ -5284,7 +5366,8 @@ Create an organization
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.organizations.createOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.organizations.createOrganization({});
 ```
 
 **Input**
@@ -5348,7 +5431,8 @@ Get organization information
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.organizations.getOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.organizations.getOrganization({});
 ```
 
 **Input**
@@ -5412,7 +5496,8 @@ List organizations
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.organizations.listAllOrganizations({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.organizations.listAllOrganizations({});
 ```
 
 **Input**
@@ -5476,7 +5561,8 @@ List organization members
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.organizations.listOrganizationMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.organizations.listOrganizationMembers({});
 ```
 
 **Input**
@@ -5542,7 +5628,8 @@ Create a project
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.projects.createProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.createProject({});
 ```
 
 **Input**
@@ -5606,7 +5693,8 @@ Delete a project
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.projects.deleteProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.deleteProject({});
 ```
 
 **Input**
@@ -5670,7 +5758,8 @@ Get available project regions
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getAvailableRegions({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.getAvailableRegions({});
 ```
 
 **Input**
@@ -5734,7 +5823,8 @@ Get project API health status
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getHealth({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.getHealth({});
 ```
 
 **Input**
@@ -5798,7 +5888,8 @@ Get a project
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.getProject({});
 ```
 
 **Input**
@@ -5862,7 +5953,8 @@ Retrieve project network bans
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getProjectNetworkBans({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.getProjectNetworkBans({});
 ```
 
 **Input**
@@ -5926,7 +6018,8 @@ Get project network restrictions
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getProjectNetworkRestrictions({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.getProjectNetworkRestrictions({});
 ```
 
 **Input**
@@ -5990,7 +6083,8 @@ Get project service health status
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getProjectServiceHealthStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.getProjectServiceHealthStatus({});
 ```
 
 **Input**
@@ -6054,7 +6148,8 @@ Get project upgrade eligibility
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getProjectUpgradeEligibility({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.getProjectUpgradeEligibility({});
 ```
 
 **Input**
@@ -6118,7 +6213,8 @@ Get project upgrade status
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getProjectUpgradeStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.getProjectUpgradeStatus({});
 ```
 
 **Input**
@@ -6182,7 +6278,8 @@ List projects
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.listAllProjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.listAllProjects({});
 ```
 
 **Input**
@@ -6246,7 +6343,8 @@ Patch project network restrictions
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.projects.patchNetworkRestrictions({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.patchNetworkRestrictions({});
 ```
 
 **Input**
@@ -6310,7 +6408,8 @@ Remove project network bans
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.projects.removeNetworkBans({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.removeNetworkBans({});
 ```
 
 **Input**
@@ -6374,7 +6473,8 @@ Update a project
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.projects.updateProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.updateProject({});
 ```
 
 **Input**
@@ -6438,7 +6538,8 @@ Apply project network restrictions
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.projects.updateProjectNetworkRestrictions({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.updateProjectNetworkRestrictions({});
 ```
 
 **Input**
@@ -6502,7 +6603,8 @@ Upgrade project PostgreSQL version
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.projects.upgradeProjectPostgresVersion({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.projects.upgradeProjectPostgresVersion({});
 ```
 
 **Input**
@@ -6568,7 +6670,8 @@ Get project PostgREST config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.rest.getProjectPostgrestConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.rest.getProjectPostgrestConfig({});
 ```
 
 **Input**
@@ -6632,7 +6735,8 @@ Update project PostgREST config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.rest.updateProjectPostgrestConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.rest.updateProjectPostgrestConfig({});
 ```
 
 **Input**
@@ -6698,7 +6802,8 @@ Create a project API key
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.secrets.createApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.secrets.createApiKey({});
 ```
 
 **Input**
@@ -6762,7 +6867,8 @@ Create multiple project secrets
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.secrets.createBulkSecrets({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.secrets.createBulkSecrets({});
 ```
 
 **Input**
@@ -6826,7 +6932,8 @@ Delete a project API key
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.secrets.deleteApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.secrets.deleteApiKey({});
 ```
 
 **Input**
@@ -6890,7 +6997,8 @@ Delete multiple project secrets
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.secrets.deleteSecrets({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.secrets.deleteSecrets({});
 ```
 
 **Input**
@@ -6954,7 +7062,8 @@ Get a project API key
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.secrets.getProjectApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.secrets.getProjectApiKey({});
 ```
 
 **Input**
@@ -7018,7 +7127,8 @@ Get project API keys
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.secrets.getProjectApiKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.secrets.getProjectApiKeys({});
 ```
 
 **Input**
@@ -7082,7 +7192,8 @@ Get project legacy API keys status
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.secrets.getProjectLegacyApiKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.secrets.getProjectLegacyApiKeys({});
 ```
 
 **Input**
@@ -7146,7 +7257,8 @@ Get project pgsodium config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.secrets.getProjectPgsodiumConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.secrets.getProjectPgsodiumConfig({});
 ```
 
 **Input**
@@ -7210,7 +7322,8 @@ List project secrets
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.secrets.listSecrets({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.secrets.listSecrets({});
 ```
 
 **Input**
@@ -7274,7 +7387,8 @@ Update a project API key
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.secrets.updateApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.secrets.updateApiKey({});
 ```
 
 **Input**
@@ -7338,7 +7452,8 @@ Update pgsodium root key
 **Risk:** `destructive`
 
 ```ts
-await corsair.supabase.api.secrets.updatePgsodiumConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.secrets.updatePgsodiumConfig({});
 ```
 
 **Input**
@@ -7402,7 +7517,8 @@ Update project legacy API keys
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.secrets.updateProjectLegacyApiKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.secrets.updateProjectLegacyApiKeys({});
 ```
 
 **Input**
@@ -7468,7 +7584,8 @@ Get TUS resumable upload base options
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.storage.getResumableUploadBaseOptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.storage.getResumableUploadBaseOptions({});
 ```
 
 **Input**
@@ -7532,7 +7649,8 @@ Get TUS resumable upload options
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.storage.getResumableUploadOptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.storage.getResumableUploadOptions({});
 ```
 
 **Input**
@@ -7596,7 +7714,8 @@ Handle TUS resumable upload sign options
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.storage.handleResumableUploadSignOptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.storage.handleResumableUploadSignOptions({});
 ```
 
 **Input**
@@ -7660,7 +7779,8 @@ Handle TUS resumable upload sign options with ID
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.storage.handleResumableUploadSignOptionsWithId({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.storage.handleResumableUploadSignOptionsWithId({});
 ```
 
 **Input**
@@ -7724,7 +7844,8 @@ List storage buckets
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.storage.listBuckets({});
+const tenant = corsair.withTenant('acme');
+await tenant.supabase.api.storage.listBuckets({});
 ```
 
 **Input**

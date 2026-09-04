@@ -20,7 +20,8 @@ Retrieves an absence balance by ID (Absence Management v5).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.absence.getAbsenceBalance({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.absence.getAbsenceBalance({});
 ```
 
 **Input**
@@ -61,7 +62,8 @@ Retrieves cost center prompt values for org assignment changes (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.assignment.getAssignmentChangeGroupCostCenters({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.assignment.getAssignmentChangeGroupCostCenters({});
 ```
 
 **Input**
@@ -110,7 +112,8 @@ Retrieves job prompt values for org assignment changes (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.assignment.getAssignmentChangeGroupJobs({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.assignment.getAssignmentChangeGroupJobs({});
 ```
 
 **Input**
@@ -159,7 +162,8 @@ Retrieves assignment type prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.assignment.getAssignmentTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.assignment.getAssignmentTypes({});
 ```
 
 **Input**
@@ -213,7 +217,8 @@ Lists absence balances (Absence Management v5).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.balances.listBalances({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.balances.listBalances({});
 ```
 
 **Input**
@@ -263,7 +268,8 @@ Creates a business title change for a worker (Common API v1).
 **Risk:** `write`
 
 ```ts
-await corsair.workday.api.business.createBusinessTitleChange({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.business.createBusinessTitleChange({});
 ```
 
 **Input**
@@ -299,7 +305,8 @@ Retrieves a business title change instance by ID (Common API v1).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.business.getBusinessTitleChange({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.business.getBusinessTitleChange({});
 ```
 
 **Input**
@@ -335,7 +342,8 @@ Retrieves a business title change for a specific worker (Common API v1).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.business.getBusinessTitleChangeForWorker({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.business.getBusinessTitleChangeForWorker({});
 ```
 
 **Input**
@@ -374,7 +382,8 @@ Retrieves candidate availability template for a job posting (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.candidate.getCandidateAvailabilityTemplate({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.candidate.getCandidateAvailabilityTemplate({});
 ```
 
 **Input**
@@ -412,7 +421,8 @@ Retrieves a paginated collection of jobs (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.collection.getCollectionOfJobs({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.collection.getCollectionOfJobs({});
 ```
 
 **Input**
@@ -457,7 +467,8 @@ Retrieves a collection of payroll inputs (Payroll v1).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.collection.getCollectionOfPayroll({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.collection.getCollectionOfPayroll({});
 ```
 
 **Input**
@@ -508,7 +519,8 @@ Retrieves company insider type prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.company.getCompanyInsiderTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.company.getCompanyInsiderTypes({});
 ```
 
 **Input**
@@ -562,7 +574,8 @@ Retrieves contingent worker type prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.contingent.getContingentWorkerTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.contingent.getContingentWorkerTypes({});
 ```
 
 **Input**
@@ -616,7 +629,8 @@ Retrieves country values for recruiting (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.countries.listCountries({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.countries.listCountries({});
 ```
 
 **Input**
@@ -663,7 +677,8 @@ Retrieves country info (Common API v1).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.country.getCountryInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.country.getCountryInfo({});
 ```
 
 **Input**
@@ -701,7 +716,8 @@ Retrieves currency prompt values for job changes (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.currencies.getCurrencies({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.currencies.getCurrencies({});
 ```
 
 **Input**
@@ -755,7 +771,8 @@ Retrieves the authenticated worker profile (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.current.getCurrentUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.current.getCurrentUser({});
 ```
 
 **Input**
@@ -790,7 +807,8 @@ Retrieves grant prompt values for org assignment changes (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.grants.getGrants({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.grants.getGrants({});
 ```
 
 **Input**
@@ -841,7 +859,8 @@ Retrieves headcount option prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.headcount.getHeadcountOptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.headcount.getHeadcountOptions({});
 ```
 
 **Input**
@@ -895,7 +914,8 @@ Retrieves a history instance for a worker (Common API v1).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.history.getHistoryInstanceForWorker({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.history.getHistoryInstanceForWorker({});
 ```
 
 **Input**
@@ -932,7 +952,8 @@ Retrieves history items for a worker (Common API v1).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.history.getHistoryItemsForWorker({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.history.getHistoryItemsForWorker({});
 ```
 
 **Input**
@@ -982,7 +1003,8 @@ Retrieves holiday events for workers/time period (Person v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.holiday.getHolidayEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.holiday.getHolidayEvents({});
 ```
 
 **Input**
@@ -1032,7 +1054,8 @@ Retrieves an interview by ID (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.interview.getInterview({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.interview.getInterview({});
 ```
 
 **Input**
@@ -1068,7 +1091,8 @@ Retrieves interview feedback (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.interview.getInterviewFeedback2({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.interview.getInterviewFeedback2({});
 ```
 
 **Input**
@@ -1118,7 +1142,8 @@ Lists interviews (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.interviews.listInterviews({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.interviews.listInterviews({});
 ```
 
 **Input**
@@ -1166,7 +1191,8 @@ Initiates a job change for a worker (Staffing v6).
 **Risk:** `write`
 
 ```ts
-await corsair.workday.api.job.createJobChange({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.createJobChange({});
 ```
 
 **Input**
@@ -1202,7 +1228,8 @@ Retrieves a single job instance by ID (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobById({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobById({});
 ```
 
 **Input**
@@ -1238,7 +1265,8 @@ Retrieves frequency prompt values for job changes (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobChangeFrequencies({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobChangeFrequencies({});
 ```
 
 **Input**
@@ -1290,7 +1318,8 @@ Retrieves location info for a job change (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobChangeLocationInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobChangeLocationInfo({});
 ```
 
 **Input**
@@ -1326,7 +1355,8 @@ Retrieves position details for a job change (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobChangePosition({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobChangePosition({});
 ```
 
 **Input**
@@ -1362,7 +1392,8 @@ Retrieves a job change reason instance (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobChangeReasonInstance({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobChangeReasonInstance({});
 ```
 
 **Input**
@@ -1398,7 +1429,8 @@ Retrieves job change reasons collection (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobChangeReasons({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobChangeReasons({});
 ```
 
 **Input**
@@ -1447,7 +1479,8 @@ Retrieves job change reason prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobChangeReasonValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobChangeReasonValues({});
 ```
 
 **Input**
@@ -1499,7 +1532,8 @@ Retrieves job change templates (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobChangesGroupTemplates({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobChangesGroupTemplates({});
 ```
 
 **Input**
@@ -1551,7 +1585,8 @@ Retrieves job prompt values for job changes (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobChangesJobValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobChangesJobValues({});
 ```
 
 **Input**
@@ -1598,7 +1633,8 @@ Retrieves worker prompt values for job changes (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobChangesWorkerValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobChangesWorkerValues({});
 ```
 
 **Input**
@@ -1644,7 +1680,8 @@ Retrieves job classification prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobClassifications({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobClassifications({});
 ```
 
 **Input**
@@ -1696,7 +1733,8 @@ Retrieves a job posting including description (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobPosting({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobPosting({});
 ```
 
 **Input**
@@ -1732,7 +1770,8 @@ Retrieves questionnaires for a job posting (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobPostingQuestionnaire({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobPostingQuestionnaire({});
 ```
 
 **Input**
@@ -1780,7 +1819,8 @@ Retrieves job profile prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobProfilesValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobProfilesValues({});
 ```
 
 **Input**
@@ -1832,7 +1872,8 @@ Retrieves job requisition prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobRequisitionValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobRequisitionValues({});
 ```
 
 **Input**
@@ -1884,7 +1925,8 @@ Retrieves a workspace for a job (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobWorkspace({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobWorkspace({});
 ```
 
 **Input**
@@ -1921,7 +1963,8 @@ Retrieves workspaces for a job (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.getJobWorkspaces({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.getJobWorkspaces({});
 ```
 
 **Input**
@@ -1969,7 +2012,8 @@ Lists job postings (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.job.listJobPostings({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.listJobPostings({});
 ```
 
 **Input**
@@ -2018,7 +2062,8 @@ Partially updates business title on a job change (Staffing v6).
 **Risk:** `write`
 
 ```ts
-await corsair.workday.api.job.updateJobChangeBusinessTitle({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.job.updateJobChangeBusinessTitle({});
 ```
 
 **Input**
@@ -2057,7 +2102,8 @@ Lists jobs (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.jobs.listJobs({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.jobs.listJobs({});
 ```
 
 **Input**
@@ -2104,7 +2150,8 @@ Retrieves leave status prompt values (Absence Management v5).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.leave.getLeaveStatusValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.leave.getLeaveStatusValues({});
 ```
 
 **Input**
@@ -2151,7 +2198,8 @@ Updates a message template by ID (Recruiting v4).
 **Risk:** `write`
 
 ```ts
-await corsair.workday.api.message.updateMessageTemplateById({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.message.updateMessageTemplateById({});
 ```
 
 **Input**
@@ -2189,7 +2237,8 @@ Retrieves job postings for the authenticated recruiter (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.my.getMyJobPostings({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.my.getMyJobPostings({});
 ```
 
 **Input**
@@ -2238,7 +2287,8 @@ Retrieves business unit prompt values for org assignment changes (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.organization.getOrganizationAssignmentBusinessUnits({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.organization.getOrganizationAssignmentBusinessUnits({});
 ```
 
 **Input**
@@ -2287,7 +2337,8 @@ Retrieves custom org assignment prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.organization.getOrganizationAssignmentCustoms({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.organization.getOrganizationAssignmentCustoms({});
 ```
 
 **Input**
@@ -2336,7 +2387,8 @@ Retrieves fund prompt values for org assignment changes (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.organization.getOrganizationAssignmentFunds({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.organization.getOrganizationAssignmentFunds({});
 ```
 
 **Input**
@@ -2385,7 +2437,8 @@ Retrieves region prompt values for org assignment changes (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.organization.getOrganizationAssignmentRegions({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.organization.getOrganizationAssignmentRegions({});
 ```
 
 **Input**
@@ -2434,7 +2487,8 @@ Retrieves worker prompt values for org assignment changes (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.organization.getOrganizationAssignmentWorkers({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.organization.getOrganizationAssignmentWorkers({});
 ```
 
 **Input**
@@ -2485,7 +2539,8 @@ Retrieves the pay group for a job (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.pay.getPayGroupByJobId({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.pay.getPayGroupByJobId({});
 ```
 
 **Input**
@@ -2521,7 +2576,8 @@ Retrieves a pay slip instance for a worker (Common API v1).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.pay.getPaySlipInstancesForWorker({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.pay.getPaySlipInstancesForWorker({});
 ```
 
 **Input**
@@ -2558,7 +2614,8 @@ Retrieves pay slips for a worker (Common API v1).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.pay.getPaySlipsForWorker({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.pay.getPaySlipsForWorker({});
 ```
 
 **Input**
@@ -2608,7 +2665,8 @@ Creates payroll inputs (Payroll v1).
 **Risk:** `write`
 
 ```ts
-await corsair.workday.api.payroll.createPayrollInputs({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.payroll.createPayrollInputs({});
 ```
 
 **Input**
@@ -2641,7 +2699,8 @@ Retrieves a payroll input by ID (Payroll v1).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.payroll.getPayrollInputInstance({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.payroll.getPayrollInputInstance({});
 ```
 
 **Input**
@@ -2677,7 +2736,8 @@ Partially updates a payroll input (Payroll v1).
 **Risk:** `write`
 
 ```ts
-await corsair.workday.api.payroll.updateAnExistingPayroll({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.payroll.updateAnExistingPayroll({});
 ```
 
 **Input**
@@ -2715,7 +2775,8 @@ Retrieves proposed position prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.proposed.getProposedPositionValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.proposed.getProposedPositionValues({});
 ```
 
 **Input**
@@ -2769,7 +2830,8 @@ Retrieves a prospect (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.prospect.getProspect({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.prospect.getProspect({});
 ```
 
 **Input**
@@ -2805,7 +2867,8 @@ Retrieves prospect educations (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.prospect.getProspectEducations({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.prospect.getProspectEducations({});
 ```
 
 **Input**
@@ -2853,7 +2916,8 @@ Retrieves prospect experiences (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.prospect.getProspectExperiences({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.prospect.getProspectExperiences({});
 ```
 
 **Input**
@@ -2901,7 +2965,8 @@ Retrieves prospect resume attachments (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.prospect.getProspectResumeAttachments({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.prospect.getProspectResumeAttachments({});
 ```
 
 **Input**
@@ -2949,7 +3014,8 @@ Retrieves prospect skills (Recruiting v4).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.prospect.getProspectSkills({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.prospect.getProspectSkills({});
 ```
 
 **Input**
@@ -2999,7 +3065,8 @@ Retrieves supervisory organization prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.supervisory.getSupervisoryOrgValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.supervisory.getSupervisoryOrgValues({});
 ```
 
 **Input**
@@ -3053,7 +3120,8 @@ Creates a time off request (Absence Management v5).
 **Risk:** `write`
 
 ```ts
-await corsair.workday.api.time.createTimeOffRequest({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.time.createTimeOffRequest({});
 ```
 
 **Input**
@@ -3089,7 +3157,8 @@ Retrieves time off entries for a worker (Common API v1).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.time.getTimeOffEntriesForWorker({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.time.getTimeOffEntriesForWorker({});
 ```
 
 **Input**
@@ -3137,7 +3206,8 @@ Retrieves time off plans for a worker (Common API v1).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.time.getTimeOffPlansForWorker({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.time.getTimeOffPlansForWorker({});
 ```
 
 **Input**
@@ -3185,7 +3255,8 @@ Retrieves time off status prompt values (Absence Management v5).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.time.getTimeOffStatusValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.time.getTimeOffStatusValues({});
 ```
 
 **Input**
@@ -3230,7 +3301,8 @@ Retrieves time type prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.time.getTimeTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.time.getTimeTypes({});
 ```
 
 **Input**
@@ -3284,7 +3356,8 @@ Retrieves work study award prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.work.getWorkStudyAwards({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.work.getWorkStudyAwards({});
 ```
 
 **Input**
@@ -3338,7 +3411,8 @@ Retrieves business title changes for a worker (Common API v1).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.worker.getWorkerBusinessTitleChanges({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.worker.getWorkerBusinessTitleChanges({});
 ```
 
 **Input**
@@ -3386,7 +3460,8 @@ Retrieves eligible absence types for a worker (Absence Management v5).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.worker.getWorkerEligibleAbsenceTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.worker.getWorkerEligibleAbsenceTypes({});
 ```
 
 **Input**
@@ -3435,7 +3510,8 @@ Retrieves worker staffing information (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.worker.getWorkerInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.worker.getWorkerInfo({});
 ```
 
 **Input**
@@ -3471,7 +3547,8 @@ Retrieves leaves of absence for a worker (Absence Management v5).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.worker.getWorkerLeavesOfAbsence({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.worker.getWorkerLeavesOfAbsence({});
 ```
 
 **Input**
@@ -3522,7 +3599,8 @@ Retrieves service dates for a worker (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.worker.getWorkerServiceDates({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.worker.getWorkerServiceDates({});
 ```
 
 **Input**
@@ -3570,7 +3648,8 @@ Retrieves current staffing information for a worker (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.worker.getWorkerStaffingInformation({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.worker.getWorkerStaffingInformation({});
 ```
 
 **Input**
@@ -3606,7 +3685,8 @@ Retrieves time off details for a worker (Absence Management v5).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.worker.getWorkerTimeOffDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.worker.getWorkerTimeOffDetails({});
 ```
 
 **Input**
@@ -3656,7 +3736,8 @@ Retrieves worker type prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.worker.getWorkerTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.worker.getWorkerTypes({});
 ```
 
 **Input**
@@ -3708,7 +3789,8 @@ Retrieves valid time off dates for a worker (Absence Management v5).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.worker.getWorkerValidTimeOffDates({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.worker.getWorkerValidTimeOffDates({});
 ```
 
 **Input**
@@ -3759,7 +3841,8 @@ Retrieves a leave of absence subresource (Absence Management v5).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.worker.retrieveWorkerLeaveOfAbsenceSubresource({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.worker.retrieveWorkerLeaveOfAbsenceSubresource({});
 ```
 
 **Input**
@@ -3798,7 +3881,8 @@ Retrieves workers with staffing information (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.workers.getWorkersCollectionStaffing({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.workers.getWorkersCollectionStaffing({});
 ```
 
 **Input**
@@ -3847,7 +3931,8 @@ Retrieves workspace prompt values (Staffing v6).
 **Risk:** `read`
 
 ```ts
-await corsair.workday.api.workspace.getWorkspaceInstances({});
+const tenant = corsair.withTenant('acme');
+await tenant.workday.api.workspace.getWorkspaceInstances({});
 ```
 
 **Input**

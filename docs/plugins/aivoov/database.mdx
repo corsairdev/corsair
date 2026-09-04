@@ -14,7 +14,8 @@ The AiVOOV text-to-speech plugin syncs data locally. Use `corsair.aivoov.db.<ent
 Path: `aivoov.db.voices.search`
 
 ```ts
-const rows = await corsair.aivoov.db.voices.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.aivoov.db.voices.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

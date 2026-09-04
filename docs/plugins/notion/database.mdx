@@ -14,7 +14,8 @@ The Notion plugin syncs data locally. Use `corsair.notion.db.<entity>.search({ d
 Path: `notion.db.blocks.search`
 
 ```ts
-const rows = await corsair.notion.db.blocks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.notion.db.blocks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -45,7 +46,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `notion.db.databases.search`
 
 ```ts
-const rows = await corsair.notion.db.databases.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.notion.db.databases.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -79,7 +81,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `notion.db.pages.search`
 
 ```ts
-const rows = await corsair.notion.db.pages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.notion.db.pages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -113,7 +116,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `notion.db.users.search`
 
 ```ts
-const rows = await corsair.notion.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.notion.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

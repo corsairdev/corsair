@@ -20,7 +20,8 @@ Link a contact to an account with an optional job title
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.accountContacts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountContacts.create({});
 ```
 
 **Input**
@@ -69,7 +70,8 @@ Remove the link between an account and a contact
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.accountContacts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountContacts.delete({});
 ```
 
 **Input**
@@ -99,7 +101,8 @@ Retrieve an account-contact association by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.accountContacts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountContacts.get({});
 ```
 
 **Input**
@@ -146,7 +149,8 @@ List associations between accounts and contacts
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.accountContacts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountContacts.list({});
 ```
 
 **Input**
@@ -206,7 +210,8 @@ Update an account-contact association
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.accountContacts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountContacts.update({});
 ```
 
 **Input**
@@ -258,7 +263,8 @@ Set a custom field value on an account
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.accountCustomFieldData.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountCustomFieldData.create({});
 ```
 
 **Input**
@@ -290,7 +296,8 @@ Set many account custom field values in one request
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.accountCustomFieldData.createBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountCustomFieldData.createBulk({});
 ```
 
 **Input**
@@ -328,7 +335,8 @@ Delete a custom field value from an account
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.accountCustomFieldData.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountCustomFieldData.delete({});
 ```
 
 **Input**
@@ -358,7 +366,8 @@ Retrieve an account custom field value by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.accountCustomFieldData.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountCustomFieldData.get({});
 ```
 
 **Input**
@@ -388,7 +397,8 @@ List custom field values stored against accounts
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.accountCustomFieldData.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountCustomFieldData.list({});
 ```
 
 **Input**
@@ -432,7 +442,8 @@ Update a custom field value on an account
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.accountCustomFieldData.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountCustomFieldData.update({});
 ```
 
 **Input**
@@ -463,7 +474,8 @@ Update many account custom field values in one request
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.accountCustomFieldData.updateBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountCustomFieldData.updateBulk({});
 ```
 
 **Input**
@@ -504,7 +516,8 @@ Define a new custom field for accounts
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.accountCustomFieldMeta.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountCustomFieldMeta.create({});
 ```
 
 **Input**
@@ -568,7 +581,8 @@ Delete an account custom field definition
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.accountCustomFieldMeta.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountCustomFieldMeta.delete({});
 ```
 
 **Input**
@@ -598,7 +612,8 @@ Retrieve an account custom field definition by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.accountCustomFieldMeta.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountCustomFieldMeta.get({});
 ```
 
 **Input**
@@ -655,7 +670,8 @@ List custom field definitions for accounts
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.accountCustomFieldMeta.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountCustomFieldMeta.list({});
 ```
 
 **Input**
@@ -723,7 +739,8 @@ Update an account custom field definition
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.accountCustomFieldMeta.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accountCustomFieldMeta.update({});
 ```
 
 **Input**
@@ -790,7 +807,8 @@ Create a CRM account with a unique name
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.accounts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accounts.create({});
 ```
 
 **Input**
@@ -856,7 +874,8 @@ Delete a CRM account and its associated data
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.accounts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accounts.delete({});
 ```
 
 **Input**
@@ -886,7 +905,8 @@ Delete many CRM accounts in one request
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.accounts.deleteBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accounts.deleteBulk({});
 ```
 
 **Input**
@@ -916,7 +936,8 @@ Retrieve a CRM account by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.accounts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accounts.get({});
 ```
 
 **Input**
@@ -967,7 +988,8 @@ List CRM accounts, optionally filtered by name
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.accounts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accounts.list({});
 ```
 
 **Input**
@@ -1030,7 +1052,8 @@ Update an existing CRM account by its ID
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.accounts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accounts.update({});
 ```
 
 **Input**
@@ -1097,7 +1120,8 @@ Create a CRM account, or update the one with the same name
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.accounts.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.accounts.upsert({});
 ```
 
 **Input**
@@ -1165,7 +1189,8 @@ List account activity, optionally narrowed to one contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.activities.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.activities.list({});
 ```
 
 **Input**
@@ -1212,7 +1237,8 @@ Create a company address for campaign footers
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.addresses.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.addresses.create({});
 ```
 
 **Input**
@@ -1277,7 +1303,8 @@ Delete a company address by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.addresses.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.addresses.delete({});
 ```
 
 **Input**
@@ -1307,7 +1334,8 @@ Retrieve a company address by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.addresses.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.addresses.get({});
 ```
 
 **Input**
@@ -1364,7 +1392,8 @@ List the company addresses used in campaigns
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.addresses.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.addresses.list({});
 ```
 
 **Input**
@@ -1432,7 +1461,8 @@ Update an existing company address
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.addresses.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.addresses.update({});
 ```
 
 **Input**
@@ -1500,7 +1530,8 @@ Delete an address group by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.addressGroups.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.addressGroups.delete({});
 ```
 
 **Input**
@@ -1532,7 +1563,8 @@ List automation workflows
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.automations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.automations.list({});
 ```
 
 **Input**
@@ -1593,7 +1625,8 @@ Retrieve a branding configuration by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.brandings.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.brandings.get({});
 ```
 
 **Input**
@@ -1657,7 +1690,8 @@ Update branding such as site name, logo and favicon
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.brandings.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.brandings.update({});
 ```
 
 **Input**
@@ -1727,7 +1761,8 @@ Flag a browse session as having items added to cart
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.browseSessions.addToCart({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.browseSessions.addToCart({});
 ```
 
 **Input**
@@ -1753,7 +1788,8 @@ Create a browse session in a specified state
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.browseSessions.save({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.browseSessions.save({});
 ```
 
 **Input**
@@ -1791,7 +1827,8 @@ Search browse sessions for a contact and connection
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.browseSessions.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.browseSessions.search({});
 ```
 
 **Input**
@@ -1823,7 +1860,8 @@ Simulate a tracking event and return its debug output
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.browseSessions.testEvent({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.browseSessions.testEvent({});
 ```
 
 **Input**
@@ -1852,7 +1890,8 @@ Create a calendar feed for external calendar apps
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.calendars.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.calendars.create({});
 ```
 
 **Input**
@@ -1905,7 +1944,8 @@ Delete a calendar feed by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.calendars.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.calendars.delete({});
 ```
 
 **Input**
@@ -1935,7 +1975,8 @@ Retrieve a calendar feed by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.calendars.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.calendars.get({});
 ```
 
 **Input**
@@ -1984,7 +2025,8 @@ List calendar feeds configured on the account
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.calendars.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.calendars.list({});
 ```
 
 **Input**
@@ -2044,7 +2086,8 @@ Update a calendar feed by its ID
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.calendars.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.calendars.update({});
 ```
 
 **Input**
@@ -2100,7 +2143,8 @@ Create a broadcast or automation campaign
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.campaigns.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.campaigns.create({});
 ```
 
 **Input**
@@ -2182,7 +2226,8 @@ Duplicate a campaign with its content and configuration
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.campaigns.duplicate({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.campaigns.duplicate({});
 ```
 
 **Input**
@@ -2240,7 +2285,8 @@ Retrieve a campaign by its ID with engagement metrics
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.campaigns.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.campaigns.get({});
 ```
 
 **Input**
@@ -2298,7 +2344,8 @@ List the lists a campaign automation sends to
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.campaigns.getAutomationLists({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.campaigns.getAutomationLists({});
 ```
 
 **Input**
@@ -2342,7 +2389,8 @@ List automations linked to a campaign
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.campaigns.getAutomations({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.campaigns.getAutomations({});
 ```
 
 **Input**
@@ -2386,7 +2434,8 @@ List the tracked links belonging to a campaign
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.campaigns.getLinks({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.campaigns.getLinks({});
 ```
 
 **Input**
@@ -2430,7 +2479,8 @@ List the messages attached to a campaign
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.campaigns.getMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.campaigns.getMessages({});
 ```
 
 **Input**
@@ -2474,7 +2524,8 @@ Retrieve the user who owns a campaign
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.campaigns.getUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.campaigns.getUser({});
 ```
 
 **Input**
@@ -2506,7 +2557,8 @@ List campaigns with pagination and filters
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.campaigns.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.campaigns.list({});
 ```
 
 **Input**
@@ -2577,7 +2629,8 @@ Edit an existing campaign, such as its name
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.campaigns.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.campaigns.update({});
 ```
 
 **Input**
@@ -2639,7 +2692,8 @@ Update an account configuration value
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.configs.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.configs.update({});
 ```
 
 **Input**
@@ -2672,7 +2726,8 @@ Create a connection to an external e-commerce service
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.connections.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.connections.create({});
 ```
 
 **Input**
@@ -2737,7 +2792,8 @@ Delete a connection by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.connections.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.connections.delete({});
 ```
 
 **Input**
@@ -2767,7 +2823,8 @@ Retrieve a connection by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.connections.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.connections.get({});
 ```
 
 **Input**
@@ -2828,7 +2885,8 @@ List Deep Data connections to external services
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.connections.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.connections.list({});
 ```
 
 **Input**
@@ -2902,7 +2960,8 @@ Update an existing connection
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.connections.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.connections.update({});
 ```
 
 **Input**
@@ -2970,7 +3029,8 @@ Enrol a contact in an automation by email address
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.contactAutomations.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactAutomations.add({});
 ```
 
 **Input**
@@ -3001,7 +3061,8 @@ Count how many times a contact entered each automation
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contactAutomations.entryCounts({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactAutomations.entryCounts({});
 ```
 
 **Input**
@@ -3026,7 +3087,8 @@ Retrieve a contact automation enrolment by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contactAutomations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactAutomations.get({});
 ```
 
 **Input**
@@ -3056,7 +3118,8 @@ List contact enrolments across automations
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contactAutomations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactAutomations.list({});
 ```
 
 **Input**
@@ -3099,7 +3162,8 @@ Remove a contact from an automation, one run or all
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.contactAutomations.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactAutomations.remove({});
 ```
 
 **Input**
@@ -3133,7 +3197,8 @@ Add a secondary contact to a deal
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.contactDeals.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactDeals.create({});
 ```
 
 **Input**
@@ -3166,7 +3231,8 @@ Remove a secondary contact from a deal
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.contactDeals.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactDeals.delete({});
 ```
 
 **Input**
@@ -3196,7 +3262,8 @@ Retrieve a secondary contact association by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contactDeals.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactDeals.get({});
 ```
 
 **Input**
@@ -3226,7 +3293,8 @@ List secondary contacts associated with deals
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contactDeals.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactDeals.list({});
 ```
 
 **Input**
@@ -3269,7 +3337,8 @@ Update a secondary contact association
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.contactDeals.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactDeals.update({});
 ```
 
 **Input**
@@ -3305,7 +3374,8 @@ List all contact-to-list memberships
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contactLists.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactLists.list({});
 ```
 
 **Input**
@@ -3386,7 +3456,8 @@ Create a contact, or update it if the email already exists
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.contacts.createOrUpdate({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.createOrUpdate({});
 ```
 
 **Input**
@@ -3488,7 +3559,8 @@ Delete a contact by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.contacts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.delete({});
 ```
 
 **Input**
@@ -3518,7 +3590,8 @@ Find a contact by email address
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.find({});
 ```
 
 **Input**
@@ -3614,7 +3687,8 @@ Retrieve a contact by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.get({});
 ```
 
 **Input**
@@ -3706,7 +3780,8 @@ List the accounts a contact is associated with
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getAccountContacts({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getAccountContacts({});
 ```
 
 **Input**
@@ -3750,7 +3825,8 @@ List the automations a contact is enrolled in
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getAutomations({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getAutomations({});
 ```
 
 **Input**
@@ -3794,7 +3870,8 @@ Retrieve the geographic and tracking data of a contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getData({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getData({});
 ```
 
 **Input**
@@ -3824,7 +3901,8 @@ List the deals associated with a contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getDeals({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getDeals({});
 ```
 
 **Input**
@@ -3868,7 +3946,8 @@ List the custom field values of a contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getFieldValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getFieldValues({});
 ```
 
 **Input**
@@ -3912,7 +3991,8 @@ List the geo IP records associated with a contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getGeoIps({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getGeoIps({});
 ```
 
 **Input**
@@ -3956,7 +4036,8 @@ List the automation goals a contact has completed
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getGoals({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getGoals({});
 ```
 
 **Input**
@@ -4000,7 +4081,8 @@ List the list memberships of a contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getLists({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getLists({});
 ```
 
 **Input**
@@ -4080,7 +4162,8 @@ List the activity log entries for a contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getLogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getLogs({});
 ```
 
 **Input**
@@ -4124,7 +4207,8 @@ List the notes attached to a contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getNotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getNotes({});
 ```
 
 **Input**
@@ -4168,7 +4252,8 @@ Retrieve the organization a contact belongs to
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getOrganization({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getOrganization({});
 ```
 
 **Input**
@@ -4198,7 +4283,8 @@ Retrieve third-party enrichment data for a contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getPlusAppend({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getPlusAppend({});
 ```
 
 **Input**
@@ -4228,7 +4314,8 @@ List the score values of a contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getScoreValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getScoreValues({});
 ```
 
 **Input**
@@ -4272,7 +4359,8 @@ List the tags applied to a contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getTags({});
 ```
 
 **Input**
@@ -4333,7 +4421,8 @@ List site and event tracking records for a contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.getTrackingLogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.getTrackingLogs({});
 ```
 
 **Input**
@@ -4377,7 +4466,8 @@ List contacts with pagination and filters
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contacts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.list({});
 ```
 
 **Input**
@@ -4482,7 +4572,8 @@ Update an existing contact by its ID
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.contacts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contacts.update({});
 ```
 
 **Input**
@@ -4587,7 +4678,8 @@ List all contact-to-tag associations
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contactTags.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactTags.list({});
 ```
 
 **Input**
@@ -4649,7 +4741,8 @@ Create a task against a contact
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.contactTasks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactTasks.create({});
 ```
 
 **Input**
@@ -4707,7 +4800,8 @@ Find contact tasks by title, optionally for one contact
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.contactTasks.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.contactTasks.find({});
 ```
 
 **Input**
@@ -4740,7 +4834,8 @@ Delete a custom object record by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.customObjectRecords.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.customObjectRecords.delete({});
 ```
 
 **Input**
@@ -4772,7 +4867,8 @@ Delete a custom object record by its external ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.customObjectRecords.deleteByExternalId({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.customObjectRecords.deleteByExternalId({});
 ```
 
 **Input**
@@ -4804,7 +4900,8 @@ Retrieve a custom object record by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.customObjectRecords.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.customObjectRecords.get({});
 ```
 
 **Input**
@@ -4835,7 +4932,8 @@ Retrieve a custom object record by its external ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.customObjectRecords.getByExternalId({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.customObjectRecords.getByExternalId({});
 ```
 
 **Input**
@@ -4866,7 +4964,8 @@ List the records belonging to a custom object schema
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.customObjectRecords.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.customObjectRecords.list({});
 ```
 
 **Input**
@@ -4910,7 +5009,8 @@ Create or update a custom object record by external ID
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.customObjectRecords.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.customObjectRecords.upsert({});
 ```
 
 **Input**
@@ -4954,7 +5054,8 @@ Create a custom object schema
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.customObjectSchemas.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.customObjectSchemas.create({});
 ```
 
 **Input**
@@ -5035,7 +5136,8 @@ Create a child schema under a public parent schema
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.customObjectSchemas.createChild({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.customObjectSchemas.createChild({});
 ```
 
 **Input**
@@ -5089,7 +5191,8 @@ Delete a custom object schema and all its records
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.customObjectSchemas.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.customObjectSchemas.delete({});
 ```
 
 **Input**
@@ -5119,7 +5222,8 @@ Retrieve a custom object schema by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.customObjectSchemas.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.customObjectSchemas.get({});
 ```
 
 **Input**
@@ -5169,7 +5273,8 @@ List custom object schema definitions
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.customObjectSchemas.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.customObjectSchemas.list({});
 ```
 
 **Input**
@@ -5230,7 +5335,8 @@ Update a custom object schema or add field options
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.customObjectSchemas.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.customObjectSchemas.update({});
 ```
 
 **Input**
@@ -5314,7 +5420,8 @@ List recent activity across deals
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealActivities.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealActivities.list({});
 ```
 
 **Input**
@@ -5363,7 +5470,8 @@ Delete a custom field value from a deal
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.dealCustomFieldData.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealCustomFieldData.delete({});
 ```
 
 **Input**
@@ -5393,7 +5501,8 @@ Retrieve a deal custom field value by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealCustomFieldData.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealCustomFieldData.get({});
 ```
 
 **Input**
@@ -5423,7 +5532,8 @@ List custom field values stored against deals
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealCustomFieldData.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealCustomFieldData.list({});
 ```
 
 **Input**
@@ -5467,7 +5577,8 @@ Update a custom field value on a deal
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealCustomFieldData.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealCustomFieldData.update({});
 ```
 
 **Input**
@@ -5503,7 +5614,8 @@ Create a custom field definition for deals
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealCustomFieldMeta.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealCustomFieldMeta.create({});
 ```
 
 **Input**
@@ -5567,7 +5679,8 @@ Delete a deal custom field definition
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.dealCustomFieldMeta.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealCustomFieldMeta.delete({});
 ```
 
 **Input**
@@ -5597,7 +5710,8 @@ Retrieve a deal custom field definition by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealCustomFieldMeta.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealCustomFieldMeta.get({});
 ```
 
 **Input**
@@ -5654,7 +5768,8 @@ List custom field definitions for deals
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealCustomFieldMeta.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealCustomFieldMeta.list({});
 ```
 
 **Input**
@@ -5722,7 +5837,8 @@ Update a deal custom field definition
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealCustomFieldMeta.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealCustomFieldMeta.update({});
 ```
 
 **Input**
@@ -5789,7 +5905,8 @@ Create a deal pipeline with its three default stages
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealGroups.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealGroups.create({});
 ```
 
 **Input**
@@ -5848,7 +5965,8 @@ Delete a pipeline and every stage and deal in it
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.dealGroups.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealGroups.delete({});
 ```
 
 **Input**
@@ -5878,7 +5996,8 @@ Retrieve a deal pipeline by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealGroups.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealGroups.get({});
 ```
 
 **Input**
@@ -5931,7 +6050,8 @@ List deal pipelines, optionally filtered by title
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealGroups.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealGroups.list({});
 ```
 
 **Input**
@@ -5996,7 +6116,8 @@ Update a deal pipeline by its ID
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealGroups.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealGroups.update({});
 ```
 
 **Input**
@@ -6058,7 +6179,8 @@ Create a deal role such as Decision Maker
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealRoles.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealRoles.create({});
 ```
 
 **Input**
@@ -6103,7 +6225,8 @@ Delete a deal role by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.dealRoles.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealRoles.delete({});
 ```
 
 **Input**
@@ -6133,7 +6256,8 @@ List the roles a contact can hold on a deal
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealRoles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealRoles.list({});
 ```
 
 **Input**
@@ -6191,7 +6315,8 @@ Delete a deal by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.deals.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.deals.delete({});
 ```
 
 **Input**
@@ -6221,7 +6346,8 @@ Retrieve a deal by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.deals.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.deals.get({});
 ```
 
 **Input**
@@ -6289,7 +6415,8 @@ List deals with pagination and filters
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.deals.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.deals.list({});
 ```
 
 **Input**
@@ -6396,7 +6523,8 @@ Search deals by title or filter by stage, pipeline, owner or status
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.deals.listFiltered({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.deals.listFiltered({});
 ```
 
 **Input**
@@ -6503,7 +6631,8 @@ Update an existing deal by its ID
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.deals.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.deals.update({});
 ```
 
 **Input**
@@ -6595,7 +6724,8 @@ Reassign many deals to new owners in one request
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.deals.updateOwnersBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.deals.updateOwnersBulk({});
 ```
 
 **Input**
@@ -6634,7 +6764,8 @@ Create a stage in a deal pipeline
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealStages.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealStages.create({});
 ```
 
 **Input**
@@ -6694,7 +6825,8 @@ Delete a pipeline stage by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.dealStages.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealStages.delete({});
 ```
 
 **Input**
@@ -6724,7 +6856,8 @@ Delete a stage, optionally relocating its deals first
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.dealStages.deleteWithDeals({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealStages.deleteWithDeals({});
 ```
 
 **Input**
@@ -6757,7 +6890,8 @@ Retrieve a pipeline stage by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealStages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealStages.get({});
 ```
 
 **Input**
@@ -6812,7 +6946,8 @@ List deal pipeline stages
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealStages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealStages.list({});
 ```
 
 **Input**
@@ -6880,7 +7015,8 @@ Move every deal in one stage to another stage
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealStages.moveDeals({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealStages.moveDeals({});
 ```
 
 **Input**
@@ -6906,7 +7042,8 @@ Update a pipeline stage by its ID
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealStages.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealStages.update({});
 ```
 
 **Input**
@@ -6969,7 +7106,8 @@ Create a task against a deal, contact or account
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealTasks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealTasks.create({});
 ```
 
 **Input**
@@ -7035,7 +7173,8 @@ Delete a deal task by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.dealTasks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealTasks.delete({});
 ```
 
 **Input**
@@ -7065,7 +7204,8 @@ Retrieve a deal task by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealTasks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealTasks.get({});
 ```
 
 **Input**
@@ -7118,7 +7258,8 @@ List deal tasks with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealTasks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealTasks.list({});
 ```
 
 **Input**
@@ -7195,7 +7336,8 @@ Update an existing deal task by its ID
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealTasks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealTasks.update({});
 ```
 
 **Input**
@@ -7264,7 +7406,8 @@ Create a task type for categorising deal tasks
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealTaskTypes.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealTaskTypes.create({});
 ```
 
 **Input**
@@ -7321,7 +7464,8 @@ Retrieve a deal task type by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealTaskTypes.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealTaskTypes.get({});
 ```
 
 **Input**
@@ -7374,7 +7518,8 @@ List the task types available for deals
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.dealTaskTypes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealTaskTypes.list({});
 ```
 
 **Input**
@@ -7438,7 +7583,8 @@ Update a deal task type by its ID
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.dealTaskTypes.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.dealTaskTypes.update({});
 ```
 
 **Input**
@@ -7498,7 +7644,8 @@ Register an e-commerce customer against a connection
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.ecomCustomers.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomCustomers.create({});
 ```
 
 **Input**
@@ -7552,7 +7699,8 @@ Delete an e-commerce customer and its data
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.ecomCustomers.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomCustomers.delete({});
 ```
 
 **Input**
@@ -7582,7 +7730,8 @@ Retrieve an e-commerce customer by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.ecomCustomers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomCustomers.get({});
 ```
 
 **Input**
@@ -7633,7 +7782,8 @@ List e-commerce customers with revenue metrics
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.ecomCustomers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomCustomers.list({});
 ```
 
 **Input**
@@ -7697,7 +7847,8 @@ Update an e-commerce customer record
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.ecomCustomers.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomCustomers.update({});
 ```
 
 **Input**
@@ -7754,7 +7905,8 @@ Retrieve an order product line by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.ecomOrderProducts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomOrderProducts.get({});
 ```
 
 **Input**
@@ -7784,7 +7936,8 @@ List the products attached to e-commerce orders
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.ecomOrderProducts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomOrderProducts.list({});
 ```
 
 **Input**
@@ -7827,7 +7980,8 @@ List the product lines belonging to one order
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.ecomOrderProducts.listForOrder({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomOrderProducts.listForOrder({});
 ```
 
 **Input**
@@ -7873,7 +8027,8 @@ Record an e-commerce order for automation triggers
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.ecomOrders.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomOrders.create({});
 ```
 
 **Input**
@@ -7938,7 +8093,8 @@ Delete an e-commerce order by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.ecomOrders.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomOrders.delete({});
 ```
 
 **Input**
@@ -7968,7 +8124,8 @@ Find one order by its store order ID within a connection
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.ecomOrders.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomOrders.find({});
 ```
 
 **Input**
@@ -7999,7 +8156,8 @@ Retrieve an e-commerce order by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.ecomOrders.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomOrders.get({});
 ```
 
 **Input**
@@ -8029,7 +8187,8 @@ List e-commerce orders with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.ecomOrders.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomOrders.list({});
 ```
 
 **Input**
@@ -8074,7 +8233,8 @@ Update an existing e-commerce order
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.ecomOrders.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomOrders.update({});
 ```
 
 **Input**
@@ -8140,7 +8300,8 @@ Create an order, or update the one with the same store order ID. Concurrent upse
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.ecomOrders.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.ecomOrders.upsert({});
 ```
 
 **Input**
@@ -8207,7 +8368,8 @@ List email activity for a subscriber or deal
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.emailActivities.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.emailActivities.list({});
 ```
 
 **Input**
@@ -8254,7 +8416,8 @@ Whitelist a new event name for tracking
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.eventTrackingEvents.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.eventTrackingEvents.create({});
 ```
 
 **Input**
@@ -8297,7 +8460,8 @@ Remove an event name from the tracking whitelist
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.eventTrackingEvents.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.eventTrackingEvents.delete({});
 ```
 
 **Input**
@@ -8327,7 +8491,8 @@ List the whitelisted event tracking event names
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.eventTrackingEvents.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.eventTrackingEvents.list({});
 ```
 
 **Input**
@@ -8383,7 +8548,8 @@ Create options in bulk for a dropdown or listbox field
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.fieldOptions.createBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fieldOptions.createBulk({});
 ```
 
 **Input**
@@ -8449,7 +8615,8 @@ Associate a custom field with a list
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.fieldRels.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fieldRels.create({});
 ```
 
 **Input**
@@ -8496,7 +8663,8 @@ Remove the association between a custom field and a list
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.fieldRels.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fieldRels.delete({});
 ```
 
 **Input**
@@ -8526,7 +8694,8 @@ List relationships between custom fields and lists
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.fieldRels.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fieldRels.list({});
 ```
 
 **Input**
@@ -8585,7 +8754,8 @@ Create a new custom contact field
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.fields.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fields.create({});
 ```
 
 **Input**
@@ -8654,7 +8824,8 @@ Delete a custom field and every value stored against it
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.fields.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fields.delete({});
 ```
 
 **Input**
@@ -8684,7 +8855,8 @@ Retrieve a custom field definition by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.fields.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fields.get({});
 ```
 
 **Input**
@@ -8746,7 +8918,8 @@ List custom field definitions with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.fields.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fields.list({});
 ```
 
 **Input**
@@ -8819,7 +8992,8 @@ Update an existing custom field definition
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.fields.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fields.update({});
 ```
 
 **Input**
@@ -8891,7 +9065,8 @@ Delete a custom field value by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.fieldValues.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fieldValues.delete({});
 ```
 
 **Input**
@@ -8921,7 +9096,8 @@ Retrieve a single custom field value by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.fieldValues.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fieldValues.get({});
 ```
 
 **Input**
@@ -8971,7 +9147,8 @@ List custom field values across all contacts
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.fieldValues.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fieldValues.list({});
 ```
 
 **Input**
@@ -9032,7 +9209,8 @@ Set a custom field value on a contact
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.fieldValues.setForContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fieldValues.setForContact({});
 ```
 
 **Input**
@@ -9085,7 +9263,8 @@ Update an existing custom field value by its ID
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.fieldValues.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.fieldValues.update({});
 ```
 
 **Input**
@@ -9139,7 +9318,8 @@ Record a form opt-in on behalf of a contact
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.forms.createOptin({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.forms.createOptin({});
 ```
 
 **Input**
@@ -9167,7 +9347,8 @@ Delete a form and its associated data
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.forms.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.forms.delete({});
 ```
 
 **Input**
@@ -9197,7 +9378,8 @@ Retrieve a form by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.forms.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.forms.get({});
 ```
 
 **Input**
@@ -9245,7 +9427,8 @@ List forms with their field configuration
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.forms.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.forms.list({});
 ```
 
 **Input**
@@ -9306,7 +9489,8 @@ List the resource limits configured per group
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.groupLimits.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.groupLimits.list({});
 ```
 
 **Input**
@@ -9373,7 +9557,8 @@ Add a custom field to a display group so it becomes visible
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.groupMembers.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.groupMembers.create({});
 ```
 
 **Input**
@@ -9420,7 +9605,8 @@ Remove a custom field from its display group
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.groupMembers.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.groupMembers.delete({});
 ```
 
 **Input**
@@ -9450,7 +9636,8 @@ List which custom fields belong to which display groups
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.groupMembers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.groupMembers.list({});
 ```
 
 **Input**
@@ -9506,7 +9693,8 @@ Change the display group or ordering of a custom field
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.groupMembers.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.groupMembers.update({});
 ```
 
 **Input**
@@ -9556,7 +9744,8 @@ Create a permission group
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.groups.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.groups.create({});
 ```
 
 **Input**
@@ -9607,7 +9796,8 @@ Delete a permission group by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.groups.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.groups.delete({});
 ```
 
 **Input**
@@ -9637,7 +9827,8 @@ Retrieve a permission group by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.groups.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.groups.get({});
 ```
 
 **Input**
@@ -9687,7 +9878,8 @@ List permission groups with their settings
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.groups.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.groups.list({});
 ```
 
 **Input**
@@ -9748,7 +9940,8 @@ Update a permission group title or description
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.groups.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.groups.update({});
 ```
 
 **Input**
@@ -9802,7 +9995,8 @@ Queue up to 250 contacts per call (payload under 400 KB) for asynchronous import
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.imports.createBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.imports.createBulk({});
 ```
 
 **Input**
@@ -9880,7 +10074,8 @@ Retrieve the progress of a single import batch by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.imports.getStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.imports.getStatus({});
 ```
 
 **Input**
@@ -9912,7 +10107,8 @@ List outstanding and recently completed import batches
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.imports.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.imports.list({});
 ```
 
 **Input:** _empty object_
@@ -9938,7 +10134,8 @@ Retrieve aggregate progress across all bulk import batches
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.imports.listAggregate({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.imports.listAggregate({});
 ```
 
 **Input:** _empty object_
@@ -9960,7 +10157,8 @@ Grant a user group permissions over a mailing list
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.listGroups.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.listGroups.create({});
 ```
 
 **Input**
@@ -10021,7 +10219,8 @@ Create a new mailing list
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.lists.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.lists.create({});
 ```
 
 **Input**
@@ -10121,7 +10320,8 @@ Delete a mailing list by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.lists.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.lists.delete({});
 ```
 
 **Input**
@@ -10151,7 +10351,8 @@ Retrieve a mailing list by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.lists.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.lists.get({});
 ```
 
 **Input**
@@ -10243,7 +10444,8 @@ List mailing lists with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.lists.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.lists.list({});
 ```
 
 **Input**
@@ -10347,7 +10549,8 @@ Subscribe or unsubscribe a contact to or from a list
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.lists.updateSubscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.lists.updateSubscription({});
 ```
 
 **Input**
@@ -10419,7 +10622,8 @@ Create an email message with subject, sender and content
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.messages.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.messages.create({});
 ```
 
 **Input**
@@ -10496,7 +10700,8 @@ Delete an email message by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.messages.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.messages.delete({});
 ```
 
 **Input**
@@ -10526,7 +10731,8 @@ Retrieve an email message by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.messages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.messages.get({});
 ```
 
 **Input**
@@ -10594,7 +10800,8 @@ List email messages with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.messages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.messages.list({});
 ```
 
 **Input**
@@ -10673,7 +10880,8 @@ Update an existing email message
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.messages.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.messages.update({});
 ```
 
 **Input**
@@ -10753,7 +10961,8 @@ Add a note to a contact identified by email address
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.notes.addToContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.notes.addToContact({});
 ```
 
 **Input**
@@ -10805,7 +11014,8 @@ Create a note against a contact, deal or account
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.notes.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.notes.create({});
 ```
 
 **Input**
@@ -10858,7 +11068,8 @@ Add a note to a CRM account
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.notes.createForAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.notes.createForAccount({});
 ```
 
 **Input**
@@ -10910,7 +11121,8 @@ Add a note to a deal
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.notes.createForDeal({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.notes.createForDeal({});
 ```
 
 **Input**
@@ -10962,7 +11174,8 @@ Delete a note by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.notes.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.notes.delete({});
 ```
 
 **Input**
@@ -10992,7 +11205,8 @@ Retrieve a note by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.notes.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.notes.get({});
 ```
 
 **Input**
@@ -11043,7 +11257,8 @@ List notes across contacts, deals and accounts
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.notes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.notes.list({});
 ```
 
 **Input**
@@ -11107,7 +11322,8 @@ Update the body of an existing note
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.notes.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.notes.update({});
 ```
 
 **Input**
@@ -11159,7 +11375,8 @@ Update a note attached to a CRM account
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.notes.updateForAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.notes.updateForAccount({});
 ```
 
 **Input**
@@ -11211,7 +11428,8 @@ Update a note attached to a deal
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.notes.updateForDeal({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.notes.updateForDeal({});
 ```
 
 **Input**
@@ -11265,7 +11483,8 @@ Create or update many orders synchronously
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.orders.upsertBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.orders.upsertBulk({});
 ```
 
 **Input**
@@ -11300,7 +11519,8 @@ Create or update many orders asynchronously
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.orders.upsertBulkAsync({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.orders.upsertBulkAsync({});
 ```
 
 **Input**
@@ -11337,7 +11557,8 @@ Create a personalization variable
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.personalizations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.personalizations.create({});
 ```
 
 **Input**
@@ -11390,7 +11611,8 @@ Delete a personalization variable
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.personalizations.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.personalizations.delete({});
 ```
 
 **Input**
@@ -11420,7 +11642,8 @@ Delete many personalization variables at once
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.personalizations.deleteBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.personalizations.deleteBulk({});
 ```
 
 **Input**
@@ -11450,7 +11673,8 @@ Retrieve a personalization variable by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.personalizations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.personalizations.get({});
 ```
 
 **Input**
@@ -11499,7 +11723,8 @@ List personalization variables
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.personalizations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.personalizations.list({});
 ```
 
 **Input**
@@ -11559,7 +11784,8 @@ Lock a personalization variable against edits
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.personalizations.lock({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.personalizations.lock({});
 ```
 
 **Input**
@@ -11608,7 +11834,8 @@ Unlock a personalization variable for editing
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.personalizations.unlock({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.personalizations.unlock({});
 ```
 
 **Input**
@@ -11657,7 +11884,8 @@ Edit an existing personalization variable
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.personalizations.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.personalizations.update({});
 ```
 
 **Input**
@@ -11713,7 +11941,8 @@ Create a product in the e-commerce catalog
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.products.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.products.create({});
 ```
 
 **Input**
@@ -11751,7 +11980,8 @@ Delete a product from the e-commerce catalog
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.products.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.products.delete({});
 ```
 
 **Input**
@@ -11781,7 +12011,8 @@ Retrieve a catalog product by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.products.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.products.get({});
 ```
 
 **Input**
@@ -11811,7 +12042,8 @@ Search the e-commerce product catalog
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.products.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.products.search({});
 ```
 
 **Input**
@@ -11853,7 +12085,8 @@ Update a catalog product
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.products.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.products.update({});
 ```
 
 **Input**
@@ -11892,7 +12125,8 @@ Create or update many catalog products in one request
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.products.upsertBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.products.upsertBulk({});
 ```
 
 **Input**
@@ -11929,7 +12163,8 @@ Search recurring payment records by filter
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.recurringPayments.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.recurringPayments.search({});
 ```
 
 **Input**
@@ -11971,7 +12206,8 @@ Create or update many recurring payments at once
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.recurringPayments.upsertBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.recurringPayments.upsertBulk({});
 ```
 
 **Input**
@@ -12008,7 +12244,8 @@ Create a reusable saved response template
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.savedResponses.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.savedResponses.create({});
 ```
 
 **Input**
@@ -12059,7 +12296,8 @@ Delete a saved response template
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.savedResponses.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.savedResponses.delete({});
 ```
 
 **Input**
@@ -12089,7 +12327,8 @@ Retrieve a saved response by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.savedResponses.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.savedResponses.get({});
 ```
 
 **Input**
@@ -12137,7 +12376,8 @@ List saved response templates
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.savedResponses.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.savedResponses.list({});
 ```
 
 **Input**
@@ -12196,7 +12436,8 @@ Update a saved response template
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.savedResponses.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.savedResponses.update({});
 ```
 
 **Input**
@@ -12250,7 +12491,8 @@ List the scoring rules configured on the account
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.scores.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.scores.list({});
 ```
 
 **Input**
@@ -12311,7 +12553,8 @@ Create a segment with filtering conditions
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.segments.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segments.create({});
 ```
 
 **Input**
@@ -12363,7 +12606,8 @@ Delete a segment and its history
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.segments.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segments.delete({});
 ```
 
 **Input**
@@ -12393,7 +12637,8 @@ Retrieve a segment by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.segments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segments.get({});
 ```
 
 **Input**
@@ -12444,7 +12689,8 @@ List contact segments
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.segments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segments.list({});
 ```
 
 **Input**
@@ -12506,7 +12752,8 @@ List saved segment summaries, known as audiences
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.segments.listAudiences({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segments.listAudiences({});
 ```
 
 **Input**
@@ -12569,7 +12816,8 @@ Update a segment definition
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.segments.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segments.update({});
 ```
 
 **Input**
@@ -12624,7 +12872,8 @@ Retrieve segment counts recorded before a timestamp
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.countAtTimestamp({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.countAtTimestamp({});
 ```
 
 **Input**
@@ -12667,7 +12916,8 @@ List historic result counts for one segment
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.countHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.countHistory({});
 ```
 
 **Input**
@@ -12709,7 +12959,8 @@ Create an advanced segment with filtering conditions
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.create({});
 ```
 
 **Input**
@@ -12751,7 +13002,8 @@ Delete a segment and every historic version of it
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.delete({});
 ```
 
 **Input**
@@ -12781,7 +13033,8 @@ Retrieve a V2 segment by its UUID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.get({});
 ```
 
 **Input**
@@ -12811,7 +13064,8 @@ Retrieve a segment as it stood at a point in time
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.getAtTimestamp({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.getAtTimestamp({});
 ```
 
 **Input**
@@ -12842,7 +13096,8 @@ Check whether a contact matches a segment
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.match({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.match({});
 ```
 
 **Input**
@@ -12868,7 +13123,8 @@ Start a match-all evaluation for every contact in a segment
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.matchAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.matchAll({});
 ```
 
 **Input**
@@ -12899,7 +13155,8 @@ Fetch a match-all result set by its run ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.matchAllResult({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.matchAllResult({});
 ```
 
 **Input**
@@ -12930,7 +13187,8 @@ Check segment membership using an external contact ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.matchByExternalId({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.matchByExternalId({});
 ```
 
 **Input**
@@ -12956,7 +13214,8 @@ Fetch a partial segment match result set by run ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.matchSomeResult({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.matchSomeResult({});
 ```
 
 **Input**
@@ -12987,7 +13246,8 @@ Retrieve the most recent result count per segment
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.recentCounts({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.recentCounts({});
 ```
 
 **Input**
@@ -13030,7 +13290,8 @@ Revert a segment to how it looked at a point in time
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.revertToTimestamp({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.revertToTimestamp({});
 ```
 
 **Input**
@@ -13061,7 +13322,8 @@ Update a V2 segment definition
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.segmentsV2.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.segmentsV2.update({});
 ```
 
 **Input**
@@ -13106,7 +13368,8 @@ List the SMS broadcast lists available on the account
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.smsBroadcastLists.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.smsBroadcastLists.list({});
 ```
 
 **Input**
@@ -13152,7 +13415,8 @@ Request a metrics snapshot for specific SMS broadcasts
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.smsBroadcasts.createSnapshot({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.smsBroadcasts.createSnapshot({});
 ```
 
 **Input**
@@ -13177,7 +13441,8 @@ Group and count SMS delivery failures for a broadcast
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.smsBroadcasts.getFailures({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.smsBroadcasts.getFailures({});
 ```
 
 **Input**
@@ -13204,7 +13469,8 @@ Retrieve delivery metrics for specific SMS broadcasts
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.smsBroadcasts.getMetrics({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.smsBroadcasts.getMetrics({});
 ```
 
 **Input**
@@ -13229,7 +13495,8 @@ List the contacts an SMS broadcast was sent to
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.smsBroadcasts.getRecipients({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.smsBroadcasts.getRecipients({});
 ```
 
 **Input**
@@ -13256,7 +13523,8 @@ Retrieve aggregate metrics across all SMS broadcasts
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.smsBroadcasts.getSnapshot({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.smsBroadcasts.getSnapshot({});
 ```
 
 **Input:** _empty object_
@@ -13281,7 +13549,8 @@ List SMS broadcasts with optional name and status filters
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.smsBroadcasts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.smsBroadcasts.list({});
 ```
 
 **Input**
@@ -13328,7 +13597,8 @@ Retrieve SMS credit usage and remaining balance
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.smsCredits.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.smsCredits.get({});
 ```
 
 **Input:** _empty object_
@@ -13355,7 +13625,8 @@ Apply a tag to a contact
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.tags.addToContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tags.addToContact({});
 ```
 
 **Input**
@@ -13405,7 +13676,8 @@ Create a new tag
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.tags.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tags.create({});
 ```
 
 **Input**
@@ -13459,7 +13731,8 @@ Delete a tag by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.tags.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tags.delete({});
 ```
 
 **Input**
@@ -13489,7 +13762,8 @@ Retrieve a tag by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.tags.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tags.get({});
 ```
 
 **Input**
@@ -13541,7 +13815,8 @@ List tags with pagination and search
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.tags.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tags.list({});
 ```
 
 **Input**
@@ -13605,7 +13880,8 @@ Remove a tag from a contact by its contactTag ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.tags.removeFromContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tags.removeFromContact({});
 ```
 
 **Input**
@@ -13635,7 +13911,8 @@ Update an existing tag by its ID
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.tags.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tags.update({});
 ```
 
 **Input**
@@ -13692,7 +13969,8 @@ Create a task outcome with an associated sentiment
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.taskOutcomes.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.taskOutcomes.create({});
 ```
 
 **Input**
@@ -13745,7 +14023,8 @@ Retrieve a task outcome by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.taskOutcomes.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.taskOutcomes.get({});
 ```
 
 **Input**
@@ -13795,7 +14074,8 @@ List the outcomes that can be assigned to tasks
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.taskOutcomes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.taskOutcomes.list({});
 ```
 
 **Input**
@@ -13858,7 +14138,8 @@ Create a reminder ahead of a deal task due date
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.taskReminders.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.taskReminders.create({});
 ```
 
 **Input**
@@ -13891,7 +14172,8 @@ Create a shareable link for a campaign template
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.templates.createShareLink({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.templates.createShareLink({});
 ```
 
 **Input**
@@ -13916,7 +14198,8 @@ Retrieve a campaign template by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.templates.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.templates.get({});
 ```
 
 **Input**
@@ -13967,7 +14250,8 @@ Add a domain to the site tracking whitelist
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.tracking.addWhitelist({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tracking.addWhitelist({});
 ```
 
 **Input**
@@ -13992,7 +14276,8 @@ Retrieve the site tracking JavaScript snippet
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.tracking.getCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tracking.getCode({});
 ```
 
 **Input:** _empty object_
@@ -14012,7 +14297,8 @@ Check whether event tracking is enabled
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.tracking.getEventStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tracking.getEventStatus({});
 ```
 
 **Input:** _empty object_
@@ -14048,7 +14334,8 @@ Check whether site tracking is enabled
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.tracking.getSiteStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tracking.getSiteStatus({});
 ```
 
 **Input:** _empty object_
@@ -14084,7 +14371,8 @@ List the domains allowed for site tracking
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.tracking.listWhitelist({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tracking.listWhitelist({});
 ```
 
 **Input**
@@ -14127,7 +14415,8 @@ Remove a domain from the site tracking whitelist
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.tracking.removeWhitelist({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tracking.removeWhitelist({});
 ```
 
 **Input**
@@ -14157,7 +14446,8 @@ Enable or disable event tracking for the account
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.tracking.setEventStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tracking.setEventStatus({});
 ```
 
 **Input**
@@ -14198,7 +14488,8 @@ Enable or disable site tracking for the account
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.tracking.setSiteStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tracking.setSiteStatus({});
 ```
 
 **Input**
@@ -14239,7 +14530,8 @@ Record a custom event against a contact
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.tracking.trackEvent({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.tracking.trackEvent({});
 ```
 
 **Input**
@@ -14270,7 +14562,8 @@ Create an account user who can sign in
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.users.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.users.create({});
 ```
 
 **Input**
@@ -14331,7 +14624,8 @@ Delete an account user by their ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.users.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.users.delete({});
 ```
 
 **Input**
@@ -14361,7 +14655,8 @@ Retrieve an account user by their ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.users.get({});
 ```
 
 **Input**
@@ -14413,7 +14708,8 @@ Retrieve an account user by their username
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.users.getByUsername({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.users.getByUsername({});
 ```
 
 **Input**
@@ -14465,7 +14761,8 @@ Retrieve the user the API token belongs to
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.users.getMe({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.users.getMe({});
 ```
 
 **Input:** _empty object_
@@ -14512,7 +14809,8 @@ List account users with pagination and sorting
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.users.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.users.list({});
 ```
 
 **Input**
@@ -14575,7 +14873,8 @@ Update an account user, including group assignment
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.users.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.users.update({});
 ```
 
 **Input**
@@ -14639,7 +14938,8 @@ Create a webhook subscription for account events
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.webhooks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.webhooks.create({});
 ```
 
 **Input**
@@ -14693,7 +14993,8 @@ Delete a webhook subscription by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.activecampaign.api.webhooks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.webhooks.delete({});
 ```
 
 **Input**
@@ -14723,7 +15024,8 @@ Retrieve a webhook subscription by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.webhooks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.webhooks.get({});
 ```
 
 **Input**
@@ -14773,7 +15075,8 @@ List configured webhook subscriptions
 **Risk:** `read`
 
 ```ts
-await corsair.activecampaign.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.webhooks.list({});
 ```
 
 **Input**
@@ -14834,7 +15137,8 @@ Update a webhook subscription
 **Risk:** `write`
 
 ```ts
-await corsair.activecampaign.api.webhooks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.activecampaign.api.webhooks.update({});
 ```
 
 **Input**

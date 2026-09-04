@@ -20,7 +20,8 @@ Retrieve organizations from the 21RISK OData API with optional filtering and pag
 **Risk:** `read`
 
 ```ts
-await corsair.twentyonerisk.api.organizations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.twentyonerisk.api.organizations.get({});
 ```
 
 **Input**

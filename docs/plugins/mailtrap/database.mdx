@@ -14,7 +14,8 @@ The Mailtrap plugin syncs data locally. Use `corsair.mailtrap.db.<entity>.search
 Path: `mailtrap.db.contactFields.search`
 
 ```ts
-const rows = await corsair.mailtrap.db.contactFields.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.mailtrap.db.contactFields.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `mailtrap.db.contactLists.search`
 
 ```ts
-const rows = await corsair.mailtrap.db.contactLists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.mailtrap.db.contactLists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -63,7 +65,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `mailtrap.db.contacts.search`
 
 ```ts
-const rows = await corsair.mailtrap.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.mailtrap.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -89,7 +92,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `mailtrap.db.emailTemplates.search`
 
 ```ts
-const rows = await corsair.mailtrap.db.emailTemplates.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.mailtrap.db.emailTemplates.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -120,7 +124,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `mailtrap.db.inboxes.search`
 
 ```ts
-const rows = await corsair.mailtrap.db.inboxes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.mailtrap.db.inboxes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -151,7 +156,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `mailtrap.db.projects.search`
 
 ```ts
-const rows = await corsair.mailtrap.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.mailtrap.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -175,7 +181,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `mailtrap.db.sendingDomains.search`
 
 ```ts
-const rows = await corsair.mailtrap.db.sendingDomains.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.mailtrap.db.sendingDomains.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

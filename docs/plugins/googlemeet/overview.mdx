@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { googlemeet } from '@corsair-dev/googlemeet';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		googlemeet(),
 	],

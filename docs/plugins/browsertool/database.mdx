@@ -1,0 +1,69 @@
+---
+title: Database
+description: "BrowserTool local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The BrowserTool plugin syncs data locally. Use `corsair.browsertool.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Executions
+
+Path: `browsertool.db.executions.search`
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.browsertool.db.executions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `error` | `string` | equals, contains, startsWith, endsWith, in |
+| `successful` | `boolean` | equals |
+| `log_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tasks
+
+Path: `browsertool.db.tasks.search`
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.browsertool.db.tasks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `taskId` | `string` | equals, contains, startsWith, endsWith, in |
+| `sessionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `watch_task_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `browser_session_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_success` | `boolean` | equals |
+| `current_goal` | `string` | equals, contains, startsWith, endsWith, in |
+| `current_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `liveUrl` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

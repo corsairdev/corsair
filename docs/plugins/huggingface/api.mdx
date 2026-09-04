@@ -20,7 +20,8 @@ Delete notifications by discussion ids or filters
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.account.deleteNotifications({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.account.deleteNotifications({});
 ```
 
 **Input**
@@ -57,7 +58,8 @@ Get authenticated Hugging Face user info
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.account.getWhoami({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.account.getWhoami({});
 ```
 
 **Input:** _empty object_
@@ -77,7 +79,8 @@ List notifications for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.account.listNotifications({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.account.listNotifications({});
 ```
 
 **Input**
@@ -106,7 +109,8 @@ Create a new collection
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.collections.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.collections.create({});
 ```
 
 **Input**
@@ -134,7 +138,8 @@ List collections on the Hub
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.collections.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.collections.list({});
 ```
 
 **Input**
@@ -166,7 +171,8 @@ Check LFS vs regular upload method for dataset files
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.checkUploadMethod({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.checkUploadMethod({});
 ```
 
 **Input**
@@ -208,7 +214,8 @@ Check whether a dataset is valid on the Hub viewer
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.checkValidity({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.checkValidity({});
 ```
 
 **Input**
@@ -235,7 +242,8 @@ Create a branch on a dataset
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.datasets.createBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.createBranch({});
 ```
 
 **Input**
@@ -265,7 +273,8 @@ Create a commit on a dataset (Hub NDJSON/JSON: files, deletedEntries, lfsFiles)
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.datasets.createCommit({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.createCommit({});
 ```
 
 **Input**
@@ -336,7 +345,8 @@ Create a SQL Console embed for a dataset
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.datasets.createSqlConsoleEmbed({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.createSqlConsoleEmbed({});
 ```
 
 **Input**
@@ -365,7 +375,8 @@ Create a tag on a dataset
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.datasets.createTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.createTag({});
 ```
 
 **Input**
@@ -393,7 +404,8 @@ Delete a branch on a dataset
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.datasets.deleteBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.deleteBranch({});
 ```
 
 **Input**
@@ -419,7 +431,8 @@ Delete a tag on a dataset
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.datasets.deleteTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.deleteTag({});
 ```
 
 **Input**
@@ -445,7 +458,8 @@ Filter dataset rows with SQL-like where clause
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.filterRows({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.filterRows({});
 ```
 
 **Input**
@@ -476,7 +490,8 @@ Get dataset repository info
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.get({});
 ```
 
 **Input**
@@ -503,7 +518,8 @@ Compare two revisions of a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getCompare({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getCompare({});
 ```
 
 **Input**
@@ -529,7 +545,8 @@ Get Croissant JSON-LD metadata for a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getCroissant({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getCroissant({});
 ```
 
 **Input**
@@ -556,7 +573,8 @@ Get first ~100 rows of a dataset split
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getFirstRows({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getFirstRows({});
 ```
 
 **Input**
@@ -583,7 +601,8 @@ Get dataset info (features, splits, citation)
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getInfo({});
 ```
 
 **Input**
@@ -610,7 +629,8 @@ Get JWT for a dataset repo
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getJwt({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getJwt({});
 ```
 
 **Input**
@@ -637,7 +657,8 @@ Get evaluation leaderboard for a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getLeaderboard({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getLeaderboard({});
 ```
 
 **Input**
@@ -662,7 +683,8 @@ Get notebook URL from a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getNotebook({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getNotebook({});
 ```
 
 **Input**
@@ -689,7 +711,8 @@ Resolve a file from a dataset (follows redirects / XET info)
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getResolve({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getResolve({});
 ```
 
 **Input**
@@ -717,7 +740,8 @@ Resolve a file from dataset cache
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getResolveCache({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getResolveCache({});
 ```
 
 **Input**
@@ -745,7 +769,8 @@ Get a slice of dataset rows (offset/length)
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getRows({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getRows({});
 ```
 
 **Input**
@@ -774,7 +799,8 @@ Get security scan status for a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getScan({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getScan({});
 ```
 
 **Input**
@@ -799,7 +825,8 @@ Get dataset size (rows and bytes)
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getSize({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getSize({});
 ```
 
 **Input**
@@ -826,7 +853,8 @@ Get statistics for a dataset split
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getStatistics({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getStatistics({});
 ```
 
 **Input**
@@ -853,7 +881,8 @@ Get dataset tags grouped by type
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getTagsByType({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getTagsByType({});
 ```
 
 **Input**
@@ -878,7 +907,8 @@ Get repository tree size for a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getTreeSize({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getTreeSize({});
 ```
 
 **Input**
@@ -905,7 +935,8 @@ Get XET read token for a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.getXetReadToken({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.getXetReadToken({});
 ```
 
 **Input**
@@ -931,7 +962,8 @@ Accept/reject gated dataset access request
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.datasets.handleAccessRequest({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.handleAccessRequest({});
 ```
 
 **Input**
@@ -959,7 +991,8 @@ List datasets on the Hub
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.list({});
 ```
 
 **Input**
@@ -992,7 +1025,8 @@ List access requests for a gated dataset
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.listAccessRequests({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.listAccessRequests({});
 ```
 
 **Input**
@@ -1018,7 +1052,8 @@ List commits for a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.listCommits({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.listCommits({});
 ```
 
 **Input**
@@ -1046,7 +1081,8 @@ List Parquet files for a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.listParquetFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.listParquetFiles({});
 ```
 
 **Input**
@@ -1073,7 +1109,8 @@ List path metadata in a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.listPathsInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.listPathsInfo({});
 ```
 
 **Input**
@@ -1101,7 +1138,8 @@ List refs (branches/tags) for a dataset
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.listRefs({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.listRefs({});
 ```
 
 **Input**
@@ -1127,7 +1165,8 @@ List dataset configurations and splits
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.listSplits({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.listSplits({});
 ```
 
 **Input**
@@ -1154,7 +1193,8 @@ Full-text search within a dataset split
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.datasets.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.search({});
 ```
 
 **Input**
@@ -1184,7 +1224,8 @@ Squash all commits in a dataset ref (irreversible)
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.datasets.squashCommits({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.squashCommits({});
 ```
 
 **Input**
@@ -1211,7 +1252,8 @@ Update settings for a dataset repository
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.datasets.updateSettings({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.updateSettings({});
 ```
 
 **Input**
@@ -1250,7 +1292,8 @@ Update a SQL Console embed
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.datasets.updateSqlConsoleEmbed({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.datasets.updateSqlConsoleEmbed({});
 ```
 
 **Input**
@@ -1282,7 +1325,8 @@ Open or close a discussion
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.discussions.changeStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.discussions.changeStatus({});
 ```
 
 **Input**
@@ -1310,7 +1354,8 @@ Create a discussion on a repository
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.discussions.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.discussions.create({});
 ```
 
 **Input**
@@ -1339,7 +1384,8 @@ Comment on a discussion
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.discussions.createComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.discussions.createComment({});
 ```
 
 **Input**
@@ -1367,7 +1413,8 @@ Delete a discussion
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.discussions.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.discussions.delete({});
 ```
 
 **Input**
@@ -1394,7 +1441,8 @@ Get discussion details
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.discussions.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.discussions.get({});
 ```
 
 **Input**
@@ -1421,7 +1469,8 @@ List discussions for a repository
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.discussions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.discussions.list({});
 ```
 
 **Input**
@@ -1450,7 +1499,8 @@ Pin or unpin a discussion
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.discussions.pin({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.discussions.pin({});
 ```
 
 **Input**
@@ -1478,7 +1528,8 @@ Update discussion title
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.discussions.updateTitle({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.discussions.updateTitle({});
 ```
 
 **Input**
@@ -1508,7 +1559,8 @@ List available Hugging Face documentation
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.docs.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.docs.list({});
 ```
 
 **Input:** _empty object_
@@ -1528,7 +1580,8 @@ Search Hugging Face documentation
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.docs.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.docs.search({});
 ```
 
 **Input**
@@ -1556,7 +1609,8 @@ Delete a network CIDR list entry for Inference Endpoints
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.endpoints.deleteNetworkCidr({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.endpoints.deleteNetworkCidr({});
 ```
 
 **Input**
@@ -1582,7 +1636,8 @@ List Inference Endpoints for a namespace
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.endpoints.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.endpoints.list({});
 ```
 
 **Input**
@@ -1608,7 +1663,8 @@ List cloud provider vendors for Inference Endpoints
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.endpoints.listVendors({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.endpoints.listVendors({});
 ```
 
 **Input:** _empty object_
@@ -1630,7 +1686,8 @@ Generate chat completion via Inference Providers (OpenAI-compatible)
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.inference.chatCompletion({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.inference.chatCompletion({});
 ```
 
 **Input**
@@ -1677,7 +1734,8 @@ Generate text embeddings via Inference Providers
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.inference.embeddings({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.inference.embeddings({});
 ```
 
 **Input**
@@ -1716,7 +1774,8 @@ List available Jobs hardware
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.jobs.getHardware({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.jobs.getHardware({});
 ```
 
 **Input:** _empty object_
@@ -1738,7 +1797,8 @@ Check LFS vs regular upload method for model files
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.checkUploadMethod({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.checkUploadMethod({});
 ```
 
 **Input**
@@ -1780,7 +1840,8 @@ Create a branch on a model
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.models.createBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.createBranch({});
 ```
 
 **Input**
@@ -1810,7 +1871,8 @@ Create a commit on a model (Hub NDJSON/JSON: files, deletedEntries, lfsFiles)
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.models.createCommit({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.createCommit({});
 ```
 
 **Input**
@@ -1881,7 +1943,8 @@ Create a tag on a model
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.models.createTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.createTag({});
 ```
 
 **Input**
@@ -1909,7 +1972,8 @@ Delete a branch on a model
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.models.deleteBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.deleteBranch({});
 ```
 
 **Input**
@@ -1935,7 +1999,8 @@ Delete a tag on a model
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.models.deleteTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.deleteTag({});
 ```
 
 **Input**
@@ -1961,7 +2026,8 @@ Get model repository info
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.get({});
 ```
 
 **Input**
@@ -1988,7 +2054,8 @@ Compare two revisions of a model
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.getCompare({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.getCompare({});
 ```
 
 **Input**
@@ -2014,7 +2081,8 @@ Get JWT for a model repo
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.getJwt({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.getJwt({});
 ```
 
 **Input**
@@ -2041,7 +2109,8 @@ Get notebook URL from a model
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.getNotebook({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.getNotebook({});
 ```
 
 **Input**
@@ -2068,7 +2137,8 @@ Resolve a file from a model (follows redirects / XET info)
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.getResolve({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.getResolve({});
 ```
 
 **Input**
@@ -2096,7 +2166,8 @@ Resolve a file from model cache
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.getResolveCache({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.getResolveCache({});
 ```
 
 **Input**
@@ -2124,7 +2195,8 @@ Get security scan status for a model
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.getScan({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.getScan({});
 ```
 
 **Input**
@@ -2149,7 +2221,8 @@ Get model tags grouped by type
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.getTagsByType({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.getTagsByType({});
 ```
 
 **Input**
@@ -2174,7 +2247,8 @@ Get repository tree size for a model
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.getTreeSize({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.getTreeSize({});
 ```
 
 **Input**
@@ -2201,7 +2275,8 @@ Get XET read token for a model
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.getXetReadToken({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.getXetReadToken({});
 ```
 
 **Input**
@@ -2227,7 +2302,8 @@ List models on the Hub
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.list({});
 ```
 
 **Input**
@@ -2260,7 +2336,8 @@ List commits for a model
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.listCommits({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.listCommits({});
 ```
 
 **Input**
@@ -2288,7 +2365,8 @@ List path metadata in a model
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.listPathsInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.listPathsInfo({});
 ```
 
 **Input**
@@ -2316,7 +2394,8 @@ List refs (branches/tags) for a model
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.models.listRefs({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.listRefs({});
 ```
 
 **Input**
@@ -2342,7 +2421,8 @@ Update settings for a model repository
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.models.updateSettings({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.models.updateSettings({});
 ```
 
 **Input**
@@ -2383,7 +2463,8 @@ Get organization avatar
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.organizations.getAvatar({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.organizations.getAvatar({});
 ```
 
 **Input**
@@ -2408,7 +2489,8 @@ List organization members
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.organizations.getMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.organizations.getMembers({});
 ```
 
 **Input**
@@ -2436,7 +2518,8 @@ Get organization social handles
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.organizations.getSocials({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.organizations.getSocials({});
 ```
 
 **Input**
@@ -2463,7 +2546,8 @@ Claim authorship of a paper
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.papers.claimAuthorship({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.papers.claimAuthorship({});
 ```
 
 **Input**
@@ -2499,7 +2583,8 @@ Comment on a paper
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.papers.createComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.papers.createComment({});
 ```
 
 **Input**
@@ -2525,7 +2610,8 @@ Reply to a paper comment
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.papers.createCommentReply({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.papers.createCommentReply({});
 ```
 
 **Input**
@@ -2552,7 +2638,8 @@ Index an arXiv paper by id
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.papers.createIndex({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.papers.createIndex({});
 ```
 
 **Input**
@@ -2577,7 +2664,8 @@ Get daily papers
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.papers.getDaily({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.papers.getDaily({});
 ```
 
 **Input**
@@ -2602,7 +2690,8 @@ Search papers (hybrid semantic/full-text)
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.papers.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.papers.search({});
 ```
 
 **Input**
@@ -2630,7 +2719,8 @@ Create a model, dataset, or Space repository
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.repos.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.repos.create({});
 ```
 
 **Input**
@@ -2671,7 +2761,8 @@ Resolve a file in any repository type
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.repos.getResolve({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.repos.getResolve({});
 ```
 
 **Input**
@@ -2700,7 +2791,8 @@ List repository file tree with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.repos.listFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.repos.listFiles({});
 ```
 
 **Input**
@@ -2732,7 +2824,8 @@ Request access to a gated repository
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.repos.requestAccess({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.repos.requestAccess({});
 ```
 
 **Input**
@@ -2771,7 +2864,8 @@ Create a settings webhook
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.settings.createWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.settings.createWebhook({});
 ```
 
 **Input**
@@ -2818,7 +2912,8 @@ Delete a settings webhook
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.settings.deleteWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.settings.deleteWebhook({});
 ```
 
 **Input**
@@ -2843,7 +2938,8 @@ Get billing usage for a custom date range (unix timestamps)
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.settings.getBillingUsageV2({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.settings.getBillingUsageV2({});
 ```
 
 **Input**
@@ -2869,7 +2965,8 @@ Get Jobs usage and billing for current subscription period
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.settings.getJobsUsage({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.settings.getJobsUsage({});
 ```
 
 **Input:** _empty object_
@@ -2889,7 +2986,8 @@ Get live billing usage stream snapshot
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.settings.getLiveBillingUsage({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.settings.getLiveBillingUsage({});
 ```
 
 **Input:** _empty object_
@@ -2909,7 +3007,8 @@ Get MCP tools configuration for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.settings.getMcp({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.settings.getMcp({});
 ```
 
 **Input:** _empty object_
@@ -2929,7 +3028,8 @@ Get a webhook by id
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.settings.getWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.settings.getWebhook({});
 ```
 
 **Input**
@@ -2954,7 +3054,8 @@ List all webhooks in settings
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.settings.listWebhooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.settings.listWebhooks({});
 ```
 
 **Input:** _empty object_
@@ -2974,7 +3075,8 @@ Update notification settings for the authenticated user
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.settings.updateNotifications({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.settings.updateNotifications({});
 ```
 
 **Input**
@@ -3009,7 +3111,8 @@ Update watch settings (orgs/users/repos to follow)
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.settings.updateWatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.settings.updateWatch({});
 ```
 
 **Input**
@@ -3053,7 +3156,8 @@ Update an existing settings webhook
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.settings.updateWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.settings.updateWebhook({});
 ```
 
 **Input**
@@ -3100,7 +3204,8 @@ Enable or disable a webhook (action: enable|disable)
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.settings.updateWebhookStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.settings.updateWebhookStatus({});
 ```
 
 **Input**
@@ -3128,7 +3233,8 @@ Check LFS vs regular upload method for space files
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.checkUploadMethod({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.checkUploadMethod({});
 ```
 
 **Input**
@@ -3170,7 +3276,8 @@ Create a branch on a space
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.spaces.createBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.createBranch({});
 ```
 
 **Input**
@@ -3200,7 +3307,8 @@ Create a commit on a space (Hub NDJSON/JSON: files, deletedEntries, lfsFiles)
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.spaces.createCommit({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.createCommit({});
 ```
 
 **Input**
@@ -3271,7 +3379,8 @@ Create or update a Space secret
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.spaces.createSecret({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.createSecret({});
 ```
 
 **Input**
@@ -3299,7 +3408,8 @@ Create a tag on a space
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.spaces.createTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.createTag({});
 ```
 
 **Input**
@@ -3327,7 +3437,8 @@ Create or update a Space variable
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.spaces.createVariable({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.createVariable({});
 ```
 
 **Input**
@@ -3355,7 +3466,8 @@ Delete a branch on a space
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.spaces.deleteBranch({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.deleteBranch({});
 ```
 
 **Input**
@@ -3381,7 +3493,8 @@ Delete a Space secret
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.spaces.deleteSecret({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.deleteSecret({});
 ```
 
 **Input**
@@ -3407,7 +3520,8 @@ Delete a tag on a space
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.spaces.deleteTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.deleteTag({});
 ```
 
 **Input**
@@ -3433,7 +3547,8 @@ Delete a Space variable
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.spaces.deleteVariable({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.deleteVariable({});
 ```
 
 **Input**
@@ -3459,7 +3574,8 @@ Get space repository info
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.get({});
 ```
 
 **Input**
@@ -3486,7 +3602,8 @@ Compare two revisions of a space
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.getCompare({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.getCompare({});
 ```
 
 **Input**
@@ -3512,7 +3629,8 @@ Stream Space status events (SSE snapshot)
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.getEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.getEvents({});
 ```
 
 **Input**
@@ -3537,7 +3655,8 @@ Get JWT for a space repo
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.getJwt({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.getJwt({});
 ```
 
 **Input**
@@ -3564,7 +3683,8 @@ Get live Space metrics (SSE snapshot)
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.getMetrics({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.getMetrics({});
 ```
 
 **Input**
@@ -3589,7 +3709,8 @@ Get notebook URL from a space
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.getNotebook({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.getNotebook({});
 ```
 
 **Input**
@@ -3616,7 +3737,8 @@ Resolve a file from a space (follows redirects / XET info)
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.getResolve({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.getResolve({});
 ```
 
 **Input**
@@ -3644,7 +3766,8 @@ Resolve a file from space cache
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.getResolveCache({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.getResolveCache({});
 ```
 
 **Input**
@@ -3672,7 +3795,8 @@ Get security scan status for a space
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.getScan({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.getScan({});
 ```
 
 **Input**
@@ -3697,7 +3821,8 @@ Get repository tree size for a space
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.getTreeSize({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.getTreeSize({});
 ```
 
 **Input**
@@ -3724,7 +3849,8 @@ Get XET read token for a space
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.getXetReadToken({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.getXetReadToken({});
 ```
 
 **Input**
@@ -3750,7 +3876,8 @@ Get XET write token for a Space
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.spaces.getXetWriteToken({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.getXetWriteToken({});
 ```
 
 **Input**
@@ -3776,7 +3903,8 @@ List spaces on the Hub
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.list({});
 ```
 
 **Input**
@@ -3809,7 +3937,8 @@ List commits for a space
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.listCommits({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.listCommits({});
 ```
 
 **Input**
@@ -3837,7 +3966,8 @@ List available Space hardware configurations
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.listHardware({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.listHardware({});
 ```
 
 **Input:** _empty object_
@@ -3857,7 +3987,8 @@ List LFS files in a Space
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.listLfsFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.listLfsFiles({});
 ```
 
 **Input**
@@ -3884,7 +4015,8 @@ List path metadata in a space
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.listPathsInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.listPathsInfo({});
 ```
 
 **Input**
@@ -3912,7 +4044,8 @@ List refs (branches/tags) for a space
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.spaces.listRefs({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.listRefs({});
 ```
 
 **Input**
@@ -3938,7 +4071,8 @@ Squash all commits in a Space ref (irreversible)
 **Risk:** `destructive`
 
 ```ts
-await corsair.huggingface.api.spaces.squashCommits({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.squashCommits({});
 ```
 
 **Input**
@@ -3965,7 +4099,8 @@ Update settings for a space repository
 **Risk:** `write`
 
 ```ts
-await corsair.huggingface.api.spaces.updateSettings({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.spaces.updateSettings({});
 ```
 
 **Input**
@@ -4006,7 +4141,8 @@ Get trending repositories
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.trending.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.trending.get({});
 ```
 
 **Input**
@@ -4034,7 +4170,8 @@ Get user avatar URL
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.users.getAvatar({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.users.getAvatar({});
 ```
 
 **Input**
@@ -4059,7 +4196,8 @@ Get user profile overview
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.users.getOverview({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.users.getOverview({});
 ```
 
 **Input**
@@ -4084,7 +4222,8 @@ Get user social handles
 **Risk:** `read`
 
 ```ts
-await corsair.huggingface.api.users.getSocials({});
+const tenant = corsair.withTenant('acme');
+await tenant.huggingface.api.users.getSocials({});
 ```
 
 **Input**

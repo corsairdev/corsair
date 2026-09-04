@@ -14,7 +14,8 @@ The Diffbot plugin syncs data locally. Use `corsair.diffbot.db.<entity>.search({
 Path: `diffbot.db.accounts.search`
 
 ```ts
-const rows = await corsair.diffbot.db.accounts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.accounts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -46,7 +47,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.articles.search`
 
 ```ts
-const rows = await corsair.diffbot.db.articles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.articles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -87,7 +89,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.bulkJobs.search`
 
 ```ts
-const rows = await corsair.diffbot.db.bulkJobs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.bulkJobs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -123,7 +126,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.crawlJobs.search`
 
 ```ts
-const rows = await corsair.diffbot.db.crawlJobs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.crawlJobs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -160,7 +164,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.customApis.search`
 
 ```ts
-const rows = await corsair.diffbot.db.customApis.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.customApis.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -190,7 +195,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.discussions.search`
 
 ```ts
-const rows = await corsair.diffbot.db.discussions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.discussions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -222,7 +228,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.events.search`
 
 ```ts
-const rows = await corsair.diffbot.db.events.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.events.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -257,7 +264,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.images.search`
 
 ```ts
-const rows = await corsair.diffbot.db.images.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.images.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -296,7 +304,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.jobs.search`
 
 ```ts
-const rows = await corsair.diffbot.db.jobs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.jobs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -328,7 +337,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.lists.search`
 
 ```ts
-const rows = await corsair.diffbot.db.lists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.lists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -357,7 +367,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.organizations.search`
 
 ```ts
-const rows = await corsair.diffbot.db.organizations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.organizations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -410,7 +421,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.people.search`
 
 ```ts
-const rows = await corsair.diffbot.db.people.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.people.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -453,7 +465,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.products.search`
 
 ```ts
-const rows = await corsair.diffbot.db.products.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.products.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -493,7 +506,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `diffbot.db.videos.search`
 
 ```ts
-const rows = await corsair.diffbot.db.videos.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.diffbot.db.videos.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

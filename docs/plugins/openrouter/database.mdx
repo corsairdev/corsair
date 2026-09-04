@@ -14,7 +14,8 @@ The OpenRouter plugin syncs data locally. Use `corsair.openrouter.db.<entity>.se
 Path: `openrouter.db.generations.search`
 
 ```ts
-const rows = await corsair.openrouter.db.generations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.openrouter.db.generations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `openrouter.db.models.search`
 
 ```ts
-const rows = await corsair.openrouter.db.models.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.openrouter.db.models.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -70,7 +72,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `openrouter.db.providers.search`
 
 ```ts
-const rows = await corsair.openrouter.db.providers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.openrouter.db.providers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

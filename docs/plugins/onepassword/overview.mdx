@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { onepassword } from '@corsair-dev/onepassword';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		onepassword(),
 	],

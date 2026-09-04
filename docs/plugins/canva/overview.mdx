@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { canva } from '@corsair-dev/canva';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		canva(),
 	],

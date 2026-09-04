@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { apify } from '@corsair-dev/apify';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		apify(),
 	],

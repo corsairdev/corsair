@@ -20,7 +20,8 @@ Post a new tweet
 **Risk:** `write`
 
 ```ts
-await corsair.twitter.api.tweets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitter.api.tweets.create({});
 ```
 
 **Input**
@@ -65,7 +66,8 @@ Post a reply to an existing tweet
 **Risk:** `write`
 
 ```ts
-await corsair.twitter.api.tweets.createReply({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitter.api.tweets.createReply({});
 ```
 
 **Input**

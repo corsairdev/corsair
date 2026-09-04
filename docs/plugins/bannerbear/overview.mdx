@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { bannerbear } from '@corsair-dev/bannerbear';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		bannerbear(),
 	],

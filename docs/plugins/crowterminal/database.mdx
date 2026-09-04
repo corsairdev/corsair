@@ -14,7 +14,8 @@ The CrowTerminal plugin syncs data locally. Use `corsair.crowterminal.db.<entity
 Path: `crowterminal.db.dataPoints.search`
 
 ```ts
-const rows = await corsair.crowterminal.db.dataPoints.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.crowterminal.db.dataPoints.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -36,7 +37,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `crowterminal.db.incidents.search`
 
 ```ts
-const rows = await corsair.crowterminal.db.incidents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.crowterminal.db.incidents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -58,7 +60,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `crowterminal.db.skills.search`
 
 ```ts
-const rows = await corsair.crowterminal.db.skills.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.crowterminal.db.skills.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -88,7 +91,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `crowterminal.db.webhooks.search`
 
 ```ts
-const rows = await corsair.crowterminal.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.crowterminal.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

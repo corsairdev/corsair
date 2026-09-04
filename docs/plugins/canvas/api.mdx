@@ -20,7 +20,8 @@ Close an account notification for the current user
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.accounts.closeNotificationForUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.accounts.closeNotificationForUser({});
 ```
 
 **Input**
@@ -88,7 +89,8 @@ Creates a global notification within a Canvas account
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.accounts.createAccountNotification({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.accounts.createAccountNotification({});
 ```
 
 **Input**
@@ -157,7 +159,8 @@ Call Canvas GraphQL (/api/graphql); supply the query document and variables in i
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.accounts.getAccountGraphQl({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.accounts.getAccountGraphQl({});
 ```
 
 **Input**
@@ -216,7 +219,8 @@ Retrieves help links configured for the specified Canvas account
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.accounts.getAccountHelpLinks({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.accounts.getAccountHelpLinks({});
 ```
 
 **Input**
@@ -280,7 +284,8 @@ Retrieve global account notifications for the current user
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.accounts.getAccountNotifications({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.accounts.getAccountNotifications({});
 ```
 
 **Input**
@@ -355,7 +360,8 @@ Retrieves Canvas accounts where the current user can create courses
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.accounts.getAccountsThatUsersCanCreateCoursesIn({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.accounts.getAccountsThatUsersCanCreateCoursesIn({});
 ```
 
 **Input**
@@ -430,7 +436,8 @@ Retrieve information on an individual account by ID
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.accounts.getSingleAccount({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.accounts.getSingleAccount({});
 ```
 
 **Input**
@@ -501,7 +508,8 @@ Creates a new appointment group in Canvas
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.appointmentGroups.createAppointmentGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.appointmentGroups.createAppointmentGroup({});
 ```
 
 **Input**
@@ -569,7 +577,8 @@ Permanently deletes an existing appointment group
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.appointmentGroups.deleteAppointmentGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.appointmentGroups.deleteAppointmentGroup({});
 ```
 
 **Input**
@@ -638,7 +647,8 @@ Create a new assignment group for a course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.assignmentGroups.createAssignmentGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignmentGroups.createAssignmentGroup({});
 ```
 
 **Input**
@@ -707,7 +717,8 @@ Retrieves the assignment group with the given id
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.assignmentGroups.getAnAssignmentGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignmentGroups.getAnAssignmentGroup({});
 ```
 
 **Input**
@@ -777,7 +788,8 @@ Retrieve information about a specific assignment group by ID
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.assignmentGroups.getAssignmentGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignmentGroups.getAssignmentGroup({});
 ```
 
 **Input**
@@ -838,7 +850,8 @@ Creates an assignment override to adjust due/unlock/lock dates
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.assignmentOverrides.createAssignmentOverride({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignmentOverrides.createAssignmentOverride({});
 ```
 
 **Input**
@@ -911,7 +924,8 @@ Batch create assignment overrides for multiple assignments in a course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.assignmentOverrides.createBatchOverridesInACourse({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignmentOverrides.createBatchOverridesInACourse({});
 ```
 
 **Input**
@@ -976,7 +990,8 @@ Deletes an assignment override and returns its former details
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.assignmentOverrides.deleteAssignmentOverride({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignmentOverrides.deleteAssignmentOverride({});
 ```
 
 **Input**
@@ -1045,7 +1060,8 @@ Batch retrieve assignment overrides in a course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.assignmentOverrides.getCourses12Assignments({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignmentOverrides.getCourses12Assignments({});
 ```
 
 **Input**
@@ -1123,7 +1139,8 @@ Retrieves details of the assignment override with the given id
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.assignmentOverrides.getSingleAssignmentOverride({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignmentOverrides.getSingleAssignmentOverride({});
 ```
 
 **Input**
@@ -1199,7 +1216,8 @@ Creates a new assignment within a specified course in Canvas LMS
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.assignments.createAssignment({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignments.createAssignment({});
 ```
 
 **Input**
@@ -1271,7 +1289,8 @@ Call Canvas GraphQL (/api/graphql); supply the mutation document and variables i
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.assignments.createAssignmentGraphQl({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignments.createAssignmentGraphQl({});
 ```
 
 **Input**
@@ -1330,7 +1349,8 @@ Soft-deletes a specific assignment within a course
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.assignments.deleteAssignment({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignments.deleteAssignment({});
 ```
 
 **Input**
@@ -1398,7 +1418,8 @@ Updates an existing assignment in a Canvas course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.assignments.editAssignment({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignments.editAssignment({});
 ```
 
 **Input**
@@ -1471,7 +1492,8 @@ Retrieves assignments for a specific Canvas course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.assignments.getAllAssignments({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignments.getAllAssignments({});
 ```
 
 **Input**
@@ -1549,7 +1571,8 @@ Retrieves detailed information for a specific assignment
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.assignments.getAssignment({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignments.getAssignment({});
 ```
 
 **Input**
@@ -1622,7 +1645,8 @@ Call Canvas GraphQL (/api/graphql); supply the query document and variables in i
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.assignments.getAssignment2({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignments.getAssignment2({});
 ```
 
 **Input**
@@ -1681,7 +1705,8 @@ Retrieves submission summary counts for a specific assignment
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.assignments.getSubmissionSummary({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.assignments.getSubmissionSummary({});
 ```
 
 **Input**
@@ -1745,7 +1770,8 @@ Access Canvas audit logs for a specified asset using GraphQL
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.auditReports.getAuditLogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.auditReports.getAuditLogs({});
 ```
 
 **Input**
@@ -1804,7 +1830,8 @@ Retrieve the status of the last generated report for a course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.auditReports.getStatusOfLastReport({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.auditReports.getStatusOfLastReport({});
 ```
 
 **Input**
@@ -1871,7 +1898,8 @@ Retrieves a specific authentication provider configuration
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.authentication.getAuthenticationProvider({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.authentication.getAuthenticationProvider({});
 ```
 
 **Input**
@@ -1943,7 +1971,8 @@ Create a blackout date for the given course context
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.blackoutDates.createBlackoutDateForCourse({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.blackoutDates.createBlackoutDateForCourse({});
 ```
 
 **Input**
@@ -2013,7 +2042,8 @@ Delete a blackout date for the given course context
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.blackoutDates.deleteBlackoutDate({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.blackoutDates.deleteBlackoutDate({});
 ```
 
 **Input**
@@ -2083,7 +2113,8 @@ Retrieves blueprint subscription migrations for a Canvas course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.blueprints.getCoursesBlueprint({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.blueprints.getCoursesBlueprint({});
 ```
 
 **Input**
@@ -2162,7 +2193,8 @@ Creates a new bookmark for the authenticated user
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.bookmarks.createBookmark({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.bookmarks.createBookmark({});
 ```
 
 **Input**
@@ -2229,7 +2261,8 @@ Deletes a bookmark from the current user bookmarks
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.bookmarks.deleteBookmark({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.bookmarks.deleteBookmark({});
 ```
 
 **Input**
@@ -2296,7 +2329,8 @@ Retrieves the details for a specific bookmark by ID
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.bookmarks.getBookmark({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.bookmarks.getBookmark({});
 ```
 
 **Input**
@@ -2366,7 +2400,8 @@ Retrieve all brand configuration variables for the Canvas account
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.brandConfig.getBrandVariables({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.brandConfig.getBrandVariables({});
 ```
 
 **Input**
@@ -2429,7 +2464,8 @@ Retrieve all internal settings from Canvas using GraphQL
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.brandConfig.getInternalSettings({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.brandConfig.getInternalSettings({});
 ```
 
 **Input**
@@ -2488,7 +2524,8 @@ Return the config information for the Kaltura plugin
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.brandConfig.getKalturaConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.brandConfig.getKalturaConfig({});
 ```
 
 **Input**
@@ -2553,7 +2590,8 @@ Creates a calendar event with options for recurrence
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.calendarEvents.createCalendarEvent({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.calendarEvents.createCalendarEvent({});
 ```
 
 **Input**
@@ -2611,7 +2649,8 @@ Create or update timetable events for a course or section
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.calendarEvents.createOrUpdateTimetableEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.calendarEvents.createOrUpdateTimetableEvents({});
 ```
 
 **Input**
@@ -2681,7 +2720,8 @@ Delete a calendar event from Canvas
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.calendarEvents.deleteCalendarEvent({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.calendarEvents.deleteCalendarEvent({});
 ```
 
 **Input**
@@ -2750,7 +2790,8 @@ Delete a comment bank item from Canvas
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.commentBank.deleteCommentBankItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.commentBank.deleteCommentBankItem({});
 ```
 
 **Input**
@@ -2819,7 +2860,8 @@ Creates a new communication channel for an existing Canvas user
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.communicationChannels.createCommunicationChannel({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.communicationChannels.createCommunicationChannel({});
 ```
 
 **Input**
@@ -2887,7 +2929,8 @@ Deletes an existing communication channel for a user
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.communicationChannels.deleteCommunicationChannel({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.communicationChannels.deleteCommunicationChannel({});
 ```
 
 **Input**
@@ -2955,7 +2998,8 @@ Deletes a communication channel by type and address
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.communicationChannels.deleteCommunicationChannelByTypeAndAddress({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.communicationChannels.deleteCommunicationChannelByTypeAndAddress({});
 ```
 
 **Input**
@@ -3026,7 +3070,8 @@ Initiates an asynchronous export of course content from Canvas
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.contentExports.exportContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.contentExports.exportContent({});
 ```
 
 **Input**
@@ -3096,7 +3141,8 @@ Begin a content export job for a group
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.contentExports.exportGroupContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.contentExports.exportGroupContent({});
 ```
 
 **Input**
@@ -3165,7 +3211,8 @@ Begin a content export job for a user
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.contentExports.exportUserContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.contentExports.exportUserContent({});
 ```
 
 **Input**
@@ -3235,7 +3282,8 @@ Create a content migration for a Canvas user
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.contentMigrations.createAContentMigration4({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.contentMigrations.createAContentMigration4({});
 ```
 
 **Input**
@@ -3303,7 +3351,8 @@ Create a content migration in a Canvas group
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.contentMigrations.createGroupContentMigration({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.contentMigrations.createGroupContentMigration({});
 ```
 
 **Input**
@@ -3372,7 +3421,8 @@ Retrieve data on an individual content migration from a group
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.contentMigrations.getAContentMigration3({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.contentMigrations.getAContentMigration3({});
 ```
 
 **Input**
@@ -3442,7 +3492,8 @@ Retrieve data on an individual content migration from a user
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.contentMigrations.getAContentMigration4({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.contentMigrations.getAContentMigration4({});
 ```
 
 **Input**
@@ -3513,7 +3564,8 @@ Send a previously created content share to additional users
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.contentShares.addUsersToContentShare({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.contentShares.addUsersToContentShare({});
 ```
 
 **Input**
@@ -3582,7 +3634,8 @@ Shares a Canvas content item to specified users
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.contentShares.createContentShare({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.contentShares.createContentShare({});
 ```
 
 **Input**
@@ -3650,7 +3703,8 @@ Retrieves detailed information about a single content share
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.contentShares.getContentShare({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.contentShares.getContentShare({});
 ```
 
 **Input**
@@ -3719,7 +3773,8 @@ Retrieve the count of unread content shares for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.contentShares.getContentSharesUnreadCount({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.contentShares.getContentSharesUnreadCount({});
 ```
 
 **Input**
@@ -3779,7 +3834,8 @@ Add a message to an existing Canvas conversation
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.conversations.addConversationMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.conversations.addConversationMessage({});
 ```
 
 **Input**
@@ -3846,7 +3902,8 @@ Add recipients to an existing group conversation
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.conversations.addRecipientsToConversation({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.conversations.addRecipientsToConversation({});
 ```
 
 **Input**
@@ -3913,7 +3970,8 @@ Send messages in Canvas by creating a new conversation
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.conversations.createConversation({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.conversations.createConversation({});
 ```
 
 **Input**
@@ -3979,7 +4037,8 @@ Create a new conversation between users in Canvas via GraphQL
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.conversations.createConversationGraphQl({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.conversations.createConversationGraphQl({});
 ```
 
 **Input**
@@ -4038,7 +4097,8 @@ Delete specific messages from a Canvas conversation
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.conversations.deleteConversationMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.conversations.deleteConversationMessages({});
 ```
 
 **Input**
@@ -4105,7 +4165,8 @@ Delete one or more Canvas conversations
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.conversations.deleteConversations({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.conversations.deleteConversations({});
 ```
 
 **Input**
@@ -4172,7 +4233,8 @@ Update attributes for a single conversation in Canvas
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.conversations.editConversation({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.conversations.editConversation({});
 ```
 
 **Input**
@@ -4239,7 +4301,8 @@ Find valid recipients that the current user can send messages to
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.conversations.findRecipients({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.conversations.findRecipients({});
 ```
 
 **Input**
@@ -4312,7 +4375,8 @@ Retrieve detailed information for a single conversation
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.conversations.getSingleConversation({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.conversations.getSingleConversation({});
 ```
 
 **Input**
@@ -4379,7 +4443,8 @@ Get the number of unread conversations for the current user
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.conversations.getUnreadCount({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.conversations.getUnreadCount({});
 ```
 
 **Input**
@@ -4439,7 +4504,8 @@ Remove all stored course nicknames for the current user
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.courseNicknames.clearCourseNicknames({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.courseNicknames.clearCourseNicknames({});
 ```
 
 **Input**
@@ -4507,7 +4573,8 @@ Add a course to the current user favorites
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.courses.addCourseToFavorites({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.courses.addCourseToFavorites({});
 ```
 
 **Input**
@@ -4577,7 +4644,8 @@ Create a new course in Canvas within a specified account
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.courses.createCourse({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.courses.createCourse({});
 ```
 
 **Input**
@@ -4647,7 +4715,8 @@ Retrieve information on a single course from a Canvas account
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.courses.getAccountCourse({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.courses.getAccountCourse({});
 ```
 
 **Input**
@@ -4718,7 +4787,8 @@ Retrieves daily activity analytics for a specified Canvas course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.courses.getCourseLevelParticipationData({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.courses.getCourseLevelParticipationData({});
 ```
 
 **Input**
@@ -4772,7 +4842,8 @@ Returns permission information for the calling user in the given course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.courses.getCoursePermissions({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.courses.getCoursePermissions({});
 ```
 
 **Input**
@@ -4836,7 +4907,8 @@ Retrieve detailed information for a specific Canvas course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.courses.getSingleCourse({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.courses.getSingleCourse({});
 ```
 
 **Input**
@@ -4908,7 +4980,8 @@ Create a new entry in a Canvas discussion topic
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.discussions.createDiscussionEntry({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.discussions.createDiscussionEntry({});
 ```
 
 **Input**
@@ -4976,7 +5049,8 @@ Create a new entry in a Canvas discussion topic via GraphQL
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.discussions.createDiscussionEntryGraphQl({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.discussions.createDiscussionEntryGraphQl({});
 ```
 
 **Input**
@@ -5035,7 +5109,8 @@ Creates a new discussion topic in a specified Canvas course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.discussions.createDiscussionTopic({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.discussions.createDiscussionTopic({});
 ```
 
 **Input**
@@ -5102,7 +5177,8 @@ Create a new discussion topic via GraphQL API
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.discussions.createDiscussionTopicGraphQl({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.discussions.createDiscussionTopicGraphQl({});
 ```
 
 **Input**
@@ -5161,7 +5237,8 @@ Delete a discussion entry
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.discussions.deleteAnEntry({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.discussions.deleteAnEntry({});
 ```
 
 **Input**
@@ -5230,7 +5307,8 @@ Delete a discussion entry via GraphQL
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.discussions.deleteDiscussionEntry({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.discussions.deleteDiscussionEntry({});
 ```
 
 **Input**
@@ -5289,7 +5367,8 @@ Delete a discussion topic in Canvas via GraphQL
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.discussions.deleteDiscussionTopicGraphQl({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.discussions.deleteDiscussionTopicGraphQl({});
 ```
 
 **Input**
@@ -5348,7 +5427,8 @@ Retrieve detailed information about a single discussion topic
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.discussions.getSingleTopic({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.discussions.getSingleTopic({});
 ```
 
 **Input**
@@ -5418,7 +5498,8 @@ Add or update the last attended date for a student enrollment
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.enrollments.addLastAttendedDate({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.enrollments.addLastAttendedDate({});
 ```
 
 **Input**
@@ -5487,7 +5568,8 @@ Conclude, deactivate, or delete an enrollment in a Canvas course
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.enrollments.concludeDeactivateOrDeleteEnrollment({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.enrollments.concludeDeactivateOrDeleteEnrollment({});
 ```
 
 **Input**
@@ -5555,7 +5637,8 @@ Enrolls a user in a Canvas course with a specified role and status
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.enrollments.createEnrollment({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.enrollments.createEnrollment({});
 ```
 
 **Input**
@@ -5622,7 +5705,8 @@ Retrieve pending enrollment invitations for the current user
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.enrollments.getEnrollmentInvitations({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.enrollments.getEnrollmentInvitations({});
 ```
 
 **Input**
@@ -5696,7 +5780,8 @@ Retrieve all ePortfolios for a specified user
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.ePortfolios.getAllEPortfoliosForUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.ePortfolios.getAllEPortfoliosForUser({});
 ```
 
 **Input**
@@ -5772,7 +5857,8 @@ Initiate an ePub export for a course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.epubExports.createEpubExport({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.epubExports.createEpubExport({});
 ```
 
 **Input**
@@ -5844,7 +5930,8 @@ Creates a new external RSS or Atom feed for a Canvas course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.externalFeeds.createExternalFeed({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.externalFeeds.createExternalFeed({});
 ```
 
 **Input**
@@ -5914,7 +6001,8 @@ Create a new external RSS or Atom feed for a Canvas group
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.externalFeeds.createExternalFeedForGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.externalFeeds.createExternalFeedForGroup({});
 ```
 
 **Input**
@@ -5983,7 +6071,8 @@ Deletes the external feed from the specified group
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.externalFeeds.deleteExternalFeedFromGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.externalFeeds.deleteExternalFeedFromGroup({});
 ```
 
 **Input**
@@ -6053,7 +6142,8 @@ Create an external tool in a Canvas account
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.externalTools.createExternalTool({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.externalTools.createExternalTool({});
 ```
 
 **Input**
@@ -6122,7 +6212,8 @@ Create an external tool in a Canvas course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.externalTools.createExternalToolInCourse({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.externalTools.createExternalToolInCourse({});
 ```
 
 **Input**
@@ -6192,7 +6283,8 @@ Creates a new LTI Resource Link in a Canvas course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.externalTools.createLtiResourceLink({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.externalTools.createLtiResourceLink({});
 ```
 
 **Input**
@@ -6262,7 +6354,8 @@ Remove the specified external tool from a course
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.externalTools.deleteAnExternalTool({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.externalTools.deleteAnExternalTool({});
 ```
 
 **Input**
@@ -6330,7 +6423,8 @@ Retrieve detailed information for a specific external tool in a course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.externalTools.getASingleExternalTool2({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.externalTools.getASingleExternalTool2({});
 ```
 
 **Input**
@@ -6401,7 +6495,8 @@ Retrieve detailed information for a specific external tool
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.externalTools.getSingleExternalTool({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.externalTools.getSingleExternalTool({});
 ```
 
 **Input**
@@ -6473,7 +6568,8 @@ Fetches a specific category of Canvas data (accounts, courses, users, etc.)
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.fetchData.fetchData({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.fetchData.fetchData({});
 ```
 
 **Input**
@@ -6534,7 +6630,8 @@ Copies an existing Canvas file to a specified destination folder
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.files.copyFileToFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.files.copyFileToFolder({});
 ```
 
 **Input**
@@ -6602,7 +6699,8 @@ Copy a folder to another folder in Canvas
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.files.copyFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.files.copyFolder({});
 ```
 
 **Input**
@@ -6670,7 +6768,8 @@ Initiate file upload to Canvas (Step 1 of 3-step process)
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.files.createFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.files.createFiles({});
 ```
 
 **Input**
@@ -6738,7 +6837,8 @@ Create a folder in the specified context for a user
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.files.createFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.files.createFolder({});
 ```
 
 **Input**
@@ -6806,7 +6906,8 @@ Create a folder within a Canvas group
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.files.createFolderInGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.files.createFolderInGroup({});
 ```
 
 **Input**
@@ -6874,7 +6975,8 @@ Remove a file from Canvas
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.files.deleteFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.files.deleteFile({});
 ```
 
 **Input**
@@ -6941,7 +7043,8 @@ Permanently deletes an existing folder
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.files.deleteFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.files.deleteFolder({});
 ```
 
 **Input**
@@ -7008,7 +7111,8 @@ Retrieves the details for a specific folder by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.files.getFolderById({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.files.getFolderById({});
 ```
 
 **Input**
@@ -7076,7 +7180,8 @@ Retrieves the details for a folder within a Canvas group
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.files.getGroupFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.files.getGroupFolder({});
 ```
 
 **Input**
@@ -7145,7 +7250,8 @@ Retrieves the total and used storage quota for a Canvas user
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.files.getQuotaInformation({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.files.getQuotaInformation({});
 ```
 
 **Input**
@@ -7207,7 +7313,8 @@ Creates a new custom gradebook column in a course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.gradebookColumns.createCustomGradebookColumn({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.gradebookColumns.createCustomGradebookColumn({});
 ```
 
 **Input**
@@ -7277,7 +7384,8 @@ Permanently deletes a custom gradebook column
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.gradebookColumns.deleteCustomGradebookColumn({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.gradebookColumns.deleteCustomGradebookColumn({});
 ```
 
 **Input**
@@ -7345,7 +7453,8 @@ Bulk updates custom gradebook column data for multiple students
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.gradebookColumns.updateCustomGradebookColumnData({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.gradebookColumns.updateCustomGradebookColumnData({});
 ```
 
 **Input**
@@ -7418,7 +7527,8 @@ Create a new grading standard in a Canvas course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.grading.createCourseGradingStandard({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.grading.createCourseGradingStandard({});
 ```
 
 **Input**
@@ -7488,7 +7598,8 @@ Delete a custom grade status from Canvas
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.grading.deleteCustomGradeStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.grading.deleteCustomGradeStatus({});
 ```
 
 **Input**
@@ -7556,7 +7667,8 @@ Retrieves a single grading standard for the given course context
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.grading.getSingleGradingStandardIn2({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.grading.getSingleGradingStandardIn2({});
 ```
 
 **Input**
@@ -7629,7 +7741,8 @@ Call Canvas GraphQL (/api/graphql); supply the query document and variables in i
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.graphql.getLegacyNode({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.graphql.getLegacyNode({});
 ```
 
 **Input**
@@ -7690,7 +7803,8 @@ Assign unassigned members to groups within a group category
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.groupCategories.assignUnassignedMembersToGroupCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupCategories.assignUnassignedMembersToGroupCategory({});
 ```
 
 **Input**
@@ -7759,7 +7873,8 @@ Creates a new group category within a specified Canvas course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.groupCategories.createGroupCategoryCourses({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupCategories.createGroupCategoryCourses({});
 ```
 
 **Input**
@@ -7828,7 +7943,8 @@ Create a new group within a Canvas group set
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.groupCategories.createGroupInSet({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupCategories.createGroupInSet({});
 ```
 
 **Input**
@@ -7897,7 +8013,8 @@ Create a new group set (group category) in a Canvas account
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.groupCategories.createGroupSet({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupCategories.createGroupSet({});
 ```
 
 **Input**
@@ -7968,7 +8085,8 @@ Create a new discussion topic in a Canvas group
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.groupDiscussions.createGroupDiscussionTopic({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupDiscussions.createGroupDiscussionTopic({});
 ```
 
 **Input**
@@ -8035,7 +8153,8 @@ Delete a discussion entry in a group discussion
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.groupDiscussions.deleteAnEntry2({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupDiscussions.deleteAnEntry2({});
 ```
 
 **Input**
@@ -8104,7 +8223,8 @@ Deletes a discussion topic from a group
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.groupDiscussions.deleteGroupDiscussionTopic({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupDiscussions.deleteGroupDiscussionTopic({});
 ```
 
 **Input**
@@ -8172,7 +8292,8 @@ Duplicate an existing discussion topic in a Canvas group
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.groupDiscussions.duplicateGroupDiscussionTopic({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupDiscussions.duplicateGroupDiscussionTopic({});
 ```
 
 **Input**
@@ -8240,7 +8361,8 @@ Retrieve the full cached structure of a group discussion topic
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.groupDiscussions.getFullTopicGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupDiscussions.getFullTopicGroups({});
 ```
 
 **Input**
@@ -8305,7 +8427,8 @@ Retrieve detailed information about a single group discussion topic
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.groupDiscussions.getSingleTopic2({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupDiscussions.getSingleTopic2({});
 ```
 
 **Input**
@@ -8375,7 +8498,8 @@ Join or request to join a group
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.groupMemberships.createMembership({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupMemberships.createMembership({});
 ```
 
 **Input**
@@ -8444,7 +8568,8 @@ Retrieve a single group membership by its membership_id
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.groupMemberships.getASingleGroupMembership({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupMemberships.getASingleGroupMembership({});
 ```
 
 **Input**
@@ -8514,7 +8639,8 @@ Retrieve a single group membership by user_id
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.groupMemberships.getASingleGroupMembership2({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groupMemberships.getASingleGroupMembership2({});
 ```
 
 **Input**
@@ -8586,7 +8712,8 @@ Add a group to the current user favorites
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.groups.addGroupToFavorites({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groups.addGroupToFavorites({});
 ```
 
 **Input**
@@ -8655,7 +8782,8 @@ Create a new community group directly
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.groups.createGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groups.createGroup({});
 ```
 
 **Input**
@@ -8723,7 +8851,8 @@ Deletes a group and removes all members
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.groups.deleteGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groups.deleteGroup({});
 ```
 
 **Input**
@@ -8790,7 +8919,8 @@ Retrieves detailed information for a single Canvas group
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.groups.getGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groups.getGroup({});
 ```
 
 **Input**
@@ -8859,7 +8989,8 @@ Retrieves a summary of the group-specific activity stream
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.groups.getGroupActivityStreamSummary({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groups.getGroupActivityStreamSummary({});
 ```
 
 **Input**
@@ -8913,7 +9044,8 @@ Returns permission information for the calling user in the group
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.groups.getGroupPermissions({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.groups.getGroupPermissions({});
 ```
 
 **Input**
@@ -8979,7 +9111,8 @@ Retrieve the late policy for a Canvas course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.latePolicy.getALatePolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.latePolicy.getALatePolicy({});
 ```
 
 **Input**
@@ -9045,7 +9178,8 @@ Creates a new organizational module within a specified Canvas LMS course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.modules.createModule({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.modules.createModule({});
 ```
 
 **Input**
@@ -9112,7 +9246,8 @@ Create a new module in a Canvas course via GraphQL
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.modules.createModuleGraphQl({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.modules.createModuleGraphQl({});
 ```
 
 **Input**
@@ -9171,7 +9306,8 @@ Create and return a new module item within a Canvas course module
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.modules.createModuleItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.modules.createModuleItem({});
 ```
 
 **Input**
@@ -9239,7 +9375,8 @@ Retrieve information about a specific module item by ID using GraphQL
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.modules.getModuleItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.modules.getModuleItem({});
 ```
 
 **Input**
@@ -9298,7 +9435,8 @@ Find the module item sequence for a given asset in a Canvas course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.modules.getModuleItemSequence({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.modules.getModuleItemSequence({});
 ```
 
 **Input**
@@ -9364,7 +9502,8 @@ Link an existing outcome or create a new outcome within a course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.outcomeGroups.createLinkOutcomeCourses({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomeGroups.createLinkOutcomeCourses({});
 ```
 
 **Input**
@@ -9435,7 +9574,8 @@ Creates a new empty subgroup under the outcome group
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.outcomeGroups.createSubgroupCourses({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomeGroups.createSubgroupCourses({});
 ```
 
 **Input**
@@ -9505,7 +9645,8 @@ Deletes an outcome group from a course
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.outcomeGroups.deleteAnOutcomeGroupCourses({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomeGroups.deleteAnOutcomeGroupCourses({});
 ```
 
 **Input**
@@ -9573,7 +9714,8 @@ Retrieve a specific outcome group from a Canvas account
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.outcomeGroups.getAccountsOutcomeGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomeGroups.getAccountsOutcomeGroups({});
 ```
 
 **Input**
@@ -9643,7 +9785,8 @@ Retrieve all outcome groups for an account context
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.outcomeGroups.getAllOutcomeGroupsForContext({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomeGroups.getAllOutcomeGroupsForContext({});
 ```
 
 **Input**
@@ -9718,7 +9861,8 @@ Retrieve all outcome groups for a course context
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.outcomeGroups.getAllOutcomeGroupsForContext2({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomeGroups.getAllOutcomeGroupsForContext2({});
 ```
 
 **Input**
@@ -9793,7 +9937,8 @@ Retrieves all outcome links for an account context
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.outcomeGroups.getAllOutcomeLinksForContext({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomeGroups.getAllOutcomeLinksForContext({});
 ```
 
 **Input**
@@ -9868,7 +10013,8 @@ Retrieves all outcome links for a course context
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.outcomeGroups.getAllOutcomeLinksForContext2({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomeGroups.getAllOutcomeLinksForContext2({});
 ```
 
 **Input**
@@ -9944,7 +10090,8 @@ Retrieves a global outcome group by ID from Canvas
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.outcomeGroups.getGlobalOutcomeGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomeGroups.getGlobalOutcomeGroup({});
 ```
 
 **Input**
@@ -10013,7 +10160,8 @@ Retrieves the root outcome group for a specified course context
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.outcomeGroups.getRootOutcomeGroupForCourse({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomeGroups.getRootOutcomeGroupForCourse({});
 ```
 
 **Input**
@@ -10084,7 +10232,8 @@ Create a new learning outcome in Canvas using GraphQL
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.outcomes.createLearningOutcome({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomes.createLearningOutcome({});
 ```
 
 **Input**
@@ -10143,7 +10292,8 @@ Delete links between outcomes and content in Canvas
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.outcomes.deleteOutcomeLinks({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomes.deleteOutcomeLinks({});
 ```
 
 **Input**
@@ -10202,7 +10352,8 @@ Retrieves outcome alignments for a student or assignment
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.outcomes.getAlignedAssignmentsForAnOutcome({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomes.getAlignedAssignmentsForAnOutcome({});
 ```
 
 **Input**
@@ -10280,7 +10431,8 @@ Get outcome results for users and outcomes in a course context
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.outcomes.getOutcomeResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.outcomes.getOutcomeResults({});
 ```
 
 **Input**
@@ -10352,7 +10504,8 @@ Creates a new wiki page in a specified Canvas course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.pages.createPageForCourse({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.pages.createPageForCourse({});
 ```
 
 **Input**
@@ -10420,7 +10573,8 @@ Creates a new wiki page in a specified Canvas group
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.pages.createPageForGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.pages.createPageForGroup({});
 ```
 
 **Input**
@@ -10488,7 +10642,8 @@ Deletes a wiki page from a Canvas group
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.pages.deletePageForGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.pages.deletePageForGroup({});
 ```
 
 **Input**
@@ -10556,7 +10711,8 @@ Retrieves a specific content page by its URL or ID from a course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.pages.getPageForCourse({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.pages.getPageForCourse({});
 ```
 
 **Input**
@@ -10627,7 +10783,8 @@ Retrieves all peer reviews for a specific submission
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.peerReviews.getAllPeerReviews({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.peerReviews.getAllPeerReviews({});
 ```
 
 **Input**
@@ -10707,7 +10864,8 @@ Retrieves all peer reviews for a specific assignment within a section
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.peerReviews.getAllPeerReviewsForSectionAssignment({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.peerReviews.getAllPeerReviewsForSectionAssignment({});
 ```
 
 **Input**
@@ -10786,7 +10944,8 @@ Retrieves all peer reviews for a specific submission within a section
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.peerReviews.getAllPeerReviewsForSectionSubmission({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.peerReviews.getAllPeerReviewsForSectionSubmission({});
 ```
 
 **Input**
@@ -10868,7 +11027,8 @@ Create a planner note for the current user
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.planner.createPlannerNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.planner.createPlannerNote({});
 ```
 
 **Input**
@@ -10926,7 +11086,8 @@ Create a planner override for the current user
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.planner.createPlannerOverride({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.planner.createPlannerOverride({});
 ```
 
 **Input**
@@ -10984,7 +11145,8 @@ Delete a planner note for the current user
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.planner.deletePlannerNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.planner.deletePlannerNote({});
 ```
 
 **Input**
@@ -11051,7 +11213,8 @@ Delete a planner override for the current user
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.planner.deletePlannerOverride({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.planner.deletePlannerOverride({});
 ```
 
 **Input**
@@ -11120,7 +11283,8 @@ Create a new poll for the current user in Canvas
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.polls.createSinglePoll({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.polls.createSinglePoll({});
 ```
 
 **Input**
@@ -11178,7 +11342,8 @@ Create one or more poll choices for an existing poll
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.polls.createSinglePollChoice({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.polls.createSinglePollChoice({});
 ```
 
 **Input**
@@ -11237,7 +11402,8 @@ Create a new poll session for a poll in Canvas
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.polls.createSinglePollSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.polls.createSinglePollSession({});
 ```
 
 **Input**
@@ -11296,7 +11462,8 @@ Create a new poll submission for a poll session
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.polls.createSinglePollSubmission({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.polls.createSinglePollSubmission({});
 ```
 
 **Input**
@@ -11356,7 +11523,8 @@ Permanently deletes the poll identified by id
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.polls.deletePoll({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.polls.deletePoll({});
 ```
 
 **Input**
@@ -11423,7 +11591,8 @@ Delete a poll choice from a Canvas poll
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.polls.deletePollChoice({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.polls.deletePollChoice({});
 ```
 
 **Input**
@@ -11491,7 +11660,8 @@ Permanently delete a poll session from a poll
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.polls.deletePollSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.polls.deletePollSession({});
 ```
 
 **Input**
@@ -11559,7 +11729,8 @@ Retrieve a single poll by its ID from Canvas
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.polls.getSinglePoll({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.polls.getSinglePoll({});
 ```
 
 **Input**
@@ -11618,7 +11789,8 @@ Retrieve a single poll choice by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.polls.getSinglePollChoice({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.polls.getSinglePollChoice({});
 ```
 
 **Input**
@@ -11680,7 +11852,8 @@ Aborts the generation of a quiz report or removes a previously generated one
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.quizReports.abortQuizReportGeneration({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.quizReports.abortQuizReportGeneration({});
 ```
 
 **Input**
@@ -11749,7 +11922,8 @@ Create a quiz report in Canvas (student or item analysis)
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.quizReports.createQuizReport({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.quizReports.createQuizReport({});
 ```
 
 **Input**
@@ -11818,7 +11992,8 @@ Retrieves the data for a single quiz report
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.quizReports.getQuizReport({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.quizReports.getQuizReport({});
 ```
 
 **Input**
@@ -11890,7 +12065,8 @@ Provide or update answers to quiz questions for a quiz submission
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.quizzes.answerQuizQuestions({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.quizzes.answerQuizQuestions({});
 ```
 
 **Input**
@@ -11958,7 +12134,8 @@ Create one or more question groups for a quiz
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.quizzes.createQuestionGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.quizzes.createQuestionGroup({});
 ```
 
 **Input**
@@ -12027,7 +12204,8 @@ Creates a new quiz with various settings in a Canvas course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.quizzes.createQuiz({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.quizzes.createQuiz({});
 ```
 
 **Input**
@@ -12095,7 +12273,8 @@ Creates a new question for an existing quiz within a course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.quizzes.createQuizQuestion({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.quizzes.createQuizQuestion({});
 ```
 
 **Input**
@@ -12164,7 +12343,8 @@ Start taking a quiz by creating a quiz submission
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.quizzes.createQuizSubmission({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.quizzes.createQuizSubmission({});
 ```
 
 **Input**
@@ -12233,7 +12413,8 @@ Permanently deletes the quiz identified by quiz_id from the course
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.quizzes.deleteQuiz({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.quizzes.deleteQuiz({});
 ```
 
 **Input**
@@ -12301,7 +12482,8 @@ Modifies an existing Canvas quiz
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.quizzes.editQuiz({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.quizzes.editQuiz({});
 ```
 
 **Input**
@@ -12370,7 +12552,8 @@ Fetch the latest quiz statistics for a Canvas quiz
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.quizzes.getQuizStatistics({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.quizzes.getQuizStatistics({});
 ```
 
 **Input**
@@ -12430,7 +12613,8 @@ Retrieves detailed information for a specific quiz in a course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.quizzes.getSingleQuiz({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.quizzes.getSingleQuiz({});
 ```
 
 **Input**
@@ -12501,7 +12685,8 @@ Create a rubric in a Canvas course
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.rubrics.createRubric({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.rubrics.createRubric({});
 ```
 
 **Input**
@@ -12571,7 +12756,8 @@ Fetches the detailed rubric for a specified assignment
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.rubrics.getAssignmentRubric({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.rubrics.getAssignmentRubric({});
 ```
 
 **Input**
@@ -12644,7 +12830,8 @@ Check whether rubric comments/grading have been seen by the student
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.rubrics.getRubricAssessmentsReadState({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.rubrics.getRubricAssessmentsReadState({});
 ```
 
 **Input**
@@ -12710,7 +12897,8 @@ Retrieve a CSV template file for importing rubrics
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.rubrics.getRubricsUploadTemplate({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.rubrics.getRubricsUploadTemplate({});
 ```
 
 **Input**
@@ -12777,7 +12965,8 @@ Create a draft submission for an assignment in Canvas via GraphQL
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.submissions.createSubmissionDraft({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.submissions.createSubmissionDraft({});
 ```
 
 **Input**
@@ -12836,7 +13025,8 @@ Delete a submission draft in Canvas via GraphQL
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.submissions.deleteSubmissionDraft({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.submissions.deleteSubmissionDraft({});
 ```
 
 **Input**
@@ -12895,7 +13085,8 @@ Retrieves a user most recently graded submissions
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.submissions.getAUsersMostRecentlyGraded({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.submissions.getAUsersMostRecentlyGraded({});
 ```
 
 **Input**
@@ -12971,7 +13162,8 @@ Create or update custom data for a Canvas user within a specified namespace
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.userCustomData.createUsersCustomData({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.userCustomData.createUsersCustomData({});
 ```
 
 **Input**
@@ -13039,7 +13231,8 @@ Delete custom user data for a given namespace
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.userCustomData.deleteCustomData({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.userCustomData.deleteCustomData({});
 ```
 
 **Input**
@@ -13106,7 +13299,8 @@ Delete custom user data at a specific scope path
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.userCustomData.deleteUsersCustomDataScope({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.userCustomData.deleteUsersCustomDataScope({});
 ```
 
 **Input**
@@ -13174,7 +13368,8 @@ Retrieve custom data stored for a Canvas user
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.userCustomData.getUsersCustomDataScope({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.userCustomData.getUsersCustomDataScope({});
 ```
 
 **Input**
@@ -13245,7 +13440,8 @@ Create new user inbox labels in Canvas
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.userInboxLabels.createUserInboxLabel({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.userInboxLabels.createUserInboxLabel({});
 ```
 
 **Input**
@@ -13312,7 +13508,8 @@ Delete user inbox labels in Canvas
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.userInboxLabels.deleteUserInboxLabel({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.userInboxLabels.deleteUserInboxLabel({});
 ```
 
 **Input**
@@ -13380,7 +13577,8 @@ Modifies an existing Canvas user profile and settings
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.users.editUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.users.editUser({});
 ```
 
 **Input**
@@ -13448,7 +13646,8 @@ Retrieves a list of users for a specified Canvas account
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.users.getAllUsers({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.users.getAllUsers({});
 ```
 
 **Input**
@@ -13523,7 +13722,8 @@ Retrieves detailed information about the currently authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.users.getCurrentUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.users.getCurrentUser({});
 ```
 
 **Input**
@@ -13590,7 +13790,8 @@ Retrieve the custom color for a specific course or context
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.users.getCustomColor({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.users.getCustomColor({});
 ```
 
 **Input**
@@ -13655,7 +13856,8 @@ Retrieve all custom colors saved by a user in Canvas LMS
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.users.getCustomColors({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.users.getCustomColors({});
 ```
 
 **Input**
@@ -13719,7 +13921,8 @@ Retrieve all dashboard positions saved for a user
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.users.getDashboardPositions({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.users.getDashboardPositions({});
 ```
 
 **Input**
@@ -13783,7 +13986,8 @@ Retrieves detailed information for a single user in a Canvas course
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.users.getSingleUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.users.getSingleUser({});
 ```
 
 **Input**
@@ -13852,7 +14056,8 @@ Retrieve available avatar options for a Canvas user
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.users.getUserAvatars({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.users.getUserAvatars({});
 ```
 
 **Input**
@@ -13926,7 +14131,8 @@ Retrieves profile information for an existing Canvas user
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.users.getUserProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.users.getUserProfile({});
 ```
 
 **Input**
@@ -13996,7 +14202,8 @@ Create a new access token for a Canvas user
 **Risk:** `write`
 
 ```ts
-await corsair.canvas.api.userTokens.createUsersTokens({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.userTokens.createUsersTokens({});
 ```
 
 **Input**
@@ -14064,7 +14271,8 @@ Delete an access token for a Canvas user
 **Risk:** `destructive`
 
 ```ts
-await corsair.canvas.api.userTokens.deleteAccessToken({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.userTokens.deleteAccessToken({});
 ```
 
 **Input**
@@ -14132,7 +14340,8 @@ Retrieves detailed information about a specific access token
 **Risk:** `read`
 
 ```ts
-await corsair.canvas.api.userTokens.getUsersTokens({});
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.userTokens.getUsersTokens({});
 ```
 
 **Input**

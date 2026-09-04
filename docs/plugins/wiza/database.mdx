@@ -14,7 +14,8 @@ The Wiza plugin syncs data locally. Use `corsair.wiza.db.<entity>.search({ data,
 Path: `wiza.db.lists.search`
 
 ```ts
-const rows = await corsair.wiza.db.lists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.wiza.db.lists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `wiza.db.prospects.search`
 
 ```ts
-const rows = await corsair.wiza.db.prospects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.wiza.db.prospects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -73,7 +75,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `wiza.db.reveals.search`
 
 ```ts
-const rows = await corsair.wiza.db.reveals.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.wiza.db.reveals.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

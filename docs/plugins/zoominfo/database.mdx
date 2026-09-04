@@ -14,7 +14,8 @@ The ZoomInfo plugin syncs data locally. Use `corsair.zoominfo.db.<entity>.search
 Path: `zoominfo.db.companies.search`
 
 ```ts
-const rows = await corsair.zoominfo.db.companies.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoominfo.db.companies.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -50,7 +51,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zoominfo.db.contacts.search`
 
 ```ts
-const rows = await corsair.zoominfo.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoominfo.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -83,7 +85,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zoominfo.db.intentSignals.search`
 
 ```ts
-const rows = await corsair.zoominfo.db.intentSignals.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoominfo.db.intentSignals.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -113,7 +116,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zoominfo.db.locations.search`
 
 ```ts
-const rows = await corsair.zoominfo.db.locations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoominfo.db.locations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -147,7 +151,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zoominfo.db.newsArticles.search`
 
 ```ts
-const rows = await corsair.zoominfo.db.newsArticles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoominfo.db.newsArticles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -176,7 +181,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zoominfo.db.scoops.search`
 
 ```ts
-const rows = await corsair.zoominfo.db.scoops.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoominfo.db.scoops.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -204,7 +210,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `zoominfo.db.technologies.search`
 
 ```ts
-const rows = await corsair.zoominfo.db.technologies.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoominfo.db.technologies.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

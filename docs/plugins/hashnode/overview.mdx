@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { hashnode } from '@corsair-dev/hashnode';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		hashnode(),
 	],

@@ -14,7 +14,8 @@ The AsticaAi plugin syncs data locally. Use `corsair.asticaai.db.<entity>.search
 Path: `asticaai.db.audioTranscripts.search`
 
 ```ts
-const rows = await corsair.asticaai.db.audioTranscripts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asticaai.db.audioTranscripts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `asticaai.db.readTextResults.search`
 
 ```ts
-const rows = await corsair.asticaai.db.readTextResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asticaai.db.readTextResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

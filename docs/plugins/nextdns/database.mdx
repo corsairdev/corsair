@@ -14,7 +14,8 @@ The NextDNS plugin syncs data locally. Use `corsair.nextdns.db.<entity>.search({
 Path: `nextdns.db.profiles.search`
 
 ```ts
-const rows = await corsair.nextdns.db.profiles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.nextdns.db.profiles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { clientary } from '@corsair-dev/clientary';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		clientary(),
 	],

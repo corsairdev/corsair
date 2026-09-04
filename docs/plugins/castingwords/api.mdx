@@ -1,0 +1,418 @@
+---
+title: API
+description: "API reference for Castingwords: every `castingwords.api.*` operation with input and output types."
+---
+
+Every `castingwords.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Audiofile
+
+### get
+
+`audiofile.get`
+
+Get audiofile details including current state
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.castingwords.api.audiofile.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audiofileId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audiofile` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="audiofile full type">
+
+```ts
+{
+  id?: string | number,
+  statename?: string,
+  names?: string,
+  notes?: string,
+  originallink?: string,
+  title?: string,
+  duration?: string | number,
+  description?: string,
+  quality_stars?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoice
+
+### get
+
+`invoice.get`
+
+Get invoice details and line items
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.castingwords.api.invoice.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoiceId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `purchase_order` | `string \| number` | No | — |
+| `createtime` | `string` | No | — |
+| `paidtime` | `string` | No | — |
+| `total` | `string \| number` | No | — |
+| `items` | `object[]` | No | — |
+| `state` | `PAID \| SUBMITTED \| OPEN \| CREATED` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | number,
+  sku?: string,
+  quantity?: string | number,
+  price?: string | number,
+  audiofile?: string | number,
+  total?: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Order
+
+### create
+
+`order.create`
+
+Create a transcription order for public audio/video URLs (API4 order_url)
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.castingwords.api.order.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string \| string[]` | Yes | — |
+| `sku` | `TRANS14 \| TRANS2 \| TRANS6 \| TRANS7 \| EMSR02 \| DIFFQ2 \| TSTMP1 \| CAPTION1[]` | Yes | — |
+| `test` | `boolean` | No | — |
+| `notes` | `string` | No | — |
+| `names` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audiofiles` | `(string \| number)[]` | Yes | — |
+| `order` | `string \| number` | Yes | — |
+| `message` | `string` | No | — |
+| `hold` | `string` | No | — |
+
+
+
+---
+
+## Prepay Balance
+
+### get
+
+`prepayBalance.get`
+
+Get the current prepaid balance in USD
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.castingwords.api.prepayBalance.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `balance` | `number` | Yes | — |
+
+
+
+---
+
+## Refund
+
+### create
+
+`refund.create`
+
+Cancel and refund an audiofile before transcription work starts
+
+**Risk:** `destructive`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.castingwords.api.refund.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audiofileId` | `number \| string` | Yes | — |
+| `test` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+## Skus
+
+### list
+
+`skus.list`
+
+List documented CastingWords SKUs from Store API v4 (no live sku endpoint)
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.castingwords.api.skus.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skus` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="skus full type">
+
+```ts
+{
+  sku: string,
+  kind: order | upgrade,
+  description: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transcript
+
+### get
+
+`transcript.get`
+
+Get a completed transcript (txt, doc, rtf, html, srt, docx, tstxt, vtt)
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.castingwords.api.transcript.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audiofileId` | `number \| string` | Yes | — |
+| `extension` | `txt \| doc \| rtf \| html \| srt \| docx \| tstxt \| vtt` | Yes | — |
+| `test` | `boolean` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+## Upgrade
+
+### create
+
+`upgrade.create`
+
+Order upgrades for an audiofile (timestamps, captions, etc.)
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.castingwords.api.upgrade.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audiofileId` | `number \| string` | Yes | — |
+| `sku` | `DIFFQ2 \| TSTMP1 \| CAPTION1 \| EDIT01 \| UPGRD1 \| UPGRD2 \| UPGRD3[]` | Yes | — |
+| `test` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+## Webhook
+
+### get
+
+`webhook.get`
+
+Get the registered account webhook URL
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.castingwords.api.webhook.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `string \| ` | No | — |
+
+
+
+---
+
+### register
+
+`webhook.register`
+
+Register a webhook URL for CastingWords event notifications
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.castingwords.api.webhook.register({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `string \| ` | No | — |
+
+
+
+---
+
+### test
+
+`webhook.test`
+
+Request a test webhook POST for a documented event type
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.castingwords.api.webhook.test({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `TRANSCRIPT_COMPLETE \| DIFFICULT_AUDIO \| REFUND_ISSUED \| ORDER_ON_HOLD` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `string \| ` | No | — |
+
+
+
+---
+

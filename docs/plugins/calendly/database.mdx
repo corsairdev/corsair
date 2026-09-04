@@ -14,7 +14,8 @@ The Calendly plugin syncs data locally. Use `corsair.calendly.db.<entity>.search
 Path: `calendly.db.activityLogEntries.search`
 
 ```ts
-const rows = await corsair.calendly.db.activityLogEntries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.calendly.db.activityLogEntries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `calendly.db.eventTypes.search`
 
 ```ts
-const rows = await corsair.calendly.db.eventTypes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.calendly.db.eventTypes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -76,7 +78,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `calendly.db.groups.search`
 
 ```ts
-const rows = await corsair.calendly.db.groups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.calendly.db.groups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -107,7 +110,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `calendly.db.invitees.search`
 
 ```ts
-const rows = await corsair.calendly.db.invitees.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.calendly.db.invitees.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -137,7 +141,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `calendly.db.orgInvitations.search`
 
 ```ts
-const rows = await corsair.calendly.db.orgInvitations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.calendly.db.orgInvitations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -168,7 +173,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `calendly.db.orgMemberships.search`
 
 ```ts
-const rows = await corsair.calendly.db.orgMemberships.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.calendly.db.orgMemberships.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -199,7 +205,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `calendly.db.outgoingCommunications.search`
 
 ```ts
-const rows = await corsair.calendly.db.outgoingCommunications.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.calendly.db.outgoingCommunications.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -227,7 +234,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `calendly.db.routingForms.search`
 
 ```ts
-const rows = await corsair.calendly.db.routingForms.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.calendly.db.routingForms.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -256,7 +264,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `calendly.db.scheduledEvents.search`
 
 ```ts
-const rows = await corsair.calendly.db.scheduledEvents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.calendly.db.scheduledEvents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -286,7 +295,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `calendly.db.users.search`
 
 ```ts
-const rows = await corsair.calendly.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.calendly.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -318,7 +328,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `calendly.db.webhookSubscriptions.search`
 
 ```ts
-const rows = await corsair.calendly.db.webhookSubscriptions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.calendly.db.webhookSubscriptions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

@@ -20,7 +20,8 @@ List workplace activity log entries
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.activityLogs.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.activityLogs.list({});
 ```
 
 **Input**
@@ -76,7 +77,8 @@ Retrieve a single activity log entry
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.activityLogs.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.activityLogs.retrieve({});
 ```
 
 **Input**
@@ -137,7 +139,8 @@ Read information about the authenticated token
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.auth.me({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.auth.me({});
 ```
 
 **Input:** _empty object_
@@ -193,7 +196,8 @@ List change requests (Team/Enterprise plans only)
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.changeRequests.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.changeRequests.list({});
 ```
 
 **Input**
@@ -233,7 +237,8 @@ Retrieve a config log entry, including its secret diff
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.configLogs.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.configLogs.get({});
 ```
 
 **Input**
@@ -288,7 +293,8 @@ List a config's change-log entries
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.configLogs.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.configLogs.list({});
 ```
 
 **Input**
@@ -340,7 +346,8 @@ Roll a config back to a prior log entry's state
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.configLogs.rollback({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.configLogs.rollback({});
 ```
 
 **Input**
@@ -397,7 +404,8 @@ Clone a config into a new branch config
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.configs.clone({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.configs.clone({});
 ```
 
 **Input**
@@ -441,7 +449,8 @@ Create a branch config within an environment
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.configs.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.configs.create({});
 ```
 
 **Input**
@@ -485,7 +494,8 @@ Permanently delete a config and its secrets
 **Risk:** `destructive`
 
 ```ts
-await corsair.doppler.api.configs.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.configs.delete({});
 ```
 
 **Input**
@@ -516,7 +526,8 @@ Retrieve a config
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.configs.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.configs.get({});
 ```
 
 **Input**
@@ -559,7 +570,8 @@ List a project's configs
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.configs.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.configs.list({});
 ```
 
 **Input**
@@ -616,7 +628,8 @@ Lock a config so it cannot be renamed or deleted
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.configs.lock({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.configs.lock({});
 ```
 
 **Input**
@@ -659,7 +672,8 @@ Unlock a config so it can be renamed or deleted
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.configs.unlock({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.configs.unlock({});
 ```
 
 **Input**
@@ -702,7 +716,8 @@ Rename a config
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.configs.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.configs.update({});
 ```
 
 **Input**
@@ -748,7 +763,8 @@ Revoke a leased dynamic secret credential
 **Risk:** `destructive`
 
 ```ts
-await corsair.doppler.api.dynamicSecrets.revokeLease({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.dynamicSecrets.revokeLease({});
 ```
 
 **Input**
@@ -783,7 +799,8 @@ Create an environment within a project
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.environments.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.environments.create({});
 ```
 
 **Input**
@@ -822,7 +839,8 @@ Permanently delete an environment and its configs
 **Risk:** `destructive`
 
 ```ts
-await corsair.doppler.api.environments.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.environments.delete({});
 ```
 
 **Input**
@@ -853,7 +871,8 @@ Retrieve an environment
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.environments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.environments.get({});
 ```
 
 **Input**
@@ -890,7 +909,8 @@ List a project's environments
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.environments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.environments.list({});
 ```
 
 **Input**
@@ -932,7 +952,8 @@ Rename an environment's display name or slug
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.environments.rename({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.environments.rename({});
 ```
 
 **Input**
@@ -974,7 +995,8 @@ Remove a member from a workplace group
 **Risk:** `destructive`
 
 ```ts
-await corsair.doppler.api.groups.deleteMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.groups.deleteMember({});
 ```
 
 **Input**
@@ -1008,7 +1030,8 @@ List third-party integrations
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.integrations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.integrations.list({});
 ```
 
 **Input:** _empty object_
@@ -1040,7 +1063,8 @@ List pending workplace invites
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.invites.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.invites.list({});
 ```
 
 **Input**
@@ -1084,7 +1108,8 @@ Remove a member from a project
 **Risk:** `destructive`
 
 ```ts
-await corsair.doppler.api.projectMembers.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.projectMembers.delete({});
 ```
 
 **Input**
@@ -1116,7 +1141,8 @@ Retrieve a project member
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.projectMembers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.projectMembers.get({});
 ```
 
 **Input**
@@ -1161,7 +1187,8 @@ List a project's members
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.projectMembers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.projectMembers.list({});
 ```
 
 **Input**
@@ -1211,7 +1238,8 @@ Retrieve a project-level role
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.projectRoles.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.projectRoles.get({});
 ```
 
 **Input**
@@ -1245,7 +1273,8 @@ List project-level roles
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.projectRoles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.projectRoles.list({});
 ```
 
 **Input:** _empty object_
@@ -1280,7 +1309,8 @@ List permissions grantable to a project-level role
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.projectRoles.listPermissions({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.projectRoles.listPermissions({});
 ```
 
 **Input:** _empty object_
@@ -1302,7 +1332,8 @@ Create a project
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.projects.create({});
 ```
 
 **Input**
@@ -1337,7 +1368,8 @@ Permanently delete a project and everything in it
 **Risk:** `destructive`
 
 ```ts
-await corsair.doppler.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.projects.delete({});
 ```
 
 **Input**
@@ -1367,7 +1399,8 @@ Retrieve a project
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.projects.get({});
 ```
 
 **Input**
@@ -1401,7 +1434,8 @@ List projects
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.projects.list({});
 ```
 
 **Input**
@@ -1448,7 +1482,8 @@ Update a project's name or description
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.projects.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.projects.update({});
 ```
 
 **Input**
@@ -1486,7 +1521,8 @@ Delete a secret
 **Risk:** `destructive`
 
 ```ts
-await corsair.doppler.api.secrets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.secrets.delete({});
 ```
 
 **Input**
@@ -1518,7 +1554,8 @@ Download a config's secrets in a given format
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.secrets.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.secrets.download({});
 ```
 
 **Input**
@@ -1559,7 +1596,8 @@ Retrieve a single secret's value
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.secrets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.secrets.get({});
 ```
 
 **Input**
@@ -1616,7 +1654,8 @@ List a config's secrets, values included
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.secrets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.secrets.list({});
 ```
 
 **Input**
@@ -1654,7 +1693,8 @@ List a config's secret names, without values
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.secrets.names({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.secrets.names({});
 ```
 
 **Input**
@@ -1682,7 +1722,8 @@ Bulk-set (or delete, via null) secrets in a config
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.secrets.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.secrets.update({});
 ```
 
 **Input**
@@ -1729,7 +1770,8 @@ Set a secret's note (project-scoped route)
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.secrets.updateNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.secrets.updateNote({});
 ```
 
 **Input**
@@ -1762,7 +1804,8 @@ Set a secret's note (config-scoped route)
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.secrets.updateNoteViaConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.secrets.updateNoteViaConfig({});
 ```
 
 **Input**
@@ -1798,7 +1841,8 @@ Create a service token for a config
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.serviceTokens.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.serviceTokens.create({});
 ```
 
 **Input**
@@ -1842,7 +1886,8 @@ Revoke a service token
 **Risk:** `destructive`
 
 ```ts
-await corsair.doppler.api.serviceTokens.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.serviceTokens.delete({});
 ```
 
 **Input**
@@ -1874,7 +1919,8 @@ List a config's service tokens
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.serviceTokens.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.serviceTokens.list({});
 ```
 
 **Input**
@@ -1923,7 +1969,8 @@ Create a Doppler Share link from a caller-encrypted payload (zero-knowledge)
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.share.createEncrypted({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.share.createEncrypted({});
 ```
 
 **Input**
@@ -1960,7 +2007,8 @@ Create a Doppler Share link from a plaintext secret
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.share.createPlain({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.share.createPlain({});
 ```
 
 **Input**
@@ -1996,7 +2044,8 @@ Create a webhook
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.webhooks.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.webhooks.add({});
 ```
 
 **Input**
@@ -2053,7 +2102,8 @@ Permanently delete a webhook
 **Risk:** `destructive`
 
 ```ts
-await corsair.doppler.api.webhooks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.webhooks.delete({});
 ```
 
 **Input**
@@ -2084,7 +2134,8 @@ Disable a webhook
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.webhooks.disable({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.webhooks.disable({});
 ```
 
 **Input**
@@ -2122,7 +2173,8 @@ Enable a webhook
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.webhooks.enable({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.webhooks.enable({});
 ```
 
 **Input**
@@ -2160,7 +2212,8 @@ Retrieve a webhook
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.webhooks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.webhooks.get({});
 ```
 
 **Input**
@@ -2198,7 +2251,8 @@ List webhooks
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.webhooks.list({});
 ```
 
 **Input**
@@ -2241,7 +2295,8 @@ Update a webhook
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.webhooks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.webhooks.update({});
 ```
 
 **Input**
@@ -2302,7 +2357,8 @@ Retrieve the workplace
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.workplace.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.workplace.get({});
 ```
 
 **Input:** _empty object_
@@ -2330,7 +2386,8 @@ Update the workplace's name, billing email, or security email
 **Risk:** `write`
 
 ```ts
-await corsair.doppler.api.workplace.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.workplace.update({});
 ```
 
 **Input**
@@ -2367,7 +2424,8 @@ Retrieve a workplace role
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.workplaceRoles.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.workplaceRoles.get({});
 ```
 
 **Input**
@@ -2398,7 +2456,8 @@ List workplace roles
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.workplaceRoles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.workplaceRoles.list({});
 ```
 
 **Input:** _empty object_
@@ -2430,7 +2489,8 @@ List permissions grantable to a workplace role
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.workplaceRoles.listPermissions({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.workplaceRoles.listPermissions({});
 ```
 
 **Input:** _empty object_
@@ -2452,7 +2512,8 @@ Retrieve a workplace user by id
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.workplaceUsers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.workplaceUsers.get({});
 ```
 
 **Input**
@@ -2498,7 +2559,8 @@ List users in the workplace
 **Risk:** `read`
 
 ```ts
-await corsair.doppler.api.workplaceUsers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.doppler.api.workplaceUsers.list({});
 ```
 
 **Input**

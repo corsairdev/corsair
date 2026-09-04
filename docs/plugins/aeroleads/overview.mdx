@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { aeroleads } from '@corsair-dev/aeroleads';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		aeroleads(),
 	],

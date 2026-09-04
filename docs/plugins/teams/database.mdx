@@ -14,7 +14,8 @@ The Microsoft Teams plugin syncs data locally. Use `corsair.teams.db.<entity>.se
 Path: `teams.db.channels.search`
 
 ```ts
-const rows = await corsair.teams.db.channels.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.teams.db.channels.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -46,7 +47,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `teams.db.chats.search`
 
 ```ts
-const rows = await corsair.teams.db.chats.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.teams.db.chats.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -76,7 +78,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `teams.db.members.search`
 
 ```ts
-const rows = await corsair.teams.db.members.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.teams.db.members.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -104,7 +107,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `teams.db.messages.search`
 
 ```ts
-const rows = await corsair.teams.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.teams.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -143,7 +147,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `teams.db.teams.search`
 
 ```ts
-const rows = await corsair.teams.db.teams.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.teams.db.teams.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

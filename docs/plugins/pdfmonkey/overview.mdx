@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { pdfmonkey } from '@corsair-dev/pdfmonkey';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		pdfmonkey(),
 	],

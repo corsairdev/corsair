@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { backendless } from '@corsair-dev/backendless';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		backendless(),
 	],

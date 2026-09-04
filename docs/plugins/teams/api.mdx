@@ -20,7 +20,8 @@ Create a new channel in a team
 **Risk:** `write`
 
 ```ts
-await corsair.teams.api.channels.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.channels.create({});
 ```
 
 **Input**
@@ -61,7 +62,8 @@ Delete a channel [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.teams.api.channels.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.channels.delete({});
 ```
 
 **Input**
@@ -87,7 +89,8 @@ Get details of a specific channel
 **Risk:** `read`
 
 ```ts
-await corsair.teams.api.channels.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.channels.get({});
 ```
 
 **Input**
@@ -125,7 +128,8 @@ List channels in a team
 **Risk:** `read`
 
 ```ts
-await corsair.teams.api.channels.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.channels.list({});
 ```
 
 **Input**
@@ -176,7 +180,8 @@ Update a channel
 **Risk:** `write`
 
 ```ts
-await corsair.teams.api.channels.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.channels.update({});
 ```
 
 **Input**
@@ -207,7 +212,8 @@ Create a new chat
 **Risk:** `write`
 
 ```ts
-await corsair.teams.api.chats.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.chats.create({});
 ```
 
 **Input**
@@ -257,7 +263,8 @@ Get details of a specific chat
 **Risk:** `read`
 
 ```ts
-await corsair.teams.api.chats.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.chats.get({});
 ```
 
 **Input**
@@ -293,7 +300,8 @@ List chats for the current user
 **Risk:** `read`
 
 ```ts
-await corsair.teams.api.chats.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.chats.list({});
 ```
 
 **Input**
@@ -343,7 +351,8 @@ List messages in a chat
 **Risk:** `read`
 
 ```ts
-await corsair.teams.api.chats.listMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.chats.listMessages({});
 ```
 
 **Input**
@@ -425,7 +434,8 @@ Send a message in a chat
 **Risk:** `write`
 
 ```ts
-await corsair.teams.api.chats.sendMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.chats.sendMessage({});
 ```
 
 **Input**
@@ -552,7 +562,8 @@ Add a member to a team
 **Risk:** `write`
 
 ```ts
-await corsair.teams.api.members.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.members.add({});
 ```
 
 **Input**
@@ -590,7 +601,8 @@ Get a specific team member
 **Risk:** `read`
 
 ```ts
-await corsair.teams.api.members.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.members.get({});
 ```
 
 **Input**
@@ -627,7 +639,8 @@ List members of a team
 **Risk:** `read`
 
 ```ts
-await corsair.teams.api.members.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.members.list({});
 ```
 
 **Input**
@@ -677,7 +690,8 @@ Remove a member from a team [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.teams.api.members.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.members.remove({});
 ```
 
 **Input**
@@ -705,7 +719,8 @@ Delete a channel message [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.teams.api.messages.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.messages.delete({});
 ```
 
 **Input**
@@ -732,7 +747,8 @@ Get a specific channel message
 **Risk:** `read`
 
 ```ts
-await corsair.teams.api.messages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.messages.get({});
 ```
 
 **Input**
@@ -845,7 +861,8 @@ List messages in a channel
 **Risk:** `read`
 
 ```ts
-await corsair.teams.api.messages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.messages.list({});
 ```
 
 **Input**
@@ -928,7 +945,8 @@ List replies to a channel message
 **Risk:** `read`
 
 ```ts
-await corsair.teams.api.messages.listReplies({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.messages.listReplies({});
 ```
 
 **Input**
@@ -1011,7 +1029,8 @@ Reply to a message in a channel
 **Risk:** `write`
 
 ```ts
-await corsair.teams.api.messages.reply({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.messages.reply({});
 ```
 
 **Input**
@@ -1138,7 +1157,8 @@ Send a message to a channel
 **Risk:** `write`
 
 ```ts
-await corsair.teams.api.messages.send({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.messages.send({});
 ```
 
 **Input**
@@ -1267,7 +1287,8 @@ Create a new team
 **Risk:** `write`
 
 ```ts
-await corsair.teams.api.teams.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.teams.create({});
 ```
 
 **Input**
@@ -1355,7 +1376,8 @@ Delete a team [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.teams.api.teams.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.teams.delete({});
 ```
 
 **Input**
@@ -1380,7 +1402,8 @@ Get details of a specific team
 **Risk:** `read`
 
 ```ts
-await corsair.teams.api.teams.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.teams.get({});
 ```
 
 **Input**
@@ -1472,7 +1495,8 @@ List teams the current user is a member of
 **Risk:** `read`
 
 ```ts
-await corsair.teams.api.teams.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.teams.list({});
 ```
 
 **Input**
@@ -1551,7 +1575,8 @@ Update team settings
 **Risk:** `write`
 
 ```ts
-await corsair.teams.api.teams.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.teams.api.teams.update({});
 ```
 
 **Input**

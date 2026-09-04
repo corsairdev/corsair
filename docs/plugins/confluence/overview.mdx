@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { confluence } from '@corsair-dev/confluence';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		confluence(),
 	],

@@ -14,7 +14,8 @@ The Webvizio plugin syncs data locally. Use `corsair.webvizio.db.<entity>.search
 Path: `webvizio.db.projects.search`
 
 ```ts
-const rows = await corsair.webvizio.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.webvizio.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `webvizio.db.webhooks.search`
 
 ```ts
-const rows = await corsair.webvizio.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.webvizio.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

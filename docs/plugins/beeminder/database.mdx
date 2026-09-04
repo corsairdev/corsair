@@ -14,7 +14,8 @@ The Beeminder plugin syncs data locally. Use `corsair.beeminder.db.<entity>.sear
 Path: `beeminder.db.charges.search`
 
 ```ts
-const rows = await corsair.beeminder.db.charges.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.beeminder.db.charges.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `beeminder.db.goals.search`
 
 ```ts
-const rows = await corsair.beeminder.db.goals.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.beeminder.db.goals.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -132,7 +134,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `beeminder.db.user.search`
 
 ```ts
-const rows = await corsair.beeminder.db.user.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.beeminder.db.user.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

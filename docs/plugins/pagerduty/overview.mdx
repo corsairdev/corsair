@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { pagerduty } from '@corsair-dev/pagerduty';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		pagerduty(),
 	],

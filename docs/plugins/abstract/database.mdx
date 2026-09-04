@@ -14,7 +14,8 @@ The Abstract plugin syncs data locally. Use `corsair.abstract.db.<entity>.search
 Path: `abstract.db.emailReputations.search`
 
 ```ts
-const rows = await corsair.abstract.db.emailReputations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.abstract.db.emailReputations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -45,7 +46,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `abstract.db.emailValidations.search`
 
 ```ts
-const rows = await corsair.abstract.db.emailValidations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.abstract.db.emailValidations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -79,7 +81,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `abstract.db.ibanValidations.search`
 
 ```ts
-const rows = await corsair.abstract.db.ibanValidations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.abstract.db.ibanValidations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -104,7 +107,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `abstract.db.vatCategories.search`
 
 ```ts
-const rows = await corsair.abstract.db.vatCategories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.abstract.db.vatCategories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

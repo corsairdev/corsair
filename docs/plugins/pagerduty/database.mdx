@@ -14,7 +14,8 @@ The Pagerduty plugin syncs data locally. Use `corsair.pagerduty.db.<entity>.sear
 Path: `pagerduty.db.incidents.search`
 
 ```ts
-const rows = await corsair.pagerduty.db.incidents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.pagerduty.db.incidents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

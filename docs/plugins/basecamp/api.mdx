@@ -20,7 +20,8 @@ Tool to retrieve a specific question answer by ID from a Basecamp project. Use w
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.automaticCheckIns.getBucketsQuestionAnswers({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.automaticCheckIns.getBucketsQuestionAnswers({});
 ```
 
 **Input**
@@ -155,7 +156,8 @@ Tool to retrieve a specific questionnaire (automatic check-ins) from a Basecamp 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.automaticCheckIns.getBucketsQuestionnaires({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.automaticCheckIns.getBucketsQuestionnaires({});
 ```
 
 **Input**
@@ -247,7 +249,8 @@ Tool to retrieve a paginated list of questions from a questionnaire in a Basecam
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.automaticCheckIns.getBucketsQuestionnairesQuestions({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.automaticCheckIns.getBucketsQuestionnairesQuestions({});
 ```
 
 **Input**
@@ -354,7 +357,8 @@ Tool to retrieve a specific check-in question by ID from a Basecamp project. Use
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.automaticCheckIns.getBucketsQuestions({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.automaticCheckIns.getBucketsQuestions({});
 ```
 
 **Input**
@@ -484,7 +488,8 @@ Tool to get all questions in a questionnaire from a Basecamp project. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.automaticCheckIns.listQuestions({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.automaticCheckIns.listQuestions({});
 ```
 
 **Input**
@@ -593,7 +598,8 @@ Tool to create a new chatbot in a Basecamp Campfire chat. Use when you need to a
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.createChatbot({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.createChatbot({});
 ```
 
 **Input**
@@ -633,7 +639,8 @@ Tool to post a message as a chatbot to a Basecamp Campfire. Use when you need to
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.createChatbotLine({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.createChatbotLine({});
 ```
 
 **Input**
@@ -662,7 +669,8 @@ Tool to delete a Campfire line from a chat conversation. Use when removing a spe
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.deleteCampfireLine({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.deleteCampfireLine({});
 ```
 
 **Input**
@@ -688,7 +696,8 @@ Tool to delete a chatbot from a Campfire chat. Use when removing a chatbot from 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.deleteChatbot({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.deleteChatbot({});
 ```
 
 **Input**
@@ -715,7 +724,8 @@ Tool to retrieve all chatbot integrations from a Campfire chat. Use when you nee
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.getBucketsChatsIntegrations({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.getBucketsChatsIntegrations({});
 ```
 
 **Input**
@@ -759,7 +769,8 @@ Tool to retrieve a paginated list of Campfire lines from a specific chat. Use wh
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.getBucketsChatsLines({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.getBucketsChatsLines({});
 ```
 
 **Input**
@@ -864,7 +875,8 @@ Tool to retrieve a specific Campfire (chat room) by ID from a Basecamp project. 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.getCampfire({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.getCampfire({});
 ```
 
 **Input**
@@ -958,7 +970,8 @@ Tool to retrieve a specific Campfire line by ID from a Basecamp project. Use whe
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.getCampfireLine({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.getCampfireLine({});
 ```
 
 **Input**
@@ -1085,7 +1098,8 @@ Tool to get a specific chatbot by ID from a Basecamp Campfire chat. Use when you
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.getChatbot({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.getChatbot({});
 ```
 
 **Input**
@@ -1124,7 +1138,8 @@ Tool to retrieve a paginated list of all active Campfires (chats) visible to the
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.getChats({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.getChats({});
 ```
 
 **Input**
@@ -1208,7 +1223,8 @@ Tool to get all lines (messages) in a Campfire chat. Use when you need to fetch 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.listCampfireLines({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.listCampfireLines({});
 ```
 
 **Input**
@@ -1313,7 +1329,8 @@ Tool to get all chatbots for a chat/campfire. Use when you need to retrieve the 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.listChatbots({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.listChatbots({});
 ```
 
 **Input**
@@ -1357,7 +1374,8 @@ Tool to create a line in a Basecamp Campfire chat. Use when you need to post a m
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.postBucketsChatsLines({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.postBucketsChatsLines({});
 ```
 
 **Input**
@@ -1485,7 +1503,8 @@ Tool to create a line in a Basecamp Campfire chat using a chatbot key. Use when 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.postIntegrationsChatbotKeyBucketsChatsLines({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.postIntegrationsChatbotKeyBucketsChatsLines({});
 ```
 
 **Input**
@@ -1514,7 +1533,8 @@ Tool to update an existing chatbot integration in a Basecamp Campfire chat. Use 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.putBucketsChatsIntegrations({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.putBucketsChatsIntegrations({});
 ```
 
 **Input**
@@ -1555,7 +1575,8 @@ Tool to update a chatbot's service name or command URL in a Basecamp Campfire ch
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.campfireAndChatbots.updateChatbot({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.campfireAndChatbots.updateChatbot({});
 ```
 
 **Input**
@@ -1598,7 +1619,8 @@ Tool to create a new card in a column of a Basecamp card table. Use when you nee
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.createCard({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.createCard({});
 ```
 
 **Input**
@@ -1939,7 +1961,8 @@ Tool to create a step within a card in a Basecamp card table. Use when you need 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.createCardStep({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.createCardStep({});
 ```
 
 **Input**
@@ -2125,7 +2148,8 @@ Tool to remove the on-hold section from a card table column. Use when you need t
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.basecamp.api.cardTables.deleteBucketsCardTablesColumnsOnHold({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.deleteBucketsCardTablesColumnsOnHold({});
 ```
 
 **Input**
@@ -2292,7 +2316,8 @@ Tool to retrieve a paginated list of cards from a card table column. Use when yo
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.cardTables.getBucketsCardTablesListsCards({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.getBucketsCardTablesListsCards({});
 ```
 
 **Input**
@@ -2515,7 +2540,8 @@ Tool to get a specific card by ID from a card table. Use when you need to retrie
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.cardTables.getCard({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.getCard({});
 ```
 
 **Input**
@@ -2852,7 +2878,8 @@ Tool to retrieve a card table (Kanban board) for a project. Use when you need to
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.cardTables.getCardTable({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.getCardTable({});
 ```
 
 **Input**
@@ -3117,7 +3144,8 @@ Tool to get a specific column from a card table within a Basecamp project. Use w
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.cardTables.getCardTableColumn({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.getCardTableColumn({});
 ```
 
 **Input**
@@ -3283,7 +3311,8 @@ Tool to get all cards in a column from a Basecamp card table. Use when you need 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.cardTables.listCards({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.listCards({});
 ```
 
 **Input**
@@ -3506,7 +3535,8 @@ Tool to move a card to a different column within a Basecamp card table. Use when
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.moveCard({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.moveCard({});
 ```
 
 **Input**
@@ -3533,7 +3563,8 @@ Tool to reorder columns within a Basecamp card table. Use when you need to chang
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.moveCardTableColumn({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.moveCardTableColumn({});
 ```
 
 **Input**
@@ -3561,7 +3592,8 @@ Tool to move a card to a different column within a Basecamp card table. Use when
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.postBucketsCardTablesCardsMoves({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.postBucketsCardTablesCardsMoves({});
 ```
 
 **Input**
@@ -3588,7 +3620,8 @@ Tool to reposition a step within a card in a Basecamp card table. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.postBucketsCardTablesCardsPositions({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.postBucketsCardTablesCardsPositions({});
 ```
 
 **Input**
@@ -3615,7 +3648,8 @@ Tool to create a column within a Basecamp card table. Use when you need to add a
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.postBucketsCardTablesColumns({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.postBucketsCardTablesColumns({});
 ```
 
 **Input**
@@ -3783,7 +3817,8 @@ Tool to create an on-hold section in a card table column. Use when you need to a
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.postBucketsCardTablesColumnsOnHold({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.postBucketsCardTablesColumnsOnHold({});
 ```
 
 **Input**
@@ -3950,7 +3985,8 @@ Tool to reposition a column within a Basecamp card table. Use when you need to c
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.postBucketsCardTablesMoves({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.postBucketsCardTablesMoves({});
 ```
 
 **Input**
@@ -3978,7 +4014,8 @@ Tool to update an existing card in a Basecamp card table. Use when you need to m
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.putBucketsCardTablesCards({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.putBucketsCardTablesCards({});
 ```
 
 **Input**
@@ -4319,7 +4356,8 @@ Tool to update a card table column in a Basecamp project. Use when you need to m
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.putBucketsCardTablesColumns({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.putBucketsCardTablesColumns({});
 ```
 
 **Input**
@@ -4487,7 +4525,8 @@ Tool to update a card table column's visual color designation in a Basecamp proj
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.putBucketsCardTablesColumnsColor({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.putBucketsCardTablesColumnsColor({});
 ```
 
 **Input**
@@ -4655,7 +4694,8 @@ Tool to update an existing card table step in Basecamp. Use when you need to mod
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.putBucketsCardTablesSteps({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.putBucketsCardTablesSteps({});
 ```
 
 **Input**
@@ -4841,7 +4881,8 @@ Tool to mark a card table step as completed or uncompleted in Basecamp. Use when
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.putBucketsCardTablesStepsCompletions({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.putBucketsCardTablesStepsCompletions({});
 ```
 
 **Input**
@@ -5025,7 +5066,8 @@ Tool to change the position of a step within a card. Use when you need to reorde
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.repositionCardStep({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.repositionCardStep({});
 ```
 
 **Input**
@@ -5052,7 +5094,8 @@ Tool to stop watching a card table column. Use when you want to unsubscribe from
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.unwatchCardTableColumn({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.unwatchCardTableColumn({});
 ```
 
 **Input**
@@ -5077,7 +5120,8 @@ Tool to update a card's details in a Basecamp card table. Use when you need to m
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.updateCard({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.updateCard({});
 ```
 
 **Input**
@@ -5418,7 +5462,8 @@ Tool to update a card table column's properties in a Basecamp project. Use when 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.updateCardTableColumn({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.updateCardTableColumn({});
 ```
 
 **Input**
@@ -5586,7 +5631,8 @@ Tool to start watching a card table column in a Basecamp project. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.cardTables.watchCardTableColumn({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.cardTables.watchCardTableColumn({});
 ```
 
 **Input**
@@ -5613,7 +5659,8 @@ Tool to create a new document in a Basecamp vault. Use when you need to publish 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.createDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.createDocument({});
 ```
 
 **Input**
@@ -5753,7 +5800,8 @@ Tool to create a new upload (file) in a Basecamp vault. Use when you need to cre
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.createUpload({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.createUpload({});
 ```
 
 **Input**
@@ -5899,7 +5947,8 @@ Tool to create a new vault (folder) within an existing parent vault in a Basecam
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.createVault({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.createVault({});
 ```
 
 **Input**
@@ -6015,7 +6064,8 @@ Tool to retrieve a specific upload by ID from a Basecamp project vault. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.getBucketsUploads({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.getBucketsUploads({});
 ```
 
 **Input**
@@ -6156,7 +6206,8 @@ Tool to retrieve a specific vault from a Basecamp project. Use when you need det
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.getBucketsVaults({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.getBucketsVaults({});
 ```
 
 **Input**
@@ -6271,7 +6322,8 @@ Tool to retrieve a paginated list of active documents from a vault in a Basecamp
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsDocuments({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.getBucketsVaultsDocuments({});
 ```
 
 **Input**
@@ -6383,7 +6435,8 @@ Tool to retrieve a paginated list of active uploads from a vault in a Basecamp p
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsUploads({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.getBucketsVaultsUploads({});
 ```
 
 **Input**
@@ -6501,7 +6554,8 @@ Tool to retrieve a paginated list of vaults nested within a parent vault in a Ba
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsVaults({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.getBucketsVaultsVaults({});
 ```
 
 **Input**
@@ -6600,7 +6654,8 @@ Tool to get a specific document by ID from a Basecamp project bucket. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.getDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.getDocument({});
 ```
 
 **Input**
@@ -6735,7 +6790,8 @@ Tool to get a specific upload by ID from a Basecamp project. Use when you need t
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.getUpload({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.getUpload({});
 ```
 
 **Input**
@@ -6876,7 +6932,8 @@ Tool to retrieve a specific vault by ID from a Basecamp project. Use when you ne
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.getVault({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.getVault({});
 ```
 
 **Input**
@@ -6991,7 +7048,8 @@ Tool to retrieve all active uploads from a vault in a Basecamp project. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.listUploads({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.listUploads({});
 ```
 
 **Input**
@@ -7109,7 +7167,8 @@ Tool to retrieve all vaults (folders) nested within a parent vault in a Basecamp
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.listVaults({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.listVaults({});
 ```
 
 **Input**
@@ -7208,7 +7267,8 @@ Tool to upload a file to Basecamp system. Use when you need to upload a file to 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.postAttachments({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.postAttachments({});
 ```
 
 **Input**
@@ -7239,7 +7299,8 @@ Tool to update an existing document in a Basecamp project bucket. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.putBucketsDocuments({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.putBucketsDocuments({});
 ```
 
 **Input**
@@ -7376,7 +7437,8 @@ Tool to update an existing upload in a Basecamp project bucket. Use when you nee
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.putBucketsUploads({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.putBucketsUploads({});
 ```
 
 **Input**
@@ -7519,7 +7581,8 @@ Tool to update a vault's title in a Basecamp project. Use when you need to renam
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.putBucketsVaults({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.putBucketsVaults({});
 ```
 
 **Input**
@@ -7635,7 +7698,8 @@ Tool to update an existing document's title or content in a Basecamp project. Us
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.updateDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.updateDocument({});
 ```
 
 **Input**
@@ -7772,7 +7836,8 @@ Tool to update an upload's description or filename in a Basecamp bucket. Use whe
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.updateUpload({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.updateUpload({});
 ```
 
 **Input**
@@ -7915,7 +7980,8 @@ Tool to update a vault's title in a Basecamp project. Use when you need to renam
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.documentsAndFiles.updateVault({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.documentsAndFiles.updateVault({});
 ```
 
 **Input**
@@ -8033,7 +8099,8 @@ Tool to retrieve a paginated list of active email forwards from a project's inbo
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.inboxesAndForwards.getBucketsInboxesForwards({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.inboxesAndForwards.getBucketsInboxesForwards({});
 ```
 
 **Input**
@@ -8146,7 +8213,8 @@ Tool to get the inbox (email forwards) for a Basecamp project. Use when you need
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.inboxesAndForwards.getInbox({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.inboxesAndForwards.getInbox({});
 ```
 
 **Input**
@@ -8238,7 +8306,8 @@ Tool to get all email forwards in an inbox. Use when you need to retrieve forwar
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.inboxesAndForwards.listForwards({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.inboxesAndForwards.listForwards({});
 ```
 
 **Input**
@@ -8353,7 +8422,8 @@ Tool to delete a message type from a Basecamp project. Use when removing a custo
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.basecamp.api.messages.deleteMessageType({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.deleteMessageType({});
 ```
 
 **Input**
@@ -8379,7 +8449,8 @@ Tool to retrieve all message types (categories) from a Basecamp project. Use whe
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.messages.getBucketsCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.getBucketsCategories({});
 ```
 
 **Input**
@@ -8419,7 +8490,8 @@ Tool to retrieve a paginated list of active messages from a message board in a B
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.messages.getBucketsMessageBoardsMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.getBucketsMessageBoardsMessages({});
 ```
 
 **Input**
@@ -8540,7 +8612,8 @@ Tool to retrieve a specific message by ID from a Basecamp project message board.
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.messages.getMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.getMessage({});
 ```
 
 **Input**
@@ -8689,7 +8762,8 @@ Tool to get the message board for a project. Use when you need to retrieve detai
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.messages.getMessageBoard({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.getMessageBoard({});
 ```
 
 **Input**
@@ -8782,7 +8856,8 @@ Tool to retrieve a specific message type by ID from a Basecamp project. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.messages.getMessageType({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.getMessageType({});
 ```
 
 **Input**
@@ -8817,7 +8892,8 @@ Tool to retrieve all message types in a Basecamp project. Use when you need to l
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.messages.listMessageTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.listMessageTypes({});
 ```
 
 **Input**
@@ -8857,7 +8933,8 @@ Tool to pin a message to the top of the message board. Use when you need to feat
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.messages.pinMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.pinMessage({});
 ```
 
 **Input**
@@ -8882,7 +8959,8 @@ Tool to create a new message type (category) in a Basecamp project. Use when you
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.messages.postBucketsCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.postBucketsCategories({});
 ```
 
 **Input**
@@ -8918,7 +8996,8 @@ Tool to publish a message to a Basecamp message board within a project. Use when
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.messages.postBucketsMessageBoardsMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.postBucketsMessageBoardsMessages({});
 ```
 
 **Input**
@@ -9073,7 +9152,8 @@ Tool to update an existing message type (category) in a Basecamp project. Use wh
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.messages.putBucketsCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.putBucketsCategories({});
 ```
 
 **Input**
@@ -9110,7 +9190,8 @@ Tool to update a message's subject, content, or category in a Basecamp project. 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.messages.putBucketsMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.putBucketsMessages({});
 ```
 
 **Input**
@@ -9263,7 +9344,8 @@ Tool to unpin a message from the message board. Use when you need to remove the 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.messages.unpinMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.unpinMessage({});
 ```
 
 **Input**
@@ -9288,7 +9370,8 @@ Tool to update an existing message type in a Basecamp project. Use when you need
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.messages.updateMessageType({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.messages.updateMessageType({});
 ```
 
 **Input**
@@ -9327,7 +9410,8 @@ Tool to retrieve all people on this Basecamp account who can be pinged. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.peopleAndAccess.getCirclesPeople({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.peopleAndAccess.getCirclesPeople({});
 ```
 
 **Input:** _empty object_
@@ -9383,7 +9467,8 @@ Tool to retrieve the current user's personal info including profile details, per
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.peopleAndAccess.getMyProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.peopleAndAccess.getMyProfile({});
 ```
 
 **Input:** _empty object_
@@ -9442,7 +9527,8 @@ Tool to retrieve all people visible to the current user in the Basecamp account.
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.peopleAndAccess.getPeople({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.peopleAndAccess.getPeople({});
 ```
 
 **Input**
@@ -9503,7 +9589,8 @@ Tool to retrieve the profile for a specific user by their ID. Use when you need 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.peopleAndAccess.getPeopleByPersonId({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.peopleAndAccess.getPeopleByPersonId({});
 ```
 
 **Input**
@@ -9567,7 +9654,8 @@ Tool to retrieve a specific person's profile by their ID. Use when you need deta
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.peopleAndAccess.getPerson({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.peopleAndAccess.getPerson({});
 ```
 
 **Input**
@@ -9631,7 +9719,8 @@ Tool to retrieve all active people assigned to a Basecamp project. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.peopleAndAccess.getProjectsPeople({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.peopleAndAccess.getProjectsPeople({});
 ```
 
 **Input**
@@ -9693,7 +9782,8 @@ Tool to get all people on a specific Basecamp project. Use when you need to retr
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.peopleAndAccess.listProjectPeople({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.peopleAndAccess.listProjectPeople({});
 ```
 
 **Input**
@@ -9755,7 +9845,8 @@ Tool to grant or revoke project access for users in Basecamp. Use when you need 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.peopleAndAccess.putProjectsPeopleUsers({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.peopleAndAccess.putProjectsPeopleUsers({});
 ```
 
 **Input**
@@ -9875,7 +9966,8 @@ Tool to create a new project from a Basecamp template asynchronously. Use when y
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.createProjectConstruction({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.createProjectConstruction({});
 ```
 
 **Input**
@@ -9962,7 +10054,8 @@ Tool to retrieve a specific project by its ID with complete details. Use when yo
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.getProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.getProject({});
 ```
 
 **Input**
@@ -10045,7 +10138,8 @@ Tool to retrieve a paginated list of projects visible to the current user, sorte
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.getProjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.getProjects({});
 ```
 
 **Input**
@@ -10112,7 +10206,8 @@ Tool to retrieve a single project by its ID with full details including dock too
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.getProjectsByProjectId({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.getProjectsByProjectId({});
 ```
 
 **Input**
@@ -10195,7 +10290,8 @@ Tool to retrieve a paginated list of active templates visible to the current use
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.getTemplates({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.getTemplates({});
 ```
 
 **Input**
@@ -10248,7 +10344,8 @@ Tool to retrieve a single template by its ID with full details including dock to
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.getTemplatesByTemplateId({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.getTemplatesByTemplateId({});
 ```
 
 **Input**
@@ -10303,7 +10400,8 @@ Tool to retrieve the status of a project construction from a template. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.getTemplatesProjectConstructions({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.getTemplatesProjectConstructions({});
 ```
 
 **Input**
@@ -10378,7 +10476,8 @@ Tool to create an account-wide marker that shows up in the Lineup. Use when you 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.postLineupMarkers({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.postLineupMarkers({});
 ```
 
 **Input**
@@ -10404,7 +10503,8 @@ Tool to create a new project in Basecamp with a name and optional description. U
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.postProjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.postProjects({});
 ```
 
 **Input**
@@ -10488,7 +10588,8 @@ Tool to create a new template in Basecamp with a name and optional description. 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.postTemplates({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.postTemplates({});
 ```
 
 **Input**
@@ -10544,7 +10645,8 @@ Tool to update an existing project's name, description, access policy, or schedu
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.putProjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.putProjects({});
 ```
 
 **Input**
@@ -10643,7 +10745,8 @@ Tool to update a template's name and description in Basecamp. Use when you need 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.putTemplates({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.putTemplates({});
 ```
 
 **Input**
@@ -10700,7 +10803,8 @@ Tool to mark a Basecamp project as trashed. Use when you need to trash a project
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.trashProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.trashProject({});
 ```
 
 **Input**
@@ -10725,7 +10829,8 @@ Tool to mark a template as trashed in Basecamp. Use when you need to soft-delete
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.basecamp.api.projectsAndTemplates.trashTemplate({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.projectsAndTemplates.trashTemplate({});
 ```
 
 **Input**
@@ -10752,7 +10857,8 @@ Tool to unpin a recording (message) in a Basecamp project. Use when you need to 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.deleteBucketsRecordingsPin({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.deleteBucketsRecordingsPin({});
 ```
 
 **Input**
@@ -10777,7 +10883,8 @@ Tool to retrieve a paginated list of active comments on a recording. Use when yo
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.getBucketsRecordingsComments({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.getBucketsRecordingsComments({});
 ```
 
 **Input**
@@ -10885,7 +10992,8 @@ Tool to retrieve a paginated list of events for a recording. Use when you need t
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.getBucketsRecordingsEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.getBucketsRecordingsEvents({});
 ```
 
 **Input**
@@ -10960,7 +11068,8 @@ Tool to retrieve a specific comment by ID from a Basecamp project. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.getComment({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.getComment({});
 ```
 
 **Input**
@@ -11091,7 +11200,8 @@ Tool to retrieve a paginated list of records for a given type of recording acros
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.getProjectsRecordings({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.getProjectsRecordings({});
 ```
 
 **Input**
@@ -11239,7 +11349,8 @@ Tool to get subscription information for a recording. Use when you need to check
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.getSubscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.getSubscription({});
 ```
 
 **Input**
@@ -11308,7 +11419,8 @@ Tool to get all comments on a recording in a Basecamp project. Use when you need
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.listComments({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.listComments({});
 ```
 
 **Input**
@@ -11416,7 +11528,8 @@ Tool to get all events (history) for a recording. Use when you need to retrieve 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.listEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.listEvents({});
 ```
 
 **Input**
@@ -11491,7 +11604,8 @@ Tool to publish a comment on a recording within a Basecamp project. Use when you
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.postBucketsRecordingsComments({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.postBucketsRecordingsComments({});
 ```
 
 **Input**
@@ -11623,7 +11737,8 @@ Tool to pin a recording (message) in a Basecamp project. Use when you need to fe
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.postBucketsRecordingsPin({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.postBucketsRecordingsPin({});
 ```
 
 **Input**
@@ -11648,7 +11763,8 @@ Tool to subscribe the current user to a recording for notifications. Use when yo
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.postBucketsRecordingsSubscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.postBucketsRecordingsSubscription({});
 ```
 
 **Input**
@@ -11717,7 +11833,8 @@ Tool to update comment content in a Basecamp project. Use when you need to modif
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsComments({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.putBucketsComments({});
 ```
 
 **Input**
@@ -11849,7 +11966,8 @@ Tool to update client visibility for a recording in Basecamp. Use when you need 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsClientVisibility({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsClientVisibility({});
 ```
 
 **Input**
@@ -12038,7 +12156,8 @@ Tool to unarchive a recording in a Basecamp project by marking it as active. Use
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsStatusActive({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsStatusActive({});
 ```
 
 **Input**
@@ -12063,7 +12182,8 @@ Tool to mark a recording as archived in a Basecamp project. Use when you need to
 **Risk:** `destructive`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsStatusArchived({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsStatusArchived({});
 ```
 
 **Input**
@@ -12088,7 +12208,8 @@ Tool to mark a recording as trashed in a Basecamp project. Use when you need to 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsStatusTrashed({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsStatusTrashed({});
 ```
 
 **Input**
@@ -12113,7 +12234,8 @@ Tool to update recording subscriptions by adding or removing subscribers. Use wh
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsSubscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsSubscription({});
 ```
 
 **Input**
@@ -12184,7 +12306,8 @@ Tool to subscribe the current authenticated user to a recording for notification
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.subscribeCurrentUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.subscribeCurrentUser({});
 ```
 
 **Input**
@@ -12253,7 +12376,8 @@ Tool to change client visibility for a recording in Basecamp. Use when you need 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.toggleClientVisibility({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.toggleClientVisibility({});
 ```
 
 **Input**
@@ -12442,7 +12566,8 @@ Tool to unsubscribe the current user from a recording. Use when you need to stop
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.recordingsAndSubscriptions.unsubscribeCurrentUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.recordingsAndSubscriptions.unsubscribeCurrentUser({});
 ```
 
 **Input**
@@ -12469,7 +12594,8 @@ Tool to retrieve a paginated list of schedule entries from a schedule. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.schedulesAndReports.getBucketsSchedulesEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.schedulesAndReports.getBucketsSchedulesEntries({});
 ```
 
 **Input**
@@ -12613,7 +12739,8 @@ Tool to retrieve all timesheet entries across the Basecamp account within a give
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.schedulesAndReports.getReportsTimesheet({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.schedulesAndReports.getReportsTimesheet({});
 ```
 
 **Input**
@@ -12737,7 +12864,8 @@ Tool to retrieve schedule details for a specific project. Use when you need info
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.schedulesAndReports.getSchedule({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.schedulesAndReports.getSchedule({});
 ```
 
 **Input**
@@ -12830,7 +12958,8 @@ Tool to get a specific schedule entry by ID from a Basecamp project. Use when yo
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.schedulesAndReports.getScheduleEntry({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.schedulesAndReports.getScheduleEntry({});
 ```
 
 **Input**
@@ -13005,7 +13134,8 @@ Tool to create a schedule entry in a Basecamp schedule within a project. Use whe
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.schedulesAndReports.postBucketsSchedulesEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.schedulesAndReports.postBucketsSchedulesEntries({});
 ```
 
 **Input**
@@ -13192,7 +13322,8 @@ Tool to update an existing schedule entry in a Basecamp schedule. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.schedulesAndReports.putBucketsScheduleEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.schedulesAndReports.putBucketsScheduleEntries({});
 ```
 
 **Input**
@@ -13376,7 +13507,8 @@ Tool to update a schedule configuration in a Basecamp project. Use when you need
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.schedulesAndReports.putBucketsSchedules({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.schedulesAndReports.putBucketsSchedules({});
 ```
 
 **Input**
@@ -13470,7 +13602,8 @@ Tool to update an existing schedule entry in a Basecamp project schedule. Use wh
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.schedulesAndReports.updateScheduleEntry({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.schedulesAndReports.updateScheduleEntry({});
 ```
 
 **Input**
@@ -13656,7 +13789,8 @@ Tool to mark a to-do as completed in Basecamp. Use when you need to complete a t
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.todos.completeTodo({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.completeTodo({});
 ```
 
 **Input**
@@ -13681,7 +13815,8 @@ DEPRECATED: Use BASECAMP_POST_BUCKETS_TODOLISTS_TODOS instead. Tool to create a 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.todos.createTodo({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.createTodo({});
 ```
 
 **Input**
@@ -13985,7 +14120,8 @@ Tool to create a new to-do group within a parent to-do list in Basecamp. Use whe
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.todos.createTodolistGroup({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.createTodolistGroup({});
 ```
 
 **Input**
@@ -14126,7 +14262,8 @@ Tool to retrieve a specific to-do list from a Basecamp project by its ID. Use wh
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.todos.getBucketsTodolists({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.getBucketsTodolists({});
 ```
 
 **Input**
@@ -14266,7 +14403,8 @@ Tool to retrieve a paginated list of active groups from a to-do list in a Baseca
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.todos.getBucketsTodolistsGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.getBucketsTodolistsGroups({});
 ```
 
 **Input**
@@ -14383,7 +14521,8 @@ Tool to retrieve a paginated list of to-dos from a specific to-do list in a Base
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.todos.getBucketsTodolistsTodos({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.getBucketsTodolistsTodos({});
 ```
 
 **Input**
@@ -14575,7 +14714,8 @@ Tool to retrieve a specific to-do by ID from a Basecamp project. Use when you ne
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.todos.getBucketsTodos({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.getBucketsTodos({});
 ```
 
 **Input**
@@ -14872,7 +15012,8 @@ Tool to retrieve a specific to-do set from a Basecamp project. Use when you need
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.todos.getBucketsTodosets({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.getBucketsTodosets({});
 ```
 
 **Input**
@@ -14972,7 +15113,8 @@ Tool to retrieve a paginated list of to-do lists within a specific to-do set in 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.todos.getBucketsTodosetsTodolists({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.getBucketsTodosetsTodolists({});
 ```
 
 **Input**
@@ -15090,7 +15232,8 @@ Tool to retrieve a specific to-do by ID from a Basecamp project. Use when you ne
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.todos.getTodo({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.getTodo({});
 ```
 
 **Input**
@@ -15387,7 +15530,8 @@ Tool to retrieve a specific to-do list from a Basecamp project by its ID. Use wh
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.todos.getTodolist({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.getTodolist({});
 ```
 
 **Input**
@@ -15527,7 +15671,8 @@ Tool to retrieve a paginated list of groups from a to-do list in a Basecamp proj
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.todos.getTodolistGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.getTodolistGroups({});
 ```
 
 **Input**
@@ -15644,7 +15789,8 @@ Tool to retrieve a specific to-do set from a Basecamp project. Use when you need
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.todos.getTodoset({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.getTodoset({});
 ```
 
 **Input**
@@ -15744,7 +15890,8 @@ Tool to get all to-do lists in a to-do set within a Basecamp project. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.todos.listTodolists({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.listTodolists({});
 ```
 
 **Input**
@@ -15862,7 +16009,8 @@ Tool to add a comment to a to-do list in a Basecamp project. Use when you need t
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.todos.postBucketsTodolistsComments({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.postBucketsTodolistsComments({});
 ```
 
 **Input**
@@ -15994,7 +16142,8 @@ Tool to create a to-do in a Basecamp to-do list within a project. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.todos.postBucketsTodolistsTodos({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.postBucketsTodolistsTodos({});
 ```
 
 **Input**
@@ -16298,7 +16447,8 @@ Tool to add a comment to a to-do in a Basecamp project. Use when you need to add
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.todos.postBucketsTodosComments({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.postBucketsTodosComments({});
 ```
 
 **Input**
@@ -16430,7 +16580,8 @@ Tool to create a new to-do list in a Basecamp to-do set within a project. Use wh
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.todos.postBucketsTodosetsTodolists({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.postBucketsTodosetsTodolists({});
 ```
 
 **Input**
@@ -16573,7 +16724,8 @@ Tool to reposition a to-do list group within its parent to-do list in a Basecamp
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.todos.putBucketsTodolistsGroupsPosition({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.putBucketsTodolistsGroupsPosition({});
 ```
 
 **Input**
@@ -16599,7 +16751,8 @@ Tool to update an existing to-do in a Basecamp project. Use when you need to mod
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.todos.putBucketsTodos({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.putBucketsTodos({});
 ```
 
 **Input**
@@ -16903,7 +17056,8 @@ Tool to change the position of a to-do within its list in a Basecamp project. Us
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.todos.putBucketsTodosPosition({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.putBucketsTodosPosition({});
 ```
 
 **Input**
@@ -16930,7 +17084,8 @@ Tool to mark a to-do as uncompleted in Basecamp. Use when you need to reverse th
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.todos.uncompleteTodo({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.uncompleteTodo({});
 ```
 
 **Input**
@@ -16955,7 +17110,8 @@ Tool to update a to-do's content, assignees, or due date in a Basecamp project. 
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.todos.updateTodo({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.todos.updateTodo({});
 ```
 
 **Input**
@@ -17261,7 +17417,8 @@ Tool to delete a webhook from a Basecamp project. Use when you need to remove a 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.basecamp.api.webhooks.deleteWebhooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.webhooks.deleteWebhooks({});
 ```
 
 **Input**
@@ -17286,7 +17443,8 @@ Tool to retrieve all webhooks configured for a Basecamp project. Use when you ne
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.webhooks.getBucketsWebhooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.webhooks.getBucketsWebhooks({});
 ```
 
 **Input**
@@ -17337,7 +17495,8 @@ Tool to retrieve a specific webhook by ID from a Basecamp project. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.basecamp.api.webhooks.getWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.webhooks.getWebhook({});
 ```
 
 **Input**
@@ -17398,7 +17557,8 @@ Tool to create a new webhook subscription for a Basecamp project. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.webhooks.postBucketsWebhooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.webhooks.postBucketsWebhooks({});
 ```
 
 **Input**
@@ -17462,7 +17622,8 @@ Tool to update an existing webhook in a Basecamp project. Use when you need to m
 **Risk:** `write`
 
 ```ts
-await corsair.basecamp.api.webhooks.putBucketsWebhooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.basecamp.api.webhooks.putBucketsWebhooks({});
 ```
 
 **Input**

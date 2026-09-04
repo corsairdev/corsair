@@ -14,7 +14,8 @@ The CustomGPT plugin syncs data locally. Use `corsair.customgpt.db.<entity>.sear
 Path: `customgpt.db.conversations.search`
 
 ```ts
-const rows = await corsair.customgpt.db.conversations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.customgpt.db.conversations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `customgpt.db.leads.search`
 
 ```ts
-const rows = await corsair.customgpt.db.leads.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.customgpt.db.leads.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -75,7 +77,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `customgpt.db.licenses.search`
 
 ```ts
-const rows = await corsair.customgpt.db.licenses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.customgpt.db.licenses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -103,7 +106,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `customgpt.db.messages.search`
 
 ```ts
-const rows = await corsair.customgpt.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.customgpt.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -133,7 +137,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `customgpt.db.pages.search`
 
 ```ts
-const rows = await corsair.customgpt.db.pages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.customgpt.db.pages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -169,7 +174,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `customgpt.db.projects.search`
 
 ```ts
-const rows = await corsair.customgpt.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.customgpt.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -209,7 +215,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `customgpt.db.sources.search`
 
 ```ts
-const rows = await corsair.customgpt.db.sources.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.customgpt.db.sources.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { sentry } from '@corsair-dev/sentry';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		sentry(),
 	],

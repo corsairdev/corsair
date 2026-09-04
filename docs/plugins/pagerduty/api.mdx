@@ -20,7 +20,8 @@ Add a note to an incident
 **Risk:** `write`
 
 ```ts
-await corsair.pagerduty.api.incidentNotes.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.pagerduty.api.incidentNotes.create({});
 ```
 
 **Input**
@@ -74,7 +75,8 @@ List notes for an incident
 **Risk:** `read`
 
 ```ts
-await corsair.pagerduty.api.incidentNotes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.pagerduty.api.incidentNotes.list({});
 ```
 
 **Input**
@@ -131,7 +133,8 @@ Create a new incident
 **Risk:** `write`
 
 ```ts
-await corsair.pagerduty.api.incidents.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.pagerduty.api.incidents.create({});
 ```
 
 **Input**
@@ -261,7 +264,8 @@ Get a single incident by ID
 **Risk:** `read`
 
 ```ts
-await corsair.pagerduty.api.incidents.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.pagerduty.api.incidents.get({});
 ```
 
 **Input**
@@ -341,7 +345,8 @@ List incidents with optional filters
 **Risk:** `read`
 
 ```ts
-await corsair.pagerduty.api.incidents.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.pagerduty.api.incidents.list({});
 ```
 
 **Input**
@@ -433,7 +438,8 @@ Update an incident (acknowledge, resolve, reassign)
 **Risk:** `write`
 
 ```ts
-await corsair.pagerduty.api.incidents.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.pagerduty.api.incidents.update({});
 ```
 
 **Input**
@@ -544,7 +550,8 @@ Get a single log entry by ID
 **Risk:** `read`
 
 ```ts
-await corsair.pagerduty.api.logEntries.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.pagerduty.api.logEntries.get({});
 ```
 
 **Input**
@@ -618,7 +625,8 @@ List log entries
 **Risk:** `read`
 
 ```ts
-await corsair.pagerduty.api.logEntries.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.pagerduty.api.logEntries.list({});
 ```
 
 **Input**
@@ -703,7 +711,8 @@ Get a user by ID
 **Risk:** `read`
 
 ```ts
-await corsair.pagerduty.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.pagerduty.api.users.get({});
 ```
 
 **Input**

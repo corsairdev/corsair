@@ -20,7 +20,8 @@ List streaming profiles
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.adaptive.getAdaptiveStreamingProfiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.adaptive.getAdaptiveStreamingProfiles({});
 ```
 
 **Input**
@@ -71,7 +72,8 @@ Get analysis task status
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.analysis.getAnalysisTaskStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.analysis.getAnalysisTaskStatus({});
 ```
 
 **Input**
@@ -123,7 +125,8 @@ Add related assets by asset ID
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.asset.createAssetRelationsByAssetId({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.asset.createAssetRelationsByAssetId({});
 ```
 
 **Input**
@@ -173,7 +176,8 @@ Add related assets by public ID
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.asset.createAssetRelationsByPublicId({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.asset.createAssetRelationsByPublicId({});
 ```
 
 **Input**
@@ -224,7 +228,8 @@ Remove related assets by asset ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.cloudinary.api.asset.deleteAssetRelationsByAssetId({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.asset.deleteAssetRelationsByAssetId({});
 ```
 
 **Input**
@@ -269,7 +274,8 @@ Remove related assets by public ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.cloudinary.api.asset.deleteAssetRelationsByPublicId({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.asset.deleteAssetRelationsByPublicId({});
 ```
 
 **Input**
@@ -315,7 +321,8 @@ Destroy asset by public ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.asset.destroyAsset({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.asset.destroyAsset({});
 ```
 
 **Input**
@@ -359,7 +366,8 @@ Destroy asset by asset ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.asset.destroyAssetById({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.asset.destroyAssetById({});
 ```
 
 **Input**
@@ -403,7 +411,8 @@ Update asset metadata values
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.asset.updateAssetMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.asset.updateAssetMetadata({});
 ```
 
 **Input**
@@ -482,7 +491,8 @@ Upload media asset
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.asset.uploadAsset({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.asset.uploadAsset({});
 ```
 
 **Input**
@@ -563,7 +573,8 @@ Search assets with Lucene-like expressions
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.assets.searchAssets({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.assets.searchAssets({});
 ```
 
 **Input**
@@ -639,7 +650,8 @@ Visual search for similar assets
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.assets.searchVisualAssets({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.assets.searchVisualAssets({});
 ```
 
 **Input**
@@ -717,7 +729,8 @@ Upload a file chunk for large uploads (requires content_range and x_unique_uploa
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.chunk.uploadChunk({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.chunk.uploadChunk({});
 ```
 
 **Input**
@@ -798,7 +811,8 @@ Ping Cloudinary servers
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.cloudinary.pingCloudinaryServers({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.cloudinary.pingCloudinaryServers({});
 ```
 
 **Input**
@@ -844,7 +858,8 @@ Get product environment config
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.config.getConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.config.getConfig({});
 ```
 
 **Input**
@@ -895,7 +910,8 @@ Add or remove contextual metadata
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.context.manageContext({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.context.manageContext({});
 ```
 
 **Input**
@@ -976,7 +992,8 @@ Create webhook trigger
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.create.createTrigger({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.create.createTrigger({});
 ```
 
 **Input**
@@ -1026,7 +1043,8 @@ Search datasource in metadata field
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.datasource.searchDatasourceInMetadataField({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.datasource.searchDatasourceInMetadataField({});
 ```
 
 **Input**
@@ -1081,7 +1099,8 @@ Delete webhook trigger
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.delete.deleteTrigger({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.delete.deleteTrigger({});
 ```
 
 **Input**
@@ -1128,7 +1147,8 @@ Delete derived resources
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.derived.deleteDerivedResources({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.derived.deleteDerivedResources({});
 ```
 
 **Input**
@@ -1174,7 +1194,8 @@ Delete datasource entries
 **Risk:** `destructive`
 
 ```ts
-await corsair.cloudinary.api.entries.deleteEntriesInMetadataFieldDatasource({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.entries.deleteEntriesInMetadataFieldDatasource({});
 ```
 
 **Input**
@@ -1219,7 +1240,8 @@ Restore datasource entries
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.entries.restoreEntriesInMetadataFieldDatasource({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.entries.restoreEntriesInMetadataFieldDatasource({});
 ```
 
 **Input**
@@ -1283,7 +1305,8 @@ Upload with auto resource type detection
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.file.uploadFileAutoDetect({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.file.uploadFileAutoDetect({});
 ```
 
 **Input**
@@ -1364,7 +1387,8 @@ Create a new asset folder
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.folder.createFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.folder.createFolder({});
 ```
 
 **Input**
@@ -1411,7 +1435,8 @@ Delete an empty folder
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.folder.deleteFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.folder.deleteFolder({});
 ```
 
 **Input**
@@ -1456,7 +1481,8 @@ List subfolders in a folder
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.folder.showFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.folder.showFolder({});
 ```
 
 **Input**
@@ -1518,7 +1544,8 @@ Rename or move a folder
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.folder.updateFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.folder.updateFolder({});
 ```
 
 **Input**
@@ -1568,7 +1595,8 @@ Search asset folders
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.folders.searchFolders({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.folders.searchFolders({});
 ```
 
 **Input**
@@ -1631,7 +1659,8 @@ Search folders (v2 POST)
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.folders.searchFoldersV2({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.folders.searchFoldersV2({});
 ```
 
 **Input**
@@ -1692,7 +1721,8 @@ Generate ZIP/TGZ archive of assets
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.generate.generateArchive({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.generate.generateArchive({});
 ```
 
 **Input**
@@ -1743,7 +1773,8 @@ Generate an image from text
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.image.createImageFromText({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.image.createImageFromText({});
 ```
 
 **Input**
@@ -1824,7 +1855,8 @@ List image assets
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.images.listImages({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.images.listImages({});
 ```
 
 **Input**
@@ -1914,7 +1946,8 @@ Manually activate a live stream
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.live.activateLiveStream({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.live.activateLiveStream({});
 ```
 
 **Input**
@@ -1964,7 +1997,8 @@ Create a new live stream
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.live.createLiveStream({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.live.createLiveStream({});
 ```
 
 **Input**
@@ -2013,7 +2047,8 @@ Create a live stream output
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.live.createLiveStreamOutput({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.live.createLiveStreamOutput({});
 ```
 
 **Input**
@@ -2063,7 +2098,8 @@ Delete a live stream
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.live.deleteLiveStream({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.live.deleteLiveStream({});
 ```
 
 **Input**
@@ -2108,7 +2144,8 @@ Delete a live stream output
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.live.deleteLiveStreamOutput({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.live.deleteLiveStreamOutput({});
 ```
 
 **Input**
@@ -2154,7 +2191,8 @@ Get live stream details
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.live.getLiveStream({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.live.getLiveStream({});
 ```
 
 **Input**
@@ -2204,7 +2242,8 @@ Get live stream output details
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.live.getLiveStreamOutput({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.live.getLiveStreamOutput({});
 ```
 
 **Input**
@@ -2255,7 +2294,8 @@ List live stream outputs
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.live.getLiveStreamOutputs({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.live.getLiveStreamOutputs({});
 ```
 
 **Input**
@@ -2324,7 +2364,8 @@ List live streams
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.live.getLiveStreams({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.live.getLiveStreams({});
 ```
 
 **Input**
@@ -2392,7 +2433,8 @@ Put a live stream into idle state
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.live.idleLiveStream({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.live.idleLiveStream({});
 ```
 
 **Input**
@@ -2442,7 +2484,8 @@ Update live stream configuration
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.live.updateLiveStream({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.live.updateLiveStream({});
 ```
 
 **Input**
@@ -2492,7 +2535,8 @@ Update live stream output configuration
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.live.updateLiveStreamOutput({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.live.updateLiveStreamOutput({});
 ```
 
 **Input**
@@ -2545,7 +2589,8 @@ Create upload mapping
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.mapping.createUploadMapping({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.mapping.createUploadMapping({});
 ```
 
 **Input**
@@ -2590,7 +2635,8 @@ Delete upload mapping
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.mapping.deleteUploadMapping({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.mapping.deleteUploadMapping({});
 ```
 
 **Input**
@@ -2635,7 +2681,8 @@ Get upload mapping details
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.mapping.getUploadMappingDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.mapping.getUploadMappingDetails({});
 ```
 
 **Input**
@@ -2681,7 +2728,8 @@ Update upload mapping
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.mapping.updateUploadMapping({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.mapping.updateUploadMapping({});
 ```
 
 **Input**
@@ -2729,7 +2777,8 @@ List upload mappings
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.mappings.getUploadMappings({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.mappings.getUploadMappings({});
 ```
 
 **Input**
@@ -2791,7 +2840,8 @@ Create metadata field definition
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.metadata.createMetadataField({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.createMetadataField({});
 ```
 
 **Input**
@@ -2852,7 +2902,8 @@ Create metadata rule
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.metadata.createMetadataRule({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.createMetadataRule({});
 ```
 
 **Input**
@@ -2917,7 +2968,8 @@ Delete metadata field
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.metadata.deleteMetadataField({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.deleteMetadataField({});
 ```
 
 **Input**
@@ -2962,7 +3014,8 @@ Delete metadata rule
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.metadata.deleteMetadataRule({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.deleteMetadataRule({});
 ```
 
 **Input**
@@ -3007,7 +3060,8 @@ Get metadata field by external ID
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.metadata.getMetadataFieldById({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.getMetadataFieldById({});
 ```
 
 **Input**
@@ -3069,7 +3123,8 @@ List metadata fields
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.metadata.listMetadataFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.listMetadataFields({});
 ```
 
 **Input**
@@ -3133,7 +3188,8 @@ List metadata rules
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.metadata.listMetadataRules({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.listMetadataRules({});
 ```
 
 **Input**
@@ -3193,7 +3249,8 @@ Order metadata field datasource
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.metadata.orderMetadataFieldDatasource({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.orderMetadataFieldDatasource({});
 ```
 
 **Input**
@@ -3255,7 +3312,8 @@ Reorder a metadata field
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.metadata.reorderMetadataField({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.reorderMetadataField({});
 ```
 
 **Input**
@@ -3317,7 +3375,8 @@ Reorder all metadata fields
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.metadata.reorderMetadataFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.reorderMetadataFields({});
 ```
 
 **Input**
@@ -3378,7 +3437,8 @@ Search all metadata datasources
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.metadata.searchMetadataFieldDatasource({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.searchMetadataFieldDatasource({});
 ```
 
 **Input**
@@ -3430,7 +3490,8 @@ Update metadata field definition
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.metadata.updateMetadataField({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.updateMetadataField({});
 ```
 
 **Input**
@@ -3492,7 +3553,8 @@ Update metadata field datasource
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.metadata.updateMetadataFieldDatasource({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.updateMetadataFieldDatasource({});
 ```
 
 **Input**
@@ -3554,7 +3616,8 @@ Update metadata rule
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.metadata.updateMetadataRule({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.metadata.updateMetadataRule({});
 ```
 
 **Input**
@@ -3622,7 +3685,8 @@ Create animation from multiple images
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.multi.createMultiResource({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.multi.createMultiResource({});
 ```
 
 **Input**
@@ -3703,7 +3767,8 @@ Create upload preset
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.preset.createUploadPreset({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.preset.createUploadPreset({});
 ```
 
 **Input**
@@ -3759,7 +3824,8 @@ Delete upload preset
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.preset.deleteUploadPreset({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.preset.deleteUploadPreset({});
 ```
 
 **Input**
@@ -3804,7 +3870,8 @@ Get upload preset
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.preset.getUploadPreset({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.preset.getUploadPreset({});
 ```
 
 **Input**
@@ -3861,7 +3928,8 @@ Update upload preset
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.preset.updateUploadPreset({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.preset.updateUploadPreset({});
 ```
 
 **Input**
@@ -3920,7 +3988,8 @@ List upload presets
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.presets.listUploadPresets({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.presets.listUploadPresets({});
 ```
 
 **Input**
@@ -3984,7 +4053,8 @@ List raw assets
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.raw.listRawFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.raw.listRawFiles({});
 ```
 
 **Input**
@@ -4074,7 +4144,8 @@ Explicitly update or generate derived assets
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.resource.explicitResource({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resource.explicitResource({});
 ```
 
 **Input**
@@ -4153,7 +4224,8 @@ Explode multi-page resource into separate images
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.resource.explodeResource({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resource.explodeResource({});
 ```
 
 **Input**
@@ -4232,7 +4304,8 @@ Get resource by asset ID
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.resource.getResourceByAssetId({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resource.getResourceByAssetId({});
 ```
 
 **Input**
@@ -4317,7 +4390,8 @@ Get resource by public ID
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.resource.getResourceByPublicId({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resource.getResourceByPublicId({});
 ```
 
 **Input**
@@ -4403,7 +4477,8 @@ List available resource types
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.resource.listResourceTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resource.listResourceTypes({});
 ```
 
 **Input**
@@ -4447,7 +4522,8 @@ Rename or move resource public ID
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.resource.renameResource({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resource.renameResource({});
 ```
 
 **Input**
@@ -4526,7 +4602,8 @@ Update resource by asset ID
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.resource.updateResourceByAssetId({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resource.updateResourceByAssetId({});
 ```
 
 **Input**
@@ -4606,7 +4683,8 @@ Update resource by public ID
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.resource.updateResourceByPublicId({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resource.updateResourceByPublicId({});
 ```
 
 **Input**
@@ -4687,7 +4765,8 @@ Add, remove, or replace resource tags
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.resource.updateResourceTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resource.updateResourceTags({});
 ```
 
 **Input**
@@ -4738,7 +4817,8 @@ Delete resources by asset IDs
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.resources.deleteResourcesByAssetId({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.deleteResourcesByAssetId({});
 ```
 
 **Input**
@@ -4782,7 +4862,8 @@ Delete resources by public ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.resources.deleteResourcesByPublicId({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.deleteResourcesByPublicId({});
 ```
 
 **Input**
@@ -4827,7 +4908,8 @@ Delete resources by tag
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.resources.deleteResourcesByTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.deleteResourcesByTags({});
 ```
 
 **Input**
@@ -4872,7 +4954,8 @@ List assets in a folder
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.resources.getResourcesByAssetFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.getResourcesByAssetFolder({});
 ```
 
 **Input**
@@ -4956,7 +5039,8 @@ Get resources by context metadata
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.resources.getResourcesByContext({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.getResourcesByContext({});
 ```
 
 **Input**
@@ -5041,7 +5125,8 @@ Get resources in moderation queue
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.resources.getResourcesInModeration({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.getResourcesInModeration({});
 ```
 
 **Input**
@@ -5126,7 +5211,8 @@ List resources by asset IDs
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.resources.listResourcesByAssetIds({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.listResourcesByAssetIds({});
 ```
 
 **Input**
@@ -5208,7 +5294,8 @@ List resources by external IDs
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.resources.listResourcesByExternalIds({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.listResourcesByExternalIds({});
 ```
 
 **Input**
@@ -5290,7 +5377,8 @@ List resources by tag
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.resources.listResourcesByTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.listResourcesByTag({});
 ```
 
 **Input**
@@ -5373,7 +5461,8 @@ List resources by type
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.resources.listResourcesByType({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.listResourcesByType({});
 ```
 
 **Input**
@@ -5461,7 +5550,8 @@ Publish resources to public access
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.resources.publishResources({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.publishResources({});
 ```
 
 **Input**
@@ -5540,7 +5630,8 @@ Restore deleted resources by public ID
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.resources.restoreResources({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.restoreResources({});
 ```
 
 **Input**
@@ -5620,7 +5711,8 @@ Restore resources by asset IDs
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.resources.restoreResourcesByAssetIds({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.resources.restoreResourcesByAssetIds({});
 ```
 
 **Input**
@@ -5701,7 +5793,8 @@ List root folders
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.root.getRootFolders({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.root.getRootFolders({});
 ```
 
 **Input**
@@ -5764,7 +5857,8 @@ Create video slideshow from assets
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.slideshow.createSlideshow({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.slideshow.createSlideshow({});
 ```
 
 **Input**
@@ -5845,7 +5939,8 @@ Generate sprite from images (deprecated)
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.sprite.generateSprite({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.sprite.generateSprite({});
 ```
 
 **Input**
@@ -5896,7 +5991,8 @@ Create adaptive streaming profile
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.streaming.createStreamingProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.streaming.createStreamingProfile({});
 ```
 
 **Input**
@@ -5945,7 +6041,8 @@ Delete streaming profile
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.streaming.deleteStreamingProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.streaming.deleteStreamingProfile({});
 ```
 
 **Input**
@@ -5990,7 +6087,8 @@ Get streaming profile details
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.streaming.getStreamingProfileDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.streaming.getStreamingProfileDetails({});
 ```
 
 **Input**
@@ -6040,7 +6138,8 @@ Update streaming profile
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.streaming.updateStreamingProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.streaming.updateStreamingProfile({});
 ```
 
 **Input**
@@ -6092,7 +6191,8 @@ List tags for a resource type
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.tags.getTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.tags.getTags({});
 ```
 
 **Input**
@@ -6154,7 +6254,8 @@ Create named transformation
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.transformation.createTransformation({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.transformation.createTransformation({});
 ```
 
 **Input**
@@ -6202,7 +6303,8 @@ Get transformation details
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.transformation.getTransformation({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.transformation.getTransformation({});
 ```
 
 **Input**
@@ -6252,7 +6354,8 @@ Delete named transformation
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.cloudinary.api.transformation2.deleteTransformation2({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.transformation2.deleteTransformation2({});
 ```
 
 **Input**
@@ -6297,7 +6400,8 @@ Update named transformation
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.transformation2.updateTransformation2({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.transformation2.updateTransformation2({});
 ```
 
 **Input**
@@ -6347,7 +6451,8 @@ List transformations
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.transformations.getTransformations({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.transformations.getTransformations({});
 ```
 
 **Input**
@@ -6412,7 +6517,8 @@ List webhook triggers
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.triggers.getTriggers({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.triggers.getTriggers({});
 ```
 
 **Input**
@@ -6478,7 +6584,8 @@ Update webhook trigger
 **Risk:** `write`
 
 ```ts
-await corsair.cloudinary.api.update.updateTrigger({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.update.updateTrigger({});
 ```
 
 **Input**
@@ -6529,7 +6636,8 @@ Get account usage details
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.usage.getUsage({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.usage.getUsage({});
 ```
 
 **Input**
@@ -6608,7 +6716,8 @@ Get video analytics views
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.video.getVideoViews({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.video.getVideoViews({});
 ```
 
 **Input**
@@ -6664,7 +6773,8 @@ List video assets
 **Risk:** `read`
 
 ```ts
-await corsair.cloudinary.api.videos.listVideos({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudinary.api.videos.listVideos({});
 ```
 
 **Input**

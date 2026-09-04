@@ -14,7 +14,8 @@ The ActiveTrail plugin syncs data locally. Use `corsair.activetrail.db.<entity>.
 Path: `activetrail.db.campaigns.search`
 
 ```ts
-const rows = await corsair.activetrail.db.campaigns.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activetrail.db.campaigns.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activetrail.db.contacts.search`
 
 ```ts
-const rows = await corsair.activetrail.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activetrail.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -65,7 +67,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `activetrail.db.groups.search`
 
 ```ts
-const rows = await corsair.activetrail.db.groups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.activetrail.db.groups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

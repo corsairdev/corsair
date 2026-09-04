@@ -20,7 +20,8 @@ Get posts from /r/all feed
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.feeds.getAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.feeds.getAll({});
 ```
 
 **Input**
@@ -92,7 +93,8 @@ Get posts from /r/popular feed
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.feeds.getPopular({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.feeds.getPopular({});
 ```
 
 **Input**
@@ -166,7 +168,8 @@ Get new subreddit listings
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.listings.subredditsNew({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.listings.subredditsNew({});
 ```
 
 **Input**
@@ -238,7 +241,8 @@ Get popular subreddit listings
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.listings.subredditsPopular({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.listings.subredditsPopular({});
 ```
 
 **Input**
@@ -312,7 +316,8 @@ Get posts by fullname IDs
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.posts.getById({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.posts.getById({});
 ```
 
 **Input**
@@ -381,7 +386,8 @@ Get a post and its comments
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.posts.getComments({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.posts.getComments({});
 ```
 
 **Input**
@@ -489,7 +495,8 @@ Search all of Reddit
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.search.global({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.search.global({});
 ```
 
 **Input**
@@ -567,7 +574,8 @@ Search within a subreddit
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.search.subreddit({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.search.subreddit({});
 ```
 
 **Input**
@@ -643,7 +651,8 @@ Search for subreddits by name
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.search.subreddits({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.search.subreddits({});
 ```
 
 **Input**
@@ -718,7 +727,8 @@ Get subreddit metadata and info
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.subreddits.getAbout({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.subreddits.getAbout({});
 ```
 
 **Input**
@@ -773,7 +783,8 @@ Get controversial posts from a subreddit
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.subreddits.getControversial({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.subreddits.getControversial({});
 ```
 
 **Input**
@@ -847,7 +858,8 @@ Get hot posts from a subreddit
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.subreddits.getHot({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.subreddits.getHot({});
 ```
 
 **Input**
@@ -920,7 +932,8 @@ Get new posts from a subreddit
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.subreddits.getNew({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.subreddits.getNew({});
 ```
 
 **Input**
@@ -993,7 +1006,8 @@ Get rising posts from a subreddit
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.subreddits.getRising({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.subreddits.getRising({});
 ```
 
 **Input**
@@ -1066,7 +1080,8 @@ Get top posts from a subreddit with time filter
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.subreddits.getTop({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.subreddits.getTop({});
 ```
 
 **Input**
@@ -1142,7 +1157,8 @@ Get user profile information
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.users.getAbout({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.users.getAbout({});
 ```
 
 **Input**
@@ -1186,7 +1202,8 @@ Get a user's comments
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.users.getComments({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.users.getComments({});
 ```
 
 **Input**
@@ -1260,7 +1277,8 @@ Get a user's mixed posts and comments
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.users.getOverview({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.users.getOverview({});
 ```
 
 **Input**
@@ -1363,7 +1381,8 @@ Get a user's submitted posts
 **Risk:** `read`
 
 ```ts
-await corsair.reddit.api.users.getSubmitted({});
+const tenant = corsair.withTenant('acme');
+await tenant.reddit.api.users.getSubmitted({});
 ```
 
 **Input**

@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { ollama } from '@corsair-dev/ollama';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		ollama(),
 	],

@@ -20,7 +20,8 @@ Get the home timeline feed of the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.bluesky.api.feeds.getTimeline({});
+const tenant = corsair.withTenant('acme');
+await tenant.bluesky.api.feeds.getTimeline({});
 ```
 
 **Input**
@@ -82,7 +83,8 @@ Create/publish a new post (skeet) on Bluesky
 **Risk:** `write`
 
 ```ts
-await corsair.bluesky.api.posts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bluesky.api.posts.create({});
 ```
 
 **Input**
@@ -113,7 +115,8 @@ Delete a post on Bluesky [DESTRUCTIVE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.bluesky.api.posts.deleteRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.bluesky.api.posts.deleteRecord({});
 ```
 
 **Input**
@@ -145,7 +148,8 @@ Get profile information for a Bluesky actor/user
 **Risk:** `read`
 
 ```ts
-await corsair.bluesky.api.profiles.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bluesky.api.profiles.get({});
 ```
 
 **Input**

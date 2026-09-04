@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { addresszen } from '@corsair-dev/addresszen';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		addresszen(),
 	],

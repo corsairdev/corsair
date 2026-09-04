@@ -14,7 +14,8 @@ The Vercel plugin syncs data locally. Use `corsair.vercel.db.<entity>.search({ d
 Path: `vercel.db.aliases.search`
 
 ```ts
-const rows = await corsair.vercel.db.aliases.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vercel.db.aliases.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `vercel.db.deployments.search`
 
 ```ts
-const rows = await corsair.vercel.db.deployments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vercel.db.deployments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -73,7 +75,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `vercel.db.domains.search`
 
 ```ts
-const rows = await corsair.vercel.db.domains.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vercel.db.domains.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -104,7 +107,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `vercel.db.envs.search`
 
 ```ts
-const rows = await corsair.vercel.db.envs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vercel.db.envs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -134,7 +138,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `vercel.db.projects.search`
 
 ```ts
-const rows = await corsair.vercel.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vercel.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -163,7 +168,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `vercel.db.teams.search`
 
 ```ts
-const rows = await corsair.vercel.db.teams.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.vercel.db.teams.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

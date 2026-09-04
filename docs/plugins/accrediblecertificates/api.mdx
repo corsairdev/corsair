@@ -20,7 +20,8 @@ Get an credential resource by ID
 **Risk:** `read`
 
 ```ts
-await corsair.accrediblecertificates.api.credentials.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.accrediblecertificates.api.credentials.get({});
 ```
 
 **Input**

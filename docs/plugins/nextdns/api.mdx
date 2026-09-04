@@ -20,7 +20,8 @@ Allow a domain
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.allowlist.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.allowlist.add({});
 ```
 
 **Input**
@@ -52,7 +53,8 @@ Remove a domain from the allowlist
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.allowlist.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.allowlist.delete({});
 ```
 
 **Input**
@@ -83,7 +85,8 @@ List allowed domains
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.allowlist.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.allowlist.get({});
 ```
 
 **Input**
@@ -120,7 +123,8 @@ Replace the entire allowlist
 **Risk:** `destructive`
 
 ```ts
-await corsair.nextdns.api.allowlist.replace({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.allowlist.replace({});
 ```
 
 **Input**
@@ -170,7 +174,8 @@ Toggle an allowlist entry active/inactive
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.allowlist.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.allowlist.update({});
 ```
 
 **Input**
@@ -204,7 +209,8 @@ Get query-destination analytics
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.analytics.destinations({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.analytics.destinations({});
 ```
 
 **Input**
@@ -261,7 +267,8 @@ Get per-device analytics
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.analytics.devices({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.analytics.devices({});
 ```
 
 **Input**
@@ -317,7 +324,8 @@ Get DNSSEC validation analytics
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.analytics.dnssec({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.analytics.dnssec({});
 ```
 
 **Input**
@@ -373,7 +381,8 @@ Get per-domain analytics
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.analytics.domains({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.analytics.domains({});
 ```
 
 **Input**
@@ -429,7 +438,8 @@ Get encrypted-vs-plain DNS analytics
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.analytics.encryption({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.analytics.encryption({});
 ```
 
 **Input**
@@ -485,7 +495,8 @@ Get per-client-IP analytics
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.analytics.ips({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.analytics.ips({});
 ```
 
 **Input**
@@ -541,7 +552,8 @@ Get IPv4/IPv6 distribution analytics
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.analytics.ipVersions({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.analytics.ipVersions({});
 ```
 
 **Input**
@@ -597,7 +609,8 @@ Get DNS protocol distribution analytics
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.analytics.protocols({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.analytics.protocols({});
 ```
 
 **Input**
@@ -653,7 +666,8 @@ Get DNS query-type analytics
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.analytics.queryTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.analytics.queryTypes({});
 ```
 
 **Input**
@@ -709,7 +723,8 @@ Get blocking-reason analytics
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.analytics.reasons({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.analytics.reasons({});
 ```
 
 **Input**
@@ -765,7 +780,8 @@ Get query-status analytics
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.analytics.status({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.analytics.status({});
 ```
 
 **Input**
@@ -823,7 +839,8 @@ Verify the API key is valid
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.auth.login({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.auth.login({});
 ```
 
 **Input:** _empty object_
@@ -851,7 +868,8 @@ Block a domain
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.denylist.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.denylist.add({});
 ```
 
 **Input**
@@ -883,7 +901,8 @@ List blocked domains
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.denylist.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.denylist.list({});
 ```
 
 **Input**
@@ -920,7 +939,8 @@ Unblock a domain
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.denylist.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.denylist.remove({});
 ```
 
 **Input**
@@ -951,7 +971,8 @@ Replace the entire denylist
 **Risk:** `destructive`
 
 ```ts
-await corsair.nextdns.api.denylist.replace({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.denylist.replace({});
 ```
 
 **Input**
@@ -1001,7 +1022,8 @@ Toggle a denylist entry active/inactive
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.denylist.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.denylist.update({});
 ```
 
 **Input**
@@ -1035,7 +1057,8 @@ Clear all stored query logs - cannot be undone
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.nextdns.api.logs.clear({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.logs.clear({});
 ```
 
 **Input**
@@ -1065,7 +1088,8 @@ Download the CSV log export
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.logs.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.logs.download({});
 ```
 
 **Input**
@@ -1090,7 +1114,8 @@ Get raw or filtered DNS query logs
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.logs.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.logs.get({});
 ```
 
 **Input**
@@ -1149,7 +1174,8 @@ Block or allow a content category
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.parentalControl.addCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.parentalControl.addCategory({});
 ```
 
 **Input**
@@ -1182,7 +1208,8 @@ Block or allow a specific service
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.parentalControl.addService({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.parentalControl.addService({});
 ```
 
 **Input**
@@ -1215,7 +1242,8 @@ Remove a content category restriction
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.parentalControl.deleteCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.parentalControl.deleteCategory({});
 ```
 
 **Input**
@@ -1246,7 +1274,8 @@ Remove a service restriction
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.parentalControl.deleteService({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.parentalControl.deleteService({});
 ```
 
 **Input**
@@ -1277,7 +1306,8 @@ Get parental control settings
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.parentalControl.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.parentalControl.get({});
 ```
 
 **Input**
@@ -1347,7 +1377,8 @@ Get blocked/allowed content categories
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.parentalControl.getCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.parentalControl.getCategories({});
 ```
 
 **Input**
@@ -1385,7 +1416,8 @@ Get blocked/allowed services
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.parentalControl.getServices({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.parentalControl.getServices({});
 ```
 
 **Input**
@@ -1423,7 +1455,8 @@ Replace the entire set of category restrictions
 **Risk:** `destructive`
 
 ```ts
-await corsair.nextdns.api.parentalControl.replaceCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.parentalControl.replaceCategories({});
 ```
 
 **Input**
@@ -1475,7 +1508,8 @@ Replace the entire set of service restrictions
 **Risk:** `destructive`
 
 ```ts
-await corsair.nextdns.api.parentalControl.replaceServices({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.parentalControl.replaceServices({});
 ```
 
 **Input**
@@ -1527,7 +1561,8 @@ Update safe search, YouTube restricted mode, or bypass blocking
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.parentalControl.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.parentalControl.update({});
 ```
 
 **Input**
@@ -1600,7 +1635,8 @@ Toggle a content category restriction
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.parentalControl.updateCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.parentalControl.updateCategory({});
 ```
 
 **Input**
@@ -1633,7 +1669,8 @@ Toggle a service restriction
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.parentalControl.updateService({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.parentalControl.updateService({});
 ```
 
 **Input**
@@ -1668,7 +1705,8 @@ Enable an additional privacy blocklist
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.privacy.addBlocklist({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.privacy.addBlocklist({});
 ```
 
 **Input**
@@ -1699,7 +1737,8 @@ Block a native tracking service from a specific vendor
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.privacy.addNative({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.privacy.addNative({});
 ```
 
 **Input**
@@ -1730,7 +1769,8 @@ Remove a privacy blocklist
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.privacy.deleteBlocklist({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.privacy.deleteBlocklist({});
 ```
 
 **Input**
@@ -1761,7 +1801,8 @@ Unblock a native tracking service
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.privacy.deleteNative({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.privacy.deleteNative({});
 ```
 
 **Input**
@@ -1792,7 +1833,8 @@ Get privacy settings
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.privacy.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.privacy.get({});
 ```
 
 **Input**
@@ -1850,7 +1892,8 @@ Replace the entire set of enabled privacy blocklists
 **Risk:** `destructive`
 
 ```ts
-await corsair.nextdns.api.privacy.replaceBlocklists({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.privacy.replaceBlocklists({});
 ```
 
 **Input**
@@ -1892,7 +1935,8 @@ Replace the entire set of blocked native trackers
 **Risk:** `destructive`
 
 ```ts
-await corsair.nextdns.api.privacy.replaceNatives({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.privacy.replaceNatives({});
 ```
 
 **Input**
@@ -1929,7 +1973,8 @@ Update disguised-tracker and affiliate-link settings
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.privacy.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.privacy.update({});
 ```
 
 **Input**
@@ -2018,7 +2063,8 @@ Create a new profile
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.profiles.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.profiles.create({});
 ```
 
 **Input**
@@ -2188,7 +2234,8 @@ Delete a profile - cannot be undone
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.nextdns.api.profiles.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.profiles.delete({});
 ```
 
 **Input**
@@ -2218,7 +2265,8 @@ Get full profile details including nested settings and lists
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.profiles.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.profiles.get({});
 ```
 
 **Input**
@@ -2405,7 +2453,8 @@ List every profile the API key can see
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.profiles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.profiles.list({});
 ```
 
 **Input:** _empty object_
@@ -2439,7 +2488,8 @@ Rename a profile
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.profiles.rename({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.profiles.rename({});
 ```
 
 **Input**
@@ -2470,7 +2520,8 @@ Partially update a profile
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.profiles.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.profiles.update({});
 ```
 
 **Input**
@@ -2640,7 +2691,8 @@ Add a DNS rewrite rule
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.rewrites.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.rewrites.add({});
 ```
 
 **Input**
@@ -2676,7 +2728,8 @@ Delete a DNS rewrite rule
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.rewrites.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.rewrites.delete({});
 ```
 
 **Input**
@@ -2707,7 +2760,8 @@ List DNS rewrite rules
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.rewrites.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.rewrites.get({});
 ```
 
 **Input**
@@ -2748,7 +2802,8 @@ Add a top-level domain to the security blocklist
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.security.addBlockedTld({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.security.addBlockedTld({});
 ```
 
 **Input**
@@ -2779,7 +2834,8 @@ Get security settings
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.security.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.security.get({});
 ```
 
 **Input**
@@ -2832,7 +2888,8 @@ Get blocked top-level domains
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.security.getTlds({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.security.getTlds({});
 ```
 
 **Input**
@@ -2868,7 +2925,8 @@ Remove a top-level domain from the security blocklist
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.security.removeBlockedTld({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.security.removeBlockedTld({});
 ```
 
 **Input**
@@ -2899,7 +2957,8 @@ Replace the entire blocked-TLD list
 **Risk:** `destructive`
 
 ```ts
-await corsair.nextdns.api.security.replaceTlds({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.security.replaceTlds({});
 ```
 
 **Input**
@@ -2936,7 +2995,8 @@ Update multiple security settings in one call
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.security.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.security.update({});
 ```
 
 **Input**
@@ -3003,7 +3063,8 @@ Get all settings for a profile
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.settings.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.settings.get({});
 ```
 
 **Input**
@@ -3073,7 +3134,8 @@ Get block page settings
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.settings.getBlockPage({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.settings.getBlockPage({});
 ```
 
 **Input**
@@ -3103,7 +3165,8 @@ Get logging settings
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.settings.getLogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.settings.getLogs({});
 ```
 
 **Input**
@@ -3148,7 +3211,8 @@ Get performance settings (ECS, cache boost, CNAME flattening)
 **Risk:** `read`
 
 ```ts
-await corsair.nextdns.api.settings.getPerformance({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.settings.getPerformance({});
 ```
 
 **Input**
@@ -3180,7 +3244,8 @@ Enable or disable logging of client IPs
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.settings.logClientIps({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.settings.logClientIps({});
 ```
 
 **Input**
@@ -3226,7 +3291,8 @@ Enable or disable logging of queried domains
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.settings.logDomains({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.settings.logDomains({});
 ```
 
 **Input**
@@ -3272,7 +3338,8 @@ Update multiple settings categories in one call
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.settings.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.settings.update({});
 ```
 
 **Input**
@@ -3383,7 +3450,8 @@ Enable or disable the branded block page
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.settings.updateBlockPage({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.settings.updateBlockPage({});
 ```
 
 **Input**
@@ -3414,7 +3482,8 @@ Update log retention, storage location, and privacy options
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.settings.updateLogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.settings.updateLogs({});
 ```
 
 **Input**
@@ -3462,7 +3531,8 @@ Update performance optimization settings
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.settings.updatePerformance({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.settings.updatePerformance({});
 ```
 
 **Input**
@@ -3499,7 +3569,8 @@ Update the profile's Linked IP to the caller's current public IP
 **Risk:** `write`
 
 ```ts
-await corsair.nextdns.api.setup.updateLinkedIp({});
+const tenant = corsair.withTenant('acme');
+await tenant.nextdns.api.setup.updateLinkedIp({});
 ```
 
 **Input**

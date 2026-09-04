@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { circleci } from '@corsair-dev/circleci';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		circleci(),
 	],

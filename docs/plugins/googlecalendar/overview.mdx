@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		googlecalendar(),
 	],
@@ -139,15 +140,23 @@ Synced entities: `calendars`, `events`. See [Database](/plugins/googlecalendar/d
 Fires when a Google Calendar event is created, updated, or deleted.
 
 ```ts
-googlecalendar({
-    webhookHooks: {
-        onEventChanged: {
-            after: async (ctx, result) => {
-                console.log('Google Calendar event changed:', result.data);
-            }
-        },
-    },
-})
+import { createCorsair } from 'corsair';
+import { googlecalendar } from '@corsair-dev/googlecalendar';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+		googlecalendar({
+			webhookHooks: {
+				onEventChanged: {
+					after: async (ctx, result) => {
+						console.log('Google Calendar event changed:', result.data);
+					}
+				},
+			},
+		)
+	],
+});
 ```
 
 Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/googlecalendar/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).

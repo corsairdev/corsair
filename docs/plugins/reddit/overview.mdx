@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { reddit } from '@corsair-dev/reddit';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		reddit(),
 	],

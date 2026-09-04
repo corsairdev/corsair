@@ -20,7 +20,8 @@ Get current elevator status and elevator outage advisories
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.advisories.elevators({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.advisories.elevators({});
 ```
 
 **Input**
@@ -84,7 +85,8 @@ Get current BART system advisories and service delays
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.advisories.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.advisories.list({});
 ```
 
 **Input**
@@ -157,7 +159,8 @@ Get the number of trains currently active in the BART system
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.advisories.trainCount({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.advisories.trainCount({});
 ```
 
 **Input:** _empty object_
@@ -186,7 +189,8 @@ Get real-time estimated departure times for a BART station
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.etd.station({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.etd.station({});
 ```
 
 **Input**
@@ -356,7 +360,8 @@ Calculate transit fares and ticket prices between two BART stations
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.fares.calculate({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.fares.calculate({});
 ```
 
 **Input**
@@ -428,7 +433,8 @@ Get detailed information about a specific BART transit route
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.routes.info({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.routes.info({});
 ```
 
 **Input**
@@ -502,7 +508,8 @@ Get the list of all current BART transit routes
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.routes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.routes.list({});
 ```
 
 **Input**
@@ -561,7 +568,8 @@ Get scheduled arrivals and trip itinerary between two BART stations
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.schedules.arrivals({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.schedules.arrivals({});
 ```
 
 **Input**
@@ -730,7 +738,8 @@ Get scheduled departures and trip itinerary between two BART stations
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.schedules.departures({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.schedules.departures({});
 ```
 
 **Input**
@@ -899,7 +908,8 @@ Get the full timetable and stop schedule for a specific BART route
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.schedules.routes({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.schedules.routes({});
 ```
 
 **Input**
@@ -973,7 +983,8 @@ Get station access details including parking, lockers, and transit connections
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.stations.access({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.stations.access({});
 ```
 
 **Input**
@@ -1155,7 +1166,8 @@ Get detailed station information, connections, and platforms
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.stations.info({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.stations.info({});
 ```
 
 **Input**
@@ -1368,7 +1380,8 @@ Get list of all BART stations with geographic coordinates and addresses
 **Risk:** `read`
 
 ```ts
-await corsair.bart.api.stations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bart.api.stations.list({});
 ```
 
 **Input:** _empty object_

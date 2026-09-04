@@ -14,7 +14,8 @@ The Figma plugin syncs data locally. Use `corsair.figma.db.<entity>.search({ dat
 Path: `figma.db.comments.search`
 
 ```ts
-const rows = await corsair.figma.db.comments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.figma.db.comments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -47,7 +48,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `figma.db.components.search`
 
 ```ts
-const rows = await corsair.figma.db.components.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.figma.db.components.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -78,7 +80,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `figma.db.fileMetadata.search`
 
 ```ts
-const rows = await corsair.figma.db.fileMetadata.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.figma.db.fileMetadata.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -108,7 +111,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `figma.db.versions.search`
 
 ```ts
-const rows = await corsair.figma.db.versions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.figma.db.versions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -138,7 +142,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `figma.db.webhookConfigs.search`
 
 ```ts
-const rows = await corsair.figma.db.webhookConfigs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.figma.db.webhookConfigs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

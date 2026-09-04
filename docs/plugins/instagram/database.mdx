@@ -14,7 +14,8 @@ The Instagram plugin syncs data locally. Use `corsair.instagram.db.<entity>.sear
 Path: `instagram.db.comments.search`
 
 ```ts
-const rows = await corsair.instagram.db.comments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.instagram.db.comments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `instagram.db.conversations.search`
 
 ```ts
-const rows = await corsair.instagram.db.conversations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.instagram.db.conversations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -65,7 +67,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `instagram.db.media.search`
 
 ```ts
-const rows = await corsair.instagram.db.media.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.instagram.db.media.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -92,7 +95,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `instagram.db.messages.search`
 
 ```ts
-const rows = await corsair.instagram.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.instagram.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -122,7 +126,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `instagram.db.users.search`
 
 ```ts
-const rows = await corsair.instagram.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.instagram.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

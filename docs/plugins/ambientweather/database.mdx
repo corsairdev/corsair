@@ -14,7 +14,8 @@ The AmbientWeather plugin syncs data locally. Use `corsair.ambientweather.db.<en
 Path: `ambientweather.db.devices.search`
 
 ```ts
-const rows = await corsair.ambientweather.db.devices.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ambientweather.db.devices.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -70,7 +71,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `ambientweather.db.readings.search`
 
 ```ts
-const rows = await corsair.ambientweather.db.readings.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ambientweather.db.readings.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

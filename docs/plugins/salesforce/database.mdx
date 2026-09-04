@@ -14,7 +14,8 @@ The Salesforce plugin syncs data locally. Use `corsair.salesforce.db.<entity>.se
 Path: `salesforce.db.account.search`
 
 ```ts
-const rows = await corsair.salesforce.db.account.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.account.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -85,7 +86,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.campaign.search`
 
 ```ts
-const rows = await corsair.salesforce.db.campaign.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.campaign.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -141,7 +143,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.campaignMember.search`
 
 ```ts
-const rows = await corsair.salesforce.db.campaignMember.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.campaignMember.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -176,7 +179,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.contact.search`
 
 ```ts
-const rows = await corsair.salesforce.db.contact.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.contact.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -251,7 +255,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.contentDocument.search`
 
 ```ts
-const rows = await corsair.salesforce.db.contentDocument.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.contentDocument.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -292,7 +297,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.emailMessage.search`
 
 ```ts
-const rows = await corsair.salesforce.db.emailMessage.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.emailMessage.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -336,7 +342,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.lead.search`
 
 ```ts
-const rows = await corsair.salesforce.db.lead.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.lead.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -404,7 +411,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.note.search`
 
 ```ts
-const rows = await corsair.salesforce.db.note.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.note.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -438,7 +446,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.opportunity.search`
 
 ```ts
-const rows = await corsair.salesforce.db.opportunity.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.opportunity.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -493,7 +502,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.opportunityLineItem.search`
 
 ```ts
-const rows = await corsair.salesforce.db.opportunityLineItem.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.opportunityLineItem.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -534,7 +544,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.pricebook.search`
 
 ```ts
-const rows = await corsair.salesforce.db.pricebook.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.pricebook.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -570,7 +581,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.pricebookEntry.search`
 
 ```ts
-const rows = await corsair.salesforce.db.pricebookEntry.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.pricebookEntry.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -607,7 +619,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.task.search`
 
 ```ts
-const rows = await corsair.salesforce.db.task.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.task.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -658,7 +671,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `salesforce.db.user.search`
 
 ```ts
-const rows = await corsair.salesforce.db.user.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.salesforce.db.user.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

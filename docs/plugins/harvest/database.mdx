@@ -14,7 +14,8 @@ The Harvest plugin syncs data locally. Use `corsair.harvest.db.<entity>.search({
 Path: `harvest.db.clients.search`
 
 ```ts
-const rows = await corsair.harvest.db.clients.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.harvest.db.clients.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `harvest.db.company.search`
 
 ```ts
-const rows = await corsair.harvest.db.company.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.harvest.db.company.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -90,7 +92,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `harvest.db.contacts.search`
 
 ```ts
-const rows = await corsair.harvest.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.harvest.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -123,7 +126,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `harvest.db.estimates.search`
 
 ```ts
-const rows = await corsair.harvest.db.estimates.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.harvest.db.estimates.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -166,7 +170,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `harvest.db.expenseCategories.search`
 
 ```ts
-const rows = await corsair.harvest.db.expenseCategories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.harvest.db.expenseCategories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -195,7 +200,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `harvest.db.invoiceItemCategories.search`
 
 ```ts
-const rows = await corsair.harvest.db.invoiceItemCategories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.harvest.db.invoiceItemCategories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -223,7 +229,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `harvest.db.invoices.search`
 
 ```ts
-const rows = await corsair.harvest.db.invoices.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.harvest.db.invoices.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -273,7 +280,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `harvest.db.projects.search`
 
 ```ts
-const rows = await corsair.harvest.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.harvest.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -319,7 +327,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `harvest.db.tasks.search`
 
 ```ts
-const rows = await corsair.harvest.db.tasks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.harvest.db.tasks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -349,7 +358,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `harvest.db.users.search`
 
 ```ts
-const rows = await corsair.harvest.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.harvest.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

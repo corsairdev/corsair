@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { anchorbrowser } from '@corsair-dev/anchorbrowser';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		anchorbrowser(),
 	],

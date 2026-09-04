@@ -20,7 +20,8 @@ Assess email deliverability and quality: format, disposable/free/role detection,
 **Risk:** `read`
 
 ```ts
-await corsair.abstract.api.email.reputation({});
+const tenant = corsair.withTenant('acme');
+await tenant.abstract.api.email.reputation({});
 ```
 
 **Input**
@@ -146,7 +147,8 @@ Validate whether an email address is real, correctly formatted, and deliverable
 **Risk:** `read`
 
 ```ts
-await corsair.abstract.api.email.validate({});
+const tenant = corsair.withTenant('acme');
+await tenant.abstract.api.email.validate({});
 ```
 
 **Input**
@@ -188,7 +190,8 @@ Validate the format and country code of an IBAN number
 **Risk:** `read`
 
 ```ts
-await corsair.abstract.api.iban.validate({});
+const tenant = corsair.withTenant('acme');
+await tenant.abstract.api.iban.validate({});
 ```
 
 **Input**
@@ -221,7 +224,8 @@ Get VAT rate categories (standard, reduced, special) for a country
 **Risk:** `read`
 
 ```ts
-await corsair.abstract.api.vat.getCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.abstract.api.vat.getCategories({});
 ```
 
 **Input**

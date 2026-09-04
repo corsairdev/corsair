@@ -14,7 +14,8 @@ The Dodo Payments plugin syncs data locally. Use `corsair.dodopayments.db.<entit
 Path: `dodopayments.db.customers.search`
 
 ```ts
-const rows = await corsair.dodopayments.db.customers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dodopayments.db.customers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dodopayments.db.payments.search`
 
 ```ts
-const rows = await corsair.dodopayments.db.payments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dodopayments.db.payments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -73,7 +75,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dodopayments.db.refunds.search`
 
 ```ts
-const rows = await corsair.dodopayments.db.refunds.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dodopayments.db.refunds.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -102,7 +105,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `dodopayments.db.subscriptions.search`
 
 ```ts
-const rows = await corsair.dodopayments.db.subscriptions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dodopayments.db.subscriptions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

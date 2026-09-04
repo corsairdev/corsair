@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { posthog } from '@corsair-dev/posthog';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		posthog(),
 	],
@@ -126,17 +127,25 @@ Synced entities: `events`. See [Database](/plugins/posthog/database) for filters
 Fires when a PostHog event is captured.
 
 ```ts
-posthog({
-    webhookHooks: {
-        events: {
-            captured: {
-                after: async (ctx, result) => {
-                    console.log('PostHog event captured:', result.data);
-                }
-            },
-        },
-    },
-})
+import { createCorsair } from 'corsair';
+import { posthog } from '@corsair-dev/posthog';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+		posthog({
+			webhookHooks: {
+				events: {
+					captured: {
+						after: async (ctx, result) => {
+							console.log('PostHog event captured:', result.data);
+						}
+					},
+				},
+			},
+		)
+	],
+});
 ```
 
 Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/posthog/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).

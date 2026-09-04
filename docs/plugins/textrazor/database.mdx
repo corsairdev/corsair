@@ -14,7 +14,8 @@ The TextRazor plugin syncs data locally. Use `corsair.textrazor.db.<entity>.sear
 Path: `textrazor.db.accounts.search`
 
 ```ts
-const rows = await corsair.textrazor.db.accounts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.textrazor.db.accounts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `textrazor.db.categories.search`
 
 ```ts
-const rows = await corsair.textrazor.db.categories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.textrazor.db.categories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -71,7 +73,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `textrazor.db.dictionaries.search`
 
 ```ts
-const rows = await corsair.textrazor.db.dictionaries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.textrazor.db.dictionaries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -98,7 +101,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `textrazor.db.dictionaryEntries.search`
 
 ```ts
-const rows = await corsair.textrazor.db.dictionaryEntries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.textrazor.db.dictionaryEntries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -124,7 +128,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `textrazor.db.entities.search`
 
 ```ts
-const rows = await corsair.textrazor.db.entities.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.textrazor.db.entities.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

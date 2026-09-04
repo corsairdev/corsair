@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { uniswapapi } from '@corsair-dev/uniswapapi';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		uniswapapi(),
 	],

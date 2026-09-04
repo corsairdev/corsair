@@ -14,7 +14,8 @@ The Twilio plugin syncs data locally. Use `corsair.twilio.db.<entity>.search({ d
 Path: `twilio.db.calls.search`
 
 ```ts
-const rows = await corsair.twilio.db.calls.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twilio.db.calls.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -47,7 +48,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `twilio.db.messages.search`
 
 ```ts
-const rows = await corsair.twilio.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twilio.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

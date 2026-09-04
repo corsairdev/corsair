@@ -14,7 +14,8 @@ The Google sheets plugin syncs data locally. Use `corsair.googlesheets.db.<entit
 Path: `googlesheets.db.rows.search`
 
 ```ts
-const rows = await corsair.googlesheets.db.rows.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlesheets.db.rows.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googlesheets.db.sheets.search`
 
 ```ts
-const rows = await corsair.googlesheets.db.sheets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlesheets.db.sheets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -68,7 +70,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googlesheets.db.spreadsheets.search`
 
 ```ts
-const rows = await corsair.googlesheets.db.spreadsheets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlesheets.db.spreadsheets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

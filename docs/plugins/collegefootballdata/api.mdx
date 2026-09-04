@@ -20,7 +20,8 @@ Get the authenticated user's subscription tier and remaining API calls
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.account.getUserInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.account.getUserInfo({});
 ```
 
 **Input:** _empty object_
@@ -65,7 +66,8 @@ Get betting lines and totals by game and provider
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.betting.getLines({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.betting.getLines({});
 ```
 
 **Input**
@@ -128,7 +130,8 @@ Get coaching records and history
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.coaches.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.coaches.list({});
 ```
 
 **Input**
@@ -191,7 +194,8 @@ List all conferences across every NCAA division
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.conferences.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.conferences.list({});
 ```
 
 **Input:** _empty object_
@@ -227,7 +231,8 @@ List conference divisions with active years and metadata
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.conferences.listDivisions({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.conferences.listDivisions({});
 ```
 
 **Input**
@@ -276,7 +281,8 @@ Get current/historical conference memberships for teams
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.conferences.listMemberships({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.conferences.listMemberships({});
 ```
 
 **Input**
@@ -327,7 +333,8 @@ List NFL draft picks
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.draft.listPicks({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.draft.listPicks({});
 ```
 
 **Input**
@@ -389,7 +396,8 @@ Get the standardized list of NFL draft positions
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.draft.listPositions({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.draft.listPositions({});
 ```
 
 **Input:** _empty object_
@@ -421,7 +429,8 @@ List NFL teams used in draft endpoints
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.draft.listTeams({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.draft.listTeams({});
 ```
 
 **Input:** _empty object_
@@ -457,7 +466,8 @@ Get drive-level data for games
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.drives.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.drives.list({});
 ```
 
 **Input**
@@ -531,7 +541,8 @@ Get advanced analytics for a single game
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.games.getAdvancedBoxScore({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.games.getAdvancedBoxScore({});
 ```
 
 **Input**
@@ -589,7 +600,8 @@ Get game schedules and results, filtered by season/week/team
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.games.getGamesAndResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.games.getGamesAndResults({});
 ```
 
 **Input**
@@ -675,7 +687,8 @@ Get broadcast/media information for games
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.games.getMedia({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.games.getMedia({});
 ```
 
 **Input**
@@ -728,7 +741,8 @@ Get player-level stats for games
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.games.getPlayerStats({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.games.getPlayerStats({});
 ```
 
 **Input**
@@ -773,7 +787,8 @@ Get team-level box score stats for games
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.games.getTeamStats({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.games.getTeamStats({});
 ```
 
 **Input**
@@ -819,7 +834,8 @@ Get field goal expected-points model data by distance
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.metrics.getFieldGoalExpectedPoints({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.metrics.getFieldGoalExpectedPoints({});
 ```
 
 **Input:** _empty object_
@@ -852,7 +868,8 @@ Get pregame win probabilities for games
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.metrics.getPregameWinProbabilities({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.metrics.getPregameWinProbabilities({});
 ```
 
 **Input**
@@ -898,7 +915,8 @@ Get play-by-play win probabilities for a game
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.metrics.getWinProbability({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.metrics.getWinProbability({});
 ```
 
 **Input**
@@ -951,7 +969,8 @@ Get returning production splits by team
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.players.getReturningProduction({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.players.getReturningProduction({});
 ```
 
 **Input**
@@ -1003,7 +1022,8 @@ Get player usage rates for a season
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.players.getUsage({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.players.getUsage({});
 ```
 
 **Input**
@@ -1051,7 +1071,8 @@ Get transfer portal entries for a season
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.players.listTransferPortal({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.players.listTransferPortal({});
 ```
 
 **Input**
@@ -1096,7 +1117,8 @@ Search for players by name
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.players.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.players.search({});
 ```
 
 **Input**
@@ -1152,7 +1174,8 @@ Get play-by-play data for games
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.plays.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.plays.list({});
 ```
 
 **Input**
@@ -1225,7 +1248,8 @@ Get player-level statistics tied to individual plays
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.plays.listStats({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.plays.listStats({});
 ```
 
 **Input**
@@ -1287,7 +1311,8 @@ List play-level stat type definitions
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.plays.listStatTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.plays.listStatTypes({});
 ```
 
 **Input:** _empty object_
@@ -1321,7 +1346,8 @@ List available play types
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.plays.listTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.plays.listTypes({});
 ```
 
 **Input:** _empty object_
@@ -1357,7 +1383,8 @@ Get player PPA by game
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.ppa.getByPlayerGame({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.ppa.getByPlayerGame({});
 ```
 
 **Input**
@@ -1409,7 +1436,8 @@ Get player PPA aggregated by season
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.ppa.getByPlayerSeason({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.ppa.getByPlayerSeason({});
 ```
 
 **Input**
@@ -1460,7 +1488,8 @@ Get team PPA by game
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.ppa.getByTeamGame({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.ppa.getByTeamGame({});
 ```
 
 **Input**
@@ -1524,7 +1553,8 @@ Get team PPA (Predicted Points Added) by season
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.ppa.getByTeamSeason({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.ppa.getByTeamSeason({});
 ```
 
 **Input**
@@ -1581,7 +1611,8 @@ Get expected points for a down/distance across field positions
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.ppa.getPredictedPoints({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.ppa.getPredictedPoints({});
 ```
 
 **Input**
@@ -1621,7 +1652,8 @@ Get poll rankings by season
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.rankings.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.rankings.list({});
 ```
 
 **Input**
@@ -1675,7 +1707,8 @@ Get SP+ ratings aggregated by conference
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.ratings.getConferenceSP({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.ratings.getConferenceSP({});
 ```
 
 **Input**
@@ -1742,7 +1775,8 @@ Get Elo ratings by season or team
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.ratings.getElo({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.ratings.getElo({});
 ```
 
 **Input**
@@ -1783,7 +1817,8 @@ Get ESPN FPI (Football Power Index) ratings
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.ratings.getFPI({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.ratings.getFPI({});
 ```
 
 **Input**
@@ -1828,7 +1863,8 @@ Get SP+ team ratings
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.ratings.getSP({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.ratings.getSP({});
 ```
 
 **Input**
@@ -1897,7 +1933,8 @@ Get SRS (Simple Rating System) ratings
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.ratings.getSRS({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.ratings.getSRS({});
 ```
 
 **Input**
@@ -1942,7 +1979,8 @@ Get recruiting data grouped by position
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.recruiting.getGroupRatings({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.recruiting.getGroupRatings({});
 ```
 
 **Input**
@@ -1988,7 +2026,8 @@ Get team recruiting class rankings
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.recruiting.getTeamRankings({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.recruiting.getTeamRankings({});
 ```
 
 **Input**
@@ -2028,7 +2067,8 @@ Get composite team talent rankings for a season
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.recruiting.getTeamTalent({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.recruiting.getTeamTalent({});
 ```
 
 **Input**
@@ -2066,7 +2106,8 @@ Get recruit rankings
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.recruiting.listRecruits({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.recruiting.listRecruits({});
 ```
 
 **Input**
@@ -2131,7 +2172,8 @@ Get the valid season-type vocabulary
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.seasonTypes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.seasonTypes.list({});
 ```
 
 **Input**
@@ -2158,7 +2200,8 @@ Get advanced team metrics at the game level
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.stats.getAdvancedGameStats({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.stats.getAdvancedGameStats({});
 ```
 
 **Input**
@@ -2208,7 +2251,8 @@ Get advanced season-level team statistics
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.stats.getAdvancedSeasonStats({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.stats.getAdvancedSeasonStats({});
 ```
 
 **Input**
@@ -2257,7 +2301,8 @@ Get havoc statistics aggregated by game
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.stats.getGameHavocStats({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.stats.getGameHavocStats({});
 ```
 
 **Input**
@@ -2308,7 +2353,8 @@ Get aggregated season statistics for players
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.stats.getPlayerSeasonStats({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.stats.getPlayerSeasonStats({});
 ```
 
 **Input**
@@ -2356,7 +2402,8 @@ Get basic season stats aggregated by team
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.stats.getTeamSeasonStats({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.stats.getTeamSeasonStats({});
 ```
 
 **Input**
@@ -2400,7 +2447,8 @@ List valid team statistical category names
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.stats.listCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.stats.listCategories({});
 ```
 
 **Input:** _empty object_
@@ -2422,7 +2470,8 @@ Get against-the-spread (ATS) summary by team
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.teams.getATSRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.teams.getATSRecords({});
 ```
 
 **Input**
@@ -2468,7 +2517,8 @@ Get head-to-head matchup history between two teams
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.teams.getMatchup({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.teams.getMatchup({});
 ```
 
 **Input**
@@ -2516,7 +2566,8 @@ Get team win-loss records for a season
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.teams.getRecords({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.teams.getRecords({});
 ```
 
 **Input**
@@ -2602,7 +2653,8 @@ Get a team's roster for a season
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.teams.getRoster({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.teams.getRoster({});
 ```
 
 **Input**
@@ -2657,7 +2709,8 @@ List teams, optionally filtered by conference/season
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.teams.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.teams.list({});
 ```
 
 **Input**
@@ -2721,7 +2774,8 @@ List FBS teams for a season
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.teams.listFBS({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.teams.listFBS({});
 ```
 
 **Input**
@@ -2784,7 +2838,8 @@ List FCS teams for a season/conference
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.teams.listFCS({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.teams.listFCS({});
 ```
 
 **Input**
@@ -2850,7 +2905,8 @@ List venues with metadata
 **Risk:** `read`
 
 ```ts
-await corsair.collegefootballdata.api.venues.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.collegefootballdata.api.venues.list({});
 ```
 
 **Input:** _empty object_

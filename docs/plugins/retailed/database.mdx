@@ -14,7 +14,8 @@ The Retailed plugin syncs data locally. Use `corsair.retailed.db.<entity>.search
 Path: `retailed.db.product.search`
 
 ```ts
-const rows = await corsair.retailed.db.product.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.retailed.db.product.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

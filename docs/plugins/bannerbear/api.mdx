@@ -20,7 +20,8 @@ Get account info including plan and quota
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.account.getAccountInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.account.getAccountInfo({});
 ```
 
 **Input:** _empty object_
@@ -74,7 +75,8 @@ Verify API authentication against the current account
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.account.getAuth({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.account.getAuth({});
 ```
 
 **Input:** _empty object_
@@ -130,7 +132,8 @@ Generate an animation from a template
 **Risk:** `write`
 
 ```ts
-await corsair.bannerbear.api.animations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.animations.create({});
 ```
 
 **Input**
@@ -192,7 +195,8 @@ Get an animation by UID
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.animations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.animations.get({});
 ```
 
 **Input**
@@ -241,7 +245,8 @@ List generated animations
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.animations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.animations.list({});
 ```
 
 **Input**
@@ -289,7 +294,8 @@ Create an animation template
 **Risk:** `write`
 
 ```ts
-await corsair.bannerbear.api.animationTemplates.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.animationTemplates.create({});
 ```
 
 **Input**
@@ -334,7 +340,8 @@ Get an animation template by UID
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.animationTemplates.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.animationTemplates.get({});
 ```
 
 **Input**
@@ -374,7 +381,8 @@ List animation templates
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.animationTemplates.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.animationTemplates.list({});
 ```
 
 **Input**
@@ -422,7 +430,8 @@ Generate an image from a template
 **Risk:** `write`
 
 ```ts
-await corsair.bannerbear.api.images.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.images.create({});
 ```
 
 **Input**
@@ -482,7 +491,8 @@ Get an image by UID
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.images.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.images.get({});
 ```
 
 **Input**
@@ -530,7 +540,8 @@ List generated images
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.images.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.images.list({});
 ```
 
 **Input**
@@ -577,7 +588,8 @@ Create an Instant URL for an image template
 **Risk:** `write`
 
 ```ts
-await corsair.bannerbear.api.instantUrls.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.instantUrls.create({});
 ```
 
 **Input**
@@ -625,7 +637,8 @@ List Instant URLs
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.instantUrls.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.instantUrls.list({});
 ```
 
 **Input**
@@ -672,7 +685,8 @@ Merge image or PDF URLs into one PDF
 **Risk:** `write`
 
 ```ts
-await corsair.bannerbear.api.misc.joinPdfs({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.misc.joinPdfs({});
 ```
 
 **Input**
@@ -710,7 +724,8 @@ Create an image template
 **Risk:** `write`
 
 ```ts
-await corsair.bannerbear.api.templates.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.templates.create({});
 ```
 
 **Input**
@@ -765,7 +780,8 @@ Delete an image template by UID
 **Risk:** `write`
 
 ```ts
-await corsair.bannerbear.api.templates.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.templates.delete({});
 ```
 
 **Input**
@@ -795,7 +811,8 @@ Get an image template by UID
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.templates.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.templates.get({});
 ```
 
 **Input**
@@ -835,7 +852,8 @@ Install a publication as an image template
 **Risk:** `write`
 
 ```ts
-await corsair.bannerbear.api.templates.import({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.templates.import({});
 ```
 
 **Input**
@@ -875,7 +893,8 @@ List image templates
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.templates.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.templates.list({});
 ```
 
 **Input**
@@ -923,7 +942,8 @@ Create a webhook
 **Risk:** `write`
 
 ```ts
-await corsair.bannerbear.api.webhooksApi.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.webhooksApi.create({});
 ```
 
 **Input**
@@ -966,7 +986,8 @@ Delete a webhook by UID
 **Risk:** `write`
 
 ```ts
-await corsair.bannerbear.api.webhooksApi.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.webhooksApi.delete({});
 ```
 
 **Input**
@@ -996,7 +1017,8 @@ Get a webhook by UID
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.webhooksApi.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.webhooksApi.get({});
 ```
 
 **Input**
@@ -1035,7 +1057,8 @@ Run a workflow with inputs
 **Risk:** `write`
 
 ```ts
-await corsair.bannerbear.api.workflows.createWorkflowRun({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.workflows.createWorkflowRun({});
 ```
 
 **Input**
@@ -1112,7 +1135,8 @@ Get a workflow by UID
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.workflows.getWorkflow({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.workflows.getWorkflow({});
 ```
 
 **Input**
@@ -1168,7 +1192,8 @@ Get a workflow run by UID
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.workflows.getWorkflowRun({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.workflows.getWorkflowRun({});
 ```
 
 **Input**
@@ -1234,7 +1259,8 @@ List workflow runs
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.workflows.listWorkflowRuns({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.workflows.listWorkflowRuns({});
 ```
 
 **Input**
@@ -1283,7 +1309,8 @@ List workflows in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.bannerbear.api.workflows.listWorkflows({});
+const tenant = corsair.withTenant('acme');
+await tenant.bannerbear.api.workflows.listWorkflows({});
 ```
 
 **Input**

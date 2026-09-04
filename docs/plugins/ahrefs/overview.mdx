@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { ahrefs } from '@corsair-dev/ahrefs';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		ahrefs(),
 	],

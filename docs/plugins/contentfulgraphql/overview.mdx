@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { contentfulgraphql } from '@corsair-dev/contentfulgraphql';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		contentfulgraphql(),
 	],

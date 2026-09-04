@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { loyverse } from '@corsair-dev/loyverse';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		loyverse(),
 	],

@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { googlemaps } from '@corsair-dev/googlemaps';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		googlemaps(),
 	],

@@ -20,7 +20,8 @@ Create a new Wit.ai app
 **Risk:** `write`
 
 ```ts
-await corsair.witai.api.apps.createApp({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.apps.createApp({});
 ```
 
 **Input**
@@ -55,7 +56,8 @@ Delete a specific Wit.ai app
 **Risk:** `destructive`
 
 ```ts
-await corsair.witai.api.apps.deleteApp({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.apps.deleteApp({});
 ```
 
 **Input**
@@ -86,7 +88,8 @@ Export Wit.ai app data as a ZIP backup
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.apps.exportApp({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.apps.exportApp({});
 ```
 
 **Input**
@@ -116,7 +119,8 @@ Retrieve metadata and settings of a Wit.ai app
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.apps.getApp({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.apps.getApp({});
 ```
 
 **Input**
@@ -157,7 +161,8 @@ List all Wit.ai apps for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.apps.listApps({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.apps.listApps({});
 ```
 
 **Input**
@@ -205,7 +210,8 @@ List all tag groups (versions) for a Wit.ai app
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.apps.listTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.apps.listTags({});
 ```
 
 **Input**
@@ -245,7 +251,8 @@ Update an existing Wit.ai app
 **Risk:** `write`
 
 ```ts
-await corsair.witai.api.apps.updateApp({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.apps.updateApp({});
 ```
 
 **Input**
@@ -285,7 +292,8 @@ Add a keyword with optional synonyms to an entity
 **Risk:** `write`
 
 ```ts
-await corsair.witai.api.entities.addKeyword({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.entities.addKeyword({});
 ```
 
 **Input**
@@ -343,7 +351,8 @@ Add a synonym to a keyword in an entity
 **Risk:** `write`
 
 ```ts
-await corsair.witai.api.entities.addSynonym({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.entities.addSynonym({});
 ```
 
 **Input**
@@ -401,7 +410,8 @@ Create a new entity in Wit.ai
 **Risk:** `write`
 
 ```ts
-await corsair.witai.api.entities.createEntity({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.entities.createEntity({});
 ```
 
 **Input**
@@ -459,7 +469,8 @@ Permanently delete an entity by name
 **Risk:** `destructive`
 
 ```ts
-await corsair.witai.api.entities.deleteEntity({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.entities.deleteEntity({});
 ```
 
 **Input**
@@ -492,7 +503,8 @@ Delete a keyword from an entity
 **Risk:** `destructive`
 
 ```ts
-await corsair.witai.api.entities.deleteKeyword({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.entities.deleteKeyword({});
 ```
 
 **Input**
@@ -544,7 +556,8 @@ Delete a specific role from an entity
 **Risk:** `destructive`
 
 ```ts
-await corsair.witai.api.entities.deleteRole({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.entities.deleteRole({});
 ```
 
 **Input**
@@ -596,7 +609,8 @@ Delete a synonym from a keyword in an entity
 **Risk:** `destructive`
 
 ```ts
-await corsair.witai.api.entities.deleteSynonym({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.entities.deleteSynonym({});
 ```
 
 **Input**
@@ -649,7 +663,8 @@ Retrieve details of a specific entity
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.entities.getEntity({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.entities.getEntity({});
 ```
 
 **Input**
@@ -705,7 +720,8 @@ List all entities in the Wit.ai app
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.entities.listEntities({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.entities.listEntities({});
 ```
 
 **Input:** _empty object_
@@ -748,7 +764,8 @@ Create a new intent in Wit.ai
 **Risk:** `write`
 
 ```ts
-await corsair.witai.api.intents.createIntent({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.intents.createIntent({});
 ```
 
 **Input**
@@ -800,7 +817,8 @@ Permanently delete an intent by name
 **Risk:** `destructive`
 
 ```ts
-await corsair.witai.api.intents.deleteIntent({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.intents.deleteIntent({});
 ```
 
 **Input**
@@ -833,7 +851,8 @@ Retrieve details of a specific intent
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.intents.getIntent({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.intents.getIntent({});
 ```
 
 **Input**
@@ -885,7 +904,8 @@ List all intents in the Wit.ai app
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.intents.listIntents({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.intents.listIntents({});
 ```
 
 **Input:** _empty object_
@@ -931,7 +951,8 @@ Detect the language of a given text input
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.message.detectLanguage({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.message.detectLanguage({});
 ```
 
 **Input**
@@ -974,7 +995,8 @@ Analyze text to extract intents, entities, and traits
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.message.getMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.message.getMessage({});
 ```
 
 **Input**
@@ -1041,7 +1063,8 @@ Add a new value to an existing trait
 **Risk:** `write`
 
 ```ts
-await corsair.witai.api.traits.addValue({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.traits.addValue({});
 ```
 
 **Input**
@@ -1086,7 +1109,8 @@ Create a new trait in Wit.ai
 **Risk:** `write`
 
 ```ts
-await corsair.witai.api.traits.createTrait({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.traits.createTrait({});
 ```
 
 **Input**
@@ -1131,7 +1155,8 @@ Delete a trait by name
 **Risk:** `destructive`
 
 ```ts
-await corsair.witai.api.traits.deleteTrait({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.traits.deleteTrait({});
 ```
 
 **Input**
@@ -1164,7 +1189,8 @@ Retrieve details of a specific trait
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.traits.getTrait({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.traits.getTrait({});
 ```
 
 **Input**
@@ -1208,7 +1234,8 @@ List all traits in the Wit.ai app
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.traits.listTraits({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.traits.listTraits({});
 ```
 
 **Input:** _empty object_
@@ -1246,7 +1273,8 @@ Add training utterances to the Wit.ai app (rate limit: 200/min)
 **Risk:** `write`
 
 ```ts
-await corsair.witai.api.utterances.createUtterances({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.utterances.createUtterances({});
 ```
 
 **Input**
@@ -1302,7 +1330,8 @@ Delete validated utterances from the Wit.ai app
 **Risk:** `destructive`
 
 ```ts
-await corsair.witai.api.utterances.deleteUtterances({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.utterances.deleteUtterances({});
 ```
 
 **Input**
@@ -1335,7 +1364,8 @@ List training utterances from the Wit.ai app
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.utterances.listUtterances({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.utterances.listUtterances({});
 ```
 
 **Input**
@@ -1397,7 +1427,8 @@ Retrieve details for a specific text-to-speech voice
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.voices.getVoice({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.voices.getVoice({});
 ```
 
 **Input**
@@ -1444,7 +1475,8 @@ List all available text-to-speech voices grouped by locale
 **Risk:** `read`
 
 ```ts
-await corsair.witai.api.voices.listVoices({});
+const tenant = corsair.withTenant('acme');
+await tenant.witai.api.voices.listVoices({});
 ```
 
 **Input:** _empty object_

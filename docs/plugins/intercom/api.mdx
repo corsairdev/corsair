@@ -20,7 +20,8 @@ Retrieve a single admin
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.admins.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.admins.get({});
 ```
 
 **Input**
@@ -58,7 +59,8 @@ Identify the currently authorised admin
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.admins.identify({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.admins.identify({});
 ```
 
 **Input:** _empty object_
@@ -91,7 +93,8 @@ List all admins in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.admins.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.admins.list({});
 ```
 
 **Input:** _empty object_
@@ -136,7 +139,8 @@ List all admin activity logs
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.admins.listActivityLogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.admins.listActivityLogs({});
 ```
 
 **Input**
@@ -205,7 +209,8 @@ Set an admin as away
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.admins.setAway({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.admins.setAway({});
 ```
 
 **Input**
@@ -247,7 +252,8 @@ Create a new article
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.articles.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.articles.create({});
 ```
 
 **Input**
@@ -292,7 +298,8 @@ Delete an article [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.intercom.api.articles.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.articles.delete({});
 ```
 
 **Input**
@@ -324,7 +331,8 @@ Retrieve a single article
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.articles.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.articles.get({});
 ```
 
 **Input**
@@ -363,7 +371,8 @@ List all articles
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.articles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.articles.list({});
 ```
 
 **Input**
@@ -431,7 +440,8 @@ Search for articles
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.articles.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.articles.search({});
 ```
 
 **Input**
@@ -499,7 +509,8 @@ Update an existing article
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.articles.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.articles.update({});
 ```
 
 **Input**
@@ -547,7 +558,8 @@ Create a new collection
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.collections.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.collections.create({});
 ```
 
 **Input**
@@ -589,7 +601,8 @@ Delete a collection [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.intercom.api.collections.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.collections.delete({});
 ```
 
 **Input**
@@ -621,7 +634,8 @@ Retrieve a single collection
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.collections.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.collections.get({});
 ```
 
 **Input**
@@ -660,7 +674,8 @@ List all collections
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.collections.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.collections.list({});
 ```
 
 **Input**
@@ -728,7 +743,8 @@ Update a collection
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.collections.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.collections.update({});
 ```
 
 **Input**
@@ -772,7 +788,8 @@ Create or update a company
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.companies.createOrUpdate({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.companies.createOrUpdate({});
 ```
 
 **Input**
@@ -831,7 +848,8 @@ Delete a company [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.intercom.api.companies.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.companies.delete({});
 ```
 
 **Input**
@@ -863,7 +881,8 @@ Retrieve a company by Intercom ID
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.companies.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.companies.get({});
 ```
 
 **Input**
@@ -904,7 +923,8 @@ List all companies
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.companies.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.companies.list({});
 ```
 
 **Input**
@@ -976,7 +996,8 @@ List contacts attached to a company
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.companies.listAttachedContacts({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.companies.listAttachedContacts({});
 ```
 
 **Input**
@@ -1046,7 +1067,8 @@ List segments attached to a company
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.companies.listAttachedSegments({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.companies.listAttachedSegments({});
 ```
 
 **Input**
@@ -1093,7 +1115,8 @@ Retrieve a company by company_id or name
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.companies.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.companies.retrieve({});
 ```
 
 **Input**
@@ -1135,7 +1158,8 @@ Scroll over all companies for large datasets
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.companies.scroll({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.companies.scroll({});
 ```
 
 **Input**
@@ -1205,7 +1229,8 @@ Add a subscription to a contact
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.contacts.addSubscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.addSubscription({});
 ```
 
 **Input**
@@ -1254,7 +1279,8 @@ Add a tag to a contact
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.contacts.addTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.addTag({});
 ```
 
 **Input**
@@ -1287,7 +1313,8 @@ Attach a contact to a company
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.contacts.attachToCompany({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.attachToCompany({});
 ```
 
 **Input**
@@ -1329,7 +1356,8 @@ Create a note for a contact
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.contacts.createNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.createNote({});
 ```
 
 **Input**
@@ -1389,7 +1417,8 @@ Delete a contact [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.intercom.api.contacts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.delete({});
 ```
 
 **Input**
@@ -1421,7 +1450,8 @@ Detach a contact from a company
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.contacts.detachFromCompany({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.detachFromCompany({});
 ```
 
 **Input**
@@ -1463,7 +1493,8 @@ Get a single contact by ID
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.contacts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.get({});
 ```
 
 **Input**
@@ -1504,7 +1535,8 @@ List all contacts
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.contacts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.list({});
 ```
 
 **Input**
@@ -1574,7 +1606,8 @@ List companies attached to a contact
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.contacts.listAttachedCompanies({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.listAttachedCompanies({});
 ```
 
 **Input**
@@ -1644,7 +1677,8 @@ List segments attached to a contact
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.contacts.listAttachedSegments({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.listAttachedSegments({});
 ```
 
 **Input**
@@ -1691,7 +1725,8 @@ List all notes for a contact
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.contacts.listNotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.listNotes({});
 ```
 
 **Input**
@@ -1762,7 +1797,8 @@ List subscription types for a contact
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.contacts.listSubscriptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.listSubscriptions({});
 ```
 
 **Input**
@@ -1812,7 +1848,8 @@ List all tags attached to a contact
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.contacts.listTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.listTags({});
 ```
 
 **Input**
@@ -1856,7 +1893,8 @@ Merge a lead into a user contact
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.contacts.merge({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.merge({});
 ```
 
 **Input**
@@ -1898,7 +1936,8 @@ Remove a subscription from a contact
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.contacts.removeSubscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.removeSubscription({});
 ```
 
 **Input**
@@ -1946,7 +1985,8 @@ Remove a tag from a contact
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.contacts.removeTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.removeTag({});
 ```
 
 **Input**
@@ -1979,7 +2019,8 @@ Update an existing contact
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.contacts.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.contacts.update({});
 ```
 
 **Input**
@@ -2039,7 +2080,8 @@ Assign a conversation to an admin or team
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.conversations.assign({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.conversations.assign({});
 ```
 
 **Input**
@@ -2136,7 +2178,8 @@ Close a conversation
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.conversations.close({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.conversations.close({});
 ```
 
 **Input**
@@ -2231,7 +2274,8 @@ Create a new conversation
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.conversations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.conversations.create({});
 ```
 
 **Input**
@@ -2336,7 +2380,8 @@ Get a conversation by ID with all messages and details
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.conversations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.conversations.get({});
 ```
 
 **Input**
@@ -2429,7 +2474,8 @@ List conversations with filtering and pagination
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.conversations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.conversations.list({});
 ```
 
 **Input**
@@ -2529,7 +2575,8 @@ Reopen a closed conversation
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.conversations.reopen({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.conversations.reopen({});
 ```
 
 **Input**
@@ -2624,7 +2671,8 @@ Send a reply to a conversation
 **Risk:** `write`
 
 ```ts
-await corsair.intercom.api.conversations.reply({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.conversations.reply({});
 ```
 
 **Input**
@@ -2722,7 +2770,8 @@ Search conversations using query string
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.conversations.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.conversations.search({});
 ```
 
 **Input**
@@ -2855,7 +2904,8 @@ Retrieve a single help center
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.helpCenters.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.helpCenters.get({});
 ```
 
 **Input**
@@ -2890,7 +2940,8 @@ List all help centers
 **Risk:** `read`
 
 ```ts
-await corsair.intercom.api.helpCenters.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.intercom.api.helpCenters.list({});
 ```
 
 **Input:** _empty object_

@@ -20,7 +20,8 @@ List anomaly resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.anomalies.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.anomalies.list({});
 ```
 
 **Input**
@@ -115,7 +116,8 @@ List anomaly score resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.anomalyScores.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.anomalyScores.list({});
 ```
 
 **Input**
@@ -210,7 +212,8 @@ List association resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.associations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.associations.list({});
 ```
 
 **Input**
@@ -305,7 +308,8 @@ List association set resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.associationSets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.associationSets.list({});
 ```
 
 **Input**
@@ -400,7 +404,8 @@ List batch anomaly score resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.batchAnomalyScores.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.batchAnomalyScores.list({});
 ```
 
 **Input**
@@ -495,7 +500,8 @@ List batch centroid resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.batchCentroids.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.batchCentroids.list({});
 ```
 
 **Input**
@@ -590,7 +596,8 @@ List batch prediction resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.batchPredictions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.batchPredictions.list({});
 ```
 
 **Input**
@@ -685,7 +692,8 @@ List batch projection resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.batchProjections.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.batchProjections.list({});
 ```
 
 **Input**
@@ -780,7 +788,8 @@ List batch topic distribution resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.batchTopicDistributions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.batchTopicDistributions.list({});
 ```
 
 **Input**
@@ -875,7 +884,8 @@ List centroid resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.centroids.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.centroids.list({});
 ```
 
 **Input**
@@ -970,7 +980,8 @@ List cluster resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.clusters.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.clusters.list({});
 ```
 
 **Input**
@@ -1065,7 +1076,8 @@ List composite resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.composites.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.composites.list({});
 ```
 
 **Input**
@@ -1160,7 +1172,8 @@ Retrieve a saved configuration
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.configurations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.configurations.get({});
 ```
 
 **Input**
@@ -1240,7 +1253,8 @@ List saved configurations
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.configurations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.configurations.list({});
 ```
 
 **Input**
@@ -1337,7 +1351,8 @@ List correlation resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.correlations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.correlations.list({});
 ```
 
 **Input**
@@ -1432,7 +1447,8 @@ List dataset resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.datasets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.datasets.list({});
 ```
 
 **Input**
@@ -1527,7 +1543,8 @@ List deepnet resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.deepnets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.deepnets.list({});
 ```
 
 **Input**
@@ -1622,7 +1639,8 @@ List ensemble resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.ensembles.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.ensembles.list({});
 ```
 
 **Input**
@@ -1717,7 +1735,8 @@ List evaluation resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.evaluations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.evaluations.list({});
 ```
 
 **Input**
@@ -1812,7 +1831,8 @@ List execution resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.executions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.executions.list({});
 ```
 
 **Input**
@@ -1907,7 +1927,8 @@ Create an external data connector
 **Risk:** `write`
 
 ```ts
-await corsair.bigml.api.externalConnectors.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.externalConnectors.create({});
 ```
 
 **Input**
@@ -2020,7 +2041,8 @@ Retrieve an external data connector
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.externalConnectors.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.externalConnectors.get({});
 ```
 
 **Input**
@@ -2105,7 +2127,8 @@ List forecast resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.forecasts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.forecasts.list({});
 ```
 
 **Input**
@@ -2200,7 +2223,8 @@ List fusion resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.fusions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.fusions.list({});
 ```
 
 **Input**
@@ -2295,7 +2319,8 @@ List library resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.libraries.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.libraries.list({});
 ```
 
 **Input**
@@ -2390,7 +2415,8 @@ List linear regression resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.linearRegressions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.linearRegressions.list({});
 ```
 
 **Input**
@@ -2485,7 +2511,8 @@ List logistic regression resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.logisticRegressions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.logisticRegressions.list({});
 ```
 
 **Input**
@@ -2580,7 +2607,8 @@ List model resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.models.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.models.list({});
 ```
 
 **Input**
@@ -2675,7 +2703,8 @@ List optiml resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.optimls.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.optimls.list({});
 ```
 
 **Input**
@@ -2770,7 +2799,8 @@ List pca resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.pcas.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.pcas.list({});
 ```
 
 **Input**
@@ -2865,7 +2895,8 @@ List prediction resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.predictions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.predictions.list({});
 ```
 
 **Input**
@@ -2960,7 +2991,8 @@ List projection resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.projections.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.projections.list({});
 ```
 
 **Input**
@@ -3055,7 +3087,8 @@ Create a project
 **Risk:** `write`
 
 ```ts
-await corsair.bigml.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.projects.create({});
 ```
 
 **Input**
@@ -3150,7 +3183,8 @@ Permanently delete a project
 **Risk:** `destructive`
 
 ```ts
-await corsair.bigml.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.projects.delete({});
 ```
 
 **Input**
@@ -3175,7 +3209,8 @@ Retrieve a project
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.projects.get({});
 ```
 
 **Input**
@@ -3267,7 +3302,8 @@ List projects
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.projects.list({});
 ```
 
 **Input**
@@ -3369,7 +3405,8 @@ List sample resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.samples.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.samples.list({});
 ```
 
 **Input**
@@ -3464,7 +3501,8 @@ List script resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.scripts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.scripts.list({});
 ```
 
 **Input**
@@ -3559,7 +3597,8 @@ Retrieve a data source
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.sources.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.sources.get({});
 ```
 
 **Input**
@@ -3795,7 +3834,8 @@ List data sources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.sources.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.sources.list({});
 ```
 
 **Input**
@@ -3983,7 +4023,8 @@ Update a data source's name, description, tags, parsing configuration, or per-fi
 **Risk:** `write`
 
 ```ts
-await corsair.bigml.api.sources.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.sources.update({});
 ```
 
 **Input**
@@ -4252,7 +4293,8 @@ List statistical test resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.statisticalTests.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.statisticalTests.list({});
 ```
 
 **Input**
@@ -4347,7 +4389,8 @@ List time series resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.timeSeries.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.timeSeries.list({});
 ```
 
 **Input**
@@ -4442,7 +4485,8 @@ List topic distribution resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.topicDistributions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.topicDistributions.list({});
 ```
 
 **Input**
@@ -4537,7 +4581,8 @@ List topic model resources
 **Risk:** `read`
 
 ```ts
-await corsair.bigml.api.topicModels.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigml.api.topicModels.list({});
 ```
 
 **Input**

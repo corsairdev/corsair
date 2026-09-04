@@ -14,7 +14,8 @@ The Linear plugin syncs data locally. Use `corsair.linear.db.<entity>.search({ d
 Path: `linear.db.comments.search`
 
 ```ts
-const rows = await corsair.linear.db.comments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.linear.db.comments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -45,7 +46,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `linear.db.issues.search`
 
 ```ts
-const rows = await corsair.linear.db.issues.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.linear.db.issues.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -91,7 +93,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `linear.db.projects.search`
 
 ```ts
-const rows = await corsair.linear.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.linear.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -128,7 +131,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `linear.db.teams.search`
 
 ```ts
-const rows = await corsair.linear.db.teams.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.linear.db.teams.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -160,7 +164,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `linear.db.users.search`
 
 ```ts
-const rows = await corsair.linear.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.linear.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

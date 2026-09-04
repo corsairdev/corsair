@@ -20,7 +20,8 @@ List Figma organization activity logs
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.activityLogs.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.activityLogs.list({});
 ```
 
 **Input**
@@ -58,7 +59,8 @@ Add a comment to a Figma file
 **Risk:** `write`
 
 ```ts
-await corsair.figma.api.comments.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.comments.add({});
 ```
 
 **Input**
@@ -129,7 +131,8 @@ Add a reaction to a comment
 **Risk:** `write`
 
 ```ts
-await corsair.figma.api.comments.addReaction({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.comments.addReaction({});
 ```
 
 **Input**
@@ -162,7 +165,8 @@ Delete a comment from a Figma file [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.figma.api.comments.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.comments.delete({});
 ```
 
 **Input**
@@ -194,7 +198,8 @@ Delete a reaction from a comment
 **Risk:** `write`
 
 ```ts
-await corsair.figma.api.comments.deleteReaction({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.comments.deleteReaction({});
 ```
 
 **Input**
@@ -227,7 +232,8 @@ Get reactions on a comment
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.comments.getReactions({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.comments.getReactions({});
 ```
 
 **Input**
@@ -286,7 +292,8 @@ List comments on a Figma file
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.comments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.comments.list({});
 ```
 
 **Input**
@@ -352,7 +359,8 @@ Get a Figma component by key
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.components.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.components.get({});
 ```
 
 **Input**
@@ -412,7 +420,8 @@ Get a Figma component set by key
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.components.getComponentSet({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.components.getComponentSet({});
 ```
 
 **Input**
@@ -459,7 +468,8 @@ Get all component sets in a Figma file
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.components.getComponentSetsForFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.components.getComponentSetsForFile({});
 ```
 
 **Input**
@@ -503,7 +513,8 @@ Get all component sets for a Figma team
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.components.getComponentSetsForTeam({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.components.getComponentSetsForTeam({});
 ```
 
 **Input**
@@ -551,7 +562,8 @@ Get all components in a Figma file
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.components.getForFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.components.getForFile({});
 ```
 
 **Input**
@@ -611,7 +623,8 @@ Get all components for a Figma team
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.components.getForTeam({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.components.getForTeam({});
 ```
 
 **Input**
@@ -676,7 +689,8 @@ Convert Figma design tokens to a Tailwind CSS configuration
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.designTools.designTokensToTailwind({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.designTools.designTokensToTailwind({});
 ```
 
 **Input**
@@ -720,7 +734,8 @@ Discover Figma files, projects, and teams
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.designTools.discoverResources({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.designTools.discoverResources({});
 ```
 
 **Input**
@@ -756,7 +771,8 @@ Download rendered images for Figma nodes
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.designTools.downloadImages({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.designTools.downloadImages({});
 ```
 
 **Input**
@@ -812,7 +828,8 @@ Extract design tokens (variables and styles) from a Figma file
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.designTools.extractDesignTokens({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.designTools.extractDesignTokens({});
 ```
 
 **Input**
@@ -855,7 +872,8 @@ Extract prototype interactions and flows from a Figma file
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.designTools.extractPrototypeInteractions({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.designTools.extractPrototypeInteractions({});
 ```
 
 **Input**
@@ -890,7 +908,8 @@ Create dev resources on a Figma file
 **Risk:** `write`
 
 ```ts
-await corsair.figma.api.devResources.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.devResources.create({});
 ```
 
 **Input**
@@ -961,7 +980,8 @@ Delete a dev resource from a Figma file [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.figma.api.devResources.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.devResources.delete({});
 ```
 
 **Input**
@@ -987,7 +1007,8 @@ Get dev resources for a Figma file
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.devResources.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.devResources.get({});
 ```
 
 **Input**
@@ -1033,7 +1054,8 @@ Update dev resources on a Figma file
 **Risk:** `write`
 
 ```ts
-await corsair.figma.api.devResources.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.devResources.update({});
 ```
 
 **Input**
@@ -1102,7 +1124,8 @@ Get image fills from a Figma file
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.files.getImageFills({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.files.getImageFills({});
 ```
 
 **Input**
@@ -1145,7 +1168,8 @@ Get full Figma file JSON
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.files.getJSON({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.files.getJSON({});
 ```
 
 **Input**
@@ -1209,7 +1233,8 @@ Get Figma file metadata
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.files.getMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.files.getMetadata({});
 ```
 
 **Input**
@@ -1244,7 +1269,8 @@ Get specific nodes from a Figma file
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.files.getNodes({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.files.getNodes({});
 ```
 
 **Input**
@@ -1290,7 +1316,8 @@ Get all files in a Figma project
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.files.getProjectFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.files.getProjectFiles({});
 ```
 
 **Input**
@@ -1336,7 +1363,8 @@ Get styles from a Figma file
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.files.getStyles({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.files.getStyles({});
 ```
 
 **Input**
@@ -1384,7 +1412,8 @@ Get version history of a Figma file
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.files.getVersions({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.files.getVersions({});
 ```
 
 **Input**
@@ -1446,7 +1475,8 @@ Render Figma nodes as images
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.files.renderImages({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.files.renderImages({});
 ```
 
 **Input**
@@ -1499,7 +1529,8 @@ Get library component action analytics
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.libraryAnalytics.componentActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.libraryAnalytics.componentActions({});
 ```
 
 **Input**
@@ -1535,7 +1566,8 @@ Get library component usage analytics
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.libraryAnalytics.componentUsages({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.libraryAnalytics.componentUsages({});
 ```
 
 **Input**
@@ -1569,7 +1601,8 @@ Get library style action analytics
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.libraryAnalytics.styleActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.libraryAnalytics.styleActions({});
 ```
 
 **Input**
@@ -1605,7 +1638,8 @@ Get library style usage analytics
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.libraryAnalytics.styleUsages({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.libraryAnalytics.styleUsages({});
 ```
 
 **Input**
@@ -1639,7 +1673,8 @@ Get library variable action analytics
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.libraryAnalytics.variableActions({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.libraryAnalytics.variableActions({});
 ```
 
 **Input**
@@ -1675,7 +1710,8 @@ Get library variable usage analytics
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.libraryAnalytics.variableUsages({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.libraryAnalytics.variableUsages({});
 ```
 
 **Input**
@@ -1711,7 +1747,8 @@ Get payment information for a Figma plugin or widget
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.payments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.payments.get({});
 ```
 
 **Input**
@@ -1759,7 +1796,8 @@ Get all projects for a Figma team
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.projects.getTeamProjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.projects.getTeamProjects({});
 ```
 
 **Input**
@@ -1804,7 +1842,8 @@ Get a Figma style by key
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.styles.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.styles.get({});
 ```
 
 **Input**
@@ -1852,7 +1891,8 @@ Get all styles for a Figma team
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.styles.getForTeam({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.styles.getForTeam({});
 ```
 
 **Input**
@@ -1902,7 +1942,8 @@ Get the currently authenticated Figma user
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.users.getCurrent({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.users.getCurrent({});
 ```
 
 **Input:** _empty object_
@@ -1932,7 +1973,8 @@ Create, modify, or delete variables in a Figma file
 **Risk:** `write`
 
 ```ts
-await corsair.figma.api.variables.createModifyDelete({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.variables.createModifyDelete({});
 ```
 
 **Input**
@@ -1980,7 +2022,8 @@ Get local variables from a Figma file
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.variables.getLocal({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.variables.getLocal({});
 ```
 
 **Input**
@@ -2026,7 +2069,8 @@ Get published variables from a Figma file
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.variables.getPublished({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.variables.getPublished({});
 ```
 
 **Input**
@@ -2074,7 +2118,8 @@ Create a Figma webhook
 **Risk:** `write`
 
 ```ts
-await corsair.figma.api.webhooks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.webhooks.create({});
 ```
 
 **Input**
@@ -2120,7 +2165,8 @@ Delete a Figma webhook [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.figma.api.webhooks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.webhooks.delete({});
 ```
 
 **Input**
@@ -2159,7 +2205,8 @@ Get a Figma webhook by ID
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.webhooks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.webhooks.get({});
 ```
 
 **Input**
@@ -2198,7 +2245,8 @@ Get webhook request history
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.webhooks.getRequests({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.webhooks.getRequests({});
 ```
 
 **Input**
@@ -2244,7 +2292,8 @@ List Figma webhooks
 **Risk:** `read`
 
 ```ts
-await corsair.figma.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.webhooks.list({});
 ```
 
 **Input**
@@ -2295,7 +2344,8 @@ Update a Figma webhook
 **Risk:** `write`
 
 ```ts
-await corsair.figma.api.webhooks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.figma.api.webhooks.update({});
 ```
 
 **Input**

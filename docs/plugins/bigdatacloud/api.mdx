@@ -20,7 +20,8 @@ Tool to return upstream providers (receivingFrom) for a given ASN. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.asn.asnExtendedReceivingFromInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.asn.asnExtendedReceivingFromInfo({});
 ```
 
 **Input**
@@ -84,7 +85,8 @@ Tool to return downstream customers (transitTo) for a given ASN. Use when you ne
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.asn.asnExtendedTransitToInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.asn.asnExtendedTransitToInfo({});
 ```
 
 **Input**
@@ -148,7 +150,8 @@ Retrieves a ranked list of Autonomous Systems (ASNs) sorted by IPv4 address anno
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.asn.asnRankList({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.asn.asnRankList({});
 ```
 
 **Input**
@@ -211,7 +214,8 @@ Tool to retrieve IPv4 or IPv6 prefixes currently announced on BGP. Use when insp
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.asn.bgpActivePrefixes({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.asn.bgpActivePrefixes({});
 ```
 
 **Input**
@@ -287,7 +291,8 @@ Tool to determine if the user is roaming based on their IP address and GPS coord
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.location.amIRoaming({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.location.amIRoaming({});
 ```
 
 **Input**
@@ -320,7 +325,8 @@ Tool to geolocate an IP address and retrieve country details and demographics. U
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.location.countryByIpAddress({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.location.countryByIpAddress({});
 ```
 
 **Input**
@@ -399,7 +405,8 @@ Tool to fetch detailed country information by ISO code. Use when you need locali
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.location.countryInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.location.countryInfo({});
 ```
 
 **Input**
@@ -493,7 +500,8 @@ Tool to return reverse geocoding and time zone info for given coordinates. Use w
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.location.reverseGeocodingWithTimezone({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.location.reverseGeocodingWithTimezone({});
 ```
 
 **Input**
@@ -584,7 +592,8 @@ Tool to retrieve time zone information for a given IP address. Use when you need
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.location.timeZoneByIpAddress({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.location.timeZoneByIpAddress({});
 ```
 
 **Input**
@@ -624,7 +633,8 @@ Tool to retrieve registry, ASN, and BGP details for a given IP address’s netwo
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.network.networkByIpAddress({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.network.networkByIpAddress({});
 ```
 
 **Input**
@@ -718,7 +728,8 @@ Tool to retrieve BGP-announced networks within a specified CIDR range. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.network.networksByCidr({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.network.networksByCidr({});
 ```
 
 **Input**
@@ -809,7 +820,8 @@ Tool to fetch a cybersecurity hazard report for a specified IP address. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.security.hazardReport({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.security.hazardReport({});
 ```
 
 **Input**
@@ -854,7 +866,8 @@ Retrieve a paginated list of active TOR exit node IP addresses with geolocation 
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.security.torExitNodesGeolocated({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.security.torExitNodesGeolocated({});
 ```
 
 **Input**
@@ -920,7 +933,8 @@ Tool to return a risk assessment for a user based on IP signals for fraud preven
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.security.userRisk({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.security.userRisk({});
 ```
 
 **Input**
@@ -953,7 +967,8 @@ Tool to verify email addresses for syntax, domain validity, and disposability. U
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.validation.emailAddressVerification({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.validation.emailAddressVerification({});
 ```
 
 **Input**
@@ -988,7 +1003,8 @@ Tool to validate phone numbers by inferring country from client IP. Use when you
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.validation.phoneNumberValidationByIp({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.validation.phoneNumberValidationByIp({});
 ```
 
 **Input**
@@ -1071,7 +1087,8 @@ Tool to parse a User-Agent string into device, OS, browser, and bot details. Use
 **Risk:** `read`
 
 ```ts
-await corsair.bigdatacloud.api.validation.userAgentParser({});
+const tenant = corsair.withTenant('acme');
+await tenant.bigdatacloud.api.validation.userAgentParser({});
 ```
 
 **Input**

@@ -14,7 +14,8 @@ The Bigml plugin syncs data locally. Use `corsair.bigml.db.<entity>.search({ dat
 Path: `bigml.db.anomalies.search`
 
 ```ts
-const rows = await corsair.bigml.db.anomalies.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.anomalies.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -52,7 +53,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.anomalyScores.search`
 
 ```ts
-const rows = await corsair.bigml.db.anomalyScores.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.anomalyScores.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -90,7 +92,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.associations.search`
 
 ```ts
-const rows = await corsair.bigml.db.associations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.associations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -128,7 +131,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.associationSets.search`
 
 ```ts
-const rows = await corsair.bigml.db.associationSets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.associationSets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -166,7 +170,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.batchAnomalyScores.search`
 
 ```ts
-const rows = await corsair.bigml.db.batchAnomalyScores.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.batchAnomalyScores.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -204,7 +209,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.batchCentroids.search`
 
 ```ts
-const rows = await corsair.bigml.db.batchCentroids.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.batchCentroids.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -242,7 +248,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.batchPredictions.search`
 
 ```ts
-const rows = await corsair.bigml.db.batchPredictions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.batchPredictions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -280,7 +287,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.batchProjections.search`
 
 ```ts
-const rows = await corsair.bigml.db.batchProjections.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.batchProjections.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -318,7 +326,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.batchTopicDistributions.search`
 
 ```ts
-const rows = await corsair.bigml.db.batchTopicDistributions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.batchTopicDistributions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -356,7 +365,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.centroids.search`
 
 ```ts
-const rows = await corsair.bigml.db.centroids.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.centroids.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -394,7 +404,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.clusters.search`
 
 ```ts
-const rows = await corsair.bigml.db.clusters.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.clusters.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -432,7 +443,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.composites.search`
 
 ```ts
-const rows = await corsair.bigml.db.composites.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.composites.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -470,7 +482,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.configurations.search`
 
 ```ts
-const rows = await corsair.bigml.db.configurations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.configurations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -508,7 +521,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.correlations.search`
 
 ```ts
-const rows = await corsair.bigml.db.correlations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.correlations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -546,7 +560,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.datasets.search`
 
 ```ts
-const rows = await corsair.bigml.db.datasets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.datasets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -584,7 +599,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.deepnets.search`
 
 ```ts
-const rows = await corsair.bigml.db.deepnets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.deepnets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -622,7 +638,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.ensembles.search`
 
 ```ts
-const rows = await corsair.bigml.db.ensembles.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.ensembles.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -660,7 +677,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.evaluations.search`
 
 ```ts
-const rows = await corsair.bigml.db.evaluations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.evaluations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -698,7 +716,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.executions.search`
 
 ```ts
-const rows = await corsair.bigml.db.executions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.executions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -736,7 +755,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.forecasts.search`
 
 ```ts
-const rows = await corsair.bigml.db.forecasts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.forecasts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -774,7 +794,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.fusions.search`
 
 ```ts
-const rows = await corsair.bigml.db.fusions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.fusions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -812,7 +833,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.libraries.search`
 
 ```ts
-const rows = await corsair.bigml.db.libraries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.libraries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -850,7 +872,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.linearRegressions.search`
 
 ```ts
-const rows = await corsair.bigml.db.linearRegressions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.linearRegressions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -888,7 +911,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.logisticRegressions.search`
 
 ```ts
-const rows = await corsair.bigml.db.logisticRegressions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.logisticRegressions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -926,7 +950,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.models.search`
 
 ```ts
-const rows = await corsair.bigml.db.models.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.models.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -964,7 +989,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.optimls.search`
 
 ```ts
-const rows = await corsair.bigml.db.optimls.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.optimls.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1002,7 +1028,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.pcas.search`
 
 ```ts
-const rows = await corsair.bigml.db.pcas.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.pcas.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1040,7 +1067,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.predictions.search`
 
 ```ts
-const rows = await corsair.bigml.db.predictions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.predictions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1078,7 +1106,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.projections.search`
 
 ```ts
-const rows = await corsair.bigml.db.projections.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.projections.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1116,7 +1145,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.projects.search`
 
 ```ts
-const rows = await corsair.bigml.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1156,7 +1186,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.samples.search`
 
 ```ts
-const rows = await corsair.bigml.db.samples.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.samples.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1194,7 +1225,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.scripts.search`
 
 ```ts
-const rows = await corsair.bigml.db.scripts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.scripts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1232,7 +1264,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.sources.search`
 
 ```ts
-const rows = await corsair.bigml.db.sources.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.sources.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1317,7 +1350,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.statisticalTests.search`
 
 ```ts
-const rows = await corsair.bigml.db.statisticalTests.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.statisticalTests.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1355,7 +1389,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.timeSeries.search`
 
 ```ts
-const rows = await corsair.bigml.db.timeSeries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.timeSeries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1393,7 +1428,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.topicDistributions.search`
 
 ```ts
-const rows = await corsair.bigml.db.topicDistributions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.topicDistributions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -1431,7 +1467,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bigml.db.topicModels.search`
 
 ```ts
-const rows = await corsair.bigml.db.topicModels.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bigml.db.topicModels.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

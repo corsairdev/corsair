@@ -20,7 +20,8 @@ Download a single competition data file (rules acceptance required)
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.competitions.downloadFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.competitions.downloadFile({});
 ```
 
 **Input**
@@ -54,7 +55,8 @@ Download all competition data files as a zip (rules acceptance required)
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.competitions.downloadFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.competitions.downloadFiles({});
 ```
 
 **Input**
@@ -87,7 +89,8 @@ Download the competition leaderboard as a zip/CSV (base64)
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.competitions.downloadLeaderboard({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.competitions.downloadLeaderboard({});
 ```
 
 **Input**
@@ -120,7 +123,8 @@ Generate a pre-signed URL and token for uploading a competition submission file
 **Risk:** `write`
 
 ```ts
-await corsair.kaggle.api.competitions.generateSubmissionUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.competitions.generateSubmissionUrl({});
 ```
 
 **Input**
@@ -158,7 +162,8 @@ List Kaggle competitions with category, group, sort, and search filters
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.competitions.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.competitions.list({});
 ```
 
 **Input**
@@ -207,7 +212,8 @@ List data files available for a Kaggle competition
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.competitions.listFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.competitions.listFiles({});
 ```
 
 **Input**
@@ -254,7 +260,8 @@ Finalize a competition submission using a previously uploaded blob file token
 **Risk:** `write`
 
 ```ts
-await corsair.kaggle.api.competitions.submit({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.competitions.submit({});
 ```
 
 **Input**
@@ -291,7 +298,8 @@ View competition leaderboard rankings and scores
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.competitions.viewLeaderboard({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.competitions.viewLeaderboard({});
 ```
 
 **Input**
@@ -328,7 +336,8 @@ Create a new Kaggle dataset (requires prior file upload tokens and owner usernam
 **Risk:** `write`
 
 ```ts
-await corsair.kaggle.api.datasets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.datasets.create({});
 ```
 
 **Input**
@@ -380,7 +389,8 @@ Create a new version of an existing Kaggle dataset after uploading updated files
 **Risk:** `write`
 
 ```ts
-await corsair.kaggle.api.datasets.createVersion({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.datasets.createVersion({});
 ```
 
 **Input**
@@ -428,7 +438,8 @@ Download all files from a Kaggle dataset as a zip (returned as base64)
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.datasets.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.datasets.download({});
 ```
 
 **Input**
@@ -463,7 +474,8 @@ Download a single file from a Kaggle dataset (returned as base64)
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.datasets.downloadFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.datasets.downloadFile({});
 ```
 
 **Input**
@@ -499,7 +511,8 @@ Get metadata for a Kaggle dataset including title, licenses, and tags
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.datasets.getMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.datasets.getMetadata({});
 ```
 
 **Input**
@@ -535,7 +548,8 @@ Check processing status after dataset create/version (404 expected when already 
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.datasets.getStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.datasets.getStatus({});
 ```
 
 **Input**
@@ -571,7 +585,8 @@ List Kaggle datasets with optional search, owner, size, and pagination filters
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.datasets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.datasets.list({});
 ```
 
 **Input**
@@ -625,7 +640,8 @@ List files in a Kaggle dataset with optional version and pagination
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.datasets.listFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.datasets.listFiles({});
 ```
 
 **Input**
@@ -676,7 +692,8 @@ Download kernel session output files as base64 (fetches signed GCS URLs from GET
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.kernels.downloadOutput({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.kernels.downloadOutput({});
 ```
 
 **Input**
@@ -723,7 +740,8 @@ Get execution status of a Kaggle kernel
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.kernels.getStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.kernels.getStatus({});
 ```
 
 **Input**
@@ -759,7 +777,8 @@ List Kaggle kernels (notebooks/scripts) with filters and pagination
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.kernels.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.kernels.list({});
 ```
 
 **Input**
@@ -815,7 +834,8 @@ List output files produced by a kernel run
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.kernels.listOutputFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.kernels.listOutputFiles({});
 ```
 
 **Input**
@@ -863,7 +883,8 @@ Pull kernel source code and optional metadata from Kaggle
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.kernels.pull({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.kernels.pull({});
 ```
 
 **Input**
@@ -902,7 +923,8 @@ Get details for a Kaggle model
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.models.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.models.get({});
 ```
 
 **Input**
@@ -938,7 +960,8 @@ Get details for a Kaggle model instance (framework variation)
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.models.getInstance({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.models.getInstance({});
 ```
 
 **Input**
@@ -976,7 +999,8 @@ List Kaggle models with optional owner, search, and pagination
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.models.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.models.list({});
 ```
 
 **Input**
@@ -1025,7 +1049,8 @@ List files for a specific version of a model instance/variation
 **Risk:** `read`
 
 ```ts
-await corsair.kaggle.api.models.listInstanceVersionFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.kaggle.api.models.listInstanceVersionFiles({});
 ```
 
 **Input**

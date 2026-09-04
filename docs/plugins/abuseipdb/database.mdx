@@ -14,7 +14,8 @@ The AbuseIPDB plugin syncs data locally. Use `corsair.abuseipdb.db.<entity>.sear
 Path: `abuseipdb.db.ipChecks.search`
 
 ```ts
-const rows = await corsair.abuseipdb.db.ipChecks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.abuseipdb.db.ipChecks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -49,7 +50,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `abuseipdb.db.reports.search`
 
 ```ts
-const rows = await corsair.abuseipdb.db.reports.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.abuseipdb.db.reports.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

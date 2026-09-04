@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { collegefootballdata } from '@corsair-dev/collegefootballdata';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		collegefootballdata(),
 	],

@@ -20,7 +20,8 @@ Check if a wallet has the required token approval for a swap
 **Risk:** `read`
 
 ```ts
-await corsair.uniswapapi.api.approval.check({});
+const tenant = corsair.withTenant('acme');
+await tenant.uniswapapi.api.approval.check({});
 ```
 
 **Input**
@@ -95,7 +96,8 @@ Check wallet delegation status for smart contract wallets across chains
 **Risk:** `read`
 
 ```ts
-await corsair.uniswapapi.api.delegation.check({});
+const tenant = corsair.withTenant('acme');
+await tenant.uniswapapi.api.delegation.check({});
 ```
 
 **Input**
@@ -139,7 +141,8 @@ Get the status and details of a gasless UniswapX order
 **Risk:** `read`
 
 ```ts
-await corsair.uniswapapi.api.order.getStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.uniswapapi.api.order.getStatus({});
 ```
 
 **Input**
@@ -200,7 +203,8 @@ Get a swap/bridge/wrap quote with route and estimated gas
 **Risk:** `read`
 
 ```ts
-await corsair.uniswapapi.api.quote.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.uniswapapi.api.quote.get({});
 ```
 
 **Input**
@@ -283,7 +287,8 @@ Create swap calldata (unsigned transaction) for broadcast
 **Risk:** `write`
 
 ```ts
-await corsair.uniswapapi.api.swap.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.uniswapapi.api.swap.create({});
 ```
 
 **Input**
@@ -356,7 +361,8 @@ Get swap status (PENDING, SUCCESS, NOT_FOUND, FAILED, EXPIRED) by tx or userOp h
 **Risk:** `read`
 
 ```ts
-await corsair.uniswapapi.api.swap.getStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.uniswapapi.api.swap.getStatus({});
 ```
 
 **Input**
@@ -408,7 +414,8 @@ List tokens and chains a source token can be swapped or bridged to
 **Risk:** `read`
 
 ```ts
-await corsair.uniswapapi.api.swappableTokens.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.uniswapapi.api.swappableTokens.get({});
 ```
 
 **Input**
@@ -464,7 +471,8 @@ Batch transactions into one for EIP-7702 smart contract wallet execution
 **Risk:** `write`
 
 ```ts
-await corsair.uniswapapi.api.transaction.encode7702({});
+const tenant = corsair.withTenant('acme');
+await tenant.uniswapapi.api.transaction.encode7702({});
 ```
 
 **Input**

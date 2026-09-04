@@ -14,7 +14,8 @@ The Apaleo plugin syncs data locally. Use `corsair.apaleo.db.<entity>.search({ d
 Path: `apaleo.db.properties.search`
 
 ```ts
-const rows = await corsair.apaleo.db.properties.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apaleo.db.properties.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -49,7 +50,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apaleo.db.unitAttributes.search`
 
 ```ts
-const rows = await corsair.apaleo.db.unitAttributes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apaleo.db.unitAttributes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -74,7 +76,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apaleo.db.unitGroups.search`
 
 ```ts
-const rows = await corsair.apaleo.db.unitGroups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apaleo.db.unitGroups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -102,7 +105,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apaleo.db.units.search`
 
 ```ts
-const rows = await corsair.apaleo.db.units.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apaleo.db.units.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

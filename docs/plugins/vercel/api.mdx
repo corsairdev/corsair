@@ -20,7 +20,8 @@ Assign an alias
 **Risk:** `write`
 
 ```ts
-await corsair.vercel.api.aliases.assignAlias({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.aliases.assignAlias({});
 ```
 
 **Input**
@@ -56,7 +57,8 @@ Get all aliases
 **Risk:** `read`
 
 ```ts
-await corsair.vercel.api.aliases.getAliases({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.aliases.getAliases({});
 ```
 
 **Input**
@@ -120,7 +122,8 @@ Create a deployment
 **Risk:** `write`
 
 ```ts
-await corsair.vercel.api.deployments.createDeployment({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.deployments.createDeployment({});
 ```
 
 **Input**
@@ -229,7 +232,8 @@ Get deployment details
 **Risk:** `read`
 
 ```ts
-await corsair.vercel.api.deployments.getDeployment({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.deployments.getDeployment({});
 ```
 
 **Input**
@@ -302,7 +306,8 @@ Get all deployments
 **Risk:** `read`
 
 ```ts
-await corsair.vercel.api.deployments.getDeployments({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.deployments.getDeployments({});
 ```
 
 **Input**
@@ -379,7 +384,8 @@ Get all domains
 **Risk:** `read`
 
 ```ts
-await corsair.vercel.api.domains.getDomains({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.domains.getDomains({});
 ```
 
 **Input**
@@ -443,7 +449,8 @@ Get project domains
 **Risk:** `read`
 
 ```ts
-await corsair.vercel.api.domains.getProjectDomains({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.domains.getProjectDomains({});
 ```
 
 **Input**
@@ -510,7 +517,8 @@ Create an environment variable for a project (supports plain, secret, encrypted,
 **Risk:** `write`
 
 ```ts
-await corsair.vercel.api.envs.createEnvVariable({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.envs.createEnvVariable({});
 ```
 
 **Input**
@@ -557,7 +565,8 @@ Get environment variables for a project (may include secret/sensitive values)
 **Risk:** `read`
 
 ```ts
-await corsair.vercel.api.envs.getEnvVariables({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.envs.getEnvVariables({});
 ```
 
 **Input**
@@ -611,7 +620,8 @@ Get project details
 **Risk:** `read`
 
 ```ts
-await corsair.vercel.api.projects.getProject({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.projects.getProject({});
 ```
 
 **Input**
@@ -677,7 +687,8 @@ Get all projects
 **Risk:** `read`
 
 ```ts
-await corsair.vercel.api.projects.getProjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.projects.getProjects({});
 ```
 
 **Input**
@@ -754,7 +765,8 @@ Get all teams
 **Risk:** `read`
 
 ```ts
-await corsair.vercel.api.teams.getTeams({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.teams.getTeams({});
 ```
 
 **Input**
@@ -819,7 +831,8 @@ Create a webhook
 **Risk:** `write`
 
 ```ts
-await corsair.vercel.api.webhooks.createWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.webhooks.createWebhook({});
 ```
 
 **Input**
@@ -858,7 +871,8 @@ Get all webhooks
 **Risk:** `read`
 
 ```ts
-await corsair.vercel.api.webhooks.getWebhooks({});
+const tenant = corsair.withTenant('acme');
+await tenant.vercel.api.webhooks.getWebhooks({});
 ```
 
 **Input**

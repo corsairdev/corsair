@@ -14,7 +14,8 @@ The Cloudflare plugin syncs data locally. Use `corsair.cloudflare.db.<entity>.se
 Path: `cloudflare.db.dnsRecords.search`
 
 ```ts
-const rows = await corsair.cloudflare.db.dnsRecords.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudflare.db.dnsRecords.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -49,7 +50,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudflare.db.rulesets.search`
 
 ```ts
-const rows = await corsair.cloudflare.db.rulesets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudflare.db.rulesets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -79,7 +81,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudflare.db.workerRoutes.search`
 
 ```ts
-const rows = await corsair.cloudflare.db.workerRoutes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudflare.db.workerRoutes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -105,7 +108,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudflare.db.workerScripts.search`
 
 ```ts
-const rows = await corsair.cloudflare.db.workerScripts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudflare.db.workerScripts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -131,7 +135,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `cloudflare.db.zones.search`
 
 ```ts
-const rows = await corsair.cloudflare.db.zones.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudflare.db.zones.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

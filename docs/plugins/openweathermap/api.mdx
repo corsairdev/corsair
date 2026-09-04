@@ -20,7 +20,8 @@ Get current air pollution data for a latitude/longitude pair
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.airPollution.current({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.airPollution.current({});
 ```
 
 **Input**
@@ -84,7 +85,8 @@ Get forecasted air pollution data for a latitude/longitude pair
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.airPollution.forecast({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.airPollution.forecast({});
 ```
 
 **Input**
@@ -148,7 +150,8 @@ Get historical air pollution data for a latitude/longitude pair and time range
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.airPollution.history({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.airPollution.history({});
 ```
 
 **Input**
@@ -216,7 +219,8 @@ Convert a zip/post code into geographic coordinates
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.geocoding.byZip({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.geocoding.byZip({});
 ```
 
 **Input**
@@ -250,7 +254,8 @@ Convert a location name into geographic coordinates
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.geocoding.direct({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.geocoding.direct({});
 ```
 
 **Input**
@@ -293,7 +298,8 @@ Convert geographic coordinates into location names
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.geocoding.reverse({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.geocoding.reverse({});
 ```
 
 **Input**
@@ -339,7 +345,8 @@ Get historical weather data for a specific timestamp (available from 1979-01-01)
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.history.timeMachine({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.history.timeMachine({});
 ```
 
 **Input**
@@ -415,7 +422,8 @@ Fetch a Weather Maps 2.0 tile image for a layer and coordinates
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.maps.weatherMapTile({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.maps.weatherMapTile({});
 ```
 
 **Input**
@@ -457,7 +465,8 @@ Register a new personal weather station with OpenWeather
 **Risk:** `write`
 
 ```ts
-await corsair.openweathermap.api.stations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.stations.create({});
 ```
 
 **Input**
@@ -486,7 +495,8 @@ Get details for a registered weather station by ID
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.stations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.stations.get({});
 ```
 
 **Input**
@@ -524,7 +534,8 @@ Get aggregated measurements from a registered station (minute/hour/day intervals
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.stations.getMeasurements({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.stations.getMeasurements({});
 ```
 
 **Input**
@@ -614,7 +625,8 @@ List all weather stations registered to your OpenWeather account
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.stations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.stations.list({});
 ```
 
 **Input:** _empty object_
@@ -653,7 +665,8 @@ Delete a registered weather station from your account [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.openweathermap.api.stations.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.stations.remove({});
 ```
 
 **Input**
@@ -683,7 +696,8 @@ Submit weather measurements from a registered station
 **Risk:** `write`
 
 ```ts
-await corsair.openweathermap.api.stations.submitMeasurements({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.stations.submitMeasurements({});
 ```
 
 **Input**
@@ -734,7 +748,8 @@ Update a registered weather station name, location, or external ID
 **Risk:** `write`
 
 ```ts
-await corsair.openweathermap.api.stations.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.stations.update({});
 ```
 
 **Input**
@@ -779,7 +794,8 @@ Get aggregated weather summary for a specific date (temperature, wind, precipita
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.summary.daySummary({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.summary.daySummary({});
 ```
 
 **Input**
@@ -888,7 +904,8 @@ Get a human-readable weather overview text for a location and date
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.summary.overview({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.summary.overview({});
 ```
 
 **Input**
@@ -928,7 +945,8 @@ Get current weather for cities within a circle around a geographic point
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.weather.circleCity({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.weather.circleCity({});
 ```
 
 **Input**
@@ -1010,7 +1028,8 @@ Get current weather for a location by city name, city ID, zip code, or coordinat
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.weather.current({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.weather.current({});
 ```
 
 **Input**
@@ -1125,7 +1144,8 @@ Get 5-day forecast in 3-hour steps (up to 40 timestamps) for a location
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.weather.forecast5Day({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.weather.forecast5Day({});
 ```
 
 **Input**
@@ -1214,7 +1234,8 @@ Get current weather, minutely/hourly/daily forecasts, and weather alerts for a l
 **Risk:** `read`
 
 ```ts
-await corsair.openweathermap.api.weather.oneCall({});
+const tenant = corsair.withTenant('acme');
+await tenant.openweathermap.api.weather.oneCall({});
 ```
 
 **Input**

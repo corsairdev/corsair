@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { openrouter } from '@corsair-dev/openrouter';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		openrouter(),
 	],

@@ -14,7 +14,8 @@ The Bart plugin syncs data locally. Use `corsair.bart.db.<entity>.search({ data,
 Path: `bart.db.advisories.search`
 
 ```ts
-const rows = await corsair.bart.db.advisories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bart.db.advisories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bart.db.routes.search`
 
 ```ts
-const rows = await corsair.bart.db.routes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bart.db.routes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -74,7 +76,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `bart.db.stations.search`
 
 ```ts
-const rows = await corsair.bart.db.stations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bart.db.stations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

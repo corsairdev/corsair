@@ -20,7 +20,8 @@ Get the current Ably service time.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.application.getServiceTime({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.application.getServiceTime({});
 ```
 
 **Input:** _empty object_
@@ -40,7 +41,8 @@ Retrieve application usage statistics.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.application.getStats({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.application.getStats({});
 ```
 
 **Input**
@@ -79,7 +81,8 @@ Request an Ably access token.
 **Risk:** `write`
 
 ```ts
-await corsair.ably.api.application.requestAccessToken({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.application.requestAccessToken({});
 ```
 
 **Input**
@@ -118,7 +121,8 @@ Retrieve presence information for multiple channels.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.channels.batchPresence({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.channels.batchPresence({});
 ```
 
 **Input**
@@ -143,7 +147,8 @@ Retrieve presence history for multiple channels.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.channels.batchPresenceHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.channels.batchPresenceHistory({});
 ```
 
 **Input**
@@ -172,7 +177,8 @@ Retrieve details for an active channel.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.channels.getChannelDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.channels.getChannelDetails({});
 ```
 
 **Input**
@@ -218,7 +224,8 @@ Retrieve message history for a channel.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.channels.getChannelHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.channels.getChannelHistory({});
 ```
 
 **Input**
@@ -266,7 +273,8 @@ Retrieve current channel presence members.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.channels.getChannelPresence({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.channels.getChannelPresence({});
 ```
 
 **Input**
@@ -310,7 +318,8 @@ Retrieve historical versions of a message.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.channels.getMessageVersions({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.channels.getMessageVersions({});
 ```
 
 **Input**
@@ -355,7 +364,8 @@ Retrieve presence history for a channel.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.channels.getPresenceHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.channels.getPresenceHistory({});
 ```
 
 **Input**
@@ -401,7 +411,8 @@ List active Ably channels.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.channels.listChannels({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.channels.listChannels({});
 ```
 
 **Input**
@@ -473,7 +484,8 @@ Publish messages to multiple Ably channels.
 **Risk:** `write`
 
 ```ts
-await corsair.ably.api.channels.publishBatchMessages({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.channels.publishBatchMessages({});
 ```
 
 **Input**
@@ -520,7 +532,8 @@ Publish a message to an Ably channel.
 **Risk:** `write`
 
 ```ts
-await corsair.ably.api.channels.publishMessageToChannel({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.channels.publishMessageToChannel({});
 ```
 
 **Input**
@@ -561,7 +574,8 @@ Subscribe a device or client to a push channel.
 **Risk:** `write`
 
 ```ts
-await corsair.ably.api.push.createPushChannelSubscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.createPushChannelSubscription({});
 ```
 
 **Input**
@@ -588,7 +602,8 @@ Delete matching push channel subscriptions.
 **Risk:** `destructive`
 
 ```ts
-await corsair.ably.api.push.deleteChannelSubscription({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.deleteChannelSubscription({});
 ```
 
 **Input**
@@ -615,7 +630,8 @@ Retrieve a push device registration.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.push.getPushDevice({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.getPushDevice({});
 ```
 
 **Input**
@@ -672,7 +688,8 @@ List channels with push subscribers.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.push.listPushChannels({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.listPushChannels({});
 ```
 
 **Input**
@@ -725,7 +742,8 @@ List push channel subscriptions.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.push.listPushChannelSubscriptions({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.listPushChannelSubscriptions({});
 ```
 
 **Input**
@@ -791,7 +809,8 @@ List registered push notification devices.
 **Risk:** `read`
 
 ```ts
-await corsair.ably.api.push.listRegisteredPushDevices({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.listRegisteredPushDevices({});
 ```
 
 **Input**
@@ -865,7 +884,8 @@ Partially update a push device registration.
 **Risk:** `write`
 
 ```ts
-await corsair.ably.api.push.patchPushDeviceRegistration({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.patchPushDeviceRegistration({});
 ```
 
 **Input**
@@ -943,7 +963,8 @@ Publish a push notification.
 **Risk:** `write`
 
 ```ts
-await corsair.ably.api.push.publishPushNotification({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.publishPushNotification({});
 ```
 
 **Input**
@@ -996,7 +1017,8 @@ Publish a batch of push notifications.
 **Risk:** `write`
 
 ```ts
-await corsair.ably.api.push.publishPushNotificationsBatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.publishPushNotificationsBatch({});
 ```
 
 **Input**
@@ -1031,7 +1053,8 @@ Register a device for push notifications.
 **Risk:** `write`
 
 ```ts
-await corsair.ably.api.push.registerPushDevice({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.registerPushDevice({});
 ```
 
 **Input**
@@ -1115,7 +1138,8 @@ Delete matching push device registrations.
 **Risk:** `destructive`
 
 ```ts
-await corsair.ably.api.push.unregisterAllPushDevices({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.unregisterAllPushDevices({});
 ```
 
 **Input**
@@ -1141,7 +1165,8 @@ Delete a push device registration.
 **Risk:** `destructive`
 
 ```ts
-await corsair.ably.api.push.unregisterPushDevice({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.unregisterPushDevice({});
 ```
 
 **Input**
@@ -1166,7 +1191,8 @@ Create or replace a push device registration.
 **Risk:** `write`
 
 ```ts
-await corsair.ably.api.push.updatePushDevice({});
+const tenant = corsair.withTenant('acme');
+await tenant.ably.api.push.updatePushDevice({});
 ```
 
 **Input**

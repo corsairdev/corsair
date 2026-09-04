@@ -41,6 +41,7 @@ import { createCorsair } from 'corsair';
 import { neon } from '@corsair-dev/neon';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		neon(),
 	],

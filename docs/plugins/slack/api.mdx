@@ -20,7 +20,8 @@ Get all the workspaces a given channel is connected to
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.admin.conversationsGetTeams({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.admin.conversationsGetTeams({});
 ```
 
 **Input**
@@ -69,7 +70,8 @@ Search for channels on an Enterprise organization
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.admin.conversationsSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.admin.conversationsSearch({});
 ```
 
 **Input**
@@ -136,7 +138,8 @@ Set the workspaces in an Enterprise grid org that connect to a channel
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.admin.conversationsSetTeams({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.admin.conversationsSetTeams({});
 ```
 
 **Input**
@@ -185,7 +188,8 @@ List all teams on an Enterprise organization
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.admin.listTeams({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.admin.listTeams({});
 ```
 
 **Input**
@@ -251,7 +255,8 @@ Archive a Slack channel [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.slack.api.channels.archive({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.archive({});
 ```
 
 **Input**
@@ -297,7 +302,8 @@ Close a direct message or multi-party DM
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.channels.close({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.close({});
 ```
 
 **Input**
@@ -345,7 +351,8 @@ Create a new Slack channel
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.channels.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.create({});
 ```
 
 **Input**
@@ -433,7 +440,8 @@ Get info about a channel
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.channels.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.get({});
 ```
 
 **Input**
@@ -521,7 +529,8 @@ Fetch message history for a channel
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.channels.getHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.getHistory({});
 ```
 
 **Input**
@@ -623,7 +632,8 @@ List members of a channel
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.channels.getMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.getMembers({});
 ```
 
 **Input**
@@ -672,7 +682,8 @@ Fetch replies for a thread
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.channels.getReplies({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.getReplies({});
 ```
 
 **Input**
@@ -772,7 +783,8 @@ Invite users to a channel
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.channels.invite({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.invite({});
 ```
 
 **Input**
@@ -860,7 +872,8 @@ Join a channel
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.channels.join({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.join({});
 ```
 
 **Input**
@@ -947,7 +960,8 @@ Remove a user from a channel
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.channels.kick({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.kick({});
 ```
 
 **Input**
@@ -994,7 +1008,8 @@ Leave a channel
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.channels.leave({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.leave({});
 ```
 
 **Input**
@@ -1041,7 +1056,8 @@ List all channels in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.channels.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.list({});
 ```
 
 **Input**
@@ -1131,7 +1147,8 @@ Open a direct message or multi-party DM
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.channels.open({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.open({});
 ```
 
 **Input**
@@ -1222,7 +1239,8 @@ Rename a channel
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.channels.rename({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.rename({});
 ```
 
 **Input**
@@ -1309,7 +1327,8 @@ Set the purpose of a channel
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.channels.setPurpose({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.setPurpose({});
 ```
 
 **Input**
@@ -1397,7 +1416,8 @@ Set the topic of a channel
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.channels.setTopic({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.setTopic({});
 ```
 
 **Input**
@@ -1485,7 +1505,8 @@ Unarchive a channel
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.channels.unarchive({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.unarchive({});
 ```
 
 **Input**
@@ -1533,7 +1554,8 @@ Get info about a file
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.files.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.files.get({});
 ```
 
 **Input**
@@ -1644,7 +1666,8 @@ List files in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.files.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.files.list({});
 ```
 
 **Input**
@@ -1746,7 +1769,8 @@ Upload a file to Slack
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.files.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.files.upload({});
 ```
 
 **Input**
@@ -1836,7 +1860,8 @@ Delete a message [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.slack.api.messages.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.messages.delete({});
 ```
 
 **Input**
@@ -1886,7 +1911,8 @@ Get a permalink for a message
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.messages.getPermalink({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.messages.getPermalink({});
 ```
 
 **Input**
@@ -1935,7 +1961,8 @@ Post a message to a channel
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.messages.post({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.messages.post({});
 ```
 
 **Input**
@@ -2074,7 +2101,8 @@ Search messages in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.messages.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.messages.search({});
 ```
 
 **Input**
@@ -2197,7 +2225,8 @@ Update an existing message
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.messages.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.messages.update({});
 ```
 
 **Input**
@@ -2334,7 +2363,8 @@ Add a reaction emoji to a message
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.reactions.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.reactions.add({});
 ```
 
 **Input**
@@ -2382,7 +2412,8 @@ Get reactions for a message
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.reactions.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.reactions.get({});
 ```
 
 **Input**
@@ -2531,7 +2562,8 @@ Remove a reaction emoji from a message
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.reactions.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.reactions.remove({});
 ```
 
 **Input**
@@ -2583,7 +2615,8 @@ Star an item
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.stars.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.stars.add({});
 ```
 
 **Input**
@@ -2632,7 +2665,8 @@ List starred items for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.stars.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.stars.list({});
 ```
 
 **Input**
@@ -2778,7 +2812,8 @@ Unstar an item
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.stars.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.stars.remove({});
 ```
 
 **Input**
@@ -2829,7 +2864,8 @@ Create a user group
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.userGroups.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.userGroups.create({});
 ```
 
 **Input**
@@ -2913,7 +2949,8 @@ Disable a user group
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.userGroups.disable({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.userGroups.disable({});
 ```
 
 **Input**
@@ -2994,7 +3031,8 @@ Enable a user group
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.userGroups.enable({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.userGroups.enable({});
 ```
 
 **Input**
@@ -3075,7 +3113,8 @@ List user groups in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.userGroups.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.userGroups.list({});
 ```
 
 **Input**
@@ -3157,7 +3196,8 @@ Update a user group
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.userGroups.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.userGroups.update({});
 ```
 
 **Input**
@@ -3244,7 +3284,8 @@ Get info about a user
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.users.get({});
 ```
 
 **Input**
@@ -3343,7 +3384,8 @@ Get the presence status of a user
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.users.getPresence({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.users.getPresence({});
 ```
 
 **Input**
@@ -3395,7 +3437,8 @@ Get a user profile
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.users.getProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.users.getProfile({});
 ```
 
 **Input**
@@ -3472,7 +3515,8 @@ List all users in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.slack.api.users.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.users.list({});
 ```
 
 **Input**
@@ -3574,7 +3618,8 @@ Update the authenticated user's profile
 **Risk:** `write`
 
 ```ts
-await corsair.slack.api.users.updateProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.users.updateProfile({});
 ```
 
 **Input**

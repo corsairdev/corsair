@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { telegram } from '@corsair-dev/telegram';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		telegram({
 			authType: 'api_key',

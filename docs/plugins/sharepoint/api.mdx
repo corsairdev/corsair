@@ -20,7 +20,8 @@ Add a field link to a list content type
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.contentTypes.addFieldLink({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.contentTypes.addFieldLink({});
 ```
 
 **Input**
@@ -69,7 +70,8 @@ Create a new SharePoint content type
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.contentTypes.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.contentTypes.create({});
 ```
 
 **Input**
@@ -117,7 +119,8 @@ Create a new field (column) on a SharePoint list
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.contentTypes.createListField({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.contentTypes.createListField({});
 ```
 
 **Input**
@@ -159,7 +162,8 @@ Get a SharePoint content type by ID
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.contentTypes.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.contentTypes.get({});
 ```
 
 **Input**
@@ -193,7 +197,8 @@ Get all content types defined on the site
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.contentTypes.getAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.contentTypes.getAll({});
 ```
 
 **Input:** _empty object_
@@ -233,7 +238,8 @@ Get a content type from a list by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.contentTypes.getById({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.contentTypes.getById({});
 ```
 
 **Input**
@@ -268,7 +274,8 @@ Get content types available for a specific list
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.contentTypes.getForList({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.contentTypes.getForList({});
 ```
 
 **Input**
@@ -313,7 +320,8 @@ Update an existing SharePoint content type
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.contentTypes.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.contentTypes.update({});
 ```
 
 **Input**
@@ -348,7 +356,8 @@ Create a sharing link for a drive item via Graph API
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.drive.createSharingLink({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.drive.createSharingLink({});
 ```
 
 **Input**
@@ -398,7 +407,8 @@ Delete a specific version of a drive item [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.sharepoint.api.drive.deleteVersion({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.drive.deleteVersion({});
 ```
 
 **Input**
@@ -430,7 +440,8 @@ Get analytics for a SharePoint drive item via Graph API
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.drive.getAnalytics({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.drive.getAnalytics({});
 ```
 
 **Input**
@@ -475,7 +486,8 @@ List recently accessed drive items via Graph API
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.drive.listRecentItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.drive.listRecentItems({});
 ```
 
 **Input**
@@ -525,7 +537,8 @@ Restore a previous version of a drive item via Graph API
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.drive.restoreVersion({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.drive.restoreVersion({});
 ```
 
 **Input**
@@ -557,7 +570,8 @@ Update a drive item (rename, move) via Graph API
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.drive.updateItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.drive.updateItem({});
 ```
 
 **Input**
@@ -630,7 +644,8 @@ Check in a SharePoint file to publish changes
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.files.checkIn({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.files.checkIn({});
 ```
 
 **Input**
@@ -664,7 +679,8 @@ Check out a SharePoint file for exclusive editing
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.files.checkOut({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.files.checkOut({});
 ```
 
 **Input**
@@ -695,7 +711,8 @@ Download a file by its server-relative URL
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.files.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.files.download({});
 ```
 
 **Input**
@@ -727,7 +744,8 @@ Get metadata of a SharePoint file by server-relative URL
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.files.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.files.get({});
 ```
 
 **Input**
@@ -791,7 +809,8 @@ List all files in a SharePoint folder
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.files.listInFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.files.listInFolder({});
 ```
 
 **Input**
@@ -845,7 +864,8 @@ Move a SharePoint file to the recycle bin
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.files.recycle({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.files.recycle({});
 ```
 
 **Input**
@@ -875,7 +895,8 @@ Undo a checked-out SharePoint file
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.files.undoCheckout({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.files.undoCheckout({});
 ```
 
 **Input**
@@ -906,7 +927,8 @@ Upload a file to a SharePoint document library folder
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.files.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.files.upload({});
 ```
 
 **Input**
@@ -976,7 +998,8 @@ Create a new SharePoint folder
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.folders.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.folders.create({});
 ```
 
 **Input**
@@ -1040,7 +1063,8 @@ Delete a SharePoint folder and all its contents [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.sharepoint.api.folders.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.folders.delete({});
 ```
 
 **Input**
@@ -1070,7 +1094,8 @@ Get a SharePoint folder by server-relative URL
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.folders.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.folders.get({});
 ```
 
 **Input**
@@ -1134,7 +1159,8 @@ Get all SharePoint folders in a list or location
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.folders.getAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.folders.getAll({});
 ```
 
 **Input**
@@ -1187,7 +1213,8 @@ List subfolders inside a SharePoint folder
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.folders.listSubfolders({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.folders.listSubfolders({});
 ```
 
 **Input**
@@ -1239,7 +1266,8 @@ Rename a SharePoint folder
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.folders.rename({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.folders.rename({});
 ```
 
 **Input**
@@ -1273,7 +1301,8 @@ Add a file attachment to a SharePoint list item
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.items.addAttachment({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.addAttachment({});
 ```
 
 **Input**
@@ -1308,7 +1337,8 @@ Create a new SharePoint list item
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.items.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.create({});
 ```
 
 **Input**
@@ -1364,7 +1394,8 @@ Create a new item in a SharePoint list by GUID
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.items.createByGuid({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.createByGuid({});
 ```
 
 **Input**
@@ -1420,7 +1451,8 @@ Create a new list item inside a specific folder
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.items.createInFolder({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.createInFolder({});
 ```
 
 **Input**
@@ -1477,7 +1509,8 @@ Permanently delete a SharePoint list item [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.sharepoint.api.items.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.delete({});
 ```
 
 **Input**
@@ -1508,7 +1541,8 @@ Get a SharePoint list item by ID
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.items.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.get({});
 ```
 
 **Input**
@@ -1556,7 +1590,8 @@ Download the content of a list item attachment
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.items.getAttachmentContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.getAttachmentContent({});
 ```
 
 **Input**
@@ -1589,7 +1624,8 @@ Get the ETag for a SharePoint list item
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.items.getEtag({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.getEtag({});
 ```
 
 **Input**
@@ -1620,7 +1656,8 @@ Get a specific version of a SharePoint list item
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.items.getVersion({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.getVersion({});
 ```
 
 **Input**
@@ -1664,7 +1701,8 @@ List items in a SharePoint list
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.items.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.list({});
 ```
 
 **Input**
@@ -1717,7 +1755,8 @@ List all attachments for a SharePoint list item
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.items.listAttachments({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.listAttachments({});
 ```
 
 **Input**
@@ -1760,7 +1799,8 @@ List items in a SharePoint list by GUID
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.items.listByGuid({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.listByGuid({});
 ```
 
 **Input**
@@ -1811,7 +1851,8 @@ Move a SharePoint list item to the recycle bin
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.items.recycle({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.recycle({});
 ```
 
 **Input**
@@ -1842,7 +1883,8 @@ Update an existing SharePoint list item
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.items.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.items.update({});
 ```
 
 **Input**
@@ -1887,7 +1929,8 @@ Create a new SharePoint list
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.lists.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.lists.create({});
 ```
 
 **Input**
@@ -1939,7 +1982,8 @@ Delete a SharePoint list by GUID [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.sharepoint.api.lists.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.lists.delete({});
 ```
 
 **Input**
@@ -1969,7 +2013,8 @@ Delete a SharePoint list by title [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.sharepoint.api.lists.deleteByTitle({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.lists.deleteByTitle({});
 ```
 
 **Input**
@@ -1999,7 +2044,8 @@ Get a SharePoint list by GUID
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.lists.getByGuid({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.lists.getByGuid({});
 ```
 
 **Input**
@@ -2048,7 +2094,8 @@ Get a SharePoint list by title
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.lists.getByTitle({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.lists.getByTitle({});
 ```
 
 **Input**
@@ -2097,7 +2144,8 @@ Get change log entries for a SharePoint list
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.lists.getChanges({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.lists.getChanges({});
 ```
 
 **Input**
@@ -2147,7 +2195,8 @@ List all SharePoint lists in the site
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.lists.listAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.lists.listAll({});
 ```
 
 **Input:** _empty object_
@@ -2193,7 +2242,8 @@ List all columns (fields) in a SharePoint list
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.lists.listColumns({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.lists.listColumns({});
 ```
 
 **Input**
@@ -2240,7 +2290,8 @@ Render list data as a pageable stream
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.lists.renderDataAsStream({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.lists.renderDataAsStream({});
 ```
 
 **Input**
@@ -2287,7 +2338,8 @@ Update an existing SharePoint list
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.lists.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.lists.update({});
 ```
 
 **Input**
@@ -2322,7 +2374,8 @@ Grant a role assignment to a user on a list item
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.permissions.addRoleToItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.permissions.addRoleToItem({});
 ```
 
 **Input**
@@ -2359,7 +2412,8 @@ Grant a role assignment to a user on a SharePoint list
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.permissions.addRoleToList({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.permissions.addRoleToList({});
 ```
 
 **Input**
@@ -2392,7 +2446,8 @@ Break permission inheritance on a list item
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.permissions.breakInheritanceOnItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.permissions.breakInheritanceOnItem({});
 ```
 
 **Input**
@@ -2425,7 +2480,8 @@ Break permission inheritance on a SharePoint list
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.permissions.breakInheritanceOnList({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.permissions.breakInheritanceOnList({});
 ```
 
 **Input**
@@ -2457,7 +2513,8 @@ Get all role definitions (permission levels) in the site
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.permissions.getRoleDefinitions({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.permissions.getRoleDefinitions({});
 ```
 
 **Input:** _empty object_
@@ -2497,7 +2554,8 @@ Permanently delete an item from the recycle bin [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.sharepoint.api.recycleBin.deletePermanent({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.recycleBin.deletePermanent({});
 ```
 
 **Input**
@@ -2527,7 +2585,8 @@ List items in the SharePoint recycle bin
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.recycleBin.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.recycleBin.list({});
 ```
 
 **Input**
@@ -2576,7 +2635,8 @@ Restore an item from the SharePoint recycle bin
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.recycleBin.restore({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.recycleBin.restore({});
 ```
 
 **Input**
@@ -2608,7 +2668,8 @@ Execute a full-text search query against SharePoint
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.search.query({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.search.query({});
 ```
 
 **Input**
@@ -2678,7 +2739,8 @@ Get query suggestions from SharePoint search
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.search.suggest({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.search.suggest({});
 ```
 
 **Input**
@@ -2723,7 +2785,8 @@ Follow a SharePoint actor (person, document, site, tag)
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.social.follow({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.social.follow({});
 ```
 
 **Input**
@@ -2756,7 +2819,8 @@ Get entities followed by the current user
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.social.getFollowed({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.social.getFollowed({});
 ```
 
 **Input**
@@ -2804,7 +2868,8 @@ Get followers of the current user
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.social.getFollowers({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.social.getFollowers({});
 ```
 
 **Input:** _empty object_
@@ -2847,7 +2912,8 @@ Check if the current user is following an actor
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.social.isFollowed({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.social.isFollowed({});
 ```
 
 **Input**
@@ -2882,7 +2948,8 @@ Add an Azure AD user to the SharePoint site
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.users.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.users.create({});
 ```
 
 **Input**
@@ -2916,7 +2983,8 @@ Ensure a user exists in SharePoint (create if not present)
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.users.ensure({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.users.ensure({});
 ```
 
 **Input**
@@ -2950,7 +3018,8 @@ Find SharePoint users by name or email
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.users.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.users.find({});
 ```
 
 **Input**
@@ -2995,7 +3064,8 @@ Get the currently authenticated SharePoint user
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.users.getCurrent({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.users.getCurrent({});
 ```
 
 **Input:** _empty object_
@@ -3024,7 +3094,8 @@ Get the effective permissions of a user on the web
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.users.getEffectivePermissions({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.users.getEffectivePermissions({});
 ```
 
 **Input**
@@ -3058,7 +3129,8 @@ Get users belonging to a SharePoint site group by name
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.users.getGroupUsers({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.users.getGroupUsers({});
 ```
 
 **Input**
@@ -3103,7 +3175,8 @@ Get users belonging to a SharePoint site group by ID
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.users.getGroupUsersById({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.users.getGroupUsersById({});
 ```
 
 **Input**
@@ -3148,7 +3221,8 @@ List all site groups
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.users.listGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.users.listGroups({});
 ```
 
 **Input:** _empty object_
@@ -3187,7 +3261,8 @@ List all users in the SharePoint site
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.users.listSite({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.users.listSite({});
 ```
 
 **Input:** _empty object_
@@ -3227,7 +3302,8 @@ Remove a user from the SharePoint site [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.sharepoint.api.users.remove({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.users.remove({});
 ```
 
 **Input**
@@ -3259,7 +3335,8 @@ Create a new SharePoint subsite
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.web.createSubsite({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.web.createSubsite({});
 ```
 
 **Input**
@@ -3310,7 +3387,8 @@ Get SharePoint context info including form digest token
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.web.getContextInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.web.getContextInfo({});
 ```
 
 **Input:** _empty object_
@@ -3339,7 +3417,8 @@ Get a drive item by its path using Microsoft Graph
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.web.getDriveItemByPath({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.web.getDriveItemByPath({});
 ```
 
 **Input**
@@ -3395,7 +3474,8 @@ Get information about the current SharePoint web/site
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.web.getInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.web.getInfo({});
 ```
 
 **Input:** _empty object_
@@ -3436,7 +3516,8 @@ Get information about the SharePoint site collection
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.web.getSiteCollectionInfo({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.web.getSiteCollectionInfo({});
 ```
 
 **Input:** _empty object_
@@ -3477,7 +3558,8 @@ Get the content of a SharePoint modern site page
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.web.getSitePage({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.web.getSitePage({});
 ```
 
 **Input**
@@ -3510,7 +3592,8 @@ Log a custom event to the SharePoint ULS log
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.web.logEvent({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.web.logEvent({});
 ```
 
 **Input**
@@ -3542,7 +3625,8 @@ Update SharePoint site title or description
 **Risk:** `write`
 
 ```ts
-await corsair.sharepoint.api.web.updateSite({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.web.updateSite({});
 ```
 
 **Input**
@@ -3575,7 +3659,8 @@ Get a specific SharePoint webhook subscription
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.webhookSubscriptions.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.webhookSubscriptions.get({});
 ```
 
 **Input**
@@ -3610,7 +3695,8 @@ Get all webhook subscriptions for a SharePoint list
 **Risk:** `read`
 
 ```ts
-await corsair.sharepoint.api.webhookSubscriptions.getAll({});
+const tenant = corsair.withTenant('acme');
+await tenant.sharepoint.api.webhookSubscriptions.getAll({});
 ```
 
 **Input**

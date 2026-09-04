@@ -20,7 +20,8 @@ List comments for a specific ticket
 **Risk:** `read`
 
 ```ts
-await corsair.zendesk.api.comments.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.zendesk.api.comments.list({});
 ```
 
 **Input**
@@ -76,7 +77,8 @@ Create a new ticket
 **Risk:** `write`
 
 ```ts
-await corsair.zendesk.api.tickets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.zendesk.api.tickets.create({});
 ```
 
 **Input**
@@ -164,7 +166,8 @@ Delete a ticket by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.zendesk.api.tickets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.zendesk.api.tickets.delete({});
 ```
 
 **Input**
@@ -194,7 +197,8 @@ Retrieve a ticket by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.zendesk.api.tickets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.zendesk.api.tickets.get({});
 ```
 
 **Input**
@@ -260,7 +264,8 @@ List tickets with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.zendesk.api.tickets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.zendesk.api.tickets.list({});
 ```
 
 **Input**
@@ -332,7 +337,8 @@ Update an existing ticket
 **Risk:** `write`
 
 ```ts
-await corsair.zendesk.api.tickets.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.zendesk.api.tickets.update({});
 ```
 
 **Input**
@@ -420,7 +426,8 @@ Create a new user
 **Risk:** `write`
 
 ```ts
-await corsair.zendesk.api.users.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.zendesk.api.users.create({});
 ```
 
 **Input**
@@ -482,7 +489,8 @@ Delete a user by their ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.zendesk.api.users.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.zendesk.api.users.delete({});
 ```
 
 **Input**
@@ -512,7 +520,8 @@ Retrieve a user by their ID
 **Risk:** `read`
 
 ```ts
-await corsair.zendesk.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.zendesk.api.users.get({});
 ```
 
 **Input**
@@ -570,7 +579,8 @@ List users with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.zendesk.api.users.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.zendesk.api.users.list({});
 ```
 
 **Input**
@@ -633,7 +643,8 @@ Update an existing user
 **Risk:** `write`
 
 ```ts
-await corsair.zendesk.api.users.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.zendesk.api.users.update({});
 ```
 
 **Input**

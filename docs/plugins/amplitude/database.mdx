@@ -14,7 +14,8 @@ The Amplitude plugin syncs data locally. Use `corsair.amplitude.db.<entity>.sear
 Path: `amplitude.db.cohorts.search`
 
 ```ts
-const rows = await corsair.amplitude.db.cohorts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.amplitude.db.cohorts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -48,7 +49,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `amplitude.db.events.search`
 
 ```ts
-const rows = await corsair.amplitude.db.events.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.amplitude.db.events.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -92,7 +94,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `amplitude.db.users.search`
 
 ```ts
-const rows = await corsair.amplitude.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.amplitude.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

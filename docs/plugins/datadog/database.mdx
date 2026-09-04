@@ -14,7 +14,8 @@ The Datadog plugin syncs data locally. Use `corsair.datadog.db.<entity>.search({
 Path: `datadog.db.dashboards.search`
 
 ```ts
-const rows = await corsair.datadog.db.dashboards.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.datadog.db.dashboards.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `datadog.db.incidents.search`
 
 ```ts
-const rows = await corsair.datadog.db.incidents.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.datadog.db.incidents.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -69,7 +71,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `datadog.db.monitors.search`
 
 ```ts
-const rows = await corsair.datadog.db.monitors.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.datadog.db.monitors.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -99,7 +102,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `datadog.db.slos.search`
 
 ```ts
-const rows = await corsair.datadog.db.slos.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.datadog.db.slos.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

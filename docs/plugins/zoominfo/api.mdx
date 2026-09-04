@@ -20,7 +20,8 @@ Enrich up to 25 companies from partial identifiers
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.enrichCompany({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.enrichCompany({});
 ```
 
 **Input**
@@ -106,7 +107,8 @@ Enrich up to 25 contacts from partial identifiers
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.enrichContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.enrichContact({});
 ```
 
 **Input**
@@ -190,7 +192,8 @@ Fetch intent signals for one company
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.enrichIntent({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.enrichIntent({});
 ```
 
 **Input**
@@ -270,7 +273,8 @@ Fetch every known office location for one company
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.enrichLocation({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.enrichLocation({});
 ```
 
 **Input**
@@ -339,7 +343,8 @@ Fetch news articles for one company
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.enrichNews({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.enrichNews({});
 ```
 
 **Input**
@@ -400,7 +405,8 @@ Fetch Scoops for one company
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.enrichScoop({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.enrichScoop({});
 ```
 
 **Input**
@@ -472,7 +478,8 @@ Fetch the technologies detected in one company's stack
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.enrichTechnology({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.enrichTechnology({});
 ```
 
 **Input**
@@ -533,7 +540,8 @@ List the company search filters this account may use
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.getCompanySearchInputFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.getCompanySearchInputFields({});
 ```
 
 **Input:** _empty object_
@@ -567,7 +575,8 @@ List the contact search filters this account may use
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.getContactSearchInputFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.getContactSearchInputFields({});
 ```
 
 **Input:** _empty object_
@@ -601,7 +610,8 @@ List the intent search filters this account may use
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.getIntentSearchInputFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.getIntentSearchInputFields({});
 ```
 
 **Input:** _empty object_
@@ -635,7 +645,8 @@ List the news search filters this account may use
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.getNewsSearchInputFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.getNewsSearchInputFields({});
 ```
 
 **Input:** _empty object_
@@ -669,7 +680,8 @@ List the scoop search filters this account may use
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.getScoopSearchInputFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.getScoopSearchInputFields({});
 ```
 
 **Input:** _empty object_
@@ -703,7 +715,8 @@ Search companies by firmographics, location and technology
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.searchCompanies({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.searchCompanies({});
 ```
 
 **Input**
@@ -809,7 +822,8 @@ Search contacts by name, title, seniority and company
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.searchContacts({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.searchContacts({});
 ```
 
 **Input**
@@ -962,7 +976,8 @@ Search companies showing buying intent on given topics
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.searchIntent({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.searchIntent({});
 ```
 
 **Input**
@@ -1079,7 +1094,8 @@ Search news articles by category and publish date
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.searchNews({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.searchNews({});
 ```
 
 **Input**
@@ -1137,7 +1153,8 @@ Search Scoops, ZoomInfo research notes about companies
 **Risk:** `read`
 
 ```ts
-await corsair.zoominfo.api.zoominfo.searchScoops({});
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.searchScoops({});
 ```
 
 **Input**

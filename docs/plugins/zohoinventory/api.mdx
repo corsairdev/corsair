@@ -1,0 +1,2690 @@
+---
+title: API
+description: "API reference for Zoho Inventory: every `zohoinventory.api.*` operation with input and output types."
+---
+
+Every `zohoinventory.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Bills
+
+### create
+
+`bills.create`
+
+Create a bill
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.bills.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `vendor_id` | `string` | Yes | — |
+| `line_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  item_id?: string,
+  name?: string,
+  description?: string,
+  rate?: number,
+  quantity?: number,
+  unit?: string,
+  tax_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `bill` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="bill full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`bills.list`
+
+List bills
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.bills.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search_text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `bills` | `object[]` | Yes | — |
+| `page_context` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="bills full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="page_context full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number,
+  has_more_page?: boolean,
+  report_name?: string,
+  applied_filter?: string,
+  sort_column?: string,
+  sort_order?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Composite Items
+
+### delete
+
+`compositeItems.delete`
+
+Delete a composite item [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.compositeItems.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `composite_item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `contact_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `contact` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  contact_id: string,
+  contact_name: string,
+  company_name?: string,
+  contact_type?: string,
+  status?: string,
+  email?: string,
+  currency_code?: string,
+  outstanding_receivable_amount?: number,
+  outstanding_payable_amount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createPerson
+
+`contacts.createPerson`
+
+Create a contact person
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.contacts.createPerson({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `contact_id` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `contact_person` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact_person full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deactivate
+
+`contacts.deactivate`
+
+Mark a contact inactive
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.contacts.deactivate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### deletePerson
+
+`contacts.deletePerson`
+
+Delete a contact person [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.contacts.deletePerson({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `contact_person_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### email
+
+`contacts.email`
+
+Email a contact
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.contacts.email({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `contact_id` | `string` | Yes | — |
+| `to_mail_ids` | `string[]` | No | — |
+| `cc_mail_ids` | `string[]` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### emailStatement
+
+`contacts.emailStatement`
+
+Email a contact statement
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.contacts.emailStatement({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `contact_id` | `string` | Yes | — |
+| `to_mail_ids` | `string[]` | No | — |
+| `cc_mail_ids` | `string[]` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a contact
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `contact` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  contact_id: string,
+  contact_name: string,
+  company_name?: string,
+  contact_type?: string,
+  status?: string,
+  email?: string,
+  currency_code?: string,
+  outstanding_receivable_amount?: number,
+  outstanding_payable_amount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAddress
+
+`contacts.getAddress`
+
+Get a contact address
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.contacts.getAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search_text` | `string` | No | — |
+| `contact_type` | `customer \| vendor \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `contacts` | `object[]` | Yes | — |
+| `page_context` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  contact_id: string,
+  contact_name: string,
+  company_name?: string,
+  contact_type?: string,
+  status?: string,
+  email?: string,
+  currency_code?: string,
+  outstanding_receivable_amount?: number,
+  outstanding_payable_amount?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="page_context full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number,
+  has_more_page?: boolean,
+  report_name?: string,
+  applied_filter?: string,
+  sort_column?: string,
+  sort_order?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Credit Notes
+
+### addComment
+
+`creditNotes.addComment`
+
+Add a credit note comment
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.creditNotes.addComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `creditnote_id` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `comment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### applyCredits
+
+`creditNotes.applyCredits`
+
+Apply credit note credits to invoices
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.creditNotes.applyCredits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `creditnote_id` | `string` | Yes | — |
+| `invoices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  invoice_id: string,
+  amount_applied: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`creditNotes.create`
+
+Create a credit note
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.creditNotes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `customer_id` | `string` | Yes | — |
+| `line_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  item_id?: string,
+  name?: string,
+  description?: string,
+  rate?: number,
+  quantity?: number,
+  unit?: string,
+  tax_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `creditnote` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="creditnote full type">
+
+```ts
+{
+  creditnote_id: string,
+  creditnote_number?: string,
+  customer_id?: string,
+  status?: string,
+  total?: number,
+  balance?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### email
+
+`creditNotes.email`
+
+Email a credit note
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.creditNotes.email({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `creditnote_id` | `string` | Yes | — |
+| `to_mail_ids` | `string[]` | No | — |
+| `cc_mail_ids` | `string[]` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`creditNotes.get`
+
+Get a credit note
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.creditNotes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `creditnote_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `creditnote` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="creditnote full type">
+
+```ts
+{
+  creditnote_id: string,
+  creditnote_number?: string,
+  customer_id?: string,
+  status?: string,
+  total?: number,
+  balance?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getEmailContent
+
+`creditNotes.getEmailContent`
+
+Get credit note email content
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.creditNotes.getEmailContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `creditnote_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`creditNotes.list`
+
+List credit notes
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.creditNotes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search_text` | `string` | No | — |
+| `status` | `string` | No | — |
+| `customer_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `creditnotes` | `object[]` | Yes | — |
+| `page_context` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="creditnotes full type">
+
+```ts
+{
+  creditnote_id: string,
+  creditnote_number?: string,
+  customer_id?: string,
+  status?: string,
+  total?: number,
+  balance?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="page_context full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number,
+  has_more_page?: boolean,
+  report_name?: string,
+  applied_filter?: string,
+  sort_column?: string,
+  sort_order?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Currencies
+
+### list
+
+`currencies.list`
+
+List currencies
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.currencies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `currencies` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="currencies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customer Payments
+
+### create
+
+`customerPayments.create`
+
+Create a customer payment
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.customerPayments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `customer_id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `invoices` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  invoice_id: string,
+  amount_applied?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `payment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="payment full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### addAttachment
+
+`invoices.addAttachment`
+
+Upload an invoice attachment
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.addAttachment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_id` | `string` | Yes | — |
+| `filename` | `string` | Yes | — |
+| `content_base64` | `string` | Yes | — |
+| `content_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### addComment
+
+`invoices.addComment`
+
+Add an invoice comment
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.addComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_id` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `show_comment_to_clients` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `comment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkEmail
+
+`invoices.bulkEmail`
+
+Bulk email invoices
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.bulkEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_ids` | `string[]` | Yes | — |
+| `contact_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### bulkExport
+
+`invoices.bulkExport`
+
+Bulk export invoices as PDF
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.bulkExport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `content_type` | `string` | No | — |
+| `content_base64` | `string` | No | — |
+
+
+
+---
+
+### bulkPrint
+
+`invoices.bulkPrint`
+
+Bulk print invoices as PDF
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.bulkPrint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `content_type` | `string` | No | — |
+| `content_base64` | `string` | No | — |
+
+
+
+---
+
+### cancelWriteOff
+
+`invoices.cancelWriteOff`
+
+Cancel an invoice write-off
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.cancelWriteOff({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`invoices.create`
+
+Create an invoice
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `customer_id` | `string` | Yes | — |
+| `line_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  item_id?: string,
+  name?: string,
+  description?: string,
+  rate?: number,
+  quantity?: number,
+  unit?: string,
+  tax_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `invoice` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  invoice_id: string,
+  invoice_number?: string,
+  customer_id?: string,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  total?: number,
+  balance?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`invoices.delete`
+
+Delete an invoice [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### deleteAttachment
+
+`invoices.deleteAttachment`
+
+Delete an invoice attachment [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.deleteAttachment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### deleteComment
+
+`invoices.deleteComment`
+
+Delete an invoice comment [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.deleteComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_id` | `string` | Yes | — |
+| `comment_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### disablePaymentReminder
+
+`invoices.disablePaymentReminder`
+
+Disable invoice payment reminders
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.disablePaymentReminder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### email
+
+`invoices.email`
+
+Email an invoice
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.email({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_id` | `string` | Yes | — |
+| `to_mail_ids` | `string[]` | No | — |
+| `cc_mail_ids` | `string[]` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### enablePaymentReminder
+
+`invoices.enablePaymentReminder`
+
+Enable invoice payment reminders
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.enablePaymentReminder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List invoices
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search_text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `invoices` | `object[]` | Yes | — |
+| `page_context` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  invoice_id: string,
+  invoice_number?: string,
+  customer_id?: string,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  total?: number,
+  balance?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="page_context full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number,
+  has_more_page?: boolean,
+  report_name?: string,
+  applied_filter?: string,
+  sort_column?: string,
+  sort_order?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPayments
+
+`invoices.listPayments`
+
+List payments on an invoice
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.invoices.listPayments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `invoice_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `payments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Item Groups
+
+### create
+
+`itemGroups.create`
+
+Create an item group
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.itemGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `group_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `itemgroup` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="itemgroup full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deactivate
+
+`itemGroups.deactivate`
+
+Mark an item group inactive
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.itemGroups.deactivate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `itemgroup_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`itemGroups.delete`
+
+Delete an item group [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.itemGroups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `itemgroup_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`itemGroups.list`
+
+List item groups
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.itemGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search_text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `itemgroups` | `object[]` | Yes | — |
+| `page_context` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="itemgroups full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="page_context full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number,
+  has_more_page?: boolean,
+  report_name?: string,
+  applied_filter?: string,
+  sort_column?: string,
+  sort_order?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Items
+
+### create
+
+`items.create`
+
+Create an inventory item
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.items.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `item` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  item_id: string,
+  name: string,
+  sku?: string,
+  status?: string,
+  rate?: number,
+  purchase_rate?: number,
+  item_type?: string,
+  product_type?: string,
+  stock_on_hand?: number,
+  available_stock?: number,
+  description?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deactivate
+
+`items.deactivate`
+
+Mark an item inactive
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.items.deactivate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`items.delete`
+
+Delete an item [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.items.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### deleteImage
+
+`items.deleteImage`
+
+Delete an item image [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.items.deleteImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`items.list`
+
+List inventory items
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.items.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search_text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `items` | `object[]` | Yes | — |
+| `page_context` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  item_id: string,
+  name: string,
+  sku?: string,
+  status?: string,
+  rate?: number,
+  purchase_rate?: number,
+  item_type?: string,
+  product_type?: string,
+  stock_on_hand?: number,
+  available_stock?: number,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="page_context full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number,
+  has_more_page?: boolean,
+  report_name?: string,
+  applied_filter?: string,
+  sort_column?: string,
+  sort_order?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### list
+
+`organizations.list`
+
+List organizations the user can access
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.organizations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `organizations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="organizations full type">
+
+```ts
+{
+  organization_id: string,
+  name: string,
+  is_default_org?: boolean,
+  contact_name?: string,
+  email?: string,
+  is_org_active?: boolean,
+  currency_code?: string,
+  currency_id?: string,
+  currency_symbol?: string,
+  time_zone?: string,
+  language_code?: string,
+  fiscal_year_start_month?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Packages
+
+### bulkPrint
+
+`packages.bulkPrint`
+
+Bulk print package slips as PDF
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.packages.bulkPrint({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `package_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `content_type` | `string` | No | — |
+| `content_base64` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`packages.create`
+
+Create a package for a sales order
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.packages.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `salesorder_id` | `string` | Yes | — |
+| `line_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  item_id?: string,
+  name?: string,
+  description?: string,
+  rate?: number,
+  quantity?: number,
+  unit?: string,
+  tax_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `package` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="package full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`packages.delete`
+
+Delete a package [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.packages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `package_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Purchase Orders
+
+### create
+
+`purchaseOrders.create`
+
+Create a purchase order
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.purchaseOrders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `vendor_id` | `string` | Yes | — |
+| `line_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  item_id?: string,
+  name?: string,
+  description?: string,
+  rate?: number,
+  quantity?: number,
+  unit?: string,
+  tax_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `purchaseorder` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="purchaseorder full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`purchaseOrders.list`
+
+List purchase orders
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.purchaseOrders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search_text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `purchaseorders` | `object[]` | Yes | — |
+| `page_context` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="purchaseorders full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="page_context full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number,
+  has_more_page?: boolean,
+  report_name?: string,
+  applied_filter?: string,
+  sort_column?: string,
+  sort_order?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sales Orders
+
+### bulkDelete
+
+`salesOrders.bulkDelete`
+
+Bulk delete sales orders [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.salesOrders.bulkDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `salesorder_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`salesOrders.create`
+
+Create a sales order
+
+**Risk:** `write`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.salesOrders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `customer_id` | `string` | Yes | — |
+| `line_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  item_id?: string,
+  name?: string,
+  description?: string,
+  rate?: number,
+  quantity?: number,
+  unit?: string,
+  tax_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `salesorder` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="salesorder full type">
+
+```ts
+{
+  salesorder_id: string,
+  salesorder_number?: string,
+  customer_id?: string,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`salesOrders.delete`
+
+Delete a sales order [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.salesOrders.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `salesorder_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`salesOrders.get`
+
+Get a sales order
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.salesOrders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `salesorder_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `salesorder` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="salesorder full type">
+
+```ts
+{
+  salesorder_id: string,
+  salesorder_number?: string,
+  customer_id?: string,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`salesOrders.list`
+
+List sales orders
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.salesOrders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search_text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `salesorders` | `object[]` | Yes | — |
+| `page_context` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="salesorders full type">
+
+```ts
+{
+  salesorder_id: string,
+  salesorder_number?: string,
+  customer_id?: string,
+  customer_name?: string,
+  status?: string,
+  date?: string,
+  total?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="page_context full type">
+
+```ts
+{
+  page?: number,
+  per_page?: number,
+  has_more_page?: boolean,
+  report_name?: string,
+  applied_filter?: string,
+  sort_column?: string,
+  sort_order?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### getCurrent
+
+`users.getCurrent`
+
+Get the current authenticated user
+
+**Risk:** `read`
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinventory.api.users.getCurrent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | Zoho Inventory organization_id (query on every org-scoped call). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number` | No | — |
+| `message` | `string` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  user_id: string,
+  name: string,
+  email: string,
+  user_role?: string,
+  status?: string,
+  is_current_user?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

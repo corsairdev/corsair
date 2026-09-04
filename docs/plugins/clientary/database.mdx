@@ -14,7 +14,8 @@ The Clientary plugin syncs data locally. Use `corsair.clientary.db.<entity>.sear
 Path: `clientary.db.clients.search`
 
 ```ts
-const rows = await corsair.clientary.db.clients.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.clientary.db.clients.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -47,7 +48,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `clientary.db.contacts.search`
 
 ```ts
-const rows = await corsair.clientary.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.clientary.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -76,7 +78,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `clientary.db.estimates.search`
 
 ```ts
-const rows = await corsair.clientary.db.estimates.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.clientary.db.estimates.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -108,7 +111,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `clientary.db.invoices.search`
 
 ```ts
-const rows = await corsair.clientary.db.invoices.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.clientary.db.invoices.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -142,7 +146,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `clientary.db.projects.search`
 
 ```ts
-const rows = await corsair.clientary.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.clientary.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -177,7 +182,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `clientary.db.tasks.search`
 
 ```ts
-const rows = await corsair.clientary.db.tasks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.clientary.db.tasks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

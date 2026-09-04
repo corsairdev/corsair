@@ -14,7 +14,8 @@ The Ahrefs plugin syncs data locally. Use `corsair.ahrefs.db.<entity>.search({ d
 Path: `ahrefs.db.domainMetrics.search`
 
 ```ts
-const rows = await corsair.ahrefs.db.domainMetrics.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ahrefs.db.domainMetrics.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -45,7 +46,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `ahrefs.db.keywords.search`
 
 ```ts
-const rows = await corsair.ahrefs.db.keywords.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ahrefs.db.keywords.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -80,7 +82,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `ahrefs.db.pages.search`
 
 ```ts
-const rows = await corsair.ahrefs.db.pages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ahrefs.db.pages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -111,7 +114,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `ahrefs.db.rankings.search`
 
 ```ts
-const rows = await corsair.ahrefs.db.rankings.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ahrefs.db.rankings.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -142,7 +146,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `ahrefs.db.refdomains.search`
 
 ```ts
-const rows = await corsair.ahrefs.db.refdomains.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ahrefs.db.refdomains.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -172,7 +177,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `ahrefs.db.serpPositions.search`
 
 ```ts
-const rows = await corsair.ahrefs.db.serpPositions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ahrefs.db.serpPositions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -205,7 +211,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `ahrefs.db.subscriptionUsage.search`
 
 ```ts
-const rows = await corsair.ahrefs.db.subscriptionUsage.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ahrefs.db.subscriptionUsage.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

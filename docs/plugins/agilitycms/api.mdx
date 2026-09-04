@@ -20,7 +20,8 @@ Retrieve enum types and metadata definitions used throughout Agility CMS API
 **Risk:** `read`
 
 ```ts
-await corsair.agilitycms.api.content.getApiTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.agilitycms.api.content.getApiTypes({});
 ```
 
 **Input**
@@ -57,7 +58,8 @@ Retrieve content models and page module schema definitions
 **Risk:** `read`
 
 ```ts
-await corsair.agilitycms.api.content.getContentModels({});
+const tenant = corsair.withTenant('acme');
+await tenant.agilitycms.api.content.getContentModels({});
 ```
 
 **Input**
@@ -100,7 +102,8 @@ Fetch details of a content item by Content ID including fields and metadata
 **Risk:** `read`
 
 ```ts
-await corsair.agilitycms.api.content.getItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.agilitycms.api.content.getItem({});
 ```
 
 **Input**
@@ -161,7 +164,8 @@ Retrieve a paginated, filterable list of content items by reference name
 **Risk:** `read`
 
 ```ts
-await corsair.agilitycms.api.content.getList({});
+const tenant = corsair.withTenant('acme');
+await tenant.agilitycms.api.content.getList({});
 ```
 
 **Input**
@@ -223,7 +227,8 @@ Retrieve sync items (content change logs) incrementally using sync tokens
 **Risk:** `read`
 
 ```ts
-await corsair.agilitycms.api.content.getLogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.agilitycms.api.content.getLogs({});
 ```
 
 **Input**
@@ -279,7 +284,8 @@ Retrieve details of a Page including metadata, content zones, and components by 
 **Risk:** `read`
 
 ```ts
-await corsair.agilitycms.api.content.getPage({});
+const tenant = corsair.withTenant('acme');
+await tenant.agilitycms.api.content.getPage({});
 ```
 
 **Input**
@@ -362,7 +368,8 @@ Retrieve page module UI component definitions for building pages
 **Risk:** `read`
 
 ```ts
-await corsair.agilitycms.api.content.getPageModules({});
+const tenant = corsair.withTenant('acme');
+await tenant.agilitycms.api.content.getPageModules({});
 ```
 
 **Input**
@@ -405,7 +412,8 @@ Retrieve the flat sitemap dictionary for a specific channel and locale
 **Risk:** `read`
 
 ```ts
-await corsair.agilitycms.api.content.getSitemapFlat({});
+const tenant = corsair.withTenant('acme');
+await tenant.agilitycms.api.content.getSitemapFlat({});
 ```
 
 **Input**
@@ -443,7 +451,8 @@ Synchronize local page data with CMS incrementally using sync tokens
 **Risk:** `read`
 
 ```ts
-await corsair.agilitycms.api.content.syncPages({});
+const tenant = corsair.withTenant('acme');
+await tenant.agilitycms.api.content.syncPages({});
 ```
 
 **Input**

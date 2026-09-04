@@ -20,7 +20,8 @@ Authenticates an existing AgencyZoom user using their email (as username) and pa
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.auth.logTheUserIn({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.auth.logTheUserIn({});
 ```
 
 **Input**
@@ -73,7 +74,8 @@ Use this action to log the current user out of AgencyZoom by invalidating their 
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.auth.logTheUserOut({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.auth.logTheUserOut({});
 ```
 
 **Input**
@@ -128,7 +130,8 @@ Logs a user into the AgencyZoom platform via Single Sign-On (SSO). Returns JWT o
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.auth.v4SsoLogTheUserIn({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.auth.v4SsoLogTheUserIn({});
 ```
 
 **Input**
@@ -183,7 +186,8 @@ Creates 1 to 5 new contacts in AgencyZoom in a single batch API call.
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.contact.batchCreateContact({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.contact.batchCreateContact({});
 ```
 
 **Input**
@@ -241,7 +245,8 @@ Adds a new note to an existing customer's profile using their ID; cannot be used
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.customers.createACustomerNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.customers.createACustomerNote({});
 ```
 
 **Input**
@@ -298,7 +303,8 @@ Irreversibly deletes a customer and all associated data in AgencyZoom using thei
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.customers.deleteACustomer({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.customers.deleteACustomer({});
 ```
 
 **Input**
@@ -354,7 +360,8 @@ Permanently deletes a specific file, identified by `fileId`, associated with a c
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.customers.deleteACustomerFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.customers.deleteACustomerFile({});
 ```
 
 **Input**
@@ -411,7 +418,8 @@ Permanently deletes a specific policy associated with a customer, for instance, 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.customers.deleteACustomerPolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.customers.deleteACustomerPolicy({});
 ```
 
 **Input**
@@ -468,7 +476,8 @@ Retrieves a customer's synchronized Agency Management System (AMS) policy data (
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.customers.getAmsPoliciesForACustomer({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.customers.getAmsPoliciesForACustomer({});
 ```
 
 **Input**
@@ -524,7 +533,8 @@ Retrieves from AgencyZoom all insurance policies for an existing customer (ident
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.customers.getPoliciesForACustomer({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.customers.getPoliciesForACustomer({});
 ```
 
 **Input**
@@ -580,7 +590,8 @@ Fetches comprehensive details for a specific customer, including personal inform
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.customers.getTheCustomerDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.customers.getTheCustomerDetails({});
 ```
 
 **Input**
@@ -637,7 +648,8 @@ Fetches all tasks (read-only task data) for a customer by `customerId` to review
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.customers.getTheCustomerTasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.customers.getTheCustomerTasks({});
 ```
 
 **Input**
@@ -693,7 +705,8 @@ Searches for customers in AgencyZoom using criteria like contact information, po
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.customers.searchCustomers({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.customers.searchCustomers({});
 ```
 
 **Input**
@@ -753,7 +766,8 @@ Updates an existing customer's information in AgencyZoom using their unique cust
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.customers.updateCustomer({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.customers.updateCustomer({});
 ```
 
 **Input**
@@ -836,7 +850,8 @@ Deletes a specific message from an email thread within AgencyZoom. Requires the 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.emailThreads.deleteMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.emailThreads.deleteMessage({});
 ```
 
 **Input**
@@ -897,7 +912,8 @@ Permanently deletes a specific email thread from the AgencyZoom system, identifi
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.emailThreads.deleteThread({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.emailThreads.deleteThread({});
 ```
 
 **Input**
@@ -958,7 +974,8 @@ Searches and retrieves detailed information for email threads in AgencyZoom; no 
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.emailThreads.getThreadDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.emailThreads.getThreadDetails({});
 ```
 
 **Input**
@@ -1022,7 +1039,8 @@ Marks an email thread in AgencyZoom as read or unread using its `threadId`; this
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.emailThreads.markThreadAsUnreadApiEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.emailThreads.markThreadAsUnreadApiEndpoint({});
 ```
 
 **Input**
@@ -1079,7 +1097,8 @@ Retrieves a list of email thread metadata from AgencyZoom, suitable for an overv
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.emailThreads.searchEmailThreads({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.emailThreads.searchEmailThreads({});
 ```
 
 **Input**
@@ -1141,7 +1160,8 @@ Creates up to 5 new leads in AgencyZoom; all referenced entity IDs (e.g., pipeli
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.batchCreateLead({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.batchCreateLead({});
 ```
 
 **Input**
@@ -1197,7 +1217,8 @@ Updates a lead's lifecycle status (e.g., Active, Won, Lost, X-Dated) and can opt
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.changeStatusForLead({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.changeStatusForLead({});
 ```
 
 **Input**
@@ -1264,7 +1285,8 @@ Adds a new note to an existing lead in AgencyZoom, identified by `leadId`.
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.createALeadNote({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.createALeadNote({});
 ```
 
 **Input**
@@ -1321,7 +1343,8 @@ Adds a new sales opportunity to an existing lead in AgencyZoom, requiring a vali
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.createALeadOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.createALeadOpportunity({});
 ```
 
 **Input**
@@ -1382,7 +1405,8 @@ Creates a new insurance quote for an existing lead in AgencyZoom, using valid ca
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.createALeadQuote({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.createALeadQuote({});
 ```
 
 **Input**
@@ -1443,7 +1467,8 @@ Creates or updates a business lead in AgencyZoom using detailed personal and com
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.createBizLead({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.createBizLead({});
 ```
 
 **Input**
@@ -1540,7 +1565,8 @@ Creates a new lead or updates an existing one in AgencyZoom; ensure `pipelineId`
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.createLead({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.createLead({});
 ```
 
 **Input**
@@ -1636,7 +1662,8 @@ Deletes a specific file (identified by `fileId`) associated with an existing lea
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.leads.deleteALeadFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.deleteALeadFile({});
 ```
 
 **Input**
@@ -1693,7 +1720,8 @@ Permanently deletes an existing opportunity (by `opportunityId`) associated with
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.leads.deleteALeadOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.deleteALeadOpportunity({});
 ```
 
 **Input**
@@ -1750,7 +1778,8 @@ Deletes a specific quote from a lead, requiring that the lead and quote exist an
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.leads.deleteALeadQuote({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.deleteALeadQuote({});
 ```
 
 **Input**
@@ -1807,7 +1836,8 @@ Retrieves metadata (id, title, MIME type, size, dates, creator info) for files a
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.leads.getLeadFiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.getLeadFiles({});
 ```
 
 **Input**
@@ -1870,7 +1900,8 @@ Fetches the complete history of notes for a specific lead by `leadId` (which mus
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.leads.getLeadNotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.getLeadNotes({});
 ```
 
 **Input**
@@ -1926,7 +1957,8 @@ Retrieves all insurance quotes (active and inactive) for a specific lead ID, use
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.leads.getLeadQuotes({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.getLeadQuotes({});
 ```
 
 **Input**
@@ -1982,7 +2014,8 @@ Retrieves all tasks for a specific lead, identified by its `leadId`, to review i
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.leads.getLeadTasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.getLeadTasks({});
 ```
 
 **Input**
@@ -2038,7 +2071,8 @@ Retrieves comprehensive details for a specific lead in AgencyZoom by its unique 
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.leads.getTheLeadDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.getTheLeadDetails({});
 ```
 
 **Input**
@@ -2098,7 +2132,8 @@ Retrieves all sales opportunities and their details for a specified, existing `l
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.leads.getTheOpportunitiesForALead({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.getTheOpportunitiesForALead({});
 ```
 
 **Input**
@@ -2154,7 +2189,8 @@ Marks an existing lead as sold by its `leadId` and records product details; `pro
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.moveLeadToSold({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.moveLeadToSold({});
 ```
 
 **Input**
@@ -2212,7 +2248,8 @@ Retrieves AgencyZoom leads, using filters, pagination, and sorting options sent 
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.leads.searchLeads({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.searchLeads({});
 ```
 
 **Input**
@@ -2290,7 +2327,8 @@ Retrieves a summary of lead counts categorized by workflow stage from AgencyZoom
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.leads.searchLeadsCount({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.searchLeadsCount({});
 ```
 
 **Input**
@@ -2350,7 +2388,8 @@ Updates a lead's file name to `newFileName`; requires `fileId` of the target fil
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.updateALeadFileName({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.updateALeadFileName({});
 ```
 
 **Input**
@@ -2409,7 +2448,8 @@ Updates an existing opportunity's details (carrier, product line, premium, items
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.updateALeadOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.updateALeadOpportunity({});
 ```
 
 **Input**
@@ -2471,7 +2511,8 @@ Updates an existing quote for a specified lead in AgencyZoom when its details re
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.updateALeadQuote({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.updateALeadQuote({});
 ```
 
 **Input**
@@ -2533,7 +2574,8 @@ Updates an existing business lead in AgencyZoom. Requires leadId (path parameter
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.updateBusinessLead({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.updateBusinessLead({});
 ```
 
 **Input**
@@ -2631,7 +2673,8 @@ Updates an existing lead's information in AgencyZoom using the `leadId`; ensure 
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.updateLead({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.updateLead({});
 ```
 
 **Input**
@@ -2728,7 +2771,8 @@ Updates a lead's status (0=ACTIVE, 2=WON, 3=LOST, 5=XDATED) by `leadId`, optiona
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.leads.updateLeadStatusById({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.leads.updateLeadStatusById({});
 ```
 
 **Input**
@@ -2797,7 +2841,8 @@ Searches for life and health insurance leads by providing filter criteria (match
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.life.searchLifeAndHealthLeads({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.life.searchLifeAndHealthLeads({});
 ```
 
 **Input**
@@ -2859,7 +2904,8 @@ Creates a new driver record associated with an existing AgencyZoom opportunity u
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.createADriverForAnOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.createADriverForAnOpportunity({});
 ```
 
 **Input**
@@ -2924,7 +2970,8 @@ Creates a new lead opportunity in AgencyZoom; this action cannot update existing
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.createAnOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.createAnOpportunity({});
 ```
 
 **Input**
@@ -2993,7 +3040,8 @@ Adds a new vehicle record to a specified opportunity; `opportunityId` must refer
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.createAVehicleForAnOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.createAVehicleForAnOpportunity({});
 ```
 
 **Input**
@@ -3054,7 +3102,8 @@ Permanently deletes an existing driver record (a person associated with an insur
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.opportunities.deleteADriver({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.deleteADriver({});
 ```
 
 **Input**
@@ -3110,7 +3159,8 @@ Permanently deletes a specific opportunity by its unique ID; this action is irre
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.opportunities.deleteAnOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.deleteAnOpportunity({});
 ```
 
 **Input**
@@ -3166,7 +3216,8 @@ Permanently deletes a vehicle record by its `vehicleId`, which must correspond t
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.opportunities.deleteAVehicle({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.deleteAVehicle({});
 ```
 
 **Input**
@@ -3222,7 +3273,8 @@ Retrieves a list of drivers (individuals), including their personal details, lic
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.getAListOfDriversForAnOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.getAListOfDriversForAnOpportunity({});
 ```
 
 **Input**
@@ -3278,7 +3330,8 @@ Retrieves all vehicles associated with an existing opportunity, using its unique
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.getAListOfVehiclesForAnOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.getAListOfVehiclesForAnOpportunity({});
 ```
 
 **Input**
@@ -3334,7 +3387,8 @@ Retrieves detailed information for a specific, existing driver (by `driverId`) a
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.getTheDriverDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.getTheDriverDetails({});
 ```
 
 **Input**
@@ -3390,7 +3444,8 @@ Fetches comprehensive details for an existing opportunity using its unique `oppo
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.getTheOpportunityDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.getTheOpportunityDetails({});
 ```
 
 **Input**
@@ -3446,7 +3501,8 @@ Retrieves detailed information for a specific vehicle, often associated with an 
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.getTheVehicleDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.getTheVehicleDetails({});
 ```
 
 **Input**
@@ -3502,7 +3558,8 @@ Assigns or reassigns an existing driver to an existing opportunity.
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.linkADriverToOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.linkADriverToOpportunity({});
 ```
 
 **Input**
@@ -3559,7 +3616,8 @@ Links an existing vehicle to an existing sales opportunity in AgencyZoom using t
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.linkAVehicleToOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.linkAVehicleToOpportunity({});
 ```
 
 **Input**
@@ -3616,7 +3674,8 @@ Unlinks a currently associated driver from an AgencyZoom opportunity, used when 
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.unlinkADriverFromOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.unlinkADriverFromOpportunity({});
 ```
 
 **Input**
@@ -3673,7 +3732,8 @@ Unlinks a specific, existing vehicle from a specific, existing opportunity using
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.unlinkAVehicleFromOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.unlinkAVehicleFromOpportunity({});
 ```
 
 **Input**
@@ -3730,7 +3790,8 @@ Updates an existing driver's details in AgencyZoom, requiring `driverId` in the 
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.updateADriverSDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.updateADriverSDetails({});
 ```
 
 **Input**
@@ -3795,7 +3856,8 @@ Updates an existing opportunity with the provided details; ensure any custom fie
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.updateAnOpportunity({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.updateAnOpportunity({});
 ```
 
 **Input**
@@ -3864,7 +3926,8 @@ Updates details for an existing vehicle within an opportunity; this action canno
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.opportunities.updateAVehicleSDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.opportunities.updateAVehicleSDetails({});
 ```
 
 **Input**
@@ -3927,7 +3990,8 @@ Updates an existing insurance policy for the given `policyId`; monetary values m
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.policies.updateAPolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.policies.updateAPolicy({});
 ```
 
 **Input**
@@ -4002,7 +4066,8 @@ Adds new comma-separated `tagNames` to a policy, requiring `tagNames` and identi
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.policies.updateTagsForAPolicy({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.policies.updateTagsForAPolicy({});
 ```
 
 **Input**
@@ -4062,7 +4127,8 @@ Updates the profile information (first name, last name, email, and optional phon
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.profile.updateMyProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.profile.updateMyProfile({});
 ```
 
 **Input**
@@ -4123,7 +4189,8 @@ Retrieves all assign groups configured in AgencyZoom, used for categorizing or a
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfAssignGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfAssignGroups({});
 ```
 
 **Input**
@@ -4178,7 +4245,8 @@ Retrieves all insurance carriers from AgencyZoom, typically used for populating 
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfCarriers({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfCarriers({});
 ```
 
 **Input**
@@ -4233,7 +4301,8 @@ Fetches all Customer Service Representatives (CSRs), including their ID and name
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfCsrs({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfCsrs({});
 ```
 
 **Input**
@@ -4288,7 +4357,8 @@ Retrieves metadata for all configured custom field definitions, not the specific
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfCustomFields({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfCustomFields({});
 ```
 
 **Input**
@@ -4343,7 +4413,8 @@ Retrieves a complete list of all employees for the authenticated agency; returns
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfEmployees({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfEmployees({});
 ```
 
 **Input**
@@ -4398,7 +4469,8 @@ Retrieves a comprehensive list of all predefined lead source categories from Age
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfLeadSourceCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfLeadSourceCategories({});
 ```
 
 **Input**
@@ -4453,7 +4525,8 @@ Fetches a list of all lead sources configured in AgencyZoom, including their ID,
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfLeadSources({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfLeadSources({});
 ```
 
 **Input**
@@ -4508,7 +4581,8 @@ Retrieves a list of life insurance professionals, including only their contact a
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfLifeProfessionals({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfLifeProfessionals({});
 ```
 
 **Input**
@@ -4563,7 +4637,8 @@ Retrieves all agency locations or branches from AgencyZoom; filtering options ar
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfLocations({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfLocations({});
 ```
 
 **Input**
@@ -4618,7 +4693,8 @@ Retrieves all predefined loss reasons (e.g., 'Lost to competitor', 'Premium too 
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfLossReasons({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfLossReasons({});
 ```
 
 **Input**
@@ -4673,7 +4749,8 @@ Retrieves all pipelines and their stages from AgencyZoom to understand workflow 
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfPipelines({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfPipelines({});
 ```
 
 **Input**
@@ -4728,7 +4805,8 @@ Fetches all product lines and policy types from AgencyZoom, each detailed with i
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfProductLinesPolicyTypes({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfProductLinesPolicyTypes({});
 ```
 
 **Input**
@@ -4783,7 +4861,8 @@ Retrieves the available recycle event types and any existing X-Date information 
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getAListOfRecycleEvents({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getAListOfRecycleEvents({});
 ```
 
 **Input**
@@ -4835,7 +4914,8 @@ Fetches department and group information for an agency, optionally filtered by a
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getDepartmentsGroups({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getDepartmentsGroups({});
 ```
 
 **Input**
@@ -4891,7 +4971,8 @@ Fetches a list of all defined end stages, representing final steps in processes 
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.getListOfEndStages({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.getListOfEndStages({});
 ```
 
 **Input**
@@ -4946,7 +5027,8 @@ Retrieves a complete, unfiltered list of all product categories (ID and name) fr
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.listProductCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.listProductCategories({});
 ```
 
 **Input**
@@ -5001,7 +5083,8 @@ Retrieves a comprehensive list of all available business classifications from Ag
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.referenceData.searchBusinessClassifications({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.referenceData.searchBusinessClassifications({});
 ```
 
 **Input**
@@ -5063,7 +5146,8 @@ Retrieves a paginated list of service tickets from AgencyZoom. Supports filterin
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.serviceTickets.serviceTicketList({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.serviceTickets.serviceTicketList({});
 ```
 
 **Input**
@@ -5125,7 +5209,8 @@ Deletes multiple AgencyZoom tasks in a batch; task deletion is permanent and the
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.tasks.batchDeleteTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.tasks.batchDeleteTask({});
 ```
 
 **Input**
@@ -5181,7 +5266,8 @@ Marks an existing and accessible task in AgencyZoom as 'completed'; this action 
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.tasks.completeTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.tasks.completeTask({});
 ```
 
 **Input**
@@ -5237,7 +5323,8 @@ Creates a new task in AgencyZoom; ensure `assigneeId`, `customerId`, or `leadId`
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.tasks.createTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.tasks.createTask({});
 ```
 
 **Input**
@@ -5305,7 +5392,8 @@ Permanently and irreversibly deletes an existing task, identified by its `taskId
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.tasks.deleteATask({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.tasks.deleteATask({});
 ```
 
 **Input**
@@ -5361,7 +5449,8 @@ Retrieves comprehensive details for a specific task using its unique `taskId`, w
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.tasks.getTheTaskDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.tasks.getTheTaskDetails({});
 ```
 
 **Input**
@@ -5418,7 +5507,8 @@ Reopens an existing AgencyZoom task that is currently 'completed' or 'closed', a
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.tasks.reopenATask({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.tasks.reopenATask({});
 ```
 
 **Input**
@@ -5475,7 +5565,8 @@ Searches and lists tasks, supporting pagination and accepting filter criteria in
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.tasks.searchTasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.tasks.searchTasks({});
 ```
 
 **Input**
@@ -5544,7 +5635,8 @@ Modifies an existing AgencyZoom task (which must be valid and identified by `tas
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.tasks.updateTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.tasks.updateTask({});
 ```
 
 **Input**
@@ -5615,7 +5707,8 @@ Retrieves a list of all producers from AgencyZoom, typically related to text thr
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.textThreads.getAListOfProducer({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.textThreads.getAListOfProducer({});
 ```
 
 **Input**
@@ -5670,7 +5763,8 @@ Call this action to permanently delete an SMS/text message thread in AgencyZoom;
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.agencyzoom.api.textThreads.removeTextThreadEndpoint({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.textThreads.removeTextThreadEndpoint({});
 ```
 
 **Input**
@@ -5731,7 +5825,8 @@ Searches and retrieves SMS threads from AgencyZoom, with search parameters, filt
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.textThreads.searchSmsThreads({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.textThreads.searchSmsThreads({});
 ```
 
 **Input**
@@ -5791,7 +5886,8 @@ Retrieves detailed messages for a specific SMS/text thread by its thread ID. Ret
 **Risk:** `read`
 
 ```ts
-await corsair.agencyzoom.api.textThreads.textDetailThread({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.textThreads.textDetailThread({});
 ```
 
 **Input**
@@ -5855,7 +5951,8 @@ Updates the read or unread status of a specific SMS/text thread within AgencyZoo
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.textThreads.unreadThread({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.textThreads.unreadThread({});
 ```
 
 **Input**
@@ -5914,7 +6011,8 @@ Completes AgencyZoom V4 Single Sign-On (SSO) authentication by exchanging an OAu
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.v4sso.authenticateForJwtviaV4Sso({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.v4sso.authenticateForJwtviaV4Sso({});
 ```
 
 **Input**
@@ -5966,7 +6064,8 @@ Retrieves a fresh authentication URL for AgencyZoom's V4 Single Sign-On (SSO) pr
 **Risk:** `write`
 
 ```ts
-await corsair.agencyzoom.api.v4sso.getAuthUrlForV4Sso({});
+const tenant = corsair.withTenant('acme');
+await tenant.agencyzoom.api.v4sso.getAuthUrlForV4Sso({});
 ```
 
 **Input**

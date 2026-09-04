@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { nextdns } from '@corsair-dev/nextdns';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		nextdns(),
 	],

@@ -20,7 +20,8 @@ Create a Todoist comment
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.comments.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.comments.create({});
 ```
 
 **Input**
@@ -56,7 +57,8 @@ Delete a Todoist comment
 **Risk:** `destructive`
 
 ```ts
-await corsair.todoist.api.comments.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.comments.delete({});
 ```
 
 **Input**
@@ -81,7 +83,8 @@ Get a Todoist comment by ID
 **Risk:** `read`
 
 ```ts
-await corsair.todoist.api.comments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.comments.get({});
 ```
 
 **Input**
@@ -115,7 +118,8 @@ List Todoist comments for a task or project
 **Risk:** `read`
 
 ```ts
-await corsair.todoist.api.comments.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.comments.getMany({});
 ```
 
 **Input**
@@ -156,7 +160,8 @@ Update a Todoist comment
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.comments.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.comments.update({});
 ```
 
 **Input**
@@ -193,7 +198,8 @@ Create a Todoist label
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.labels.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.labels.create({});
 ```
 
 **Input**
@@ -230,7 +236,8 @@ Delete a Todoist label
 **Risk:** `destructive`
 
 ```ts
-await corsair.todoist.api.labels.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.labels.delete({});
 ```
 
 **Input**
@@ -255,7 +262,8 @@ Get a Todoist label by ID
 **Risk:** `read`
 
 ```ts
-await corsair.todoist.api.labels.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.labels.get({});
 ```
 
 **Input**
@@ -289,7 +297,8 @@ List Todoist labels
 **Risk:** `read`
 
 ```ts
-await corsair.todoist.api.labels.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.labels.getMany({});
 ```
 
 **Input:** _empty object_
@@ -324,7 +333,8 @@ Update a Todoist label
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.labels.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.labels.update({});
 ```
 
 **Input**
@@ -364,7 +374,8 @@ Archive a Todoist project
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.projects.archive({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.projects.archive({});
 ```
 
 **Input**
@@ -389,7 +400,8 @@ Create a Todoist project
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.projects.create({});
 ```
 
 **Input**
@@ -433,7 +445,8 @@ Delete a Todoist project
 **Risk:** `destructive`
 
 ```ts
-await corsair.todoist.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.projects.delete({});
 ```
 
 **Input**
@@ -458,7 +471,8 @@ Get a Todoist project by ID
 **Risk:** `read`
 
 ```ts
-await corsair.todoist.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.projects.get({});
 ```
 
 **Input**
@@ -498,7 +512,8 @@ List collaborators for a Todoist project
 **Risk:** `read`
 
 ```ts
-await corsair.todoist.api.projects.getCollaborators({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.projects.getCollaborators({});
 ```
 
 **Input**
@@ -536,7 +551,8 @@ List Todoist projects
 **Risk:** `read`
 
 ```ts
-await corsair.todoist.api.projects.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.projects.getMany({});
 ```
 
 **Input:** _empty object_
@@ -591,7 +607,8 @@ Unarchive a Todoist project
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.projects.unarchive({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.projects.unarchive({});
 ```
 
 **Input**
@@ -616,7 +633,8 @@ Update a Todoist project
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.projects.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.projects.update({});
 ```
 
 **Input**
@@ -663,7 +681,8 @@ Create a Todoist reminder
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.reminders.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.reminders.create({});
 ```
 
 **Input**
@@ -713,7 +732,8 @@ Delete a Todoist reminder
 **Risk:** `destructive`
 
 ```ts
-await corsair.todoist.api.reminders.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.reminders.delete({});
 ```
 
 **Input**
@@ -738,7 +758,8 @@ List Todoist reminders
 **Risk:** `read`
 
 ```ts
-await corsair.todoist.api.reminders.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.reminders.getMany({});
 ```
 
 **Input:** _empty object_
@@ -773,7 +794,8 @@ Update a Todoist reminder
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.reminders.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.reminders.update({});
 ```
 
 **Input**
@@ -826,7 +848,8 @@ Create a Todoist section
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.sections.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.sections.create({});
 ```
 
 **Input**
@@ -861,7 +884,8 @@ Delete a Todoist section
 **Risk:** `destructive`
 
 ```ts
-await corsair.todoist.api.sections.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.sections.delete({});
 ```
 
 **Input**
@@ -886,7 +910,8 @@ Get a Todoist section by ID
 **Risk:** `read`
 
 ```ts
-await corsair.todoist.api.sections.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.sections.get({});
 ```
 
 **Input**
@@ -919,7 +944,8 @@ List Todoist sections for a project
 **Risk:** `read`
 
 ```ts
-await corsair.todoist.api.sections.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.sections.getMany({});
 ```
 
 **Input**
@@ -958,7 +984,8 @@ Update a Todoist section
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.sections.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.sections.update({});
 ```
 
 **Input**
@@ -996,7 +1023,8 @@ Close a Todoist task
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.tasks.close({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.tasks.close({});
 ```
 
 **Input**
@@ -1031,7 +1059,8 @@ Create a Todoist task
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.tasks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.tasks.create({});
 ```
 
 **Input**
@@ -1098,7 +1127,8 @@ Delete a Todoist task
 **Risk:** `destructive`
 
 ```ts
-await corsair.todoist.api.tasks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.tasks.delete({});
 ```
 
 **Input**
@@ -1133,7 +1163,8 @@ Get a Todoist task by ID
 **Risk:** `read`
 
 ```ts
-await corsair.todoist.api.tasks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.tasks.get({});
 ```
 
 **Input**
@@ -1189,7 +1220,8 @@ List Todoist tasks with filters
 **Risk:** `read`
 
 ```ts
-await corsair.todoist.api.tasks.getMany({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.tasks.getMany({});
 ```
 
 **Input**
@@ -1267,7 +1299,8 @@ Move a Todoist task between project or section
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.tasks.move({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.tasks.move({});
 ```
 
 **Input**
@@ -1327,7 +1360,8 @@ Quick add a Todoist task using natural language
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.tasks.quickAdd({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.tasks.quickAdd({});
 ```
 
 **Input**
@@ -1386,7 +1420,8 @@ Reopen a completed Todoist task
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.tasks.reopen({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.tasks.reopen({});
 ```
 
 **Input**
@@ -1421,7 +1456,8 @@ Update a Todoist task
 **Risk:** `write`
 
 ```ts
-await corsair.todoist.api.tasks.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.todoist.api.tasks.update({});
 ```
 
 **Input**

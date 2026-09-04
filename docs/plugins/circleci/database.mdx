@@ -14,7 +14,8 @@ The CircleCI plugin syncs data locally. Use `corsair.circleci.db.<entity>.search
 Path: `circleci.db.contexts.search`
 
 ```ts
-const rows = await corsair.circleci.db.contexts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.circleci.db.contexts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `circleci.db.groups.search`
 
 ```ts
-const rows = await corsair.circleci.db.groups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.circleci.db.groups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -64,7 +66,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `circleci.db.orbAllowlistEntries.search`
 
 ```ts
-const rows = await corsair.circleci.db.orbAllowlistEntries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.circleci.db.orbAllowlistEntries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -90,7 +93,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `circleci.db.pipelineDefinitions.search`
 
 ```ts
-const rows = await corsair.circleci.db.pipelineDefinitions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.circleci.db.pipelineDefinitions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -116,7 +120,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `circleci.db.projectEnvVars.search`
 
 ```ts
-const rows = await corsair.circleci.db.projectEnvVars.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.circleci.db.projectEnvVars.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -142,7 +147,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `circleci.db.projects.search`
 
 ```ts
-const rows = await corsair.circleci.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.circleci.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -170,7 +176,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `circleci.db.schedules.search`
 
 ```ts
-const rows = await corsair.circleci.db.schedules.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.circleci.db.schedules.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

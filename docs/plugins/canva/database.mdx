@@ -14,7 +14,8 @@ The Canva plugin syncs data locally. Use `corsair.canva.db.<entity>.search({ dat
 Path: `canva.db.assets.search`
 
 ```ts
-const rows = await corsair.canva.db.assets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.canva.db.assets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `canva.db.brandTemplates.search`
 
 ```ts
-const rows = await corsair.canva.db.brandTemplates.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.canva.db.brandTemplates.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -68,7 +70,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `canva.db.designs.search`
 
 ```ts
-const rows = await corsair.canva.db.designs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.canva.db.designs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -100,7 +103,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `canva.db.folders.search`
 
 ```ts
-const rows = await corsair.canva.db.folders.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.canva.db.folders.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

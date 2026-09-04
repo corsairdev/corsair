@@ -20,7 +20,8 @@ Create a new AIMLAPI assistant.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.assistants.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.assistants.create({});
 ```
 
 **Input**
@@ -92,7 +93,8 @@ Delete an assistant.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.assistants.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.assistants.delete({});
 ```
 
 **Input**
@@ -124,7 +126,8 @@ Retrieve an assistant by ID.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.assistants.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.assistants.get({});
 ```
 
 **Input**
@@ -170,7 +173,8 @@ List configured assistants.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.assistants.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.assistants.list({});
 ```
 
 **Input**
@@ -207,7 +211,8 @@ Update an assistant definition.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.assistants.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.assistants.update({});
 ```
 
 **Input**
@@ -282,7 +287,8 @@ List or retrieve batch processing status and results.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.batches.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.batches.list({});
 ```
 
 **Input**
@@ -330,7 +336,8 @@ Retrieve account billing balance.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.billing.getBalance({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.billing.getBalance({});
 ```
 
 **Input:** _empty object_
@@ -359,7 +366,8 @@ Generate a chat completion using an AIMLAPI-compatible model.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.chat.createCompletion({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.chat.createCompletion({});
 ```
 
 **Input**
@@ -445,7 +453,8 @@ Retrieve a Luma video generation by ID.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.luma.getGeneration({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.luma.getGeneration({});
 ```
 
 **Input**
@@ -482,7 +491,8 @@ Create a message in a thread.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.messages.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.messages.create({});
 ```
 
 **Input**
@@ -542,7 +552,8 @@ Delete a message.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.messages.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.messages.delete({});
 ```
 
 **Input**
@@ -575,7 +586,8 @@ Retrieve a message by ID.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.messages.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.messages.get({});
 ```
 
 **Input**
@@ -622,7 +634,8 @@ List messages in a thread.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.messages.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.messages.list({});
 ```
 
 **Input**
@@ -661,7 +674,8 @@ Update a message.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.messages.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.messages.update({});
 ```
 
 **Input**
@@ -721,7 +735,8 @@ List models currently available to the AIMLAPI account.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.models.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.models.list({});
 ```
 
 **Input:** _empty object_
@@ -800,7 +815,8 @@ List models with pagination metadata and expanded details.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.models.listWithDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.models.listWithDetails({});
 ```
 
 **Input**
@@ -890,7 +906,8 @@ Retrieve a response by ID.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.responses.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.responses.get({});
 ```
 
 **Input**
@@ -941,7 +958,8 @@ Cancel an in-progress run.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.runs.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.runs.cancel({});
 ```
 
 **Input**
@@ -988,7 +1006,8 @@ Create a run for a thread and assistant.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.runs.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.runs.create({});
 ```
 
 **Input**
@@ -1049,7 +1068,8 @@ Retrieve a run by ID.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.runs.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.runs.get({});
 ```
 
 **Input**
@@ -1096,7 +1116,8 @@ List runs for a thread.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.runs.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.runs.list({});
 ```
 
 **Input**
@@ -1134,7 +1155,8 @@ Submit tool outputs for a run.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.runs.submitToolOutputs({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.runs.submitToolOutputs({});
 ```
 
 **Input**
@@ -1182,7 +1204,8 @@ Update a run.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.runs.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.runs.update({});
 ```
 
 **Input**
@@ -1243,7 +1266,8 @@ Retrieve a single run step.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.runSteps.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.runSteps.get({});
 ```
 
 **Input**
@@ -1291,7 +1315,8 @@ List run steps for a run.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.runSteps.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.runSteps.list({});
 ```
 
 **Input**
@@ -1332,7 +1357,8 @@ Create an AIMLAPI thread.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.threads.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.threads.create({});
 ```
 
 **Input**
@@ -1408,7 +1434,8 @@ Delete a thread.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.threads.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.threads.delete({});
 ```
 
 **Input**
@@ -1440,7 +1467,8 @@ Retrieve a thread by ID.
 **Risk:** `read`
 
 ```ts
-await corsair.aimlapi.api.threads.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.threads.get({});
 ```
 
 **Input**
@@ -1486,7 +1514,8 @@ Update thread metadata or resources.
 **Risk:** `write`
 
 ```ts
-await corsair.aimlapi.api.threads.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.aimlapi.api.threads.update({});
 ```
 
 **Input**

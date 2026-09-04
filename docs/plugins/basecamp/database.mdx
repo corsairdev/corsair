@@ -14,7 +14,8 @@ The Basecamp OAuth plugin syncs data locally. Use `corsair.basecamp.db.<entity>.
 Path: `basecamp.db.campfires.search`
 
 ```ts
-const rows = await corsair.basecamp.db.campfires.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.basecamp.db.campfires.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -50,7 +51,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `basecamp.db.chatbots.search`
 
 ```ts
-const rows = await corsair.basecamp.db.chatbots.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.basecamp.db.chatbots.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -79,7 +81,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `basecamp.db.messageTypes.search`
 
 ```ts
-const rows = await corsair.basecamp.db.messageTypes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.basecamp.db.messageTypes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -105,7 +108,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `basecamp.db.people.search`
 
 ```ts
-const rows = await corsair.basecamp.db.people.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.basecamp.db.people.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -145,7 +149,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `basecamp.db.projects.search`
 
 ```ts
-const rows = await corsair.basecamp.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.basecamp.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -185,7 +190,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `basecamp.db.templates.search`
 
 ```ts
-const rows = await corsair.basecamp.db.templates.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.basecamp.db.templates.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

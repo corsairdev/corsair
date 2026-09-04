@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { apaleo } from '@corsair-dev/apaleo';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		apaleo(),
 	],

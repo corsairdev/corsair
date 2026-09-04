@@ -14,7 +14,8 @@ The HubSpot plugin syncs data locally. Use `corsair.hubspot.db.<entity>.search({
 Path: `hubspot.db.companies.search`
 
 ```ts
-const rows = await corsair.hubspot.db.companies.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.hubspot.db.companies.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `hubspot.db.contacts.search`
 
 ```ts
-const rows = await corsair.hubspot.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.hubspot.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -66,7 +68,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `hubspot.db.deals.search`
 
 ```ts
-const rows = await corsair.hubspot.db.deals.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.hubspot.db.deals.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -92,7 +95,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `hubspot.db.engagements.search`
 
 ```ts
-const rows = await corsair.hubspot.db.engagements.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.hubspot.db.engagements.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -115,7 +119,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `hubspot.db.tickets.search`
 
 ```ts
-const rows = await corsair.hubspot.db.tickets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.hubspot.db.tickets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

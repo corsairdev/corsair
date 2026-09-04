@@ -14,7 +14,8 @@ The Monday plugin syncs data locally. Use `corsair.monday.db.<entity>.search({ d
 Path: `monday.db.boards.search`
 
 ```ts
-const rows = await corsair.monday.db.boards.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.monday.db.boards.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `monday.db.items.search`
 
 ```ts
-const rows = await corsair.monday.db.items.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.monday.db.items.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -72,7 +74,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `monday.db.updates.search`
 
 ```ts
-const rows = await corsair.monday.db.updates.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.monday.db.updates.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -101,7 +104,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `monday.db.users.search`
 
 ```ts
-const rows = await corsair.monday.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.monday.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

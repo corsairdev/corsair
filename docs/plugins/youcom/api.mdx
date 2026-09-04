@@ -20,7 +20,8 @@ Search the web using You.com's search API. Returns LLM-ready web results and new
 **Risk:** `read`
 
 ```ts
-await corsair.youcom.api.yousearch.youSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.youcom.api.yousearch.youSearch({});
 ```
 
 **Input**

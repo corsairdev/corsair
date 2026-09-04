@@ -14,7 +14,8 @@ The PostHog plugin syncs data locally. Use `corsair.posthog.db.<entity>.search({
 Path: `posthog.db.events.search`
 
 ```ts
-const rows = await corsair.posthog.db.events.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.posthog.db.events.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

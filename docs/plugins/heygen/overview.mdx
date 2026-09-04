@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { heygen } from '@corsair-dev/heygen';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		heygen(),
 	],

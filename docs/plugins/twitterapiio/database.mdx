@@ -14,7 +14,8 @@ The TwitterAPI.io plugin syncs data locally. Use `corsair.twitterapiio.db.<entit
 Path: `twitterapiio.db.communities.search`
 
 ```ts
-const rows = await corsair.twitterapiio.db.communities.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twitterapiio.db.communities.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -43,7 +44,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `twitterapiio.db.lists.search`
 
 ```ts
-const rows = await corsair.twitterapiio.db.lists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twitterapiio.db.lists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -72,7 +74,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `twitterapiio.db.replies.search`
 
 ```ts
-const rows = await corsair.twitterapiio.db.replies.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twitterapiio.db.replies.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -116,7 +119,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `twitterapiio.db.trends.search`
 
 ```ts
-const rows = await corsair.twitterapiio.db.trends.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twitterapiio.db.trends.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -143,7 +147,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `twitterapiio.db.tweets.search`
 
 ```ts
-const rows = await corsair.twitterapiio.db.tweets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twitterapiio.db.tweets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -184,7 +189,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `twitterapiio.db.users.search`
 
 ```ts
-const rows = await corsair.twitterapiio.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twitterapiio.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

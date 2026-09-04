@@ -20,7 +20,8 @@ Get the current TextRazor plan, concurrency limits, and daily usage
 **Risk:** `read`
 
 ```ts
-await corsair.textrazor.api.account.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.account.get({});
 ```
 
 **Input:** _empty object_
@@ -66,7 +67,8 @@ Analyze text or a URL with one or more TextRazor extractors in a single call
 **Risk:** `read`
 
 ```ts
-await corsair.textrazor.api.analysis.analyzeContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.analysis.analyzeContent({});
 ```
 
 **Input**
@@ -218,7 +220,8 @@ Classify text or a URL against built-in or custom TextRazor classifiers
 **Risk:** `read`
 
 ```ts
-await corsair.textrazor.api.analysis.classifyText({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.analysis.classifyText({});
 ```
 
 **Input**
@@ -370,7 +373,8 @@ Extract named entities from text or a URL, optionally filtering by relevance and
 **Risk:** `read`
 
 ```ts
-await corsair.textrazor.api.analysis.extractEntities({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.analysis.extractEntities({});
 ```
 
 **Input**
@@ -526,7 +530,8 @@ Delete a custom classifier and all of its categories
 **Risk:** `destructive`
 
 ```ts
-await corsair.textrazor.api.classifiers.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.classifiers.delete({});
 ```
 
 **Input**
@@ -559,7 +564,8 @@ Delete a category from a custom classifier
 **Risk:** `destructive`
 
 ```ts
-await corsair.textrazor.api.classifiers.deleteCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.classifiers.deleteCategory({});
 ```
 
 **Input**
@@ -593,7 +599,8 @@ Get a category from a custom classifier by id
 **Risk:** `read`
 
 ```ts
-await corsair.textrazor.api.classifiers.getCategory({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.classifiers.getCategory({});
 ```
 
 **Input**
@@ -641,7 +648,8 @@ List categories for a custom classifier with limit and offset pagination
 **Risk:** `read`
 
 ```ts
-await corsair.textrazor.api.classifiers.listCategories({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.classifiers.listCategories({});
 ```
 
 **Input**
@@ -699,7 +707,8 @@ Create or update a custom classifier from JSON categories
 **Risk:** `write`
 
 ```ts
-await corsair.textrazor.api.classifiers.put({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.classifiers.put({});
 ```
 
 **Input**
@@ -748,7 +757,8 @@ Add or overwrite entries in a custom entity dictionary
 **Risk:** `write`
 
 ```ts
-await corsair.textrazor.api.dictionaries.addEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.dictionaries.addEntries({});
 ```
 
 **Input**
@@ -796,7 +806,8 @@ Create a custom entity dictionary
 **Risk:** `write`
 
 ```ts
-await corsair.textrazor.api.dictionaries.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.dictionaries.create({});
 ```
 
 **Input**
@@ -847,7 +858,8 @@ Delete a custom entity dictionary and all of its entries
 **Risk:** `destructive`
 
 ```ts
-await corsair.textrazor.api.dictionaries.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.dictionaries.delete({});
 ```
 
 **Input**
@@ -880,7 +892,8 @@ Delete a dictionary entry by id
 **Risk:** `destructive`
 
 ```ts
-await corsair.textrazor.api.dictionaries.deleteEntry({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.dictionaries.deleteEntry({});
 ```
 
 **Input**
@@ -914,7 +927,8 @@ Get a custom entity dictionary by id
 **Risk:** `read`
 
 ```ts
-await corsair.textrazor.api.dictionaries.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.dictionaries.get({});
 ```
 
 **Input**
@@ -962,7 +976,8 @@ Get a dictionary entry by id
 **Risk:** `read`
 
 ```ts
-await corsair.textrazor.api.dictionaries.getEntry({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.dictionaries.getEntry({});
 ```
 
 **Input**
@@ -1011,7 +1026,8 @@ List custom entity dictionaries on the account
 **Risk:** `read`
 
 ```ts
-await corsair.textrazor.api.dictionaries.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.dictionaries.list({});
 ```
 
 **Input:** _empty object_
@@ -1074,7 +1090,8 @@ List dictionary entries with limit and offset pagination
 **Risk:** `read`
 
 ```ts
-await corsair.textrazor.api.dictionaries.listEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.textrazor.api.dictionaries.listEntries({});
 ```
 
 **Input**

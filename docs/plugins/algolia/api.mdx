@@ -20,7 +20,8 @@ Tool to create an A/B test comparing search performance between two index varian
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.abTests.addAbTest({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.abTests.addAbTest({});
 ```
 
 **Input**
@@ -80,7 +81,8 @@ Tool to delete an A/B test by its unique identifier. Use when you need to perman
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.abTests.deleteAbTest({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.abTests.deleteAbTest({});
 ```
 
 **Input**
@@ -128,7 +130,8 @@ Tool to retrieve detailed information about an A/B test by its ID. Use when you 
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.abTests.getAbTest({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.abTests.getAbTest({});
 ```
 
 **Input**
@@ -176,7 +179,8 @@ Tool to list all A/B tests configured for this application. Use when you need to
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.abTests.listAbTests({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.abTests.listAbTests({});
 ```
 
 **Input**
@@ -227,7 +231,8 @@ Tool to stop an A/B test by its unique identifier. Use when you need to halt an 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.abTests.stopAbTest({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.abTests.stopAbTest({});
 ```
 
 **Input**
@@ -277,7 +282,8 @@ Tool to retrieve add-to-cart rate metrics for e-commerce search analytics. Use w
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getAddToCartRate({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getAddToCartRate({});
 ```
 
 **Input**
@@ -328,7 +334,8 @@ Tool to retrieve average click position metrics from Algolia Analytics. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getAverageClickPosition({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getAverageClickPosition({});
 ```
 
 **Input**
@@ -379,7 +386,8 @@ Tool to retrieve the distribution of clicks by position from Algolia Analytics. 
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getClickPositions({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getClickPositions({});
 ```
 
 **Input**
@@ -430,7 +438,8 @@ Tool to retrieve click-through rate (CTR) for searches with at least one click e
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getClickThroughRate({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getClickThroughRate({});
 ```
 
 **Input**
@@ -481,7 +490,8 @@ Tool to retrieve conversion rate for searches with conversion events. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getConversionRate({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getConversionRate({});
 ```
 
 **Input**
@@ -532,7 +542,8 @@ Tool to retrieve the rate of searches that received no clicks. Use when you need
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getNoClickRate({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getNoClickRate({});
 ```
 
 **Input**
@@ -583,7 +594,8 @@ Tool to retrieve the fraction of searches that didn't return any results. Use wh
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getNoResultsRate({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getNoResultsRate({});
 ```
 
 **Input**
@@ -634,7 +646,8 @@ Tool to retrieve the most frequent searches that produced zero results. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getNoResultsSearches({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getNoResultsSearches({});
 ```
 
 **Input**
@@ -687,7 +700,8 @@ Tool to retrieve purchase rate metrics for searches that led to purchase events.
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getPurchaseRate({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getPurchaseRate({});
 ```
 
 **Input**
@@ -738,7 +752,8 @@ Tool to retrieve revenue data from Algolia Analytics. Use when analyzing revenue
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getRevenue({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getRevenue({});
 ```
 
 **Input**
@@ -789,7 +804,8 @@ Tool to retrieve the number of searches within a time range, including a daily b
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getSearchesCount({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getSearchesCount({});
 ```
 
 **Input**
@@ -840,7 +856,8 @@ Tool to retrieve top searches that did not receive any clicks. Use when analyzin
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getSearchesNoClicks({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getSearchesNoClicks({});
 ```
 
 **Input**
@@ -893,7 +910,8 @@ Tool to retrieve top countries by search volume for a specified index. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getTopCountries({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getTopCountries({});
 ```
 
 **Input**
@@ -946,7 +964,8 @@ Tool to retrieve top filter attributes from Algolia Analytics. Use when analyzin
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getTopFilterAttributes({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getTopFilterAttributes({});
 ```
 
 **Input**
@@ -1000,7 +1019,8 @@ Tool to retrieve top filter values for a specific attribute from Algolia Analyti
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getTopFilterForAttribute({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getTopFilterForAttribute({});
 ```
 
 **Input**
@@ -1055,7 +1075,8 @@ Tool to retrieve top filters for searches that returned no results from Algolia 
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getTopFiltersNoResults({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getTopFiltersNoResults({});
 ```
 
 **Input**
@@ -1109,7 +1130,8 @@ Tool to retrieve the object IDs of the most frequent search results from Algolia
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getTopHits({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getTopHits({});
 ```
 
 **Input**
@@ -1165,7 +1187,8 @@ Tool to retrieve the most popular searches from Algolia Analytics. Returns searc
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getTopSearches({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getTopSearches({});
 ```
 
 **Input**
@@ -1222,7 +1245,8 @@ Tool to retrieve the number of unique users within a time range, including daily
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.analytics.getUsersCount({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.analytics.getUsersCount({});
 ```
 
 **Input**
@@ -1275,7 +1299,8 @@ Tool to create a new API key with specific permissions and restrictions. Use whe
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.apiKeys.createApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.apiKeys.createApiKey({});
 ```
 
 **Input**
@@ -1330,7 +1355,8 @@ Tool to delete an API key. Use when you need to revoke or remove an existing API
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.apiKeys.deleteApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.apiKeys.deleteApiKey({});
 ```
 
 **Input**
@@ -1378,7 +1404,8 @@ Tool to retrieve the permissions and details of a specific API key. Use when you
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.apiKeys.getApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.apiKeys.getApiKey({});
 ```
 
 **Input**
@@ -1426,7 +1453,8 @@ Tool to list all API keys associated with your Algolia application, including th
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.apiKeys.listApiKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.apiKeys.listApiKeys({});
 ```
 
 **Input**
@@ -1473,7 +1501,8 @@ Tool to restore a deleted API key within 72 hours of deletion. Use when you need
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.apiKeys.restoreApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.apiKeys.restoreApiKey({});
 ```
 
 **Input**
@@ -1521,7 +1550,8 @@ Tool to update the permissions and settings of an existing API key. Use when you
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.apiKeys.updateApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.apiKeys.updateApiKey({});
 ```
 
 **Input**
@@ -1579,7 +1609,8 @@ Tool to create a new authentication resource in Algolia. Use when you need to se
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.authentications.createAuthentication({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.authentications.createAuthentication({});
 ```
 
 **Input**
@@ -1638,7 +1669,8 @@ Tool to delete an authentication resource from Algolia. Use when you need to rem
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.authentications.deleteAuthentication({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.authentications.deleteAuthentication({});
 ```
 
 **Input**
@@ -1686,7 +1718,8 @@ Tool to retrieve an authentication resource by its ID. Use when you need to fetc
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.authentications.getAuthentication({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.authentications.getAuthentication({});
 ```
 
 **Input**
@@ -1734,7 +1767,8 @@ Tool to list authentication resources from Algolia. Use when you need to retriev
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.authentications.listAuthentications({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.authentications.listAuthentications({});
 ```
 
 **Input**
@@ -1787,7 +1821,8 @@ Tool to search for authentication resources by IDs in Algolia. Use when you need
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.authentications.searchAuthentications({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.authentications.searchAuthentications({});
 ```
 
 **Input**
@@ -1835,7 +1870,8 @@ Tool to update an authentication resource in Algolia. Use when you need to modif
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.authentications.updateAuthentication({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.authentications.updateAuthentication({});
 ```
 
 **Input**
@@ -1895,7 +1931,8 @@ Tool to create a new destination in Algolia Ingestion API. Use when you need to 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.destinations.createDestination({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.destinations.createDestination({});
 ```
 
 **Input**
@@ -1955,7 +1992,8 @@ Tool to delete a destination in Algolia Ingestion API. Use when you need to perm
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.destinations.deleteDestination({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.destinations.deleteDestination({});
 ```
 
 **Input**
@@ -2003,7 +2041,8 @@ Tool to retrieve a destination by its ID. Use when you need to get details about
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.destinations.getDestination({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.destinations.getDestination({});
 ```
 
 **Input**
@@ -2051,7 +2090,8 @@ Tool to list destinations in Algolia. Use when you need to retrieve all destinat
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.destinations.listDestinations({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.destinations.listDestinations({});
 ```
 
 **Input**
@@ -2105,7 +2145,8 @@ Tool to search for specific destinations by their IDs. Use when you need to retr
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.destinations.searchDestinations({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.destinations.searchDestinations({});
 ```
 
 **Input**
@@ -2153,7 +2194,8 @@ Tool to update a destination in Algolia Ingestion API. Use when you need to modi
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.destinations.updateDestination({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.destinations.updateDestination({});
 ```
 
 **Input**
@@ -2216,7 +2258,8 @@ Tool to list available languages for dictionary entries. Use when you need to ch
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.dictionaries.getDictionaryLanguages({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.dictionaries.getDictionaryLanguages({});
 ```
 
 **Input**
@@ -2263,7 +2306,8 @@ Tool to retrieve dictionary settings for all dictionaries. Use when you need to 
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.dictionaries.getDictionarySettings({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.dictionaries.getDictionarySettings({});
 ```
 
 **Input**
@@ -2310,7 +2354,8 @@ Tool to search dictionary entries in Algolia dictionaries. Use when you need to 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.dictionaries.searchDictionaryEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.dictionaries.searchDictionaryEntries({});
 ```
 
 **Input**
@@ -2353,7 +2398,8 @@ Tool to update dictionary settings for Algolia. Use when you need to enable or d
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.dictionaries.setDictionarySettings({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.dictionaries.setDictionarySettings({});
 ```
 
 **Input**
@@ -2409,7 +2455,8 @@ Tool to add or delete dictionary entries in Algolia dictionaries. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.dictionaries.updateDictionaryEntries({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.dictionaries.updateDictionaryEntries({});
 ```
 
 **Input**
@@ -2461,7 +2508,8 @@ Tool to add or replace a specific record in an index by objectID. If a record wi
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.indices.addOrReplaceRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.addOrReplaceRecord({});
 ```
 
 **Input**
@@ -2519,7 +2567,8 @@ Tool to add a record to an index with auto-generated objectID. Records with matc
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.indices.addRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.addRecord({});
 ```
 
 **Input**
@@ -2576,7 +2625,8 @@ Tool to retrieve all records from an index. Use when you need to export or itera
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.indices.browseIndex({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.browseIndex({});
 ```
 
 **Input**
@@ -2626,7 +2676,8 @@ Tool to clear records of an index without affecting settings. Use when you need 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.indices.clearObjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.clearObjects({});
 ```
 
 **Input**
@@ -2683,7 +2734,8 @@ Tool to copy the specified index to a new index. Use when you need to duplicate 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.indices.copyIndex({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.copyIndex({});
 ```
 
 **Input**
@@ -2733,7 +2785,8 @@ Tool to delete the specified index and all its records. Use when you need to per
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.indices.deleteIndex({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.deleteIndex({});
 ```
 
 **Input**
@@ -2781,7 +2834,8 @@ Tool to delete multiple records from an Algolia index. Use when you need to remo
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.indices.deleteObjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.deleteObjects({});
 ```
 
 **Input**
@@ -2839,7 +2893,8 @@ Tool to delete records matching a filter from an Algolia index. Use when you nee
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.indices.deleteRecordsByFilter({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.deleteRecordsByFilter({});
 ```
 
 **Input**
@@ -2904,7 +2959,8 @@ Tool to perform batch operations (add, update, delete) across multiple Algolia i
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.indices.executeBatchOnMultipleIndices({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.executeBatchOnMultipleIndices({});
 ```
 
 **Input**
@@ -2952,7 +3008,8 @@ Tool to check the status of a Recommend task. Use when you need to verify if an 
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.indices.getRecommendTaskStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.getRecommendTaskStatus({});
 ```
 
 **Input**
@@ -3002,7 +3059,8 @@ Tool to retrieve a specific record from an index by its objectID. Use when you n
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.indices.getRecord({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.getRecord({});
 ```
 
 **Input**
@@ -3052,7 +3110,8 @@ Tool to retrieve the settings of a specified index. Use when you need to inspect
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.indices.getSettings({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.getSettings({});
 ```
 
 **Input**
@@ -3100,7 +3159,8 @@ Tool to check the status of an asynchronous task. Use when you need to verify co
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.indices.getTaskStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.getTaskStatus({});
 ```
 
 **Input**
@@ -3149,7 +3209,8 @@ Tool to check if an Algolia index exists. Use before performing index operations
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.indices.indexExists({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.indexExists({});
 ```
 
 **Input**
@@ -3197,7 +3258,8 @@ Tool to list all indices and their metadata. Use when you need to retrieve index
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.indices.listIndices({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.listIndices({});
 ```
 
 **Input**
@@ -3244,7 +3306,8 @@ Tool to partially update multiple records in the specified index. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.indices.partialUpdateObjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.partialUpdateObjects({});
 ```
 
 **Input**
@@ -3293,7 +3356,8 @@ Tool to update an Algolia index's settings. Use when you need to configure index
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.indices.setSettings({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.setSettings({});
 ```
 
 **Input**
@@ -3351,7 +3415,8 @@ Tool to add or update attributes in a single record. Use when you need to modify
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.indices.updateRecordPartially({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.indices.updateRecordPartially({});
 ```
 
 **Input**
@@ -3412,7 +3477,8 @@ Tool to send a click event to Algolia to capture clicked items. Use immediately 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.insights.clickedObjectIds({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.insights.clickedObjectIds({});
 ```
 
 **Input**
@@ -3464,7 +3530,8 @@ Tool to send a click event after a search response. Use when you want to report 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.insights.clickedObjectIdsAfterSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.insights.clickedObjectIdsAfterSearch({});
 ```
 
 **Input**
@@ -3518,7 +3585,8 @@ Tool to send a conversion event for items outside of search context. Use when tr
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.insights.convertedObjectIds({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.insights.convertedObjectIds({});
 ```
 
 **Input**
@@ -3571,7 +3639,8 @@ Tool to delete all events related to a user token from events metrics and analyt
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.insights.deleteUserToken({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.insights.deleteUserToken({});
 ```
 
 **Input**
@@ -3619,7 +3688,8 @@ Tool to initialize the Algolia Insights API client. Use before sending any Insig
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.insights.initInsights({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.insights.initInsights({});
 ```
 
 **Input**
@@ -3669,7 +3739,8 @@ Tool to retrieve log entries for API requests made to your Algolia application. 
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.logs.getLogs({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.logs.getLogs({});
 ```
 
 **Input**
@@ -3722,7 +3793,8 @@ Tool to compute a user's real-time personalization profile in Algolia. Use when 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.personalization.computeRealtimeUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.personalization.computeRealtimeUser({});
 ```
 
 **Input**
@@ -3770,7 +3842,8 @@ Tool to delete a user profile from personalization. Use when you need to remove 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.personalization.deleteUserProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.personalization.deleteUserProfile({});
 ```
 
 **Input**
@@ -3818,7 +3891,8 @@ Tool to retrieve the advanced personalization configuration. Use when you need t
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.personalization.getConfig2({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.personalization.getConfig2({});
 ```
 
 **Input**
@@ -3865,7 +3939,8 @@ Tool to retrieve a list of user profiles from Algolia advanced personalization. 
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.personalization.getUsers({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.personalization.getUsers({});
 ```
 
 **Input**
@@ -3919,7 +3994,8 @@ Tool to define personalization strategy that controls how user behavior affects 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.personalization.setPersonalizationStrategy({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.personalization.setPersonalizationStrategy({});
 ```
 
 **Input**
@@ -3971,7 +4047,8 @@ Tool to create a new Query Suggestions configuration for an Algolia index. Use w
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.querySuggestions.createQsConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.querySuggestions.createQsConfig({});
 ```
 
 **Input**
@@ -4024,7 +4101,8 @@ Tool to delete a Query Suggestions configuration for the specified index. Use wh
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.querySuggestions.deleteConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.querySuggestions.deleteConfig({});
 ```
 
 **Input**
@@ -4072,7 +4150,8 @@ Tool to retrieve a Query Suggestions configuration by index name. Use when you n
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.querySuggestions.getConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.querySuggestions.getConfig({});
 ```
 
 **Input**
@@ -4120,7 +4199,8 @@ Tool to retrieve all Query Suggestions configurations for an Algolia application
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.querySuggestions.listQsConfigs({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.querySuggestions.listQsConfigs({});
 ```
 
 **Input**
@@ -4167,7 +4247,8 @@ Tool to update an existing Query Suggestions configuration. Use when you need to
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.querySuggestions.updateConfig({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.querySuggestions.updateConfig({});
 ```
 
 **Input**
@@ -4222,7 +4303,8 @@ Tool to delete all rules in an index. Use when you need to wipe all rules before
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.rules.clearRules({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.rules.clearRules({});
 ```
 
 **Input**
@@ -4271,7 +4353,8 @@ Tool to create or update a batch of Recommend Rules in an index. Use when you ne
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.rules.createOrUpdateRecommendRules({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.rules.createOrUpdateRecommendRules({});
 ```
 
 **Input**
@@ -4330,7 +4413,8 @@ Tool to delete a Recommend rule from a recommendation scenario. Use when you nee
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.rules.deleteRecommendRule({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.rules.deleteRecommendRule({});
 ```
 
 **Input**
@@ -4380,7 +4464,8 @@ Tool to delete the specified rule from an index. Use when you need to permanentl
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.rules.deleteRule({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.rules.deleteRule({});
 ```
 
 **Input**
@@ -4430,7 +4515,8 @@ Tool to export all rules defined on an index. Use when you need to backup or mig
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.rules.exportRules({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.rules.exportRules({});
 ```
 
 **Input**
@@ -4479,7 +4565,8 @@ Tool to retrieve a Recommend rule that was previously created in the Algolia das
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.rules.getRecommendRule({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.rules.getRecommendRule({});
 ```
 
 **Input**
@@ -4529,7 +4616,8 @@ Tool to retrieve a specific rule by its objectID from an index. Use when you nee
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.rules.getRule({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.rules.getRule({});
 ```
 
 **Input**
@@ -4578,7 +4666,8 @@ Tool to push a new set of rules, erasing previous ones. Use when you need zero-d
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.rules.replaceAllRules({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.rules.replaceAllRules({});
 ```
 
 **Input**
@@ -4646,7 +4735,8 @@ Tool to create or replace a rule in an index. Use when you need to add merchandi
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.rules.saveRule({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.rules.saveRule({});
 ```
 
 **Input**
@@ -4709,7 +4799,8 @@ Tool to search for Recommend rules in the specified index and model. Use when yo
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.rules.searchRecommendRules({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.rules.searchRecommendRules({});
 ```
 
 **Input**
@@ -4759,7 +4850,8 @@ Tool to list task runs. Use when you need to retrieve and monitor task execution
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.runs.listRuns({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.runs.listRuns({});
 ```
 
 **Input**
@@ -4817,7 +4909,8 @@ Tool to find the first object matching a query or filter in an index. Use when d
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.search.findObject({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.search.findObject({});
 ```
 
 **Input**
@@ -4868,7 +4961,8 @@ Tool to retrieve an object’s position in a result set. Use when debugging rele
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.search.getObjectPosition({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.search.getObjectPosition({});
 ```
 
 **Input**
@@ -4926,7 +5020,8 @@ Tool to retrieve multiple records from an index. Use when you need to batch-fetc
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.search.getObjects({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.search.getObjects({});
 ```
 
 **Input**
@@ -4974,7 +5069,8 @@ Tool to search for values of a specified facet attribute. Use when you need to f
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.search.searchFacetValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.search.searchFacetValues({});
 ```
 
 **Input**
@@ -5026,7 +5122,8 @@ Tool to perform a search on a specified Algolia index. Use after confirming the 
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.search.searchIndex({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.search.searchIndex({});
 ```
 
 **Input**
@@ -5084,7 +5181,8 @@ Tool to perform searches across multiple indices in a single call. Use when you 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.search.searchMultipleIndices({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.search.searchMultipleIndices({});
 ```
 
 **Input**
@@ -5135,7 +5233,8 @@ Tool to create a new data source in Algolia Ingestion API. Use when you need to 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.sources.createSource({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.sources.createSource({});
 ```
 
 **Input**
@@ -5194,7 +5293,8 @@ Tool to delete a source from the Algolia Ingestion API. Use when you need to per
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.sources.deleteSource({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.sources.deleteSource({});
 ```
 
 **Input**
@@ -5242,7 +5342,8 @@ Tool to retrieve a source from the Algolia Ingestion API. Use when you need to g
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.sources.getSource({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.sources.getSource({});
 ```
 
 **Input**
@@ -5290,7 +5391,8 @@ Tool to list sources from the Algolia Ingestion API. Use when you need to retrie
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.sources.listSources({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.sources.listSources({});
 ```
 
 **Input**
@@ -5343,7 +5445,8 @@ Tool to search for sources by IDs in Algolia Ingestion API. Use when you need to
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.sources.searchSources({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.sources.searchSources({});
 ```
 
 **Input**
@@ -5391,7 +5494,8 @@ Tool to update a source in the Algolia Ingestion API. Use when you need to modif
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.sources.updateSource({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.sources.updateSource({});
 ```
 
 **Input**
@@ -5450,7 +5554,8 @@ Tool to validate a source payload before creating it in Algolia. Use when you ne
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.sources.validateSource({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.sources.validateSource({});
 ```
 
 **Input**
@@ -5509,7 +5614,8 @@ Tool to validate a source update payload in the Algolia Ingestion API. Use when 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.sources.validateSourceBeforeUpdate({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.sources.validateSourceBeforeUpdate({});
 ```
 
 **Input**
@@ -5570,7 +5676,8 @@ Tool to delete all synonyms from an index. Use when you need to remove all synon
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.synonyms.clearSynonyms({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.synonyms.clearSynonyms({});
 ```
 
 **Input**
@@ -5619,7 +5726,8 @@ Tool to delete a synonym from a specified index. Use when you need to remove an 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.synonyms.deleteSynonym({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.synonyms.deleteSynonym({});
 ```
 
 **Input**
@@ -5669,7 +5777,8 @@ Tool to retrieve a specific synonym by its objectID. Use when you need to fetch 
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.synonyms.getSynonym({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.synonyms.getSynonym({});
 ```
 
 **Input**
@@ -5718,7 +5827,8 @@ Tool to add or update a synonym in the specified index. Use when you need progra
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.synonyms.saveSynonym({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.synonyms.saveSynonym({});
 ```
 
 **Input**
@@ -5777,7 +5887,8 @@ Tool to batch create or replace synonyms in an Algolia index. If a synonym with 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.synonyms.saveSynonyms({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.synonyms.saveSynonyms({});
 ```
 
 **Input**
@@ -5828,7 +5939,8 @@ Tool to search for synonyms in the specified index. Use when you need to retriev
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.synonyms.searchSynonyms({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.synonyms.searchSynonyms({});
 ```
 
 **Input**
@@ -5873,7 +5985,8 @@ Tool to create a new ingestion task connecting a source to a destination in Algo
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.tasks.createIngestionTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.tasks.createIngestionTask({});
 ```
 
 **Input**
@@ -5955,7 +6068,8 @@ Tool to disable a task V1 in Algolia Ingestion API. Use when you need to disable
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.tasks.disableTaskV1({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.tasks.disableTaskV1({});
 ```
 
 **Input**
@@ -6003,7 +6117,8 @@ Tool to enable a task V1 in Algolia Ingestion API. Use when you need to activate
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.tasks.enableTaskV1({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.tasks.enableTaskV1({});
 ```
 
 **Input**
@@ -6051,7 +6166,8 @@ Tool to check the status of an application task. Use when you need to verify if 
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.tasks.getAppTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.tasks.getAppTask({});
 ```
 
 **Input**
@@ -6099,7 +6215,8 @@ Tool to retrieve a task V1 from Algolia Ingestion API. Use when you need to fetc
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.tasks.getTaskV1({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.tasks.getTaskV1({});
 ```
 
 **Input**
@@ -6147,7 +6264,8 @@ Tool to retrieve a list of ingestion tasks from Algolia. Use when you need to fe
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.tasks.listIngestionTasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.tasks.listIngestionTasks({});
 ```
 
 **Input**
@@ -6205,7 +6323,8 @@ Tool to push records to an Algolia task by task ID. Use when you need to send da
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.tasks.pushTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.tasks.pushTask({});
 ```
 
 **Input**
@@ -6256,7 +6375,8 @@ Tool to fully replace a task in Algolia Ingestion API. Use when you need to comp
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.tasks.replaceTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.tasks.replaceTask({});
 ```
 
 **Input**
@@ -6338,7 +6458,8 @@ Tool to run a task V1 from Algolia Ingestion API. Use when you need to manually 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.tasks.runTaskV1({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.tasks.runTaskV1({});
 ```
 
 **Input**
@@ -6395,7 +6516,8 @@ Tool to search for tasks V1 from Algolia Ingestion API. Use when you need to ret
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.tasks.searchTasksV1({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.tasks.searchTasksV1({});
 ```
 
 **Input**
@@ -6443,7 +6565,8 @@ Tool to partially update a task in Algolia Ingestion API. Use when you need to m
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.tasks.updateTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.tasks.updateTask({});
 ```
 
 **Input**
@@ -6525,7 +6648,8 @@ Tool to create a new transformation in Algolia Ingestion API. Use when you need 
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.transformations.createTransformation({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.transformations.createTransformation({});
 ```
 
 **Input**
@@ -6585,7 +6709,8 @@ Tool to delete a transformation in Algolia Ingestion API. Use when you need to p
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.algolia.api.transformations.deleteTransformation({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.transformations.deleteTransformation({});
 ```
 
 **Input**
@@ -6633,7 +6758,8 @@ Tool to retrieve a transformation by its ID from Algolia's Ingestion API. Use wh
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.transformations.getTransformation({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.transformations.getTransformation({});
 ```
 
 **Input**
@@ -6681,7 +6807,8 @@ Tool to list all transformations in Algolia Ingestion API. Use when you need to 
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.transformations.listTransformations({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.transformations.listTransformations({});
 ```
 
 **Input**
@@ -6733,7 +6860,8 @@ Tool to search for transformations by IDs in Algolia Ingestion API. Use when you
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.transformations.searchTransformations({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.transformations.searchTransformations({});
 ```
 
 **Input**
@@ -6781,7 +6909,8 @@ Tool to try a transformation before creating it in Algolia. Use when you need to
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.transformations.tryTransformation({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.transformations.tryTransformation({});
 ```
 
 **Input**
@@ -6841,7 +6970,8 @@ Tool to test a transformation before updating it in Algolia Ingestion API. Use w
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.transformations.tryTransformationBeforeUpdate({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.transformations.tryTransformationBeforeUpdate({});
 ```
 
 **Input**
@@ -6902,7 +7032,8 @@ Tool to update an existing transformation in Algolia Ingestion API. Use when you
 **Risk:** `write`
 
 ```ts
-await corsair.algolia.api.transformations.updateTransformation({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.transformations.updateTransformation({});
 ```
 
 **Input**
@@ -6966,7 +7097,8 @@ Tool to retrieve Algolia usage statistics over a specified time period. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.usage.getUsage({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.usage.getUsage({});
 ```
 
 **Input**
@@ -7017,7 +7149,8 @@ Tool to retrieve usage statistics for a specific Algolia index over a time perio
 **Risk:** `read`
 
 ```ts
-await corsair.algolia.api.usage.getUsageForIndex({});
+const tenant = corsair.withTenant('acme');
+await tenant.algolia.api.usage.getUsageForIndex({});
 ```
 
 **Input**

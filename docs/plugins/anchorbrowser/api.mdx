@@ -20,7 +20,8 @@ List all agent resources (files) uploaded to a browser session. Returns metadata
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.agent.listAgentResources({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.agent.listAgentResources({});
 ```
 
 **Input**
@@ -66,7 +67,8 @@ Tool to pause the AI agent for a specific browser session. Use when you need to 
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.agent.pauseAgent({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.agent.pauseAgent({});
 ```
 
 **Input**
@@ -112,7 +114,8 @@ Tool to resume the AI agent for a specific browser session. Use when you need to
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.agent.resumeAgent({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.agent.resumeAgent({});
 ```
 
 **Input**
@@ -158,7 +161,8 @@ Tool to upload a file to a browser session as an agent resource. Use after start
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.agent.uploadFile({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.agent.uploadFile({});
 ```
 
 **Input**
@@ -216,7 +220,8 @@ Tool to retrieve detailed status information for a specific batch including prog
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.batchSessions.getBatchSessionStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.batchSessions.getBatchSessionStatus({});
 ```
 
 **Input**
@@ -264,7 +269,8 @@ Tool to retrieve metadata of files downloaded during a browser session. Use afte
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.downloads.listSessionDownloads({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.downloads.listSessionDownloads({});
 ```
 
 **Input**
@@ -312,7 +318,8 @@ Tool to signal a specific event to be received by other processes or sessions. U
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.events.signalEvent({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.events.signalEvent({});
 ```
 
 **Input**
@@ -367,7 +374,8 @@ Blocks execution until a specific named event is signaled or the timeout expires
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.events.waitForEvent({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.events.waitForEvent({});
 ```
 
 **Input**
@@ -416,7 +424,8 @@ Tool to delete a browser extension and remove it from storage. Use after confirm
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.anchorbrowser.api.extensions.deleteExtension({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.extensions.deleteExtension({});
 ```
 
 **Input**
@@ -462,7 +471,8 @@ Retrieves all browser extensions uploaded by the authenticated user. Use this to
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.extensions.listExtensions({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.extensions.listExtensions({});
 ```
 
 **Input**
@@ -507,7 +517,8 @@ Tool to upload a new browser extension as a ZIP file for use in browser sessions
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.extensions.uploadExtension({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.extensions.uploadExtension({});
 ```
 
 **Input**
@@ -566,7 +577,8 @@ Tool to create a new integration with a third-party service like 1Password. Use 
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.integrations.createIntegration({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.integrations.createIntegration({});
 ```
 
 **Input**
@@ -622,7 +634,8 @@ Tool to delete an existing integration and remove its stored credentials. Use af
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.anchorbrowser.api.integrations.deleteIntegration({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.integrations.deleteIntegration({});
 ```
 
 **Input**
@@ -668,7 +681,8 @@ Tool to retrieve all integrations for the authenticated team. Use when you need 
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.integrations.listIntegrations({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.integrations.listIntegrations({});
 ```
 
 **Input**
@@ -715,7 +729,8 @@ Tool to perform a mouse click at specified coordinates within a browser session.
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.clickMouse({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.clickMouse({});
 ```
 
 **Input**
@@ -764,7 +779,8 @@ Tool to copy currently selected text in a browser session to the clipboard. Use 
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.copySelectedText({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.copySelectedText({});
 ```
 
 **Input**
@@ -810,7 +826,8 @@ Tool to perform a double click at specified coordinates in a browser session. Us
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.doubleClickMouse({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.doubleClickMouse({});
 ```
 
 **Input**
@@ -858,7 +875,8 @@ Tool to perform a drag and drop operation from start coordinates to end coordina
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.dragAndDrop({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.dragAndDrop({});
 ```
 
 **Input**
@@ -908,7 +926,8 @@ Tool to retrieve the current content of the clipboard from a browser session. Us
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.getClipboardContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.getClipboardContent({});
 ```
 
 **Input**
@@ -954,7 +973,8 @@ Tool to move the mouse cursor to specified coordinates within a browser session.
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.moveMouse({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.moveMouse({});
 ```
 
 **Input**
@@ -1002,7 +1022,8 @@ Tool to navigate a browser session to a specified URL. Use when you need to dire
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.navigateToUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.navigateToUrl({});
 ```
 
 **Input**
@@ -1049,7 +1070,8 @@ Tool to paste text at the current cursor position in a browser session. Use when
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.pasteText({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.pasteText({});
 ```
 
 **Input**
@@ -1096,7 +1118,8 @@ Tool to perform a keyboard shortcut using specified keys in a browser session. U
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.performKeyboardShortcut({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.performKeyboardShortcut({});
 ```
 
 **Input**
@@ -1144,7 +1167,8 @@ Tool to perform a mouse button down action at specified coordinates within a bro
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.pressMouseButton({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.pressMouseButton({});
 ```
 
 **Input**
@@ -1193,7 +1217,8 @@ Tool to release a mouse button at specified coordinates within a browser session
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.releaseMouseButton({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.releaseMouseButton({});
 ```
 
 **Input**
@@ -1242,7 +1267,8 @@ Tool to perform a scroll action at specified coordinates within a browser sessio
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.scrollSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.scrollSession({});
 ```
 
 **Input**
@@ -1294,7 +1320,8 @@ Tool to set the content of the clipboard in a browser session. Use when you need
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.setClipboardContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.setClipboardContent({});
 ```
 
 **Input**
@@ -1341,7 +1368,8 @@ Tool to type specified text with optional delay between keystrokes. Use when you
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.osLevel.typeText({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.osLevel.typeText({});
 ```
 
 **Input**
@@ -1391,7 +1419,8 @@ Tool to retrieve all pages associated with a specific browser session. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.pages.getSessionPages({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.pages.getSessionPages({});
 ```
 
 **Input**
@@ -1439,7 +1468,8 @@ Creates a new browser profile from an active session. A profile stores cookies, 
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.profiles.createProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.profiles.createProfile({});
 ```
 
 **Input**
@@ -1489,7 +1519,8 @@ Tool to delete a browser profile by ID. Use after confirming the profile exists.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.anchorbrowser.api.profiles.deleteProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.profiles.deleteProfile({});
 ```
 
 **Input**
@@ -1535,7 +1566,8 @@ Tool to retrieve details of a specific profile by its name. Use when you need to
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.profiles.getProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.profiles.getProfile({});
 ```
 
 **Input**
@@ -1581,7 +1613,8 @@ Tool to fetch all stored browser profiles. Use when you need an overview of all 
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.profiles.listProfiles({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.profiles.listProfiles({});
 ```
 
 **Input**
@@ -1626,7 +1659,8 @@ Updates an existing browser profile with data from an active session. The profil
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.profiles.updateProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.profiles.updateProfile({});
 ```
 
 **Input**
@@ -1677,7 +1711,8 @@ Tool to list all recordings for a specific browser session. Use after confirming
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.recordings.listSessionRecordings({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.recordings.listSessionRecordings({});
 ```
 
 **Input**
@@ -1723,7 +1758,8 @@ Tool to pause the video recording for a specific browser session. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.recordings.pauseSessionRecording({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.recordings.pauseSessionRecording({});
 ```
 
 **Input**
@@ -1769,7 +1805,8 @@ Tool to resume video recording for a specific browser session. Use when recordin
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.recordings.resumeSessionRecording({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.recordings.resumeSessionRecording({});
 ```
 
 **Input**
@@ -1817,7 +1854,8 @@ Tool to take a screenshot of the current browser session and return it as an ima
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.screenshots.takeScreenshot({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.screenshots.takeScreenshot({});
 ```
 
 **Input**
@@ -1865,7 +1903,8 @@ Tool to terminate all active browser sessions at once. Use when you need to imme
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.anchorbrowser.api.sessions.endAllSessions({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.sessions.endAllSessions({});
 ```
 
 **Input**
@@ -1910,7 +1949,8 @@ Tool to end a specific browser session by ID. Use after confirming the session I
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.anchorbrowser.api.sessions.endBrowserSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.sessions.endBrowserSession({});
 ```
 
 **Input**
@@ -1956,7 +1996,8 @@ Tool to retrieve detailed information about a specific browser session. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.sessions.getBrowserSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.sessions.getBrowserSession({});
 ```
 
 **Input**
@@ -2002,7 +2043,8 @@ Tool to list all browser sessions. Use when you need to retrieve both active and
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.sessions.listSessions({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.sessions.listSessions({});
 ```
 
 **Input**
@@ -2063,7 +2105,8 @@ Tool to start a new browser session with optional customizations. Use when you n
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.sessions.startBrowserSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.sessions.startBrowserSession({});
 ```
 
 **Input**
@@ -2130,7 +2173,8 @@ Tool to create or update the draft version of a task. Draft versions are used fo
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.createOrUpdateTaskDraft({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.createOrUpdateTaskDraft({});
 ```
 
 **Input**
@@ -2177,7 +2221,8 @@ Tool to create a new task or update an existing task with the same name. Tasks a
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.createTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.createTask({});
 ```
 
 **Input**
@@ -2235,7 +2280,8 @@ Tool to soft delete a task and all its versions. Use after confirming the task e
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.anchorbrowser.api.tasks.deleteTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.deleteTask({});
 ```
 
 **Input**
@@ -2281,7 +2327,8 @@ Tool to soft delete a specific version of a task. The version will no longer be 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.anchorbrowser.api.tasks.deleteTaskVersion({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.deleteTaskVersion({});
 ```
 
 **Input**
@@ -2328,7 +2375,8 @@ Tool to deploy a task by creating a new version with auto-incremented version nu
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.deployTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.deployTask({});
 ```
 
 **Input**
@@ -2386,7 +2434,8 @@ Tool to retrieve the latest version of a task including the full base64 encoded 
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.getLatestTaskVersion({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.getLatestTaskVersion({});
 ```
 
 **Input**
@@ -2432,7 +2481,8 @@ Tool to retrieve the draft version of a task, including the full Base64 encoded 
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.getTaskDraft({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.getTaskDraft({});
 ```
 
 **Input**
@@ -2478,7 +2528,8 @@ Tool to retrieve a single task execution result by its ID. Use when you need to 
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.getTaskExecutionResult({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.getTaskExecutionResult({});
 ```
 
 **Input**
@@ -2525,7 +2576,8 @@ Tool to retrieve task metadata without downloading the full task code. Use when 
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.getTaskMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.getTaskMetadata({});
 ```
 
 **Input**
@@ -2571,7 +2623,8 @@ Tool to retrieve a specific version of a task, including the full code content. 
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.getTaskVersion({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.getTaskVersion({});
 ```
 
 **Input**
@@ -2618,7 +2671,8 @@ Tool to retrieve execution history for a specific task with filtering and pagina
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.listTaskExecutions({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.listTaskExecutions({});
 ```
 
 **Input**
@@ -2668,7 +2722,8 @@ Tool to retrieve a paginated list of all tasks for the authenticated team. Use w
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.listTasks({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.listTasks({});
 ```
 
 **Input**
@@ -2715,7 +2770,8 @@ Tool to retrieve all versions of a specific task, including draft and published 
 **Risk:** `read`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.listTaskVersions({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.listTaskVersions({});
 ```
 
 **Input**
@@ -2761,7 +2817,8 @@ Tool to publish a specific version of a task. Creates a new version if it doesn'
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.publishTaskVersion({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.publishTaskVersion({});
 ```
 
 **Input**
@@ -2820,7 +2877,8 @@ Tool to execute a task in a browser session with a specific or latest version. U
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.runTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.runTask({});
 ```
 
 **Input**
@@ -2888,7 +2946,8 @@ Tool to execute a task by its name, always using the latest version. Use when yo
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.runTaskByName({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.runTaskByName({});
 ```
 
 **Input**
@@ -2954,7 +3013,8 @@ Updates task metadata (name and description). This does not affect the task code
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.tasks.updateTaskMetadata({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tasks.updateTaskMetadata({});
 ```
 
 **Input**
@@ -3004,7 +3064,8 @@ Tool to retrieve rendered content of a webpage in HTML or Markdown format. Use w
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.tools.getWebpageContent({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tools.getWebpageContent({});
 ```
 
 **Input**
@@ -3056,7 +3117,8 @@ Tool to perform autonomous web tasks using AI agents. Use when you need to autom
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.tools.performWebTask({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tools.performWebTask({});
 ```
 
 **Input**
@@ -3130,7 +3192,8 @@ Tool to take a screenshot of a specified webpage within a session. Use when you 
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.tools.screenshotWebpage({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.tools.screenshotWebpage({});
 ```
 
 **Input**
@@ -3186,7 +3249,8 @@ Tool to upload files directly to a browser session for use with web forms and fi
 **Risk:** `write`
 
 ```ts
-await corsair.anchorbrowser.api.uploads.uploadFilesToSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.anchorbrowser.api.uploads.uploadFilesToSession({});
 ```
 
 **Input**

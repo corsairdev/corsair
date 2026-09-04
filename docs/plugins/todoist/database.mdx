@@ -14,7 +14,8 @@ The Todoist plugin syncs data locally. Use `corsair.todoist.db.<entity>.search({
 Path: `todoist.db.comments.search`
 
 ```ts
-const rows = await corsair.todoist.db.comments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.todoist.db.comments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -41,7 +42,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `todoist.db.labels.search`
 
 ```ts
-const rows = await corsair.todoist.db.labels.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.todoist.db.labels.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -68,7 +70,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `todoist.db.projects.search`
 
 ```ts
-const rows = await corsair.todoist.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.todoist.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -101,7 +104,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `todoist.db.reminders.search`
 
 ```ts
-const rows = await corsair.todoist.db.reminders.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.todoist.db.reminders.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -126,7 +130,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `todoist.db.sections.search`
 
 ```ts
-const rows = await corsair.todoist.db.sections.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.todoist.db.sections.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -152,7 +157,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `todoist.db.tasks.search`
 
 ```ts
-const rows = await corsair.todoist.db.tasks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.todoist.db.tasks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

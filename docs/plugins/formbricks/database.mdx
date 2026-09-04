@@ -14,7 +14,8 @@ The Formbricks plugin syncs data locally. Use `corsair.formbricks.db.<entity>.se
 Path: `formbricks.db.actionClasses.search`
 
 ```ts
-const rows = await corsair.formbricks.db.actionClasses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.formbricks.db.actionClasses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `formbricks.db.contactAttributeKeys.search`
 
 ```ts
-const rows = await corsair.formbricks.db.contactAttributeKeys.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.formbricks.db.contactAttributeKeys.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -76,7 +78,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `formbricks.db.surveys.search`
 
 ```ts
-const rows = await corsair.formbricks.db.surveys.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.formbricks.db.surveys.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -127,7 +130,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `formbricks.db.teams.search`
 
 ```ts
-const rows = await corsair.formbricks.db.teams.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.formbricks.db.teams.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -154,7 +158,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `formbricks.db.webhooks.search`
 
 ```ts
-const rows = await corsair.formbricks.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.formbricks.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

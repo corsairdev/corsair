@@ -20,7 +20,8 @@ Delete a category
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.categories.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.categories.delete({});
 ```
 
 **Input**
@@ -50,7 +51,8 @@ Get a single category
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.categories.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.categories.get({});
 ```
 
 **Input**
@@ -84,7 +86,8 @@ List categories
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.categories.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.categories.list({});
 ```
 
 **Input**
@@ -137,7 +140,8 @@ Create or update a category
 **Risk:** `write`
 
 ```ts
-await corsair.loyverse.api.categories.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.categories.upsert({});
 ```
 
 **Input**
@@ -175,7 +179,8 @@ Delete a customer permanently
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.customers.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.customers.delete({});
 ```
 
 **Input**
@@ -205,7 +210,8 @@ Get a single customer
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.customers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.customers.get({});
 ```
 
 **Input**
@@ -254,7 +260,8 @@ List customers
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.customers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.customers.list({});
 ```
 
 **Input**
@@ -323,7 +330,8 @@ Create or update a customer
 **Risk:** `write`
 
 ```ts
-await corsair.loyverse.api.customers.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.customers.upsert({});
 ```
 
 **Input**
@@ -384,7 +392,8 @@ Delete a discount
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.discounts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.discounts.delete({});
 ```
 
 **Input**
@@ -414,7 +423,8 @@ Get a single discount
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.discounts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.discounts.get({});
 ```
 
 **Input**
@@ -453,7 +463,8 @@ List discounts
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.discounts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.discounts.list({});
 ```
 
 **Input**
@@ -505,7 +516,8 @@ List discounts filtered by id, timestamp range or deleted status
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.discounts.listFiltered({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.discounts.listFiltered({});
 ```
 
 **Input**
@@ -563,7 +575,8 @@ Create or update a discount
 **Risk:** `write`
 
 ```ts
-await corsair.loyverse.api.discounts.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.discounts.upsert({});
 ```
 
 **Input**
@@ -610,7 +623,8 @@ Get a single employee
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.employees.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.employees.get({});
 ```
 
 **Input**
@@ -648,7 +662,8 @@ List employees
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.employees.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.employees.list({});
 ```
 
 **Input**
@@ -707,7 +722,8 @@ List inventory levels
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.inventory.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.inventory.list({});
 ```
 
 **Input**
@@ -757,7 +773,8 @@ Set inventory levels for item variants
 **Risk:** `write`
 
 ```ts
-await corsair.loyverse.api.inventory.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.inventory.update({});
 ```
 
 **Input**
@@ -816,7 +833,8 @@ Delete an item
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.items.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.items.delete({});
 ```
 
 **Input**
@@ -846,7 +864,8 @@ Delete an item's image
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.items.deleteImage({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.items.deleteImage({});
 ```
 
 **Input**
@@ -877,7 +896,8 @@ Get a single item
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.items.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.items.get({});
 ```
 
 **Input**
@@ -973,7 +993,8 @@ List items
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.items.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.items.list({});
 ```
 
 **Input**
@@ -1072,7 +1093,8 @@ Upload an item's image
 **Risk:** `write`
 
 ```ts
-await corsair.loyverse.api.items.uploadImage({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.items.uploadImage({});
 ```
 
 **Input**
@@ -1105,7 +1127,8 @@ Create or update an item
 **Risk:** `write`
 
 ```ts
-await corsair.loyverse.api.items.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.items.upsert({});
 ```
 
 **Input**
@@ -1260,7 +1283,8 @@ Get merchant information
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.merchant.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.merchant.get({});
 ```
 
 **Input:** _empty object_
@@ -1304,7 +1328,8 @@ Delete a modifier
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.modifiers.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.modifiers.delete({});
 ```
 
 **Input**
@@ -1334,7 +1359,8 @@ Get a single modifier
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.modifiers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.modifiers.get({});
 ```
 
 **Input**
@@ -1388,7 +1414,8 @@ List modifiers
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.modifiers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.modifiers.list({});
 ```
 
 **Input**
@@ -1452,7 +1479,8 @@ Create or update a modifier
 **Risk:** `write`
 
 ```ts
-await corsair.loyverse.api.modifiers.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.modifiers.upsert({});
 ```
 
 **Input**
@@ -1526,7 +1554,8 @@ Get the OpenID Connect discovery document
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.oidc.discovery({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.oidc.discovery({});
 ```
 
 **Input:** _empty object_
@@ -1557,7 +1586,8 @@ Get the JSON Web Key Set
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.oidc.jwks({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.oidc.jwks({});
 ```
 
 **Input:** _empty object_
@@ -1584,7 +1614,8 @@ Get a single payment type
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.paymentTypes.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.paymentTypes.get({});
 ```
 
 **Input**
@@ -1620,7 +1651,8 @@ List payment types
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.paymentTypes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.paymentTypes.list({});
 ```
 
 **Input**
@@ -1677,7 +1709,8 @@ Delete a POS device
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.posDevices.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.posDevices.delete({});
 ```
 
 **Input**
@@ -1707,7 +1740,8 @@ Get a single POS device
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.posDevices.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.posDevices.get({});
 ```
 
 **Input**
@@ -1741,7 +1775,8 @@ List POS devices
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.posDevices.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.posDevices.list({});
 ```
 
 **Input**
@@ -1794,7 +1829,8 @@ Create or update a POS device
 **Risk:** `write`
 
 ```ts
-await corsair.loyverse.api.posDevices.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.posDevices.upsert({});
 ```
 
 **Input**
@@ -1832,7 +1868,8 @@ Record a sale, which cannot be withdrawn once created
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.receipts.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.receipts.create({});
 ```
 
 **Input**
@@ -2038,7 +2075,8 @@ Get a single receipt
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.receipts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.receipts.get({});
 ```
 
 **Input**
@@ -2188,7 +2226,8 @@ List receipts
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.receipts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.receipts.list({});
 ```
 
 **Input**
@@ -2331,7 +2370,8 @@ Refund a receipt, which returns money to the customer
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.receipts.refund({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.receipts.refund({});
 ```
 
 **Input**
@@ -2513,7 +2553,8 @@ List shifts
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.shifts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.shifts.list({});
 ```
 
 **Input**
@@ -2602,7 +2643,8 @@ Get a single store
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.stores.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.stores.get({});
 ```
 
 **Input**
@@ -2645,7 +2687,8 @@ List stores
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.stores.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.stores.list({});
 ```
 
 **Input**
@@ -2709,7 +2752,8 @@ Delete a supplier
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.suppliers.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.suppliers.delete({});
 ```
 
 **Input**
@@ -2739,7 +2783,8 @@ Get a single supplier
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.suppliers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.suppliers.get({});
 ```
 
 **Input**
@@ -2784,7 +2829,8 @@ List suppliers
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.suppliers.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.suppliers.list({});
 ```
 
 **Input**
@@ -2848,7 +2894,8 @@ Create or update a supplier
 **Risk:** `write`
 
 ```ts
-await corsair.loyverse.api.suppliers.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.suppliers.upsert({});
 ```
 
 **Input**
@@ -2907,7 +2954,8 @@ Delete a tax
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.taxes.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.taxes.delete({});
 ```
 
 **Input**
@@ -2937,7 +2985,8 @@ Get a single tax
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.taxes.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.taxes.get({});
 ```
 
 **Input**
@@ -2974,7 +3023,8 @@ List taxes
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.taxes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.taxes.list({});
 ```
 
 **Input**
@@ -3030,7 +3080,8 @@ Create or update a tax
 **Risk:** `write`
 
 ```ts
-await corsair.loyverse.api.taxes.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.taxes.upsert({});
 ```
 
 **Input**
@@ -3073,7 +3124,8 @@ Delete an item variant
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.variants.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.variants.delete({});
 ```
 
 **Input**
@@ -3103,7 +3155,8 @@ Get a single variant
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.variants.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.variants.get({});
 ```
 
 **Input**
@@ -3164,7 +3217,8 @@ List item variants
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.variants.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.variants.list({});
 ```
 
 **Input**
@@ -3237,7 +3291,8 @@ Create or update an item variant
 **Risk:** `write`
 
 ```ts
-await corsair.loyverse.api.variants.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.variants.upsert({});
 ```
 
 **Input**
@@ -3328,7 +3383,8 @@ Delete a webhook subscription
 **Risk:** `destructive`
 
 ```ts
-await corsair.loyverse.api.webhooks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.webhooks.delete({});
 ```
 
 **Input**
@@ -3358,7 +3414,8 @@ Get a single webhook subscription
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.webhooks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.webhooks.get({});
 ```
 
 **Input**
@@ -3395,7 +3452,8 @@ List webhook subscriptions
 **Risk:** `read`
 
 ```ts
-await corsair.loyverse.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.webhooks.list({});
 ```
 
 **Input:** _empty object_
@@ -3439,7 +3497,8 @@ Create or update a webhook subscription
 **Risk:** `write`
 
 ```ts
-await corsair.loyverse.api.webhooks.upsert({});
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.webhooks.upsert({});
 ```
 
 **Input**

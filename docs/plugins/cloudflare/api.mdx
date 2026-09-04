@@ -20,7 +20,8 @@ Create a DNS record in a zone
 **Risk:** `write`
 
 ```ts
-await corsair.cloudflare.api.dns.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.dns.create({});
 ```
 
 **Input**
@@ -67,7 +68,8 @@ Delete a DNS record [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.cloudflare.api.dns.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.dns.delete({});
 ```
 
 **Input**
@@ -98,7 +100,8 @@ Update a DNS record
 **Risk:** `write`
 
 ```ts
-await corsair.cloudflare.api.dns.edit({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.dns.edit({});
 ```
 
 **Input**
@@ -146,7 +149,8 @@ Retrieve a DNS record by ID
 **Risk:** `read`
 
 ```ts
-await corsair.cloudflare.api.dns.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.dns.get({});
 ```
 
 **Input**
@@ -188,7 +192,8 @@ List DNS records for a zone
 **Risk:** `read`
 
 ```ts
-await corsair.cloudflare.api.dns.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.dns.list({});
 ```
 
 **Input**
@@ -242,7 +247,8 @@ Create a ruleset in a zone
 **Risk:** `write`
 
 ```ts
-await corsair.cloudflare.api.rulesets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.rulesets.create({});
 ```
 
 **Input**
@@ -304,7 +310,8 @@ Delete a ruleset [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.cloudflare.api.rulesets.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.rulesets.delete({});
 ```
 
 **Input**
@@ -330,7 +337,8 @@ Retrieve a ruleset by ID
 **Risk:** `read`
 
 ```ts
-await corsair.cloudflare.api.rulesets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.rulesets.get({});
 ```
 
 **Input**
@@ -378,7 +386,8 @@ List rulesets for a zone
 **Risk:** `read`
 
 ```ts
-await corsair.cloudflare.api.rulesets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.rulesets.list({});
 ```
 
 **Input**
@@ -422,7 +431,8 @@ Update a ruleset
 **Risk:** `write`
 
 ```ts
-await corsair.cloudflare.api.rulesets.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.rulesets.update({});
 ```
 
 **Input**
@@ -484,7 +494,8 @@ Create a Workers route
 **Risk:** `write`
 
 ```ts
-await corsair.cloudflare.api.workers.routes.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.workers.routes.create({});
 ```
 
 **Input**
@@ -518,7 +529,8 @@ Delete a Workers route [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.cloudflare.api.workers.routes.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.workers.routes.delete({});
 ```
 
 **Input**
@@ -549,7 +561,8 @@ Update a Workers route
 **Risk:** `write`
 
 ```ts
-await corsair.cloudflare.api.workers.routes.edit({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.workers.routes.edit({});
 ```
 
 **Input**
@@ -584,7 +597,8 @@ Retrieve a Workers route by ID
 **Risk:** `read`
 
 ```ts
-await corsair.cloudflare.api.workers.routes.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.workers.routes.get({});
 ```
 
 **Input**
@@ -617,7 +631,8 @@ List Workers routes for a zone
 **Risk:** `read`
 
 ```ts
-await corsair.cloudflare.api.workers.routes.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.workers.routes.list({});
 ```
 
 **Input**
@@ -655,7 +670,8 @@ Delete a Workers script [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.cloudflare.api.workers.scripts.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.workers.scripts.delete({});
 ```
 
 **Input**
@@ -681,7 +697,8 @@ Download Workers script source code by name
 **Risk:** `read`
 
 ```ts
-await corsair.cloudflare.api.workers.scripts.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.workers.scripts.get({});
 ```
 
 **Input**
@@ -707,7 +724,8 @@ List Workers scripts for an account
 **Risk:** `read`
 
 ```ts
-await corsair.cloudflare.api.workers.scripts.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.workers.scripts.list({});
 ```
 
 **Input**
@@ -745,7 +763,8 @@ Upload or overwrite a Workers script
 **Risk:** `write`
 
 ```ts
-await corsair.cloudflare.api.workers.scripts.upload({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.workers.scripts.upload({});
 ```
 
 **Input**
@@ -793,7 +812,8 @@ Create a new Cloudflare zone
 **Risk:** `write`
 
 ```ts
-await corsair.cloudflare.api.zones.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.zones.create({});
 ```
 
 **Input**
@@ -859,7 +879,8 @@ Delete a Cloudflare zone [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.cloudflare.api.zones.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.zones.delete({});
 ```
 
 **Input**
@@ -889,7 +910,8 @@ Update a Cloudflare zone
 **Risk:** `write`
 
 ```ts
-await corsair.cloudflare.api.zones.edit({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.zones.edit({});
 ```
 
 **Input**
@@ -956,7 +978,8 @@ Retrieve a Cloudflare zone by ID
 **Risk:** `read`
 
 ```ts
-await corsair.cloudflare.api.zones.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.zones.get({});
 ```
 
 **Input**
@@ -1009,7 +1032,8 @@ List Cloudflare zones
 **Risk:** `read`
 
 ```ts
-await corsair.cloudflare.api.zones.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.cloudflare.api.zones.list({});
 ```
 
 **Input**

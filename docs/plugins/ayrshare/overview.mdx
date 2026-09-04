@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { ayrshare } from '@corsair-dev/ayrshare';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		ayrshare(),
 	],

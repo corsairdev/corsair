@@ -14,7 +14,8 @@ The Google drive plugin syncs data locally. Use `corsair.googledrive.db.<entity>
 Path: `googledrive.db.files.search`
 
 ```ts
-const rows = await corsair.googledrive.db.files.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googledrive.db.files.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -76,7 +77,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googledrive.db.folders.search`
 
 ```ts
-const rows = await corsair.googledrive.db.folders.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googledrive.db.folders.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -127,7 +129,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `googledrive.db.sharedDrives.search`
 
 ```ts
-const rows = await corsair.googledrive.db.sharedDrives.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googledrive.db.sharedDrives.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

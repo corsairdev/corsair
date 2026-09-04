@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { linkedin } from '@corsair-dev/linkedin';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		linkedin(),
 	],

@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { intercom } from '@corsair-dev/intercom';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		intercom(),
 	],

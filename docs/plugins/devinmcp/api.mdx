@@ -20,7 +20,8 @@ Create a new Devin session to start working on a task
 **Risk:** `write`
 
 ```ts
-await corsair.devinmcp.api.session.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.devinmcp.api.session.create({});
 ```
 
 **Input**
@@ -104,7 +105,8 @@ Get details and status of an existing Devin session
 **Risk:** `read`
 
 ```ts
-await corsair.devinmcp.api.session.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.devinmcp.api.session.get({});
 ```
 
 **Input**
@@ -168,7 +170,8 @@ List Devin sessions
 **Risk:** `read`
 
 ```ts
-await corsair.devinmcp.api.session.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.devinmcp.api.session.list({});
 ```
 
 **Input**
@@ -234,7 +237,8 @@ Send a follow-up message to an existing Devin session
 **Risk:** `write`
 
 ```ts
-await corsair.devinmcp.api.session.sendMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.devinmcp.api.session.sendMessage({});
 ```
 
 **Input**

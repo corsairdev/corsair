@@ -14,7 +14,8 @@ The Trello plugin syncs data locally. Use `corsair.trello.db.<entity>.search({ d
 Path: `trello.db.boards.search`
 
 ```ts
-const rows = await corsair.trello.db.boards.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.trello.db.boards.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `trello.db.cards.search`
 
 ```ts
-const rows = await corsair.trello.db.cards.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.trello.db.cards.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -78,7 +80,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `trello.db.labels.search`
 
 ```ts
-const rows = await corsair.trello.db.labels.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.trello.db.labels.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -104,7 +107,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `trello.db.lists.search`
 
 ```ts
-const rows = await corsair.trello.db.lists.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.trello.db.lists.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -132,7 +136,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `trello.db.members.search`
 
 ```ts
-const rows = await corsair.trello.db.members.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.trello.db.members.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

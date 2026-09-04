@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { serpapi } from '@corsair-dev/serpapi';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		serpapi(),
 	],

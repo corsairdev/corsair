@@ -20,7 +20,8 @@ Get an event by ID
 **Risk:** `read`
 
 ```ts
-await corsair.sentry.api.events.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.events.get({});
 ```
 
 **Input**
@@ -81,7 +82,8 @@ List events for a project
 **Risk:** `read`
 
 ```ts
-await corsair.sentry.api.events.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.events.list({});
 ```
 
 **Input**
@@ -134,7 +136,8 @@ Permanently delete an issue [DESTRUCTIVE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.sentry.api.issues.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.issues.delete({});
 ```
 
 **Input**
@@ -159,7 +162,8 @@ Get an issue by ID
 **Risk:** `read`
 
 ```ts
-await corsair.sentry.api.issues.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.issues.get({});
 ```
 
 **Input**
@@ -240,7 +244,8 @@ List issues for a project
 **Risk:** `read`
 
 ```ts
-await corsair.sentry.api.issues.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.issues.list({});
 ```
 
 **Input**
@@ -307,7 +312,8 @@ Update an issue
 **Risk:** `write`
 
 ```ts
-await corsair.sentry.api.issues.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.issues.update({});
 ```
 
 **Input**
@@ -396,7 +402,8 @@ Create a new organization
 **Risk:** `write`
 
 ```ts
-await corsair.sentry.api.organizations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.organizations.create({});
 ```
 
 **Input**
@@ -457,7 +464,8 @@ Get an organization by slug
 **Risk:** `read`
 
 ```ts
-await corsair.sentry.api.organizations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.organizations.get({});
 ```
 
 **Input**
@@ -516,7 +524,8 @@ List organizations
 **Risk:** `read`
 
 ```ts
-await corsair.sentry.api.organizations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.organizations.list({});
 ```
 
 **Input**
@@ -565,7 +574,8 @@ Update an organization
 **Risk:** `write`
 
 ```ts
-await corsair.sentry.api.organizations.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.organizations.update({});
 ```
 
 **Input**
@@ -628,7 +638,8 @@ Create a new project
 **Risk:** `write`
 
 ```ts
-await corsair.sentry.api.projects.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.projects.create({});
 ```
 
 **Input**
@@ -706,7 +717,8 @@ Permanently delete a project [DESTRUCTIVE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.sentry.api.projects.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.projects.delete({});
 ```
 
 **Input**
@@ -732,7 +744,8 @@ Get a project by slug
 **Risk:** `read`
 
 ```ts
-await corsair.sentry.api.projects.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.projects.get({});
 ```
 
 **Input**
@@ -807,7 +820,8 @@ List projects for an organization
 **Risk:** `read`
 
 ```ts
-await corsair.sentry.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.projects.list({});
 ```
 
 **Input**
@@ -872,7 +886,8 @@ Update a project
 **Risk:** `write`
 
 ```ts
-await corsair.sentry.api.projects.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.projects.update({});
 ```
 
 **Input**
@@ -953,7 +968,8 @@ Create a new release
 **Risk:** `write`
 
 ```ts
-await corsair.sentry.api.releases.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.releases.create({});
 ```
 
 **Input**
@@ -1011,7 +1027,8 @@ Delete a release [DESTRUCTIVE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.sentry.api.releases.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.releases.delete({});
 ```
 
 **Input**
@@ -1037,7 +1054,8 @@ Get a release by version ID
 **Risk:** `read`
 
 ```ts
-await corsair.sentry.api.releases.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.releases.get({});
 ```
 
 **Input**
@@ -1091,7 +1109,8 @@ List releases for an organization
 **Risk:** `read`
 
 ```ts
-await corsair.sentry.api.releases.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.releases.list({});
 ```
 
 **Input**
@@ -1143,7 +1162,8 @@ Update a release
 **Risk:** `write`
 
 ```ts
-await corsair.sentry.api.releases.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.releases.update({});
 ```
 
 **Input**
@@ -1202,7 +1222,8 @@ Create a new team
 **Risk:** `write`
 
 ```ts
-await corsair.sentry.api.teams.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.teams.create({});
 ```
 
 **Input**
@@ -1254,7 +1275,8 @@ Delete a team [DESTRUCTIVE]
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.sentry.api.teams.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.teams.delete({});
 ```
 
 **Input**
@@ -1280,7 +1302,8 @@ Get a team by slug
 **Risk:** `read`
 
 ```ts
-await corsair.sentry.api.teams.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.teams.get({});
 ```
 
 **Input**
@@ -1331,7 +1354,8 @@ List teams for an organization
 **Risk:** `read`
 
 ```ts
-await corsair.sentry.api.teams.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.teams.list({});
 ```
 
 **Input**
@@ -1379,7 +1403,8 @@ Update a team
 **Risk:** `write`
 
 ```ts
-await corsair.sentry.api.teams.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.sentry.api.teams.update({});
 ```
 
 **Input**

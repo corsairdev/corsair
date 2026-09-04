@@ -14,7 +14,8 @@ The Exa plugin syncs data locally. Use `corsair.exa.db.<entity>.search({ data, l
 Path: `exa.db.events.search`
 
 ```ts
-const rows = await corsair.exa.db.events.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.exa.db.events.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `exa.db.imports.search`
 
 ```ts
-const rows = await corsair.exa.db.imports.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.exa.db.imports.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -66,7 +68,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `exa.db.monitors.search`
 
 ```ts
-const rows = await corsair.exa.db.monitors.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.exa.db.monitors.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -92,7 +95,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `exa.db.searchResults.search`
 
 ```ts
-const rows = await corsair.exa.db.searchResults.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.exa.db.searchResults.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -124,7 +128,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `exa.db.webhookConfigs.search`
 
 ```ts
-const rows = await corsair.exa.db.webhookConfigs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.exa.db.webhookConfigs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -150,7 +155,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `exa.db.websets.search`
 
 ```ts
-const rows = await corsair.exa.db.websets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.exa.db.websets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

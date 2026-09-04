@@ -14,7 +14,8 @@ The All Images AI plugin syncs data locally. Use `corsair.allimagesai.db.<entity
 Path: `allimagesai.db.downloadedImages.search`
 
 ```ts
-const rows = await corsair.allimagesai.db.downloadedImages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.allimagesai.db.downloadedImages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `allimagesai.db.imageGenerations.search`
 
 ```ts
-const rows = await corsair.allimagesai.db.imageGenerations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.allimagesai.db.imageGenerations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -71,7 +73,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `allimagesai.db.webhooks.search`
 
 ```ts
-const rows = await corsair.allimagesai.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.allimagesai.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

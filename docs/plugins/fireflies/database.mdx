@@ -14,7 +14,8 @@ The Fireflies plugin syncs data locally. Use `corsair.fireflies.db.<entity>.sear
 Path: `fireflies.db.askFredThreads.search`
 
 ```ts
-const rows = await corsair.fireflies.db.askFredThreads.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.fireflies.db.askFredThreads.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `fireflies.db.transcripts.search`
 
 ```ts
-const rows = await corsair.fireflies.db.transcripts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.fireflies.db.transcripts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -77,7 +79,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `fireflies.db.users.search`
 
 ```ts
-const rows = await corsair.fireflies.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.fireflies.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

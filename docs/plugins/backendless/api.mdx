@@ -20,7 +20,8 @@ Read a Backendless atomic counter.
 **Risk:** `read`
 
 ```ts
-await corsair.backendless.api.counters.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.counters.get({});
 ```
 
 **Input**
@@ -45,7 +46,8 @@ Reset a Backendless atomic counter.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.backendless.api.counters.reset({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.counters.reset({});
 ```
 
 **Input**
@@ -70,7 +72,8 @@ Conditionally update a Backendless atomic counter.
 **Risk:** `write`
 
 ```ts
-await corsair.backendless.api.counters.set({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.counters.set({});
 ```
 
 **Input**
@@ -99,7 +102,8 @@ Retrieve Backendless database objects.
 **Risk:** `read`
 
 ```ts
-await corsair.backendless.api.data.retrieve({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.data.retrieve({});
 ```
 
 **Input**
@@ -155,7 +159,8 @@ Copy a Backendless file or directory.
 **Risk:** `write`
 
 ```ts
-await corsair.backendless.api.files.copy({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.files.copy({});
 ```
 
 **Input**
@@ -181,7 +186,8 @@ Count Backendless files and directories.
 **Risk:** `read`
 
 ```ts
-await corsair.backendless.api.files.count({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.files.count({});
 ```
 
 **Input**
@@ -209,7 +215,8 @@ Create a Backendless directory.
 **Risk:** `write`
 
 ```ts
-await corsair.backendless.api.files.createDirectory({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.files.createDirectory({});
 ```
 
 **Input**
@@ -234,7 +241,8 @@ Delete a Backendless file.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.backendless.api.files.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.files.delete({});
 ```
 
 **Input**
@@ -260,7 +268,8 @@ Delete a Backendless directory.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.backendless.api.files.deleteDirectory({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.files.deleteDirectory({});
 ```
 
 **Input**
@@ -285,7 +294,8 @@ List Backendless files and directories.
 **Risk:** `read`
 
 ```ts
-await corsair.backendless.api.files.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.files.list({});
 ```
 
 **Input**
@@ -329,7 +339,8 @@ Move a Backendless file or directory.
 **Risk:** `write`
 
 ```ts
-await corsair.backendless.api.files.move({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.files.move({});
 ```
 
 **Input**
@@ -357,7 +368,8 @@ Create a Backendless Hive.
 **Risk:** `write`
 
 ```ts
-await corsair.backendless.api.hive.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.hive.create({});
 ```
 
 **Input**
@@ -382,7 +394,8 @@ Retrieve items from a Backendless Hive list.
 **Risk:** `read`
 
 ```ts
-await corsair.backendless.api.hive.keyItems({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.hive.keyItems({});
 ```
 
 **Input**
@@ -421,7 +434,8 @@ Insert or update a Backendless Hive map value.
 **Risk:** `write`
 
 ```ts
-await corsair.backendless.api.hive.mapPut({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.hive.mapPut({});
 ```
 
 **Input**
@@ -449,7 +463,8 @@ Retrieve values from a Backendless Hive map.
 **Risk:** `read`
 
 ```ts
-await corsair.backendless.api.hive.values({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.hive.values({});
 ```
 
 **Input**
@@ -487,7 +502,8 @@ Publish a message to a Backendless channel.
 **Risk:** `write`
 
 ```ts
-await corsair.backendless.api.messaging.publish({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.messaging.publish({});
 ```
 
 **Input**
@@ -535,7 +551,8 @@ Grant a Backendless data permission; security-sensitive.
 **Risk:** `destructive`
 
 ```ts
-await corsair.backendless.api.permissions.grant({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.permissions.grant({});
 ```
 
 **Input**
@@ -564,7 +581,8 @@ Revoke a Backendless data permission; security-sensitive.
 **Risk:** `destructive`
 
 ```ts
-await corsair.backendless.api.permissions.revoke({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.permissions.revoke({});
 ```
 
 **Input**
@@ -595,7 +613,8 @@ Delete a Backendless user.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.backendless.api.users.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.users.delete({});
 ```
 
 **Input**
@@ -631,7 +650,8 @@ Find a Backendless user by object ID.
 **Risk:** `read`
 
 ```ts
-await corsair.backendless.api.users.find({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.users.find({});
 ```
 
 **Input**
@@ -667,7 +687,8 @@ Log in to Backendless and return a user token.
 **Risk:** `write`
 
 ```ts
-await corsair.backendless.api.users.login({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.users.login({});
 ```
 
 **Input**
@@ -717,7 +738,8 @@ Log out the current Backendless user session.
 **Risk:** `write`
 
 ```ts
-await corsair.backendless.api.users.logout({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.users.logout({});
 ```
 
 **Input:** _empty object_
@@ -737,7 +759,8 @@ Request Backendless password recovery.
 **Risk:** `write`
 
 ```ts
-await corsair.backendless.api.users.passwordRecovery({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.users.passwordRecovery({});
 ```
 
 **Input**
@@ -762,7 +785,8 @@ Register a Backendless user.
 **Risk:** `write`
 
 ```ts
-await corsair.backendless.api.users.register({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.users.register({});
 ```
 
 **Input**
@@ -810,7 +834,8 @@ Update a Backendless user.
 **Risk:** `write`
 
 ```ts
-await corsair.backendless.api.users.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.users.update({});
 ```
 
 **Input**
@@ -857,7 +882,8 @@ Validate a Backendless user token.
 **Risk:** `read`
 
 ```ts
-await corsair.backendless.api.users.validateToken({});
+const tenant = corsair.withTenant('acme');
+await tenant.backendless.api.users.validateToken({});
 ```
 
 **Input**

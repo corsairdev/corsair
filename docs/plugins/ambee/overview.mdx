@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { ambee } from '@corsair-dev/ambee';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		ambee(),
 	],

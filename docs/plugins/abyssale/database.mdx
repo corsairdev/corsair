@@ -14,7 +14,8 @@ The Abyssale plugin syncs data locally. Use `corsair.abyssale.db.<entity>.search
 Path: `abyssale.db.banners.search`
 
 ```ts
-const rows = await corsair.abyssale.db.banners.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.abyssale.db.banners.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `abyssale.db.designs.search`
 
 ```ts
-const rows = await corsair.abyssale.db.designs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.abyssale.db.designs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -73,7 +75,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `abyssale.db.fonts.search`
 
 ```ts
-const rows = await corsair.abyssale.db.fonts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.abyssale.db.fonts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -97,7 +100,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `abyssale.db.projects.search`
 
 ```ts
-const rows = await corsair.abyssale.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.abyssale.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

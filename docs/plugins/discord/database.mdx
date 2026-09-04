@@ -14,7 +14,8 @@ The Discord plugin syncs data locally. Use `corsair.discord.db.<entity>.search({
 Path: `discord.db.channels.search`
 
 ```ts
-const rows = await corsair.discord.db.channels.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.discord.db.channels.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -45,7 +46,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `discord.db.guilds.search`
 
 ```ts
-const rows = await corsair.discord.db.guilds.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.discord.db.guilds.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -77,7 +79,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `discord.db.members.search`
 
 ```ts
-const rows = await corsair.discord.db.members.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.discord.db.members.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -108,7 +111,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `discord.db.messages.search`
 
 ```ts
-const rows = await corsair.discord.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.discord.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

@@ -20,7 +20,8 @@ Copy an existing Google Doc
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.documents.copyDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.copyDocument({});
 ```
 
 **Input**
@@ -61,7 +62,8 @@ Create a blank Google Doc [DEPRECATED: prefer documents.createDocument]
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.documents.createBlankDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.createBlankDocument({});
 ```
 
 **Input**
@@ -103,7 +105,8 @@ Create a Google Doc with an optional title and initial text
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.documents.createDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.createDocument({});
 ```
 
 **Input**
@@ -146,7 +149,8 @@ Create a Google Doc initialized from Markdown text
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.documents.createDocumentMarkdown({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.createDocumentMarkdown({});
 ```
 
 **Input**
@@ -189,7 +193,8 @@ Export a Google Doc as PDF (Drive enforces a 10MB limit)
 **Risk:** `read`
 
 ```ts
-await corsair.googledocs.api.documents.exportDocumentAsPdf({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.exportDocumentAsPdf({});
 ```
 
 **Input**
@@ -221,7 +226,8 @@ Retrieve a Google Doc by id
 **Risk:** `read`
 
 ```ts
-await corsair.googledocs.api.documents.getDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.getDocument({});
 ```
 
 **Input**
@@ -263,7 +269,8 @@ Retrieve a Google Doc as best-effort plain text
 **Risk:** `read`
 
 ```ts
-await corsair.googledocs.api.documents.getDocumentPlaintext({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.getDocumentPlaintext({});
 ```
 
 **Input**
@@ -296,7 +303,8 @@ List charts in a Google Sheets spreadsheet for embedding
 **Risk:** `read`
 
 ```ts
-await corsair.googledocs.api.documents.listSpreadsheetCharts({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.listSpreadsheetCharts({});
 ```
 
 **Input**
@@ -327,7 +335,8 @@ Search Google Docs by name, content, or date filters
 **Risk:** `read`
 
 ```ts
-await corsair.googledocs.api.documents.searchDocuments({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.searchDocuments({});
 ```
 
 **Input**
@@ -383,7 +392,8 @@ Apply batchUpdate edits [DEPRECATED: prefer documents.updateExistingDocument]
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.documents.updateDocumentBatch({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.updateDocumentBatch({});
 ```
 
 **Input**
@@ -455,7 +465,8 @@ Replace a Google Doc content with Markdown text
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.documents.updateDocumentMarkdown({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.updateDocumentMarkdown({});
 ```
 
 **Input**
@@ -508,7 +519,8 @@ Replace a section of a Google Doc with Markdown text
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.documents.updateDocumentSectionMarkdown({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.updateDocumentSectionMarkdown({});
 ```
 
 **Input**
@@ -563,7 +575,8 @@ Update the page size, margins, and global document style
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.documents.updateDocumentStyle({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.updateDocumentStyle({});
 ```
 
 **Input**
@@ -627,7 +640,8 @@ Apply batchUpdate edits (insert/delete/format) to a Google Doc
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.documents.updateExistingDocument({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.documents.updateExistingDocument({});
 ```
 
 **Input**
@@ -701,7 +715,8 @@ Create a footer
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.structure.createFooter({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.structure.createFooter({});
 ```
 
 **Input**
@@ -768,7 +783,8 @@ Create a footnote
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.structure.createFootnote({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.structure.createFootnote({});
 ```
 
 **Input**
@@ -845,7 +861,8 @@ Create a header
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.structure.createHeader({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.structure.createHeader({});
 ```
 
 **Input**
@@ -912,7 +929,8 @@ Create a named range
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.structure.createNamedRange({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.structure.createNamedRange({});
 ```
 
 **Input**
@@ -967,7 +985,8 @@ Add bullets to a range of paragraphs
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.structure.createParagraphBullets({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.structure.createParagraphBullets({});
 ```
 
 **Input**
@@ -1022,7 +1041,8 @@ Delete a footer
 **Risk:** `destructive`
 
 ```ts
-await corsair.googledocs.api.structure.deleteFooter({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.structure.deleteFooter({});
 ```
 
 **Input**
@@ -1076,7 +1096,8 @@ Delete a header
 **Risk:** `destructive`
 
 ```ts
-await corsair.googledocs.api.structure.deleteHeader({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.structure.deleteHeader({});
 ```
 
 **Input**
@@ -1130,7 +1151,8 @@ Delete a named range by id or name
 **Risk:** `destructive`
 
 ```ts
-await corsair.googledocs.api.structure.deleteNamedRange({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.structure.deleteNamedRange({});
 ```
 
 **Input**
@@ -1184,7 +1206,8 @@ Remove bullets from a range of paragraphs
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.structure.deleteParagraphBullets({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.structure.deleteParagraphBullets({});
 ```
 
 **Input**
@@ -1240,7 +1263,8 @@ Delete a column from a table
 **Risk:** `destructive`
 
 ```ts
-await corsair.googledocs.api.tables.deleteTableColumn({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.tables.deleteTableColumn({});
 ```
 
 **Input**
@@ -1310,7 +1334,8 @@ Delete a row from a table
 **Risk:** `destructive`
 
 ```ts
-await corsair.googledocs.api.tables.deleteTableRow({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.tables.deleteTableRow({});
 ```
 
 **Input**
@@ -1380,7 +1405,8 @@ Insert a table into a Google Doc
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.tables.insertTable({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.tables.insertTable({});
 ```
 
 **Input**
@@ -1436,7 +1462,8 @@ Insert a column into a table
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.tables.insertTableColumn({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.tables.insertTableColumn({});
 ```
 
 **Input**
@@ -1507,7 +1534,8 @@ Unmerge previously merged table cells
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.tables.unmergeTableCells({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.tables.unmergeTableCells({});
 ```
 
 **Input**
@@ -1581,7 +1609,8 @@ Update the style of table rows
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.tables.updateTableRowStyle({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.tables.updateTableRowStyle({});
 ```
 
 **Input**
@@ -1666,7 +1695,8 @@ Delete a content range from a Google Doc
 **Risk:** `destructive`
 
 ```ts
-await corsair.googledocs.api.text.deleteContentRange({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.text.deleteContentRange({});
 ```
 
 **Input**
@@ -1720,7 +1750,8 @@ Insert an inline image from a URI into a Google Doc
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.text.insertInlineImage({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.text.insertInlineImage({});
 ```
 
 **Input**
@@ -1794,7 +1825,8 @@ Start a new page at a location in a Google Doc
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.text.insertPageBreak({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.text.insertPageBreak({});
 ```
 
 **Input**
@@ -1848,7 +1880,8 @@ Insert text at a location or append to the end of a Google Doc
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.text.insertText({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.text.insertText({});
 ```
 
 **Input**
@@ -1903,7 +1936,8 @@ Replace all occurrences of a string in a Google Doc
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.text.replaceAllText({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.text.replaceAllText({});
 ```
 
 **Input**
@@ -1958,7 +1992,8 @@ Replace an existing image in a Google Doc
 **Risk:** `write`
 
 ```ts
-await corsair.googledocs.api.text.replaceImage({});
+const tenant = corsair.withTenant('acme');
+await tenant.googledocs.api.text.replaceImage({});
 ```
 
 **Input**

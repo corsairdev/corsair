@@ -20,7 +20,8 @@ Get info about an album
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.albums.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.albums.get({});
 ```
 
 **Input**
@@ -96,7 +97,8 @@ Get new album releases
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.albums.getNewReleases({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.albums.getNewReleases({});
 ```
 
 **Input**
@@ -169,7 +171,8 @@ Get tracks from an album
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.albums.getTracks({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.albums.getTracks({});
 ```
 
 **Input**
@@ -259,7 +262,8 @@ Search for albums
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.albums.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.albums.search({});
 ```
 
 **Input**
@@ -336,7 +340,8 @@ Get info about an artist
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.artists.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.artists.get({});
 ```
 
 **Input**
@@ -404,7 +409,8 @@ Get albums by an artist
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.artists.getAlbums({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.artists.getAlbums({});
 ```
 
 **Input**
@@ -477,7 +483,8 @@ Get artists related to an artist
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.artists.getRelatedArtists({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.artists.getRelatedArtists({});
 ```
 
 **Input**
@@ -533,7 +540,8 @@ Get top tracks for an artist
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.artists.getTopTracks({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.artists.getTopTracks({});
 ```
 
 **Input**
@@ -615,7 +623,8 @@ Search for artists
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.artists.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.artists.search({});
 ```
 
 **Input**
@@ -685,7 +694,8 @@ Get the current user's liked tracks
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.library.getLikedTracks({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.library.getLikedTracks({});
 ```
 
 **Input**
@@ -779,7 +789,8 @@ Get artists followed by the current user
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.myData.getFollowedArtists({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.myData.getFollowedArtists({});
 ```
 
 **Input**
@@ -848,7 +859,8 @@ Add a track to the playback queue
 **Risk:** `write`
 
 ```ts
-await corsair.spotify.api.player.addToQueue({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.player.addToQueue({});
 ```
 
 **Input**
@@ -874,7 +886,8 @@ Get the currently playing track
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.player.getCurrentlyPlaying({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.player.getCurrentlyPlaying({});
 ```
 
 **Input**
@@ -987,7 +1000,8 @@ Get recently played tracks
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.player.getRecentlyPlayed({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.player.getRecentlyPlayed({});
 ```
 
 **Input**
@@ -1094,7 +1108,8 @@ Pause playback
 **Risk:** `write`
 
 ```ts
-await corsair.spotify.api.player.pause({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.player.pause({});
 ```
 
 **Input**
@@ -1119,7 +1134,8 @@ Resume playback
 **Risk:** `write`
 
 ```ts
-await corsair.spotify.api.player.resume({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.player.resume({});
 ```
 
 **Input**
@@ -1144,7 +1160,8 @@ Set the playback volume
 **Risk:** `write`
 
 ```ts
-await corsair.spotify.api.player.setVolume({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.player.setVolume({});
 ```
 
 **Input**
@@ -1170,7 +1187,8 @@ Skip to the next track
 **Risk:** `write`
 
 ```ts
-await corsair.spotify.api.player.skipToNext({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.player.skipToNext({});
 ```
 
 **Input**
@@ -1195,7 +1213,8 @@ Skip to the previous track
 **Risk:** `write`
 
 ```ts
-await corsair.spotify.api.player.skipToPrevious({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.player.skipToPrevious({});
 ```
 
 **Input**
@@ -1220,7 +1239,8 @@ Start playback of specified content
 **Risk:** `write`
 
 ```ts
-await corsair.spotify.api.player.startPlayback({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.player.startPlayback({});
 ```
 
 **Input**
@@ -1263,7 +1283,8 @@ Add a track to a playlist
 **Risk:** `write`
 
 ```ts
-await corsair.spotify.api.playlists.addItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.playlists.addItem({});
 ```
 
 **Input**
@@ -1295,7 +1316,8 @@ Create a new playlist
 **Risk:** `write`
 
 ```ts
-await corsair.spotify.api.playlists.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.playlists.create({});
 ```
 
 **Input**
@@ -1393,7 +1415,8 @@ Get info about a playlist
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.playlists.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.playlists.get({});
 ```
 
 **Input**
@@ -1490,7 +1513,8 @@ Get tracks in a playlist
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.playlists.getTracks({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.playlists.getTracks({});
 ```
 
 **Input**
@@ -1589,7 +1613,8 @@ Get the current user's playlists
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.playlists.getUserPlaylists({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.playlists.getUserPlaylists({});
 ```
 
 **Input**
@@ -1665,7 +1690,8 @@ Remove a track from a playlist
 **Risk:** `write`
 
 ```ts
-await corsair.spotify.api.playlists.removeItem({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.playlists.removeItem({});
 ```
 
 **Input**
@@ -1708,7 +1734,8 @@ Search for playlists
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.playlists.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.playlists.search({});
 ```
 
 **Input**
@@ -1790,7 +1817,8 @@ Get info about a track
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.tracks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.tracks.get({});
 ```
 
 **Input**
@@ -1884,7 +1912,8 @@ Get audio features for a track
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.tracks.getAudioFeatures({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.tracks.getAudioFeatures({});
 ```
 
 **Input**
@@ -1927,7 +1956,8 @@ Search for tracks
 **Risk:** `read`
 
 ```ts
-await corsair.spotify.api.tracks.search({});
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.tracks.search({});
 ```
 
 **Input**

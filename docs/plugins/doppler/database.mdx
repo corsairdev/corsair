@@ -14,7 +14,8 @@ The Doppler plugin syncs data locally. Use `corsair.doppler.db.<entity>.search({
 Path: `doppler.db.configs.search`
 
 ```ts
-const rows = await corsair.doppler.db.configs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.doppler.db.configs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -47,7 +48,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `doppler.db.environments.search`
 
 ```ts
-const rows = await corsair.doppler.db.environments.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.doppler.db.environments.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -76,7 +78,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `doppler.db.projects.search`
 
 ```ts
-const rows = await corsair.doppler.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.doppler.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -103,7 +106,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `doppler.db.webhooks.search`
 
 ```ts
-const rows = await corsair.doppler.db.webhooks.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.doppler.db.webhooks.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -131,7 +135,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `doppler.db.workplace.search`
 
 ```ts
-const rows = await corsair.doppler.db.workplace.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.doppler.db.workplace.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

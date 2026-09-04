@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { abuseipdb } from '@corsair-dev/abuseipdb';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		abuseipdb(),
 	],

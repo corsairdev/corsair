@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { amcards } from '@corsair-dev/amcards';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		amcards(),
 	],

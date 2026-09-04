@@ -14,7 +14,8 @@ The Attio plugin syncs data locally. Use `corsair.attio.db.<entity>.search({ dat
 Path: `attio.db.records.search`
 
 ```ts
-const rows = await corsair.attio.db.records.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.attio.db.records.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -37,7 +38,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `attio.db.workspaceMembers.search`
 
 ```ts
-const rows = await corsair.attio.db.workspaceMembers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.attio.db.workspaceMembers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

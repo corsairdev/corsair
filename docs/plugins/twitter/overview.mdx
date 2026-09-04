@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { twitter } from '@corsair-dev/twitter';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		twitter(),
 	],

@@ -14,7 +14,8 @@ The AsyncInterview plugin syncs data locally. Use `corsair.asyncinterview.db.<en
 Path: `asyncinterview.db.interviews.search`
 
 ```ts
-const rows = await corsair.asyncinterview.db.interviews.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asyncinterview.db.interviews.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `asyncinterview.db.jobs.search`
 
 ```ts
-const rows = await corsair.asyncinterview.db.jobs.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asyncinterview.db.jobs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

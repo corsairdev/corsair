@@ -14,7 +14,8 @@ The Alpha Vantage plugin syncs data locally. Use `corsair.alphavantage.db.<entit
 Path: `alphavantage.db.companies.search`
 
 ```ts
-const rows = await corsair.alphavantage.db.companies.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.alphavantage.db.companies.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -92,7 +93,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `alphavantage.db.symbols.search`
 
 ```ts
-const rows = await corsair.alphavantage.db.symbols.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.alphavantage.db.symbols.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

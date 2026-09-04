@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { agilitycms } from '@corsair-dev/agilitycms';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		agilitycms(),
 	],

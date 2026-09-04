@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { ambientweather } from '@corsair-dev/ambientweather';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		ambientweather(),
 	],

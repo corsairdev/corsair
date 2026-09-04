@@ -14,7 +14,8 @@ The Outlook plugin syncs data locally. Use `corsair.outlook.db.<entity>.search({
 Path: `outlook.db.calendars.search`
 
 ```ts
-const rows = await corsair.outlook.db.calendars.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.outlook.db.calendars.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -45,7 +46,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `outlook.db.contacts.search`
 
 ```ts
-const rows = await corsair.outlook.db.contacts.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.outlook.db.contacts.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -80,7 +82,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `outlook.db.events.search`
 
 ```ts
-const rows = await corsair.outlook.db.events.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.outlook.db.events.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -119,7 +122,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `outlook.db.folders.search`
 
 ```ts
-const rows = await corsair.outlook.db.folders.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.outlook.db.folders.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -149,7 +153,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `outlook.db.messages.search`
 
 ```ts
-const rows = await corsair.outlook.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.outlook.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

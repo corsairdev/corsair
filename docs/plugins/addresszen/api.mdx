@@ -20,7 +20,8 @@ Get address autocomplete suggestions for a partial address query
 **Risk:** `read`
 
 ```ts
-await corsair.addresszen.api.autocomplete.addresses({});
+const tenant = corsair.withTenant('acme');
+await tenant.addresszen.api.autocomplete.addresses({});
 ```
 
 **Input**
@@ -73,7 +74,8 @@ Get public information on an API key, including whether it is currently usable
 **Risk:** `read`
 
 ```ts
-await corsair.addresszen.api.key.availability({});
+const tenant = corsair.withTenant('acme');
+await tenant.addresszen.api.key.availability({});
 ```
 
 **Input:** _empty object_
@@ -116,7 +118,8 @@ Resolve an address autocompletion by its address ID and return the full address 
 **Risk:** `read`
 
 ```ts
-await corsair.addresszen.api.resolve.addressUsa({});
+const tenant = corsair.withTenant('acme');
+await tenant.addresszen.api.resolve.addressUsa({});
 ```
 
 **Input**
@@ -168,7 +171,8 @@ Verify and standardize a US address using USPS CASS validation
 **Risk:** `read`
 
 ```ts
-await corsair.addresszen.api.verify.address({});
+const tenant = corsair.withTenant('acme');
+await tenant.addresszen.api.verify.address({});
 ```
 
 **Input**

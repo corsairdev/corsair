@@ -20,7 +20,8 @@ Tool to look up an aerial view video by address or video ID. Returns video metad
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.aerial.lookupAerialVideo({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.aerial.lookupAerialVideo({});
 ```
 
 **Input**
@@ -63,7 +64,8 @@ Starts rendering an aerial view video for a US postal address. Returns a video I
 **Risk:** `write`
 
 ```ts
-await corsair.googlemaps.api.aerial.renderAerialVideo({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.aerial.renderAerialVideo({});
 ```
 
 **Input**
@@ -107,7 +109,8 @@ DEPRECATED: Legacy API to convert street addresses into geographic coordinates (
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.geocoding.geocodeAddress({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.geocoding.geocodeAddress({});
 ```
 
 **Input**
@@ -152,7 +155,8 @@ Tool to map addresses to geographic coordinates with query parameter. Use when y
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.geocoding.geocodeAddressWithQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.geocoding.geocodeAddressWithQuery({});
 ```
 
 **Input**
@@ -194,7 +198,8 @@ Tool to perform destination lookup and return detailed destination information i
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.geocoding.geocodeDestinations({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.geocoding.geocodeDestinations({});
 ```
 
 **Input**
@@ -237,7 +242,8 @@ Tool to perform geocode lookup using a place identifier to retrieve address and 
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.geocoding.geocodePlace({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.geocoding.geocodePlace({});
 ```
 
 **Input**
@@ -279,7 +285,8 @@ Convert addresses into geographic coordinates (latitude and longitude) and vice 
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.geocoding.geocodingApi({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.geocoding.geocodingApi({});
 ```
 
 **Input**
@@ -323,7 +330,8 @@ Tool to convert geographic coordinates (latitude and longitude) to human-readabl
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.geocoding.reverseGeocodeLocation({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.geocoding.reverseGeocodeLocation({});
 ```
 
 **Input**
@@ -368,7 +376,8 @@ Tool to determine location based on cell towers and WiFi access points. Use when
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.geolocation.geolocate({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.geolocation.geolocate({});
 ```
 
 **Input**
@@ -436,7 +445,8 @@ Returns place and query predictions for text input. Use when implementing as-you
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.places.autocomplete({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.places.autocomplete({});
 ```
 
 **Input**
@@ -490,7 +500,8 @@ Retrieves comprehensive details for a place using its resource name (places/{pla
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.places.getPlaceDetails({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.places.getPlaceDetails({});
 ```
 
 **Input**
@@ -537,7 +548,8 @@ Retrieves high quality photographic content from the Google Maps Places database
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.places.getPlacePhoto({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.places.getPlacePhoto({});
 ```
 
 **Input**
@@ -569,7 +581,8 @@ Searches for places (e.g., restaurants, parks) within a specified circular area,
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.places.nearbySearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.places.nearbySearch({});
 ```
 
 **Input**
@@ -622,7 +635,8 @@ Searches for places on Google Maps using a textual query (e.g., "restaurants in 
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.places.textSearch({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.places.textSearch({});
 ```
 
 **Input**
@@ -679,7 +693,8 @@ Calculates travel distance and duration matrix between multiple origins and dest
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.routes.computeRouteMatrix({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.routes.computeRouteMatrix({});
 ```
 
 **Input**
@@ -746,7 +761,8 @@ DEPRECATED: Legacy API that calculates travel distance and time for a matrix of 
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.routes.distanceMatrix({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.routes.distanceMatrix({});
 ```
 
 **Input**
@@ -793,7 +809,8 @@ Fetches detailed directions between an origin and a destination, supporting inte
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.routes.getDirection({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.routes.getDirection({});
 ```
 
 **Input**
@@ -838,7 +855,8 @@ Calculates one or more routes between two specified locations. Uses various trav
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.routes.getRoute({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.routes.getRoute({});
 ```
 
 **Input**
@@ -901,7 +919,8 @@ Tool to create a session token required for accessing 2D Tiles and Street View i
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.tiles.createTilesSession({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.tiles.createTilesSession({});
 ```
 
 **Input**
@@ -939,7 +958,8 @@ Tool to generate an embeddable Google Map URL and HTML iframe code. Use when you
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.tiles.embedMap({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.tiles.embedMap({});
 ```
 
 **Input**
@@ -978,7 +998,8 @@ Tool to retrieve a 2D map tile image at specified coordinates for building custo
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.tiles.get2dTile({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.tiles.get2dTile({});
 ```
 
 **Input**
@@ -1012,7 +1033,8 @@ Tool to retrieve the 3D Tiles tileset root configuration for photorealistic 3D m
 **Risk:** `read`
 
 ```ts
-await corsair.googlemaps.api.tiles.get3dTilesRoot({});
+const tenant = corsair.withTenant('acme');
+await tenant.googlemaps.api.tiles.get3dTilesRoot({});
 ```
 
 **Input**

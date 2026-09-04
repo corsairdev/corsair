@@ -14,7 +14,8 @@ The Hacker news plugin syncs data locally. Use `corsair.hackernews.db.<entity>.s
 Path: `hackernews.db.items.search`
 
 ```ts
-const rows = await corsair.hackernews.db.items.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.hackernews.db.items.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -49,7 +50,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `hackernews.db.users.search`
 
 ```ts
-const rows = await corsair.hackernews.db.users.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.hackernews.db.users.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

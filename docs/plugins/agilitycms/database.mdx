@@ -14,7 +14,8 @@ The Agility CMS plugin syncs data locally. Use `corsair.agilitycms.db.<entity>.s
 Path: `agilitycms.db.contentItems.search`
 
 ```ts
-const rows = await corsair.agilitycms.db.contentItems.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agilitycms.db.contentItems.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -37,7 +38,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agilitycms.db.contentModels.search`
 
 ```ts
-const rows = await corsair.agilitycms.db.contentModels.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agilitycms.db.contentModels.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -63,7 +65,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agilitycms.db.pageModules.search`
 
 ```ts
-const rows = await corsair.agilitycms.db.pageModules.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agilitycms.db.pageModules.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -89,7 +92,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agilitycms.db.pages.search`
 
 ```ts
-const rows = await corsair.agilitycms.db.pages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agilitycms.db.pages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -120,7 +124,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agilitycms.db.sitemapNodes.search`
 
 ```ts
-const rows = await corsair.agilitycms.db.sitemapNodes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agilitycms.db.sitemapNodes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -148,7 +153,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agilitycms.db.syncItems.search`
 
 ```ts
-const rows = await corsair.agilitycms.db.syncItems.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agilitycms.db.syncItems.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -171,7 +177,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `agilitycms.db.syncPages.search`
 
 ```ts
-const rows = await corsair.agilitycms.db.syncPages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agilitycms.db.syncPages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

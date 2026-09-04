@@ -20,7 +20,8 @@ Get the hourly air quality forecast for a latitude/longitude (next 48 hours)
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.airQuality.getForecastByLatLng({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.airQuality.getForecastByLatLng({});
 ```
 
 **Input**
@@ -79,7 +80,8 @@ Get hourly historical air quality for a latitude/longitude over a time range
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.airQuality.getHistoryByLatLng({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.airQuality.getHistoryByLatLng({});
 ```
 
 **Input**
@@ -140,7 +142,8 @@ Get hourly historical air quality for a postal code over a time range
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.airQuality.getHistoryByPostalCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.airQuality.getHistoryByPostalCode({});
 ```
 
 **Input**
@@ -201,7 +204,8 @@ Get the latest air quality for the stations in a city
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.airQuality.getLatestByCity({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.airQuality.getLatestByCity({});
 ```
 
 **Input**
@@ -265,7 +269,8 @@ Get the latest air quality for the monitoring stations across a country
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.airQuality.getLatestByCountryCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.airQuality.getLatestByCountryCode({});
 ```
 
 **Input**
@@ -329,7 +334,8 @@ Get the latest air quality (AQI and pollutant concentrations) for a latitude/lon
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.airQuality.getLatestByLatLng({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.airQuality.getLatestByLatLng({});
 ```
 
 **Input**
@@ -393,7 +399,8 @@ Get the latest air quality for a postal code and country
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.airQuality.getLatestByPostalCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.airQuality.getLatestByPostalCode({});
 ```
 
 **Input**
@@ -459,7 +466,8 @@ Get historical natural disasters on a continent over a date range (paginated)
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.disasters.getHistoryByContinent({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.disasters.getHistoryByContinent({});
 ```
 
 **Input**
@@ -543,7 +551,8 @@ Get historical natural disasters in a country over a date range (paginated)
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.disasters.getHistoryByCountryCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.disasters.getHistoryByCountryCode({});
 ```
 
 **Input**
@@ -627,7 +636,8 @@ Get historical natural disasters worldwide over a date range (paginated)
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.disasters.getHistoryByDateRange({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.disasters.getHistoryByDateRange({});
 ```
 
 **Input**
@@ -710,7 +720,8 @@ Get historical natural disasters near a latitude/longitude over a date range (pa
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.disasters.getHistoryByLatLng({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.disasters.getHistoryByLatLng({});
 ```
 
 **Input**
@@ -795,7 +806,8 @@ Get the latest natural disasters on a continent (paginated)
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.disasters.getLatestByContinent({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.disasters.getLatestByContinent({});
 ```
 
 **Input**
@@ -877,7 +889,8 @@ Get the latest natural disasters in a country (paginated)
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.disasters.getLatestByCountryCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.disasters.getLatestByCountryCode({});
 ```
 
 **Input**
@@ -959,7 +972,8 @@ Get the latest natural disasters near a latitude/longitude (paginated)
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.disasters.getLatestByLatLng({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.disasters.getLatestByLatLng({});
 ```
 
 **Input**
@@ -1044,7 +1058,8 @@ Get the ground elevation at a latitude/longitude
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.elevation.getByLatLng({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.elevation.getByLatLng({});
 ```
 
 **Input**
@@ -1094,7 +1109,8 @@ Get the ground elevation for a named place
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.elevation.getByPlace({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.elevation.getByPlace({});
 ```
 
 **Input**
@@ -1145,7 +1161,8 @@ Get wildfires detected or reported near a latitude/longitude in the last 7 days
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.fire.getLatestByLatLng({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.fire.getLatestByLatLng({});
 ```
 
 **Input**
@@ -1201,7 +1218,8 @@ Get wildfires detected or reported near a named place in the last 7 days
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.fire.getLatestByPlace({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.fire.getLatestByPlace({});
 ```
 
 **Input**
@@ -1256,7 +1274,8 @@ Get the wildfire risk forecast for a latitude/longitude (up to 4 weeks ahead)
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.fire.getRiskByLatLng({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.fire.getRiskByLatLng({});
 ```
 
 **Input**
@@ -1304,7 +1323,8 @@ Get the wildfire risk forecast for a named place (up to 4 weeks ahead)
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.fire.getRiskByPlace({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.fire.getRiskByPlace({});
 ```
 
 **Input**
@@ -1353,7 +1373,8 @@ Geocode a place name or address into coordinates
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.geocode.byPlace({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.geocode.byPlace({});
 ```
 
 **Input**
@@ -1403,7 +1424,8 @@ Reverse-geocode a latitude/longitude into a human-readable address
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.geocode.reverseByLatLng({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.geocode.reverseByLatLng({});
 ```
 
 **Input**
@@ -1456,7 +1478,8 @@ Get the daily influenza-like-illness risk forecast for a latitude/longitude
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.ili.getForecastByLatLng({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.ili.getForecastByLatLng({});
 ```
 
 **Input**
@@ -1509,7 +1532,8 @@ Get the pollen forecast for a location (48 hours hourly or 120 hours 3-hourly)
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.pollen.getForecast({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.pollen.getForecast({});
 ```
 
 **Input:** `object`
@@ -1581,7 +1605,8 @@ Get historical pollen counts for a location over a time range
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.pollen.getHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.pollen.getHistory({});
 ```
 
 **Input:** `object`
@@ -1655,7 +1680,8 @@ Get the latest grass, tree and weed pollen counts and risk levels for a location
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.pollen.getLatest({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.pollen.getLatest({});
 ```
 
 **Input:** `object`
@@ -1727,7 +1753,8 @@ Get the hourly weather forecast for a latitude/longitude (next 72 hours)
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.weather.getForecast({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.weather.getForecast({});
 ```
 
 **Input**
@@ -1754,7 +1781,8 @@ Get hourly historical weather for a latitude/longitude over a time range
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.weather.getHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.weather.getHistory({});
 ```
 
 **Input**
@@ -1783,7 +1811,8 @@ Get current weather conditions (temperature, humidity, wind, UV) for a latitude/
 **Risk:** `read`
 
 ```ts
-await corsair.ambee.api.weather.getLatest({});
+const tenant = corsair.withTenant('acme');
+await tenant.ambee.api.weather.getLatest({});
 ```
 
 **Input**

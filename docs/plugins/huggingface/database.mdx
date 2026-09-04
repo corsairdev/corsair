@@ -14,7 +14,8 @@ The Hugging Face plugin syncs data locally. Use `corsair.huggingface.db.<entity>
 Path: `huggingface.db.collections.search`
 
 ```ts
-const rows = await corsair.huggingface.db.collections.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.huggingface.db.collections.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `huggingface.db.datasets.search`
 
 ```ts
-const rows = await corsair.huggingface.db.datasets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.huggingface.db.datasets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -81,7 +83,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `huggingface.db.discussions.search`
 
 ```ts
-const rows = await corsair.huggingface.db.discussions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.huggingface.db.discussions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -110,7 +113,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `huggingface.db.models.search`
 
 ```ts
-const rows = await corsair.huggingface.db.models.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.huggingface.db.models.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -147,7 +151,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `huggingface.db.papers.search`
 
 ```ts
-const rows = await corsair.huggingface.db.papers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.huggingface.db.papers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -175,7 +180,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `huggingface.db.spaces.search`
 
 ```ts
-const rows = await corsair.huggingface.db.spaces.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.huggingface.db.spaces.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { formbricks } from '@corsair-dev/formbricks';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		formbricks(),
 	],

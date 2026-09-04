@@ -14,7 +14,8 @@ The Botpress plugin syncs data locally. Use `corsair.botpress.db.<entity>.search
 Path: `botpress.db.bots.search`
 
 ```ts
-const rows = await corsair.botpress.db.bots.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.botpress.db.bots.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -45,7 +46,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `botpress.db.integrations.search`
 
 ```ts
-const rows = await corsair.botpress.db.integrations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.botpress.db.integrations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -79,7 +81,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `botpress.db.workspaces.search`
 
 ```ts
-const rows = await corsair.botpress.db.workspaces.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.botpress.db.workspaces.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

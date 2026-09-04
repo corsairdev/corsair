@@ -14,7 +14,8 @@ The Supabase plugin syncs data locally. Use `corsair.supabase.db.<entity>.search
 Path: `supabase.db.apiKeys.search`
 
 ```ts
-const rows = await corsair.supabase.db.apiKeys.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.supabase.db.apiKeys.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `supabase.db.branches.search`
 
 ```ts
-const rows = await corsair.supabase.db.branches.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.supabase.db.branches.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -67,7 +69,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `supabase.db.buckets.search`
 
 ```ts
-const rows = await corsair.supabase.db.buckets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.supabase.db.buckets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -94,7 +97,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `supabase.db.functions.search`
 
 ```ts
-const rows = await corsair.supabase.db.functions.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.supabase.db.functions.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -121,7 +125,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `supabase.db.migrations.search`
 
 ```ts
-const rows = await corsair.supabase.db.migrations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.supabase.db.migrations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -146,7 +151,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `supabase.db.organizations.search`
 
 ```ts
-const rows = await corsair.supabase.db.organizations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.supabase.db.organizations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -171,7 +177,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `supabase.db.projects.search`
 
 ```ts
-const rows = await corsair.supabase.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.supabase.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

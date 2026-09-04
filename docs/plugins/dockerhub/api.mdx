@@ -20,7 +20,8 @@ Get image variant by digest
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.images.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.images.get({});
 ```
 
 **Input**
@@ -48,7 +49,8 @@ List platform image variants (from tags)
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.images.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.images.list({});
 ```
 
 **Input**
@@ -78,7 +80,8 @@ Invite a member to an organization (bulk invite API)
 **Risk:** `write`
 
 ```ts
-await corsair.dockerhub.api.organizations.addMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.organizations.addMember({});
 ```
 
 **Input**
@@ -106,7 +109,8 @@ Create a Docker Hub organization
 **Risk:** `write`
 
 ```ts
-await corsair.dockerhub.api.organizations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.organizations.create({});
 ```
 
 **Input**
@@ -136,7 +140,8 @@ Delete an organization (idempotent)
 **Risk:** `destructive`
 
 ```ts
-await corsair.dockerhub.api.organizations.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.organizations.delete({});
 ```
 
 **Input**
@@ -161,7 +166,8 @@ List organizations for the authenticated user
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.organizations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.organizations.list({});
 ```
 
 **Input**
@@ -187,7 +193,8 @@ List organization access tokens
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.organizations.listAccessTokens({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.organizations.listAccessTokens({});
 ```
 
 **Input**
@@ -214,7 +221,8 @@ List organization members
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.organizations.listMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.organizations.listMembers({});
 ```
 
 **Input**
@@ -241,7 +249,8 @@ Remove a member from an organization
 **Risk:** `destructive`
 
 ```ts
-await corsair.dockerhub.api.organizations.removeMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.organizations.removeMember({});
 ```
 
 **Input**
@@ -269,7 +278,8 @@ Create a repository under a namespace
 **Risk:** `write`
 
 ```ts
-await corsair.dockerhub.api.repositories.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.repositories.create({});
 ```
 
 **Input**
@@ -298,7 +308,8 @@ Delete a repository (idempotent)
 **Risk:** `destructive`
 
 ```ts
-await corsair.dockerhub.api.repositories.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.repositories.delete({});
 ```
 
 **Input**
@@ -324,7 +335,8 @@ Get repository metadata
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.repositories.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.repositories.get({});
 ```
 
 **Input**
@@ -350,7 +362,8 @@ List repositories under a namespace
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.repositories.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.repositories.list({});
 ```
 
 **Input**
@@ -379,7 +392,8 @@ Delete a repository tag
 **Risk:** `destructive`
 
 ```ts
-await corsair.dockerhub.api.tags.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.tags.delete({});
 ```
 
 **Input**
@@ -406,7 +420,8 @@ Get a specific repository tag
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.tags.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.tags.get({});
 ```
 
 **Input**
@@ -433,7 +448,8 @@ List tags for a repository
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.tags.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.tags.list({});
 ```
 
 **Input**
@@ -463,7 +479,8 @@ Delete a team (idempotent)
 **Risk:** `destructive`
 
 ```ts
-await corsair.dockerhub.api.teams.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.teams.delete({});
 ```
 
 **Input**
@@ -489,7 +506,8 @@ Get team details
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.teams.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.teams.get({});
 ```
 
 **Input**
@@ -515,7 +533,8 @@ List teams (groups) in an organization
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.teams.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.teams.list({});
 ```
 
 **Input**
@@ -542,7 +561,8 @@ List team members
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.teams.listMembers({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.teams.listMembers({});
 ```
 
 **Input**
@@ -570,7 +590,8 @@ Remove a member from a team
 **Risk:** `destructive`
 
 ```ts
-await corsair.dockerhub.api.teams.removeMember({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.teams.removeMember({});
 ```
 
 **Input**
@@ -599,7 +620,8 @@ Create a repository webhook with hook URL
 **Risk:** `write`
 
 ```ts
-await corsair.dockerhub.api.webhooks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.webhooks.create({});
 ```
 
 **Input**
@@ -627,7 +649,8 @@ Delete a repository webhook
 **Risk:** `destructive`
 
 ```ts
-await corsair.dockerhub.api.webhooks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.webhooks.delete({});
 ```
 
 **Input**
@@ -654,7 +677,8 @@ Get a repository webhook
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.webhooks.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.webhooks.get({});
 ```
 
 **Input**
@@ -681,7 +705,8 @@ List repository webhooks
 **Risk:** `read`
 
 ```ts
-await corsair.dockerhub.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.dockerhub.api.webhooks.list({});
 ```
 
 **Input**

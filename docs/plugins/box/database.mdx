@@ -14,7 +14,8 @@ The Box plugin syncs data locally. Use `corsair.box.db.<entity>.search({ data, l
 Path: `box.db.files.search`
 
 ```ts
-const rows = await corsair.box.db.files.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.box.db.files.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -53,7 +54,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `box.db.folders.search`
 
 ```ts
-const rows = await corsair.box.db.folders.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.box.db.folders.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

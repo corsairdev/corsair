@@ -20,7 +20,8 @@ List all available Webvizio projects
 **Risk:** `read`
 
 ```ts
-await corsair.webvizio.api.projects.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.webvizio.api.projects.list({});
 ```
 
 **Input:** _empty object_
@@ -60,7 +61,8 @@ List all configured Webvizio webhook subscriptions
 **Risk:** `read`
 
 ```ts
-await corsair.webvizio.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.webvizio.api.webhooks.list({});
 ```
 
 **Input:** _empty object_

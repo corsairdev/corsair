@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { textrazor } from '@corsair-dev/textrazor';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		textrazor(),
 	],

@@ -20,7 +20,8 @@ Cancel an in-flight agent job
 **Risk:** `write`
 
 ```ts
-await corsair.firecrawl.api.agent.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.firecrawl.api.agent.cancel({});
 ```
 
 **Input**
@@ -50,7 +51,8 @@ Get status for an agent job
 **Risk:** `read`
 
 ```ts
-await corsair.firecrawl.api.agent.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.firecrawl.api.agent.get({});
 ```
 
 **Input**
@@ -96,7 +98,8 @@ Start an agentic extraction job
 **Risk:** `write`
 
 ```ts
-await corsair.firecrawl.api.agent.start({});
+const tenant = corsair.withTenant('acme');
+await tenant.firecrawl.api.agent.start({});
 ```
 
 **Input**
@@ -144,7 +147,8 @@ Cancel an in-flight crawl job
 **Risk:** `write`
 
 ```ts
-await corsair.firecrawl.api.crawl.cancel({});
+const tenant = corsair.withTenant('acme');
+await tenant.firecrawl.api.crawl.cancel({});
 ```
 
 **Input**
@@ -175,7 +179,8 @@ Get status and results for a crawl job
 **Risk:** `read`
 
 ```ts
-await corsair.firecrawl.api.crawl.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.firecrawl.api.crawl.get({});
 ```
 
 **Input**
@@ -242,7 +247,8 @@ Start a recursive crawl from a base URL
 **Risk:** `write`
 
 ```ts
-await corsair.firecrawl.api.crawl.start({});
+const tenant = corsair.withTenant('acme');
+await tenant.firecrawl.api.crawl.start({});
 ```
 
 **Input**
@@ -424,7 +430,8 @@ Map all URLs discovered from a site
 **Risk:** `read`
 
 ```ts
-await corsair.firecrawl.api.map.run({});
+const tenant = corsair.withTenant('acme');
+await tenant.firecrawl.api.map.run({});
 ```
 
 **Input**
@@ -490,7 +497,8 @@ Scrape a single URL (markdown, JSON, etc.)
 **Risk:** `read`
 
 ```ts
-await corsair.firecrawl.api.scrape.run({});
+const tenant = corsair.withTenant('acme');
+await tenant.firecrawl.api.scrape.run({});
 ```
 
 **Input**
@@ -734,7 +742,8 @@ Search the web and retrieve page content
 **Risk:** `read`
 
 ```ts
-await corsair.firecrawl.api.search.run({});
+const tenant = corsair.withTenant('acme');
+await tenant.firecrawl.api.search.run({});
 ```
 
 **Input**

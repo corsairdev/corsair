@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { asindataapi } from '@corsair-dev/asindataapi';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		asindataapi(),
 	],

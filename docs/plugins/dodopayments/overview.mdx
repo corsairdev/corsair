@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { dodopayments } from '@corsair-dev/dodopayments';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		dodopayments(),
 	],

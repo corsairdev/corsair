@@ -20,7 +20,8 @@ Render HTML to PDF with custom headers and footers
 **Risk:** `write`
 
 ```ts
-await corsair.api2pdf.api.chrome.addHeaderFooter({});
+const tenant = corsair.withTenant('acme');
+await tenant.api2pdf.api.chrome.addHeaderFooter({});
 ```
 
 **Input**
@@ -63,7 +64,8 @@ Convert a PDF to HTML using LibreOffice
 **Risk:** `write`
 
 ```ts
-await corsair.api2pdf.api.libreoffice.libreOfficePdfToHtml({});
+const tenant = corsair.withTenant('acme');
+await tenant.api2pdf.api.libreoffice.libreOfficePdfToHtml({});
 ```
 
 **Input**
@@ -101,7 +103,8 @@ Generate a thumbnail preview of a document
 **Risk:** `write`
 
 ```ts
-await corsair.api2pdf.api.libreoffice.libreOfficeThumbnail({});
+const tenant = corsair.withTenant('acme');
+await tenant.api2pdf.api.libreoffice.libreOfficeThumbnail({});
 ```
 
 **Input**
@@ -141,7 +144,8 @@ Extract a page range from a PDF
 **Risk:** `write`
 
 ```ts
-await corsair.api2pdf.api.pdfsharp.extractPages({});
+const tenant = corsair.withTenant('acme');
+await tenant.api2pdf.api.pdfsharp.extractPages({});
 ```
 
 **Input**
@@ -181,7 +185,8 @@ Merge multiple PDF URLs into a single document
 **Risk:** `write`
 
 ```ts
-await corsair.api2pdf.api.pdfsharp.mergePdfs({});
+const tenant = corsair.withTenant('acme');
+await tenant.api2pdf.api.pdfsharp.mergePdfs({});
 ```
 
 **Input**
@@ -219,7 +224,8 @@ Compress a PDF to reduce file size
 **Risk:** `write`
 
 ```ts
-await corsair.api2pdf.api.pdfsharp.optimizePdf({});
+const tenant = corsair.withTenant('acme');
+await tenant.api2pdf.api.pdfsharp.optimizePdf({});
 ```
 
 **Input**
@@ -257,7 +263,8 @@ Stamp a text watermark onto every page of a PDF
 **Risk:** `write`
 
 ```ts
-await corsair.api2pdf.api.pdfsharp.watermarkPdf({});
+const tenant = corsair.withTenant('acme');
+await tenant.api2pdf.api.pdfsharp.watermarkPdf({});
 ```
 
 **Input**
@@ -302,7 +309,8 @@ Check API2PDF service health status
 **Risk:** `read`
 
 ```ts
-await corsair.api2pdf.api.utility.checkStatus({});
+const tenant = corsair.withTenant('acme');
+await tenant.api2pdf.api.utility.checkStatus({});
 ```
 
 **Input:** _empty object_
@@ -327,7 +335,8 @@ Delete a previously generated PDF by response ID
 **Risk:** `write`
 
 ```ts
-await corsair.api2pdf.api.utility.deletePdf({});
+const tenant = corsair.withTenant('acme');
+await tenant.api2pdf.api.utility.deletePdf({});
 ```
 
 **Input**
@@ -360,7 +369,8 @@ Generate a barcode or QR code image
 **Risk:** `write`
 
 ```ts
-await corsair.api2pdf.api.zebra.generateBarcode({});
+const tenant = corsair.withTenant('acme');
+await tenant.api2pdf.api.zebra.generateBarcode({});
 ```
 
 **Input**

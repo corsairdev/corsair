@@ -40,6 +40,7 @@ import { createCorsair } from 'corsair';
 import { vercel } from '@corsair-dev/vercel';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		vercel(),
 	],

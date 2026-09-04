@@ -20,7 +20,8 @@ Retrieve Amazon category data and products within a category
 **Risk:** `read`
 
 ```ts
-await corsair.asindataapi.api.categories.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.categories.get({});
 ```
 
 **Input**
@@ -147,7 +148,8 @@ Create a new Collection for batch data collection
 **Risk:** `write`
 
 ```ts
-await corsair.asindataapi.api.collections.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.collections.create({});
 ```
 
 **Input**
@@ -246,7 +248,8 @@ Delete a Collection [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.asindataapi.api.collections.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.collections.delete({});
 ```
 
 **Input**
@@ -292,7 +295,8 @@ Get details of a specific Collection including status and request counts
 **Risk:** `read`
 
 ```ts
-await corsair.asindataapi.api.collections.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.collections.get({});
 ```
 
 **Input**
@@ -376,7 +380,8 @@ List all Collections on the account
 **Risk:** `read`
 
 ```ts
-await corsair.asindataapi.api.collections.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.collections.list({});
 ```
 
 **Input**
@@ -477,7 +482,8 @@ Start a Collection to run all its requests immediately
 **Risk:** `write`
 
 ```ts
-await corsair.asindataapi.api.collections.start({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.collections.start({});
 ```
 
 **Input**
@@ -523,7 +529,8 @@ Update an existing Collection's configuration (only when not running)
 **Risk:** `write`
 
 ```ts
-await corsair.asindataapi.api.collections.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.collections.update({});
 ```
 
 **Input**
@@ -625,7 +632,8 @@ Create a new Destination for exporting Collection Result Sets
 **Risk:** `write`
 
 ```ts
-await corsair.asindataapi.api.destinations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.destinations.create({});
 ```
 
 **Input**
@@ -730,7 +738,8 @@ Delete a Destination [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.asindataapi.api.destinations.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.destinations.delete({});
 ```
 
 **Input**
@@ -776,7 +785,8 @@ List all configured Destinations (S3, GCS, Azure Blob, S3-compatible)
 **Risk:** `read`
 
 ```ts
-await corsair.asindataapi.api.destinations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.destinations.list({});
 ```
 
 **Input**
@@ -863,7 +873,8 @@ Update an existing Destination's configuration
 **Risk:** `write`
 
 ```ts
-await corsair.asindataapi.api.destinations.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.destinations.update({});
 ```
 
 **Input**
@@ -958,7 +969,8 @@ Resolve GTIN, ISBN, UPC, or EAN identifiers to ASINs automatically
 **Risk:** `read`
 
 ```ts
-await corsair.asindataapi.api.identifiers.resolve({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.identifiers.resolve({});
 ```
 
 **Input**
@@ -1100,7 +1112,8 @@ Retrieve product offers, pricing, availability, and seller information
 **Risk:** `read`
 
 ```ts
-await corsair.asindataapi.api.offers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.offers.get({});
 ```
 
 **Input**
@@ -1233,7 +1246,8 @@ Retrieve Amazon product details by ASIN, URL, or GTIN/ISBN/UPC/EAN
 **Risk:** `read`
 
 ```ts
-await corsair.asindataapi.api.products.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.products.get({});
 ```
 
 **Input**
@@ -1378,7 +1392,8 @@ Add Requests to a Collection (up to 1000 per call)
 **Risk:** `write`
 
 ```ts
-await corsair.asindataapi.api.requests.add({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.requests.add({});
 ```
 
 **Input**
@@ -1490,7 +1505,8 @@ Bulk-delete multiple Requests from a Collection by their IDs [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.asindataapi.api.requests.clear({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.requests.clear({});
 ```
 
 **Input**
@@ -1537,7 +1553,8 @@ Delete a single Request from a Collection [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.asindataapi.api.requests.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.requests.delete({});
 ```
 
 **Input**
@@ -1584,7 +1601,8 @@ List all Requests in a Collection (paginated, 1000 per page)
 **Risk:** `read`
 
 ```ts
-await corsair.asindataapi.api.requests.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.requests.list({});
 ```
 
 **Input**
@@ -1662,7 +1680,8 @@ Update a single Request within a Collection
 **Risk:** `write`
 
 ```ts
-await corsair.asindataapi.api.requests.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.requests.update({});
 ```
 
 **Input**
@@ -1754,7 +1773,8 @@ Get a specific Result Set with download links
 **Risk:** `read`
 
 ```ts
-await corsair.asindataapi.api.resultSets.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.resultSets.get({});
 ```
 
 **Input**
@@ -1838,7 +1858,8 @@ List all Result Sets for a Collection
 **Risk:** `read`
 
 ```ts
-await corsair.asindataapi.api.resultSets.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.resultSets.list({});
 ```
 
 **Input**
@@ -1962,7 +1983,8 @@ Search Amazon products by keywords across supported Amazon domains
 **Risk:** `read`
 
 ```ts
-await corsair.asindataapi.api.search.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.asindataapi.api.search.get({});
 ```
 
 **Input**

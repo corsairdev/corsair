@@ -14,7 +14,8 @@ The BaseLinker plugin syncs data locally. Use `corsair.baselinker.db.<entity>.se
 Path: `baselinker.db.categories.search`
 
 ```ts
-const rows = await corsair.baselinker.db.categories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.categories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -37,7 +38,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.connectIntegrations.search`
 
 ```ts
-const rows = await corsair.baselinker.db.connectIntegrations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.connectIntegrations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -60,7 +62,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.couriers.search`
 
 ```ts
-const rows = await corsair.baselinker.db.couriers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.couriers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -83,7 +86,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.externalStorages.search`
 
 ```ts
-const rows = await corsair.baselinker.db.externalStorages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.externalStorages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -106,7 +110,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.inventories.search`
 
 ```ts
-const rows = await corsair.baselinker.db.inventories.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.inventories.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -129,7 +134,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.inventoryExtraFields.search`
 
 ```ts
-const rows = await corsair.baselinker.db.inventoryExtraFields.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.inventoryExtraFields.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -152,7 +158,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.manufacturers.search`
 
 ```ts
-const rows = await corsair.baselinker.db.manufacturers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.manufacturers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -175,7 +182,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.orderStatuses.search`
 
 ```ts
-const rows = await corsair.baselinker.db.orderStatuses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.orderStatuses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -198,7 +206,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.payers.search`
 
 ```ts
-const rows = await corsair.baselinker.db.payers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.payers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -221,7 +230,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.priceGroups.search`
 
 ```ts
-const rows = await corsair.baselinker.db.priceGroups.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.priceGroups.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -244,7 +254,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.returnProductStatuses.search`
 
 ```ts
-const rows = await corsair.baselinker.db.returnProductStatuses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.returnProductStatuses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -267,7 +278,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.returnReasons.search`
 
 ```ts
-const rows = await corsair.baselinker.db.returnReasons.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.returnReasons.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -290,7 +302,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.returnStatuses.search`
 
 ```ts
-const rows = await corsair.baselinker.db.returnStatuses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.returnStatuses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -313,7 +326,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.suppliers.search`
 
 ```ts
-const rows = await corsair.baselinker.db.suppliers.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.suppliers.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -336,7 +350,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.tags.search`
 
 ```ts
-const rows = await corsair.baselinker.db.tags.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.tags.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -359,7 +374,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `baselinker.db.warehouses.search`
 
 ```ts
-const rows = await corsair.baselinker.db.warehouses.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.baselinker.db.warehouses.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

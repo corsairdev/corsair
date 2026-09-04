@@ -20,7 +20,8 @@ Archive a board
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.boards.archive({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.boards.archive({});
 ```
 
 **Input**
@@ -61,7 +62,8 @@ Create a new board
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.boards.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.boards.create({});
 ```
 
 **Input**
@@ -106,7 +108,8 @@ Permanently delete a board
 **Risk:** `destructive`
 
 ```ts
-await corsair.monday.api.boards.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.boards.delete({});
 ```
 
 **Input**
@@ -147,7 +150,8 @@ Duplicate a board
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.boards.duplicate({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.boards.duplicate({});
 ```
 
 **Input**
@@ -193,7 +197,8 @@ Get a board by ID with groups and columns
 **Risk:** `read`
 
 ```ts
-await corsair.monday.api.boards.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.boards.get({});
 ```
 
 **Input**
@@ -253,7 +258,8 @@ List all boards
 **Risk:** `read`
 
 ```ts
-await corsair.monday.api.boards.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.boards.list({});
 ```
 
 **Input**
@@ -304,7 +310,8 @@ Update a board attribute
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.boards.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.boards.update({});
 ```
 
 **Input**
@@ -349,7 +356,8 @@ Change a column value on an item
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.columns.changeValue({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.columns.changeValue({});
 ```
 
 **Input**
@@ -393,7 +401,8 @@ Create a new column in a board
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.columns.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.columns.create({});
 ```
 
 **Input**
@@ -438,7 +447,8 @@ List all columns in a board
 **Risk:** `read`
 
 ```ts
-await corsair.monday.api.columns.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.columns.list({});
 ```
 
 **Input**
@@ -487,7 +497,8 @@ Create a new group in a board
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.groups.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.groups.create({});
 ```
 
 **Input**
@@ -531,7 +542,8 @@ Delete a group from a board
 **Risk:** `destructive`
 
 ```ts
-await corsair.monday.api.groups.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.groups.delete({});
 ```
 
 **Input**
@@ -573,7 +585,8 @@ List all groups in a board
 **Risk:** `read`
 
 ```ts
-await corsair.monday.api.groups.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.groups.list({});
 ```
 
 **Input**
@@ -620,7 +633,8 @@ Update a group attribute
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.groups.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.groups.update({});
 ```
 
 **Input**
@@ -666,7 +680,8 @@ Archive an item
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.items.archive({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.items.archive({});
 ```
 
 **Input**
@@ -707,7 +722,8 @@ Create a new item in a board
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.items.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.items.create({});
 ```
 
 **Input**
@@ -752,7 +768,8 @@ Permanently delete an item
 **Risk:** `destructive`
 
 ```ts
-await corsair.monday.api.items.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.items.delete({});
 ```
 
 **Input**
@@ -793,7 +810,8 @@ Get an item by ID with column values
 **Risk:** `read`
 
 ```ts
-await corsair.monday.api.items.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.items.get({});
 ```
 
 **Input**
@@ -852,7 +870,8 @@ List items in a board
 **Risk:** `read`
 
 ```ts
-await corsair.monday.api.items.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.items.list({});
 ```
 
 **Input**
@@ -918,7 +937,8 @@ Move an item to a different group
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.items.move({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.items.move({});
 ```
 
 **Input**
@@ -960,7 +980,8 @@ Update a column value on an item
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.items.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.items.update({});
 ```
 
 **Input**
@@ -1006,7 +1027,8 @@ Create an update (comment) on an item
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.updates.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.updates.create({});
 ```
 
 **Input**
@@ -1049,7 +1071,8 @@ Delete an update (comment)
 **Risk:** `destructive`
 
 ```ts
-await corsair.monday.api.updates.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.updates.delete({});
 ```
 
 **Input**
@@ -1090,7 +1113,8 @@ List updates (comments) on an item
 **Risk:** `read`
 
 ```ts
-await corsair.monday.api.updates.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.updates.list({});
 ```
 
 **Input**
@@ -1148,7 +1172,8 @@ Get a user by ID
 **Risk:** `read`
 
 ```ts
-await corsair.monday.api.users.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.users.get({});
 ```
 
 **Input**
@@ -1195,7 +1220,8 @@ List all users in the account
 **Risk:** `read`
 
 ```ts
-await corsair.monday.api.users.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.users.list({});
 ```
 
 **Input**
@@ -1246,7 +1272,8 @@ Subscribe to a board event via webhook
 **Risk:** `write`
 
 ```ts
-await corsair.monday.api.webhooks.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.webhooks.create({});
 ```
 
 **Input**
@@ -1292,7 +1319,8 @@ Unsubscribe a webhook by ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.monday.api.webhooks.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.webhooks.delete({});
 ```
 
 **Input**
@@ -1334,7 +1362,8 @@ List all webhooks for a board
 **Risk:** `read`
 
 ```ts
-await corsair.monday.api.webhooks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.webhooks.list({});
 ```
 
 **Input**
@@ -1379,7 +1408,8 @@ List all workspaces
 **Risk:** `read`
 
 ```ts
-await corsair.monday.api.workspaces.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.monday.api.workspaces.list({});
 ```
 
 **Input**

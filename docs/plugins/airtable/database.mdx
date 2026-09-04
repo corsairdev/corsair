@@ -14,7 +14,8 @@ The Airtable plugin syncs data locally. Use `corsair.airtable.db.<entity>.search
 Path: `airtable.db.bases.search`
 
 ```ts
-const rows = await corsair.airtable.db.bases.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.airtable.db.bases.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -39,7 +40,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `airtable.db.records.search`
 
 ```ts
-const rows = await corsair.airtable.db.records.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.airtable.db.records.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

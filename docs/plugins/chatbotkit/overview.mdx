@@ -39,6 +39,7 @@ import { createCorsair } from 'corsair';
 import { chatbotkit } from '@corsair-dev/chatbotkit';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		chatbotkit(),
 	],

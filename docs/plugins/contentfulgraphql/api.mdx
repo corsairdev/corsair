@@ -20,7 +20,8 @@ Get the stored Contentful access token, space ID, and environment ID
 **Risk:** `read`
 
 ```ts
-await corsair.contentfulgraphql.api.getCmaToken({});
+const tenant = corsair.withTenant('acme');
+await tenant.contentfulgraphql.api.getCmaToken({});
 ```
 
 **Input:** _empty object_
@@ -48,7 +49,8 @@ Run an automatic persisted query (APQ) against the Contentful GraphQL Content AP
 **Risk:** `read`
 
 ```ts
-await corsair.contentfulgraphql.api.graphQlContentApiPersistedQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.contentfulgraphql.api.graphQlContentApiPersistedQuery({});
 ```
 
 **Input**
@@ -103,7 +105,8 @@ Run a GraphQL query against the Contentful GraphQL Content API for the configure
 **Risk:** `read`
 
 ```ts
-await corsair.contentfulgraphql.api.graphQlContentApiQuery({});
+const tenant = corsair.withTenant('acme');
+await tenant.contentfulgraphql.api.graphQlContentApiQuery({});
 ```
 
 **Input**

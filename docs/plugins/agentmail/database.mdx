@@ -14,7 +14,8 @@ The AgentMail plugin syncs data locally. Use `corsair.agentmail.db.<entity>.sear
 Path: `agentmail.db.messages.search`
 
 ```ts
-const rows = await corsair.agentmail.db.messages.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.agentmail.db.messages.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

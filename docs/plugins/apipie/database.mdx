@@ -14,7 +14,8 @@ The APIpie AI plugin syncs data locally. Use `corsair.apipie.db.<entity>.search(
 Path: `apipie.db.images.search`
 
 ```ts
-const rows = await corsair.apipie.db.images.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apipie.db.images.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -42,7 +43,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apipie.db.modelDetails.search`
 
 ```ts
-const rows = await corsair.apipie.db.modelDetails.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apipie.db.modelDetails.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -89,7 +91,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `apipie.db.models.search`
 
 ```ts
-const rows = await corsair.apipie.db.models.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.apipie.db.models.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

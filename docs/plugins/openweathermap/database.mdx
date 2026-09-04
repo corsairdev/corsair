@@ -14,7 +14,8 @@ The Open Weather Map plugin syncs data locally. Use `corsair.openweathermap.db.<
 Path: `openweathermap.db.daySummaries.search`
 
 ```ts
-const rows = await corsair.openweathermap.db.daySummaries.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.openweathermap.db.daySummaries.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -54,7 +55,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `openweathermap.db.overviews.search`
 
 ```ts
-const rows = await corsair.openweathermap.db.overviews.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.openweathermap.db.overviews.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

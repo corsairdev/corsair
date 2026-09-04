@@ -14,7 +14,8 @@ The Securitytrails plugin syncs data locally. Use `corsair.securitytrails.db.<en
 Path: `securitytrails.db.certificates.search`
 
 ```ts
-const rows = await corsair.securitytrails.db.certificates.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.securitytrails.db.certificates.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -44,7 +45,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `securitytrails.db.companyIpRanges.search`
 
 ```ts
-const rows = await corsair.securitytrails.db.companyIpRanges.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.securitytrails.db.companyIpRanges.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -69,7 +71,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `securitytrails.db.domains.search`
 
 ```ts
-const rows = await corsair.securitytrails.db.domains.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.securitytrails.db.domains.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -95,7 +98,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `securitytrails.db.ips.search`
 
 ```ts
-const rows = await corsair.securitytrails.db.ips.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.securitytrails.db.ips.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -121,7 +125,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `securitytrails.db.projects.search`
 
 ```ts
-const rows = await corsair.securitytrails.db.projects.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.securitytrails.db.projects.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

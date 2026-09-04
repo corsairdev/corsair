@@ -14,7 +14,8 @@ The Ambee plugin syncs data locally. Use `corsair.ambee.db.<entity>.search({ dat
 Path: `ambee.db.airQualityReadings.search`
 
 ```ts
-const rows = await corsair.ambee.db.airQualityReadings.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ambee.db.airQualityReadings.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -55,7 +56,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `ambee.db.geocodedPlaces.search`
 
 ```ts
-const rows = await corsair.ambee.db.geocodedPlaces.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ambee.db.geocodedPlaces.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -87,7 +89,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `ambee.db.weatherObservations.search`
 
 ```ts
-const rows = await corsair.ambee.db.weatherObservations.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.ambee.db.weatherObservations.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,

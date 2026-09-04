@@ -38,6 +38,7 @@ import { createCorsair } from 'corsair';
 import { clockify } from '@corsair-dev/clockify';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 		clockify(),
 	],

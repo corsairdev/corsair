@@ -20,7 +20,8 @@ Get the authenticated account
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.account.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.account.get({});
 ```
 
 **Input:** _empty object_
@@ -49,7 +50,8 @@ Get an account preference by key
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.account.getPreference({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.account.getPreference({});
 ```
 
 **Input**
@@ -79,7 +81,8 @@ Set an account preference by key
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.account.setPreference({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.account.setPreference({});
 ```
 
 **Input**
@@ -105,7 +108,8 @@ Update the authenticated account profile
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.account.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.account.update({});
 ```
 
 **Input**
@@ -143,7 +147,8 @@ Charge outstanding invoices for a workspace [DESTRUCTIVE - real financial action
 **Risk:** `destructive`
 
 ```ts
-await corsair.botpress.api.billing.chargeUnpaidInvoices({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.billing.chargeUnpaidInvoices({});
 ```
 
 **Input**
@@ -198,7 +203,8 @@ Preview the upcoming invoice for a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.billing.getUpcomingInvoice({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.billing.getUpcomingInvoice({});
 ```
 
 **Input**
@@ -248,7 +254,8 @@ List invoices billed to a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.billing.listInvoices({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.billing.listInvoices({});
 ```
 
 **Input**
@@ -296,7 +303,8 @@ List usage history for a workspace or bot
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.billing.listUsageHistory({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.billing.listUsageHistory({});
 ```
 
 **Input**
@@ -339,7 +347,8 @@ Create a bot in a workspace
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.bots.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.bots.create({});
 ```
 
 **Input**
@@ -506,7 +515,8 @@ List a bot's action-run history
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.bots.listActionRuns({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.bots.listActionRuns({});
 ```
 
 **Input**
@@ -565,7 +575,8 @@ List configuration and runtime issues for a bot
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.bots.listIssues({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.bots.listIssues({});
 ```
 
 **Input**
@@ -617,7 +628,8 @@ Update a bot
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.bots.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.bots.update({});
 ```
 
 **Input**
@@ -808,7 +820,8 @@ Create a conversation on a channel
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.chat.createConversation({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.chat.createConversation({});
 ```
 
 **Input**
@@ -884,7 +897,8 @@ List a bot's conversations
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.chat.listConversations({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.chat.listConversations({});
 ```
 
 **Input**
@@ -957,7 +971,8 @@ Send a message into a conversation
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.chat.sendMessage({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.chat.sendMessage({});
 ```
 
 **Input**
@@ -1049,7 +1064,8 @@ Update a workflow's status, output or failure reason
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.chat.updateWorkflow({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.chat.updateWorkflow({});
 ```
 
 **Input**
@@ -1146,7 +1162,8 @@ Delete a file from a bot's storage [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.botpress.api.files.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.files.delete({});
 ```
 
 **Input**
@@ -1172,7 +1189,8 @@ List tags used across a bot's files
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.files.listTags({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.files.listTags({});
 ```
 
 **Input**
@@ -1205,7 +1223,8 @@ List all values seen for a given file tag
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.files.listTagValues({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.files.listTagValues({});
 ```
 
 **Input**
@@ -1241,7 +1260,8 @@ Get a public plugin with interface entity references resolved
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.hub.getDereferencedPluginById({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.hub.getDereferencedPluginById({});
 ```
 
 **Input**
@@ -1287,7 +1307,8 @@ Get a public integration by name and version
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.hub.getIntegration({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.hub.getIntegration({});
 ```
 
 **Input**
@@ -1343,7 +1364,8 @@ Get a public integration by id
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.hub.getIntegrationById({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.hub.getIntegrationById({});
 ```
 
 **Input**
@@ -1398,7 +1420,8 @@ Get a public interface by name and version
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.hub.getInterface({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.hub.getInterface({});
 ```
 
 **Input**
@@ -1438,7 +1461,8 @@ Get a public interface by id
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.hub.getInterfaceById({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.hub.getInterfaceById({});
 ```
 
 **Input**
@@ -1477,7 +1501,8 @@ Get a public plugin by name and version
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.hub.getPlugin({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.hub.getPlugin({});
 ```
 
 **Input**
@@ -1518,7 +1543,8 @@ Get a public plugin by id
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.hub.getPluginById({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.hub.getPluginById({});
 ```
 
 **Input**
@@ -1558,7 +1584,8 @@ Get a public plugin's source code for a platform
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.hub.getPluginCode({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.hub.getPluginCode({});
 ```
 
 **Input**
@@ -1589,7 +1616,8 @@ List public integrations in the hub
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.hub.listIntegrations({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.hub.listIntegrations({});
 ```
 
 **Input**
@@ -1658,7 +1686,8 @@ List public interfaces in the hub
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.hub.listInterfaces({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.hub.listInterfaces({});
 ```
 
 **Input**
@@ -1712,7 +1741,8 @@ List public plugins in the hub
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.hub.listPlugins({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.hub.listPlugins({});
 ```
 
 **Input**
@@ -1769,7 +1799,8 @@ Create an integration in a workspace
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.integrations.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.integrations.create({});
 ```
 
 **Input**
@@ -1944,7 +1975,8 @@ Delete the shareable id for a bot-integration pair [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.botpress.api.integrations.deleteShareableId({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.integrations.deleteShareableId({});
 ```
 
 **Input**
@@ -1971,7 +2003,8 @@ Get an integration by id
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.integrations.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.integrations.get({});
 ```
 
 **Input**
@@ -2015,7 +2048,8 @@ List integrations owned by the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.integrations.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.integrations.list({});
 ```
 
 **Input**
@@ -2083,7 +2117,8 @@ List Integration API Keys (IAKs) for an integration
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.integrations.listApiKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.integrations.listApiKeys({});
 ```
 
 **Input**
@@ -2121,7 +2156,8 @@ Submit an integration for verification
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.integrations.requestVerification({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.integrations.requestVerification({});
 ```
 
 **Input**
@@ -2146,7 +2182,8 @@ Validate that an integration update would succeed
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.integrations.validateUpdate({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.integrations.validateUpdate({});
 ```
 
 **Input**
@@ -2295,7 +2332,8 @@ Permanently delete a knowledge base [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.botpress.api.knowledgeBases.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.knowledgeBases.delete({});
 ```
 
 **Input**
@@ -2321,7 +2359,8 @@ List a bot's knowledge bases
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.knowledgeBases.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.knowledgeBases.list({});
 ```
 
 **Input**
@@ -2383,7 +2422,8 @@ List plugins installed in the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.plugins.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.plugins.list({});
 ```
 
 **Input**
@@ -2440,7 +2480,8 @@ Fetch a single row from a table by id
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.tools.getTableRow({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.tools.getTableRow({});
 ```
 
 **Input**
@@ -2474,7 +2515,8 @@ Execute a VRL script against input data
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.tools.runVrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.tools.runVrl({});
 ```
 
 **Input**
@@ -2518,7 +2560,8 @@ Break down a workspace's usage of a quota type by bot
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.workspaces.breakDownUsageByBot({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.workspaces.breakDownUsageByBot({});
 ```
 
 **Input**
@@ -2557,7 +2600,8 @@ Check whether a workspace handle is available
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.workspaces.checkHandleAvailability({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.workspaces.checkHandleAvailability({});
 ```
 
 **Input**
@@ -2589,7 +2633,8 @@ Create a workspace
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.workspaces.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.workspaces.create({});
 ```
 
 **Input**
@@ -2637,7 +2682,8 @@ Permanently delete a workspace [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.botpress.api.workspaces.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.workspaces.delete({});
 ```
 
 **Input**
@@ -2662,7 +2708,8 @@ Get a workspace by id
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.workspaces.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.workspaces.get({});
 ```
 
 **Input**
@@ -2709,7 +2756,8 @@ Get the highest quota completion rate for every workspace
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.workspaces.getAllQuotaCompletion({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.workspaces.getAllQuotaCompletion({});
 ```
 
 **Input:** _empty object_
@@ -2739,7 +2787,8 @@ Get a workspace's usage against a quota type
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.workspaces.getQuota({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.workspaces.getQuota({});
 ```
 
 **Input**
@@ -2773,7 +2822,8 @@ List workspaces owned by the account
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.workspaces.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.workspaces.list({});
 ```
 
 **Input**
@@ -2834,7 +2884,8 @@ List public workspaces
 **Risk:** `read`
 
 ```ts
-await corsair.botpress.api.workspaces.listPublic({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.workspaces.listPublic({});
 ```
 
 **Input**
@@ -2896,7 +2947,8 @@ Set a workspace preference by key
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.workspaces.setPreference({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.workspaces.setPreference({});
 ```
 
 **Input**
@@ -2922,7 +2974,8 @@ Update workspace settings
 **Risk:** `write`
 
 ```ts
-await corsair.botpress.api.workspaces.update({});
+const tenant = corsair.withTenant('acme');
+await tenant.botpress.api.workspaces.update({});
 ```
 
 **Input**

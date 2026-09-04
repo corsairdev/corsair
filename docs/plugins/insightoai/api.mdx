@@ -20,7 +20,8 @@ Create a new agency with organization-specific branding and config
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.agency.createAgency({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.agency.createAgency({});
 ```
 
 **Input**
@@ -93,7 +94,8 @@ View an agency billing plan limits for bots, queries, words, and voice seconds
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.agency.getAgencyBillingPlan({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.agency.getAgencyBillingPlan({});
 ```
 
 **Input**
@@ -128,7 +130,8 @@ Retrieve the branding configuration for an agency
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.agency.getAgencyBrandingById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.agency.getAgencyBrandingById({});
 ```
 
 **Input**
@@ -163,7 +166,8 @@ Fetch a paginated list of team agents/users
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.agency.getAgentList({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.agency.getAgentList({});
 ```
 
 **Input**
@@ -199,7 +203,8 @@ Retrieve pricing tier information for LLM, voice, or transcription services
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.agency.getPricingForUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.agency.getPricingForUser({});
 ```
 
 **Input**
@@ -236,7 +241,8 @@ Retrieve monthly aggregated usage analytics
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.agency.retrieveUserMonthlyUsagesAggregation({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.agency.retrieveUserMonthlyUsagesAggregation({});
 ```
 
 **Input**
@@ -272,7 +278,8 @@ Modify user account details, contact information, or billing settings
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.agency.updateUserProfile({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.agency.updateUserProfile({});
 ```
 
 **Input**
@@ -309,7 +316,8 @@ Link an existing conversational intent to an assistant
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.assistants.addIntentToAssistant({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.assistants.addIntentToAssistant({});
 ```
 
 **Input**
@@ -356,7 +364,8 @@ Create a new custom conversational intent
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.assistants.createIntent({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.assistants.createIntent({});
 ```
 
 **Input**
@@ -405,7 +414,8 @@ Create a new customizable AI prompt template with variable support
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.assistants.createPrompt({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.assistants.createPrompt({});
 ```
 
 **Input**
@@ -443,7 +453,8 @@ Permanently remove an assistant from the system
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.assistants.deleteAssistantById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.assistants.deleteAssistantById({});
 ```
 
 **Input**
@@ -478,7 +489,8 @@ Permanently delete a prompt template by ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.assistants.deletePromptById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.assistants.deletePromptById({});
 ```
 
 **Input**
@@ -513,7 +525,8 @@ Retrieve comprehensive details and configuration of a specific assistant
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.assistants.getAssistantById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.assistants.getAssistantById({});
 ```
 
 **Input**
@@ -548,7 +561,8 @@ Retrieve details of a specific intent by ID
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.assistants.getIntentById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.assistants.getIntentById({});
 ```
 
 **Input**
@@ -583,7 +597,8 @@ Retrieve details of a specific prompt template by ID
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.assistants.getPromptById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.assistants.getPromptById({});
 ```
 
 **Input**
@@ -618,7 +633,8 @@ Retrieve a paginated list of all configured intents
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.assistants.readIntentsList({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.assistants.readIntentsList({});
 ```
 
 **Input**
@@ -656,7 +672,8 @@ Create a custom metadata field for contacts
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.contacts.createContactCustomField({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.contacts.createContactCustomField({});
 ```
 
 **Input**
@@ -693,7 +710,8 @@ Delete multiple contacts simultaneously by UUIDs
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.contacts.deleteContactsInBulk({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.contacts.deleteContactsInBulk({});
 ```
 
 **Input**
@@ -728,7 +746,8 @@ Retrieve a comprehensive profile of a specific contact
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.contacts.getContactById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.contacts.getContactById({});
 ```
 
 **Input**
@@ -763,7 +782,8 @@ Fetch a paginated list of contacts
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.contacts.getListOfContacts({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.contacts.getListOfContacts({});
 ```
 
 **Input**
@@ -799,7 +819,8 @@ Fetch all contacts enrolled in a specific campaign
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.contacts.readCampaignContactList({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.contacts.readCampaignContactList({});
 ```
 
 **Input**
@@ -836,7 +857,8 @@ Retrieve definitions of all contact custom fields
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.contacts.readContactCustomFieldList({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.contacts.readContactCustomFieldList({});
 ```
 
 **Input**
@@ -872,7 +894,8 @@ Retrieve audit history and logs of contact synchronization operations
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.contacts.readContactSyncLogList({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.contacts.readContactSyncLogList({});
 ```
 
 **Input**
@@ -908,7 +931,8 @@ Send bulk broadcast messages to contacts via connected WhatsApp or SMS
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.contacts.sendMessagesToContacts({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.contacts.sendMessagesToContacts({});
 ```
 
 **Input**
@@ -946,7 +970,8 @@ Create or update a contact using email or phone number
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.contacts.upsertContactByEmailOrPhoneNumber({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.contacts.upsertContactByEmailOrPhoneNumber({});
 ```
 
 **Input**
@@ -986,7 +1011,8 @@ Create a custom tag for categorizing contacts and conversations
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.datasources.createTag({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.datasources.createTag({});
 ```
 
 **Input**
@@ -1034,7 +1060,8 @@ Unlink and remove a data source from an assistant's knowledge base
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.datasources.deleteLinkedAssistantDatasource({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.datasources.deleteLinkedAssistantDatasource({});
 ```
 
 **Input**
@@ -1070,7 +1097,8 @@ Remove a specific tag association from an entity
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.datasources.deleteLinkTagEntityById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.datasources.deleteLinkTagEntityById({});
 ```
 
 **Input**
@@ -1105,7 +1133,8 @@ Permanently remove a tag by ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.datasources.deleteTagById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.datasources.deleteTagById({});
 ```
 
 **Input**
@@ -1140,7 +1169,8 @@ Retrieve comprehensive details of a specific knowledge base data source
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.datasources.getDatasourceById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.datasources.getDatasourceById({});
 ```
 
 **Input**
@@ -1175,7 +1205,8 @@ Discover all available knowledge base data sources (text, URLs, files)
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.datasources.getListOfDatasources({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.datasources.getListOfDatasources({});
 ```
 
 **Input**
@@ -1211,7 +1242,8 @@ List all data sources linked to an assistant
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.datasources.getListOfDataSourcesLinkedToAssistantId({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.datasources.getListOfDataSourcesLinkedToAssistantId({});
 ```
 
 **Input**
@@ -1248,7 +1280,8 @@ Fetch a paginated list of all available tags
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.datasources.readTagList({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.datasources.readTagList({});
 ```
 
 **Input**
@@ -1286,7 +1319,8 @@ Create a conversational AI-driven or traditional data capture form
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.forms.createForm({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.forms.createForm({});
 ```
 
 **Input**
@@ -1355,7 +1389,8 @@ Delete multiple forms in a single bulk operation
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.forms.deleteBulkFormsByIds({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.forms.deleteBulkFormsByIds({});
 ```
 
 **Input**
@@ -1390,7 +1425,8 @@ Permanently remove a form by unique ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.forms.deleteFormById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.forms.deleteFormById({});
 ```
 
 **Input**
@@ -1425,7 +1461,8 @@ Fetch captured user form submissions with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.forms.getCapturedFormByFormId({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.forms.getCapturedFormByFormId({});
 ```
 
 **Input**
@@ -1464,7 +1501,8 @@ Configure an AI provider (OpenAI, ElevenLabs, Azure Speech, Cartesia, PlayHT)
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.providers.createProvider({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.providers.createProvider({});
 ```
 
 **Input**
@@ -1514,7 +1552,8 @@ Permanently delete an AI provider configuration
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.providers.deleteProviderById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.providers.deleteProviderById({});
 ```
 
 **Input**
@@ -1549,7 +1588,8 @@ Retrieve configuration details of an AI provider
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.providers.getProviderById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.providers.getProviderById({});
 ```
 
 **Input**
@@ -1584,7 +1624,8 @@ Fetch a paginated list of available speech-to-text voice configurations
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.providers.getSpeechtotextList({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.providers.getSpeechtotextList({});
 ```
 
 **Input**
@@ -1620,7 +1661,8 @@ Retrieve a paginated list of custom user voice models
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.providers.retrieveListOfUserCustomVoice({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.providers.retrieveListOfUserCustomVoice({});
 ```
 
 **Input**
@@ -1658,7 +1700,8 @@ Register a new tool function (SDK, CURL, or query index) for assistant workflows
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.tools.createToolfunction({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.tools.createToolfunction({});
 ```
 
 **Input**
@@ -1708,7 +1751,8 @@ Remove an entire tool integration by ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.tools.deleteToolById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.tools.deleteToolById({});
 ```
 
 **Input**
@@ -1743,7 +1787,8 @@ Remove a tool function from the system
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.tools.deleteToolfunctionById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.tools.deleteToolfunctionById({});
 ```
 
 **Input**
@@ -1778,7 +1823,8 @@ Inspect execution history and audit logs of tool function calls
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.tools.readToolFunctionInvokeLogList({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.tools.readToolFunctionInvokeLogList({});
 ```
 
 **Input**
@@ -1815,7 +1861,8 @@ Fetch all tool functions associated with a specific tool ID
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.tools.readToolToolfunctionList({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.tools.readToolToolfunctionList({});
 ```
 
 **Input**
@@ -1852,7 +1899,8 @@ Retrieve linked tool and user associations
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.tools.retrieveLinkedToolAndUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.tools.retrieveLinkedToolAndUser({});
 ```
 
 **Input**
@@ -1889,7 +1937,8 @@ Modify properties of a linked tool user integration
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.tools.updateLinkToolUser({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.tools.updateLinkToolUser({});
 ```
 
 **Input**
@@ -1947,7 +1996,8 @@ Modify general properties and enabled status of a tool
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.tools.updateToolById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.tools.updateToolById({});
 ```
 
 **Input**
@@ -2020,7 +2070,8 @@ Modify the name, type, or enabled status of an existing tool function
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.tools.updateToolfunctionById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.tools.updateToolfunctionById({});
 ```
 
 **Input**
@@ -2073,7 +2124,8 @@ Configure an outbound webhook URL for event notifications
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.webhooksTelephony.createWebhook({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.webhooksTelephony.createWebhook({});
 ```
 
 **Input**
@@ -2110,7 +2162,8 @@ Remove a Twilio authentication integration
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.webhooksTelephony.deleteTwilioAuthById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.webhooksTelephony.deleteTwilioAuthById({});
 ```
 
 **Input**
@@ -2145,7 +2198,8 @@ Remove a WhatsApp Business connection
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.webhooksTelephony.deleteUserwhatsappById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.webhooksTelephony.deleteUserwhatsappById({});
 ```
 
 **Input**
@@ -2180,7 +2234,8 @@ Permanently remove an outbound webhook configuration
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.webhooksTelephony.deleteWebhookById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.webhooksTelephony.deleteWebhookById({});
 ```
 
 **Input**
@@ -2215,7 +2270,8 @@ Retrieve all configured Twilio authentication integrations
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.webhooksTelephony.readTwilioAuthList({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.webhooksTelephony.readTwilioAuthList({});
 ```
 
 **Input**
@@ -2251,7 +2307,8 @@ Inspect delivery status and debug logs for a specific webhook
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.webhooksTelephony.retrieveWebhookLog({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.webhooksTelephony.retrieveWebhookLog({});
 ```
 
 **Input**
@@ -2288,7 +2345,8 @@ Modify Twilio auth credentials or telephony settings
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.webhooksTelephony.updateTwilioAuthById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.webhooksTelephony.updateTwilioAuthById({});
 ```
 
 **Input**
@@ -2326,7 +2384,8 @@ Modify WhatsApp Business API settings for a user
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.webhooksTelephony.updateUserwhatsappById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.webhooksTelephony.updateUserwhatsappById({});
 ```
 
 **Input**
@@ -2366,7 +2425,8 @@ Modify the endpoint URL, name, or enabled status of an outbound webhook
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.webhooksTelephony.updateWebhookById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.webhooksTelephony.updateWebhookById({});
 ```
 
 **Input**
@@ -2406,7 +2466,8 @@ Create a new chat/voice widget for web or mobile embedding
 **Risk:** `write`
 
 ```ts
-await corsair.insightoai.api.widgets.createWidget({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.widgets.createWidget({});
 ```
 
 **Input**
@@ -2490,7 +2551,8 @@ Permanently remove a widget by ID
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.insightoai.api.widgets.deleteWidgetById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.widgets.deleteWidgetById({});
 ```
 
 **Input**
@@ -2525,7 +2587,8 @@ Retrieve filtered conversation metadata across date ranges
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.widgets.getListOfConversations({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.widgets.getListOfConversations({});
 ```
 
 **Input**
@@ -2566,7 +2629,8 @@ Discover all widgets associated with a specific assistant
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.widgets.getListOfWidgetsLinkedToAssistantId({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.widgets.getListOfWidgetsLinkedToAssistantId({});
 ```
 
 **Input**
@@ -2603,7 +2667,8 @@ Retrieve widget configuration and visual styling attributes
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.widgets.getWidgetById({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.widgets.getWidgetById({});
 ```
 
 **Input**
@@ -2638,7 +2703,8 @@ Retrieve all available communication channels and configurations
 **Risk:** `read`
 
 ```ts
-await corsair.insightoai.api.widgets.listChannels({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.widgets.listChannels({});
 ```
 
 **Input**

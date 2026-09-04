@@ -14,7 +14,8 @@ The DigitalOcean plugin syncs data locally. Use `corsair.digitalocean.db.<entity
 Path: `digitalocean.db.databases.search`
 
 ```ts
-const rows = await corsair.digitalocean.db.databases.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.digitalocean.db.databases.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -40,7 +41,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `digitalocean.db.droplets.search`
 
 ```ts
-const rows = await corsair.digitalocean.db.droplets.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.digitalocean.db.droplets.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -65,7 +67,8 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 Path: `digitalocean.db.volumes.search`
 
 ```ts
-const rows = await corsair.digitalocean.db.volumes.search({
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.digitalocean.db.volumes.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
