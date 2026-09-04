@@ -1,7 +1,7 @@
 {
   "id": "apininjas",
   "displayName": "API Ninjas",
-  "description": "API Ninjas plugin for Corsair",
+  "description": "Developer API hub for facts, finance, nutrition, and dozens of data endpoints.",
   "npmPackageName": "@corsair-dev/apininjas",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

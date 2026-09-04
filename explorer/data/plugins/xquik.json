@@ -1,7 +1,7 @@
 {
   "id": "xquik",
-  "displayName": "Search tweets, inspect users, manage Xquik webhooks, upload media, and run X actions from Corsair",
-  "description": "Search tweets, inspect users, manage Xquik webhooks, upload media, and run X actions from Corsair",
+  "displayName": "Xquik",
+  "description": "X/Twitter automation API for searching tweets, managing webhooks, and social account actions.",
   "npmPackageName": "@corsair-dev/xquik",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

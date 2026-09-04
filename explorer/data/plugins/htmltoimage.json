@@ -1,7 +1,7 @@
 {
   "id": "htmltoimage",
-  "displayName": "HtmlToImage",
-  "description": "HtmlToImage plugin for Corsair",
+  "displayName": "HTML to Image",
+  "description": "Screenshot API for converting HTML, URLs, and templates into PNG or JPEG images.",
   "npmPackageName": "@corsair-dev/htmltoimage",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

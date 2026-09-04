@@ -1,7 +1,7 @@
 {
   "id": "gemini",
   "displayName": "Gemini",
-  "description": "Gemini plugin for Corsair",
+  "description": "Google multimodal AI API for text, image, and code generation with Gemini models.",
   "npmPackageName": "@corsair-dev/gemini",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

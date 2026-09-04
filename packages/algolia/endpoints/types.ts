@@ -1443,19 +1443,6 @@ export type GetUsersCountInput = z.infer<typeof GetUsersCountInputSchema>;
 const GetUsersCountResponseSchema = AlgoliaResponseSchema;
 export type GetUsersCountResponse = z.infer<typeof GetUsersCountResponseSchema>;
 
-// indexExists
-const IndexExistsInputSchema = z.object({
-	index_name: z.string(),
-	body: AlgoliaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
-	headers: z.record(z.string(), z.string()).optional(),
-	region: z.string().optional(),
-	baseUrl: z.string().optional(),
-});
-export type IndexExistsInput = z.infer<typeof IndexExistsInputSchema>;
-const IndexExistsResponseSchema = AlgoliaResponseSchema;
-export type IndexExistsResponse = z.infer<typeof IndexExistsResponseSchema>;
-
 // initInsights
 const InitInsightsInputSchema = z.object({
 	region: z.string().optional(),
@@ -2408,7 +2395,6 @@ export const AlgoliaEndpointInputSchemas = {
 	getUsageForIndex: GetUsageForIndexInputSchema,
 	getUsers: GetUsersInputSchema,
 	getUsersCount: GetUsersCountInputSchema,
-	indexExists: IndexExistsInputSchema,
 	initInsights: InitInsightsInputSchema,
 	listAbTests: ListAbTestsInputSchema,
 	listApiKeys: ListApiKeysInputSchema,
@@ -2550,7 +2536,6 @@ export const AlgoliaEndpointOutputSchemas = {
 	getUsageForIndex: GetUsageForIndexResponseSchema,
 	getUsers: GetUsersResponseSchema,
 	getUsersCount: GetUsersCountResponseSchema,
-	indexExists: IndexExistsResponseSchema,
 	initInsights: InitInsightsResponseSchema,
 	listAbTests: ListAbTestsResponseSchema,
 	listApiKeys: ListApiKeysResponseSchema,

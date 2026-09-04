@@ -1,7 +1,7 @@
 {
   "id": "hubspot",
-  "displayName": "Hubspot",
-  "description": "Hubspot plugin for Corsair",
+  "displayName": "HubSpot",
+  "description": "CRM and marketing platform for contacts, deals, tickets, email, and sales automation.",
   "npmPackageName": "@corsair-dev/hubspot",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

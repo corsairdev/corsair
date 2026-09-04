@@ -1,7 +1,7 @@
 {
   "id": "ahrefs",
   "displayName": "Ahrefs",
-  "description": "Ahrefs plugin for Corsair",
+  "description": "SEO toolkit for keyword research, backlink analysis, and search ranking insights.",
   "npmPackageName": "@corsair-dev/ahrefs",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

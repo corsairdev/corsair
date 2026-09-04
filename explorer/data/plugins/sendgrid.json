@@ -1,7 +1,7 @@
 {
   "id": "sendgrid",
-  "displayName": "SendGrid v3",
-  "description": "SendGrid v3 plugin for Corsair (100 REST endpoints)",
+  "displayName": "SendGrid",
+  "description": "Email delivery platform for transactional mail, marketing campaigns, and sender reputation tools.",
   "npmPackageName": "@corsair-dev/sendgrid",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

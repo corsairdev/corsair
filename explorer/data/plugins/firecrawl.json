@@ -1,7 +1,7 @@
 {
   "id": "firecrawl",
   "displayName": "Firecrawl",
-  "description": "Firecrawl plugin for Corsair",
+  "description": "Web scraping API that crawls sites and returns clean markdown or structured page data.",
   "npmPackageName": "@corsair-dev/firecrawl",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

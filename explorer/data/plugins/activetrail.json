@@ -1,7 +1,7 @@
 {
   "id": "activetrail",
   "displayName": "ActiveTrail",
-  "description": "ActiveTrail plugin for Corsair",
+  "description": "Email and SMS marketing platform for campaigns, automations, and subscriber management.",
   "npmPackageName": "@corsair-dev/activetrail",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

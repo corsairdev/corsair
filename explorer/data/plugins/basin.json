@@ -1,7 +1,7 @@
 {
   "id": "basin",
   "displayName": "Basin",
-  "description": "Basin plugin for Corsair",
+  "description": "Form backend service for collecting submissions without writing server-side code.",
   "npmPackageName": "@corsair-dev/basin",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -653,7 +653,7 @@
     {
       "path": "basin.api.forms.delete",
       "shortPath": "forms.delete",
-      "description": "Permanently delete a form and its configuration [DESTRUCTIVE]",
+      "description": "Permanently delete a form and its configuration",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -1870,7 +1870,7 @@
     {
       "path": "basin.api.projects.delete",
       "shortPath": "projects.delete",
-      "description": "Permanently delete a project [DESTRUCTIVE]",
+      "description": "Permanently delete a project",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -2019,7 +2019,7 @@
     {
       "path": "basin.api.submissions.delete",
       "shortPath": "submissions.delete",
-      "description": "Permanently delete a form submission [DESTRUCTIVE]",
+      "description": "Permanently delete a form submission",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -2688,7 +2688,7 @@
     {
       "path": "basin.api.webhooks.delete",
       "shortPath": "webhooks.delete",
-      "description": "Permanently delete a form webhook integration [DESTRUCTIVE]",
+      "description": "Permanently delete a form webhook integration",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {

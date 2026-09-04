@@ -1,7 +1,7 @@
 {
   "id": "whatsapp",
   "displayName": "WhatsApp",
-  "description": "WhatsApp plugin for Corsair",
+  "description": "Messaging platform API for business conversations, templates, media, and customer notifications.",
   "npmPackageName": "@corsair-dev/whatsapp",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "blazemeter",
   "displayName": "BlazeMeter",
-  "description": "BlazeMeter plugin for Corsair",
+  "description": "Performance testing platform for load, stress, and API scalability benchmarking.",
   "npmPackageName": "@corsair-dev/blazemeter",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

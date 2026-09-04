@@ -1,7 +1,7 @@
 {
   "id": "razorpay",
   "displayName": "Razorpay",
-  "description": "Razorpay plugin for Corsair",
+  "description": "Payment gateway for accepting online payments, subscriptions, and payouts in India.",
   "npmPackageName": "@corsair-dev/razorpay",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -1479,7 +1479,7 @@
     {
       "path": "razorpay.api.subscriptions.cancel",
       "shortPath": "subscriptions.cancel",
-      "description": "Cancel a Razorpay subscription [DESTRUCTIVE]",
+      "description": "Cancel a Razorpay subscription",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {

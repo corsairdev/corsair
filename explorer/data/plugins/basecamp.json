@@ -1,7 +1,7 @@
 {
   "id": "basecamp",
-  "displayName": "Basecamp OAuth",
-  "description": "Basecamp OAuth plugin for Corsair",
+  "displayName": "Basecamp",
+  "description": "Project management and team communication tool for to-dos, messages, and schedules.",
   "npmPackageName": "@corsair-dev/basecamp",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

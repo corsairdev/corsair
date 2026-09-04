@@ -1,0 +1,835 @@
+---
+title: API
+description: "API reference for Dripcel: every `dripcel.api.*` operation with input and output types."
+---
+
+Every `dripcel.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Balance
+
+### get
+
+`balance.get`
+
+Get the current Dripcel credit balance
+
+**Risk:** `read`
+
+```ts
+await corsair.dripcel.api.balance.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `balance` | `number` | Yes | — |
+
+
+
+---
+
+## Campaigns
+
+### list
+
+`campaigns.list`
+
+List Dripcel campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.dripcel.api.campaigns.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaigns` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaigns full type">
+
+```ts
+{
+  _id?: string,
+  name?: string,
+  status?: string,
+  active?: boolean,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Compliance
+
+### checkSend
+
+`compliance.checkSend`
+
+Check whether phone numbers may receive SMS
+
+**Risk:** `read`
+
+```ts
+await corsair.dripcel.api.compliance.checkSend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cells` | `string[]` | Yes | — |
+| `country` | `string` | Yes | — |
+| `campaign_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | No | — |
+| `credits_used` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  cell: string,
+  can_send: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### addTags
+
+`contacts.addTags`
+
+Add tags to a Dripcel contact by cell number
+
+**Risk:** `write`
+
+```ts
+await corsair.dripcel.api.contacts.addTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cell` | `string` | Yes | — |
+| `tag_ids` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `create_missing_contact` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `matchedCount` | `number` | Yes | — |
+| `modifiedCount` | `number` | Yes | — |
+
+
+
+---
+
+### create
+
+`contacts.create`
+
+Create new Dripcel contacts in bulk (POST /contacts)
+
+**Risk:** `write`
+
+```ts
+await corsair.dripcel.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+| `country` | `ZA \| NA` | No | — |
+| `tag_ids` | `string[]` | No | — |
+| `send` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  _id?: string,
+  cell: string,
+  firstname?: string,
+  lastname?: string,
+  email?: string,
+  tag_ids?: string[],
+  tags?: string[],
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="send full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `validContacts` | `number` | Yes | — |
+| `invalidContacts` | `any[]` | Yes | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a Dripcel contact by cell number
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dripcel.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cell` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a Dripcel contact by cell number (MSISDN)
+
+**Risk:** `read`
+
+```ts
+await corsair.dripcel.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cell` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `cell` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `email` | `string` | No | — |
+| `tag_ids` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### optOut
+
+`contacts.optOut`
+
+Opt a Dripcel contact out of campaigns
+
+**Risk:** `write`
+
+```ts
+await corsair.dripcel.api.contacts.optOut({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cell` | `string` | Yes | — |
+| `campaign_ids` | `string[]` | No | — |
+| `all` | `boolean` | No | — |
+| `create_missing_contact` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `matchedCount` | `number` | Yes | — |
+| `modifiedCount` | `number` | Yes | — |
+
+
+
+---
+
+### upsert
+
+`contacts.upsert`
+
+Create or update Dripcel contacts in bulk (PUT /contacts)
+
+**Risk:** `write`
+
+```ts
+await corsair.dripcel.api.contacts.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+| `country` | `ZA \| NA` | No | — |
+| `tag_ids` | `string[]` | No | — |
+| `send` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  _id?: string,
+  cell: string,
+  firstname?: string,
+  lastname?: string,
+  email?: string,
+  tag_ids?: string[],
+  tags?: string[],
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="send full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `validContacts` | `number` | Yes | — |
+| `invalidContacts` | `any[]` | Yes | — |
+
+
+
+---
+
+## Deliveries
+
+### list
+
+`deliveries.list`
+
+List Dripcel deliveries by cell or send customerId
+
+**Risk:** `read`
+
+```ts
+await corsair.dripcel.api.deliveries.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cell` | `string` | No | — |
+| `customerId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deliveries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="deliveries full type">
+
+```ts
+{
+  _id?: string,
+  cell?: string,
+  customerId?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Templates
+
+### list
+
+`emailTemplates.list`
+
+List Dripcel email templates
+
+**Risk:** `read`
+
+```ts
+await corsair.dripcel.api.emailTemplates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  _id?: string,
+  name?: string,
+  subject?: string,
+  content?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Replies
+
+### search
+
+`replies.search`
+
+Search Dripcel message replies
+
+**Risk:** `read`
+
+```ts
+await corsair.dripcel.api.replies.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| string[]` | No | — |
+| `Message` | `string` | No | — |
+| `kind` | `string \| string[]` | No | — |
+| `Msisdn` | `string \| string[]` | No | — |
+| `campaign_id` | `string \| string[]` | No | — |
+| `UserReference` | `string \| string[]` | No | — |
+| `Received` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Received full type">
+
+```ts
+{
+  $gte?: string,
+  $lte?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `replies` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+  _id?: string,
+  Msisdn?: string,
+  Message?: string,
+  campaign_id?: string,
+  UserReference?: string,
+  kind?: optIn | optOut | unknown,
+  Received?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sales
+
+### upload
+
+`sales.upload`
+
+Upload sales to Dripcel (POST /sales)
+
+**Risk:** `write`
+
+```ts
+await corsair.dripcel.api.sales.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sales` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sales full type">
+
+```ts
+{
+  _id?: string,
+  campaign_id: string,
+  send_id?: string,
+  click_id?: string,
+  cell: string,
+  soldAt?: string,
+  saleValue?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+## Send
+
+### bulkEmail
+
+`send.bulkEmail`
+
+Send bulk email via a Dripcel template
+
+**Risk:** `write`
+
+```ts
+await corsair.dripcel.api.send.bulkEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `template_id` | `string` | Yes | — |
+| `destinations` | `string[]` | Yes | — |
+| `filter_non_contacts` | `boolean` | No | — |
+| `to_start_at` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### sms
+
+`send.sms`
+
+Send a single SMS via Dripcel
+
+**Risk:** `write`
+
+```ts
+await corsair.dripcel.api.send.sms({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+| `cell` | `string` | Yes | — |
+| `skipNonContacts` | `boolean` | Yes | — |
+| `country` | `string` | Yes | — |
+| `deliveryMethod` | `reverse \| standard \| transactional` | Yes | — |
+| `campaign_id` | `string` | No | — |
+| `sendOptions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sendOptions full type">
+
+```ts
+{
+  testMode?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | — |
+| `totalCost` | `number` | Yes | — |
+
+
+
+---
+
+## Send Logs
+
+### search
+
+`sendLogs.search`
+
+Search Dripcel send logs
+
+**Risk:** `read`
+
+```ts
+await corsair.dripcel.api.sendLogs.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `find` | `object` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="find full type">
+
+```ts
+{
+  campaign_id?: string[],
+  startDeliveryAt?: {
+    $gte?: string,
+    $lte?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  skip?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `send_logs` | `object[]` | Yes | — |
+| `parsed` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="send_logs full type">
+
+```ts
+{
+  _id?: string,
+  campaign_id?: string,
+  message?: string,
+  triggeredBy?: string,
+  startDeliveryAt?: string,
+  destinations?: number | string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="parsed full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### delete
+
+`tags.delete`
+
+Delete a Dripcel tag by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dripcel.api.tags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `color` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List all Dripcel tags
+
+**Risk:** `read`
+
+```ts
+await corsair.dripcel.api.tags.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  _id?: string,
+  name?: string,
+  description?: string,
+  color?: string,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

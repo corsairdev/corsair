@@ -1,7 +1,7 @@
 {
   "id": "botsonic",
   "displayName": "Botsonic",
-  "description": "Botsonic plugin for Corsair",
+  "description": "No-code AI chatbot builder trained on your content for customer support automation.",
   "npmPackageName": "@corsair-dev/botsonic",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "loyverse",
   "displayName": "Loyverse",
-  "description": "Loyverse plugin for Corsair",
+  "description": "Point-of-sale system for retail stores, inventory, receipts, and customer loyalty programs.",
   "npmPackageName": "@corsair-dev/loyverse",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

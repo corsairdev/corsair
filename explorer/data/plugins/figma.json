@@ -1,7 +1,7 @@
 {
   "id": "figma",
   "displayName": "Figma",
-  "description": "Figma plugin for Corsair",
+  "description": "Collaborative design tool for UI mockups, prototypes, components, and design system files.",
   "npmPackageName": "@corsair-dev/figma",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -209,7 +209,7 @@
     {
       "path": "figma.api.comments.delete",
       "shortPath": "comments.delete",
-      "description": "Delete a comment from a Figma file [DESTRUCTIVE]",
+      "description": "Delete a comment from a Figma file",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -835,7 +835,7 @@
     {
       "path": "figma.api.devResources.delete",
       "shortPath": "devResources.delete",
-      "description": "Delete a dev resource from a Figma file [DESTRUCTIVE]",
+      "description": "Delete a dev resource from a Figma file",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2079,7 +2079,7 @@
     {
       "path": "figma.api.webhooks.delete",
       "shortPath": "webhooks.delete",
-      "description": "Delete a Figma webhook [DESTRUCTIVE]",
+      "description": "Delete a Figma webhook",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

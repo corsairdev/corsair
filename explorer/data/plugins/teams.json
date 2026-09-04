@@ -1,7 +1,7 @@
 {
   "id": "teams",
   "displayName": "Microsoft Teams",
-  "description": "Microsoft Teams plugin for Corsair",
+  "description": "Workplace collaboration hub for chat, meetings, channels, and Microsoft 365 team communication.",
   "npmPackageName": "@corsair-dev/teams",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -110,7 +110,7 @@
     {
       "path": "teams.api.channels.delete",
       "shortPath": "channels.delete",
-      "description": "Delete a channel [DESTRUCTIVE]",
+      "description": "Delete a channel",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -785,7 +785,7 @@
     {
       "path": "teams.api.members.remove",
       "shortPath": "members.remove",
-      "description": "Remove a member from a team [DESTRUCTIVE]",
+      "description": "Remove a member from a team",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -810,7 +810,7 @@
     {
       "path": "teams.api.messages.delete",
       "shortPath": "messages.delete",
-      "description": "Delete a channel message [DESTRUCTIVE]",
+      "description": "Delete a channel message",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1406,7 +1406,7 @@
     {
       "path": "teams.api.teams.delete",
       "shortPath": "teams.delete",
-      "description": "Delete a team [DESTRUCTIVE]",
+      "description": "Delete a team",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

@@ -1,7 +1,7 @@
 {
   "id": "asana",
   "displayName": "Asana",
-  "description": "Asana plugin for Corsair",
+  "description": "Work management platform for tasks, projects, teams, and cross-functional collaboration.",
   "npmPackageName": "@corsair-dev/asana",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
@@ -239,7 +239,7 @@
     {
       "path": "asana.api.projects.delete",
       "shortPath": "projects.delete",
-      "description": "Delete a project [DESTRUCTIVE]",
+      "description": "Delete a project",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -720,7 +720,7 @@
     {
       "path": "asana.api.sections.delete",
       "shortPath": "sections.delete",
-      "description": "Delete a section [DESTRUCTIVE]",
+      "description": "Delete a section",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -956,7 +956,7 @@
     {
       "path": "asana.api.stories.delete",
       "shortPath": "stories.delete",
-      "description": "Delete a story [DESTRUCTIVE]",
+      "description": "Delete a story",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1187,7 +1187,7 @@
     {
       "path": "asana.api.tags.delete",
       "shortPath": "tags.delete",
-      "description": "Delete a tag [DESTRUCTIVE]",
+      "description": "Delete a tag",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1786,7 +1786,7 @@
     {
       "path": "asana.api.tasks.delete",
       "shortPath": "tasks.delete",
-      "description": "Delete a task [DESTRUCTIVE]",
+      "description": "Delete a task",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -3350,7 +3350,7 @@
     {
       "path": "asana.api.webhookManagement.delete",
       "shortPath": "webhookManagement.delete",
-      "description": "Delete a webhook [DESTRUCTIVE]",
+      "description": "Delete a webhook",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

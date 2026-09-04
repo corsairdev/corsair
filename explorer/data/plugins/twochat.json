@@ -1,7 +1,7 @@
 {
   "id": "twochat",
   "displayName": "TwoChat",
-  "description": "TwoChat plugin for Corsair",
+  "description": "WhatsApp Business API platform for messaging automation and customer chat workflows.",
   "npmPackageName": "@corsair-dev/twochat",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

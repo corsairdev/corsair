@@ -1,7 +1,7 @@
 {
   "id": "addresszen",
-  "displayName": "Addresszen",
-  "description": "Addresszen plugin for Corsair",
+  "displayName": "AddressZen",
+  "description": "Address validation and geocoding API for verifying and standardizing postal addresses.",
   "npmPackageName": "@corsair-dev/addresszen",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
