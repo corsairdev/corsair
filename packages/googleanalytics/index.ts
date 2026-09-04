@@ -577,8 +577,10 @@ const googleAnalyticsEndpointMeta = {
 		description: 'List custom dimensions on a property',
 	},
 	'customDimensions.archive': {
-		riskLevel: 'write',
-		description: 'Archive a custom dimension on a property',
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Archive a custom dimension on a property [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 
 	'customMetrics.create': {

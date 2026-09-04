@@ -962,6 +962,16 @@ describe('plugin risk metadata', () => {
 			}),
 		);
 	});
+
+	it('treats customDimensions.archive as destructive and irreversible', () => {
+		const plugin = googleanalytics();
+		expect(plugin.endpointMeta?.['customDimensions.archive']).toEqual(
+			expect.objectContaining({
+				riskLevel: 'destructive',
+				irreversible: true,
+			}),
+		);
+	});
 });
 
 describe('measurement protocol rate limits', () => {
