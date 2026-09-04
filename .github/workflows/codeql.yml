@@ -8,6 +8,14 @@ on:
   schedule:
     - cron: '30 2 * * 1'
 
+# Contributors iterate on plugin PRs; without this, every push leaves the
+# previous analysis running to completion. Keyed per-SHA off PRs so pushes to
+# main never share a group: GitHub keeps only one *pending* run per group, so a
+# shared key would drop a commit's scan even with cancel-in-progress false.
+concurrency:
+  group: codeql-${{ github.event_name }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   analyze:
     name: Analyze
@@ -33,6 +41,7 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
+          config-file: ./.github/codeql/config.yml
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
