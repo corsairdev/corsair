@@ -1,8 +1,6 @@
-# Overrides for scripts/generate-plugin-docs.ts
 displayName: Airtable
-description: "Airtable plugin for Corsair — bases, records, synced data, and change events."
+description: Spreadsheet-database hybrid for organizing records, workflows, and collaborative project data.
 recommendedAuth: api_key
-
 examples:
   read:
     path: bases.getMany
@@ -15,16 +13,14 @@ examples:
       tableIdOrName: tblXXXXXXXXXXXXXX
       fields:
         Name: Ada Lovelace
-
 dbExample:
   entity: records
-  note: "Search synced Airtable records without calling the API again."
+  note: Search synced Airtable records without calling the API again.
   data:
     tableId: tblXXXXXXXXXXXXXX
   limit: 20
-
 exampleWebhook:
   path: events.event
-  note: "React when an Airtable base sends a change notification."
+  note: React when an Airtable base sends a change notification.
   after: |
     console.log('Airtable event:', result.data);

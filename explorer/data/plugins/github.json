@@ -1,7 +1,7 @@
 {
   "id": "github",
-  "displayName": "Github",
-  "description": "Github plugin for Corsair",
+  "displayName": "GitHub",
+  "description": "Code hosting platform for repositories, issues, pull requests, and developer workflows.",
   "npmPackageName": "@corsair-dev/github",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

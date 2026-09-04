@@ -1,7 +1,7 @@
 {
   "id": "betterproposals",
-  "displayName": "BetterProposals",
-  "description": "BetterProposals plugin for Corsair",
+  "displayName": "Better Proposals",
+  "description": "Proposal software for creating, sending, and tracking client sales documents online.",
   "npmPackageName": "@corsair-dev/betterproposals",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

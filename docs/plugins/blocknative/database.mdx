@@ -1,0 +1,154 @@
+---
+title: Database
+description: "Blocknative local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Blocknative plugin syncs data locally. Use `corsair.blocknative.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Base Fee Estimates
+
+Path: `blocknative.db.baseFeeEstimates.search`
+
+```ts
+const rows = await corsair.blocknative.db.baseFeeEstimates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `system` | `string` | equals, contains, startsWith, endsWith, in |
+| `network` | `string` | equals, contains, startsWith, endsWith, in |
+| `unit` | `string` | equals, contains, startsWith, endsWith, in |
+| `currentBlockNumber` | `number` | equals, gt, gte, lt, lte, in |
+| `msSinceLastBlock` | `number` | equals, gt, gte, lt, lte, in |
+| `baseFeePerGas` | `number` | equals, gt, gte, lt, lte, in |
+| `blobBaseFeePerGas` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Block Prices
+
+Path: `blocknative.db.blockPrices.search`
+
+```ts
+const rows = await corsair.blocknative.db.blockPrices.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `system` | `string` | equals, contains, startsWith, endsWith, in |
+| `network` | `string` | equals, contains, startsWith, endsWith, in |
+| `unit` | `string` | equals, contains, startsWith, endsWith, in |
+| `maxPrice` | `number` | equals, gt, gte, lt, lte, in |
+| `currentBlockNumber` | `number` | equals, gt, gte, lt, lte, in |
+| `msSinceLastBlock` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Chains
+
+Path: `blocknative.db.chains.search`
+
+```ts
+const rows = await corsair.blocknative.db.chains.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `arch` | `string` | equals, contains, startsWith, endsWith, in |
+| `chainId` | `number` | equals, gt, gte, lt, lte, in |
+| `label` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon` | `string` | equals, contains, startsWith, endsWith, in |
+| `system` | `string` | equals, contains, startsWith, endsWith, in |
+| `network` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Gas Distributions
+
+Path: `blocknative.db.gasDistributions.search`
+
+```ts
+const rows = await corsair.blocknative.db.gasDistributions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `system` | `string` | equals, contains, startsWith, endsWith, in |
+| `network` | `string` | equals, contains, startsWith, endsWith, in |
+| `unit` | `string` | equals, contains, startsWith, endsWith, in |
+| `maxPrice` | `number` | equals, gt, gte, lt, lte, in |
+| `currentBlockNumber` | `number` | equals, gt, gte, lt, lte, in |
+| `msSinceLastBlock` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Oracles
+
+Path: `blocknative.db.oracles.search`
+
+```ts
+const rows = await corsair.blocknative.db.oracles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `arch` | `string` | equals, contains, startsWith, endsWith, in |
+| `chainId` | `number` | equals, gt, gte, lt, lte, in |
+| `label` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon` | `string` | equals, contains, startsWith, endsWith, in |
+| `system` | `string` | equals, contains, startsWith, endsWith, in |
+| `network` | `string` | equals, contains, startsWith, endsWith, in |
+| `rpcUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `blockExplorerUrl` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

@@ -1,7 +1,7 @@
 {
   "id": "dynapictures",
   "displayName": "Dynapictures",
-  "description": "Dynapictures plugin for Corsair",
+  "description": "Dynamic image generation API for personalized visuals, banners, and automated creatives.",
   "npmPackageName": "@corsair-dev/dynapictures",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

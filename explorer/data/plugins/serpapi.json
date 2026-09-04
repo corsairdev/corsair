@@ -1,7 +1,7 @@
 {
   "id": "serpapi",
-  "displayName": "Serpapi",
-  "description": "Serpapi plugin for Corsair",
+  "displayName": "SerpApi",
+  "description": "Search engine results API for Google, Bing, and other SERP scraping at scale.",
   "npmPackageName": "@corsair-dev/serpapi",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

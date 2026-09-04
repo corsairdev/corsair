@@ -1,7 +1,7 @@
 {
   "id": "datarobot",
   "displayName": "DataRobot",
-  "description": "DataRobot plugin for Corsair",
+  "description": "Enterprise AI platform for automated machine learning model building and deployment.",
   "npmPackageName": "@corsair-dev/datarobot",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

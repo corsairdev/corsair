@@ -1,7 +1,7 @@
 {
   "id": "linkedin",
   "displayName": "LinkedIn",
-  "description": "LinkedIn plugin for Corsair",
+  "description": "Professional network for profiles, company pages, posts, and B2B social marketing.",
   "npmPackageName": "@corsair-dev/linkedin",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

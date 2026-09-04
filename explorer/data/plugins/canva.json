@@ -1,7 +1,7 @@
 {
   "id": "canva",
   "displayName": "Canva",
-  "description": "Canva plugin for Corsair",
+  "description": "Design platform for creating graphics, presentations, and visual content collaboratively.",
   "npmPackageName": "@corsair-dev/canva",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -28,7 +28,7 @@
     {
       "path": "canva.api.assets.delete",
       "shortPath": "assets.delete",
-      "description": "Delete an asset [DESTRUCTIVE]",
+      "description": "Delete an asset",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -853,7 +853,7 @@
     {
       "path": "canva.api.folders.delete",
       "shortPath": "folders.delete",
-      "description": "Delete a folder [DESTRUCTIVE]",
+      "description": "Delete a folder",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

@@ -1,7 +1,7 @@
 {
   "id": "filloutforms",
-  "displayName": "FilloutForms",
-  "description": "FilloutForms plugin for Corsair",
+  "displayName": "Fillout",
+  "description": "Form builder for creating advanced surveys, quizzes, and data collection workflows.",
   "npmPackageName": "@corsair-dev/filloutforms",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
@@ -94,7 +94,7 @@
     {
       "path": "filloutforms.api.databases.delete",
       "shortPath": "databases.delete",
-      "description": "Permanently delete a Zite database [DESTRUCTIVE]",
+      "description": "Permanently delete a Zite database",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -250,7 +250,7 @@
     {
       "path": "filloutforms.api.fields.delete",
       "shortPath": "fields.delete",
-      "description": "Permanently delete a Zite field [DESTRUCTIVE]",
+      "description": "Permanently delete a Zite field",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -513,7 +513,7 @@
     {
       "path": "filloutforms.api.records.delete",
       "shortPath": "records.delete",
-      "description": "Permanently delete a Zite record [DESTRUCTIVE]",
+      "description": "Permanently delete a Zite record",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -747,7 +747,7 @@
     {
       "path": "filloutforms.api.submissions.delete",
       "shortPath": "submissions.delete",
-      "description": "Delete a form submission by ID [DESTRUCTIVE]",
+      "description": "Delete a form submission by ID",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -961,7 +961,7 @@
     {
       "path": "filloutforms.api.tables.delete",
       "shortPath": "tables.delete",
-      "description": "Permanently delete a Zite table [DESTRUCTIVE]",
+      "description": "Permanently delete a Zite table",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1052,7 +1052,7 @@
     {
       "path": "filloutforms.api.token.invalidate",
       "shortPath": "token.invalidate",
-      "description": "Invalidate/revoke an OAuth access token [DESTRUCTIVE]",
+      "description": "Invalidate/revoke an OAuth access token",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1149,7 +1149,7 @@
     {
       "path": "filloutforms.api.webhooks.deleteDatabase",
       "shortPath": "webhooks.deleteDatabase",
-      "description": "Delete a Zite database webhook [DESTRUCTIVE]",
+      "description": "Delete a Zite database webhook",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1200,7 +1200,7 @@
     {
       "path": "filloutforms.api.webhooks.removeForm",
       "shortPath": "webhooks.removeForm",
-      "description": "Remove a Fillout form webhook [DESTRUCTIVE]",
+      "description": "Remove a Fillout form webhook",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

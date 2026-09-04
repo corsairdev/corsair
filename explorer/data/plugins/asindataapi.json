@@ -1,7 +1,7 @@
 {
   "id": "asindataapi",
-  "displayName": "AsinDataApi",
-  "description": "AsinDataApi plugin for Corsair",
+  "displayName": "AsinData API",
+  "description": "Amazon product data API for ASIN lookups, pricing, and marketplace intelligence.",
   "npmPackageName": "@corsair-dev/asindataapi",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -208,7 +208,7 @@
     {
       "path": "asindataapi.api.collections.delete",
       "shortPath": "collections.delete",
-      "description": "Delete a Collection [DESTRUCTIVE]",
+      "description": "Delete a Collection",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -659,7 +659,7 @@
     {
       "path": "asindataapi.api.destinations.delete",
       "shortPath": "destinations.delete",
-      "description": "Delete a Destination [DESTRUCTIVE]",
+      "description": "Delete a Destination",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1079,7 +1079,7 @@
     {
       "path": "asindataapi.api.requests.clear",
       "shortPath": "requests.clear",
-      "description": "Bulk-delete multiple Requests from a Collection by their IDs [DESTRUCTIVE]",
+      "description": "Bulk-delete multiple Requests from a Collection by their IDs",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1110,7 +1110,7 @@
     {
       "path": "asindataapi.api.requests.delete",
       "shortPath": "requests.delete",
-      "description": "Delete a single Request from a Collection [DESTRUCTIVE]",
+      "description": "Delete a single Request from a Collection",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

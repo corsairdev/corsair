@@ -1,7 +1,7 @@
 {
   "id": "openweathermap",
-  "displayName": "Openweathermap",
-  "description": "Openweathermap plugin for Corsair",
+  "displayName": "OpenWeatherMap",
+  "description": "Weather data API for forecasts, current conditions, and historical climate information.",
   "npmPackageName": "@corsair-dev/openweathermap",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -577,7 +577,7 @@
     {
       "path": "openweathermap.api.stations.remove",
       "shortPath": "stations.remove",
-      "description": "Delete a registered weather station from your account [DESTRUCTIVE]",
+      "description": "Delete a registered weather station from your account",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

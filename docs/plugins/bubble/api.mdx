@@ -1,0 +1,399 @@
+---
+title: API
+description: "API reference for Bubble: every `bubble.api.*` operation with input and output types."
+---
+
+Every `bubble.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Meta
+
+### getSwagger
+
+`meta.getSwagger`
+
+Retrieve the auto-generated Swagger 2.0 JSON for enabled Bubble APIs
+
+**Risk:** `read`
+
+```ts
+await corsair.bubble.api.meta.getSwagger({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Things
+
+### bulkCreate
+
+`things.bulkCreate`
+
+Create up to 1,000 things in one request, returning per-record results
+
+**Risk:** `write`
+
+```ts
+await corsair.bubble.api.things.bulkCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `typeName` | `string` | Yes | — |
+| `records` | `any[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  status: string,
+  id?: string,
+  message?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`things.create`
+
+Create a single thing with the supplied field values
+
+**Risk:** `write`
+
+```ts
+await corsair.bubble.api.things.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `typeName` | `string` | Yes | — |
+| `fields` | `any` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`things.delete`
+
+Permanently delete a thing by its unique ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bubble.api.things.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `typeName` | `string` | Yes | — |
+| `thingId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`things.get`
+
+Retrieve a single thing by its unique ID
+
+**Risk:** `read`
+
+```ts
+await corsair.bubble.api.things.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `typeName` | `string` | Yes | — |
+| `thingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `Created By` | `string` | No | — |
+| `Created Date` | `string` | No | — |
+| `Modified Date` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`things.list`
+
+Search and paginate things of a data type, with optional constraints and sorting
+
+**Risk:** `read`
+
+```ts
+await corsair.bubble.api.things.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `typeName` | `string` | Yes | — |
+| `cursor` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `constraints` | `object[]` | No | — |
+| `sortField` | `string` | No | — |
+| `descending` | `boolean` | No | — |
+| `excludeRemaining` | `boolean` | No | — |
+| `additionalSortFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="constraints full type">
+
+```ts
+{
+  key: string,
+  constraint_type: string,
+  value?: string | number | boolean | lazy
+}[]
+```
+</Accordion>
+
+<Accordion title="additionalSortFields full type">
+
+```ts
+{
+  sortField: string,
+  descending?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  cursor: number,
+  count: number,
+  remaining?: number,
+  results: {
+    _id: string,
+    Created By?: string,
+    Created Date?: string,
+    Modified Date?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`things.replace`
+
+Overwrite all editable fields of an existing thing (omitted fields reset to default)
+
+**Risk:** `write`
+
+```ts
+await corsair.bubble.api.things.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `typeName` | `string` | Yes | — |
+| `thingId` | `string` | Yes | — |
+| `fields` | `any` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### update
+
+`things.update`
+
+Change selected fields of an existing thing
+
+**Risk:** `write`
+
+```ts
+await corsair.bubble.api.things.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `typeName` | `string` | Yes | — |
+| `thingId` | `string` | Yes | — |
+| `fields` | `any` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+## Workflows
+
+### run
+
+`workflows.run`
+
+Run an API workflow with the supplied parameters (Workflow API POST)
+
+**Risk:** `write`
+
+```ts
+await corsair.bubble.api.workflows.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowName` | `string` | Yes | — |
+| `params` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### runGet
+
+`workflows.runGet`
+
+Run an API workflow with query-string parameters (Workflow API GET)
+
+**Risk:** `write`
+
+```ts
+await corsair.bubble.api.workflows.runGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowName` | `string` | Yes | — |
+| `params` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+

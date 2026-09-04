@@ -1,7 +1,7 @@
 {
   "id": "resend",
   "displayName": "Resend",
-  "description": "Resend plugin for Corsair",
+  "description": "Developer email API for sending transactional messages, broadcasts, and deliverability tools.",
   "npmPackageName": "@corsair-dev/resend",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

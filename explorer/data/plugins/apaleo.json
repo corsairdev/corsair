@@ -1,7 +1,7 @@
 {
   "id": "apaleo",
   "displayName": "Apaleo",
-  "description": "Apaleo plugin for Corsair",
+  "description": "Open hospitality platform for property management, reservations, and hotel operations.",
   "npmPackageName": "@corsair-dev/apaleo",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
