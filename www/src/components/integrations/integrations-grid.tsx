@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 
 import { IntegrationCard } from '@/components/integrations/integration-card';
 import type { IntegrationCatalogEntry } from '@/lib/integrations-catalog.types';
+import { partitionIntegrations } from '@/lib/popular-integrations';
 
 function filterIntegrations(
 	integrations: IntegrationCatalogEntry[],
@@ -21,6 +22,20 @@ function filterIntegrations(
 	);
 }
 
+function IntegrationGrid({
+	integrations,
+}: {
+	integrations: IntegrationCatalogEntry[];
+}) {
+	return (
+		<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+			{integrations.map((integration) => (
+				<IntegrationCard key={integration.id} integration={integration} />
+			))}
+		</div>
+	);
+}
+
 export function IntegrationsGrid({
 	integrations,
 }: {
@@ -28,10 +43,22 @@ export function IntegrationsGrid({
 }) {
 	const [query, setQuery] = useState('');
 
-	const filtered = useMemo(
-		() => filterIntegrations(integrations, query),
-		[integrations, query],
+	const { popular, rest } = useMemo(
+		() => partitionIntegrations(integrations),
+		[integrations],
 	);
+
+	const filteredPopular = useMemo(
+		() => filterIntegrations(popular, query),
+		[popular, query],
+	);
+	const filteredRest = useMemo(
+		() => filterIntegrations(rest, query),
+		[rest, query],
+	);
+
+	const hasResults = filteredPopular.length > 0 || filteredRest.length > 0;
+	const isSearching = query.trim().length > 0;
 
 	return (
 		<section className="mx-auto max-w-[1440px] px-4 pb-20 pt-8 sm:px-6 md:px-10 md:pt-10">
@@ -52,17 +79,35 @@ export function IntegrationsGrid({
 				</div>
 			</div>
 
-			{filtered.length === 0 ? (
+			{!hasResults ? (
 				<div className="mt-12 rounded-sm border border-dashed border-[#1c1c1c]/15 bg-white px-6 py-16 text-center">
 					<p className="text-sm text-[#1c1c1c99]">
 						No integrations match your search.
 					</p>
 				</div>
 			) : (
-				<div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-					{filtered.map((integration) => (
-						<IntegrationCard key={integration.id} integration={integration} />
-					))}
+				<div className="mt-6 space-y-10">
+					{filteredPopular.length > 0 ? (
+						<div>
+							{!isSearching ? (
+								<h2 className="mb-4 font-[family-name:var(--landing-font-mono)] text-xs font-medium uppercase tracking-[0.06em] text-[#1c1c1c66]">
+									Popular
+								</h2>
+							) : null}
+							<IntegrationGrid integrations={filteredPopular} />
+						</div>
+					) : null}
+
+					{filteredRest.length > 0 ? (
+						<div>
+							{!isSearching && filteredPopular.length > 0 ? (
+								<h2 className="mb-4 font-[family-name:var(--landing-font-mono)] text-xs font-medium uppercase tracking-[0.06em] text-[#1c1c1c66]">
+									All integrations
+								</h2>
+							) : null}
+							<IntegrationGrid integrations={filteredRest} />
+						</div>
+					) : null}
 				</div>
 			)}
 		</section>
