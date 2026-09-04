@@ -581,7 +581,7 @@ export const resendConfirmEmail: BenchmarkEmailEndpoints['accountResendConfirmEm
 		await logEventFromContext(
 			ctx,
 			'benchmarkemail.account.resendConfirmEmail',
-			{ ...input },
+			eventLogPayload(input, ['email']),
 			'completed',
 		);
 		return response;
@@ -626,7 +626,7 @@ export const sendPINViaEmail: BenchmarkEmailEndpoints['accountSendPINViaEmail'] 
 		await logEventFromContext(
 			ctx,
 			'benchmarkemail.account.sendPINViaEmail',
-			{ ...input },
+			eventLogPayload(input),
 			'completed',
 		);
 		return response;

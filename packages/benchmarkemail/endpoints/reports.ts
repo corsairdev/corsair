@@ -244,7 +244,7 @@ export const getDownloadReport: BenchmarkEmailEndpoints['reportsGetDownloadRepor
 		await logEventFromContext(
 			ctx,
 			'benchmarkemail.reports.getDownloadReport',
-			{ ...input },
+			eventLogPayload(input),
 			'completed',
 		);
 		return response;
@@ -642,7 +642,7 @@ export const updateListCompilationDetails: BenchmarkEmailEndpoints['reportsUpdat
 		await logEventFromContext(
 			ctx,
 			'benchmarkemail.reports.updateListCompilationDetails',
-			{ ...input },
+			eventLogPayload(input),
 			'completed',
 		);
 		return response;

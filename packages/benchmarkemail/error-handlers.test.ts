@@ -19,7 +19,7 @@ function apiError(
 }
 
 describe('Benchmark Email error handlers', () => {
-	it('matches 429 as a rate-limit error and retries with Retry-After', async () => {
+	it('matches 429 as a rate-limit error and leaves retries to the transport', async () => {
 		const error = apiError(
 			429,
 			'Rate limit exceeded. Retry after 45 seconds.',
@@ -29,15 +29,16 @@ describe('Benchmark Email error handlers', () => {
 		);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		const decision = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
-		expect(decision).toEqual({ maxRetries: 5, headersRetryAfterMs: 45000 });
+		// The client's RateLimitConfig already retries 429s (honouring
+		// Retry-After); retrying here too would multiply the two policies.
+		expect(decision).toEqual({ maxRetries: 0 });
 	});
 
-	it('matches 429 without rate-limit info and still retries', async () => {
+	it('matches 429 without rate-limit info and does not double-retry', async () => {
 		const error = apiError(429, '429 Too Many Requests');
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		const decision = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
-		expect(decision.maxRetries).toBe(5);
-		expect(decision.headersRetryAfterMs).toBeUndefined();
+		expect(decision).toEqual({ maxRetries: 0 });
 	});
 
 	it('matches TooManyRequestsError bodies as rate-limit errors', () => {

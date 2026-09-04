@@ -190,5 +190,21 @@ describe('Benchmark Email client', () => {
 			expect(result).toEqual({ total: 7 });
 			expect(calls.length).toBeGreaterThanOrEqual(2);
 		}, 15000);
+
+		it('caps sustained 429s at maxRetries + 1 attempts (no endpoint-layer multiplication)', async () => {
+			responder = () =>
+				jsonResponse({ errors: [{ errorType: 'TooManyRequestsError' }] }, 429, {
+					// 1s per Retry-After; 0 would be ignored by the transport in
+					// favour of its exponential backoff, slowing this test down.
+					'Retry-After': '1',
+				});
+			await expect(
+				makeBenchmarkEmailRequest('Contact/ActiveCount', TOKEN),
+			).rejects.toMatchObject({ status: 429 });
+			// BENCHMARKEMAIL_RATE_LIMIT_CONFIG.maxRetries (5) + the initial
+			// attempt. The endpoint-level RATE_LIMIT_ERROR handler deliberately
+			// does not re-invoke, so the two layers cannot multiply.
+			expect(calls).toHaveLength(6);
+		}, 15000);
 	});
 });

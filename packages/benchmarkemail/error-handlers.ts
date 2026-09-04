@@ -26,12 +26,15 @@ export const errorHandlers = {
 				msg.includes('429')
 			);
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+		handler: async (_error: Error) => {
+			// The transport layer (corsair/http request with our
+			// RateLimitConfig) already retries 429s - honouring the
+			// provider's Retry-After header - up to BENCHMARKEMAIL_RATE_LIMIT_CONFIG.maxRetries
+			// attempts. Retrying again here would multiply the two policies
+			// (a sustained 429 could otherwise issue maxRetries * maxRetries
+			// requests), so this handler deliberately does not re-invoke the
+			// endpoint; it only classifies the error for logging.
+			return { maxRetries: 0 };
 		},
 	},
 	AUTH_ERROR: {

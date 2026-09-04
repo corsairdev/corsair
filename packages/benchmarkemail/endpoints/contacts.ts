@@ -762,7 +762,7 @@ export const saveEmailAddress: BenchmarkEmailEndpoints['contactsSaveEmailAddress
 		await logEventFromContext(
 			ctx,
 			'benchmarkemail.contacts.saveEmailAddress',
-			{ ...input },
+			eventLogPayload(input),
 			'completed',
 		);
 		return response;
@@ -803,7 +803,7 @@ export const searchContactDetailsByEmail: BenchmarkEmailEndpoints['contactsSearc
 		await logEventFromContext(
 			ctx,
 			'benchmarkemail.contacts.searchContactDetailsByEmail',
-			{ ...input },
+			eventLogPayload(input, ['search']),
 			'completed',
 		);
 		return response;

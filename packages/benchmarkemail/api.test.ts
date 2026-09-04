@@ -51,8 +51,17 @@ function expectLiveOutput(
 		);
 		return;
 	}
+	// Deliberately no raw payload here: live ContactDetails-style responses
+	// carry PII (emails, names) and Jest failure output is retained in CI logs.
+	const envelopeKind = Array.isArray(res)
+		? 'array'
+		: typeof res === 'object' && res !== null
+			? `object(keys=[${Object.keys(res as Record<string, unknown>)
+					.slice(0, 8)
+					.join(', ')}])`
+			: typeof res;
 	throw new Error(
-		`live:${label} unexpected envelope: ${JSON.stringify(res)?.slice(0, 300)}`,
+		`live:${label} unexpected envelope (kind=${envelopeKind}); raw payload withheld`,
 	);
 }
 
