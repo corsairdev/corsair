@@ -92,3 +92,109 @@ describe('makeGriptapeRequest error handling', () => {
 		).rejects.toEqual(new GriptapeAPIError('Unknown error'));
 	});
 });
+
+describe('makeGriptapeRequest request wiring', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+		mockRequest.mockResolvedValue({ assistants: [] });
+	});
+
+	it('returns the payload on success', async () => {
+		const payload = { assistants: [{ assistant_id: 'a-1' }] };
+		mockRequest.mockResolvedValueOnce(payload);
+
+		await expect(
+			makeGriptapeRequest('assistants', 'test-api-key'),
+		).resolves.toBe(payload);
+	});
+
+	it('targets the Griptape Cloud base URL with a Bearer key header', async () => {
+		await makeGriptapeRequest('assistants', 'test-api-key');
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://cloud.griptape.ai/api',
+				HEADERS: expect.objectContaining({
+					'Content-Type': 'application/json',
+					Authorization: 'Bearer test-api-key',
+				}),
+			}),
+			expect.anything(),
+		);
+	});
+
+	it('forwards query params on GET with no body', async () => {
+		await makeGriptapeRequest('assistants', 'test-api-key', {
+			method: 'GET',
+			query: { page: 2, page_size: 25 },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'GET',
+				url: 'assistants',
+				query: { page: 2, page_size: 25 },
+				body: undefined,
+			}),
+		);
+	});
+
+	it('forwards JSON bodies on POST with the JSON media type', async () => {
+		const body = { name: 'Support Bot' };
+
+		await makeGriptapeRequest('assistants', 'test-api-key', {
+			method: 'POST',
+			body,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'POST',
+				url: 'assistants',
+				body,
+				mediaType: 'application/json; charset=utf-8',
+			}),
+		);
+	});
+
+	it('forwards bodies on PUT and PATCH', async () => {
+		await makeGriptapeRequest('buckets/b-1/assets', 'test-api-key', {
+			method: 'PUT',
+			body: { name: 'file.pdf' },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'PUT',
+				body: { name: 'file.pdf' },
+			}),
+		);
+
+		await makeGriptapeRequest('assistants/a-1', 'test-api-key', {
+			method: 'PATCH',
+			body: { description: 'updated' },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'PATCH',
+				body: { description: 'updated' },
+			}),
+		);
+	});
+
+	it('sends no body on DELETE', async () => {
+		await makeGriptapeRequest('assistants/a-1', 'test-api-key', {
+			method: 'DELETE',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({ method: 'DELETE', body: undefined }),
+		);
+	});
+});
