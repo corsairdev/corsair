@@ -15,5 +15,9 @@ export const corsair = createCorsair({
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
-	plugins: [slack(), linear(), github({ authType: 'managed' })],
+	plugins: [
+		slack({ authType: 'managed' }),
+		linear({ authType: 'managed' }),
+		github({ authType: 'managed' }),
+	],
 });

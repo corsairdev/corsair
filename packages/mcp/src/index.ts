@@ -1,6 +1,8 @@
 export { AnthropicProvider } from './adapters/anthropic-api.js';
 export { ClaudeProvider } from './adapters/claude.js';
 export { MastraProvider } from './adapters/mastra.js';
+export type { CorsairToolProviderConfig } from './adapters/mastra-tool-provider.js';
+export { CorsairToolProvider } from './adapters/mastra-tool-provider.js';
 export { OllamaProvider } from './adapters/ollama.js';
 export type { OpenAIMcpConfig } from './adapters/openai.js';
 export { getOpenAIMcpConfig } from './adapters/openai.js';
