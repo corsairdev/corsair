@@ -1,0 +1,31 @@
+# Overrides for scripts/generate-plugin-docs.ts
+# Plugin-specific examples; the generator owns Hub-shaped wiring and shared copy.
+
+displayName: Google Sheets
+description: "Google Sheets plugin for Corsair — spreadsheets, rows, and range updates."
+
+examples:
+  read:
+    path: sheets.getRows
+    title: Get rows
+    args:
+      spreadsheetId: 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms
+  write:
+    path: sheets.appendRow
+    title: Append a row
+    args:
+      spreadsheetId: 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms
+      values:
+        - Hello
+        - from Corsair
+
+dbExample:
+  entity: rows
+  note: "Search synced rows without hitting Sheets."
+  limit: 50
+
+exampleWebhook:
+  path: rangeUpdated
+  note: "Fires when a range of cells is updated."
+  after: |
+    console.log('Sheet range updated:', result.data);
