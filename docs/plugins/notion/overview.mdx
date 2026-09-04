@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Notion plugin for Corsair"
+description: "Notion plugin for Corsair — search and create pages."
 ---
 
 Use **Notion** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -124,19 +124,21 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`blocks.getManyChildBlocks`**
+**Search pages**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.notion.api.blocks.getManyChildBlocks({});
+await tenant.notion.api.pages.searchPage({});
 ```
 
 
-**`blocks.appendBlock`**
+**Create a new page**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.notion.api.blocks.appendBlock({});
+await tenant.notion.api.pages.createPage({
+	parent: { type: 'database_id', database_id: '1234567890' },
+});
 ```
 
 
@@ -144,15 +146,38 @@ See the full list on the [API](/plugins/notion/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.notion.db.<entity>.search()` and `.list()`: `blocks`, `databases`, `pages`, `users`.
+Search synced pages without hitting Notion's API.
 
-See [Database](/plugins/notion/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.notion.db.pages.search({
+	data: { archived: true },
+	limit: 100,
+});
+```
+
+Synced entities: `blocks`, `databases`, `pages`, `users`. See [Database](/plugins/notion/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **3** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a page is created in the Notion database.
 
-See [Webhooks](/plugins/notion/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+notion({
+    webhookHooks: {
+        databasePages: {
+            pageCreated: {
+                after: async (ctx, result) => {
+                    const pageId = result.data?.data.page_id;
+                    console.log('New Notion page created with ID:', pageId);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/notion/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
