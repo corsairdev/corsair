@@ -10,7 +10,24 @@ export type DocusignExecutionContext =
 	| DocusignClient
 	| { client: DocusignClient }
 	| DocusignAuthOptions
-	| { options: DocusignAuthOptions };
+	| { options: DocusignAuthOptions }
+	| DocusignRuntimeContext;
+
+/**
+ * Bound runtime context the Corsair core passes to endpoints as
+ * `fn({ ...ctx, key }, args)`. `key` carries the active tenant's
+ * credentials resolved per request by the plugin keyBuilder; `options`
+ * carries factory-wide credentials for direct config. All fields are
+ * optional at the type level — `resolveClient` still validates the
+ * resolved credentials at runtime and throws on missing pieces.
+ */
+export type DocusignRuntimeContext = {
+	key?: string | undefined;
+	options?: Partial<DocusignAuthOptions> | undefined;
+	tenantId?: string | undefined;
+	keys?: unknown;
+	db?: unknown;
+};
 
 export const CreateEnvelopeInputSchema = z.object({
 	templateId: z.string().optional(),

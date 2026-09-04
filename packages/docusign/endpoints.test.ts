@@ -4,7 +4,12 @@ import type { EndpointContractCase } from './endpoint-contract-cases';
 import { endpointContractCases } from './endpoint-contract-cases';
 import * as endpoints from './endpoints';
 import { resolveClient } from './endpoints/context';
-import { docusignEndpointMeta, docusignEndpointsNested } from './index';
+import {
+	docusign,
+	docusignEndpointMeta,
+	docusignEndpointsNested,
+	docusignPlugin,
+} from './index';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -246,6 +251,135 @@ describe('DocuSign generated endpoints', () => {
 	it('rejects a runtime context without credentials', () => {
 		expect(() => resolveClient({ db: {}, tenantId: 'default' })).toThrow(
 			'Invalid execution context',
+		);
+	});
+
+	it('prefers the tenant key bundle over factory options', async () => {
+		mockRequest.mockResolvedValue({ envelopeId: 'env_9', status: 'sent' });
+		const tenantCtx = {
+			db: {},
+			tenantId: 'acme',
+			options: {
+				accessToken: 'factory_token',
+				accountId: '99999',
+				baseUri: 'https://demo.docusign.net/restapi/v2.1',
+			},
+			key: JSON.stringify({
+				accessToken: 'tenant_token',
+				accountId: '12345',
+				baseUri: 'https://demo.docusign.net/restapi/v2.1',
+			}),
+		};
+		await endpoints.getEnvelope(tenantCtx, { envelopeId: 'env_9' });
+		const call = mockRequest.mock.calls[0];
+		if (!call) throw new Error('expected corsair/http request to be called');
+		expect(call[0].BASE).toBe(
+			'https://demo.docusign.net/restapi/v2.1/accounts/12345',
+		);
+		expect(call[0].HEADERS).toEqual(
+			expect.objectContaining({ Authorization: 'Bearer tenant_token' }),
+		);
+	});
+
+	it('combines a raw key token with options routing', async () => {
+		mockRequest.mockResolvedValue({ envelopeId: 'env_9', status: 'sent' });
+		const tenantCtx = {
+			db: {},
+			tenantId: 'acme',
+			options: {
+				accountId: '12345',
+				baseUri: 'https://demo.docusign.net/restapi/v2.1',
+			},
+			key: 'raw_tenant_token',
+		};
+		await endpoints.getEnvelope(tenantCtx, { envelopeId: 'env_9' });
+		const call = mockRequest.mock.calls[0];
+		if (!call) throw new Error('expected corsair/http request to be called');
+		expect(call[0].BASE).toBe(
+			'https://demo.docusign.net/restapi/v2.1/accounts/12345',
+		);
+		expect(call[0].HEADERS).toEqual(
+			expect.objectContaining({ Authorization: 'Bearer raw_tenant_token' }),
+		);
+	});
+});
+
+describe('DocuSign tenant credential lifecycle', () => {
+	const buildKey = docusignPlugin.keyBuilder as (
+		ctx: unknown,
+		source: string,
+	) => Promise<string>;
+
+	function keychain(overrides: Record<string, string | null> = {}) {
+		const values: Record<string, string | null> = {
+			accessToken: 'tenant_token',
+			accountId: '12345',
+			baseUri: 'https://demo.docusign.net/restapi/v2.1',
+			...overrides,
+		};
+		return {
+			get_access_token: async () => values.accessToken ?? null,
+			get_account_id: async () => values.accountId ?? null,
+			get_base_uri: async () => values.baseUri ?? null,
+		};
+	}
+
+	it('keyBuilder resolves the tenant keychain bundle', async () => {
+		const key = await buildKey(
+			{
+				options: {},
+				authType: 'oauth_2',
+				keys: keychain(),
+				tenantId: 'acme',
+			},
+			'endpoint',
+		);
+		expect(JSON.parse(key)).toEqual({
+			accessToken: 'tenant_token',
+			accountId: '12345',
+			baseUri: 'https://demo.docusign.net/restapi/v2.1',
+		});
+	});
+
+	it('keyBuilder prefers factory options for direct config', async () => {
+		const key = await buildKey(
+			{
+				options: {
+					accessToken: 'factory_token',
+					accountId: '99999',
+				},
+				authType: 'oauth_2',
+				tenantId: 'default',
+			},
+			'endpoint',
+		);
+		expect(JSON.parse(key)).toEqual({
+			accessToken: 'factory_token',
+			accountId: '99999',
+		});
+	});
+
+	it('keyBuilder throws when the tenant has no credentials', async () => {
+		await expect(
+			buildKey(
+				{
+					options: {},
+					authType: 'oauth_2',
+					keys: keychain({ accessToken: null, accountId: null }),
+					tenantId: 'acme',
+				},
+				'endpoint',
+			),
+		).rejects.toThrow();
+	});
+
+	it('factory defaults authType so the runtime provisions tenant keys', () => {
+		const plugin = docusign({
+			accessToken: 'factory_token',
+			accountId: '12345',
+		});
+		expect(plugin.options).toEqual(
+			expect.objectContaining({ authType: 'oauth_2' }),
 		);
 	});
 });
