@@ -1,0 +1,1189 @@
+{
+  "id": "googlemaps",
+  "displayName": "Google Maps",
+  "description": "Mapping platform for geocoding, directions, places search, and location-based services.",
+  "npmPackageName": "@corsair-dev/googlemaps",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 22,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googlemaps.api.aerial.lookupAerialVideo",
+      "shortPath": "aerial.lookupAerialVideo",
+      "description": "Tool to look up an aerial view video by address or video ID. Returns video metadata including state and URIs for playback. Use when you need to retrieve a previously rendered aerial video or check the status of a video render request. Note that receiving a video is a billable event.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string",
+            "description": "US postal address."
+          },
+          {
+            "key": "videoId",
+            "optional": true,
+            "type": "string",
+            "description": "Video ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "PROCESSING, ACTIVE, FAILED."
+          },
+          {
+            "key": "uris",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.aerial.renderAerialVideo",
+      "shortPath": "aerial.renderAerialVideo",
+      "description": "Starts rendering an aerial view video for a US postal address. Returns a video ID that can be used with lookupVideo to retrieve the video once rendering completes. Rendering typically takes up to a few hours.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "US postal address to render aerial view video for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ videoId: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.geocoding.geocodeAddress",
+      "shortPath": "geocoding.geocodeAddress",
+      "description": "DEPRECATED: Legacy API to convert street addresses into geographic coordinates (latitude and longitude). This API works best with API key authentication. For OAuth connections without an API key, use geocoding.geocodeAddressWithQuery or geocoding.geocodingApi instead. Use when you need to geocode an address or location to get its precise latitude/longitude coordinates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "Street address to geocode."
+          },
+          {
+            "key": "bounds",
+            "optional": true,
+            "type": "string",
+            "description": "Bounding box bias."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Language code."
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string",
+            "description": "Region code."
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string",
+            "description": "API key override."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.geocoding.geocodeAddressWithQuery",
+      "shortPath": "geocoding.geocodeAddressWithQuery",
+      "description": "Tool to map addresses to geographic coordinates with query parameter. Use when you need to convert a textual address into latitude/longitude coordinates using the modern v4beta API. Results may match multiple places — always verify formattedAddress, region, and addressComponents in the response before using returned coordinates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string",
+            "description": "Address to geocode or validate."
+          },
+          {
+            "key": "regionCode",
+            "optional": true,
+            "type": "string",
+            "description": "Two-character region code."
+          },
+          {
+            "key": "locality",
+            "optional": true,
+            "type": "string",
+            "description": "Locality/City."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "places",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.geocoding.geocodeDestinations",
+      "shortPath": "geocoding.geocodeDestinations",
+      "description": "Tool to perform destination lookup and return detailed destination information including primary place, containing places, sub-destinations, landmarks, entrances, and navigation points. Use when you need comprehensive destination data for an address, place ID, or geographic coordinates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string",
+            "description": "Street address query."
+          },
+          {
+            "key": "placeId",
+            "optional": true,
+            "type": "string",
+            "description": "Place ID query."
+          },
+          {
+            "key": "latlng",
+            "optional": true,
+            "type": "string",
+            "description": "Latitude,longitude query."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.geocoding.geocodePlace",
+      "shortPath": "geocoding.geocodePlace",
+      "description": "Tool to perform geocode lookup using a place identifier to retrieve address and coordinates. Use when you need to get detailed geographic information for a specific Google Place ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "place_id",
+            "optional": false,
+            "type": "string",
+            "description": "Google Place ID."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Language code."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.geocoding.geocodingApi",
+      "shortPath": "geocoding.geocodingApi",
+      "description": "Convert addresses into geographic coordinates (latitude and longitude) and vice versa (reverse geocoding), or get an address for a Place ID. Uses the Geocoding API v4 (v4beta) which supports OAuth2 authentication. Exactly one of address, latlng, or place_id must be provided per request; omitting all three or mixing incompatible combinations yields no useful results.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string",
+            "description": "Street address to geocode."
+          },
+          {
+            "key": "latlng",
+            "optional": true,
+            "type": "string",
+            "description": "Coordinates for reverse geocoding."
+          },
+          {
+            "key": "place_id",
+            "optional": true,
+            "type": "string",
+            "description": "Place ID."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Language."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.geocoding.reverseGeocodeLocation",
+      "shortPath": "geocoding.reverseGeocodeLocation",
+      "description": "Tool to convert geographic coordinates (latitude and longitude) to human-readable addresses using reverse geocoding. Use when you need to find the address or place name for a given set of coordinates. A single coordinate pair may return multiple results; verify formattedAddress, region, and addressComponents before committing to a result.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "latlng",
+            "optional": false,
+            "type": "string",
+            "description": "Latitude and longitude string (e.g. \"37.422,-122.084\")."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Language code."
+          },
+          {
+            "key": "result_type",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by result types."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.geolocation.geolocate",
+      "shortPath": "geolocation.geolocate",
+      "description": "Tool to determine location based on cell towers and WiFi access points. Use when you need to find the geographic location of a device using network infrastructure data.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "homeMobileCountryCode",
+            "optional": true,
+            "type": "number",
+            "description": "MCC for home network."
+          },
+          {
+            "key": "homeMobileNetworkCode",
+            "optional": true,
+            "type": "number",
+            "description": "MNC for home network."
+          },
+          {
+            "key": "radioType",
+            "optional": true,
+            "type": "string",
+            "description": "lte, gsm, cdma, wcdma."
+          },
+          {
+            "key": "carrier",
+            "optional": true,
+            "type": "string",
+            "description": "Carrier name."
+          },
+          {
+            "key": "cellTowers",
+            "optional": true,
+            "type": "{}[]",
+            "description": "Cell tower objects."
+          },
+          {
+            "key": "wifiAccessPoints",
+            "optional": true,
+            "type": "{}[]",
+            "description": "WiFi access point objects."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": false,
+            "type": "{ lat: number, lng: number }"
+          },
+          {
+            "key": "accuracy",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.places.autocomplete",
+      "shortPath": "places.autocomplete",
+      "description": "Returns place and query predictions for text input. Use when implementing as-you-type autocomplete functionality for place searches. Returns up to five predictions ordered by relevance.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string",
+            "description": "Text query to get predictions for."
+          },
+          {
+            "key": "locationBias",
+            "optional": true,
+            "type": "{}",
+            "description": "Location bias area."
+          },
+          {
+            "key": "includedPrimaryTypes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Primary place types."
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string",
+            "description": "Language code."
+          },
+          {
+            "key": "regionCode",
+            "optional": true,
+            "type": "string",
+            "description": "Region code."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.places.getPlaceDetails",
+      "shortPath": "places.getPlaceDetails",
+      "description": "Retrieves comprehensive details for a place using its resource name (places/{place_id} format). Use when you need detailed information about a specific place.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "place_id",
+            "optional": false,
+            "type": "string",
+            "description": "Place ID (or resource name places/{place_id})."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Field mask for response fields."
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string",
+            "description": "Language code."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "formattedAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.places.getPlacePhoto",
+      "shortPath": "places.getPlacePhoto",
+      "description": "Retrieves high quality photographic content from the Google Maps Places database. Use when you need to download a place photo using a photo_reference obtained from Place Details, Nearby Search, or Text Search requests. Images are scaled proportionally to fit within specified dimensions.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "photo_reference",
+            "optional": false,
+            "type": "string",
+            "description": "Photo reference identifier."
+          },
+          {
+            "key": "maxwidth",
+            "optional": true,
+            "type": "number",
+            "description": "Max width in pixels."
+          },
+          {
+            "key": "maxheight",
+            "optional": true,
+            "type": "number",
+            "description": "Max height in pixels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "photoUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Public photo URL or image resource link."
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.places.nearbySearch",
+      "shortPath": "places.nearbySearch",
+      "description": "Searches for places (e.g., restaurants, parks) within a specified circular area, with options to filter by place types and customize the returned fields and number of results.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includedTypes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Included place types."
+          },
+          {
+            "key": "excludedTypes",
+            "optional": true,
+            "type": "string[]",
+            "description": "Excluded place types."
+          },
+          {
+            "key": "maxResultCount",
+            "optional": true,
+            "type": "number",
+            "description": "Max results (1-20)."
+          },
+          {
+            "key": "locationRestriction",
+            "optional": false,
+            "type": "{}",
+            "description": "Center circle restriction."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "places",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.places.textSearch",
+      "shortPath": "places.textSearch",
+      "description": "Searches for places on Google Maps using a textual query (e.g., \"restaurants in London\", \"Eiffel Tower\"). Results may include CLOSED_PERMANENTLY or TEMPORARILY_CLOSED places — filter by businessStatus=OPERATIONAL. Include city/region and business type in textQuery to avoid empty or irrelevant results. Deduplicate using id or formattedAddress, not name alone. Throttle to ~1 req/s; OVER_QUERY_LIMIT (HTTP 429) requires exponential backoff.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "textQuery",
+            "optional": false,
+            "type": "string",
+            "description": "Text search query string."
+          },
+          {
+            "key": "includedType",
+            "optional": true,
+            "type": "string",
+            "description": "Primary place type filter."
+          },
+          {
+            "key": "locationBias",
+            "optional": true,
+            "type": "{}",
+            "description": "Location bias circle or rectangle."
+          },
+          {
+            "key": "minRating",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum place rating filter."
+          },
+          {
+            "key": "openNow",
+            "optional": true,
+            "type": "boolean",
+            "description": "Filter currently open places."
+          },
+          {
+            "key": "maxResultCount",
+            "optional": true,
+            "type": "number",
+            "description": "Max result count."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "places",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.routes.computeRouteMatrix",
+      "shortPath": "routes.computeRouteMatrix",
+      "description": "Calculates travel distance and duration matrix between multiple origins and destinations using the modern Routes API; supports OAuth2 authentication and various travel modes. Matrix is capped at 625 elements (e.g., 25×25); chunk larger sets to avoid RESOURCE_EXHAUSTED errors. Response elements may be returned out of input order — always use originIndex and destinationIndex to map results. Only use elements where condition='ROUTE_EXISTS'; the matrix may be incomplete.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origins",
+            "optional": false,
+            "type": "{}[]",
+            "description": "List of origin waypoints."
+          },
+          {
+            "key": "destinations",
+            "optional": false,
+            "type": "{}[]",
+            "description": "List of destination waypoints."
+          },
+          {
+            "key": "travelMode",
+            "optional": true,
+            "type": "string",
+            "description": "DRIVE, BICYCLE, WALK, TWO_WHEELER, TRANSIT."
+          },
+          {
+            "key": "routingPreference",
+            "optional": true,
+            "type": "string",
+            "description": "TRAFFIC_UNAWARE, TRAFFIC_AWARE, TRAFFIC_AWARE_OPTIMAL."
+          },
+          {
+            "key": "departureTime",
+            "optional": true,
+            "type": "string",
+            "description": "Departure timestamp."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "originIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "destinationIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "condition",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "distanceMeters",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.routes.distanceMatrix",
+      "shortPath": "routes.distanceMatrix",
+      "description": "DEPRECATED: Legacy API that calculates travel distance and time for a matrix of origins and destinations. This API only works with API keys (no OAuth2 support). Use the modern 'Compute Route Matrix' action instead, which supports OAuth2 authentication. Supports different modes of transportation and options like departure/arrival times. Capped at 100 elements per request (elements = origins × destinations count); split large sets into batches.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origins",
+            "optional": false,
+            "type": "string | string[]",
+            "description": "Origins addresses or coordinates."
+          },
+          {
+            "key": "destinations",
+            "optional": false,
+            "type": "string | string[]",
+            "description": "Destinations addresses or coordinates."
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string",
+            "description": "driving, walking, bicycling, transit."
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "string",
+            "description": "metric, imperial."
+          },
+          {
+            "key": "departure_time",
+            "optional": true,
+            "type": "string",
+            "description": "Departure time."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin_addresses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "destination_addresses",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.routes.getDirection",
+      "shortPath": "routes.getDirection",
+      "description": "Fetches detailed directions between an origin and a destination, supporting intermediate waypoints and various travel modes. Automatically uses the modern Routes API with OAuth2 when available, falling back to legacy API with API key if provided.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": false,
+            "type": "string",
+            "description": "Origin location address or lat,lng."
+          },
+          {
+            "key": "destination",
+            "optional": false,
+            "type": "string",
+            "description": "Destination location address or lat,lng."
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string",
+            "description": "driving, walking, bicycling, transit."
+          },
+          {
+            "key": "waypoints",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Intermediate waypoints."
+          },
+          {
+            "key": "avoid",
+            "optional": true,
+            "type": "string",
+            "description": "tolls, highways, ferries."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "routes",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.routes.getRoute",
+      "shortPath": "routes.getRoute",
+      "description": "Calculates one or more routes between two specified locations. Uses various travel modes and preferences; addresses must be resolvable by Google Maps. Response duration is a string with 's' suffix (e.g., \"4557s\"); parse before displaying.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": false,
+            "type": "{}",
+            "description": "Origin waypoint object."
+          },
+          {
+            "key": "destination",
+            "optional": false,
+            "type": "{}",
+            "description": "Destination waypoint object."
+          },
+          {
+            "key": "travelMode",
+            "optional": true,
+            "type": "string",
+            "description": "DRIVE, BICYCLE, WALK, TWO_WHEELER, TRANSIT."
+          },
+          {
+            "key": "routingPreference",
+            "optional": true,
+            "type": "string",
+            "description": "TRAFFIC_UNAWARE, TRAFFIC_AWARE."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "routes",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.tiles.createTilesSession",
+      "shortPath": "tiles.createTilesSession",
+      "description": "Tool to create a session token required for accessing 2D Tiles and Street View imagery. Use when you need to initialize tile-based map rendering or street view display. The session token is valid for approximately two weeks and must be included in all subsequent tile requests. Each call consumes quota — cache and reuse the returned token across all tile requests within its validity window rather than creating a new session per request.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mapType",
+            "optional": false,
+            "type": "string",
+            "description": "roadmap, satellite, terrain, or streetview."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "BCP-47 language tag."
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string",
+            "description": "ccTLD two-character region code."
+          },
+          {
+            "key": "imageFormat",
+            "optional": true,
+            "type": "string",
+            "description": "png, jpeg, webp."
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "string",
+            "description": "scale factor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session",
+            "optional": false,
+            "type": "string",
+            "description": "Session token for subsequent tile requests."
+          },
+          {
+            "key": "expiry",
+            "optional": true,
+            "type": "string",
+            "description": "Expiration timestamp."
+          },
+          {
+            "key": "tileWidth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tileHeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "imageFormat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.tiles.embedMap",
+      "shortPath": "tiles.embedMap",
+      "description": "Tool to generate an embeddable Google Map URL and HTML iframe code. Use when you need to display a map (place, view, directions, street view, search) on a webpage without JavaScript. Note: This API only works with API keys (no OAuth2 support). It generates embed URLs and does not make direct API calls. Generated embed URLs are publicly accessible; avoid passing sensitive or internal location queries.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "place | view | directions | streetview | search",
+            "description": "Map embed mode."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Location or search query."
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "string",
+            "description": "Origin for directions mode."
+          },
+          {
+            "key": "destination",
+            "optional": true,
+            "type": "string",
+            "description": "Destination for directions mode."
+          },
+          {
+            "key": "center",
+            "optional": true,
+            "type": "string",
+            "description": "Center lat,lng."
+          },
+          {
+            "key": "zoom",
+            "optional": true,
+            "type": "number",
+            "description": "Zoom level."
+          },
+          {
+            "key": "maptype",
+            "optional": true,
+            "type": "string",
+            "description": "roadmap or satellite."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Lat,lng location for streetview mode."
+          },
+          {
+            "key": "pano",
+            "optional": true,
+            "type": "string",
+            "description": "Panorama ID for streetview mode."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "embedUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Embeddable map URL."
+          },
+          {
+            "key": "iframeHtml",
+            "optional": false,
+            "type": "string",
+            "description": "HTML iframe code snippet for embedding."
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.tiles.get2dTile",
+      "shortPath": "tiles.get2dTile",
+      "description": "Tool to retrieve a 2D map tile image at specified coordinates for building custom map visualizations. Use when you need to download individual map tile images for roadmap, satellite, or terrain views. Requires a valid session token from the createSession endpoint.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session",
+            "optional": false,
+            "type": "string",
+            "description": "Valid session token from CreateTilesSession."
+          },
+          {
+            "key": "z",
+            "optional": false,
+            "type": "number",
+            "description": "Zoom level."
+          },
+          {
+            "key": "x",
+            "optional": false,
+            "type": "number",
+            "description": "X coordinate."
+          },
+          {
+            "key": "y",
+            "optional": false,
+            "type": "number",
+            "description": "Y coordinate."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tileUrl",
+            "optional": false,
+            "type": "string",
+            "description": "URL to fetch 2D tile image."
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Base64 tile data if requested."
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemaps.api.tiles.get3dTilesRoot",
+      "shortPath": "tiles.get3dTilesRoot",
+      "description": "Tool to retrieve the 3D Tiles tileset root configuration for photorealistic 3D map rendering. Use when you need to initialize a 3D renderer with Google's photorealistic tiles following the OGC 3D Tiles specification. The Map Tiles API is billable per request; cache the root response client-side and avoid repeated calls.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string",
+            "description": "Optional API key override."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "geometricError",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,1016 @@
+{
+  "id": "ahrefs",
+  "displayName": "Ahrefs",
+  "description": "SEO toolkit for keyword research, backlink analysis, and search ranking insights.",
+  "npmPackageName": "@corsair-dev/ahrefs",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ahrefs.api.keywordsExplorer.overview",
+      "shortPath": "keywordsExplorer.overview",
+      "description": "Get keyword metrics such as volume, difficulty, CPC, clicks, and traffic potential",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "volume_monthly_date_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "volume_monthly_date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_mode",
+            "optional": true,
+            "type": "exact | prefix | domain | subdomains"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_position",
+            "optional": true,
+            "type": "in_top10 | in_top100"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "keyword_list_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "json"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keywords",
+            "optional": false,
+            "type": "{ clicks?: number | null, cpc?: number | null, cps?: number | null, difficulty?: number | null, first_seen?: string | null, global_volume?: number | null, intents?: { informational?: boolean, navigational?: boolean, commercial?: boolean, transactional?: boolean, branded?: boolean, local?: boolean } | null, keyword: string, parent_topic?: string | null, parent_volume?: number | null, searches_pct_clicks_organic_and_paid?: number | null, searches_pct_clicks_organic_only?: number | null, searches_pct_clicks_paid_only?: number | null, serp_features?: string[], serp_last_update?: string | null, traffic_potential?: number | null, volume?: number | null, volume_desktop_pct?: number | null, volume_mobile_pct?: number | null, volume_monthly?: number | null, volume_monthly_history?: {}[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ahrefs.api.rankTracker.overview",
+      "shortPath": "rankTracker.overview",
+      "description": "Get Rank Tracker keyword overview data for a project and device",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_compared",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": false,
+            "type": "desktop | mobile"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "volume_mode",
+            "optional": true,
+            "type": "monthly | average"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "json"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "overviews",
+            "optional": false,
+            "type": "{ keyword?: string | null, country?: string, device?: string, position?: number | null, previous_position?: number | null, best_position_kind?: string | null, clicks?: number | null, volume?: number | null, traffic?: number | null, url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ahrefs.api.serp.overview",
+      "shortPath": "serp.overview",
+      "description": "Get SERP positions for a keyword and country, including ranking page metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "select",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top_positions",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "json"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "positions",
+            "optional": false,
+            "type": "{ position: number, url?: string | null, title?: string | null, type?: string[], domain_rating?: number | null, ahrefs_rank?: number | null, backlinks?: number | null, refdomains?: number | null, traffic?: number | null, value?: number | null, update_date?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ahrefs.api.siteExplorer.backlinksStats",
+      "shortPath": "siteExplorer.backlinksStats",
+      "description": "Get live and all-time backlink and referring-domain counts for a target",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "protocol",
+            "optional": true,
+            "type": "both | http | https"
+          },
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "exact | prefix | domain | subdomains"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metrics",
+            "optional": false,
+            "type": "{ all_time?: number | null, all_time_refdomains?: number | null, live?: number | null, live_refdomains?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ahrefs.api.siteExplorer.getDomainRating",
+      "shortPath": "siteExplorer.getDomainRating",
+      "description": "Get Ahrefs Domain Rating and Ahrefs Rank for a target",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "protocol",
+            "optional": true,
+            "type": "both | http | https"
+          },
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "json"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain_rating",
+            "optional": false,
+            "type": "{ ahrefs_rank?: number | null, domain_rating?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ahrefs.api.siteExplorer.organicKeywords",
+      "shortPath": "siteExplorer.organicKeywords",
+      "description": "List organic keywords a target ranks for, including positions and traffic metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "protocol",
+            "optional": true,
+            "type": "both | http | https"
+          },
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "exact | prefix | domain | subdomains"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_compared",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "volume_mode",
+            "optional": true,
+            "type": "monthly | average"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keywords",
+            "optional": false,
+            "type": "{ keyword?: string | null, keyword_country?: string, best_position?: number | null, best_position_url?: string | null, keyword_difficulty?: number | null, volume?: number | null, cpc?: number | null, sum_traffic?: number | null, serp_features?: string[], last_update?: string | null, status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ahrefs.api.siteExplorer.refdomains",
+      "shortPath": "siteExplorer.refdomains",
+      "description": "List referring domains linking to a target",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "protocol",
+            "optional": true,
+            "type": "both | http | https"
+          },
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "exact | prefix | domain | subdomains"
+          },
+          {
+            "key": "history",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "refdomains",
+            "optional": false,
+            "type": "{ domain: string, domain_rating?: number | null, dofollow_links?: number | null, dofollow_refdomains?: number | null, links?: number | null, refdomains?: number | null, first_seen?: string | null, last_visited?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ahrefs.api.siteExplorer.topPages",
+      "shortPath": "siteExplorer.topPages",
+      "description": "List top organic pages for a target with traffic, keyword, and link metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "protocol",
+            "optional": true,
+            "type": "both | http | https"
+          },
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "json"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "select",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "exact | prefix | domain | subdomains"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_compared",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "volume_mode",
+            "optional": true,
+            "type": "monthly | average"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pages",
+            "optional": false,
+            "type": "{ raw_url: string, keywords?: number | null, referring_domains?: number | null, sum_traffic?: number | null, value?: number | null, page_type?: string | null, status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ahrefs.api.subscriptionInfo.limitsAndUsage",
+      "shortPath": "subscriptionInfo.limitsAndUsage",
+      "description": "Get Ahrefs subscription limits and API unit usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": true,
+            "type": "json"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limits_and_usage",
+            "optional": false,
+            "type": "{ api_key_expiration_date: string, subscription: string, units_limit_api_key?: number | null, units_limit_workspace?: number | null, units_usage_api_key: number, units_usage_workspace?: number | null, usage_reset_date: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "ahrefs.db.domainMetrics.search",
+      "entityName": "domainMetrics",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ahrefs_rank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "domain_rating",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "backlinks",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "referring_domains",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "all_time_backlinks",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "all_time_referring_domains",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ahrefs.db.keywords.search",
+      "entityName": "keywords",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "keyword",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "volume",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "keyword_difficulty",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "difficulty",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "cpc",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "best_position",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "best_position_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sum_traffic",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "traffic_potential",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ahrefs.db.pages.search",
+      "entityName": "pages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "raw_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "keywords",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "referring_domains",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sum_traffic",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "value",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ahrefs.db.rankings.search",
+      "entityName": "rankings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "device",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "keyword",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "position",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "previous_position",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ahrefs.db.refdomains.search",
+      "entityName": "refdomains",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain_rating",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "dofollow_links",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "dofollow_refdomains",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "links",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "refdomains",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ahrefs.db.serpPositions.search",
+      "entityName": "serpPositions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "keyword",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "requestedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "position",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain_rating",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "backlinks",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "refdomains",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "traffic",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ahrefs.db.subscriptionUsage.search",
+      "entityName": "subscriptionUsage",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "api_key_expiration_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subscription",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "units_limit_api_key",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "units_limit_workspace",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "units_usage_api_key",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "units_usage_workspace",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "usage_reset_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

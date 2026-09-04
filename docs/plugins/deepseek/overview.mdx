@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Deepseek plugin for Corsair"
+description: "AI model provider API for chat completions, reasoning, and code generation tasks."
 ---
 
-Use **Deepseek** through Corsair: one client, typed API calls.
+Use **DeepSeek** through Corsair: one client, typed API calls.
 
 **What you get:**
 
@@ -44,8 +44,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```

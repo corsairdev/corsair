@@ -467,7 +467,6 @@ export type VideosGetSubtitleLanguageDetailsInput = z.infer<
 
 export const VideosCreateSubtitleLanguageInputSchema = z.object({
 	video_id: z.string().min(1),
-	/** Official Amara field (docs use `language_code`, not Composio's `language`). */
 	language_code: z.string().min(1),
 	is_primary_audio_language: z.boolean().optional(),
 	soft_limit_cpl: z.number().nullable().optional(),

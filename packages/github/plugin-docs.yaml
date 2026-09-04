@@ -1,0 +1,22 @@
+displayName: GitHub
+description: Code hosting platform for repositories, issues, pull requests, and developer workflows.
+examples:
+  read:
+    path: repositories.list
+    title: List repositories
+  write:
+    path: issues.create
+    title: Create an issue
+    args:
+      owner: octocat
+      repo: hello-world
+      title: Found a bug
+dbExample:
+  entity: repositories
+  note: Search synced repositories without hitting GitHub.
+  limit: 50
+exampleWebhook:
+  path: issue.opened
+  note: Fires when a GitHub issue is opened.
+  after: |
+    console.log('GitHub issue opened:', result.data);

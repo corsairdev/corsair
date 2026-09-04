@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Stripe plugin for Corsair"
+description: "Payment infrastructure for accepting charges, subscriptions, invoices, and online checkout flows."
 ---
 
 Use **Stripe** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -46,8 +46,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -107,19 +107,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`balance.get`**
+**List customers**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.stripe.api.balance.get({});
+await tenant.stripe.api.customers.list({});
 ```
 
 
-**`charges.create`**
+**Create a payment intent**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.stripe.api.charges.create({});
+await tenant.stripe.api.paymentIntents.create({ amount: 2000, currency: 'usd' });
 ```
 
 
@@ -127,15 +127,38 @@ See the full list on the [API](/plugins/stripe/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.stripe.db.<entity>.search()` and `.list()`: `balance`, `charges`, `coupons`, `customers`, `paymentIntents`, `prices`, `sources`.
+Search synced customers without hitting Stripe.
 
-See [Database](/plugins/stripe/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.stripe.db.customers.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `balance`, `charges`, `coupons`, `customers`, `paymentIntents`, `prices`, `sources`. See [Database](/plugins/stripe/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **11** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a payment intent transitions to `succeeded`. Use this to fulfil orders.
 
-See [Webhooks](/plugins/stripe/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+stripe({
+    webhookHooks: {
+        paymentIntent: {
+            succeeded: {
+                after: async (ctx, result) => {
+                    const intent = result.data.data.object;
+                    console.log('Payment succeeded:', intent.id, intent.amount, intent.currency);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/stripe/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

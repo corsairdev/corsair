@@ -1,0 +1,1765 @@
+{
+  "id": "discord",
+  "displayName": "Discord",
+  "description": "Community chat platform for servers, channels, voice, bots, and real-time group messaging.",
+  "npmPackageName": "@corsair-dev/discord",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 4,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "guild_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "discord.api.channels.list",
+      "shortPath": "channels.list",
+      "description": "List channels in a guild",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "guild_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, type: number, guild_id?: string, name?: string | null, topic?: string | null, position?: number, parent_id?: string | null, last_message_id?: string | null, owner_id?: string, thread_metadata?: { archived: boolean, auto_archive_duration: number, archive_timestamp: string, locked: boolean, invitable?: boolean } }[]"
+      }
+    },
+    {
+      "path": "discord.api.guilds.get",
+      "shortPath": "guilds.get",
+      "description": "Get info about a guild",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "guild_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "with_counts",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "splash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "afk_timeout",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "verification_level",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "default_message_notifications",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "explicit_content_filter",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "{ id: string, name: string, permissions: string, position: number, color: number, hoist: boolean, managed: boolean, mentionable: boolean }[]"
+          },
+          {
+            "key": "features",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "mfa_level",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "premium_tier",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "premium_subscription_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "preferred_locale",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "approximate_member_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "approximate_presence_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "discord.api.guilds.list",
+      "shortPath": "guilds.list",
+      "description": "List guilds the bot is a member of",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "with_counts",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, icon?: string | null, owner: boolean, permissions: string, features: string[], approximate_member_count?: number, approximate_presence_count?: number }[]"
+      }
+    },
+    {
+      "path": "discord.api.members.get",
+      "shortPath": "members.get",
+      "description": "Get info about a guild member",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "guild_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }"
+          },
+          {
+            "key": "nick",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "joined_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "premium_since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deaf",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "mute",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "flags",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pending",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "discord.api.members.list",
+      "shortPath": "members.list",
+      "description": "List members of a guild",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "guild_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, nick?: string | null, avatar?: string | null, roles: string[], joined_at: string, premium_since?: string | null, deaf: boolean, mute: boolean, flags: number, pending?: boolean }[]"
+      }
+    },
+    {
+      "path": "discord.api.messages.delete",
+      "shortPath": "messages.delete",
+      "description": "Permanently delete a message",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "discord.api.messages.edit",
+      "shortPath": "messages.edit",
+      "description": "Edit an existing message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "embeds",
+            "optional": true,
+            "type": "{ title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": false,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "edited_timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tts",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "mention_everyone",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "mentions",
+            "optional": false,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }[]"
+          },
+          {
+            "key": "mention_roles",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "attachments",
+            "optional": false,
+            "type": "{ id: string, filename: string, description?: string, content_type?: string, size: number, url: string, proxy_url: string, height?: number | null, width?: number | null }[]"
+          },
+          {
+            "key": "embeds",
+            "optional": false,
+            "type": "{ title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[]"
+          },
+          {
+            "key": "reactions",
+            "optional": true,
+            "type": "{ count: number, me: boolean, emoji: { id?: string | null, name: string } }[]"
+          },
+          {
+            "key": "pinned",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message_reference",
+            "optional": true,
+            "type": "{ message_id?: string, channel_id?: string, guild_id?: string }"
+          },
+          {
+            "key": "thread",
+            "optional": true,
+            "type": "{ id: string, type: number, guild_id?: string, name?: string | null, topic?: string | null, position?: number, parent_id?: string | null, last_message_id?: string | null, owner_id?: string, thread_metadata?: { archived: boolean, auto_archive_duration: number, archive_timestamp: string, locked: boolean, invitable?: boolean } }"
+          },
+          {
+            "key": "nonce",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "referenced_message",
+            "optional": false,
+            "type": "lazy"
+          }
+        ]
+      }
+    },
+    {
+      "path": "discord.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Get a specific message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": false,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "edited_timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tts",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "mention_everyone",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "mentions",
+            "optional": false,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }[]"
+          },
+          {
+            "key": "mention_roles",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "attachments",
+            "optional": false,
+            "type": "{ id: string, filename: string, description?: string, content_type?: string, size: number, url: string, proxy_url: string, height?: number | null, width?: number | null }[]"
+          },
+          {
+            "key": "embeds",
+            "optional": false,
+            "type": "{ title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[]"
+          },
+          {
+            "key": "reactions",
+            "optional": true,
+            "type": "{ count: number, me: boolean, emoji: { id?: string | null, name: string } }[]"
+          },
+          {
+            "key": "pinned",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message_reference",
+            "optional": true,
+            "type": "{ message_id?: string, channel_id?: string, guild_id?: string }"
+          },
+          {
+            "key": "thread",
+            "optional": true,
+            "type": "{ id: string, type: number, guild_id?: string, name?: string | null, topic?: string | null, position?: number, parent_id?: string | null, last_message_id?: string | null, owner_id?: string, thread_metadata?: { archived: boolean, auto_archive_duration: number, archive_timestamp: string, locked: boolean, invitable?: boolean } }"
+          },
+          {
+            "key": "nonce",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "referenced_message",
+            "optional": false,
+            "type": "lazy"
+          }
+        ]
+      }
+    },
+    {
+      "path": "discord.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List recent messages in a channel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "around",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, channel_id: string, author: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, content: string, timestamp: string, edited_timestamp?: string | null, tts: boolean, mention_everyone: boolean, mentions: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }[], mention_roles: string[], attachments: { id: string, filename: string, description?: string, content_type?: string, size: number, url: string, proxy_url: string, height?: number | null, width?: number | null }[], embeds: { title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[], reactions?: { count: number, me: boolean, emoji: { id?: string | null, name: string } }[], pinned: boolean, type: number, flags?: number, message_reference?: { message_id?: string, channel_id?: string, guild_id?: string }, thread?: { id: string, type: number, guild_id?: string, name?: string | null, topic?: string | null, position?: number, parent_id?: string | null, last_message_id?: string | null, owner_id?: string, thread_metadata?: { archived: boolean, auto_archive_duration: number, archive_timestamp: string, locked: boolean, invitable?: boolean } }, nonce?: string | number, referenced_message: lazy }[]"
+      }
+    },
+    {
+      "path": "discord.api.messages.reply",
+      "shortPath": "messages.reply",
+      "description": "Reply to a message in a channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "embeds",
+            "optional": true,
+            "type": "{ title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[]"
+          },
+          {
+            "key": "fail_if_not_exists",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": false,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "edited_timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tts",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "mention_everyone",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "mentions",
+            "optional": false,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }[]"
+          },
+          {
+            "key": "mention_roles",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "attachments",
+            "optional": false,
+            "type": "{ id: string, filename: string, description?: string, content_type?: string, size: number, url: string, proxy_url: string, height?: number | null, width?: number | null }[]"
+          },
+          {
+            "key": "embeds",
+            "optional": false,
+            "type": "{ title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[]"
+          },
+          {
+            "key": "reactions",
+            "optional": true,
+            "type": "{ count: number, me: boolean, emoji: { id?: string | null, name: string } }[]"
+          },
+          {
+            "key": "pinned",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message_reference",
+            "optional": true,
+            "type": "{ message_id?: string, channel_id?: string, guild_id?: string }"
+          },
+          {
+            "key": "thread",
+            "optional": true,
+            "type": "{ id: string, type: number, guild_id?: string, name?: string | null, topic?: string | null, position?: number, parent_id?: string | null, last_message_id?: string | null, owner_id?: string, thread_metadata?: { archived: boolean, auto_archive_duration: number, archive_timestamp: string, locked: boolean, invitable?: boolean } }"
+          },
+          {
+            "key": "nonce",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "referenced_message",
+            "optional": false,
+            "type": "lazy"
+          }
+        ]
+      }
+    },
+    {
+      "path": "discord.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a message to a channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "embeds",
+            "optional": true,
+            "type": "{ title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[]"
+          },
+          {
+            "key": "tts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nonce",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": false,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "edited_timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tts",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "mention_everyone",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "mentions",
+            "optional": false,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }[]"
+          },
+          {
+            "key": "mention_roles",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "attachments",
+            "optional": false,
+            "type": "{ id: string, filename: string, description?: string, content_type?: string, size: number, url: string, proxy_url: string, height?: number | null, width?: number | null }[]"
+          },
+          {
+            "key": "embeds",
+            "optional": false,
+            "type": "{ title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[]"
+          },
+          {
+            "key": "reactions",
+            "optional": true,
+            "type": "{ count: number, me: boolean, emoji: { id?: string | null, name: string } }[]"
+          },
+          {
+            "key": "pinned",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message_reference",
+            "optional": true,
+            "type": "{ message_id?: string, channel_id?: string, guild_id?: string }"
+          },
+          {
+            "key": "thread",
+            "optional": true,
+            "type": "{ id: string, type: number, guild_id?: string, name?: string | null, topic?: string | null, position?: number, parent_id?: string | null, last_message_id?: string | null, owner_id?: string, thread_metadata?: { archived: boolean, auto_archive_duration: number, archive_timestamp: string, locked: boolean, invitable?: boolean } }"
+          },
+          {
+            "key": "nonce",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "referenced_message",
+            "optional": false,
+            "type": "lazy"
+          }
+        ]
+      }
+    },
+    {
+      "path": "discord.api.reactions.add",
+      "shortPath": "reactions.add",
+      "description": "Add a reaction to a message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "discord.api.reactions.list",
+      "shortPath": "reactions.list",
+      "description": "List reactions on a message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }[]"
+      }
+    },
+    {
+      "path": "discord.api.reactions.remove",
+      "shortPath": "reactions.remove",
+      "description": "Remove a reaction from a message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "discord.api.threads.create",
+      "shortPath": "threads.create",
+      "description": "Create a new thread in a channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "auto_archive_duration",
+            "optional": true,
+            "type": "60 | 1440 | 4320 | 10080"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "invitable",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "guild_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_message_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thread_metadata",
+            "optional": true,
+            "type": "{ archived: boolean, auto_archive_duration: number, archive_timestamp: string, locked: boolean, invitable?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "discord.api.threads.createFromMessage",
+      "shortPath": "threads.createFromMessage",
+      "description": "Create a thread from an existing message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "auto_archive_duration",
+            "optional": true,
+            "type": "60 | 1440 | 4320 | 10080"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "guild_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_message_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thread_metadata",
+            "optional": true,
+            "type": "{ archived: boolean, auto_archive_duration: number, archive_timestamp: string, locked: boolean, invitable?: boolean }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "discord.webhooks.interactions.applicationCommand",
+      "shortPath": "interactions.applicationCommand",
+      "description": "A user invoked a slash command or context-menu action",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "application_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "guild_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "member",
+            "optional": true,
+            "type": "{ user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, nick?: string | null, roles: string[], joined_at: string, permissions: string, deaf: boolean, mute: boolean }"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "guild_locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_permissions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "2"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, type: number, options?: { name: string, type: number, value?: string | number | boolean, focused?: boolean, options?: lazy }[], guild_id?: string, target_id?: string }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, application_id: string, token: string, version: 1, guild_id?: string, channel_id?: string, member?: { user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, nick?: string | null, roles: string[], joined_at: string, permissions: string, deaf: boolean, mute: boolean }, user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, locale?: string, guild_locale?: string, app_permissions?: string, type: 2, data: { id: string, name: string, type: number, options?: { name: string, type: number, value?: string | number | boolean, focused?: boolean, options?: lazy }[], guild_id?: string, target_id?: string } }",
+      "usageExample": "discord({\n    webhookHooks: {\n        interactions: {\n            applicationCommand: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "discord.webhooks.interactions.messageComponent",
+      "shortPath": "interactions.messageComponent",
+      "description": "A user clicked a button or selected a menu option",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "application_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "guild_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "member",
+            "optional": true,
+            "type": "{ user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, nick?: string | null, roles: string[], joined_at: string, permissions: string, deaf: boolean, mute: boolean }"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "guild_locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_permissions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "3"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ custom_id: string, component_type: number, values?: string[] }"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ id: string, channel_id: string, content: string, author: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, timestamp: string, edited_timestamp?: string | null, tts: boolean, mention_everyone: boolean, mentions: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }[], attachments: any[], embeds: { title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[], pinned: boolean, type: number }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, application_id: string, token: string, version: 1, guild_id?: string, channel_id?: string, member?: { user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, nick?: string | null, roles: string[], joined_at: string, permissions: string, deaf: boolean, mute: boolean }, user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, locale?: string, guild_locale?: string, app_permissions?: string, type: 3, data: { custom_id: string, component_type: number, values?: string[] }, message: { id: string, channel_id: string, content: string, author: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, timestamp: string, edited_timestamp?: string | null, tts: boolean, mention_everyone: boolean, mentions: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }[], attachments: any[], embeds: { title?: string, description?: string, url?: string, color?: number, fields?: { name: string, value: string, inline?: boolean }[], footer?: { text: string, icon_url?: string }, image?: { url: string }, thumbnail?: { url: string }, author?: { name: string, url?: string, icon_url?: string }, timestamp?: string }[], pinned: boolean, type: number } }",
+      "usageExample": "discord({\n    webhookHooks: {\n        interactions: {\n            messageComponent: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "discord.webhooks.interactions.modalSubmit",
+      "shortPath": "interactions.modalSubmit",
+      "description": "A user submitted a modal dialog",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "application_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "guild_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "member",
+            "optional": true,
+            "type": "{ user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, nick?: string | null, roles: string[], joined_at: string, permissions: string, deaf: boolean, mute: boolean }"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "guild_locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_permissions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "5"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ custom_id: string, components: { type: number, components: { type: number, custom_id: string, value: string }[] }[] }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, application_id: string, token: string, version: 1, guild_id?: string, channel_id?: string, member?: { user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, nick?: string | null, roles: string[], joined_at: string, permissions: string, deaf: boolean, mute: boolean }, user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, locale?: string, guild_locale?: string, app_permissions?: string, type: 5, data: { custom_id: string, components: { type: number, components: { type: number, custom_id: string, value: string }[] }[] } }",
+      "usageExample": "discord({\n    webhookHooks: {\n        interactions: {\n            modalSubmit: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "discord.webhooks.interactions.ping",
+      "shortPath": "interactions.ping",
+      "description": "Discord sends a PING to verify the endpoint is live",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "application_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "1"
+          },
+          {
+            "key": "guild_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "member",
+            "optional": true,
+            "type": "{ user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, nick?: string | null, roles: string[], joined_at: string, permissions: string, deaf: boolean, mute: boolean }"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "guild_locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_permissions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "1"
+          }
+        ]
+      },
+      "responseType": "{ id: string, application_id: string, token: string, version: 1, guild_id?: string, channel_id?: string, member?: { user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, nick?: string | null, roles: string[], joined_at: string, permissions: string, deaf: boolean, mute: boolean }, user?: { id: string, username: string, discriminator: string, global_name?: string | null, avatar?: string | null, bot?: boolean, system?: boolean, email?: string | null, verified?: boolean, locale?: string, premium_type?: number, public_flags?: number, flags?: number }, locale?: string, guild_locale?: string, app_permissions?: string, type: 1 }",
+      "usageExample": "discord({\n    webhookHooks: {\n        interactions: {\n            ping: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "discord.db.channels.search",
+      "entityName": "channels",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "guild_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "topic",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "position",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_message_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "discord.db.guilds.search",
+      "entityName": "guilds",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "icon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "owner_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "approximate_member_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "approximate_presence_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "premium_tier",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "preferred_locale",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "discord.db.members.search",
+      "entityName": "members",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "guild_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nick",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "joined_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "premium_since",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deaf",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "mute",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "pending",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "discord.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channel_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timestamp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "edited_timestamp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tts",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "mention_everyone",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "pinned",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "flags",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "authorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thread_ts",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

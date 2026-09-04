@@ -1,0 +1,105 @@
+{
+  "id": "twentyonerisk",
+  "displayName": "TwentyOne Risk",
+  "description": "Risk intelligence platform for compliance screening, fraud detection, and vendor due diligence.",
+  "npmPackageName": "@corsair-dev/twentyonerisk",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "twentyonerisk.api.organizations.get",
+      "shortPath": "organizations.get",
+      "description": "Retrieve organizations from the 21RISK OData API with optional filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "$filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "$top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "$skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "$select",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "$orderby",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "$count",
+            "optional": true,
+            "type": "boolean | true | false"
+          },
+          {
+            "key": "$expand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "$skiptoken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxPageSizeInMb",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "@odata.count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "@odata.nextLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "@odata.context",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,2687 @@
+{
+  "id": "hubspot",
+  "displayName": "HubSpot",
+  "description": "CRM and marketing platform for contacts, deals, tickets, email, and sales automation.",
+  "npmPackageName": "@corsair-dev/hubspot",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 35,
+    "webhooks": 12,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "portal_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "portal_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "hubspot.api.companies.create",
+      "shortPath": "companies.create",
+      "description": "Create a new company",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{ to: { id: string }, types: { associationCategory: string, associationTypeId: number }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.companies.delete",
+      "shortPath": "companies.delete",
+      "description": "Permanently delete a company [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "hubspot.api.companies.get",
+      "shortPath": "companies.get",
+      "description": "Get a specific company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "propertiesWithHistory",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idProperty",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.companies.getMany",
+      "shortPath": "companies.getMany",
+      "description": "Get multiple companies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "propertiesWithHistory",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.companies.getRecentlyCreated",
+      "shortPath": "companies.getRecentlyCreated",
+      "description": "List recently created companies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.companies.getRecentlyUpdated",
+      "shortPath": "companies.getRecentlyUpdated",
+      "description": "List recently updated companies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.companies.searchByDomain",
+      "shortPath": "companies.searchByDomain",
+      "description": "Search companies by domain name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.companies.update",
+      "shortPath": "companies.update",
+      "description": "Update an existing company",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.contactLists.addContact",
+      "shortPath": "contactLists.addContact",
+      "description": "Add a contact to a static contact list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "vids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "discarded",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "invalidVids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "invalidEmails",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.contactLists.removeContact",
+      "shortPath": "contactLists.removeContact",
+      "description": "Remove a contact from a static contact list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "vids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "discarded",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "invalidVids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "invalidEmails",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a new contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{ to: { id: string }, types: { associationCategory: string, associationTypeId: number }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Permanently delete a contact [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "hubspot.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a specific contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "propertiesWithHistory",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idProperty",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.contacts.getMany",
+      "shortPath": "contacts.getMany",
+      "description": "Get multiple contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "propertiesWithHistory",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.contacts.getRecentlyCreated",
+      "shortPath": "contacts.getRecentlyCreated",
+      "description": "List recently created contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.contacts.getRecentlyUpdated",
+      "shortPath": "contacts.getRecentlyUpdated",
+      "description": "List recently updated contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.contacts.search",
+      "shortPath": "contacts.search",
+      "description": "Search contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sorts",
+            "optional": true,
+            "type": "{ propertyName: string, direction: ASCENDING | DESCENDING }[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filterGroups",
+            "optional": true,
+            "type": "{ filters: { operator: BETWEEN | CONTAINS_TOKEN | EQ | GT | GTE | HAS_PROPERTY | IN | LT | LTE | NEQ | NOT_CONTAINS_TOKEN | NOT_HAS_PROPERTY | NOT_IN, propertyName: string, highValue?: string, value?: string, values?: string[] }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update an existing contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.deals.create",
+      "shortPath": "deals.create",
+      "description": "Create a new deal",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{ to: { id: string }, types: { associationCategory: string, associationTypeId: number }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.deals.delete",
+      "shortPath": "deals.delete",
+      "description": "Permanently delete a deal [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dealId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "hubspot.api.deals.get",
+      "shortPath": "deals.get",
+      "description": "Get a specific deal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dealId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "propertiesWithHistory",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idProperty",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.deals.getMany",
+      "shortPath": "deals.getMany",
+      "description": "Get multiple deals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "propertiesWithHistory",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.deals.getRecentlyCreated",
+      "shortPath": "deals.getRecentlyCreated",
+      "description": "List recently created deals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.deals.getRecentlyUpdated",
+      "shortPath": "deals.getRecentlyUpdated",
+      "description": "List recently updated deals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.deals.search",
+      "shortPath": "deals.search",
+      "description": "Search deals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sorts",
+            "optional": true,
+            "type": "{ propertyName: string, direction: ASCENDING | DESCENDING }[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filterGroups",
+            "optional": true,
+            "type": "{ filters: { operator: BETWEEN | CONTAINS_TOKEN | EQ | GT | GTE | HAS_PROPERTY | IN | LT | LTE | NEQ | NOT_CONTAINS_TOKEN | NOT_HAS_PROPERTY | NOT_IN, propertyName: string, highValue?: string, value?: string, values?: string[] }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.deals.update",
+      "shortPath": "deals.update",
+      "description": "Update an existing deal",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dealId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.engagements.create",
+      "shortPath": "engagements.create",
+      "description": "Create a new engagement",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "engagement",
+            "optional": false,
+            "type": "{ active?: boolean, type: string, timestamp?: number }"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{ contactIds?: number[], companyIds?: number[], dealIds?: number[], ownerIds?: number[] }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "engagement",
+            "optional": true,
+            "type": "{ id?: number, portalId?: number, active?: boolean, createdAt?: number, lastUpdated?: number, createdBy?: number, modifiedBy?: number, ownerId?: number, type?: string, timestamp?: number }"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.engagements.delete",
+      "shortPath": "engagements.delete",
+      "description": "Permanently delete an engagement [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "engagementId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "hubspot.api.engagements.get",
+      "shortPath": "engagements.get",
+      "description": "Get a specific engagement",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "engagementId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "engagement",
+            "optional": true,
+            "type": "{ id?: number, portalId?: number, active?: boolean, createdAt?: number, lastUpdated?: number, createdBy?: number, modifiedBy?: number, ownerId?: number, type?: string, timestamp?: number }"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.engagements.getMany",
+      "shortPath": "engagements.getMany",
+      "description": "Get multiple engagements",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, engagement?: { id?: number, portalId?: number, active?: boolean, createdAt?: number, lastUpdated?: number, createdBy?: number, modifiedBy?: number, ownerId?: number, type?: string, timestamp?: number }, associations?: {}, metadata?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.tickets.create",
+      "shortPath": "tickets.create",
+      "description": "Create a new support ticket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{ to: { id: string }, types: { associationCategory: string, associationTypeId: number }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.tickets.delete",
+      "shortPath": "tickets.delete",
+      "description": "Permanently delete a ticket [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticketId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "hubspot.api.tickets.get",
+      "shortPath": "tickets.get",
+      "description": "Get a specific ticket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticketId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "propertiesWithHistory",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idProperty",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.tickets.getMany",
+      "shortPath": "tickets.getMany",
+      "description": "Get multiple tickets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "propertiesWithHistory",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: string, properties?: {}, createdAt?: Date | null, updatedAt?: Date | null, archived?: boolean, associations?: {} }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { after: string }, prev?: { before: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hubspot.api.tickets.update",
+      "shortPath": "tickets.update",
+      "description": "Update an existing ticket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ticketId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "associations",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "hubspot.webhooks.companyCreated",
+      "shortPath": "companyCreated",
+      "description": "A new company was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portalId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurredAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "company.creation"
+          },
+          {
+            "key": "attemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "propertyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "propertyValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean }",
+      "usageExample": "hubspot({\n    webhookHooks: {\n        companyCreated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "hubspot.webhooks.companyDeleted",
+      "shortPath": "companyDeleted",
+      "description": "A company was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portalId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurredAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "company.deletion"
+          },
+          {
+            "key": "attemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "propertyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "propertyValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean }",
+      "usageExample": "hubspot({\n    webhookHooks: {\n        companyDeleted: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "hubspot.webhooks.companyUpdated",
+      "shortPath": "companyUpdated",
+      "description": "A company property was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portalId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurredAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "company.propertyChange"
+          },
+          {
+            "key": "attemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "propertyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "propertyValue",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "changeSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean }",
+      "usageExample": "hubspot({\n    webhookHooks: {\n        companyUpdated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "hubspot.webhooks.contactCreated",
+      "shortPath": "contactCreated",
+      "description": "A new contact was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portalId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurredAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "contact.creation"
+          },
+          {
+            "key": "attemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "propertyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "propertyValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean }",
+      "usageExample": "hubspot({\n    webhookHooks: {\n        contactCreated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "hubspot.webhooks.contactDeleted",
+      "shortPath": "contactDeleted",
+      "description": "A contact was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portalId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurredAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "contact.deletion"
+          },
+          {
+            "key": "attemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "propertyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "propertyValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean }",
+      "usageExample": "hubspot({\n    webhookHooks: {\n        contactDeleted: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "hubspot.webhooks.contactUpdated",
+      "shortPath": "contactUpdated",
+      "description": "A contact property was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portalId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurredAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "contact.propertyChange"
+          },
+          {
+            "key": "attemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "propertyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "propertyValue",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "changeSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean }",
+      "usageExample": "hubspot({\n    webhookHooks: {\n        contactUpdated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "hubspot.webhooks.dealCreated",
+      "shortPath": "dealCreated",
+      "description": "A new deal was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portalId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurredAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "deal.creation"
+          },
+          {
+            "key": "attemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "propertyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "propertyValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean }",
+      "usageExample": "hubspot({\n    webhookHooks: {\n        dealCreated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "hubspot.webhooks.dealDeleted",
+      "shortPath": "dealDeleted",
+      "description": "A deal was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portalId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurredAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "deal.deletion"
+          },
+          {
+            "key": "attemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "propertyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "propertyValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean }",
+      "usageExample": "hubspot({\n    webhookHooks: {\n        dealDeleted: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "hubspot.webhooks.dealUpdated",
+      "shortPath": "dealUpdated",
+      "description": "A deal property was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portalId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurredAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "deal.propertyChange"
+          },
+          {
+            "key": "attemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "propertyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "propertyValue",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "changeSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean }",
+      "usageExample": "hubspot({\n    webhookHooks: {\n        dealUpdated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "hubspot.webhooks.ticketCreated",
+      "shortPath": "ticketCreated",
+      "description": "A new support ticket was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portalId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurredAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "ticket.creation"
+          },
+          {
+            "key": "attemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "propertyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "propertyValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean }",
+      "usageExample": "hubspot({\n    webhookHooks: {\n        ticketCreated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "hubspot.webhooks.ticketDeleted",
+      "shortPath": "ticketDeleted",
+      "description": "A support ticket was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portalId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurredAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "ticket.deletion"
+          },
+          {
+            "key": "attemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "propertyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "propertyValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changeSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean }",
+      "usageExample": "hubspot({\n    webhookHooks: {\n        ticketDeleted: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "hubspot.webhooks.ticketUpdated",
+      "shortPath": "ticketUpdated",
+      "description": "A support ticket property was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "portalId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurredAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "ticket.propertyChange"
+          },
+          {
+            "key": "attemptNumber",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "propertyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "propertyValue",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "changeSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean }",
+      "usageExample": "hubspot({\n    webhookHooks: {\n        ticketUpdated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "hubspot.db.companies.search",
+      "entityName": "companies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "hubspot.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "hubspot.db.deals.search",
+      "entityName": "deals",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "hubspot.db.engagements.search",
+      "entityName": "engagements",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "hubspot.db.tickets.search",
+      "entityName": "tickets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

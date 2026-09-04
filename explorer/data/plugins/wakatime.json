@@ -1,0 +1,44 @@
+{
+  "id": "wakatime",
+  "displayName": "WakaTime",
+  "description": "Developer time tracker for coding activity, project stats, and programming productivity metrics.",
+  "npmPackageName": "@corsair-dev/wakatime",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "wakatime.api.users.current",
+      "shortPath": "users.current",
+      "description": "Get the current WakaTime user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, username?: string, display_name?: string, email?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Google calendar plugin for Corsair"
+description: "Scheduling service for creating events, managing calendars, and checking availability."
 ---
 
-Use **Google calendar** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+Use **Google Calendar** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
@@ -46,8 +46,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -60,7 +60,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="OAuth 2.0 (Recommended)">
 
-Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google calendar OAuth app.
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google Calendar OAuth app.
 
 Provider walkthrough: [Get Credentials](/plugins/googlecalendar/get-credentials).
 
@@ -92,19 +92,29 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`calendar.getAvailability`**
+**Get availability**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.googlecalendar.api.calendar.getAvailability({});
+await tenant.googlecalendar.api.calendar.getAvailability({
+	timeMin: '2026-01-01T00:00:00Z',
+	timeMax: '2026-01-07T23:59:59Z',
+	items: [{ id: 'primary' }],
+});
 ```
 
 
-**`events.create`**
+**Create an event**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.googlecalendar.api.events.create({});
+await tenant.googlecalendar.api.events.create({
+	event: {
+		summary: 'Team Sync',
+		start: { dateTime: '2026-01-02T10:00:00Z' },
+		end: { dateTime: '2026-01-02T11:00:00Z' },
+	},
+});
 ```
 
 
@@ -112,15 +122,35 @@ See the full list on the [API](/plugins/googlecalendar/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.googlecalendar.db.<entity>.search()` and `.list()`: `calendars`, `events`.
+Search synced events without hitting Google Calendar.
 
-See [Database](/plugins/googlecalendar/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlecalendar.db.events.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `calendars`, `events`. See [Database](/plugins/googlecalendar/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a Google Calendar event is created, updated, or deleted.
 
-See [Webhooks](/plugins/googlecalendar/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+googlecalendar({
+    webhookHooks: {
+        onEventChanged: {
+            after: async (ctx, result) => {
+                console.log('Google Calendar event changed:', result.data);
+            }
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/googlecalendar/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
