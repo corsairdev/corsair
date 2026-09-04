@@ -113,6 +113,24 @@ export const docusignPlugin = {
 		if (source !== 'endpoint') {
 			throw new AuthMissingError('docusign', 'oauth_2');
 		}
+		// Managed runtime: a tenant key manager is present, so resolve
+		// exclusively from the active tenant's keychain. Factory options are
+		// never consulted here — otherwise one factory account would serve
+		// every tenant's calls.
+		if (ctx.keys) {
+			const accessToken = await ctx.keys.get_access_token();
+			const accountId = await ctx.keys.get_account_id();
+			const baseUri = await ctx.keys.get_base_uri();
+			if (!accessToken || !accountId) {
+				throw new AuthMissingError('docusign', 'oauth_2');
+			}
+			return JSON.stringify({
+				accessToken,
+				accountId,
+				...(baseUri ? { baseUri } : {}),
+			});
+		}
+		// Direct mode: no key manager, so factory options are the only source.
 		const factory = ctx.options as Partial<DocusignAuthOptions> | undefined;
 		if (
 			typeof factory?.accessToken === 'string' &&
@@ -128,17 +146,7 @@ export const docusignPlugin = {
 					: {}),
 			});
 		}
-		const accessToken = await ctx.keys?.get_access_token?.();
-		const accountId = await ctx.keys?.get_account_id?.();
-		const baseUri = await ctx.keys?.get_base_uri?.();
-		if (!accessToken || !accountId) {
-			throw new AuthMissingError('docusign', 'oauth_2');
-		}
-		return JSON.stringify({
-			accessToken,
-			accountId,
-			...(baseUri ? { baseUri } : {}),
-		});
+		throw new AuthMissingError('docusign', 'oauth_2');
 	},
 };
 

@@ -341,7 +341,27 @@ describe('DocuSign tenant credential lifecycle', () => {
 		});
 	});
 
-	it('keyBuilder prefers factory options for direct config', async () => {
+	it('keyBuilder never lets factory options override the tenant', async () => {
+		const key = await buildKey(
+			{
+				options: {
+					accessToken: 'factory_token',
+					accountId: '99999',
+				},
+				authType: 'oauth_2',
+				keys: keychain(),
+				tenantId: 'acme',
+			},
+			'endpoint',
+		);
+		expect(JSON.parse(key)).toEqual({
+			accessToken: 'tenant_token',
+			accountId: '12345',
+			baseUri: 'https://demo.docusign.net/restapi/v2.1',
+		});
+	});
+
+	it('keyBuilder uses factory options when no key manager exists', async () => {
 		const key = await buildKey(
 			{
 				options: {
@@ -364,6 +384,23 @@ describe('DocuSign tenant credential lifecycle', () => {
 			buildKey(
 				{
 					options: {},
+					authType: 'oauth_2',
+					keys: keychain({ accessToken: null, accountId: null }),
+					tenantId: 'acme',
+				},
+				'endpoint',
+			),
+		).rejects.toThrow();
+	});
+
+	it('keyBuilder throws instead of falling back to factory options', async () => {
+		await expect(
+			buildKey(
+				{
+					options: {
+						accessToken: 'factory_token',
+						accountId: '99999',
+					},
 					authType: 'oauth_2',
 					keys: keychain({ accessToken: null, accountId: null }),
 					tenantId: 'acme',
