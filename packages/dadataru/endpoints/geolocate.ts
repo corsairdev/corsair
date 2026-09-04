@@ -1,23 +1,28 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeDadataruRequest } from '../client';
-import type { DadataruEndpoints } from '../index';
+import type { DadataruContext, DadataruEndpoints } from '../index';
+import type { SuggestResponse } from './types';
 
 async function handleGeolocate(
-	ctx: any,
+	ctx: DadataruContext,
 	input: { lat: number; lon: number; radius_meters?: number; count?: number },
 	endpointPath: string,
 	eventName: string,
-) {
-	const response = await makeDadataruRequest<any>(endpointPath, ctx.key, {
-		method: 'POST',
-		body: {
-			lat: input.lat,
-			lon: input.lon,
-			radius_meters: input.radius_meters,
-			count: input.count ?? 5,
+): Promise<SuggestResponse> {
+	const response = await makeDadataruRequest<SuggestResponse>(
+		endpointPath,
+		ctx.key,
+		{
+			method: 'POST',
+			body: {
+				lat: input.lat,
+				lon: input.lon,
+				radius_meters: input.radius_meters,
+				count: input.count ?? 5,
+			},
+			apiType: 'suggest',
 		},
-		apiType: 'suggest',
-	});
+	);
 
 	await logEventFromContext(
 		ctx,

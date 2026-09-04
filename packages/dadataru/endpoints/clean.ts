@@ -1,13 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeDadataruRequest } from '../client';
-import type { DadataruEndpoints } from '../index';
+import type { DadataruContext, DadataruEndpoints } from '../index';
+import type { CleanResponse, CompositeCleanResponse } from './types';
 
 async function handleClean(
-	ctx: any,
+	ctx: DadataruContext,
 	queries: string[],
 	endpointPath: string,
 	eventName: string,
-) {
+): Promise<CleanResponse> {
 	const response = await makeDadataruRequest<Record<string, unknown>[]>(
 		endpointPath,
 		ctx.key,
@@ -15,7 +16,7 @@ async function handleClean(
 			method: 'POST',
 			body: queries,
 			apiType: 'clean',
-			secretKey: ctx.options.secret,
+			secretKey: (await ctx.keys.get_secret_key()) ?? undefined,
 		},
 	);
 
@@ -58,18 +59,19 @@ export const cleanRecord: DadataruEndpoints['cleanRecord'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeDadataruRequest<{
-		structure: string[];
-		data: Record<string, unknown>[][];
-	}>('clean', ctx.key, {
-		method: 'POST',
-		body: {
-			structure: input.structure,
-			data: input.data,
+	const response = await makeDadataruRequest<CompositeCleanResponse>(
+		'clean',
+		ctx.key,
+		{
+			method: 'POST',
+			body: {
+				structure: input.structure,
+				data: input.data,
+			},
+			apiType: 'clean',
+			secretKey: (await ctx.keys.get_secret_key()) ?? undefined,
 		},
-		apiType: 'clean',
-		secretKey: ctx.options.secret,
-	});
+	);
 
 	await logEventFromContext(
 		ctx,

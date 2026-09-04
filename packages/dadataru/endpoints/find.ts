@@ -1,24 +1,29 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeDadataruRequest } from '../client';
-import type { DadataruEndpoints } from '../index';
+import type { DadataruContext, DadataruEndpoints } from '../index';
+import type { SuggestResponse } from './types';
 
 async function handleFind(
-	ctx: any,
+	ctx: DadataruContext,
 	query: string,
 	count: number | undefined,
 	kpp: string | undefined,
 	endpointPath: string,
 	eventName: string,
-) {
-	const response = await makeDadataruRequest<any>(endpointPath, ctx.key, {
-		method: 'POST',
-		body: {
-			query: query,
-			count: count ?? 5,
-			kpp: kpp,
+): Promise<SuggestResponse> {
+	const response = await makeDadataruRequest<SuggestResponse>(
+		endpointPath,
+		ctx.key,
+		{
+			method: 'POST',
+			body: {
+				query: query,
+				count: count ?? 5,
+				kpp: kpp,
+			},
+			apiType: 'suggest',
 		},
-		apiType: 'suggest',
-	});
+	);
 
 	await logEventFromContext(ctx, eventName, { query }, 'completed');
 	return response;
