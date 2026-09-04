@@ -168,7 +168,7 @@ notion({
         databasePages: {
             pageCreated: {
                 after: async (ctx, result) => {
-                    const pageId = result.data?.id;
+                    const pageId = result.data?.data.page_id;
                     console.log('New Notion page created with ID:', pageId);
                 }
             },
