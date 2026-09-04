@@ -594,14 +594,6 @@
                 ]
               },
               {
-                "group": "BenchmarkEmail",
-                "pages": [
-                  "plugins/benchmarkemail/overview",
-                  "plugins/benchmarkemail/api",
-                  "plugins/benchmarkemail/database"
-                ]
-              },
-              {
                 "group": "Better Stack",
                 "pages": [
                   "plugins/betterstack/overview",
