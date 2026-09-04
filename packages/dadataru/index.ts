@@ -1,12 +1,10 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -33,17 +31,10 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { DadataruSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveDadataruOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchDadataruTenantWebhook } from './webhooks/tenant-matcher';
-import type { DadataruWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type DadataruPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	secret?: string;
-	webhookSecret?: string;
 	hooks?: InternalDadataruPlugin['hooks'];
 	webhookHooks?: InternalDadataruPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -52,14 +43,14 @@ export type DadataruPluginOptions = {
 
 export type DadataruContext = CorsairPluginContext<
 	typeof DadataruSchema,
-	DadataruPluginOptions
+	DadataruPluginOptions,
+	undefined,
+	typeof dadataruAuthConfig
 >;
 
-export type DadataruKeyBuilderContext =
-	KeyBuilderContext<DadataruPluginOptions>;
-
-export type DadataruBoundEndpoints = BindEndpoints<
-	typeof dadataruEndpointsNested
+export type DadataruKeyBuilderContext = KeyBuilderContext<
+	DadataruPluginOptions,
+	typeof dadataruAuthConfig
 >;
 
 type DadataruEndpoint<K extends keyof DadataruEndpointOutputs> =
@@ -141,16 +132,9 @@ export type DadataruEndpoints = {
 	suggestPostalUnit: DadataruEndpoint<'suggestPostalUnit'>;
 };
 
-type DadataruWebhook<
-	K extends keyof DadataruWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<DadataruContext, TEvent, DadataruWebhookOutputs[K]>;
-
-export type DadataruWebhooks = {
-	example: DadataruWebhook<'example', ExampleEvent>;
-};
-
-export type DadataruBoundWebhooks = BindWebhooks<DadataruWebhooks>;
+export type DadataruBoundEndpoints = BindEndpoints<
+	typeof dadataruEndpointsNested
+>;
 
 const dadataruEndpointsNested = {
 	clean: {
@@ -230,11 +214,7 @@ const dadataruEndpointsNested = {
 	},
 } as const;
 
-const dadataruWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const dadataruWebhooksNested = {} as const;
 
 export const dadataruEndpointSchemas = {
 	// Clean
@@ -499,15 +479,10 @@ export const dadataruEndpointSchemas = {
 	typeof dadataruEndpointsNested
 >;
 
-const dadataruWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof dadataruWebhooksNested
->;
+const dadataruWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof dadataruWebhooksNested
+	>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -759,10 +734,7 @@ const dadataruEndpointMeta = {
 
 export const dadataruAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['secret_key'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -772,7 +744,8 @@ export type BaseDadataruPlugin<T extends DadataruPluginOptions> = CorsairPlugin<
 	typeof dadataruEndpointsNested,
 	typeof dadataruWebhooksNested,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof dadataruAuthConfig
 >;
 
 export type InternalDadataruPlugin = BaseDadataruPlugin<DadataruPluginOptions>;
@@ -799,38 +772,17 @@ export function dadataru<const T extends DadataruPluginOptions>(
 		endpointMeta: dadataruEndpointMeta,
 		endpointSchemas: dadataruEndpointSchemas,
 		webhookSchemas: dadataruWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-dadataru-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchDadataruTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveDadataruOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: DadataruKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
 				return res ?? '';
 			}
 
@@ -855,7 +807,3 @@ export type {
 	SuggestResponse,
 	VersionsResponse,
 } from './endpoints/types';
-export type {
-	DadataruWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
