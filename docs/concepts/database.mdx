@@ -9,7 +9,7 @@ Every API call and webhook that flows through Corsair is stored in your database
 
 ## Get started
 
-Run the migration once, then pass your connection to `createCorsair({ database, ... })`. See [Quick Start](/quick-start) for a full setup example. If the tables already exist, run only the two `CREATE INDEX` statements.
+Run the migration once, then pass your connection to `createCorsair({ database, ... })`. See [Quick Start](/quick-start) for a full setup example. Existing installs: add `corsair_connects` if it is missing, then run the two `CREATE INDEX` statements.
 
 <Tabs>
   <Tab title="SQLite">

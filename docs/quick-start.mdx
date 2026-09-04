@@ -156,7 +156,7 @@ Get-Content migration.sql | sqlite3 corsair.db
   </Tab>
 </Tabs>
 
-If the tables already exist, run only the two `CREATE INDEX` statements.
+Existing installs: add `corsair_connects` if it is missing, then run the two `CREATE INDEX` statements.
 
 Using Postgres, Drizzle, or Prisma instead? See [Database](/concepts/database) for each option.
 
