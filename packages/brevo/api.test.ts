@@ -547,6 +547,17 @@ describe('Brevo Plugin & Client Tests', () => {
 			);
 		});
 
+		it('emailCampaigns.sendTest rejects an empty recipient list before calling the API', async () => {
+			const ctx = createMockContext();
+			await expect(
+				EmailCampaigns.sendTest(ctx, {
+					campaignId: 99,
+					emailTo: [],
+				}),
+			).rejects.toThrow();
+			expect(mockMakeBrevoRequest).not.toHaveBeenCalled();
+		});
+
 		it('emailCampaigns.sendTest rejects invalid emails before calling the API', async () => {
 			const ctx = createMockContext();
 			await expect(

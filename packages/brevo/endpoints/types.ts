@@ -359,7 +359,7 @@ export type EmailCampaignsSendNowResponse = z.infer<
 
 export const EmailCampaignsSendTestInputSchema = z.object({
 	campaignId: z.number(),
-	emailTo: z.array(z.email()),
+	emailTo: z.array(z.email()).min(1),
 });
 export type EmailCampaignsSendTestInput = z.infer<
 	typeof EmailCampaignsSendTestInputSchema
