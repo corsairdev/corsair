@@ -136,7 +136,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -1779,6 +1782,15 @@
                   "plugins/uniswapapi/overview",
                   "plugins/uniswapapi/api",
                   "plugins/uniswapapi/database"
+                ]
+              },
+              {
+                "group": "Uploadcare",
+                "pages": [
+                  "plugins/uploadcare/overview",
+                  "plugins/uploadcare/api",
+                  "plugins/uploadcare/database",
+                  "plugins/uploadcare/webhooks"
                 ]
               },
               {

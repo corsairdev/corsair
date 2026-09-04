@@ -1,0 +1,583 @@
+---
+title: API
+description: "API reference for Uploadcare: every `uploadcare.api.*` operation with input and output types."
+---
+
+Every `uploadcare.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Files
+
+### batchDelete
+
+`files.batchDelete`
+
+Batch delete files
+
+**Risk:** `write`
+
+```ts
+await corsair.uploadcare.api.files.batchDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `result` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  uuid: string,
+  filename?: string | null,
+  original_filename?: string | null,
+  size?: number | null,
+  is_stored?: boolean | null,
+  is_image?: boolean | null,
+  is_ready?: boolean | null,
+  mime_type?: string | null,
+  created_at?: string | null,
+  removed_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### batchStore
+
+`files.batchStore`
+
+Batch store files
+
+**Risk:** `write`
+
+```ts
+await corsair.uploadcare.api.files.batchStore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `result` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  uuid: string,
+  filename?: string | null,
+  original_filename?: string | null,
+  size?: number | null,
+  is_stored?: boolean | null,
+  is_image?: boolean | null,
+  is_ready?: boolean | null,
+  mime_type?: string | null,
+  created_at?: string | null,
+  removed_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`files.delete`
+
+Delete a file
+
+**Risk:** `write`
+
+```ts
+await corsair.uploadcare.api.files.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `filename` | `string` | No | — |
+| `original_filename` | `string` | No | — |
+| `size` | `number` | No | — |
+| `is_stored` | `boolean` | No | — |
+| `is_image` | `boolean` | No | — |
+| `is_ready` | `boolean` | No | — |
+| `mime_type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `removed_at` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`files.get`
+
+Get file info by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.uploadcare.api.files.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `filename` | `string` | No | — |
+| `original_filename` | `string` | No | — |
+| `size` | `number` | No | — |
+| `is_stored` | `boolean` | No | — |
+| `is_image` | `boolean` | No | — |
+| `is_ready` | `boolean` | No | — |
+| `mime_type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `removed_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`files.list`
+
+List files in project
+
+**Risk:** `read`
+
+```ts
+await corsair.uploadcare.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `ordering` | `string` | No | — |
+| `stored` | `boolean` | No | — |
+| `removed` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid: string,
+  filename?: string | null,
+  original_filename?: string | null,
+  size?: number | null,
+  is_stored?: boolean | null,
+  is_image?: boolean | null,
+  is_ready?: boolean | null,
+  mime_type?: string | null,
+  created_at?: string | null,
+  removed_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### store
+
+`files.store`
+
+Store a file
+
+**Risk:** `write`
+
+```ts
+await corsair.uploadcare.api.files.store({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `filename` | `string` | No | — |
+| `original_filename` | `string` | No | — |
+| `size` | `number` | No | — |
+| `is_stored` | `boolean` | No | — |
+| `is_image` | `boolean` | No | — |
+| `is_ready` | `boolean` | No | — |
+| `mime_type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `removed_at` | `string` | No | — |
+
+
+
+---
+
+## Groups
+
+### get
+
+`groups.get`
+
+Get group info by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.uploadcare.api.groups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `files_count` | `number` | No | — |
+| `url` | `string` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  uuid: string,
+  filename?: string | null,
+  original_filename?: string | null,
+  size?: number | null,
+  is_stored?: boolean | null,
+  is_image?: boolean | null,
+  is_ready?: boolean | null,
+  mime_type?: string | null,
+  created_at?: string | null,
+  removed_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List file groups
+
+**Risk:** `read`
+
+```ts
+await corsair.uploadcare.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `ordering` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `total` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  created_at?: string | null,
+  files_count?: number | null,
+  url?: string | null,
+  files?: {
+    uuid: string,
+    filename?: string | null,
+    original_filename?: string | null,
+    size?: number | null,
+    is_stored?: boolean | null,
+    is_image?: boolean | null,
+    is_ready?: boolean | null,
+    mime_type?: string | null,
+    created_at?: string | null,
+    removed_at?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Project
+
+### get
+
+`project.get`
+
+Get project info
+
+**Risk:** `read`
+
+```ts
+await corsair.uploadcare.api.project.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `pub_key` | `string` | No | — |
+| `collaborator_emails` | `string[]` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.uploadcare.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_url` | `string` | Yes | — |
+| `event` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `event` | `string` | No | — |
+| `target_url` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `project` | `number \| string` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.uploadcare.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List registered webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.uploadcare.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  created_at?: string | null,
+  updated_at?: string | null,
+  event?: string | null,
+  target_url?: string | null,
+  is_active?: boolean | null,
+  project?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.uploadcare.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `number \| string` | Yes | — |
+| `target_url` | `string` | No | — |
+| `event` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `event` | `string` | No | — |
+| `target_url` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `project` | `number \| string` | No | — |
+
+
+
+---
+
