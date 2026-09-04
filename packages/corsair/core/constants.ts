@@ -86,16 +86,16 @@ export const BaseProviders = [
 	'boloforms',
 	'boltiot',
 	'bonsai',
-	'botbaba',
 	'bookingmood',
+	'botbaba',
 	'botpress',
 	'botsonic',
 	'bouncer',
 	'box',
 	'boxhero',
 	'brandfetch',
-	'brevo',
 	'breathehr',
+	'brevo',
 	'brex',
 	'brightdata',
 	'browseai',
@@ -263,11 +263,12 @@ export const BaseProviders = [
 	'webflow',
 	'webvizio',
 	'whatsapp',
+	'whautomate',
 	'witai',
-	'worldnewsapi',
 	'wiza',
 	'workday',
 	'workiom',
+	'worldnewsapi',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -352,16 +353,16 @@ export const ProviderDisplayNames = {
 	boloforms: 'Boloforms',
 	boltiot: 'Bolt IoT',
 	bonsai: 'Bonsai',
-	botbaba: 'Botbaba',
 	bookingmood: 'Bookingmood',
+	botbaba: 'Botbaba',
 	botpress: 'Botpress',
 	botsonic: 'Botsonic',
 	bouncer: 'Bouncer',
 	box: 'Box',
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
-	brevo: 'Brevo',
 	breathehr: 'Breathe HR',
+	brevo: 'Brevo',
 	brex: 'Brex',
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
@@ -529,11 +530,12 @@ export const ProviderDisplayNames = {
 	webflow: 'Webflow',
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
+	whautomate: 'Whautomate',
 	witai: 'WitAi',
-	worldnewsapi: 'World News API',
 	wiza: 'Wiza',
 	workday: 'Workday',
 	workiom: 'Workiom',
+	worldnewsapi: 'World News API',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -625,16 +627,16 @@ export type AllProviders =
 	| 'boloforms'
 	| 'boltiot'
 	| 'bonsai'
-	| 'botbaba'
 	| 'bookingmood'
+	| 'botbaba'
 	| 'botpress'
 	| 'botsonic'
 	| 'bouncer'
 	| 'box'
 	| 'boxhero'
 	| 'brandfetch'
-	| 'brevo'
 	| 'breathehr'
+	| 'brevo'
 	| 'brex'
 	| 'brightdata'
 	| 'browseai'
@@ -802,11 +804,12 @@ export type AllProviders =
 	| 'webflow'
 	| 'webvizio'
 	| 'whatsapp'
+	| 'whautomate'
 	| 'witai'
-	| 'worldnewsapi'
 	| 'wiza'
 	| 'workday'
 	| 'workiom'
+	| 'worldnewsapi'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'
