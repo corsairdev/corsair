@@ -1123,7 +1123,7 @@
                 ]
               },
               {
-                "group": "Google sheets",
+                "group": "Google Sheets",
                 "pages": [
                   "plugins/googlesheets/overview",
                   "plugins/googlesheets/get-credentials",
