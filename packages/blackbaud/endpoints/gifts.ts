@@ -9,7 +9,7 @@ export const getGiftById: BlackbaudEndpoints['getGiftById'] = async (
 ) => {
 	const response = await makeBlackbaudRequest<
 		BlackbaudEndpointOutputs['getGiftById']
-	>(`gift/v1/gifts/${input.gift_id}`, ctx.key, {
+	>(`gift/v1/gifts/${encodeURIComponent(input.gift_id)}`, ctx.key, {
 		method: 'GET',
 		subscriptionKey: ctx.options.subscriptionKey,
 	});

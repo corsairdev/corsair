@@ -7,10 +7,14 @@ export const getPaymentTransaction: BlackbaudEndpoints['getPaymentTransaction'] 
 	async (ctx, input) => {
 		const response = await makeBlackbaudRequest<
 			BlackbaudEndpointOutputs['getPaymentTransaction']
-		>(`payments/v1/transactions/${input.transaction_id}`, ctx.key, {
-			method: 'GET',
-			subscriptionKey: ctx.options.subscriptionKey,
-		});
+		>(
+			`payments/v1/transactions/${encodeURIComponent(input.transaction_id)}`,
+			ctx.key,
+			{
+				method: 'GET',
+				subscriptionKey: ctx.options.subscriptionKey,
+			},
+		);
 
 		await logEventFromContext(
 			ctx,

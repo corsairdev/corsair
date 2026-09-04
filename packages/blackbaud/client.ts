@@ -1,13 +1,20 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class BlackbaudAPIError extends Error {
+	public readonly code?: string;
+	public readonly statusCode?: number;
+	public readonly retryAfterMs?: number;
+
 	constructor(
 		message: string,
-		public readonly code?: string,
+		options: { code?: string; statusCode?: number; retryAfterMs?: number } = {},
 	) {
 		super(message);
 		this.name = 'BlackbaudAPIError';
+		this.code = options.code;
+		this.statusCode = options.statusCode;
+		this.retryAfterMs = options.retryAfterMs;
 	}
 }
 
@@ -19,7 +26,7 @@ export async function makeBlackbaudRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: any;
+		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 		subscriptionKey?: string;
 		headers?: Record<string, string>;
@@ -59,6 +66,11 @@ export async function makeBlackbaudRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		// Preserve ApiError (status, retryAfter) so error-handlers.ts can match
+		// 429/401/404 reliably. Only wrap non-API errors.
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new BlackbaudAPIError(error.message);
 		}

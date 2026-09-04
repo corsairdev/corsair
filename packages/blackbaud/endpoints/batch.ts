@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import type { BlackbaudEndpoints } from '..';
-import { makeBlackbaudRequest } from '../client';
+import { BlackbaudAPIError, makeBlackbaudRequest } from '../client';
 import type { BlackbaudEndpointOutputs } from './types';
 
 export const addGiftsToBatch: BlackbaudEndpoints['addGiftsToBatch'] = async (
@@ -8,11 +9,15 @@ export const addGiftsToBatch: BlackbaudEndpoints['addGiftsToBatch'] = async (
 	input,
 ) => {
 	let statusCode = 200;
-	let responseDetails: any = null;
+	let responseDetails: BlackbaudEndpointOutputs['addGiftsToBatch']['response_details'] =
+		null;
+	let succeeded = true;
 
 	try {
-		responseDetails = await makeBlackbaudRequest<any>(
-			`gift/v1/giftbatches/${input.batch_id}/gifts`,
+		responseDetails = await makeBlackbaudRequest<
+			BlackbaudEndpointOutputs['addGiftsToBatch']['response_details']
+		>(
+			`gift/v1/giftbatches/${encodeURIComponent(input.batch_id)}/gifts`,
 			ctx.key,
 			{
 				method: 'POST',
@@ -20,16 +25,25 @@ export const addGiftsToBatch: BlackbaudEndpoints['addGiftsToBatch'] = async (
 				subscriptionKey: ctx.options.subscriptionKey,
 			},
 		);
-	} catch (error: any) {
-		statusCode = error.statusCode || 500;
-		responseDetails = { error: error.message };
+	} catch (error) {
+		succeeded = false;
+		if (error instanceof ApiError) {
+			statusCode = error.status;
+		} else if (error instanceof BlackbaudAPIError && error.statusCode) {
+			statusCode = error.statusCode;
+		} else {
+			statusCode = 500;
+		}
+		responseDetails = {
+			error: error instanceof Error ? error.message : 'Unknown error',
+		};
 	}
 
 	await logEventFromContext(
 		ctx,
 		'blackbaud.gifts.add_to_batch',
 		{ batch_id: input.batch_id, count: input.gifts.length },
-		'completed',
+		succeeded ? 'completed' : 'failed',
 	);
 
 	return {

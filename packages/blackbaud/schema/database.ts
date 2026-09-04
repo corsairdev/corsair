@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-// TODO: Define your database entities here
-// export const BlackbaudExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type BlackbaudExample = z.infer<typeof BlackbaudExample>;
+// Local persistence decision: all Blackbaud endpoints are live reads/writes
+// against the SKY API (Raiser's Edge NXT gifts/membership, SKY Payments,
+// OneRoster discovery). No entities are cached locally, so no tables are
+// declared here. Revisit if offline access or sync is ever required.
+export const BlackbaudStoredEntities = z.object({});
+
+export type BlackbaudStoredEntities = z.infer<typeof BlackbaudStoredEntities>;

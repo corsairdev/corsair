@@ -7,10 +7,14 @@ export const getMembershipDetails: BlackbaudEndpoints['getMembershipDetails'] =
 	async (ctx, input) => {
 		const response = await makeBlackbaudRequest<
 			BlackbaudEndpointOutputs['getMembershipDetails']
-		>(`membership/v1/memberships/${input.member_junction_id}`, ctx.key, {
-			method: 'GET',
-			subscriptionKey: ctx.options.subscriptionKey,
-		});
+		>(
+			`membership/v1/memberships/${encodeURIComponent(input.member_junction_id)}`,
+			ctx.key,
+			{
+				method: 'GET',
+				subscriptionKey: ctx.options.subscriptionKey,
+			},
+		);
 
 		await logEventFromContext(
 			ctx,

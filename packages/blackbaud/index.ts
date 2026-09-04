@@ -1,12 +1,10 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -132,7 +130,7 @@ const blackbaudEndpointMeta = {
 	'oneRoster.oneRosterOAuth2BaseApi': {
 		riskLevel: 'read',
 		description:
-			'Tool to interact with Blackbaud OneRoster OAuth2 base endpoints.',
+			'Reads Blackbaud OneRoster OAuth2 discovery metadata (openid-configuration, public keys).',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof blackbaudEndpointsNested
