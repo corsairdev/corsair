@@ -96,6 +96,15 @@ export const corsair = createCorsair({
 });
 ```
 
+`db` is the app's own database handle. No database yet? The fast path is SQLite:
+
+```ts
+import Database from "better-sqlite3";
+const db = new Database("corsair.db");
+```
+
+Postgres, Drizzle, and Prisma work too; see [database](https://docs.corsair.dev/concepts/database.md).
+
 | Field | What it is |
 | --- | --- |
 | `kek` | Envelope key. Wraps a per-connection DEK that encrypts each credential. |
@@ -159,13 +168,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 - The dialog opens for any failed call with no per-call code (`captureUnhandled`, on by default). `baseURL` defaults to `/api/corsair`; `appearance` is `"light"`, `"dark"`, or `"auto"`.
 - `useConnections()` gives `connect(plugin)` for a proactive "Connect X" button, `call(fn)` to wrap a mutation so it re-runs itself after connect, and `isConnected(plugin)` for button state.
-- A Server Component that reads Corsair data throws to its segment's `error.tsx`. Re-export the boundary there and the read retries once connected:
+- A Server Component that reads Corsair data throws to its segment's `error.tsx` (Next.js App Router). Re-export the boundary there and the read retries once connected:
 
 ```tsx
 // app/inbox/error.tsx
 "use client";
 export { CorsairErrorBoundary as default } from "corsair/client/react";
 ```
+
+The examples above are Next.js App Router. The provider and `useConnections` are plain React; `router.refresh()` and the `error.tsx` boundary are the Next-specific parts. On other React setups, drive connects through `connect`/`call` and drop the boundary.
 
 Full API in [adapters/react](https://docs.corsair.dev/adapters/react.md). The lower-level `createCorsairReactClient` hooks (`useConnectionStatus`, `useCreateConnectLink`, and friends) are for an admin dashboard reading arbitrary tenants.
 
@@ -210,6 +221,8 @@ npm corsair schema <endpoint> # to get input / output schema of any operation
 | `"managed"` | Fastest. Corsair-hosted OAuth app, no provider registration | `github({ authType: "managed" })` |
 | `"oauth_2"` | The user brings their own OAuth app | `linear({ authType: "oauth_2", credentials: { clientId, clientSecret } })` |
 | `"api_key"` | Static API key or bot token | `slack({ authType: "api_key", credentials: { botToken } })` |
+
+When end users connect their own accounts (`multiTenancy: true`), use `managed`, or `oauth_2` if the user brings their own OAuth app. `api_key` is a single static credential the app owns, not a per-user connection.
 
 For which services support bring-your-own OAuth: [auth](https://docs.corsair.dev/concepts/auth.md) and [plugin credentials](https://docs.corsair.dev/guides/plugin-credentials.md).
 
