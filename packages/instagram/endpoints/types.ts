@@ -31,6 +31,14 @@ const GetInstagramMediaListInputSchema = z
 			.describe(
 				'Optional search keyword or filter to narrow the media results.',
 			),
+		after: z
+			.string()
+			.optional()
+			.describe('Cursor for the next page of results.'),
+		before: z
+			.string()
+			.optional()
+			.describe('Cursor for the previous page of results.'),
 	})
 	.describe(
 		'Retrieve a list of media (posts, reels, stories, or videos) published by the specified Instagram account.',
@@ -693,6 +701,14 @@ const GetInstagramConversationsInputSchema = z
 			.describe(
 				'Optional search query used to filter conversations by participant, message content, or other supported criteria.',
 			),
+		after: z
+			.string()
+			.optional()
+			.describe('Cursor for the next page of results.'),
+		before: z
+			.string()
+			.optional()
+			.describe('Cursor for the previous page of results.'),
 	})
 	.describe(
 		'Retrieve Instagram Direct Message conversations associated with a Facebook Page and its connected Instagram professional account.',
@@ -718,6 +734,14 @@ const GetConversationMessagesInputSchema = z
 			.describe(
 				'Optional search query used to filter messages within the conversation.',
 			),
+		after: z
+			.string()
+			.optional()
+			.describe('Cursor for the next page of results.'),
+		before: z
+			.string()
+			.optional()
+			.describe('Cursor for the previous page of results.'),
 	})
 	.describe(
 		'Retrieve messages from a specific Instagram Direct Message conversation.',
@@ -855,6 +879,14 @@ const GetCommentsInputSchema = z
 			.describe(
 				'Optional search query used to filter comments by text, username, or other supported criteria.',
 			),
+		after: z
+			.string()
+			.optional()
+			.describe('Cursor for the next page of results.'),
+		before: z
+			.string()
+			.optional()
+			.describe('Cursor for the previous page of results.'),
 	})
 	.describe(
 		'Retrieve comments associated with a specific Instagram media object.',
@@ -935,6 +967,462 @@ const DeleteCommentInputSchema = z
 	})
 	.describe('Delete a specific Instagram comment from a media object.');
 
+// Create Media Container (Deprecated)
+// INSTAGRAM_CREATE_MEDIA_CONTAINER
+const CreateMediaContainerInputSchema = z
+	.object({
+		ig_id: z
+			.string()
+			.describe('The Instagram User ID of the Instagram professional account.'),
+		image_url: z
+			.string()
+			.url()
+			.optional()
+			.describe('A publicly accessible URL of the image to be uploaded.'),
+		video_url: z
+			.string()
+			.url()
+			.optional()
+			.describe('A publicly accessible URL of the video to be uploaded.'),
+		media_type: z
+			.string()
+			.optional()
+			.describe('The media type of the container (e.g. IMAGE, VIDEO).'),
+		caption: z.string().optional().describe('Optional caption text.'),
+		is_carousel_item: z
+			.boolean()
+			.optional()
+			.describe('Whether this is a carousel item.'),
+		user_tags: z
+			.array(
+				z.object({
+					username: z.string().describe('Instagram username to tag.'),
+					x: z
+						.number()
+						.min(0)
+						.max(1)
+						.optional()
+						.describe('Horizontal tag position (0.0–1.0).'),
+					y: z
+						.number()
+						.min(0)
+						.max(1)
+						.optional()
+						.describe('Vertical tag position (0.0–1.0).'),
+				}),
+			)
+			.optional()
+			.describe('Optional user tags.'),
+	})
+	.refine((data) => data.image_url || data.video_url, {
+		message: 'Either image_url or video_url is required',
+		path: ['image_url'],
+	});
+
+// Create Post (Deprecated)
+// INSTAGRAM_CREATE_POST
+const CreatePostInputSchema = z.object({
+	ig_id: z.string().describe('The Instagram User ID.'),
+	creation_id: z.string().describe('The container ID to publish.'),
+});
+
+// Delete Messenger Profile
+// INSTAGRAM_DELETE_MESSENGER_PROFILE
+const DeleteMessengerProfileInputSchema = z.object({
+	page_id: z.string().describe('The Facebook Page ID.'),
+	fields: z
+		.array(z.string())
+		.optional()
+		.describe('The messenger profile fields to delete.'),
+});
+
+// Get Conversation
+// INSTAGRAM_GET_CONVERSATION
+const GetConversationInputSchema = z.object({
+	page_id: z.string().describe('The Facebook Page ID.'),
+	conversation_id: z.string().describe('The DM conversation ID.'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+});
+
+// Get IG Comment Replies
+// INSTAGRAM_GET_IG_COMMENT_REPLIES
+const GetIgCommentRepliesInputSchema = z.object({
+	comment_id: z.string().describe('The Instagram Comment ID.'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
+});
+
+// Get IG Media Children
+// INSTAGRAM_GET_IG_MEDIA_CHILDREN
+const GetIgMediaChildrenInputSchema = z.object({
+	media_id: z
+		.string()
+		.describe('The Instagram Media ID (parent carousel/album).'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
+});
+
+// Get IG Media Comments
+// INSTAGRAM_GET_IG_MEDIA_COMMENTS
+const GetIgMediaCommentsInputSchema = z.object({
+	media_id: z.string().describe('The Instagram Media ID.'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
+});
+
+// Get IG Media Insights
+// INSTAGRAM_GET_IG_MEDIA_INSIGHTS
+const GetIgMediaInsightsInputSchema = z.object({
+	media_id: z.string().describe('The Instagram Media ID.'),
+	metrics: z.array(z.string()).describe('The metrics to retrieve.'),
+});
+
+// Get IG User Content Publishing Limit
+// INSTAGRAM_GET_IG_USER_CONTENT_PUBLISHING_LIMIT
+const GetIgUserContentPublishingLimitInputSchema = z.object({
+	ig_id: z
+		.string()
+		.describe('The Instagram User ID (Instagram Business Account ID).'),
+});
+
+// Get IG User Live Media
+// INSTAGRAM_GET_IG_USER_LIVE_MEDIA
+const GetIgUserLiveMediaInputSchema = z.object({
+	ig_id: z.string().describe('The Instagram User ID.'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
+});
+
+// Get IG User Media
+// INSTAGRAM_GET_IG_USER_MEDIA
+const GetIgUserMediaInputSchema = z.object({
+	ig_id: z.string().describe('The Instagram User ID.'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
+});
+
+// Get IG User Stories
+// INSTAGRAM_GET_IG_USER_STORIES
+const GetIgUserStoriesInputSchema = z.object({
+	ig_id: z.string().describe('The Instagram User ID.'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
+});
+
+// Get IG User Tags
+// INSTAGRAM_GET_IG_USER_TAGS
+const GetIgUserTagsInputSchema = z.object({
+	ig_id: z.string().describe('The Instagram User ID.'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
+});
+
+// Get Messenger Profile
+// INSTAGRAM_GET_MESSENGER_PROFILE
+const GetMessengerProfileInputSchema = z.object({
+	page_id: z.string().describe('The Facebook Page ID.'),
+	fields: z.array(z.string()).optional().describe('Optional fields to query.'),
+});
+
+// Get Page Conversations
+// INSTAGRAM_GET_PAGE_CONVERSATIONS
+const GetPageConversationsInputSchema = z.object({
+	page_id: z
+		.string()
+		.describe(
+			'The Facebook Page ID connected to the Instagram Business account.',
+		),
+	platform: z.string().optional().describe('The platform (use "instagram").'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
+});
+
+// Get Post Comments (Deprecated)
+// INSTAGRAM_GET_POST_COMMENTS
+const GetPostCommentsInputSchema = z.object({
+	post_id: z.string().describe('The post (media) ID.'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
+});
+
+// Get Post Insights (Deprecated)
+// INSTAGRAM_GET_POST_INSIGHTS
+const GetPostInsightsInputSchema = z.object({
+	post_id: z.string().describe('The post (media) ID.'),
+	metrics: z.array(z.string()).describe('The metrics to retrieve.'),
+});
+
+// Get Post Status (Deprecated)
+// INSTAGRAM_GET_POST_STATUS
+const GetPostStatusInputSchema = z.object({
+	container_id: z.string().describe('The container ID to check.'),
+});
+
+// Get User Info
+// INSTAGRAM_GET_USER_INFO
+const GetUserInfoInputSchema = z.object({
+	ig_id: z.string().describe('The Instagram User ID.'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+});
+
+// Get User Insights
+// INSTAGRAM_GET_USER_INSIGHTS
+const GetUserInsightsInputSchema = z.object({
+	ig_id: z.string().describe('The Instagram User ID.'),
+	metrics: z.array(z.string()).describe('The metrics to retrieve.'),
+	period: z.string().optional().describe('The period (e.g. day).'),
+	since: z.string().optional().describe('Start timestamp.'),
+	until: z.string().optional().describe('End timestamp.'),
+	metric_type: z
+		.string()
+		.optional()
+		.describe('The metric type (e.g. time_series, total_value).'),
+	breakdown: z.string().optional().describe('The metric breakdown.'),
+	timeframe: z.string().optional().describe('The demographic timeframe.'),
+});
+
+// Get User Media (Deprecated)
+// INSTAGRAM_GET_USER_MEDIA
+const GetUserMediaInputSchema = z.object({
+	ig_id: z.string().describe('The Instagram User ID.'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
+});
+
+// List All Conversations
+// INSTAGRAM_LIST_ALL_CONVERSATIONS
+const ListAllConversationsInputSchema = z.object({
+	page_id: z.string().describe('The Facebook Page ID.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
+});
+
+// List All Messages
+// INSTAGRAM_LIST_ALL_MESSAGES
+const ListAllMessagesInputSchema = z.object({
+	page_id: z.string().describe('The Facebook Page ID.'),
+	conversation_id: z.string().describe('The DM conversation ID.'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
+});
+
+// Mark Seen
+// INSTAGRAM_MARK_SEEN
+const MarkSeenInputSchema = z.object({
+	page_id: z.string().describe('The Facebook Page ID.'),
+	recipient_id: z
+		.string()
+		.describe('The recipient user ID to mark messages as seen.'),
+});
+
+// Post IG Comment Replies
+// INSTAGRAM_POST_IG_COMMENT_REPLIES
+const PostIgCommentRepliesInputSchema = z.object({
+	comment_id: z.string().describe('The Instagram Comment ID.'),
+	message: z.string().max(300).describe('The text of the reply.'),
+});
+
+// Post IG Media Comments
+// INSTAGRAM_POST_IG_MEDIA_COMMENTS
+const PostIgMediaCommentsInputSchema = z.object({
+	media_id: z.string().describe('The Instagram Media ID.'),
+	message: z.string().max(300).describe('The text of the comment.'),
+});
+
+// Post IG User Media
+// INSTAGRAM_POST_IG_USER_MEDIA
+const PostIgUserMediaInputSchema = z
+	.object({
+		ig_id: z.string().describe('The Instagram User ID.'),
+		image_url: z
+			.string()
+			.url()
+			.optional()
+			.describe('A publicly accessible URL of the image to be uploaded.'),
+		video_url: z
+			.string()
+			.url()
+			.optional()
+			.describe('A publicly accessible URL of the video to be uploaded.'),
+		media_type: z
+			.string()
+			.optional()
+			.describe('The media type of the container (e.g. IMAGE, VIDEO).'),
+		caption: z.string().optional().describe('Optional caption text.'),
+		is_carousel_item: z
+			.boolean()
+			.optional()
+			.describe('Whether this is a carousel item.'),
+		user_tags: z
+			.array(
+				z.object({
+					username: z.string().describe('Instagram username to tag.'),
+					x: z
+						.number()
+						.min(0)
+						.max(1)
+						.optional()
+						.describe('Horizontal tag position (0.0–1.0).'),
+					y: z
+						.number()
+						.min(0)
+						.max(1)
+						.optional()
+						.describe('Vertical tag position (0.0–1.0).'),
+				}),
+			)
+			.optional()
+			.describe('Optional user tags.'),
+	})
+	.refine((data) => data.image_url || data.video_url, {
+		message: 'Either image_url or video_url is required',
+		path: ['image_url'],
+	});
+
+// Publish IG User Media
+// INSTAGRAM_POST_IG_USER_MEDIA_PUBLISH
+const PublishIgUserMediaInputSchema = z.object({
+	ig_id: z.string().describe('The Instagram User ID.'),
+	creation_id: z.string().describe('The container ID to publish.'),
+});
+
+// Reply To Comment (Deprecated)
+// INSTAGRAM_REPLY_TO_COMMENT
+const ReplyToCommentInputSchema = z.object({
+	comment_id: z.string().describe('The Instagram Comment ID.'),
+	message: z.string().max(300).describe('The text of the reply.'),
+});
+
+// Reply to IG User Mentions
+// INSTAGRAM_POST_IG_USER_MENTIONS
+const ReplyToIgUserMentionsInputSchema = z.object({
+	mention_id: z.string().describe('The mention ID (media or comment ID).'),
+	message: z.string().max(300).describe('The text of the reply.'),
+});
+
+// Send Image
+// INSTAGRAM_SEND_IMAGE
+const SendImageInputSchema = z.object({
+	page_id: z.string().describe('The Facebook Page ID.'),
+	recipient_id: z.string().describe('The recipient ID.'),
+	image_url: z.string().url().describe('The URL of the image to send via DM.'),
+});
+
+// Send Text Message
+// INSTAGRAM_SEND_TEXT_MESSAGE
+const SendTextMessageInputSchema = z.object({
+	page_id: z.string().describe('The Facebook Page ID.'),
+	recipient_id: z.string().describe('The recipient ID.'),
+	message: z.string().describe('The text message to send via DM.'),
+});
+
+// Update Messenger Profile
+// INSTAGRAM_UPDATE_MESSENGER_PROFILE
+const UpdateMessengerProfileInputSchema = z.object({
+	page_id: z.string().describe('The Facebook Page ID.'),
+	greeting: z
+		.array(
+			z.object({
+				locale: z
+					.string()
+					.describe('The locale for this greeting (e.g. "default").'),
+				text: z.string().describe('The greeting text.'),
+			}),
+		)
+		.optional()
+		.describe('Greeting text configuration for new conversations.'),
+	persistent_menu: z
+		.array(
+			z.object({
+				locale: z
+					.string()
+					.describe('The locale for this menu (e.g. "default").'),
+				composer_input_disabled: z
+					.boolean()
+					.optional()
+					.describe('Whether to disable composer input.'),
+				call_to_actions: z
+					.array(
+						z.object({
+							type: z
+								.string()
+								.describe('The menu item type (e.g. "postback", "web_url").'),
+							title: z.string().describe('The menu item label.'),
+							url: z
+								.string()
+								.optional()
+								.describe('URL for web_url type items.'),
+							payload: z
+								.string()
+								.optional()
+								.describe('Payload for postback type items.'),
+						}),
+					)
+					.optional()
+					.describe('The menu items.'),
+			}),
+		)
+		.optional()
+		.describe('Persistent menu configuration.'),
+	ice_breakers: z
+		.array(
+			z.object({
+				question: z.string().describe('The ice breaker question text.'),
+				payload: z
+					.string()
+					.describe('The payload sent when the user taps the ice breaker.'),
+			}),
+		)
+		.optional()
+		.describe('Ice breaker configuration.'),
+});
+
 export const InstagramEndpointInputSchemas = {
 	// GetFacebookUser: GetFacebookUserInputSchema,
 	// GetFacebookPages: GetFacebookPagesInputSchema,
@@ -961,6 +1449,39 @@ export const InstagramEndpointInputSchemas = {
 	GetCommentsDetails: GetInstagramCommentDetailsInputSchema,
 	UpdateComments: UpdateCommentsInputSchema,
 	DeleteComment: DeleteCommentInputSchema,
+	CreateMediaContainer: CreateMediaContainerInputSchema,
+	CreatePost: CreatePostInputSchema,
+	DeleteMessengerProfile: DeleteMessengerProfileInputSchema,
+	GetConversation: GetConversationInputSchema,
+	GetIgCommentReplies: GetIgCommentRepliesInputSchema,
+	GetIgMediaChildren: GetIgMediaChildrenInputSchema,
+	GetIgMediaComments: GetIgMediaCommentsInputSchema,
+	GetIgMediaInsights: GetIgMediaInsightsInputSchema,
+	GetIgUserContentPublishingLimit: GetIgUserContentPublishingLimitInputSchema,
+	GetIgUserLiveMedia: GetIgUserLiveMediaInputSchema,
+	GetIgUserMedia: GetIgUserMediaInputSchema,
+	GetIgUserStories: GetIgUserStoriesInputSchema,
+	GetIgUserTags: GetIgUserTagsInputSchema,
+	GetMessengerProfile: GetMessengerProfileInputSchema,
+	GetPageConversations: GetPageConversationsInputSchema,
+	GetPostComments: GetPostCommentsInputSchema,
+	GetPostInsights: GetPostInsightsInputSchema,
+	GetPostStatus: GetPostStatusInputSchema,
+	GetUserInfo: GetUserInfoInputSchema,
+	GetUserInsights: GetUserInsightsInputSchema,
+	GetUserMedia: GetUserMediaInputSchema,
+	ListAllConversations: ListAllConversationsInputSchema,
+	ListAllMessages: ListAllMessagesInputSchema,
+	MarkSeen: MarkSeenInputSchema,
+	PostIgCommentReplies: PostIgCommentRepliesInputSchema,
+	PostIgMediaComments: PostIgMediaCommentsInputSchema,
+	PostIgUserMedia: PostIgUserMediaInputSchema,
+	PublishIgUserMedia: PublishIgUserMediaInputSchema,
+	ReplyToComment: ReplyToCommentInputSchema,
+	ReplyToIgUserMentions: ReplyToIgUserMentionsInputSchema,
+	SendImage: SendImageInputSchema,
+	SendTextMessage: SendTextMessageInputSchema,
+	UpdateMessengerProfile: UpdateMessengerProfileInputSchema,
 } as const;
 
 export type InstagramEndpointInputs = {
@@ -1085,80 +1606,6 @@ export const InstagramMedia = z
 		'Represents an Instagram media object, including posts, videos, reels, stories, and carousel content.',
 	);
 
-const GetInstagramMediaListOutputSchema = z
-	.object({
-		data: z
-			.array(InstagramMedia)
-			.describe('The list of Instagram media objects returned by the request.'),
-
-		paging: MetaPagination.describe(
-			'Pagination information used to navigate through additional pages of media results.',
-		),
-	})
-	.describe('A paginated collection of Instagram media objects.');
-
-const CreateInstagramMediaOutputSchema = z
-	.object({
-		id: z
-			.string()
-			.describe(
-				'The media container ID that can be used to check processing status or publish the media.',
-			),
-	})
-	.describe(
-		'Response returned after successfully creating an Instagram media container.',
-	);
-
-const GetMediaContainerStatusOutputSchema = z
-	.object({
-		id: z
-			.string()
-			.describe('The Instagram media container ID whose status was requested.'),
-
-		status_code: z
-			.enum(['IN_PROGRESS', 'FINISHED', 'ERROR', 'EXPIRED'])
-			.describe(
-				'The current processing status of the media container. IN_PROGRESS indicates processing is ongoing, FINISHED indicates the media is ready to publish, ERROR indicates processing failed, and EXPIRED indicates the container is no longer valid.',
-			),
-	})
-	.describe(
-		'Represents the processing status of an Instagram media container.',
-	);
-
-const GetMediaInsightsOutputSchema = z
-	.object({
-		data: z
-			.array(z.record(z.string(), z.any()))
-			.describe(
-				'A collection of insight metrics and values returned for the requested Instagram media.',
-			),
-	})
-	.describe(
-		'Represents performance insights and analytics for an Instagram media object.',
-	);
-
-const GetAccountInsightsOutputSchema = GetMediaInsightsOutputSchema;
-
-const GetInstagramConversationsOutputSchema = z
-	.object({
-		data: z
-			.array(
-				z.object({
-					id: z
-						.string()
-						.describe(
-							'The unique ID of an Instagram Direct Message conversation.',
-						),
-				}),
-			)
-			.describe(
-				'The list of Instagram conversations associated with the connected account.',
-			),
-	})
-	.describe(
-		'Represents a collection of Instagram Direct Message conversations.',
-	);
-
 const MessageAttachmentDataSchema = z
 	.object({
 		id: z.string().optional().describe('The unique ID of the attachment.'),
@@ -1237,7 +1684,405 @@ export const MessageSchema = z
 		'Represents an Instagram or Messenger message, including sender information, content, and attachments.',
 	);
 
-export const GetConversationMessagesOutputSchema = z
+export const CommentsOutputSchema = z
+	.object({
+		id: z.string().describe('The unique Instagram Comment ID.'),
+
+		text: z.string().optional().describe('The text content of the comment.'),
+
+		timestamp: z
+			.string()
+			.optional()
+			.describe('The timestamp indicating when the comment was created.'),
+
+		username: z
+			.string()
+			.optional()
+			.describe('The Instagram username of the user who created the comment.'),
+	})
+	.describe('Represents an Instagram comment and its associated metadata.');
+
+// Response schemas
+
+const CreateMediaContainerResponseSchema = z
+	.object({
+		id: z.string().describe('The created container ID.'),
+		creation_id: z.string().optional().describe('The creation ID.'),
+	})
+	.passthrough();
+
+const CreatePostResponseSchema = z.object({ id: z.string() }).passthrough();
+
+const DeleteMessengerProfileResponseSchema = z
+	.object({
+		result: z
+			.string()
+			.describe('The API status response, typically "success".'),
+	})
+	.passthrough();
+
+const GetConversationResponseSchema = z
+	.object({
+		id: z.string().describe('The DM conversation ID.'),
+		updated_time: z.string().optional().describe('Last updated timestamp.'),
+		message_count: z.number().optional().describe('Total message count.'),
+		unread_count: z.number().optional().describe('Unread message count.'),
+	})
+	.passthrough();
+
+const GetIgCommentRepliesResponseSchema = z
+	.object({
+		data: z.array(CommentsOutputSchema).describe('The replies.'),
+		paging: MetaPagination,
+	})
+	.passthrough();
+
+const GetIgMediaChildrenResponseSchema = z
+	.object({
+		data: z
+			.array(
+				z.object({
+					id: z.string().describe('Child Media ID.'),
+					media_type: z
+						.enum(['IMAGE', 'VIDEO'])
+						.optional()
+						.describe('Child media type.'),
+					media_url: z.string().url().optional().describe('Child media URL.'),
+				}),
+			)
+			.describe('Media children items.'),
+		paging: MetaPagination,
+	})
+	.passthrough();
+
+const GetIgMediaCommentsResponseSchema = z
+	.object({
+		data: z.array(CommentsOutputSchema).describe('Comments list.'),
+		paging: MetaPagination,
+	})
+	.passthrough();
+
+const GetIgMediaInsightsResponseSchema = z
+	.object({
+		data: z
+			.array(
+				z.object({
+					name: z.string(),
+					period: z.string(),
+					values: z.array(z.object({ value: z.number() })),
+					title: z.string().optional(),
+					description: z.string().optional(),
+					id: z.string().optional(),
+				}),
+			)
+			.describe('Insights data list.'),
+	})
+	.passthrough();
+
+const GetIgUserContentPublishingLimitResponseSchema = z
+	.object({
+		data: z
+			.array(
+				z.object({
+					quota_usage: z.number().optional(),
+					config: z
+						.object({
+							quota_total: z.number(),
+							quota_duration: z.number(),
+						})
+						.optional(),
+				}),
+			)
+			.optional(),
+	})
+	.passthrough();
+
+const GetIgUserLiveMediaResponseSchema = z
+	.object({
+		data: z.array(InstagramMedia).describe('Live media items.'),
+		paging: MetaPagination,
+	})
+	.passthrough();
+
+const GetIgUserMediaResponseSchema = z
+	.object({
+		data: z.array(InstagramMedia).describe('Media list.'),
+		paging: MetaPagination,
+	})
+	.passthrough();
+
+const GetIgUserStoriesResponseSchema = z
+	.object({
+		data: z.array(InstagramMedia).describe('Stories list.'),
+		paging: MetaPagination,
+	})
+	.passthrough();
+
+const GetIgUserTagsResponseSchema = z
+	.object({
+		data: z.array(InstagramMedia).describe('Tagged media list.'),
+		paging: MetaPagination,
+	})
+	.passthrough();
+
+const GetMessengerProfileResponseSchema = z
+	.object({
+		data: z
+			.array(
+				z.object({
+					greeting: z
+						.array(
+							z.object({
+								locale: z.string().describe('The locale for this greeting.'),
+								text: z.string().describe('The greeting text.'),
+							}),
+						)
+						.optional()
+						.describe('Greeting configuration.'),
+					persistent_menu: z
+						.array(z.any())
+						.optional()
+						.describe('Persistent menu options.'),
+					ice_breakers: z
+						.array(z.any())
+						.optional()
+						.describe('Ice breaker options.'),
+				}),
+			)
+			.describe('Messenger Profile options.'),
+	})
+	.passthrough();
+
+const GetPageConversationsResponseSchema = z
+	.object({
+		data: z
+			.array(
+				z.object({
+					id: z.string(),
+					updated_time: z.string().optional(),
+				}),
+			)
+			.describe('Conversations.'),
+		paging: MetaPagination,
+	})
+	.passthrough();
+
+const GetPostCommentsResponseSchema = z
+	.object({
+		data: z.array(CommentsOutputSchema).describe('Comments.'),
+		paging: MetaPagination,
+	})
+	.passthrough();
+
+const GetPostInsightsResponseSchema = z
+	.object({
+		data: z
+			.array(
+				z.object({
+					name: z.string(),
+					period: z.string(),
+					values: z.array(z.object({ value: z.number() })),
+				}),
+			)
+			.describe('Insights.'),
+	})
+	.passthrough();
+
+const GetPostStatusResponseSchema = z
+	.object({
+		id: z.string().describe('The container ID.'),
+		status_code: z.enum(['IN_PROGRESS', 'FINISHED', 'ERROR', 'EXPIRED']),
+	})
+	.passthrough();
+
+const GetUserInfoResponseSchema = z
+	.object({
+		id: z.string().describe('User ID.'),
+		username: z.string().optional(),
+		name: z.string().optional(),
+		biography: z.string().optional(),
+		followers_count: z.number().optional(),
+		follows_count: z.number().optional(),
+		media_count: z.number().optional(),
+		profile_picture_url: z.string().url().optional(),
+	})
+	.passthrough();
+
+const GetUserInsightsResponseSchema = z
+	.object({
+		data: z
+			.array(
+				z.object({
+					name: z.string(),
+					period: z.string(),
+					values: z.array(z.object({ value: z.number() })),
+				}),
+			)
+			.describe('Insights.'),
+	})
+	.passthrough();
+
+const GetUserMediaResponseSchema = z
+	.object({
+		data: z.array(InstagramMedia).describe('User media.'),
+		paging: MetaPagination,
+	})
+	.passthrough();
+
+const ListAllConversationsResponseSchema = z
+	.object({
+		data: z
+			.array(
+				z.object({
+					id: z.string().describe('Conversation ID.'),
+					updated_time: z.string().optional().describe('Last updated time.'),
+				}),
+			)
+			.describe('Conversations list.'),
+		paging: MetaPagination,
+	})
+	.passthrough();
+
+const ListAllMessagesResponseSchema = z
+	.object({
+		data: z.array(MessageSchema).describe('Messages list.'),
+		paging: MetaPagination,
+	})
+	.passthrough();
+
+const MarkSeenResponseSchema = z
+	.object({
+		success: z.boolean().describe('Whether action succeeded.'),
+	})
+	.passthrough();
+
+const PostIgCommentRepliesResponseSchema = z
+	.object({
+		id: z.string().describe('The created comment reply ID.'),
+	})
+	.passthrough();
+
+const PostIgMediaCommentsResponseSchema = z
+	.object({
+		id: z.string().describe('The created comment ID.'),
+	})
+	.passthrough();
+
+const PostIgUserMediaResponseSchema = z
+	.object({
+		id: z.string().describe('The created media container ID.'),
+	})
+	.passthrough();
+
+const PublishIgUserMediaResponseSchema = z
+	.object({
+		id: z.string().describe('The published media ID.'),
+	})
+	.passthrough();
+
+const ReplyToCommentResponseSchema = z.object({ id: z.string() }).passthrough();
+
+const ReplyToIgUserMentionsResponseSchema = z
+	.object({
+		id: z.string().describe('The created comment reply ID.'),
+	})
+	.passthrough();
+
+const SendImageResponseSchema = z
+	.object({
+		message_id: z.string().describe('The message ID.'),
+	})
+	.passthrough();
+
+const SendTextMessageResponseSchema = z
+	.object({
+		message_id: z.string().describe('The message ID.'),
+	})
+	.passthrough();
+
+const UpdateMessengerProfileResponseSchema = z
+	.object({
+		result: z
+			.string()
+			.describe('The API response result, typically "success".'),
+	})
+	.passthrough();
+
+const GetInstagramMediaListOutputSchema = z
+	.object({
+		data: z
+			.array(InstagramMedia)
+			.describe('The list of Instagram media objects returned by the request.'),
+
+		paging: MetaPagination.describe(
+			'Pagination information used to navigate through additional pages of media results.',
+		),
+	})
+	.describe('A paginated collection of Instagram media objects.');
+
+const CreateInstagramMediaOutputSchema = z
+	.object({
+		id: z
+			.string()
+			.describe(
+				'The media container ID that can be used to check processing status or publish the media.',
+			),
+	})
+	.describe(
+		'Response returned after successfully creating an Instagram media container.',
+	);
+
+const GetMediaContainerStatusOutputSchema = z
+	.object({
+		id: z
+			.string()
+			.describe('The Instagram media container ID whose status was requested.'),
+
+		status_code: z
+			.enum(['IN_PROGRESS', 'FINISHED', 'ERROR', 'EXPIRED'])
+			.describe(
+				'The current processing status of the media container. IN_PROGRESS indicates processing is ongoing, FINISHED indicates the media is ready to publish, ERROR indicates processing failed, and EXPIRED indicates the container is no longer valid.',
+			),
+	})
+	.describe(
+		'Represents the processing status of an Instagram media container.',
+	);
+
+const GetMediaInsightsOutputSchema = z
+	.object({
+		data: z
+			.array(z.record(z.string(), z.any()))
+			.describe(
+				'A collection of insight metrics and values returned for the requested Instagram media.',
+			),
+	})
+	.describe(
+		'Represents performance insights and analytics for an Instagram media object.',
+	);
+
+const GetAccountInsightsOutputSchema = GetMediaInsightsOutputSchema;
+
+const GetInstagramConversationsOutputSchema = z
+	.object({
+		data: z
+			.array(
+				z.object({
+					id: z
+						.string()
+						.describe(
+							'The unique ID of an Instagram Direct Message conversation.',
+						),
+				}),
+			)
+			.describe(
+				'The list of Instagram conversations associated with the connected account.',
+			),
+	})
+	.describe(
+		'Represents a collection of Instagram Direct Message conversations.',
+	);
+
+const GetConversationMessagesOutputSchema = z
 	.object({
 		data: z
 			.array(MessageSchema)
@@ -1265,24 +2110,6 @@ const SendMessageOutputSchema = z
 			.describe('The Unix timestamp indicating when the message was sent.'),
 	})
 	.describe('Represents the result of successfully sending a message.');
-
-export const CommentsOutputSchema = z
-	.object({
-		id: z.string().describe('The unique Instagram Comment ID.'),
-
-		text: z.string().optional().describe('The text content of the comment.'),
-
-		timestamp: z
-			.string()
-			.optional()
-			.describe('The timestamp indicating when the comment was created.'),
-
-		username: z
-			.string()
-			.optional()
-			.describe('The Instagram username of the user who created the comment.'),
-	})
-	.describe('Represents an Instagram comment and its associated metadata.');
 
 const GetCommentsOutputSchema = z
 	.object({
@@ -1490,6 +2317,40 @@ export const InstagramEndpointOutputSchemas = {
 	GetCommentsDetails: GetInstagramCommentDetailsOutputSchema,
 	UpdateComments: UpdateCommentsOutputSchema,
 	DeleteComment: DeleteCommentOutputSchema,
+	CreateMediaContainer: CreateMediaContainerResponseSchema,
+	CreatePost: CreatePostResponseSchema,
+	DeleteMessengerProfile: DeleteMessengerProfileResponseSchema,
+	GetConversation: GetConversationResponseSchema,
+	GetIgCommentReplies: GetIgCommentRepliesResponseSchema,
+	GetIgMediaChildren: GetIgMediaChildrenResponseSchema,
+	GetIgMediaComments: GetIgMediaCommentsResponseSchema,
+	GetIgMediaInsights: GetIgMediaInsightsResponseSchema,
+	GetIgUserContentPublishingLimit:
+		GetIgUserContentPublishingLimitResponseSchema,
+	GetIgUserLiveMedia: GetIgUserLiveMediaResponseSchema,
+	GetIgUserMedia: GetIgUserMediaResponseSchema,
+	GetIgUserStories: GetIgUserStoriesResponseSchema,
+	GetIgUserTags: GetIgUserTagsResponseSchema,
+	GetMessengerProfile: GetMessengerProfileResponseSchema,
+	GetPageConversations: GetPageConversationsResponseSchema,
+	GetPostComments: GetPostCommentsResponseSchema,
+	GetPostInsights: GetPostInsightsResponseSchema,
+	GetPostStatus: GetPostStatusResponseSchema,
+	GetUserInfo: GetUserInfoResponseSchema,
+	GetUserInsights: GetUserInsightsResponseSchema,
+	GetUserMedia: GetUserMediaResponseSchema,
+	ListAllConversations: ListAllConversationsResponseSchema,
+	ListAllMessages: ListAllMessagesResponseSchema,
+	MarkSeen: MarkSeenResponseSchema,
+	PostIgCommentReplies: PostIgCommentRepliesResponseSchema,
+	PostIgMediaComments: PostIgMediaCommentsResponseSchema,
+	PostIgUserMedia: PostIgUserMediaResponseSchema,
+	PublishIgUserMedia: PublishIgUserMediaResponseSchema,
+	ReplyToComment: ReplyToCommentResponseSchema,
+	ReplyToIgUserMentions: ReplyToIgUserMentionsResponseSchema,
+	SendImage: SendImageResponseSchema,
+	SendTextMessage: SendTextMessageResponseSchema,
+	UpdateMessengerProfile: UpdateMessengerProfileResponseSchema,
 } as const;
 
 export type InstagramEndpointOutputs = {
@@ -1516,4 +2377,39 @@ export type InstagramEndpointOutputs = {
 	GetCommentsDetails: GetInstagramCommentDetailsOutputSchema;
 	UpdateComments: UpdateCommentsOutputSchema;
 	DeleteComment: DeleteCommentOutputSchema;
+	CreateMediaContainer: z.infer<typeof CreateMediaContainerResponseSchema>;
+	CreatePost: z.infer<typeof CreatePostResponseSchema>;
+	DeleteMessengerProfile: z.infer<typeof DeleteMessengerProfileResponseSchema>;
+	GetConversation: z.infer<typeof GetConversationResponseSchema>;
+	GetIgCommentReplies: z.infer<typeof GetIgCommentRepliesResponseSchema>;
+	GetIgMediaChildren: z.infer<typeof GetIgMediaChildrenResponseSchema>;
+	GetIgMediaComments: z.infer<typeof GetIgMediaCommentsResponseSchema>;
+	GetIgMediaInsights: z.infer<typeof GetIgMediaInsightsResponseSchema>;
+	GetIgUserContentPublishingLimit: z.infer<
+		typeof GetIgUserContentPublishingLimitResponseSchema
+	>;
+	GetIgUserLiveMedia: z.infer<typeof GetIgUserLiveMediaResponseSchema>;
+	GetIgUserMedia: z.infer<typeof GetIgUserMediaResponseSchema>;
+	GetIgUserStories: z.infer<typeof GetIgUserStoriesResponseSchema>;
+	GetIgUserTags: z.infer<typeof GetIgUserTagsResponseSchema>;
+	GetMessengerProfile: z.infer<typeof GetMessengerProfileResponseSchema>;
+	GetPageConversations: z.infer<typeof GetPageConversationsResponseSchema>;
+	GetPostComments: z.infer<typeof GetPostCommentsResponseSchema>;
+	GetPostInsights: z.infer<typeof GetPostInsightsResponseSchema>;
+	GetPostStatus: z.infer<typeof GetPostStatusResponseSchema>;
+	GetUserInfo: z.infer<typeof GetUserInfoResponseSchema>;
+	GetUserInsights: z.infer<typeof GetUserInsightsResponseSchema>;
+	GetUserMedia: z.infer<typeof GetUserMediaResponseSchema>;
+	ListAllConversations: z.infer<typeof ListAllConversationsResponseSchema>;
+	ListAllMessages: z.infer<typeof ListAllMessagesResponseSchema>;
+	MarkSeen: z.infer<typeof MarkSeenResponseSchema>;
+	PostIgCommentReplies: z.infer<typeof PostIgCommentRepliesResponseSchema>;
+	PostIgMediaComments: z.infer<typeof PostIgMediaCommentsResponseSchema>;
+	PostIgUserMedia: z.infer<typeof PostIgUserMediaResponseSchema>;
+	PublishIgUserMedia: z.infer<typeof PublishIgUserMediaResponseSchema>;
+	ReplyToComment: z.infer<typeof ReplyToCommentResponseSchema>;
+	ReplyToIgUserMentions: z.infer<typeof ReplyToIgUserMentionsResponseSchema>;
+	SendImage: z.infer<typeof SendImageResponseSchema>;
+	SendTextMessage: z.infer<typeof SendTextMessageResponseSchema>;
+	UpdateMessengerProfile: z.infer<typeof UpdateMessengerProfileResponseSchema>;
 };

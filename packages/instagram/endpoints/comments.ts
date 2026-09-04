@@ -10,6 +10,8 @@ export const list: InstagramEndpoints['GetComments'] = async (ctx, input) => {
 		method: 'GET',
 		query: {
 			fields: input.q,
+			after: input.after,
+			before: input.before,
 		},
 	});
 
@@ -154,6 +156,100 @@ export const remove: InstagramEndpoints['DeleteComment'] = async (
 	await logEventFromContext(
 		ctx,
 		'instagram.comments.delete',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const getReplies: InstagramEndpoints['GetIgCommentReplies'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['GetIgCommentReplies']
+	>(`/${input.comment_id}/replies`, ctx, {
+		method: 'GET',
+		query: {
+			fields: input.fields,
+			after: input.after,
+			before: input.before,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.comments.getReplies',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const postReplies: InstagramEndpoints['PostIgCommentReplies'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['PostIgCommentReplies']
+	>(`/${input.comment_id}/replies`, ctx, {
+		method: 'POST',
+		body: {
+			message: input.message,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.comments.postReplies',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const postComments: InstagramEndpoints['PostIgMediaComments'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['PostIgMediaComments']
+	>(`/${input.media_id}/comments`, ctx, {
+		method: 'POST',
+		body: {
+			message: input.message,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.comments.postComments',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const replyToComment: InstagramEndpoints['ReplyToComment'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['ReplyToComment']
+	>(`/${input.comment_id}/replies`, ctx, {
+		method: 'POST',
+		body: {
+			message: input.message,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.comments.replyToComment',
 		{ ...input },
 		'completed',
 	);
