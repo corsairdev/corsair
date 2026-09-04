@@ -2,7 +2,6 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
-import * as AssistantRuns from './endpoints/assistant-runs';
 import * as Assistants from './endpoints/assistants';
 import * as billing from './endpoints/billing';
 import * as buckets from './endpoints/buckets';
@@ -315,7 +314,7 @@ describe('griptape assistant runs', () => {
 
 			mockRequest.mockResolvedValueOnce(mockResponse);
 
-			const result = await AssistantRuns.createRun(ctx, {
+			const result = await Assistants.createRun(ctx, {
 				assistant_id: assistantId,
 				input: 'Hello',
 				model: 'gpt-5',
@@ -350,7 +349,7 @@ describe('griptape assistant runs', () => {
 
 			mockRequest.mockResolvedValueOnce(mockResponse);
 
-			const result = await AssistantRuns.listRuns(ctx, {
+			const result = await Assistants.listRuns(ctx, {
 				assistant_id: assistantId,
 				page: 1,
 				page_size: 10,
@@ -378,7 +377,7 @@ describe('griptape assistant runs', () => {
 
 			mockRequest.mockResolvedValueOnce(mockResponse);
 
-			const result = await AssistantRuns.getRun(ctx, {
+			const result = await Assistants.getRun(ctx, {
 				assistant_run_id: runId,
 			});
 
@@ -403,7 +402,7 @@ describe('griptape assistant runs', () => {
 
 			mockRequest.mockResolvedValueOnce(mockResponse);
 
-			const result = await AssistantRuns.cancelRun(ctx, {
+			const result = await Assistants.cancelRun(ctx, {
 				assistant_run_id: runId,
 			});
 
@@ -429,7 +428,7 @@ describe('griptape assistant runs', () => {
 
 			mockRequest.mockResolvedValueOnce(mockResponse);
 
-			const result = await AssistantRuns.getResult(ctx, {
+			const result = await Assistants.getResult(ctx, {
 				assistant_run_id: runId,
 			});
 
@@ -454,7 +453,7 @@ describe('griptape assistant runs', () => {
 
 			mockRequest.mockResolvedValueOnce(mockResponse);
 
-			const result = await AssistantRuns.retryRun(ctx, {
+			const result = await Assistants.retryRun(ctx, {
 				assistant_run_id: runId,
 			});
 
@@ -480,7 +479,7 @@ describe('griptape assistant runs', () => {
 
 			mockRequest.mockResolvedValueOnce(mockResponse);
 
-			const result = await AssistantRuns.getErrorDetails(ctx, {
+			const result = await Assistants.getErrorDetails(ctx, {
 				assistant_run_id: runId,
 			});
 
@@ -504,7 +503,7 @@ describe('griptape assistant runs', () => {
 
 			mockRequest.mockResolvedValueOnce(mockResponse);
 
-			const result = await AssistantRuns.listLogs(ctx, {
+			const result = await Assistants.listLogs(ctx, {
 				assistant_run_id: runId,
 				limit: 20,
 				offset: 0,
@@ -536,7 +535,7 @@ describe('griptape assistant runs', () => {
 
 			mockRequest.mockResolvedValueOnce(mockResponse);
 
-			const result = await AssistantRuns.listEvents(ctx, {
+			const result = await Assistants.listEvents(ctx, {
 				assistant_run_id: runId,
 				limit: 10,
 				offset: 0,
@@ -3563,13 +3562,16 @@ describe('griptape endpoints scaffold', () => {
 		expect(existsSync(join(__dirname, 'endpoints', 'example.ts'))).toBe(false);
 	});
 
-	it('wires assistant list and get endpoints', () => {
+	it('wires assistant endpoints from a single module', () => {
 		const src = readFileSync(join(__dirname, 'endpoints', 'index.ts'), 'utf8');
 
-		expect(src).toContain("from './assistant-list'");
-		expect(src).toContain("from './assistant-get'");
+		expect(src).toContain("from './assistants'");
 		expect(src).toContain('list: assistantList');
 		expect(src).toContain('get: assistantGet');
+		expect(src).toContain('create: assistantCreate');
+		expect(src).not.toContain("from './assistant-list'");
+		expect(src).not.toContain("from './assistant-get'");
+		expect(src).not.toContain("from './assistant-runs'");
 		expect(src).not.toContain("from './example'");
 	});
 });

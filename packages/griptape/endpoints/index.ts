@@ -1,6 +1,8 @@
-import { get as assistantGet } from './assistant-get';
-import { list as assistantList } from './assistant-list';
 import {
+	create as assistantCreate,
+	get as assistantGet,
+	list as assistantList,
+	remove as assistantRemove,
 	cancelRun as assistantRunCancel,
 	createRun as assistantRunCreate,
 	getErrorDetails as assistantRunErrorDetails,
@@ -10,10 +12,6 @@ import {
 	listLogs as assistantRunLogs,
 	getResult as assistantRunResult,
 	retryRun as assistantRunRetry,
-} from './assistant-runs';
-import {
-	create as assistantCreate,
-	remove as assistantRemove,
 	update as assistantUpdate,
 } from './assistants';
 import {
