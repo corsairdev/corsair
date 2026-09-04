@@ -77,6 +77,33 @@ describe('Wisepops API & Endpoints Unit Tests', () => {
 				'WISEPOPS-API key="test-api-key"',
 			);
 			expect(requestOptions.url).not.toContain('test-api-key');
+			expect(mockLogEvent).toHaveBeenCalledWith(
+				ctx,
+				'wisepops.dataPrivacy.delete',
+				{},
+				'completed',
+			);
+		});
+
+		it('does not log email, phone, or PII identifiers on successful dataPrivacyDelete', async () => {
+			mockRequest.mockResolvedValueOnce({ deleted: 1 });
+			const ctx = createMockContext();
+
+			await DataPrivacy.deleteData(ctx, {
+				email: 'privacy-user@example.com',
+			});
+
+			expect(mockLogEvent).toHaveBeenCalledTimes(1);
+			expect(mockLogEvent).toHaveBeenCalledWith(
+				ctx,
+				'wisepops.dataPrivacy.delete',
+				{},
+				'completed',
+			);
+			const loggedPayload = mockLogEvent.mock.calls[0][2];
+			expect(loggedPayload).toEqual({});
+			expect(loggedPayload).not.toHaveProperty('email');
+			expect(loggedPayload).not.toHaveProperty('phone');
 		});
 
 		it('preserves phone selector on dataPrivacyDelete request', async () => {
@@ -91,6 +118,12 @@ describe('Wisepops API & Endpoints Unit Tests', () => {
 			const [, requestOptions] = mockRequest.mock.calls[0];
 			expect(requestOptions.method).toBe('DELETE');
 			expect(requestOptions.body).toEqual({ phone: '+1234567890' });
+			expect(mockLogEvent).toHaveBeenCalledWith(
+				ctx,
+				'wisepops.dataPrivacy.delete',
+				{},
+				'completed',
+			);
 		});
 
 		it('preserves query selector on webhookDelete request', async () => {
@@ -195,6 +228,60 @@ describe('Wisepops API & Endpoints Unit Tests', () => {
 			expect(errorHandlers.RATE_LIMIT_ERROR.match(rawError)).toBe(true);
 			const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(rawError);
 			expect(strategy).toEqual({ maxRetries: 5, headersRetryAfterMs: 2000 });
+		});
+
+		it('sets maxRetries: 0 for non-retryable operations (webhook.create and dataPrivacy.delete) while preserving headersRetryAfterMs', async () => {
+			const rawError = createRateLimitError(6000);
+
+			// webhook.create
+			const webhookCreateContext = {
+				pluginId: 'wisepops',
+				operation: 'webhook.create',
+				input: {},
+				originalError: rawError,
+			};
+			const whStrategy = await errorHandlers.RATE_LIMIT_ERROR.handler(
+				rawError,
+				webhookCreateContext,
+			);
+			expect(whStrategy).toEqual({ maxRetries: 0, headersRetryAfterMs: 6000 });
+
+			// dataPrivacy.delete
+			const dataPrivacyDeleteContext = {
+				pluginId: 'wisepops',
+				operation: 'dataPrivacy.delete',
+				input: {},
+				originalError: rawError,
+			};
+			const dpStrategy = await errorHandlers.RATE_LIMIT_ERROR.handler(
+				rawError,
+				dataPrivacyDeleteContext,
+			);
+			expect(dpStrategy).toEqual({ maxRetries: 0, headersRetryAfterMs: 6000 });
+		});
+
+		it('preserves maxRetries: 5 and retryAfterMs for idempotent and read operations', async () => {
+			const rawError = createRateLimitError(4500);
+
+			const idempotentOperations = [
+				'contacts.get',
+				'performance.get',
+				'webhook.delete',
+			];
+
+			for (const op of idempotentOperations) {
+				const context = {
+					pluginId: 'wisepops',
+					operation: op,
+					input: {},
+					originalError: rawError,
+				};
+				const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(
+					rawError,
+					context,
+				);
+				expect(strategy).toEqual({ maxRetries: 5, headersRetryAfterMs: 4500 });
+			}
 		});
 
 		it('classifies 401 authentication errors as terminal with 0 retries', async () => {

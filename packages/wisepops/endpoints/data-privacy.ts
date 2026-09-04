@@ -23,7 +23,7 @@ export const deleteData: WisepopsEndpoints['dataPrivacyDelete'] = async (
 	await logEventFromContext(
 		ctx,
 		'wisepops.dataPrivacy.delete',
-		{ ...validatedInput },
+		{},
 		'completed',
 	);
 	return WisepopsEndpointOutputSchemas.dataPrivacyDelete.parse(response);
