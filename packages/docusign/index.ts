@@ -57,7 +57,7 @@ export const docusignEndpointMeta = {
 	},
 	fetchRecipientNamesForEmail: {
 		description:
-			'Retrieves the names associated with an email address from the recipients of an envelope.',
+			'Retrieves the names associated with an email address from all recipient types on an envelope.',
 		riskLevel: 'read',
 	},
 	...endpoints.generatedEndpointMeta,

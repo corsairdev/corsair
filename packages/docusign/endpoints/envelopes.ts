@@ -103,6 +103,14 @@ const EnvelopeRecipientsResponseSchema = z
 			.object({
 				signers: z.array(EnvelopeRecipientSchema).optional(),
 				carbonCopies: z.array(EnvelopeRecipientSchema).optional(),
+				certifiedDeliveries: z.array(EnvelopeRecipientSchema).optional(),
+				inPersonSigners: z.array(EnvelopeRecipientSchema).optional(),
+				agents: z.array(EnvelopeRecipientSchema).optional(),
+				editors: z.array(EnvelopeRecipientSchema).optional(),
+				intermediaries: z.array(EnvelopeRecipientSchema).optional(),
+				witnesses: z.array(EnvelopeRecipientSchema).optional(),
+				seals: z.array(EnvelopeRecipientSchema).optional(),
+				notaries: z.array(EnvelopeRecipientSchema).optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -121,17 +129,29 @@ export const fetchRecipientNamesForEmail = async (
 		),
 	);
 	const target = input.email.toLowerCase();
-	const candidates = [
-		...(data.recipients?.signers ?? []),
-		...(data.recipients?.carbonCopies ?? []),
-	];
+	const recipientsRecord = (data.recipients ?? {}) as Record<string, unknown>;
+	const candidates = Object.values(recipientsRecord)
+		.filter((value): value is unknown[] => Array.isArray(value))
+		.flat()
+		.filter(
+			(
+				recipient,
+			): recipient is { email?: unknown; name?: unknown; userName?: unknown } =>
+				typeof recipient === 'object' && recipient !== null,
+		);
 	const names = candidates
 		.filter(
 			(recipient) =>
 				typeof recipient.email === 'string' &&
 				recipient.email.toLowerCase() === target,
 		)
-		.map((recipient) => recipient.name ?? recipient.userName ?? '')
+		.map((recipient) =>
+			typeof recipient.name === 'string'
+				? recipient.name
+				: typeof recipient.userName === 'string'
+					? recipient.userName
+					: '',
+		)
 		.filter((name) => name.length > 0);
 	return FetchRecipientNamesForEmailOutputSchema.parse({
 		email: input.email,
