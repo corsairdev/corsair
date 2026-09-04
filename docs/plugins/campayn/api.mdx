@@ -1,0 +1,692 @@
+---
+title: API
+description: "API reference for Campayn: every `campayn.api.*` operation with input and output types."
+---
+
+Every `campayn.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contacts
+
+### createContact
+
+`contacts.createContact`
+
+Create a new contact in a contact list.
+
+**Risk:** `write`
+
+```ts
+await corsair.campayn.api.contacts.createContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string \| number` | Yes | — |
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `company` | `string` | No | — |
+| `country` | `string` | No | — |
+| `phones` | `object[]` | No | — |
+| `sites` | `object[]` | No | — |
+| `social` | `object[]` | No | — |
+| `custom_fields` | `object[]` | No | — |
+| `failOnDuplicate` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="phones full type">
+
+```ts
+{
+  value: string,
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="sites full type">
+
+```ts
+{
+  value: string,
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="social full type">
+
+```ts
+{
+  value: string,
+  type: string,
+  protocol: string
+}[]
+```
+</Accordion>
+
+<Accordion title="custom_fields full type">
+
+```ts
+{
+  field: string,
+  value?: string,
+  variable?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| 1 \| 0` | Yes | — |
+
+
+
+---
+
+### deleteContact
+
+`contacts.deleteContact`
+
+Delete a contact by contact ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.campayn.api.contacts.deleteContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| 1 \| 0` | Yes | — |
+
+
+
+---
+
+### getContact
+
+`contacts.getContact`
+
+Get full contact details by contact ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.campayn.api.contacts.getContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `company` | `string` | No | — |
+| `address` | `string` | No | — |
+| `country_id` | `string` | No | — |
+| `country` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `birthday` | `string` | No | — |
+| `tags` | `string` | No | — |
+| `phones` | `object[]` | No | — |
+| `sites` | `object[]` | No | — |
+| `social` | `object[]` | No | — |
+| `custom_fields` | `object[]` | No | — |
+| `image_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="phones full type">
+
+```ts
+{
+  value: string,
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="sites full type">
+
+```ts
+{
+  value: string,
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="social full type">
+
+```ts
+{
+  value: string,
+  type: string,
+  protocol: string
+}[]
+```
+</Accordion>
+
+<Accordion title="custom_fields full type">
+
+```ts
+{
+  field: string,
+  value?: string,
+  variable?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContacts
+
+`contacts.getContacts`
+
+List contacts for a contact list, with optional contact keyword filtering.
+
+**Risk:** `read`
+
+```ts
+await corsair.campayn.api.contacts.getContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string \| number` | Yes | — |
+| `contactFilter` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  image_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unsubscribeContact
+
+`contacts.unsubscribeContact`
+
+Unsubscribe contacts from a list by contact ID or by email address.
+
+**Risk:** `write`
+
+```ts
+await corsair.campayn.api.contacts.unsubscribeContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string \| number` | Yes | — |
+| `id` | `string \| number` | No | — |
+| `email` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success: boolean | 1 | 0
+} | {
+  contactCount: number | string,
+  success: boolean,
+  msg: string,
+  unsubscribeCount: number | string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Lists
+
+### deleteList
+
+`lists.deleteList`
+
+Delete a contact list by list ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.campayn.api.lists.deleteList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| 1 \| 0` | Yes | — |
+
+
+
+---
+
+### getLists
+
+`lists.getLists`
+
+List all contact lists visible to the authenticated user.
+
+**Risk:** `read`
+
+```ts
+await corsair.campayn.api.lists.getLists({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  list_name: string,
+  tags?: string,
+  contact_count: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateList
+
+`lists.updateList`
+
+Update a contact list name or tags by list ID.
+
+**Risk:** `write`
+
+```ts
+await corsair.campayn.api.lists.updateList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string \| number` | Yes | — |
+| `list_name` | `string` | No | — |
+| `tags` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `list_name` | `string` | Yes | — |
+| `tags` | `string` | No | — |
+| `contact_count` | `number \| string` | Yes | — |
+
+
+
+---
+
+## Messages
+
+### getMessages
+
+`messages.getMessages`
+
+List messages visible to the authenticated user.
+
+**Risk:** `read`
+
+```ts
+await corsair.campayn.api.messages.getMessages({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  scheduled_date?: string | null,
+  send_now?: string | number,
+  send_count?: string | number,
+  campaign_title?: string | null,
+  status?: string,
+  unique_views?: number | string,
+  unique_responses?: number | string,
+  percent_views?: number | string,
+  percent_responses?: number | string,
+  preview_url?: string,
+  preview_thumb?: string,
+  report_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMessageStatistics
+
+`messages.getMessageStatistics`
+
+Get message statistics for a specific message ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.campayn.api.messages.getMessageStatistics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `scheduled_date` | `string` | No | — |
+| `send_now` | `string \| number` | No | — |
+| `send_count` | `string \| number` | No | — |
+| `campaign_title` | `string` | No | — |
+| `status` | `string` | No | — |
+| `unique_views` | `number \| string` | No | — |
+| `unique_responses` | `number \| string` | No | — |
+| `percent_views` | `number \| string` | No | — |
+| `percent_responses` | `number \| string` | No | — |
+| `preview_url` | `string` | No | — |
+| `preview_thumb` | `string` | No | — |
+| `report_url` | `string` | No | — |
+
+
+
+---
+
+## Reports
+
+### getReports
+
+`reports.getReports`
+
+Get report calendar entries for sent and scheduled emails, optionally filtered by Unix timestamp range.
+
+**Risk:** `read`
+
+```ts
+await corsair.campayn.api.reports.getReports({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  scheduled_date?: string | null,
+  status: string,
+  preview_url: string,
+  report_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Signup
+
+### signup
+
+`signup.signup`
+
+Sign up a new Campayn user account. This endpoint requires API-key authorization for signup action.
+
+**Risk:** `write`
+
+```ts
+await corsair.campayn.api.signup.signup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `subdomain` | `string` | No | — |
+| `site` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `number \| boolean` | Yes | — |
+| `msg` | `string` | Yes | — |
+| `errorCode` | `string` | No | — |
+
+
+
+---
+
+## Webforms
+
+### deleteWebform
+
+`webforms.deleteWebform`
+
+Delete a webform by list ID and webform ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.campayn.api.webforms.deleteWebform({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string \| number` | Yes | — |
+| `webformId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| 1 \| 0` | Yes | — |
+
+
+
+---
+
+### getWebform
+
+`webforms.getWebform`
+
+Get a webform by list ID and webform ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.campayn.api.webforms.getWebform({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string \| number` | Yes | — |
+| `webformId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `contact_list_id` | `string` | Yes | — |
+| `form_title` | `string` | Yes | — |
+| `form_type` | `string` | Yes | — |
+| `form_html` | `string` | Yes | — |
+| `signup_count` | `string \| number` | Yes | — |
+
+
+
+---
+
+### getWebforms
+
+`webforms.getWebforms`
+
+List webforms for a contact list, with optional form type filter.
+
+**Risk:** `read`
+
+```ts
+await corsair.campayn.api.webforms.getWebforms({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string \| number` | Yes | — |
+| `form_type` | `0 \| 1 \| 2 \| 3` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  contact_list_id: string,
+  form_title: string,
+  form_type: string,
+  form_html: string,
+  signup_count: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
