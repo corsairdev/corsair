@@ -22,7 +22,7 @@ npm install corsair @corsair-dev/flutterwave
 yarn add corsair @corsair-dev/flutterwave
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/flutterwave
+pnpm add corsair @corsair-dev/flutterwave
 ```
 ```bash bun
 bun add corsair @corsair-dev/flutterwave
@@ -92,7 +92,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.flutterwave.api.banks.getBranches({});
+await tenant.flutterwave.api.banks.getBranches({ id: 173 });
 ```
 
 
@@ -100,7 +100,11 @@ await tenant.flutterwave.api.banks.getBranches({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.flutterwave.api.beneficiaries.create({});
+await tenant.flutterwave.api.beneficiaries.create({
+	account_number: '0690000040',
+	account_bank: '044',
+	beneficiary_name: 'Alexis Sanchez',
+});
 ```
 
 
