@@ -171,7 +171,7 @@ export type InternalWorldNewsApiPlugin =
 export type ExternalWorldNewsApiPlugin<T extends WorldNewsApiPluginOptions> =
 	BaseWorldNewsApiPlugin<T>;
 
-export function worldNewsApi<const T extends WorldNewsApiPluginOptions>(
+export function worldnewsapi<const T extends WorldNewsApiPluginOptions>(
 	incomingOptions: WorldNewsApiPluginOptions &
 		T = {} as WorldNewsApiPluginOptions & T,
 ): ExternalWorldNewsApiPlugin<T> {
