@@ -29,6 +29,7 @@ type PageProps = {
 		page?: string;
 		q?: string;
 		tags?: string | string[];
+		view?: string;
 	}>;
 };
 
@@ -42,7 +43,8 @@ function normalizeQueryParam(
 
 export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
-	const page = Math.max(1, Number(params.page) || 1);
+	const page =
+		params.view === 'leaderboard' ? 1 : Math.max(1, Number(params.page) || 1);
 	const q = params.q?.trim() ?? '';
 	const selectedTags = parseTagSlugs(normalizeQueryParam(params.tags));
 
