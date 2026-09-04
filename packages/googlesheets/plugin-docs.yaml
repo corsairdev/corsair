@@ -28,6 +28,6 @@ dbExample:
 
 exampleWebhook:
   path: rangeUpdated
-  note: "Fires when a range of cells is updated."
+  note: "Fires when a range of cells is updated. Replace the `googlesheets()` call in the setup's `plugins` array with this configured call so the hook is registered."
   after: |
     console.log('Sheet range updated:', result.data);
