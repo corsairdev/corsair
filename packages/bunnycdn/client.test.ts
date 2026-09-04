@@ -31,12 +31,13 @@ describe('makeBunnycdnRequest', () => {
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		const [config, options] = mockRequest.mock.calls[0] as [
-			{ BASE: string; TOKEN: string; HEADERS: Record<string, string> },
+			{ BASE: string; HEADERS: Record<string, string> },
 			{ method: string; url: string; mediaType: string },
 		];
 		expect(config.BASE).toBe('https://api.bunny.net');
 		expect(config.BASE).toBe(BUNNYCDN_API_BASES.core);
-		expect(config.TOKEN).toBe('secret-key');
+		// BunnyCDN authenticates via AccessKey only: no Bearer TOKEN allowed.
+		expect(config).not.toHaveProperty('TOKEN');
 		expect(config.HEADERS.AccessKey).toBe('secret-key');
 		expect(config.HEADERS['Content-Type']).toBe('application/json');
 		expect(options.method).toBe('GET');

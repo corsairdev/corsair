@@ -35,11 +35,17 @@ function firstId(value: unknown): number | undefined {
 	return undefined;
 }
 
+// Set once a core call succeeds: it proves the key itself is valid, so a
+// later Shield 401 means "no Shield access on this account" rather than a
+// bad key. Tests run in file order with core reads first.
+let coreAuthOk = false;
+
 /**
  * Shield endpoints answer 401 on accounts without a Shield subscription.
  * That still proves the request reached the real endpoint with valid auth
  * plumbing, so it is accepted here with an explicit assertion rather than
- * silently skipped.
+ * silently skipped — but only after core auth succeeded, so an invalid key
+ * still fails loudly instead of being masked as "unavailable".
  */
 async function liveShieldGet<T>(
 	path: string,
@@ -47,7 +53,7 @@ async function liveShieldGet<T>(
 	try {
 		return await liveGet<T>(path, 'shield');
 	} catch (error) {
-		if (error instanceof ApiError && error.status === 401) {
+		if (error instanceof ApiError && error.status === 401 && coreAuthOk) {
 			return 'shield-unavailable';
 		}
 		throw error;
@@ -81,6 +87,7 @@ async function liveMcGet<T>(path: string): Promise<T | 'mc-unavailable'> {
 describeLive('BunnyCDN live API (read-only)', () => {
 	it('lists pull zones and gets the first one by id', async () => {
 		const zones = await liveGet('/pullzone', 'core', { perPage: 5 });
+		coreAuthOk = true;
 		const parsed = BunnycdnEndpointOutputSchemas.pullZoneList.parse(zones);
 		const id = firstId(parsed);
 		if (id === undefined) {

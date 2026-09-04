@@ -51,12 +51,14 @@ export async function create(
 	input: PullZoneCreateInput,
 ): Promise<BunnycdnEndpointOutputs['pullZoneCreate']> {
 	const { name, originUrl, type, settings } = input;
+	// Explicit fields win: a colliding property inside settings must never
+	// silently replace the dedicated Name/OriginUrl/Type inputs.
 	return api(ctx, 'core', 'POST', '/pullzone', {
 		body: {
+			...(settings ?? {}),
 			Name: name,
 			OriginUrl: originUrl,
 			Type: type,
-			...(settings ?? {}),
 		},
 	});
 }

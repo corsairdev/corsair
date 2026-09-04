@@ -33,12 +33,13 @@ export async function makeBunnycdnRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query, base = 'core' } = options;
 
+	// BunnyCDN authenticates via the AccessKey header only. TOKEN is
+	// intentionally omitted so no Authorization: Bearer header is sent.
 	const config: OpenAPIConfig = {
 		BASE: BUNNYCDN_API_BASES[base],
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			AccessKey: apiKey,

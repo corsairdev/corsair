@@ -17,7 +17,9 @@ export async function api<T>(
 		body?: Record<string, unknown>;
 	} = {},
 ): Promise<T> {
-	const key = (await ctx.keys?.get_api_key()) ?? ctx.options.key ?? '';
+	// The explicitly configured key wins over the stored account key so an
+	// endpoint call can never run against the wrong BunnyCDN account.
+	const key = ctx.options.key ?? (await ctx.keys?.get_api_key()) ?? '';
 	return makeBunnycdnRequest<T>(path, key, {
 		method,
 		query: opts.query,

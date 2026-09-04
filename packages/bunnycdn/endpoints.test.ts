@@ -19,6 +19,7 @@ import {
 	BunnycdnEndpointInputSchemas,
 	BunnycdnEndpointOutputSchemas,
 } from './endpoints/types';
+import { NON_IDEMPOTENT_OPERATIONS } from './error-handlers';
 import type { BunnycdnContext } from './index';
 import { bunnycdn } from './index';
 
@@ -1307,7 +1308,7 @@ describe('shield', () => {
 			body: undefined,
 			base: 'shield',
 		});
-		expect(BunnycdnEndpointOutputSchemas.shieldPage.parse(result)).toEqual({});
+		expect(BunnycdnEndpointOutputSchemas.emptyInput.parse(result)).toEqual({});
 	});
 
 	it('ddosEnums: lists available DDoS configuration values', async () => {
@@ -1319,7 +1320,7 @@ describe('shield', () => {
 			body: undefined,
 			base: 'shield',
 		});
-		expect(BunnycdnEndpointOutputSchemas.shieldPage.parse(result)).toEqual({});
+		expect(BunnycdnEndpointOutputSchemas.emptyInput.parse(result)).toEqual({});
 	});
 
 	it('botDetectionGet: reads the bot detection configuration', async () => {
@@ -1991,6 +1992,77 @@ describe('input schema validation', () => {
 		expect(() =>
 			BunnycdnEndpointOutputSchemas.pullZoneGet.parse({ Name: 'missing-id' }),
 		).toThrow();
+	});
+});
+
+describe('request safety', () => {
+	it('prefers the configured key over the stored account key', async () => {
+		const optionCtx = {
+			keys: { get_api_key: async () => 'stored-key' },
+			options: { key: 'option-key' },
+		} as unknown as BunnycdnContext;
+		await PullZoneEndpoints.list(optionCtx, {});
+		expect(mockedRequest).toHaveBeenLastCalledWith(
+			'/pullzone',
+			'option-key',
+			expect.objectContaining({ method: 'GET', base: 'core' }),
+		);
+	});
+
+	it('explicit creation fields win over colliding settings properties', async () => {
+		await PullZoneEndpoints.create(ctx, {
+			name: 'my-zone',
+			settings: { Name: 'evil-zone', OriginUrl: 'https://evil.example.com' },
+		});
+		expect(mockedRequest).toHaveBeenLastCalledWith(
+			'/pullzone',
+			'test-key',
+			expect.objectContaining({
+				body: {
+					Name: 'my-zone',
+					OriginUrl: undefined,
+					Type: undefined,
+				},
+			}),
+		);
+	});
+
+	it('keeps caller-supplied path segments inside a single segment', async () => {
+		mockedRequest.mockResolvedValue({});
+		await ShieldEndpoints.eventLogs(ctx, {
+			shieldZoneId: 5,
+			date: '2026-09-01',
+			continuationToken: '../waf/engine-config',
+		});
+		expect(mockedRequest).toHaveBeenLastCalledWith(
+			'/event-logs/5/2026-09-01/..%2Fwaf%2Fengine-config',
+			'test-key',
+			expect.objectContaining({ method: 'GET', base: 'shield' }),
+		);
+		await ContainersEndpoints.registryDelete(ctx, { registryId: 'reg/1' });
+		expect(mockedRequest).toHaveBeenLastCalledWith(
+			'/registries/reg%2F1',
+			'test-key',
+			expect.objectContaining({ method: 'DELETE' }),
+		);
+	});
+
+	it('keeps the non-idempotent set inside the registered operations', () => {
+		const plugin = bunnycdn({});
+		const endpoints = plugin.endpoints as Record<
+			string,
+			Record<string, unknown>
+		>;
+		const registered = new Set<string>();
+		for (const [group, ops] of Object.entries(endpoints)) {
+			for (const name of Object.keys(ops)) {
+				registered.add(`${group}.${name}`);
+			}
+		}
+		for (const op of NON_IDEMPOTENT_OPERATIONS) {
+			expect(registered.has(op)).toBe(true);
+		}
+		expect(NON_IDEMPOTENT_OPERATIONS.size).toBe(25);
 	});
 });
 

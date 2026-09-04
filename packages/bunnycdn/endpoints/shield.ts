@@ -198,11 +198,13 @@ export async function metricsWafRule(
 	ctx: BunnycdnContext,
 	input: ShieldWafRuleMetricsInput,
 ): Promise<BunnycdnEndpointOutputs['shieldWafRuleMetrics']> {
+	// Caller-supplied ids stay a single path segment even with `/` or `..`.
+	const ruleId = encodeURIComponent(String(input.ruleId));
 	return api(
 		ctx,
 		'shield',
 		'GET',
-		`/metrics/shield-zone/${input.shieldZoneId}/waf-rule/${input.ruleId}`,
+		`/metrics/shield-zone/${input.shieldZoneId}/waf-rule/${ruleId}`,
 	);
 }
 
@@ -210,11 +212,13 @@ export async function eventLogs(
 	ctx: BunnycdnContext,
 	input: ShieldEventLogsInput,
 ): Promise<BunnycdnEndpointOutputs['shieldEventLogs']> {
+	const date = encodeURIComponent(input.date);
+	const continuationToken = encodeURIComponent(input.continuationToken);
 	return api(
 		ctx,
 		'shield',
 		'GET',
-		`/event-logs/${input.shieldZoneId}/${input.date}/${input.continuationToken}`,
+		`/event-logs/${input.shieldZoneId}/${date}/${continuationToken}`,
 	);
 }
 
@@ -383,7 +387,8 @@ export async function wafCustomRuleGet(
 	ctx: BunnycdnContext,
 	input: ShieldWafCustomRuleIdInput,
 ): Promise<BunnycdnEndpointOutputs['shieldWafCustomRuleId']> {
-	return api(ctx, 'shield', 'GET', `/waf/custom-rule/${input.id}`);
+	const id = encodeURIComponent(String(input.id));
+	return api(ctx, 'shield', 'GET', `/waf/custom-rule/${id}`);
 }
 
 export async function wafEngineConfig(

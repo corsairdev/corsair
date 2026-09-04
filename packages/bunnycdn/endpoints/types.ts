@@ -27,18 +27,18 @@ export type Success = z.infer<typeof SuccessSchema>;
 
 const PullZoneHostnameSchema = z.looseObject({
 	Id: z.number().optional(),
-	Value: z.string().optional(),
+	Value: z.string().nullable().optional(),
 	ForceSSL: z.boolean().optional(),
 	HasCertificate: z.boolean().optional(),
 });
 
 const PullZoneSchema = z.looseObject({
 	Id: z.number(),
-	Name: z.string().optional(),
-	OriginUrl: z.string().optional(),
+	Name: z.string().nullable().optional(),
+	OriginUrl: z.string().nullable().optional(),
 	Enabled: z.boolean().optional(),
 	Suspended: z.boolean().optional(),
-	Hostnames: z.array(PullZoneHostnameSchema).optional(),
+	Hostnames: z.array(PullZoneHostnameSchema).nullable().optional(),
 	StorageZoneId: z.number().optional(),
 	MonthlyBandwidthUsed: z.number().optional(),
 	MonthlyCharges: z.number().optional(),

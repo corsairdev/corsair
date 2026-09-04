@@ -73,7 +73,8 @@ export async function userAuditLog(
 	ctx: BunnycdnContext,
 	input: UserAuditLogInput,
 ): Promise<BunnycdnEndpointOutputs['userAuditLog']> {
-	return api(ctx, 'core', 'GET', `/user/audit/${input.date}`, {
+	const date = encodeURIComponent(input.date);
+	return api(ctx, 'core', 'GET', `/user/audit/${date}`, {
 		query: {
 			Product: input.product,
 			ResourceType: input.resourceType,

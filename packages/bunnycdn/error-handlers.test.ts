@@ -1,5 +1,6 @@
+import type { ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { errorHandlers } from './error-handlers';
+import { errorHandlers, isNonIdempotent } from './error-handlers';
 
 function apiError(
 	status: number,
@@ -18,6 +19,10 @@ function apiError(
 		message,
 		retryAfter === undefined ? undefined : { retryAfter },
 	);
+}
+
+function errorContext(operation: string, error: Error): ErrorContext {
+	return { pluginId: 'bunnycdn', operation, input: {}, originalError: error };
 }
 
 describe('bunnycdn error handlers', () => {
@@ -39,19 +44,56 @@ describe('bunnycdn error handlers', () => {
 		).toBe(false);
 	});
 
-	it('rate limit handler retries up to 5 times', async () => {
+	it('rate limit handler retries reads up to 5 times', async () => {
+		const error = apiError(429, 'Too Many Requests');
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
-			apiError(429, 'Too Many Requests'),
+			error,
+			errorContext('pullZone.list', error),
 		);
 		expect(result.maxRetries).toBe(5);
 	});
 
 	it('rate limit handler forwards retryAfter when present', async () => {
+		const error = apiError(429, 'Too Many Requests', 2000);
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
-			apiError(429, 'Too Many Requests', 2000),
+			error,
+			errorContext('pullZone.list', error),
 		);
 		expect(result.maxRetries).toBe(5);
 		expect(result.headersRetryAfterMs).toBe(2000);
+	});
+
+	it('rate limit handler never retries non-idempotent writes', async () => {
+		for (const operation of [
+			'pullZone.create',
+			'pullZone.update',
+			'dnsZone.createRecord',
+			'shield.rateLimitCreate',
+		]) {
+			const error = apiError(429, 'Too Many Requests', 2000);
+			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+				error,
+				errorContext(operation, error),
+			);
+			expect(result.maxRetries).toBe(0);
+		}
+	});
+
+	it('rate limit handler still retries idempotent deletes', async () => {
+		const error = apiError(429, 'Too Many Requests');
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+			error,
+			errorContext('pullZone.remove', error),
+		);
+		expect(result.maxRetries).toBe(5);
+	});
+
+	it('classifies operations by idempotency', async () => {
+		expect(isNonIdempotent('pullZone.create')).toBe(true);
+		expect(isNonIdempotent('shield.accessListCreate')).toBe(true);
+		expect(isNonIdempotent('pullZone.list')).toBe(false);
+		expect(isNonIdempotent('pullZone.remove')).toBe(false);
+		expect(isNonIdempotent('purge.url')).toBe(false);
 	});
 
 	it('matches 401 responses as auth errors', () => {

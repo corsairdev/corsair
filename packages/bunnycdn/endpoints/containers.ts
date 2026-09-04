@@ -66,7 +66,8 @@ export async function registryDelete(
 	ctx: BunnycdnContext,
 	input: ContainerRegistryDeleteInput,
 ): Promise<BunnycdnEndpointOutputs['containerRegistryDelete']> {
-	return apiVoid(ctx, 'mc', 'DELETE', `/registries/${input.registryId}`);
+	const registryId = encodeURIComponent(String(input.registryId));
+	return apiVoid(ctx, 'mc', 'DELETE', `/registries/${registryId}`);
 }
 
 export async function imageTags(
@@ -128,5 +129,6 @@ export async function volumesList(
 	ctx: BunnycdnContext,
 	input: ContainerVolumesListInput,
 ): Promise<BunnycdnEndpointOutputs['containerVolumesList']> {
-	return api(ctx, 'mc', 'GET', `/apps/${input.appId}/volumes`);
+	const appId = encodeURIComponent(input.appId);
+	return api(ctx, 'mc', 'GET', `/apps/${appId}/volumes`);
 }
