@@ -1,4 +1,3 @@
-import { request } from 'corsair/http';
 import { CASTINGWORDS_API_BASE, makeCastingwordsRequest } from './client';
 import {
 	createOrder,
@@ -24,81 +23,109 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(undefined),
 }));
 
-jest.mock('corsair/http', () => ({
-	ApiError: class ApiError extends Error {},
-	request: jest.fn(),
-}));
-
-const requestMock = request as unknown as jest.Mock;
+const fetchMock = jest.fn();
 const ctx = { key: 'test-key' };
 
+function jsonResponse(body: unknown, status = 200) {
+	return new Response(JSON.stringify(body), {
+		status,
+		headers: { 'Content-Type': 'application/json' },
+	});
+}
+
 describe('CastingWords', () => {
-	beforeEach(() => requestMock.mockReset());
+	const originalFetch = globalThis.fetch;
+
+	beforeEach(() => {
+		fetchMock.mockReset();
+		globalThis.fetch = fetchMock as typeof fetch;
+	});
+
+	afterAll(() => {
+		globalThis.fetch = originalFetch;
+	});
 
 	it('uses the documented API v4 base URL', () => {
 		expect(CASTINGWORDS_API_BASE).toBe('https://castingwords.com/store/API4');
 	});
 
-	it('sends api_key on GET and JSON POST', async () => {
-		requestMock.mockResolvedValue({ balance: 10 });
+	it('sends api_key on GET and JSON POST without following redirects', async () => {
+		fetchMock.mockResolvedValue(jsonResponse({ balance: 10 }));
 		await makeCastingwordsRequest('prepay_balance', 'secret');
-		expect(requestMock).toHaveBeenCalledWith(
-			expect.objectContaining({ BASE: CASTINGWORDS_API_BASE }),
-			expect.objectContaining({ method: 'GET', query: { api_key: 'secret' } }),
+		expect(String(fetchMock.mock.calls[0]?.[0])).toContain(
+			'prepay_balance?api_key=secret',
+		);
+		expect(fetchMock.mock.calls[0]?.[1]).toEqual(
+			expect.objectContaining({ method: 'GET', redirect: 'error' }),
 		);
 
-		requestMock.mockResolvedValue({ message: 'ok' });
+		fetchMock.mockResolvedValue(jsonResponse({ message: 'ok' }));
 		await makeCastingwordsRequest('order_url', 'secret', {
 			method: 'POST',
 			body: { url: 'https://example.com/a.mp3', sku: ['TRANS14'] },
 		});
-		expect(requestMock).toHaveBeenCalledWith(
-			expect.anything(),
+		expect(fetchMock.mock.calls[1]?.[1]).toEqual(
 			expect.objectContaining({
 				method: 'POST',
-				body: {
+				redirect: 'error',
+				body: JSON.stringify({
 					api_key: 'secret',
 					url: 'https://example.com/a.mp3',
 					sku: ['TRANS14'],
-				},
-				mediaType: 'application/json',
+				}),
 			}),
 		);
 	});
 
-	it('creates an order and lists SKUs', async () => {
-		requestMock.mockResolvedValue({
-			audiofiles: [101],
-			order: 'order-1',
-			message: 'ok',
+	it('does not follow a redirect with the api_key', async () => {
+		fetchMock.mockImplementation((_url, init) => {
+			expect(init.redirect).toBe('error');
+			return Promise.reject(new TypeError('redirect'));
 		});
+		await expect(
+			makeCastingwordsRequest('prepay_balance', 'secret'),
+		).rejects.toThrow('redirect');
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(String(fetchMock.mock.calls[0]?.[0])).not.toContain('evil.test');
+	});
+
+	it('creates an order and lists SKUs', async () => {
+		fetchMock.mockResolvedValue(
+			jsonResponse({
+				audiofiles: [101],
+				order: 'order-1',
+				message: 'ok',
+			}),
+		);
 		await expect(
 			createOrder(ctx, { url: 'https://example.com/a.mp3', sku: ['TRANS14'] }),
 		).resolves.toMatchObject({ order: 'order-1' });
 
-		requestMock.mockReset();
+		fetchMock.mockReset();
 		const skus = await listSkus(ctx);
 		expect(skus.skus.some((row) => row.sku === 'TRANS14')).toBe(true);
-		expect(requestMock).not.toHaveBeenCalled();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('covers the remaining API4 operations', async () => {
-		requestMock.mockResolvedValue({ balance: 4.5 });
+		fetchMock.mockResolvedValue(jsonResponse({ balance: 4.5 }));
 		await expect(getPrepayBalance(ctx)).resolves.toEqual({ balance: 4.5 });
 
-		requestMock.mockResolvedValue({
-			audiofile: { id: 101, statename: 'Delivered' },
-		});
+		fetchMock.mockResolvedValue(
+			jsonResponse({ audiofile: { id: 101, statename: 'Delivered' } }),
+		);
 		await expect(
 			getAudiofileDetails(ctx, { audiofileId: 101 }),
 		).resolves.toMatchObject({ audiofile: { statename: 'Delivered' } });
 
-		requestMock.mockResolvedValue('transcript text');
+		fetchMock.mockResolvedValue(new Response('transcript text'));
 		await expect(
 			getTranscript(ctx, { audiofileId: 101, extension: 'txt' }),
 		).resolves.toBe('transcript text');
 
-		requestMock.mockResolvedValue({ message: 'success' });
+		fetchMock.mockImplementation(() =>
+			Promise.resolve(jsonResponse({ message: 'success' })),
+		);
 		await expect(
 			orderUpgrade(ctx, { audiofileId: 101, sku: ['TSTMP1'] }),
 		).resolves.toMatchObject({ message: 'success' });
@@ -106,12 +133,16 @@ describe('CastingWords', () => {
 			refundAudiofile(ctx, { audiofileId: 101 }),
 		).resolves.toMatchObject({ message: 'success' });
 
-		requestMock.mockResolvedValue({ id: 55, state: 'PAID', items: [] });
+		fetchMock.mockResolvedValue(
+			jsonResponse({ id: 55, state: 'PAID', items: [] }),
+		);
 		await expect(getInvoice(ctx, { invoiceId: 55 })).resolves.toMatchObject({
 			state: 'PAID',
 		});
 
-		requestMock.mockResolvedValue({ webhook: 'https://example.com/hook' });
+		fetchMock.mockImplementation(() =>
+			Promise.resolve(jsonResponse({ webhook: 'https://example.com/hook' })),
+		);
 		await expect(getWebhook(ctx)).resolves.toEqual({
 			webhook: 'https://example.com/hook',
 		});
@@ -133,7 +164,7 @@ describe('CastingWords', () => {
 		).toBe(true);
 		expect(
 			CastingwordsEndpointInputSchemas.createOrder.safeParse({
-				url: 'not-url',
+				url: 'ftp://example.com/a.mp3',
 				sku: ['TRANS14'],
 			}).success,
 		).toBe(false);
@@ -147,5 +178,40 @@ describe('CastingWords', () => {
 		expect(CASTINGWORDS_SKU_CATALOG.some((row) => row.sku === 'UPGRD3')).toBe(
 			true,
 		);
+	});
+
+	it('rejects invalid identifiers and non-http webhook URLs', () => {
+		const idCases = [
+			{ audiofileId: 101, ok: true },
+			{ audiofileId: '101', ok: true },
+			{ audiofileId: '', ok: false },
+			{ audiofileId: '   ', ok: false },
+			{ audiofileId: 0, ok: false },
+			{ audiofileId: -1, ok: false },
+			{ audiofileId: 1.5, ok: false },
+			{ audiofileId: '1.5', ok: false },
+		] as const;
+		for (const { audiofileId, ok } of idCases) {
+			expect(
+				CastingwordsEndpointInputSchemas.getAudiofileDetails.safeParse({
+					audiofileId,
+				}).success,
+			).toBe(ok);
+			expect(
+				CastingwordsEndpointInputSchemas.getInvoice.safeParse({
+					invoiceId: audiofileId,
+				}).success,
+			).toBe(ok);
+		}
+		expect(
+			CastingwordsEndpointInputSchemas.registerWebhook.safeParse({
+				webhook: 'https://example.com/hook',
+			}).success,
+		).toBe(true);
+		expect(
+			CastingwordsEndpointInputSchemas.registerWebhook.safeParse({
+				webhook: 'ftp://example.com/hook',
+			}).success,
+		).toBe(false);
 	});
 });

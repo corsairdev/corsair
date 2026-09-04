@@ -10,6 +10,16 @@ import {
 
 const EmptyInputSchema = z.object({});
 
+const PositiveIdSchema = z.union([
+	z.number().int().positive(),
+	z
+		.string()
+		.trim()
+		.regex(/^[1-9]\d*$/),
+]);
+
+const HttpUrlSchema = z.url({ protocol: /^https?$/ });
+
 const OrderSkuSchema = z.enum([
 	'TRANS14',
 	'TRANS2',
@@ -136,7 +146,7 @@ export const CASTINGWORDS_SKU_CATALOG: z.infer<typeof CastingwordsSku>[] = [
 
 export const CastingwordsEndpointInputSchemas = {
 	createOrder: z.object({
-		url: z.union([z.string().url(), z.array(z.string().url()).min(1)]),
+		url: z.union([HttpUrlSchema, z.array(HttpUrlSchema).min(1)]),
 		sku: z.array(OrderSkuSchema).min(1),
 		test: z.boolean().optional(),
 		notes: z.string().optional(),
@@ -144,28 +154,28 @@ export const CastingwordsEndpointInputSchemas = {
 	}),
 	getPrepayBalance: EmptyInputSchema,
 	getAudiofileDetails: z.object({
-		audiofileId: z.union([z.string(), z.number()]),
+		audiofileId: PositiveIdSchema,
 	}),
 	getTranscript: z.object({
-		audiofileId: z.union([z.string(), z.number()]),
+		audiofileId: PositiveIdSchema,
 		extension: TranscriptExtensionSchema.default('txt'),
 		test: z.boolean().optional(),
 	}),
 	orderUpgrade: z.object({
-		audiofileId: z.union([z.string(), z.number()]),
+		audiofileId: PositiveIdSchema,
 		sku: z.array(UpgradeSkuSchema).min(1),
 		test: z.boolean().optional(),
 	}),
 	refundAudiofile: z.object({
-		audiofileId: z.union([z.string(), z.number()]),
+		audiofileId: PositiveIdSchema,
 		test: z.boolean().optional(),
 	}),
 	getInvoice: z.object({
-		invoiceId: z.union([z.string(), z.number()]),
+		invoiceId: PositiveIdSchema,
 	}),
 	getWebhook: EmptyInputSchema,
 	registerWebhook: z.object({
-		webhook: z.string().url(),
+		webhook: HttpUrlSchema,
 	}),
 	testWebhook: z.object({
 		event: WebhookEventSchema,
