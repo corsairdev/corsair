@@ -1,140 +1,73 @@
 import { z } from 'zod';
+import { BrowserToolExecution } from '../schema/database';
 
-// ======================
-// Run Browser Task
-// ======================
-export const RunBrowserTaskInputSchema = z.object({
+/**
+ * Input fields from https://docs.composio.dev/toolkits/browser_tool
+ * (camelCase as published: task, secrets, startUrl, sessionId, fileId, taskId, lastStepSeen).
+ */
+
+const CreateTaskInput = z.object({
 	task: z.string().min(1),
-	browser_session_id: z.string().optional(),
-	start_url: z.string().url().optional(),
-	max_steps: z.number().int().positive().optional(),
+	secrets: z.record(z.string(), z.string()).optional(),
+	startUrl: z.string().url().optional(),
+	sessionId: z.string().min(1).optional(),
 });
 
-export type RunBrowserTaskInput = z.infer<typeof RunBrowserTaskInputSchema>;
-
-export const RunBrowserTaskOutputSchema = z.object({
-	task_id: z.string().optional(),
-	browser_session_id: z.string().optional(),
-	status: z.string().optional(),
-	message: z.string().optional(),
-	data: z.unknown().optional(),
+const GetOutputFileInput = z.object({
+	fileId: z.string().min(1),
+	taskId: z.string().min(1),
 });
 
-export type RunBrowserTaskOutput = z.infer<typeof RunBrowserTaskOutputSchema>;
-
-// ======================
-// Download Task File
-// ======================
-export const DownloadTaskFileInputSchema = z.object({
-	task_id: z.string().min(1),
-	file_id: z.string().min(1),
+const GetSessionInput = z.object({
+	sessionId: z.string().min(1),
 });
 
-export type DownloadTaskFileInput = z.infer<typeof DownloadTaskFileInputSchema>;
-
-export const DownloadTaskFileOutputSchema = z.object({
-	download_url: z.string().url().optional(),
-	file_id: z.string().optional(),
-	expires_at: z.string().optional(),
-	filename: z.string().optional(),
+const StopTaskInput = z.object({
+	taskId: z.string().min(1),
 });
 
-export type DownloadTaskFileOutput = z.infer<
-	typeof DownloadTaskFileOutputSchema
->;
-
-// ======================
-// Get Session Live URL
-// ======================
-export const GetSessionLiveUrlInputSchema = z.object({
-	browser_session_id: z.string().min(1),
+const WatchTaskInput = z.object({
+	taskId: z.string().min(1),
+	lastStepSeen: z.number().int().min(0).optional(),
 });
 
-export type GetSessionLiveUrlInput = z.infer<
-	typeof GetSessionLiveUrlInputSchema
->;
+const ExecutionOutput = BrowserToolExecution;
 
-export const GetSessionLiveUrlOutputSchema = z.object({
-	live_url: z.string().url().optional(),
-	browser_session_id: z.string().optional(),
-});
-
-export type GetSessionLiveUrlOutput = z.infer<
-	typeof GetSessionLiveUrlOutputSchema
->;
-
-// ======================
-// Stop Browser Task
-// ======================
-export const StopBrowserTaskInputSchema = z.object({
-	task_id: z.string().min(1),
-});
-
-export type StopBrowserTaskInput = z.infer<typeof StopBrowserTaskInputSchema>;
-
-export const StopBrowserTaskOutputSchema = z.object({
-	task_id: z.string().optional(),
-	status: z.string().optional(),
-	message: z.string().optional(),
-});
-
-export type StopBrowserTaskOutput = z.infer<typeof StopBrowserTaskOutputSchema>;
-
-// ======================
-// Watch Browser Task
-// ======================
-export const WatchBrowserTaskInputSchema = z.object({
-	task_id: z.string().min(1),
-});
-
-export type WatchBrowserTaskInput = z.infer<typeof WatchBrowserTaskInputSchema>;
-
-export const WatchBrowserTaskOutputSchema = z.object({
-	task_id: z.string().optional(),
-	status: z.string().optional(),
-	is_success: z.boolean().optional(),
-	current_goal: z.string().optional(),
-	current_url: z.string().optional(),
-	output: z.unknown().optional(),
-	output_files: z.array(z.unknown()).optional(),
-	screenshots: z.array(z.unknown()).optional(),
-	message: z.string().optional(),
-});
-
-export type WatchBrowserTaskOutput = z.infer<
-	typeof WatchBrowserTaskOutputSchema
->;
-
-// ======================
-// Combined Types
-// ======================
-export type BrowserToolEndpointInputs = {
-	runBrowserTask: RunBrowserTaskInput;
-	downloadTaskFile: DownloadTaskFileInput;
-	getSessionLiveUrl: GetSessionLiveUrlInput;
-	stopBrowserTask: StopBrowserTaskInput;
-	watchBrowserTask: WatchBrowserTaskInput;
-};
-
-export type BrowserToolEndpointOutputs = {
-	runBrowserTask: RunBrowserTaskOutput;
-	downloadTaskFile: DownloadTaskFileOutput;
-	getSessionLiveUrl: GetSessionLiveUrlOutput;
-	stopBrowserTask: StopBrowserTaskOutput;
-	watchBrowserTask: WatchBrowserTaskOutput;
-};
 export const BrowserToolEndpointInputSchemas = {
-	runBrowserTask: RunBrowserTaskInputSchema,
-	downloadTaskFile: DownloadTaskFileInputSchema,
-	getSessionLiveUrl: GetSessionLiveUrlInputSchema,
-	stopBrowserTask: StopBrowserTaskInputSchema,
-	watchBrowserTask: WatchBrowserTaskInputSchema,
+	createTask: CreateTaskInput,
+	getOutputFile: GetOutputFileInput,
+	getSession: GetSessionInput,
+	stopTask: StopTaskInput,
+	watchTask: WatchTaskInput,
 };
 
 export const BrowserToolEndpointOutputSchemas = {
-	runBrowserTask: RunBrowserTaskOutputSchema,
-	downloadTaskFile: DownloadTaskFileOutputSchema,
-	getSessionLiveUrl: GetSessionLiveUrlOutputSchema,
-	stopBrowserTask: StopBrowserTaskOutputSchema,
-	watchBrowserTask: WatchBrowserTaskOutputSchema,
+	createTask: ExecutionOutput,
+	getOutputFile: ExecutionOutput,
+	getSession: ExecutionOutput,
+	stopTask: ExecutionOutput,
+	watchTask: ExecutionOutput,
 };
+
+export type BrowserToolEndpointInputs = {
+	[K in keyof typeof BrowserToolEndpointInputSchemas]: z.infer<
+		(typeof BrowserToolEndpointInputSchemas)[K]
+	>;
+};
+
+export type BrowserToolEndpointOutputs = {
+	[K in keyof typeof BrowserToolEndpointOutputSchemas]: z.infer<
+		(typeof BrowserToolEndpointOutputSchemas)[K]
+	>;
+};
+
+export type CreateTaskInput = BrowserToolEndpointInputs['createTask'];
+export type CreateTaskOutput = BrowserToolEndpointOutputs['createTask'];
+export type GetOutputFileInput = BrowserToolEndpointInputs['getOutputFile'];
+export type GetOutputFileOutput = BrowserToolEndpointOutputs['getOutputFile'];
+export type GetSessionInput = BrowserToolEndpointInputs['getSession'];
+export type GetSessionOutput = BrowserToolEndpointOutputs['getSession'];
+export type StopTaskInput = BrowserToolEndpointInputs['stopTask'];
+export type StopTaskOutput = BrowserToolEndpointOutputs['stopTask'];
+export type WatchTaskInput = BrowserToolEndpointInputs['watchTask'];
+export type WatchTaskOutput = BrowserToolEndpointOutputs['watchTask'];

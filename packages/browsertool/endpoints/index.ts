@@ -1,17 +1,17 @@
 import {
-	downloadTaskFile,
-	getSessionLiveUrl,
-	runBrowserTask,
-	stopBrowserTask,
-	watchBrowserTask,
-} from './example';
+	createTask,
+	getOutputFile,
+	getSession,
+	stopTask,
+	watchTask,
+} from './handlers';
 
 export const BrowserTool = {
-	runBrowserTask,
-	downloadTaskFile,
-	getSessionLiveUrl,
-	stopBrowserTask,
-	watchBrowserTask,
+	createTask,
+	watchTask,
+	stopTask,
+	getSession,
+	getOutputFile,
 };
 
 export * from './types';
