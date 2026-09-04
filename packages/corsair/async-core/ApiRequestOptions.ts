@@ -8,7 +8,6 @@ export type ApiRequestOptions = {
 		| 'HEAD'
 		| 'PATCH';
 	readonly url: string;
-	readonly redirect?: 'follow' | 'error' | 'manual';
 	readonly path?: Record<string, any>;
 	readonly cookies?: Record<string, any>;
 	readonly headers?: Record<string, any>;
