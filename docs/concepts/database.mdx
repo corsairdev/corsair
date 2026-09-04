@@ -3,13 +3,13 @@ title: Database
 description: Five tables, always-fresh integration data, tenant-scoped by default.
 ---
 
-import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
+import { WindowsMigrationNote } from '/snippets/windows-shell.mdx'
 
 Every API call and webhook that flows through Corsair is stored in your database automatically. When something changes in Slack, GitHub, or Linear, Corsair updates the same row, so your UI can read from `*.db.*` instead of hitting third-party APIs on every page load. Third-party data becomes an extension of your own DB, always fresh.
 
 ## Get started
 
-Run the migration once, then pass your connection to `createCorsair({ database, ... })`. See [Quick Start](/quick-start) for a full setup example.
+Run the migration once, then pass your connection to `createCorsair({ database, ... })`. See [Quick Start](/quick-start) for a full setup example. If the tables already exist, run only the two `CREATE INDEX` statements.
 
 <Tabs>
   <Tab title="SQLite">
@@ -17,32 +17,14 @@ Run the migration once, then pass your connection to `createCorsair({ database, 
 Install the driver, then run the migration:
 
 <CodeGroup>
-```bash npm
-npm install better-sqlite3
-```
-```bash yarn
-yarn add better-sqlite3
-```
-```bash pnpm
-pnpm install better-sqlite3
-```
-```bash bun
-bun add better-sqlite3
-```
+  ```bash npm npm install better-sqlite3 ``` ```bash yarn yarn add
+  better-sqlite3 ``` ```bash pnpm pnpm install better-sqlite3 ``` ```bash bun
+  bun add better-sqlite3 ```
 </CodeGroup>
 <CodeGroup>
-```bash npm
-npm install --save-dev @types/better-sqlite3
-```
-```bash yarn
-yarn add --dev @types/better-sqlite3
-```
-```bash pnpm
-pnpm install --save-dev @types/better-sqlite3
-```
-```bash bun
-bun add --dev @types/better-sqlite3
-```
+  ```bash npm npm install --save-dev @types/better-sqlite3 ``` ```bash yarn yarn
+  add --dev @types/better-sqlite3 ``` ```bash pnpm pnpm install --save-dev
+  @types/better-sqlite3 ``` ```bash bun bun add --dev @types/better-sqlite3 ```
 </CodeGroup>
 
   </Tab>
@@ -51,32 +33,13 @@ bun add --dev @types/better-sqlite3
 Install the driver, then run the migration:
 
 <CodeGroup>
-```bash npm
-npm install pg
-```
-```bash yarn
-yarn add pg
-```
-```bash pnpm
-pnpm install pg
-```
-```bash bun
-bun add pg
-```
+  ```bash npm npm install pg ``` ```bash yarn yarn add pg ``` ```bash pnpm pnpm
+  install pg ``` ```bash bun bun add pg ```
 </CodeGroup>
 <CodeGroup>
-```bash npm
-npm install --save-dev @types/pg
-```
-```bash yarn
-yarn add --dev @types/pg
-```
-```bash pnpm
-pnpm install --save-dev @types/pg
-```
-```bash bun
-bun add --dev @types/pg
-```
+  ```bash npm npm install --save-dev @types/pg ``` ```bash yarn yarn add --dev
+  @types/pg ``` ```bash pnpm pnpm install --save-dev @types/pg ``` ```bash bun
+  bun add --dev @types/pg ```
 </CodeGroup>
 
   </Tab>
@@ -145,6 +108,11 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     expires_at TEXT NOT NULL,
     error TEXT
 );
+
+CREATE INDEX IF NOT EXISTS corsair_accounts_tenant_integration_idx
+    ON corsair_accounts (tenant_id, integration_id);
+CREATE INDEX IF NOT EXISTS corsair_entities_account_type_entity_idx
+    ON corsair_entities (account_id, entity_type, entity_id);
 ```
 
 </Accordion>
@@ -232,6 +200,11 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     expires_at TEXT NOT NULL,
     error TEXT
 );
+
+CREATE INDEX IF NOT EXISTS corsair_accounts_tenant_integration_idx
+    ON corsair_accounts (tenant_id, integration_id);
+CREATE INDEX IF NOT EXISTS corsair_entities_account_type_entity_idx
+    ON corsair_entities (account_id, entity_type, entity_id);
 ```
 
 </Accordion>
@@ -263,61 +236,106 @@ psql $env:DATABASE_URL -f migration.sql
 <Accordion title="View Drizzle schema">
 
 ```ts src/server/db/schema.ts
-import { pgTable, text, jsonb, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, text, jsonb, timestamp, index } from 'drizzle-orm/pg-core'
 
 export const corsairIntegrations = pgTable('corsair_integrations', {
-    id: text('id').primaryKey(),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-    name: text('name').notNull(),
-    config: jsonb('config').notNull().default({}),
-    dek: text('dek'),
-});
+  id: text('id').primaryKey(),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  name: text('name').notNull(),
+  config: jsonb('config').notNull().default({}),
+  dek: text('dek'),
+})
 
-export const corsairAccounts = pgTable('corsair_accounts', {
+export const corsairAccounts = pgTable(
+  'corsair_accounts',
+  {
     id: text('id').primaryKey(),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
     tenantId: text('tenant_id').notNull(),
-    integrationId: text('integration_id').notNull().references(() => corsairIntegrations.id),
+    integrationId: text('integration_id')
+      .notNull()
+      .references(() => corsairIntegrations.id),
     config: jsonb('config').notNull().default({}),
     dek: text('dek'),
-});
+  },
+  table => [
+    index('corsair_accounts_tenant_integration_idx').on(
+      table.tenantId,
+      table.integrationId
+    ),
+  ]
+)
 
-export const corsairEntities = pgTable('corsair_entities', {
+export const corsairEntities = pgTable(
+  'corsair_entities',
+  {
     id: text('id').primaryKey(),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-    accountId: text('account_id').notNull().references(() => corsairAccounts.id),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    accountId: text('account_id')
+      .notNull()
+      .references(() => corsairAccounts.id),
     entityId: text('entity_id').notNull(),
     entityType: text('entity_type').notNull(),
     version: text('version').notNull(),
     data: jsonb('data').notNull().default({}),
-});
+  },
+  table => [
+    index('corsair_entities_account_type_entity_idx').on(
+      table.accountId,
+      table.entityType,
+      table.entityId
+    ),
+  ]
+)
 
 export const corsairEvents = pgTable('corsair_events', {
-    id: text('id').primaryKey(),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-    accountId: text('account_id').notNull().references(() => corsairAccounts.id),
-    eventType: text('event_type').notNull(),
-    payload: jsonb('payload').notNull().default({}),
-    status: text('status'),
-});
+  id: text('id').primaryKey(),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  accountId: text('account_id')
+    .notNull()
+    .references(() => corsairAccounts.id),
+  eventType: text('event_type').notNull(),
+  payload: jsonb('payload').notNull().default({}),
+  status: text('status'),
+})
 
 export const corsairPermissions = pgTable('corsair_permissions', {
-    id: text('id').primaryKey(),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-    token: text('token').notNull(),
-    plugin: text('plugin').notNull(),
-    endpoint: text('endpoint').notNull(),
-    args: text('args').notNull(),
-    tenantId: text('tenant_id').notNull(),
-    status: text('status').notNull().default('pending'),
-    expiresAt: text('expires_at').notNull(),
-    error: text('error'),
-});
+  id: text('id').primaryKey(),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  token: text('token').notNull(),
+  plugin: text('plugin').notNull(),
+  endpoint: text('endpoint').notNull(),
+  args: text('args').notNull(),
+  tenantId: text('tenant_id').notNull(),
+  status: text('status').notNull().default('pending'),
+  expiresAt: text('expires_at').notNull(),
+  error: text('error'),
+})
 ```
 
 </Accordion>
@@ -360,6 +378,7 @@ model CorsairAccount {
   entities      CorsairEntity[]
   events        CorsairEvent[]
 
+  @@index([tenantId, integrationId], map: "corsair_accounts_tenant_integration_idx")
   @@map("corsair_accounts")
 }
 
@@ -374,6 +393,7 @@ model CorsairEntity {
   data       Json           @default("{}")
   account    CorsairAccount @relation(fields: [accountId], references: [id])
 
+  @@index([accountId, entityType, entityId], map: "corsair_entities_account_type_entity_idx")
   @@map("corsair_entities")
 }
 
@@ -427,22 +447,22 @@ npx prisma migrate dev
 All data is scoped to tenants. `withTenant()` ensures you only read and write that tenant's rows, with no cross-contamination.
 
 ```ts
-const tenant = corsair.withTenant('user_abc123');
+const tenant = corsair.withTenant('user_abc123')
 
 // 1. Send a message — Corsair stores it in corsair_entities
 const posted = await tenant.slack.api.messages.post({
-    channel: 'C01234567',
-    text: 'Hello from Corsair!',
-});
-const messageId = posted.ts!;
+  channel: 'C01234567',
+  text: 'Hello from Corsair!',
+})
+const messageId = posted.ts!
 
 // 2. Someone edits the message in Slack — a webhook updates the same row
 
 // 3. Your UI reads from the local DB — always up to date
 const [message] = await tenant.slack.db.messages.search({
-    entity_id: messageId,
-});
-console.log(message?.data.text);
+  entity_id: messageId,
+})
+console.log(message?.data.text)
 ```
 
 Use `*.api.*` to write or force a fresh read. Use `*.db.*` for lists, search, and detail pages. Plugin-specific filters are in each plugin's database reference (e.g. [Slack](/plugins/slack/database)).
@@ -486,11 +506,13 @@ You don't build a sync layer or poll for changes. Query `corsair_entities` (or `
 Use the typed ORM on each plugin, no raw SQL required for most reads:
 
 ```ts
-const tenant = corsair.withTenant('user_abc123');
+const tenant = corsair.withTenant('user_abc123')
 
-await tenant.slack.db.messages.list({ limit: 50 });
-await tenant.slack.db.messages.findByEntityId('1234567890.123456');
-await tenant.github.db.repositories.search({ data: { name: { contains: 'api' } } });
+await tenant.slack.db.messages.list({ limit: 50 })
+await tenant.slack.db.messages.findByEntityId('1234567890.123456')
+await tenant.github.db.repositories.search({
+  data: { name: { contains: 'api' } },
+})
 ```
 
 ### Join to your own tables
@@ -507,19 +529,24 @@ CREATE TABLE support_tickets (
 
 ```ts
 // Create a ticket linked to a Corsair entity
-const posted = await tenant.slack.api.messages.post({ channel, text });
-const [entity] = await tenant.slack.db.messages.search({ entity_id: posted.ts! });
+const posted = await tenant.slack.api.messages.post({ channel, text })
+const [entity] = await tenant.slack.db.messages.search({
+  entity_id: posted.ts!,
+})
 
 await db.insert(supportTickets).values({
-    title: 'Customer issue',
-    slackMessageId: entity!.id, // corsair_entities.id
-});
+  title: 'Customer issue',
+  slackMessageId: entity!.id, // corsair_entities.id
+})
 
 // Join your table to live Slack data
 const rows = await db
-    .select()
-    .from(supportTickets)
-    .innerJoin(corsairEntities, eq(supportTickets.slackMessageId, corsairEntities.id));
+  .select()
+  .from(supportTickets)
+  .innerJoin(
+    corsairEntities,
+    eq(supportTickets.slackMessageId, corsairEntities.id)
+  )
 // rows[].corsair_entities.data.text stays fresh via webhooks
 ```
 
@@ -527,10 +554,10 @@ Because Corsair updates `corsair_entities` on every API call and webhook, foreig
 
 ### When to use API vs DB
 
-| Use | When |
-|-----|------|
+| Use       | When                                                                    |
+| --------- | ----------------------------------------------------------------------- |
 | `*.api.*` | Writes, deletes, or you need the latest value right now from the source |
-| `*.db.*` | UI lists, search, detail pages; fast reads, no rate limits |
+| `*.db.*`  | UI lists, search, detail pages; fast reads, no rate limits              |
 
 ## SQLite, Postgres, and ORMs
 
@@ -542,13 +569,13 @@ Corsair runs on **your** database. Pass a connection to `createCorsair`, and it 
 Best for local dev and small apps. Pass a `better-sqlite3` instance:
 
 ```ts
-import Database from 'better-sqlite3';
+import Database from 'better-sqlite3'
 
 export const corsair = createCorsair({
-    database: new Database('corsair.db'),
-    plugins: [slack()],
-    kek: process.env.CORSAIR_KEK!,
-});
+  database: new Database('corsair.db'),
+  plugins: [slack()],
+  kek: process.env.CORSAIR_KEK!,
+})
 ```
 
 </Tab>
@@ -557,13 +584,13 @@ export const corsair = createCorsair({
 Production default. Pass a `pg` Pool:
 
 ```ts
-import { Pool } from 'pg';
+import { Pool } from 'pg'
 
 export const corsair = createCorsair({
-    database: new Pool({ connectionString: process.env.DATABASE_URL }),
-    plugins: [slack()],
-    kek: process.env.CORSAIR_KEK!,
-});
+  database: new Pool({ connectionString: process.env.DATABASE_URL }),
+  plugins: [slack()],
+  kek: process.env.CORSAIR_KEK!,
+})
 ```
 
 </Tab>

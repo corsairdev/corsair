@@ -3,9 +3,9 @@ title: Quick start
 description: A working integration in five steps, powered by Hub.
 ---
 
-import { GenerateKEK } from '/snippets/generate-kek.mdx';
-import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
-import MountHandlerNextjs from '/snippets/mount-handler-nextjs.mdx';
+import { GenerateKEK } from '/snippets/generate-kek.mdx'
+import { WindowsMigrationNote } from '/snippets/windows-shell.mdx'
+import MountHandlerNextjs from '/snippets/mount-handler-nextjs.mdx'
 
 Hub hosts the OAuth connect, approval, and webhook surfaces, so there are no connect pages, callback routes, or per-environment redirect URIs to build. Credentials are encrypted and stored in your own database. Hub stores none.
 
@@ -16,22 +16,15 @@ Hub hosts the OAuth connect, approval, and webhook surfaces, so there are no con
 ## Install
 
 <CodeGroup>
-```bash npm
-npm install corsair @corsair-dev/github
-```
-```bash yarn
-yarn add corsair @corsair-dev/github
-```
-```bash pnpm
-pnpm install corsair @corsair-dev/github
-```
-```bash bun
-bun add corsair @corsair-dev/github
-```
+  ```bash npm npm install corsair @corsair-dev/github ``` ```bash yarn yarn add
+  corsair @corsair-dev/github ``` ```bash pnpm pnpm install corsair
+  @corsair-dev/github ``` ```bash bun bun add corsair @corsair-dev/github ```
 </CodeGroup>
 
 <Tip>
-`@corsair-dev/github` is one plugin. Every service is its own `@corsair-dev/*` package. Find the one you need, and its exact install id, in the [**Plugins**](/guides/plugins) catalog.
+  `@corsair-dev/github` is one plugin. Every service is its own `@corsair-dev/*`
+  package. Find the one you need, and its exact install id, in the
+  [**Plugins**](/guides/plugins) catalog.
 </Tip>
 
 </Step>
@@ -51,7 +44,8 @@ CORSAIR_SIGNING_SECRET=...
 ```
 
 <Warning>
-Keep your KEK safe. Lose it and you lose access to every stored credential. Treat it like a root password.
+  Keep your KEK safe. Lose it and you lose access to every stored credential.
+  Treat it like a root password.
 </Warning>
 
 </Step>
@@ -63,18 +57,9 @@ Keep your KEK safe. Lose it and you lose access to every stored credential. Trea
 Corsair stores data in five tables. SQLite is the fastest way to start:
 
 <CodeGroup>
-```bash npm
-npm install better-sqlite3
-```
-```bash yarn
-yarn add better-sqlite3
-```
-```bash pnpm
-pnpm install better-sqlite3
-```
-```bash bun
-bun add better-sqlite3
-```
+  ```bash npm npm install better-sqlite3 ``` ```bash yarn yarn add
+  better-sqlite3 ``` ```bash pnpm pnpm install better-sqlite3 ``` ```bash bun
+  bun add better-sqlite3 ```
 </CodeGroup>
 
 <Accordion title="View migration SQL">
@@ -136,6 +121,11 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     expires_at TEXT NOT NULL,
     error TEXT
 );
+
+CREATE INDEX IF NOT EXISTS corsair_accounts_tenant_integration_idx
+    ON corsair_accounts (tenant_id, integration_id);
+CREATE INDEX IF NOT EXISTS corsair_entities_account_type_entity_idx
+    ON corsair_entities (account_id, entity_type, entity_id);
 ```
 
 </Accordion>
@@ -159,6 +149,8 @@ Get-Content migration.sql | sqlite3 corsair.db
   </Tab>
 </Tabs>
 
+If the tables already exist, run only the two `CREATE INDEX` statements.
+
 Using Postgres, Drizzle, or Prisma instead? See [Database](/concepts/database) for each option.
 
 </Step>
@@ -170,22 +162,22 @@ Using Postgres, Drizzle, or Prisma instead? See [Database](/concepts/database) f
 Wire your database, KEK, and Hub keys together in `src/server/corsair.ts`:
 
 ```ts src/server/corsair.ts
-import Database from 'better-sqlite3';
-import { createCorsair } from 'corsair';
-import { github } from '@corsair-dev/github';
+import Database from 'better-sqlite3'
+import { createCorsair } from 'corsair'
+import { github } from '@corsair-dev/github'
 
-const db = new Database('corsair.db');
+const db = new Database('corsair.db')
 
 export const corsair = createCorsair({
-    plugins: [github({ authType: 'managed' })],
-    database: db,
-    kek: process.env.CORSAIR_KEK!,
-    multiTenancy: true, // gives every user their own credentials; enables corsair.withTenant(id)
-    hub: {
-        projectApiKey: process.env.CORSAIR_API_KEY!,
-        signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
-    },
-});
+  plugins: [github({ authType: 'managed' })],
+  database: db,
+  kek: process.env.CORSAIR_KEK!,
+  multiTenancy: true, // gives every user their own credentials; enables corsair.withTenant(id)
+  hub: {
+    projectApiKey: process.env.CORSAIR_API_KEY!,
+    signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+  },
+})
 ```
 
 Mount the handler once. It serves Hub delivery and the management API. In development, Hub auto-detects your localhost delivery URL:
@@ -193,7 +185,9 @@ Mount the handler once. It serves Hub delivery and the management API. In develo
 <MountHandlerNextjs />
 
 <Note>
-This quick-start uses Next.js. The instance above is the same on every framework; only the mount line changes. See [Frameworks](/frameworks/next) for Express, Node, SvelteKit, Hono, and the rest.
+  This quick-start uses Next.js. The instance above is the same on every
+  framework; only the mount line changes. See [Frameworks](/frameworks/next) for
+  Express, Node, SvelteKit, Hono, and the rest.
 </Note>
 
 Add more plugins later, like `slack()`, `linear()`, or `gmail()`, by appending to the array.
@@ -208,16 +202,16 @@ Mint a connect link and send the user to it. Hub hosts the connect page and deli
 
 ```ts connect.ts
 const { connectUrl } = await corsair.manage.connect.createLink({
-    plugin: 'github',
-    tenantId: 'acme',
-});
+  plugin: 'github',
+  tenantId: 'acme',
+})
 // redirect the user's browser to connectUrl
 ```
 
 Once connected, call any endpoint. Responses are also cached in your database for instant reads:
 
 ```ts usage.ts
-const repos = await corsair.github.api.repositories.list({});
+const repos = await corsair.github.api.repositories.list({})
 ```
 
 Want an agent to call endpoints on its own? See [MCP Adapters](/mcp-adapters/mcp-adapters).
@@ -242,7 +236,8 @@ Load your app so the mounted route gets its first hit. That request registers yo
 
 <CardGroup cols={2}>
   <Card title="Use with AI" href="/mcp-adapters/mcp-adapters">
-    Give an agent the three Corsair tools and let it discover and call any endpoint.
+    Give an agent the three Corsair tools and let it discover and call any
+    endpoint.
   </Card>
   <Card title="Hub overview" href="/hub/overview">
     How the relay works, and why Hub stores none of your credentials.
@@ -251,12 +246,14 @@ Load your app so the mounted route gets its first hit. That request registers yo
     Development vs production keys. Switch to production when you deploy.
   </Card>
   <Card title="Multi-tenancy" href="/concepts/multi-tenancy">
-    Building a product? Flip one flag and every user gets their own data and credentials.
+    Building a product? Flip one flag and every user gets their own data and
+    credentials.
   </Card>
   <Card title="Database options" href="/concepts/database">
     Postgres, Drizzle, Prisma, and the five tables Corsair uses.
   </Card>
   <Card title="Provisioning" href="/concepts/provisioning">
-    Seed credentials and provision tenants from the `corsair` CLI or `setupCorsair`.
+    Seed credentials and provision tenants from the `corsair` CLI or
+    `setupCorsair`.
   </Card>
 </CardGroup>

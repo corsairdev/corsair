@@ -176,6 +176,11 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     status TEXT,
     FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
 );
+
+CREATE INDEX IF NOT EXISTS corsair_accounts_tenant_integration_idx
+    ON corsair_accounts (tenant_id, integration_id);
+CREATE INDEX IF NOT EXISTS corsair_entities_account_type_entity_idx
+    ON corsair_entities (account_id, entity_type, entity_id);
 ```
 
 </Accordion>
@@ -199,6 +204,8 @@ Get-Content migration.sql | sqlite3 corsair.db
 
   </Tab>
 </Tabs>
+
+If the tables already exist, run only the two `CREATE INDEX` statements.
 
 </Step>
 

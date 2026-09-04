@@ -41,6 +41,10 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
 );
 
+CREATE INDEX IF NOT EXISTS corsair_accounts_tenant_integration_idx
+    ON corsair_accounts (tenant_id, integration_id);
+CREATE INDEX IF NOT EXISTS corsair_entities_account_type_entity_idx
+    ON corsair_entities (account_id, entity_type, entity_id);
 CREATE INDEX IF NOT EXISTS corsair_events_account_type_created_idx
     ON corsair_events (account_id, event_type, created_at);
 
