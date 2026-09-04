@@ -44,6 +44,9 @@ sqlite.exec(`
 		status TEXT
 	);
 
+	CREATE INDEX IF NOT EXISTS corsair_events_account_type_created_idx
+		ON corsair_events (account_id, event_type, created_at);
+
 	CREATE TABLE IF NOT EXISTS corsair_permissions (
 		id TEXT PRIMARY KEY,
 		created_at TEXT NOT NULL,
