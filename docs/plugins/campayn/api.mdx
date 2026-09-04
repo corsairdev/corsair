@@ -20,7 +20,10 @@ Create a new contact in a contact list.
 **Risk:** `write`
 
 ```ts
-await corsair.campayn.api.contacts.createContact({});
+await corsair.campayn.api.contacts.createContact({
+  listId: '123',
+  email: 'person@example.com'
+});
 ```
 
 **Input**
@@ -109,7 +112,7 @@ Delete a contact by contact ID.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.campayn.api.contacts.deleteContact({});
+await corsair.campayn.api.contacts.deleteContact({ contactId: '123' });
 ```
 
 **Input**
@@ -139,7 +142,7 @@ Get full contact details by contact ID.
 **Risk:** `read`
 
 ```ts
-await corsair.campayn.api.contacts.getContact({});
+await corsair.campayn.api.contacts.getContact({ contactId: '123' });
 ```
 
 **Input**
@@ -231,7 +234,7 @@ List contacts for a contact list, with optional contact keyword filtering.
 **Risk:** `read`
 
 ```ts
-await corsair.campayn.api.contacts.getContacts({});
+await corsair.campayn.api.contacts.getContacts({ listId: '123' });
 ```
 
 **Input**
@@ -272,7 +275,10 @@ Unsubscribe contacts from a list by contact ID or by email address.
 **Risk:** `write`
 
 ```ts
-await corsair.campayn.api.contacts.unsubscribeContact({});
+await corsair.campayn.api.contacts.unsubscribeContact({
+  listId: '123',
+  email: 'person@example.com'
+});
 ```
 
 **Input**
@@ -317,7 +323,7 @@ Delete a contact list by list ID.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.campayn.api.lists.deleteList({});
+await corsair.campayn.api.lists.deleteList({ listId: '123' });
 ```
 
 **Input**
@@ -381,7 +387,10 @@ Update a contact list name or tags by list ID.
 **Risk:** `write`
 
 ```ts
-await corsair.campayn.api.lists.updateList({});
+await corsair.campayn.api.lists.updateList({
+  listId: '123',
+  list_name: 'Newsletter Subscribers'
+});
 ```
 
 **Input**
@@ -462,7 +471,7 @@ Get message statistics for a specific message ID.
 **Risk:** `read`
 
 ```ts
-await corsair.campayn.api.messages.getMessageStatistics({});
+await corsair.campayn.api.messages.getMessageStatistics({ messageId: '507' });
 ```
 
 **Input**
@@ -507,7 +516,10 @@ Get report calendar entries for sent and scheduled emails, optionally filtered b
 **Risk:** `read`
 
 ```ts
-await corsair.campayn.api.reports.getReports({});
+await corsair.campayn.api.reports.getReports({
+  from: 1704067200,
+  to: 1706745600
+});
 ```
 
 **Input**
@@ -551,7 +563,12 @@ Sign up a new Campayn user account. This endpoint requires API-key authorization
 **Risk:** `write`
 
 ```ts
-await corsair.campayn.api.signup.signup({});
+await corsair.campayn.api.signup.signup({
+  email: 'new.user@example.com',
+  first_name: 'New',
+  last_name: 'User',
+  password: 'secure-password-123'
+});
 ```
 
 **Input**
@@ -590,7 +607,10 @@ Delete a webform by list ID and webform ID.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.campayn.api.webforms.deleteWebform({});
+await corsair.campayn.api.webforms.deleteWebform({
+  listId: '123',
+  webformId: '1550'
+});
 ```
 
 **Input**
@@ -621,7 +641,10 @@ Get a webform by list ID and webform ID.
 **Risk:** `read`
 
 ```ts
-await corsair.campayn.api.webforms.getWebform({});
+await corsair.campayn.api.webforms.getWebform({
+  listId: '123',
+  webformId: '1550'
+});
 ```
 
 **Input**
@@ -657,7 +680,7 @@ List webforms for a contact list, with optional form type filter.
 **Risk:** `read`
 
 ```ts
-await corsair.campayn.api.webforms.getWebforms({});
+await corsair.campayn.api.webforms.getWebforms({ listId: '123' });
 ```
 
 **Input**
@@ -689,4 +712,3 @@ await corsair.campayn.api.webforms.getWebforms({});
 
 
 ---
-

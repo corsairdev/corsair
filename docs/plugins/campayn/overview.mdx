@@ -23,7 +23,7 @@ npm install corsair @corsair-dev/campayn
 yarn add corsair @corsair-dev/campayn
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/campayn
+pnpm add corsair @corsair-dev/campayn
 ```
 ```bash bun
 bun add corsair @corsair-dev/campayn
@@ -93,7 +93,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.campayn.api.contacts.getContact({});
+await tenant.campayn.api.contacts.getContact({ contactId: '12345' });
 ```
 
 
@@ -101,7 +101,10 @@ await tenant.campayn.api.contacts.getContact({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.campayn.api.contacts.createContact({});
+await tenant.campayn.api.contacts.createContact({
+	listId: '987',
+	email: 'person@example.com',
+});
 ```
 
 
