@@ -22,5 +22,5 @@ exampleWebhook:
   path: databasePages.pageCreated
   note: "Fires when a page is created in Notion database."
   after: |
-    const pageId = result.data?.id;
+    const pageId = result.data?.data.page_id;
     console.log('New Notion page created with ID:', pageId);
