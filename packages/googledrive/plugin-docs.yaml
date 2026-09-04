@@ -1,0 +1,29 @@
+# Overrides for scripts/generate-plugin-docs.ts
+# Plugin-specific examples; the generator owns Hub-shaped wiring and shared copy.
+
+displayName: Google Drive
+description: "Google Drive plugin for Corsair — files, folders, and change events."
+
+examples:
+  read:
+    path: files.list
+    title: List files
+  write:
+    path: files.createFromText
+    title: Create a file
+    args:
+      name: hello.txt
+      content: Hello from Corsair
+
+dbExample:
+  entity: files
+  note: "Search synced files without hitting Drive."
+  data:
+    trashed: false
+  limit: 50
+
+exampleWebhook:
+  path: driveChanged
+  note: "Fires when a file or folder is created, updated, or deleted."
+  after: |
+    console.log('Drive change:', result.data?.changeType, result.data?.fileId ?? result.data?.folderId);
