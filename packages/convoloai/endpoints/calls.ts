@@ -240,17 +240,18 @@ export const trigger: ConvoloAiEndpoints['callTrigger'] = async (
 		ConvoloAiEndpointOutputs['callTrigger']
 	>('rest/v1/ext/add_call_api/', ctx.key, {
 		method: 'POST',
-		query: {
+		body: {
+			...input.body,
 			api_key: input.api_key,
 			widget_key: input.widget_key,
+			lc_number: input.lc_number,
 		},
-		body: input.body,
 	});
 
 	await logEventFromContext(
 		ctx,
 		'convoloai.call.trigger',
-		{ api_key: '***', widget_key: '***', body: input.body },
+		{ extraFieldCount: input.body ? Object.keys(input.body).length : 0 },
 		'completed',
 	);
 

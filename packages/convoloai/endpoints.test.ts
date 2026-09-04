@@ -130,10 +130,10 @@ const CASES: Case[] = [
 			endpoints.Call.trigger(ctx, {
 				api_key: 'acct-key',
 				widget_key: 'wid-key',
+				lc_number: '+15551234567',
 			}),
 		method: 'POST',
 		url: 'rest/v1/ext/add_call_api/',
-		query: { api_key: 'acct-key', widget_key: 'wid-key' },
 	},
 	{
 		name: 'lead.list',
@@ -213,7 +213,6 @@ const CASES: Case[] = [
 			}),
 		method: 'POST',
 		url: 'api/v1/ext/update-widget-settings',
-		query: { widget_key: 'wk', api_key: 'ak' },
 	},
 	{
 		name: 'getCustomWidgetParams',
@@ -255,6 +254,40 @@ describe('convoloai endpoint wiring', () => {
 				expect(received).toEqual(value);
 			}
 		}
+	});
+
+	it('posts call.trigger credentials and lc_number in the JSON body', async () => {
+		await endpoints.Call.trigger(ctx, {
+			api_key: 'acct-key',
+			widget_key: 'wid-key',
+			lc_number: '+15551234567',
+			body: { lc_param_name: 'Ada' },
+		});
+		const call = mockRequest.mock.calls[0];
+		if (!call) throw new Error('expected request to be called');
+		expect(call[1].query).toBeUndefined();
+		expect(call[1].body).toEqual({
+			api_key: 'acct-key',
+			widget_key: 'wid-key',
+			lc_number: '+15551234567',
+			lc_param_name: 'Ada',
+		});
+	});
+
+	it('posts widget.updateSettings credentials in the JSON body', async () => {
+		await endpoints.Widget.updateSettings(ctx, {
+			widget_key: 'wk',
+			api_key: 'ak',
+			body: { apiUrl: 'https://x.y' },
+		});
+		const call = mockRequest.mock.calls[0];
+		if (!call) throw new Error('expected request to be called');
+		expect(call[1].query).toBeUndefined();
+		expect(call[1].body).toEqual({
+			widget_key: 'wk',
+			api_key: 'ak',
+			apiUrl: 'https://x.y',
+		});
 	});
 
 	it('encodes path ids', async () => {

@@ -134,17 +134,17 @@ const AgentIdInputSchema = z.object({
 });
 
 const AgentCreateInputSchema = z.object({
-	body: MutationBodySchema.optional(),
+	body: MutationBodySchema,
 });
 
 const AgentUpdateInputSchema = z.object({
 	id: NonEmptyId,
-	body: MutationBodySchema.optional(),
+	body: MutationBodySchema,
 });
 
 const AgentUpdateScheduleInputSchema = z.object({
 	id: NonEmptyId,
-	body: MutationBodySchema.optional(),
+	body: MutationBodySchema,
 });
 
 const CallListInputSchema = CallsListQuerySchema;
@@ -159,7 +159,7 @@ const CallIdInputSchema = z.object({
 
 const CallSetS2lTagInputSchema = z.object({
 	callId: NonEmptyId,
-	body: MutationBodySchema.optional(),
+	body: MutationBodySchema,
 });
 
 const CallSetRatingInputSchema = z.object({
@@ -171,6 +171,7 @@ const CallSetRatingInputSchema = z.object({
 const CallTriggerInputSchema = z.object({
 	api_key: NonEmptyId,
 	widget_key: NonEmptyId,
+	lc_number: NonEmptyId,
 	body: MutationBodySchema.optional(),
 });
 
@@ -187,7 +188,7 @@ const LeadOutcomeTagsInputSchema = z.object({
 const WidgetListInputSchema = WidgetsListQuerySchema;
 
 const WidgetCreateInputSchema = z.object({
-	body: MutationBodySchema.optional(),
+	body: MutationBodySchema,
 });
 
 const WidgetIdInputSchema = z.object({
@@ -196,17 +197,17 @@ const WidgetIdInputSchema = z.object({
 
 const WidgetUpdateInputSchema = z.object({
 	id: NonEmptyId,
-	body: MutationBodySchema.optional(),
+	body: MutationBodySchema,
 });
 
 const WidgetUpdateV2InputSchema = z.object({
 	widgetId: NonEmptyId,
-	body: MutationBodySchema.optional(),
+	body: MutationBodySchema,
 });
 
 const WidgetToggleInputSchema = z.object({
 	id: z.number().int(),
-	new_state: z.number().int(),
+	new_state: z.union([z.literal(0), z.literal(1)]),
 });
 
 const WidgetHtmlSiteCodeInputSchema = z.object({

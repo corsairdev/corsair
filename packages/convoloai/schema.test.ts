@@ -21,7 +21,7 @@ const VALID_INPUTS: Record<string, Record<string, unknown>> = {
 	callListPayloadData: {},
 	callSetS2lTag: { callId: 'c', body: {} },
 	callSetRating: { callId: 'c', type: 'positive' },
-	callTrigger: { api_key: 'k', widget_key: 'w' },
+	callTrigger: { api_key: 'k', widget_key: 'w', lc_number: '+15551234567' },
 	leadList: { page: 1 },
 	leadListByPost: { body: {} },
 	leadGetOutcomeTags: { id: 'l' },
@@ -96,6 +96,35 @@ describe('convoloai plugin schemas', () => {
 		).toBe(false);
 		expect(
 			ConvoloAiEndpointInputSchemas.getCustomWidgetParams.safeParse({}).success,
+		).toBe(false);
+		expect(
+			ConvoloAiEndpointInputSchemas.callTrigger.safeParse({
+				api_key: 'k',
+				widget_key: 'w',
+			}).success,
+		).toBe(false);
+		expect(
+			ConvoloAiEndpointInputSchemas.callTrigger.safeParse({
+				api_key: 'k',
+				widget_key: 'w',
+				lc_number: '',
+			}).success,
+		).toBe(false);
+		expect(
+			ConvoloAiEndpointInputSchemas.widgetToggle.safeParse({
+				id: 3,
+				new_state: 2,
+			}).success,
+		).toBe(false);
+		expect(
+			ConvoloAiEndpointInputSchemas.agentCreate.safeParse({}).success,
+		).toBe(false);
+		expect(
+			ConvoloAiEndpointInputSchemas.widgetCreate.safeParse({}).success,
+		).toBe(false);
+		expect(
+			ConvoloAiEndpointInputSchemas.callSetS2lTag.safeParse({ callId: 'c' })
+				.success,
 		).toBe(false);
 	});
 

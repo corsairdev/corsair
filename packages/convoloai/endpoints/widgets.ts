@@ -182,17 +182,17 @@ export const updateSettings: ConvoloAiEndpoints['widgetUpdateSettings'] =
 			ConvoloAiEndpointOutputs['widgetUpdateSettings']
 		>('api/v1/ext/update-widget-settings', ctx.key, {
 			method: 'POST',
-			query: {
+			body: {
+				...input.body,
 				widget_key: input.widget_key,
 				api_key: input.api_key,
 			},
-			body: input.body,
 		});
 
 		await logEventFromContext(
 			ctx,
 			'convoloai.widget.updateSettings',
-			{ widget_key: '***', api_key: '***', body: input.body },
+			{ extraFieldCount: input.body ? Object.keys(input.body).length : 0 },
 			'completed',
 		);
 
