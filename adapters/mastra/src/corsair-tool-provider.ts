@@ -47,6 +47,10 @@ interface CorsairManage {
 			tenantId?: string;
 		}): Promise<{ connectUrl: string; tenantId: string }>;
 	};
+	disconnect(input: {
+		plugin: string;
+		tenantId?: string;
+	}): Promise<{ ok: true; disconnected: boolean }>;
 }
 
 /**
@@ -82,13 +86,16 @@ export interface CorsairToolProviderConfig extends BaseToolProviderOptions {
 	 *
 	 * - **`string`** — pin every request to one tenant (single-tenant apps).
 	 *   Derives `defaultScope: 'shared'`.
-	 * - **function** — resolve the tenant per request from the decoded
-	 *   connection, the author id, or the request context (multi-tenant SaaS).
-	 *   Derives `defaultScope: 'caller-supplied'`.
-	 * - **omitted** — default resolution: the connection's tenant, then the
-	 *   author id, then `'default'`. Derives `defaultScope: 'per-author'`.
+	 * - **function** — choose the tenant for a *new* connection from the author
+	 *   id or request context (multi-tenant SaaS). Derives
+	 *   `defaultScope: 'caller-supplied'`.
+	 * - **omitted** — fall back to the author id, then `'default'`. Derives
+	 *   `defaultScope: 'per-author'`.
 	 *
-	 * The derived scope is only a default; pass `defaultScope` to override it.
+	 * An existing connection always resolves to the tenant baked into its
+	 * `connectionId`, regardless of this setting, so a connection stays bound to
+	 * the tenant it was created for. The derived scope is only a default; pass
+	 * `defaultScope` to override it.
 	 */
 	tenantId?: string | ((input: TenantResolveInput) => string | Promise<string>);
 }
@@ -231,7 +238,7 @@ export class CorsairToolProvider extends BaseToolProvider {
 		multipleConnectionsPerToolkit: false,
 		batchConnectionStatus: true,
 		reauthorizeReusesConnectionId: true,
-		supportsRevoke: false,
+		supportsRevoke: true,
 	};
 
 	private readonly corsair: { [key: string]: unknown };
@@ -262,15 +269,26 @@ export class CorsairToolProvider extends BaseToolProvider {
 		return (this.corsair as unknown as { manage: CorsairManage }).manage;
 	}
 
-	/** Resolves a request to a Corsair tenant using the configured mapping. */
+	/**
+	 * Resolves a request to a Corsair tenant.
+	 *
+	 * A decodable `connectionId` is authoritative: it is minted once when the
+	 * connection is created and then handed identically to `authorize` and
+	 * `resolveToolsVNext`, so binding to it keeps a connection on the same tenant
+	 * for its whole lifecycle. `authorize` receives no author/request context
+	 * (see {@link AuthorizeOpts}), so without this precedence a function resolver
+	 * could open the OAuth flow under one tenant and later resolve tools under
+	 * another. The configured mapping only chooses a tenant when minting a fresh
+	 * connection (no id to decode yet).
+	 */
 	private async resolveTenant(input: TenantResolveInput): Promise<string> {
-		const configured = this.tenantConfig;
-		if (typeof configured === 'function') return configured(input);
-		if (typeof configured === 'string') return configured;
 		if (input.connectionId) {
 			const decoded = decodeConnectionId(input.connectionId);
 			if (decoded) return decoded.tenantId;
 		}
+		const configured = this.tenantConfig;
+		if (typeof configured === 'function') return configured(input);
+		if (typeof configured === 'string') return configured;
 		return input.authorId ?? 'default';
 	}
 
@@ -328,6 +346,22 @@ export class CorsairToolProvider extends BaseToolProvider {
 			data: all.slice(start, start + perPage),
 			pagination: { page, perPage, hasMore: start + perPage < all.length },
 		};
+	}
+
+	/**
+	 * The JSON Schema for one tool's input, so the editor's tool-detail view can
+	 * render it without materialising the tool. Built from Corsair's structured
+	 * schema; `null` when the operation is unknown or takes no input.
+	 */
+	async getToolSchema(
+		toolSlug: string,
+	): Promise<Record<string, unknown> | null> {
+		const schema = getStructuredSchema(this.asInstance(), toolSlug);
+		if (!schema?.input) return null;
+		return z.toJSONSchema(formFieldToZod(schema.input)) as Record<
+			string,
+			unknown
+		>;
 	}
 
 	// ── Runtime ─────────────────────────────────────────────────────────────────
@@ -472,6 +506,21 @@ export class CorsairToolProvider extends BaseToolProvider {
 			}
 		}
 		return { items, pagination: { page: 1, hasMore: false } };
+	}
+
+	/**
+	 * Revokes a connection by removing its stored credentials (and account-scoped
+	 * data) through Corsair's management API. Idempotent per the ToolProvider
+	 * contract: an unreadable `connectionId` or an already-gone connection
+	 * resolves without error.
+	 */
+	async revokeConnection(connectionId: string): Promise<void> {
+		const decoded = decodeConnectionId(connectionId);
+		if (!decoded) return;
+		await this.manage.disconnect({
+			plugin: decoded.toolkit,
+			tenantId: decoded.tenantId,
+		});
 	}
 
 	/** Reports provider health by probing Corsair's management API. */

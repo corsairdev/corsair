@@ -11,6 +11,6 @@
     "declarationMap": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "../corsair/yaml.d.ts"],
+  "include": ["src/**/*", "../../packages/corsair/yaml.d.ts"],
   "exclude": ["dist", "node_modules"]
 }

@@ -1,9 +1,12 @@
 import type { FormFieldSchema } from 'corsair';
 import { z } from 'zod';
 
-// Converts the machine-readable schema from Corsair's `getStructuredSchema`
-// into a zod schema, so a Corsair operation can back a Mastra `createTool`
-// `inputSchema`.
+/**
+ * Converts the machine-readable schema from Corsair's `getStructuredSchema`
+ * into a Zod schema, so a Corsair operation can back a Mastra `createTool`
+ * `inputSchema`. Applies the field's `description` and `optional` flag on top of
+ * its base type.
+ */
 export function formFieldToZod(field: FormFieldSchema): z.ZodTypeAny {
 	let schema = baseType(field);
 	if (field.description) schema = schema.describe(field.description);
@@ -11,6 +14,7 @@ export function formFieldToZod(field: FormFieldSchema): z.ZodTypeAny {
 	return schema;
 }
 
+/** Maps one {@link FormFieldSchema} `kind` to its base Zod type, recursing into objects and arrays. */
 function baseType(field: FormFieldSchema): z.ZodTypeAny {
 	switch (field.kind) {
 		case 'string':

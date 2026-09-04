@@ -1,0 +1,4 @@
+.env
+*.db
+.mastra
+node_modules

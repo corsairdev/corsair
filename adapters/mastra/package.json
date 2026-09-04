@@ -18,7 +18,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/corsairdev/corsair.git",
-    "directory": "packages/mastra"
+    "directory": "adapters/mastra"
   },
   "type": "module",
   "main": "./dist/index.js",
@@ -44,7 +44,7 @@
     "zod": "^4.1.13"
   },
   "peerDependencies": {
-    "@mastra/core": ">=1.0.0"
+    "@mastra/core": ">=1.64.0"
   },
   "devDependencies": {
     "@mastra/core": "^1.64.0",

@@ -11,6 +11,10 @@ Each Corsair plugin becomes a toolkit and each operation becomes a tool. The sam
 
 ```bash
 npm install @corsair-dev/mastra @mastra/core corsair
+# plus a plugin per integration you use, e.g. Slack:
+npm install @corsair-dev/slack
+# and, for the managed-connection editor UI:
+npm install @mastra/editor
 ```
 
 `@mastra/core` is a peer dependency.
@@ -92,6 +96,42 @@ const agent = new Agent({
 	tools,
 });
 ```
+
+## Choosing which tools
+
+You rarely hand-write slugs. Pick the level that fits:
+
+**Let users choose in the editor (most common).** With `MastraEditor`, the
+playground lists every Corsair toolkit and tool and users toggle them — no code.
+Scope what's offered with the provider's allowlist (inherited from
+`BaseToolProvider`, same as Composio/Arcade):
+
+```ts
+// only Slack shows up; omit both to offer everything Corsair has
+new CorsairToolProvider({ corsair, allowedToolkits: ['slack'] });
+new CorsairToolProvider({ corsair, allowedTools: ['slack.api.channels.list'] });
+```
+
+**Code-config — specific tools:**
+
+```ts
+const tools = await provider.resolveTools([
+	'slack.api.channels.list',
+	'slack.api.messages.post',
+]);
+```
+
+**Code-config — a whole toolkit, or every operation Corsair offers:**
+
+```ts
+// one toolkit: pass { toolkit: 'slack' }; omit it for every registered plugin
+const { data } = await provider.listTools({ toolkit: 'slack' });
+const tools = await provider.resolveTools(data.map((t) => t.slug));
+```
+
+`listTools()` returns metadata (browse/pick); `resolveTools()` returns the
+executable tools you hand to an `Agent`. All operations of every plugin you
+register on the `corsair` instance are reachable this way.
 
 ## License
 

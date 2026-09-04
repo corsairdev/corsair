@@ -4,7 +4,9 @@ import { join } from 'node:path';
 import { isAlreadyPublished } from './npm-publish-errors.mjs';
 import { orderForPublish } from './publish-order.mjs';
 
-const PACKAGES_DIR = 'packages';
+// Publishable workspace roots. Plugins live in packages/; framework adapters
+// (mcp, mastra) live in adapters/ — both publish to npm.
+const PACKAGE_ROOTS = ['packages', 'adapters'];
 const PACKAGE_NAME_RE = /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/;
 
 function assertPackageName(name) {
@@ -42,14 +44,18 @@ function getPublishedVersion(name) {
 	}
 }
 
-const dirs = readdirSync(PACKAGES_DIR, { withFileTypes: true })
-	.filter((d) => d.isDirectory())
-	.map((d) => d.name);
+const dirs = PACKAGE_ROOTS.flatMap((root) =>
+	existsSync(root)
+		? readdirSync(root, { withFileTypes: true })
+				.filter((d) => d.isDirectory())
+				.map((d) => join(root, d.name))
+		: [],
+);
 
 const toPublish = [];
 
 for (const dir of dirs) {
-	const pkgPath = join(PACKAGES_DIR, dir, 'package.json');
+	const pkgPath = join(dir, 'package.json');
 	if (!existsSync(pkgPath)) continue;
 
 	const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
