@@ -13,6 +13,22 @@ export type RouteSpec = {
 	form?: 'invoice_attachment';
 };
 
+const SENSITIVE_EVENT_FIELDS = new Set([
+	'content_base64',
+	'to_mail_ids',
+	'cc_mail_ids',
+	'body',
+	'subject',
+]);
+
+function eventFields(input: Record<string, unknown>): Record<string, unknown> {
+	const fields: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(input)) {
+		if (!SENSITIVE_EVENT_FIELDS.has(key)) fields[key] = value;
+	}
+	return fields;
+}
+
 const PATH_OR_CONTROL = new Set([
 	'organization_id',
 	'filename',
@@ -116,7 +132,7 @@ async function persistLists(
 			if (!row || typeof row !== 'object') continue;
 			const id = String((row as Record<string, unknown>)[idField] ?? '');
 			if (!id) continue;
-			await store.upsertByEntityId(id, { ...row, id, createdAt: new Date() });
+			await store.upsertByEntityId(id, { ...row, id });
 		}
 	}
 }
@@ -158,7 +174,7 @@ export async function runZohoInventory(
 	});
 
 	await persistLists(ctx, res);
-	await logEventFromContext(ctx, event, { ...input }, 'completed');
+	await logEventFromContext(ctx, event, eventFields(input), 'completed');
 	return {
 		code: (res.code as number | undefined) ?? 0,
 		message: (res.message as string | undefined) ?? 'success',

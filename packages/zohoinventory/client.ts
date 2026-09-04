@@ -229,7 +229,18 @@ export async function makeZohoInventoryRequest<T>(
 			} catch {
 				// PDF/error body was not JSON
 			}
-			throw new ZohoInventoryAPIError(message, response.status, zohoCode);
+			const retryAfterHeader = response.headers.get('retry-after');
+			const retryAfter =
+				retryAfterHeader && !Number.isNaN(Number(retryAfterHeader))
+					? Number(retryAfterHeader) * 1000
+					: undefined;
+			throw new ZohoInventoryAPIError(
+				message,
+				response.status,
+				zohoCode,
+				undefined,
+				retryAfter,
+			);
 		}
 		const bytes = Buffer.from(await response.arrayBuffer());
 		return {

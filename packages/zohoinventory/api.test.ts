@@ -3,6 +3,7 @@ import {
 	isAllowedZohoApiDomain,
 	isUnauthorizedError,
 	makeAuthenticatedZohoInventoryRequest,
+	makeZohoInventoryRequest,
 	stripTrailingSlashes,
 	ZohoInventoryAPIError,
 	zohoInventoryApiBase,
@@ -299,6 +300,28 @@ describe('errors and refresh', () => {
 				new ZohoInventoryAPIError('daily', undefined, 45),
 			),
 		).toBe(true);
+	});
+
+	it('parses Retry-After on binary error responses', async () => {
+		const originalFetch = globalThis.fetch;
+		globalThis.fetch = jest.fn().mockResolvedValue({
+			ok: false,
+			status: 429,
+			statusText: 'Too Many Requests',
+			headers: new Headers({ 'retry-after': '2' }),
+			json: async () => {
+				throw new Error('not json');
+			},
+		}) as never;
+		try {
+			await makeZohoInventoryRequest('/invoices/pdf', 'tok', { binary: true });
+			throw new Error('expected rate limit');
+		} catch (error) {
+			expect(error).toBeInstanceOf(ZohoInventoryAPIError);
+			expect((error as ZohoInventoryAPIError).retryAfter).toBe(2000);
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
 	});
 
 	it('forwards retryAfter from ZohoInventoryAPIError', async () => {
