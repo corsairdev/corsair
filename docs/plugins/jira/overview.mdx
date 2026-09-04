@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Jira plugin for Corsair"
+description: "Jira plugin for Corsair — issues, projects, and issue events."
 ---
 
 Use **Jira** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -92,19 +92,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`comments.get`**
+**Search issues**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.jira.api.comments.get({});
+await tenant.jira.api.issues.search({ jql: 'order by created DESC' });
 ```
 
 
-**`comments.add`**
+**Create an issue**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.jira.api.comments.add({});
+await tenant.jira.api.issues.create({ project_key: 'ENG', summary: 'Follow up from Corsair' });
 ```
 
 
@@ -112,15 +112,37 @@ See the full list on the [API](/plugins/jira/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.jira.db.<entity>.search()` and `.list()`: `boards`, `comments`, `issues`, `projects`, `sprints`, `users`.
+Search synced issues without hitting Jira.
 
-See [Database](/plugins/jira/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.jira.db.issues.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `boards`, `comments`, `issues`, `projects`, `sprints`, `users`. See [Database](/plugins/jira/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **3** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a Jira issue is created.
 
-See [Webhooks](/plugins/jira/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+jira({
+    webhookHooks: {
+        issues: {
+            newIssue: {
+                after: async (ctx, result) => {
+                    console.log('Jira issue created:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/jira/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

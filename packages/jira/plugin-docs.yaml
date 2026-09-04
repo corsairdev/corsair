@@ -1,0 +1,23 @@
+displayName: Jira
+description: "Jira plugin for Corsair — issues, projects, and issue events."
+examples:
+  read:
+    path: issues.search
+    title: Search issues
+    args:
+      jql: order by created DESC
+  write:
+    path: issues.create
+    title: Create an issue
+    args:
+      project_key: ENG
+      summary: Follow up from Corsair
+dbExample:
+  entity: issues
+  note: "Search synced issues without hitting Jira."
+  limit: 50
+exampleWebhook:
+  path: issues.newIssue
+  note: "Fires when a Jira issue is created."
+  after: |
+    console.log('Jira issue created:', result.data);
