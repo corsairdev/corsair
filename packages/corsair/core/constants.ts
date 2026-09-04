@@ -84,6 +84,7 @@ export const BaseProviders = [
 	'boloforms',
 	'boltiot',
 	'bonsai',
+	'botbaba',
 	'bookingmood',
 	'botpress',
 	'botsonic',
@@ -96,6 +97,7 @@ export const BaseProviders = [
 	'brightdata',
 	'browseai',
 	'browserless',
+	'browsertool',
 	'bubble',
 	'bugsnag',
 	'buildkite',
@@ -104,6 +106,8 @@ export const BaseProviders = [
 	'canva',
 	'canvas',
 	'capsulecrm',
+	'castingwords',
+	'certifier',
 	'chatbotkit',
 	'chatfai',
 	'circleci',
@@ -211,6 +215,7 @@ export const BaseProviders = [
 	'retailed',
 	'salesforce',
 	'sapsuccessfactors',
+	'scaleai',
 	'scrapegraphai',
 	'securitytrails',
 	'sendgrid',
@@ -233,9 +238,10 @@ export const BaseProviders = [
 	'telegram',
 	'textrazor',
 	'ticktick',
-	'timelink',
-	'tisane',
 	'timecamp',
+	'timelink',
+	'tinyurl',
+	'tisane',
 	'todoist',
 	'toggl',
 	'trello',
@@ -263,6 +269,7 @@ export const BaseProviders = [
 	'youcom',
 	'youtube',
 	'zendesk',
+	'zohoinventory',
 	'zohomail',
 	'zoom',
 	'zoominfo',
@@ -340,6 +347,7 @@ export const ProviderDisplayNames = {
 	boloforms: 'Boloforms',
 	boltiot: 'Bolt IoT',
 	bonsai: 'Bonsai',
+	botbaba: 'Botbaba',
 	bookingmood: 'Bookingmood',
 	botpress: 'Botpress',
 	botsonic: 'Botsonic',
@@ -352,6 +360,7 @@ export const ProviderDisplayNames = {
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
 	browserless: 'Browserless',
+	browsertool: 'Browser Tool',
 	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
@@ -360,6 +369,8 @@ export const ProviderDisplayNames = {
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
 	capsulecrm: 'Capsule CRM',
+	castingwords: 'CastingWords',
+	certifier: 'Certifier',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
 	circleci: 'CircleCI',
@@ -467,6 +478,7 @@ export const ProviderDisplayNames = {
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
 	sapsuccessfactors: 'SAP SuccessFactors',
+	scaleai: 'Scale AI',
 	scrapegraphai: 'ScrapeGraphAI',
 	securitytrails: 'SecurityTrails',
 	sendgrid: 'SendGrid',
@@ -489,9 +501,10 @@ export const ProviderDisplayNames = {
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
-	timelink: 'Timelink',
-	tisane: 'Tisane',
 	timecamp: 'TimeCamp',
+	timelink: 'Timelink',
+	tinyurl: 'TinyURL',
+	tisane: 'Tisane',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -519,6 +532,7 @@ export const ProviderDisplayNames = {
 	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
+	zohoinventory: 'Zoho Inventory',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
 	zoominfo: 'ZoomInfo',
@@ -603,6 +617,7 @@ export type AllProviders =
 	| 'boloforms'
 	| 'boltiot'
 	| 'bonsai'
+	| 'botbaba'
 	| 'bookingmood'
 	| 'botpress'
 	| 'botsonic'
@@ -615,6 +630,7 @@ export type AllProviders =
 	| 'brightdata'
 	| 'browseai'
 	| 'browserless'
+	| 'browsertool'
 	| 'bubble'
 	| 'bugsnag'
 	| 'buildkite'
@@ -623,6 +639,8 @@ export type AllProviders =
 	| 'canva'
 	| 'canvas'
 	| 'capsulecrm'
+	| 'castingwords'
+	| 'certifier'
 	| 'chatbotkit'
 	| 'chatfai'
 	| 'circleci'
@@ -730,6 +748,7 @@ export type AllProviders =
 	| 'retailed'
 	| 'salesforce'
 	| 'sapsuccessfactors'
+	| 'scaleai'
 	| 'scrapegraphai'
 	| 'securitytrails'
 	| 'sendgrid'
@@ -752,9 +771,10 @@ export type AllProviders =
 	| 'telegram'
 	| 'textrazor'
 	| 'ticktick'
-	| 'timelink'
-	| 'tisane'
 	| 'timecamp'
+	| 'timelink'
+	| 'tinyurl'
+	| 'tisane'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
@@ -782,6 +802,7 @@ export type AllProviders =
 	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
+	| 'zohoinventory'
 	| 'zohomail'
 	| 'zoom'
 	| 'zoominfo'
