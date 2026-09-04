@@ -271,6 +271,18 @@ describe('Wix endpoints', () => {
 		expect(options.body?.query?.paging).toEqual({ limit: 5, offset: 10 });
 	});
 
+	it('rejects invalid input through the schema before any request', async () => {
+		const fn = endpointFn('contacts', 'query');
+		await expect(fn(mockCtx, { limit: 'not-a-number' })).rejects.toThrow();
+		expect(mockMakeWixRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects malformed responses through the output schema', async () => {
+		mockMakeWixRequest.mockResolvedValueOnce({ contacts: 'not-an-array' });
+		const fn = endpointFn('contacts', 'query');
+		await expect(fn(mockCtx, { siteId: 's' })).rejects.toThrow();
+	});
+
 	it('sends GET query params as query, not body', async () => {
 		const fn = endpointFn('contacts', 'list');
 		await fn(mockCtx, { siteId: 's', limit: 5, offset: 0 });

@@ -4,6 +4,7 @@ import { makeWixRequest } from '../client';
 import type { WixContext } from '../index';
 import type { WixRoute } from './routes';
 import { wixRoutes } from './routes';
+import { WixEndpointInputSchemas, WixEndpointOutputSchemas } from './types';
 
 export type WixEndpointInput = Record<string, unknown>;
 
@@ -160,15 +161,27 @@ export async function requestWixOperation(
 	input: WixEndpointInput,
 	route: WixRoute,
 ) {
+	// Resolve the path first so a missing path parameter surfaces the
+	// caller-friendly "[wix] missing required path parameter" error before
+	// schema validation reports a less specific message.
+	const path = resolvePath(route.path, input, route);
+	// The shared binder registers `endpointSchemas` as introspection metadata
+	// only, so parsing here is what actually enforces the declared contract:
+	// malformed input never reaches the Wix API.
+	const inputSchema =
+		WixEndpointInputSchemas[route.key as keyof typeof WixEndpointInputSchemas];
+	const validated = (
+		inputSchema ? inputSchema.parse(input ?? {}) : input
+	) as WixEndpointInput;
 	const headers =
-		(input.headers as Record<string, string> | undefined) ?? undefined;
-	return makeWixRequest(resolvePath(route.path, input, route), ctx.key, {
+		(validated.headers as Record<string, string> | undefined) ?? undefined;
+	return makeWixRequest(path, ctx.key, {
 		method: route.method,
-		body: requestBody(route, input),
-		query: buildQuery(route, input),
+		body: requestBody(route, validated),
+		query: buildQuery(route, validated),
 		headers,
-		siteId: input.siteId as string | undefined,
-		accountId: input.accountId as string | undefined,
+		siteId: validated.siteId as string | undefined,
+		accountId: validated.accountId as string | undefined,
 	});
 }
 
@@ -179,7 +192,15 @@ export async function executeWixOperation(
 ) {
 	let status: 'completed' | 'failed' = 'completed';
 	try {
-		return await requestWixOperation(ctx, input, route);
+		const response = await requestWixOperation(ctx, input, route);
+		// Responses are validated against the registered output schema so a
+		// payload that breaks the declared contract fails loudly instead of
+		// reaching consumers malformed.
+		const outputSchema =
+			WixEndpointOutputSchemas[
+				route.key as keyof typeof WixEndpointOutputSchemas
+			];
+		return outputSchema ? outputSchema.parse(response) : response;
 	} catch (error) {
 		status = 'failed';
 		throw error;
