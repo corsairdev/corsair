@@ -2975,7 +2975,9 @@ describe('operation routing', () => {
 				expect(call.method === 'POST' || call.method === 'PATCH').toBe(true);
 
 			// Auth travels in the AuthToken header, never in the URL.
-			expect(call.url.startsWith(BASE)).toBe(true);
+			// Compare the parsed origin (not a substring) so a path or query
+			// that merely contains the base host can never pass the check.
+			expect(new URL(call.url).origin).toBe(BASE);
 			expect(call.headers.authtoken).toBe(TOKEN);
 			expect(call.url).not.toContain(TOKEN);
 
