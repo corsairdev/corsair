@@ -14,9 +14,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
-import { getValidAccessToken } from './client';
 import { Channels, Chats, Members, Messages, Teams } from './endpoints';
 import type {
 	TeamsEndpointInputs,
@@ -486,36 +485,11 @@ export function teams<const T extends TeamsPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('teams', 'oauth_2');
-				}
-
-				const creds = await ctx.keys.get_integration_credentials();
-				if (!creds.client_id || !creds.client_secret) {
-					throw new Error('No client id or client secret.');
-				}
-
-				const result = await getValidAccessToken({
-					accessToken,
-					expiresAt,
-					refreshToken,
-					clientId: creds.client_id,
-					clientSecret: creds.client_secret,
+				return getOAuthAccessToken(ctx, {
+					plugin: 'teams',
+					tokenUrl:
+						'https://login.microsoftonline.com/common/oauth2/v2.0/token',
 				});
-
-				if (result.refreshed) {
-					await Promise.all([
-						ctx.keys.set_access_token(result.accessToken),
-						ctx.keys.set_expires_at(String(result.expiresAt)),
-					]);
-				}
-				return result.accessToken;
 			}
 
 			if (ctx.authType === 'managed') {

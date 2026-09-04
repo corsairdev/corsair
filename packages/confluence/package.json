@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/confluence",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Confluence plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -19,7 +19,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "corsair": ">=0.1.0",
+    "corsair": ">=0.1.120",
     "zod": "^4.1.13"
   },
   "devDependencies": {
