@@ -1,10 +1,19 @@
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import { makeReplicateRequest } from '../client';
 import type { ReplicateEndpoints } from '../index';
 import {
 	ReplicateEndpointInputSchemas,
 	ReplicateEndpointOutputSchemas,
 } from './types';
+
+const PaginatedDeploymentsResponseSchema = z
+	.object({
+		next: z.string().nullable().optional(),
+		previous: z.string().nullable().optional(),
+		results: z.array(ReplicateEndpointOutputSchemas.deploymentsGet),
+	})
+	.loose();
 
 function encodePath(...parts: string[]): string {
 	return parts.map((part) => encodeURIComponent(part)).join('/');
@@ -70,8 +79,13 @@ export const deploymentsList: ReplicateEndpoints['deploymentsList'] = async (
 	rawInput,
 ) => {
 	ReplicateEndpointInputSchemas.deploymentsList.parse(rawInput);
+	const paginatedResponse = PaginatedDeploymentsResponseSchema.parse(
+		await makeReplicateRequest('/deployments', ctx.key, {
+			method: 'GET',
+		}),
+	);
 	const response = ReplicateEndpointOutputSchemas.deploymentsList.parse(
-		await makeReplicateRequest('/deployments', ctx.key, { method: 'GET' }),
+		paginatedResponse.results,
 	);
 	await logEventFromContext(ctx, 'replicate.deployments.list', {}, 'completed');
 	return response;

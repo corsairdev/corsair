@@ -136,7 +136,11 @@ describe('Replicate endpoint contracts', () => {
 	});
 
 	it('deployments.list', async () => {
-		mockRequest.mockResolvedValueOnce([deployment]);
+		mockRequest.mockResolvedValueOnce({
+			next: null,
+			previous: null,
+			results: [deployment],
+		});
 		await deploymentsList(ctx as never, {});
 		expect(mockRequest).toHaveBeenCalledWith('/deployments', ctx.key, {
 			method: 'GET',
