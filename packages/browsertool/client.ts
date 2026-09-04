@@ -12,11 +12,13 @@ import { ApiError, request } from 'corsair/http';
  */
 export const BROWSERTOOL_API_BASE = 'https://backend.composio.dev';
 
-const BROWSERTOOL_RATE_LIMIT_CONFIG: RateLimitConfig = {
+// Parse Retry-After onto ApiError; do not retry here.
+// Plugin error-handlers own 429 policy (0 for create/stop, 3 for reads).
+const BROWSERTOOL_NO_TRANSPORT_RETRIES: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
 	headerNames: {
 		retryAfter: 'Retry-After',
 	},
@@ -79,7 +81,7 @@ export async function executeBrowserTool<T>(
 
 	try {
 		return await request<T>(config, requestOptions, {
-			rateLimitConfig: BROWSERTOOL_RATE_LIMIT_CONFIG,
+			rateLimitConfig: BROWSERTOOL_NO_TRANSPORT_RETRIES,
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {

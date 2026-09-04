@@ -149,7 +149,10 @@ describe('executeBrowserTool', () => {
 				},
 			}),
 			expect.objectContaining({
-				rateLimitConfig: expect.objectContaining({ enabled: true }),
+				rateLimitConfig: expect.objectContaining({
+					enabled: true,
+					maxRetries: 0,
+				}),
 			}),
 		);
 	});
