@@ -22,13 +22,13 @@ function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {
 
 const mockCtx = {
 	key: 'plainApiKey_test',
-	$getAccountId: () => 'acct_plain_test',
+	$getAccountId: async () => 'acct_plain_test',
 	options: {},
 	keys: {
 		get_api_key: jest.fn().mockResolvedValue('plainApiKey_stored'),
 	},
 	logEvent: jest.fn(),
-	database: {},
+	database: undefined,
 } as never;
 
 const sampleCustomer = {
