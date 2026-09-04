@@ -1,0 +1,21 @@
+displayName: Zoom
+description: "Zoom plugin for Corsair — meetings, recordings, and meeting events."
+examples:
+  read:
+    path: meetings.list
+    title: List meetings
+  write:
+    path: meetings.create
+    title: Create a meeting
+    args:
+      topic: Corsair standup
+      duration: 30
+dbExample:
+  entity: meetings
+  note: "Search synced meetings without hitting Zoom."
+  limit: 50
+exampleWebhook:
+  path: meetings.created
+  note: "Fires when a Zoom meeting is created."
+  after: |
+    console.log('Zoom meeting created:', result.data);
