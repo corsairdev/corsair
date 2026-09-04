@@ -1683,6 +1683,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.1
       corsair:
         specifier: workspace:*
         version: link:../corsair
