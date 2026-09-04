@@ -10,11 +10,17 @@ describe('Campayn schema', () => {
 		expect(typeof CampaynSchema.entities).toBe('object');
 		expect(CampaynSchema.entities).not.toBeNull();
 		expect(Array.isArray(Object.keys(CampaynSchema.entities))).toBe(true);
+		expect(Object.keys(CampaynSchema.entities)).toEqual(
+			expect.arrayContaining([
+				'lists',
+				'contacts',
+				'messages',
+				'reports',
+				'webforms',
+			]),
+		);
 		for (const entity of Object.values(CampaynSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
