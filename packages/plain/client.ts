@@ -1,60 +1,91 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class PlainAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
+	public readonly code?: string;
+	public readonly status?: number;
+	public readonly retryAfter?: number | string;
+
+	constructor(message: string, options?: { code?: string; cause?: Error }) {
+		super(message, options);
 		this.name = 'PlainAPIError';
+		this.code = options?.code;
+		if (options?.cause instanceof ApiError) {
+			this.status = options.cause.status;
+			this.retryAfter = options.cause.retryAfter;
+		}
 	}
 }
 
-// TODO: Update with your API base URL
-const PLAIN_API_BASE = 'https://api.example.com';
+export const PLAIN_API_BASE = 'https://core-api.uk.plain.com/graphql/v1';
 
-export async function makePlainRequest<T>(
-	endpoint: string,
+type PlainGraphQLError = {
+	message: string;
+	extensions?: {
+		code?: string;
+	};
+};
+
+type PlainGraphQLResponse<TData> = {
+	data?: TData;
+	errors?: PlainGraphQLError[];
+};
+
+export async function makePlainRequest<TData>(
+	query: string,
 	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	const { method = 'GET', body, query } = options;
-
+	variables?: Record<string, unknown>,
+	operationName?: string,
+): Promise<TData> {
 	const config: OpenAPIConfig = {
 		BASE: PLAIN_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
+			Authorization: `Bearer ${apiKey}`,
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		method: 'POST',
+		url: '',
+		body: {
+			query,
+			variables: variables ?? {},
+			operationName,
+		},
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		const response = await request<PlainGraphQLResponse<TData>>(
+			config,
+			requestOptions,
+		);
+
+		if (response.errors && response.errors.length > 0) {
+			const firstError = response.errors[0]!;
+			throw new PlainAPIError(firstError.message, {
+				code: firstError.extensions?.code,
+			});
+		}
+
+		if (response.data === undefined) {
+			throw new PlainAPIError('No data returned from Plain API');
+		}
+
+		return response.data;
 	} catch (error) {
+		if (error instanceof PlainAPIError) {
+			throw error;
+		}
+		if (error instanceof ApiError) {
+			throw new PlainAPIError(error.message, { cause: error });
+		}
 		if (error instanceof Error) {
-			throw new PlainAPIError(error.message);
+			throw new PlainAPIError(error.message, { cause: error });
 		}
 		throw new PlainAPIError('Unknown error');
 	}
