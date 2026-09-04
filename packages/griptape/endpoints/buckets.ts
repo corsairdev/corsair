@@ -125,9 +125,13 @@ export const getAsset: GriptapeEndpoints['bucketGetAsset'] = async (
 ) => {
 	const response = await makeGriptapeRequest<
 		GriptapeEndpointOutputs['bucketGetAsset']
-	>(`buckets/${input.bucket_id}/assets/${input.name}`, ctx.key, {
-		method: 'GET',
-	});
+	>(
+		`buckets/${input.bucket_id}/assets/${encodeURIComponent(input.name)}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -147,7 +151,7 @@ export const createAsset: GriptapeEndpoints['bucketCreateAsset'] = async (
 		GriptapeEndpointOutputs['bucketCreateAsset']
 	>(`buckets/${input.bucket_id}/assets`, ctx.key, {
 		method: 'PUT',
-		body: { name: input.name, ...(input.body ?? {}) },
+		body: { ...(input.body ?? {}), name: input.name },
 	});
 
 	await logEventFromContext(
@@ -166,9 +170,13 @@ export const deleteAsset: GriptapeEndpoints['bucketDeleteAsset'] = async (
 ) => {
 	const response = await makeGriptapeRequest<
 		GriptapeEndpointOutputs['bucketDeleteAsset']
-	>(`buckets/${input.bucket_id}/assets/${input.name}`, ctx.key, {
-		method: 'DELETE',
-	});
+	>(
+		`buckets/${input.bucket_id}/assets/${encodeURIComponent(input.name)}`,
+		ctx.key,
+		{
+			method: 'DELETE',
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -186,10 +194,14 @@ export const assetUrl: GriptapeEndpoints['bucketAssetUrl'] = async (
 ) => {
 	const response = await makeGriptapeRequest<
 		GriptapeEndpointOutputs['bucketAssetUrl']
-	>(`buckets/${input.bucket_id}/asset-urls/${input.name}`, ctx.key, {
-		method: 'POST',
-		body: input.body,
-	});
+	>(
+		`buckets/${input.bucket_id}/asset-urls/${encodeURIComponent(input.name)}`,
+		ctx.key,
+		{
+			method: 'POST',
+			body: input.body,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
