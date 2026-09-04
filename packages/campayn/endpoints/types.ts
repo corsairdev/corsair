@@ -160,11 +160,18 @@ export type GetListsInput = z.input<typeof GetListsInputSchema>;
 export const GetListsResponseSchema = z.array(ListSchema);
 export type GetListsResponse = z.infer<typeof GetListsResponseSchema>;
 
-export const UpdateListInputSchema = z.object({
-	listId: ListIdSchema,
-	list_name: z.string().optional(),
-	tags: z.string().optional(),
-});
+export const UpdateListInputSchema = z
+	.object({
+		listId: ListIdSchema,
+		list_name: z.string().optional(),
+		tags: z.string().optional(),
+	})
+	.refine(
+		(value) => value.list_name !== undefined || value.tags !== undefined,
+		{
+			message: 'At least one of list_name or tags is required.',
+		},
+	);
 export type UpdateListInput = z.input<typeof UpdateListInputSchema>;
 export const UpdateListResponseSchema = ListSchema;
 export type UpdateListResponse = z.infer<typeof UpdateListResponseSchema>;

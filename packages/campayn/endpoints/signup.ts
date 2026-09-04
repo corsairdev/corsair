@@ -21,11 +21,6 @@ export const signup: CampaynEndpoints['signup'] = async (ctx, rawInput) => {
 	});
 	const response = SignupResponseOutputSchema.parse(raw);
 
-	await logEventFromContext(
-		ctx,
-		'campayn.signup.signup',
-		{ email: input.email },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'campayn.signup.signup', {}, 'completed');
 	return response;
 };

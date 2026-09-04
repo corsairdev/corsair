@@ -97,7 +97,7 @@ export const createContact: CampaynEndpoints['createContact'] = async (
 	await logEventFromContext(
 		ctx,
 		'campayn.contacts.createContact',
-		{ listId: input.listId, email: input.email },
+		{ listId: input.listId },
 		'completed',
 	);
 	return response;
@@ -145,7 +145,7 @@ export const unsubscribeContact: CampaynEndpoints['unsubscribeContact'] =
 		await logEventFromContext(
 			ctx,
 			'campayn.contacts.unsubscribeContact',
-			{ listId: input.listId, id: input.id, email: input.email },
+			{ listId: input.listId, id: input.id },
 			'completed',
 		);
 		return response;

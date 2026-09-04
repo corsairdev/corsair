@@ -68,6 +68,13 @@ describe('lists endpoints', () => {
 		expect(result.list_name).toBe('VIP');
 	});
 
+	it('updateList rejects when no mutable fields are provided', async () => {
+		await expect(Lists.updateList(ctx, { listId: 7 })).rejects.toThrow(
+			'At least one of list_name or tags is required.',
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('deleteList calls DELETE /lists/{id}.json', async () => {
 		mockRequest.mockResolvedValue({ success: true });
 
@@ -130,6 +137,12 @@ describe('contacts endpoints', () => {
 			'campayn-key',
 			expect.objectContaining({ method: 'POST' }),
 		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'campayn.contacts.createContact',
+			{ listId: '9' },
+			'completed',
+		);
 		expect(result.success).toBe(true);
 	});
 
@@ -160,6 +173,12 @@ describe('contacts endpoints', () => {
 				method: 'POST',
 				body: { id: '11', email: undefined },
 			},
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'campayn.contacts.unsubscribeContact',
+			{ listId: 3, id: '11' },
+			'completed',
 		);
 		expect(result.success).toBe(1);
 	});
@@ -273,6 +292,12 @@ describe('messages/reports/webforms/signup endpoints', () => {
 				site: undefined,
 			},
 		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'campayn.signup.signup',
+			{},
+			'completed',
+		);
 		expect(result.success).toBe(1);
 	});
 });
