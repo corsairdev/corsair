@@ -133,6 +133,12 @@ describe('DocusignClient', () => {
 		expect(lastCall().config.BASE).toBe('https://account.docusign.com');
 	});
 
+	it('calls the production userinfo endpoint for .net production hosts', async () => {
+		const client = makeClient('https://na4.docusign.net/restapi/v2.1');
+		await client.userInfo();
+		expect(lastCall().config.BASE).toBe('https://account.docusign.com');
+	});
+
 	it('rejects untrusted auth server hosts', async () => {
 		const client = makeClient();
 		await expect(client.userInfo('https://evil.example.com')).rejects.toThrow(

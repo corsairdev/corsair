@@ -195,12 +195,12 @@ export class DocusignClient {
 		}
 
 		const host = url.hostname.toLowerCase();
-		const isDemoEnvironment =
-			host === 'docusign.net' || host.endsWith('.docusign.net');
+		const isDemoEnvironment = host === 'demo.docusign.net';
 		const isAllowedHost =
 			host === 'docusign.com' ||
 			host.endsWith('.docusign.com') ||
-			isDemoEnvironment;
+			host === 'docusign.net' ||
+			host.endsWith('.docusign.net');
 
 		if (!isAllowedHost) {
 			throw new Error(
