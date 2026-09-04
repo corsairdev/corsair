@@ -124,6 +124,7 @@ export const BaseProviders = [
 	'dreamstudio',
 	'dropbox',
 	'dropboxsign',
+	'dynapictures',
 	'epicgames',
 	'exa',
 	'facebook',
