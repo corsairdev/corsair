@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { Contacts, DataPrivacy, Performance, Webhooks } from './endpoints';
 import type {
@@ -26,18 +23,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { WisepopsSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveWisepopsOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchWisepopsTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, WisepopsWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type WisepopsPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalWisepopsPlugin['hooks'];
-	webhookHooks?: InternalWisepopsPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof wisepopsEndpointsNested>;
 };
@@ -69,17 +59,6 @@ export type WisepopsEndpoints = {
 	dataPrivacyDelete: WisepopsEndpoint<'dataPrivacyDelete'>;
 };
 
-type WisepopsWebhook<
-	K extends keyof WisepopsWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<WisepopsContext, TEvent, WisepopsWebhookOutputs[K]>;
-
-export type WisepopsWebhooks = {
-	example: WisepopsWebhook<'example', ExampleEvent>;
-};
-
-export type WisepopsBoundWebhooks = BindWebhooks<WisepopsWebhooks>;
-
 const wisepopsEndpointsNested = {
 	contacts: {
 		get: Contacts.get,
@@ -93,12 +72,6 @@ const wisepopsEndpointsNested = {
 	},
 	dataPrivacy: {
 		delete: DataPrivacy.deleteData,
-	},
-} as const;
-
-const wisepopsWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
 	},
 } as const;
 
@@ -127,16 +100,6 @@ export const wisepopsEndpointSchemas = {
 	typeof wisepopsEndpointsNested
 >;
 
-const wisepopsWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof wisepopsWebhooksNested
->;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const wisepopsEndpointMeta = {
@@ -163,19 +126,14 @@ const wisepopsEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof wisepopsEndpointsNested>;
 
 export const wisepopsAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseWisepopsPlugin<T extends WisepopsPluginOptions> = CorsairPlugin<
 	'wisepops',
 	typeof WisepopsSchema,
 	typeof wisepopsEndpointsNested,
-	typeof wisepopsWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
@@ -198,33 +156,15 @@ export function wisepops<const T extends WisepopsPluginOptions>(
 		schema: WisepopsSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: wisepopsEndpointsNested,
-		webhooks: wisepopsWebhooksNested,
+		webhooks: {},
 		endpointMeta: wisepopsEndpointMeta,
 		endpointSchemas: wisepopsEndpointSchemas,
-		webhookSchemas: wisepopsWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-wisepops-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchWisepopsTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveWisepopsOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: WisepopsKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -234,16 +174,16 @@ export function wisepops<const T extends WisepopsPluginOptions>(
 				return res ?? '';
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
 			return '';
 		},
 	} satisfies InternalWisepopsPlugin;
 }
 
+export {
+	makeWisepopsRequest,
+	WISEPOPS_API_BASE,
+	WisepopsAPIError,
+} from './client';
 export type {
 	ContactsGetInput,
 	ContactsGetResponse,
@@ -258,7 +198,27 @@ export type {
 	WisepopsEndpointInputs,
 	WisepopsEndpointOutputs,
 } from './endpoints/types';
+export {
+	ContactsGetInputSchema,
+	ContactsGetResponseSchema,
+	DataPrivacyDeleteInputSchema,
+	DataPrivacyDeleteResponseSchema,
+	PerformanceGetInputSchema,
+	PerformanceGetResponseSchema,
+	WebhookCreateInputSchema,
+	WebhookCreateResponseSchema,
+	WebhookDeleteInputSchema,
+	WebhookDeleteResponseSchema,
+	WisepopsEndpointInputSchemas,
+	WisepopsEndpointOutputSchemas,
+} from './endpoints/types';
+export { WisepopsSchema } from './schema';
 export type {
-	ExampleEvent,
-	WisepopsWebhookOutputs,
-} from './webhooks/types';
+	WisepopsWebhookContact,
+	WisepopsWebhookPayload,
+} from './webhooks';
+export {
+	verifyWisepopsWebhookSignature,
+	WisepopsWebhookContactSchema,
+	WisepopsWebhookPayloadSchema,
+} from './webhooks';

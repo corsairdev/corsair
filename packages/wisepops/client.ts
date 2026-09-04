@@ -1,9 +1,11 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class WisepopsAPIError extends Error {
 	constructor(
 		message: string,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
 		public readonly code?: string,
 	) {
 		super(message);
@@ -11,8 +13,7 @@ export class WisepopsAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
-const WISEPOPS_API_BASE = 'https://app.wisepops.com';
+export const WISEPOPS_API_BASE = 'https://app.wisepops.com';
 
 export async function makeWisepopsRequest<T>(
 	endpoint: string,
@@ -30,7 +31,7 @@ export async function makeWisepopsRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: `WISEPOPS-API key="${apiKey}"`,
@@ -40,17 +41,18 @@ export async function makeWisepopsRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		body,
+		mediaType:
+			body !== undefined ? 'application/json; charset=utf-8' : undefined,
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw new WisepopsAPIError(error.message, error.status, error.retryAfter);
+		}
 		if (error instanceof Error) {
 			throw new WisepopsAPIError(error.message);
 		}

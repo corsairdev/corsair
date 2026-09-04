@@ -15,7 +15,7 @@ export const ContactsGetResponseSchema = z.array(
 		ip: z.string().optional(),
 		country_code: z.string().optional(),
 		form_session: z.string().optional(),
-		fields: z.record(z.string(), z.any()).optional(),
+		fields: z.record(z.string(), z.unknown()).optional(),
 	}),
 );
 export type ContactsGetResponse = z.infer<typeof ContactsGetResponseSchema>;
@@ -42,7 +42,7 @@ export type PerformanceGetResponse = z.infer<
 // Webhooks
 export const WebhookCreateInputSchema = z.object({
 	event: z.enum(['email', 'phone', 'survey']),
-	target_url: z.string(),
+	target_url: z.string().url(),
 	wisepop_id: z.number().optional(),
 });
 export type WebhookCreateInput = z.infer<typeof WebhookCreateInputSchema>;
@@ -53,18 +53,45 @@ export const WebhookCreateResponseSchema = z.object({
 export type WebhookCreateResponse = z.infer<typeof WebhookCreateResponseSchema>;
 
 export const WebhookDeleteInputSchema = z.object({
-	hook_id: z.number(),
+	hook_id: z.number().int().positive(),
 });
 export type WebhookDeleteInput = z.infer<typeof WebhookDeleteInputSchema>;
 
-export const WebhookDeleteResponseSchema = z.any();
+export const WebhookDeleteResponseSchema = z.union([
+	z
+		.object({
+			success: z.boolean().optional(),
+			message: z.string().optional(),
+			id: z.number().optional(),
+		})
+		.passthrough(),
+	z.record(z.string(), z.unknown()),
+	z.undefined(),
+	z.null(),
+	z.void(),
+]);
 export type WebhookDeleteResponse = z.infer<typeof WebhookDeleteResponseSchema>;
 
 // Data Privacy
-export const DataPrivacyDeleteInputSchema = z.object({
-	email: z.string().optional(),
-	phone: z.string().optional(),
-});
+export const DataPrivacyDeleteInputSchema = z
+	.object({
+		email: z.string().email().optional(),
+		phone: z
+			.string()
+			.regex(
+				/^\+[1-9]\d{1,14}$/,
+				'Phone number must be in E.164 international format (e.g. +1234567890)',
+			)
+			.optional(),
+	})
+	.refine(
+		(data) =>
+			(data.email !== undefined && data.email.trim().length > 0) ||
+			(data.phone !== undefined && data.phone.trim().length > 0),
+		{
+			message: 'At least one of email or phone must be provided',
+		},
+	);
 export type DataPrivacyDeleteInput = z.infer<
 	typeof DataPrivacyDeleteInputSchema
 >;

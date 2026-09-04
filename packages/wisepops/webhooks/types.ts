@@ -1,64 +1,79 @@
-import type {
-	CorsairWebhookMatcher,
-	RawWebhookRequest,
-	WebhookRequest,
-} from 'corsair/core';
+import type { WebhookRequest } from 'corsair/core';
+import { verifyHmacSignature } from 'corsair/http';
 import { z } from 'zod';
 
-export const WisepopsWebhookPayloadSchema = z.object({
-	type: z.string(),
-	created_at: z.string(),
-	data: z.record(z.string(), z.unknown()),
+export const WisepopsWebhookContactSchema = z.object({
+	collected_at: z.string(),
+	wisepop_id: z.number(),
+	ip: z.string().optional(),
+	country_code: z.string().optional(),
+	form_session: z.string().optional(),
+	fields: z.record(z.string(), z.unknown()).optional(),
 });
+export type WisepopsWebhookContact = z.infer<
+	typeof WisepopsWebhookContactSchema
+>;
 
+export const WisepopsWebhookPayloadSchema = z.array(
+	WisepopsWebhookContactSchema,
+);
 export type WisepopsWebhookPayload = z.infer<
 	typeof WisepopsWebhookPayloadSchema
 >;
 
-export const ExampleEventSchema = WisepopsWebhookPayloadSchema.extend({
-	type: z.literal('example'),
-	data: z
-		.object({
-			id: z.string(),
-		})
-		.loose(),
-});
-
-export type ExampleEvent = z.infer<typeof ExampleEventSchema>;
-
-export type WisepopsWebhookOutputs = {
-	example: ExampleEvent;
-};
-
-function parseBody(body: unknown): Record<string, unknown> | null {
-	if (typeof body === 'string') {
-		try {
-			const parsed = JSON.parse(body);
-			return parsed !== null &&
-				typeof parsed === 'object' &&
-				!Array.isArray(parsed)
-				? (parsed as Record<string, unknown>)
-				: null;
-		} catch {
-			return null;
+function getHeader(
+	headers: Record<string, string | string[] | undefined>,
+	name: string,
+): string | undefined {
+	const lower = name.toLowerCase();
+	for (const [key, value] of Object.entries(headers)) {
+		if (key.toLowerCase() === lower) {
+			return Array.isArray(value) ? value[0] : value;
 		}
 	}
-	return body !== null && typeof body === 'object' && !Array.isArray(body)
-		? (body as Record<string, unknown>)
-		: null;
-}
-
-export function createWisepopsMatch(eventType: string): CorsairWebhookMatcher {
-	return (request: RawWebhookRequest) => {
-		const parsedBody = parseBody(request.body);
-		return parsedBody !== null && parsedBody.type === eventType;
-	};
+	return undefined;
 }
 
 export function verifyWisepopsWebhookSignature(
-	request: WebhookRequest<WisepopsWebhookPayload>,
-	secret: string,
+	request:
+		| WebhookRequest<unknown>
+		| {
+				rawBody?: string | Buffer;
+				headers: Record<string, string | string[] | undefined>;
+		  },
+	secret?: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
+	const rawBody = request.rawBody;
+	if (rawBody === undefined || rawBody === null || rawBody === '') {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const sigHeader = getHeader(request.headers, 'x-wisepops-signature');
+	if (!sigHeader) {
+		return { valid: false, error: 'Missing x-wisepops-signature header' };
+	}
+
+	// Wisepops signs using HMAC-SHA256 hex digest (64 hex characters)
+	if (!/^[0-9a-fA-F]{64}$/.test(sigHeader.trim())) {
+		return { valid: false, error: 'Malformed signature header' };
+	}
+
+	const isValid = verifyHmacSignature(
+		rawBody,
+		secret,
+		sigHeader.trim(),
+		'sha256',
+	);
+	if (!isValid) {
+		return { valid: false, error: 'Invalid signature' };
+	}
+
 	return { valid: true };
 }
