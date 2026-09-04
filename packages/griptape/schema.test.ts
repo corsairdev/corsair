@@ -124,7 +124,7 @@ type Row = [
 // endpoints/types.ts — not the live API — so they stay hermetic.
 const ROWS: Row[] = [
 	['assistantList', {}, { page: 'two' }, 'strict'],
-	['assistantGet', { assistant_id: UUID }, { assistant_id: 'nope' }, 'strict'],
+	['assistantGet', { assistant_id: UUID }, { assistant_id: '' }, 'strict'],
 	['assistantCreate', { body: { name: 'x' } }, { body: 'nope' }, 'object'],
 	[
 		'assistantUpdate',
@@ -142,14 +142,6 @@ const ROWS: Row[] = [
 	],
 	['assistantRunGet', { assistant_run_id: 'r' }, {}, 'object'],
 	['assistantRunCancel', { assistant_run_id: 'r' }, {}, 'object'],
-	['assistantRunResult', { assistant_run_id: 'r' }, {}, 'object'],
-	['assistantRunErrorDetails', { assistant_run_id: 'r' }, {}, 'object'],
-	[
-		'assistantRunLogs',
-		{ assistant_run_id: 'r', limit: 10 },
-		{ assistant_run_id: 'r', limit: 0 },
-		'object',
-	],
 	[
 		'assistantRunEvents',
 		{ assistant_run_id: 'r' },
@@ -352,8 +344,8 @@ describe('griptape endpoint schema coverage', () => {
 	it('covers every registered endpoint exactly once', () => {
 		const keys = Object.keys(GriptapeEndpointInputSchemas);
 
-		expect(ROWS).toHaveLength(143);
-		expect(new Set(ROWS.map(([key]) => key)).size).toBe(143);
+		expect(ROWS).toHaveLength(140);
+		expect(new Set(ROWS.map(([key]) => key)).size).toBe(140);
 		expect([...ROWS.map(([key]) => key)].sort()).toEqual([...keys].sort());
 	});
 

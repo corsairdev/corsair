@@ -124,9 +124,7 @@ describe('Griptape Plugin API', () => {
 			expect(mockRequest).toHaveBeenCalledWith(
 				expect.objectContaining({
 					BASE: 'https://cloud.griptape.ai/api',
-					HEADERS: expect.objectContaining({
-						Authorization: `Bearer ${apiKey}`,
-					}),
+					TOKEN: apiKey,
 				}),
 				expect.objectContaining({
 					method: 'GET',
@@ -198,9 +196,7 @@ describe('Griptape Plugin API', () => {
 			expect(mockRequest).toHaveBeenCalledWith(
 				expect.objectContaining({
 					BASE: 'https://cloud.griptape.ai/api',
-					HEADERS: expect.objectContaining({
-						Authorization: `Bearer ${apiKey}`,
-					}),
+					TOKEN: apiKey,
 				}),
 				expect.objectContaining({
 					method: 'GET',
@@ -239,12 +235,20 @@ describe('Griptape Plugin API', () => {
 			expect(mockLog).not.toHaveBeenCalled();
 		});
 
-		it('rejects non-UUID assistant ids at the input schema boundary', () => {
+		it('rejects empty assistant ids at the input schema boundary', () => {
+			const result = GriptapeEndpointInputSchemas.assistantGet.safeParse({
+				assistant_id: '',
+			});
+
+			expect(result.success).toBe(false);
+		});
+
+		it('accepts non-UUID assistant ids like update and delete do', () => {
 			const result = GriptapeEndpointInputSchemas.assistantGet.safeParse({
 				assistant_id: 'not-a-uuid',
 			});
 
-			expect(result.success).toBe(false);
+			expect(result.success).toBe(true);
 		});
 	});
 
@@ -418,85 +422,6 @@ describe('griptape assistant runs', () => {
 		});
 	});
 
-	describe('getResult', () => {
-		it('sends GET /assistant-runs/{assistant_run_id} for the run result', async () => {
-			const mockResponse = {
-				assistant_run_id: runId,
-				status: 'completed',
-				output: 'Hello back',
-			};
-
-			mockRequest.mockResolvedValueOnce(mockResponse);
-
-			const result = await Assistants.getResult(ctx, {
-				assistant_run_id: runId,
-			});
-
-			expect(mockRequest).toHaveBeenCalledWith(
-				expect.objectContaining({ BASE: 'https://cloud.griptape.ai/api' }),
-				expect.objectContaining({
-					method: 'GET',
-					url: `assistant-runs/${runId}`,
-				}),
-			);
-
-			expect(result).toEqual(mockResponse);
-		});
-	});
-
-	describe('getErrorDetails', () => {
-		it('sends GET /assistant-runs/{assistant_run_id} carrying embedded error details', async () => {
-			const mockResponse = {
-				assistant_run_id: runId,
-				status: 'failed',
-				error: 'Upstream model timed out',
-			};
-
-			mockRequest.mockResolvedValueOnce(mockResponse);
-
-			const result = await Assistants.getErrorDetails(ctx, {
-				assistant_run_id: runId,
-			});
-
-			expect(mockRequest).toHaveBeenCalledWith(
-				expect.objectContaining({ BASE: 'https://cloud.griptape.ai/api' }),
-				expect.objectContaining({
-					method: 'GET',
-					url: `assistant-runs/${runId}`,
-				}),
-			);
-
-			expect(result).toEqual(mockResponse);
-		});
-	});
-
-	describe('listLogs', () => {
-		it('sends GET /assistant-runs/{assistant_run_id}/events with limit/offset', async () => {
-			const mockResponse = {
-				events: [],
-			};
-
-			mockRequest.mockResolvedValueOnce(mockResponse);
-
-			const result = await Assistants.listLogs(ctx, {
-				assistant_run_id: runId,
-				limit: 20,
-				offset: 0,
-			});
-
-			expect(mockRequest).toHaveBeenCalledWith(
-				expect.objectContaining({ BASE: 'https://cloud.griptape.ai/api' }),
-				expect.objectContaining({
-					method: 'GET',
-					url: `assistant-runs/${runId}/events`,
-					query: { limit: 20, offset: 0 },
-				}),
-			);
-
-			expect(result).toEqual(mockResponse);
-		});
-	});
-
 	describe('listEvents', () => {
 		it('sends GET /assistant-runs/{assistant_run_id}/events with limit/offset', async () => {
 			const mockResponse = {
@@ -573,9 +498,7 @@ describe('griptape assistants mutating endpoints', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				BASE: 'https://cloud.griptape.ai/api',
-				HEADERS: expect.objectContaining({
-					Authorization: `Bearer ${apiKey}`,
-				}),
+				TOKEN: apiKey,
 			}),
 			expect.objectContaining({
 				method: 'POST',
@@ -883,6 +806,42 @@ describe('griptape bucket endpoints', () => {
 			}),
 		);
 		expect(result).toEqual(payload);
+	});
+
+	it('bucket.createAsset lets the input name win over a body name', async () => {
+		mockRequest.mockResolvedValueOnce({});
+
+		await buckets.createAsset(ctx, {
+			bucket_id: 'bucket-test-001',
+			name: 'a.pdf',
+			body: { name: 'b.pdf', content_type: 'application/pdf' },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'PUT',
+				url: 'buckets/bucket-test-001/assets',
+				body: { name: 'a.pdf', content_type: 'application/pdf' },
+			}),
+		);
+	});
+
+	it('bucket.getAsset encodes asset names in the URL', async () => {
+		mockRequest.mockResolvedValueOnce({});
+
+		await buckets.getAsset(ctx, {
+			bucket_id: 'bucket-test-001',
+			name: 'my report.pdf',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'GET',
+				url: 'buckets/bucket-test-001/assets/my%20report.pdf',
+			}),
+		);
 	});
 
 	it('bucket.deleteAsset sends DELETE /buckets/{bucket_id}/assets/{name}', async () => {
@@ -3513,8 +3472,8 @@ describe('griptape registry completeness', () => {
 		return names;
 	}
 
-	it('exposes 143 wired endpoints', () => {
-		expect(flattenEndpoints()).toHaveLength(143);
+	it('exposes 140 wired endpoints', () => {
+		expect(flattenEndpoints()).toHaveLength(140);
 	});
 
 	it('defaults to api_key auth', () => {
@@ -3532,7 +3491,7 @@ describe('griptape registry completeness', () => {
 			expect(schemas[name]).toBeDefined();
 			expect(meta[name]).toBeDefined();
 		}
-		expect(Object.keys(schemas)).toHaveLength(143);
+		expect(Object.keys(schemas)).toHaveLength(140);
 	});
 });
 
