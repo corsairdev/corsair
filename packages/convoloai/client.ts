@@ -1,19 +1,21 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class ConvoloAiAPIError extends Error {
 	constructor(
 		message: string,
-		public readonly code?: string,
+		public readonly status?: number,
+		public readonly body?: unknown,
+		options?: { cause?: Error },
 	) {
-		super(message);
+		super(message, options?.cause ? { cause: options.cause } : undefined);
 		this.name = 'ConvoloAiAPIError';
+		this.status = status;
+		this.body = body;
 	}
 }
 
-// TODO: Update with your API base URL
-const CONVOLOAI_API_BASE = 'https://api.example.com';
+const CONVOLOAI_API_BASE = 'https://app.brightcall.ai';
 
 export async function makeConvoloAiRequest<T>(
 	endpoint: string,
@@ -21,7 +23,7 @@ export async function makeConvoloAiRequest<T>(
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		query?: Record<string, string | number | boolean | string[] | undefined>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
@@ -31,11 +33,9 @@ export async function makeConvoloAiRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			'api-key': apiKey,
 		},
 	};
 
@@ -47,14 +47,19 @@ export async function makeConvoloAiRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
-			throw new ConvoloAiAPIError(error.message);
+			throw new ConvoloAiAPIError(error.message, undefined, undefined, {
+				cause: error,
+			});
 		}
 		throw new ConvoloAiAPIError('Unknown error');
 	}
