@@ -42,7 +42,7 @@ function expectLiveOutput(
 	const schema = OUTPUTS[schemaKey];
 	if (!schema) throw new Error(`No output schema registered for ${schemaKey}`);
 	if (schema.safeParse(res).success) return;
-	if (Array.isArray(res)) {
+	if (Array.isArray(res) && res.length > 0) {
 		for (const row of res.slice(0, 5)) {
 			expect(row !== null && typeof row === 'object').toBe(true);
 		}

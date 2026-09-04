@@ -87,7 +87,10 @@ export async function makeBenchmarkEmailRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body: method === 'POST' || method === 'PATCH' ? body : undefined,
+		body:
+			method === 'POST' || method === 'PATCH' || method === 'DELETE'
+				? body
+				: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query,
 	};

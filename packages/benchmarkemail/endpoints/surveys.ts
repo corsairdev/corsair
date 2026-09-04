@@ -137,7 +137,10 @@ export const getSurveyReportAnswerText: BenchmarkEmailEndpoints['surveysGetSurve
 		>(
 			`Survey/${encodeURIComponent(input.surveyID)}/ReportAnswer/Text`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: compactQuery({ questionID: input.questionID }),
+			},
 		);
 
 		await logEventFromContext(
@@ -156,7 +159,10 @@ export const getSurveyReportAnswerComment: BenchmarkEmailEndpoints['surveysGetSu
 		>(
 			`Survey/${encodeURIComponent(input.surveyID)}/ReportAnswer/Comment`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: compactQuery({ questionID: input.questionID }),
+			},
 		);
 
 		await logEventFromContext(
@@ -175,7 +181,10 @@ export const getSurveyReportAnswerOther: BenchmarkEmailEndpoints['surveysGetSurv
 		>(
 			`Survey/${encodeURIComponent(input.surveyID)}/ReportAnswer/Other`,
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: compactQuery({ questionID: input.questionID }),
+			},
 		);
 
 		await logEventFromContext(

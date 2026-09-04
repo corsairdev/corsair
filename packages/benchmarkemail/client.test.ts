@@ -115,6 +115,30 @@ describe('Benchmark Email client', () => {
 			);
 		});
 
+		it('forwards an explicitly supplied DELETE body as JSON', async () => {
+			await makeBenchmarkEmailRequest('Contact/ContactDetails', TOKEN, {
+				method: 'DELETE',
+				body: { emails: ['jane@example.com'] },
+			});
+			expect(calls[0]?.init?.method).toBe('DELETE');
+			expect(typeof calls[0]?.init?.body).toBe('string');
+			expect(JSON.parse(calls[0]?.init?.body as string)).toEqual({
+				emails: ['jane@example.com'],
+			});
+		});
+
+		it('sends no body on a DELETE without a supplied payload', async () => {
+			await makeBenchmarkEmailRequest(
+				'Contact/list_1/ContactDetails/1',
+				TOKEN,
+				{
+					method: 'DELETE',
+				},
+			);
+			expect(calls[0]?.init?.method).toBe('DELETE');
+			expect(calls[0]?.init?.body).toBeUndefined();
+		});
+
 		it('appends defined query params to the URL', async () => {
 			await makeBenchmarkEmailRequest('Contact/list_1/ContactDetails', TOKEN, {
 				method: 'GET',

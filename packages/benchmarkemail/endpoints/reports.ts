@@ -6,7 +6,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BenchmarkEmailEndpoints } from '..';
 import { makeBenchmarkEmailRequest } from '../client';
-import { compactQuery } from './shared';
+import { compactQuery, eventLogPayload } from './shared';
 import type { BenchmarkEmailEndpointOutputs } from './types';
 
 export const getABTestReport: BenchmarkEmailEndpoints['reportsGetABTestReport'] =
@@ -226,7 +226,7 @@ export const getContactReportHistory: BenchmarkEmailEndpoints['reportsGetContact
 		await logEventFromContext(
 			ctx,
 			'benchmarkemail.reports.getContactReportHistory',
-			{ ...input },
+			eventLogPayload(input, ['email']),
 			'completed',
 		);
 		return response;

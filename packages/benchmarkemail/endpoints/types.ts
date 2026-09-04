@@ -2634,6 +2634,7 @@ export type surveysGetSurveyIndividualQuestionResultResponse = z.infer<
 
 const surveysGetSurveyReportAnswerTextInputSchema = z.object({
 	surveyID: z.string().min(1),
+	questionID: z.string().min(1),
 });
 
 export type surveysGetSurveyReportAnswerTextInput = z.infer<
@@ -2649,6 +2650,7 @@ export type surveysGetSurveyReportAnswerTextResponse = z.infer<
 
 const surveysGetSurveyReportAnswerCommentInputSchema = z.object({
 	surveyID: z.string().min(1),
+	questionID: z.string().min(1),
 });
 
 export type surveysGetSurveyReportAnswerCommentInput = z.infer<
@@ -2664,6 +2666,7 @@ export type surveysGetSurveyReportAnswerCommentResponse = z.infer<
 
 const surveysGetSurveyReportAnswerOtherInputSchema = z.object({
 	surveyID: z.string().min(1),
+	questionID: z.string().min(1),
 });
 
 export type surveysGetSurveyReportAnswerOtherInput = z.infer<

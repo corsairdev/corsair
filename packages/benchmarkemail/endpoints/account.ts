@@ -6,7 +6,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BenchmarkEmailEndpoints } from '..';
 import { makeBenchmarkEmailRequest } from '../client';
-import { compactQuery } from './shared';
+import { compactQuery, eventLogPayload } from './shared';
 import type { BenchmarkEmailEndpointOutputs } from './types';
 
 export const addRemoveInboxTestsFromSubAccount: BenchmarkEmailEndpoints['accountAddRemoveInboxTestsFromSubAccount'] =
@@ -336,7 +336,7 @@ export const changePassword: BenchmarkEmailEndpoints['accountChangePassword'] =
 		await logEventFromContext(
 			ctx,
 			'benchmarkemail.account.changePassword',
-			{ ...input },
+			eventLogPayload(input),
 			'completed',
 		);
 		return response;
@@ -351,7 +351,7 @@ export const changeSecurityPIN: BenchmarkEmailEndpoints['accountChangeSecurityPI
 		await logEventFromContext(
 			ctx,
 			'benchmarkemail.account.changeSecurityPIN',
-			{ ...input },
+			eventLogPayload(input),
 			'completed',
 		);
 		return response;
@@ -549,7 +549,7 @@ export const loginRedirectUsingToken: BenchmarkEmailEndpoints['accountLoginRedir
 		await logEventFromContext(
 			ctx,
 			'benchmarkemail.account.loginRedirectUsingToken',
-			{ ...input },
+			eventLogPayload(input),
 			'completed',
 		);
 		return response;
@@ -596,7 +596,7 @@ export const saveSecurityPIN: BenchmarkEmailEndpoints['accountSaveSecurityPIN'] 
 		await logEventFromContext(
 			ctx,
 			'benchmarkemail.account.saveSecurityPIN',
-			{ ...input },
+			eventLogPayload(input),
 			'completed',
 		);
 		return response;

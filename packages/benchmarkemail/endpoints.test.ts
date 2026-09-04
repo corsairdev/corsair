@@ -1810,7 +1810,7 @@ describe('operation routing', () => {
 			method: 'GET',
 			url: 'Survey/test_surveyID/ReportAnswer/Text',
 			kind: 'generic',
-			input: { surveyID: 'test_surveyID' },
+			input: { surveyID: 'test_surveyID', questionID: 'test_questionID' },
 		},
 		{
 			path: 'surveys.getSurveyReportAnswerComment',
@@ -1819,7 +1819,7 @@ describe('operation routing', () => {
 			method: 'GET',
 			url: 'Survey/test_surveyID/ReportAnswer/Comment',
 			kind: 'generic',
-			input: { surveyID: 'test_surveyID' },
+			input: { surveyID: 'test_surveyID', questionID: 'test_questionID' },
 		},
 		{
 			path: 'surveys.getSurveyReportAnswerOther',
@@ -1828,7 +1828,7 @@ describe('operation routing', () => {
 			method: 'GET',
 			url: 'Survey/test_surveyID/ReportAnswer/Other',
 			kind: 'generic',
-			input: { surveyID: 'test_surveyID' },
+			input: { surveyID: 'test_surveyID', questionID: 'test_questionID' },
 		},
 		{
 			path: 'surveys.getSurveyReportDetail',
@@ -3103,6 +3103,18 @@ describe('endpoint behaviour', () => {
 			expect(behaviourCall().method).toBe('DELETE');
 			expect(behaviourCall().body).toBeUndefined();
 		});
+
+		it('forwards an explicitly supplied data record as the DELETE body', async () => {
+			await op('contacts', 'deleteContactsFromCurrentLists')(
+				makeBehaviourCtx(),
+				{
+					data: { emails: ['jane@example.com'] },
+					search: 'jane@example.com',
+				},
+			);
+			expect(behaviourCall().method).toBe('DELETE');
+			expect(behaviourCall().body).toEqual({ emails: ['jane@example.com'] });
+		});
 	});
 
 	describe('query handling', () => {
@@ -3155,13 +3167,13 @@ describe('endpoint behaviour', () => {
 			['webhooks', 'createWebhook'],
 		])('logs benchmarkemail.%s.%s as completed', async (group, leaf) => {
 			const input =
-				group === 'webhooks'
-					? { listID: 'list_1', data: { url: 'https://example.com/hook' } }
-					: group === 'automations'
-						? { automationID: 'automation_1' }
-						: group === 'emails' || group === 'reports'
-							? { id: 'email_1' }
-							: { listID: 'list_1', data: { email: 'jane@example.com' } };
+				group === 'contacts'
+					? { listID: 'list_1' }
+					: group === 'webhooks'
+						? { listID: 'list_1', data: { url: 'https://example.com/hook' } }
+						: group === 'automations'
+							? { automationID: 'automation_1' }
+							: { id: 'email_1' };
 			await op(group, leaf)(makeBehaviourCtx(), input);
 			expect(mockLogEvent).toHaveBeenCalledWith(
 				expect.anything(),
