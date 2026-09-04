@@ -1192,8 +1192,8 @@ ${setupPluginCall},
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 \`\`\`

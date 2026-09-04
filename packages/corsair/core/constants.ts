@@ -55,6 +55,7 @@ export const BaseProviders = [
 	'apipie',
 	'apisports',
 	'asana',
+	'ascora',
 	'asindataapi',
 	'asticaai',
 	'asyncinterview',
@@ -83,6 +84,7 @@ export const BaseProviders = [
 	'boloforms',
 	'boltiot',
 	'bonsai',
+	'botbaba',
 	'bookingmood',
 	'botpress',
 	'botsonic',
@@ -90,10 +92,13 @@ export const BaseProviders = [
 	'box',
 	'boxhero',
 	'brandfetch',
+	'breathehr',
 	'brex',
 	'brightdata',
 	'browseai',
 	'browserless',
+	'browsertool',
+	'bubble',
 	'bugsnag',
 	'buildkite',
 	'cal',
@@ -101,6 +106,8 @@ export const BaseProviders = [
 	'canva',
 	'canvas',
 	'capsulecrm',
+	'castingwords',
+	'certifier',
 	'chatbotkit',
 	'chatfai',
 	'circleci',
@@ -111,6 +118,7 @@ export const BaseProviders = [
 	'cloudinary',
 	'collegefootballdata',
 	'confluence',
+	'connecteam',
 	'contentfulgraphql',
 	'contextsevenmcp',
 	'crowterminal',
@@ -118,6 +126,7 @@ export const BaseProviders = [
 	'customgpt',
 	'databricks',
 	'datadog',
+	'datarobot',
 	'deepseek',
 	'devinmcp',
 	'diffbot',
@@ -130,6 +139,7 @@ export const BaseProviders = [
 	'dripcel',
 	'dropbox',
 	'dropboxsign',
+	'dynapictures',
 	'epicgames',
 	'exa',
 	'facebook',
@@ -205,6 +215,8 @@ export const BaseProviders = [
 	'resend',
 	'retailed',
 	'salesforce',
+	'sapsuccessfactors',
+	'scaleai',
 	'scrapegraphai',
 	'securitytrails',
 	'sendgrid',
@@ -227,8 +239,10 @@ export const BaseProviders = [
 	'telegram',
 	'textrazor',
 	'ticktick',
-	'tisane',
 	'timecamp',
+	'timelink',
+	'tinyurl',
+	'tisane',
 	'todoist',
 	'toggl',
 	'trello',
@@ -248,6 +262,7 @@ export const BaseProviders = [
 	'webvizio',
 	'whatsapp',
 	'witai',
+	'worldnewsapi',
 	'wiza',
 	'workday',
 	'workiom',
@@ -255,6 +270,7 @@ export const BaseProviders = [
 	'youcom',
 	'youtube',
 	'zendesk',
+	'zohoinventory',
 	'zohomail',
 	'zoom',
 	'zoominfo',
@@ -303,6 +319,7 @@ export const ProviderDisplayNames = {
 	apipie: 'APIpie AI',
 	apisports: 'API-Sports',
 	asana: 'Asana',
+	ascora: 'Ascora',
 	asindataapi: 'ASIN Data API',
 	asticaai: 'Astica AI',
 	asyncinterview: 'Async Interview',
@@ -331,6 +348,7 @@ export const ProviderDisplayNames = {
 	boloforms: 'Boloforms',
 	boltiot: 'Bolt IoT',
 	bonsai: 'Bonsai',
+	botbaba: 'Botbaba',
 	bookingmood: 'Bookingmood',
 	botpress: 'Botpress',
 	botsonic: 'Botsonic',
@@ -338,10 +356,13 @@ export const ProviderDisplayNames = {
 	box: 'Box',
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
+	breathehr: 'Breathe HR',
 	brex: 'Brex',
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
 	browserless: 'Browserless',
+	browsertool: 'Browser Tool',
+	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
 	cal: 'Cal',
@@ -349,6 +370,8 @@ export const ProviderDisplayNames = {
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
 	capsulecrm: 'Capsule CRM',
+	castingwords: 'CastingWords',
+	certifier: 'Certifier',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
 	circleci: 'CircleCI',
@@ -359,6 +382,7 @@ export const ProviderDisplayNames = {
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
+	connecteam: 'Connecteam',
 	contentfulgraphql: 'Contentful GraphQL',
 	contextsevenmcp: 'Context7',
 	crowterminal: 'CrowTerminal',
@@ -366,6 +390,7 @@ export const ProviderDisplayNames = {
 	customgpt: 'CustomGPT',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
+	datarobot: 'DataRobot',
 	deepseek: 'DeepSeek',
 	devinmcp: 'Devin MCP',
 	diffbot: 'Diffbot',
@@ -378,6 +403,7 @@ export const ProviderDisplayNames = {
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
 	dropboxsign: 'Dropbox Sign',
+	dynapictures: 'Dynapictures',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
@@ -453,6 +479,8 @@ export const ProviderDisplayNames = {
 	resend: 'Resend',
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
+	sapsuccessfactors: 'SAP SuccessFactors',
+	scaleai: 'Scale AI',
 	scrapegraphai: 'ScrapeGraphAI',
 	securitytrails: 'SecurityTrails',
 	sendgrid: 'SendGrid',
@@ -475,8 +503,10 @@ export const ProviderDisplayNames = {
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
-	tisane: 'Tisane',
 	timecamp: 'TimeCamp',
+	timelink: 'Timelink',
+	tinyurl: 'TinyURL',
+	tisane: 'Tisane',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -496,6 +526,7 @@ export const ProviderDisplayNames = {
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
+	worldnewsapi: 'World News API',
 	wiza: 'Wiza',
 	workday: 'Workday',
 	workiom: 'Workiom',
@@ -503,6 +534,7 @@ export const ProviderDisplayNames = {
 	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
+	zohoinventory: 'Zoho Inventory',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
 	zoominfo: 'ZoomInfo',
@@ -558,6 +590,7 @@ export type AllProviders =
 	| 'apipie'
 	| 'apisports'
 	| 'asana'
+	| 'ascora'
 	| 'asindataapi'
 	| 'asticaai'
 	| 'asyncinterview'
@@ -586,6 +619,7 @@ export type AllProviders =
 	| 'boloforms'
 	| 'boltiot'
 	| 'bonsai'
+	| 'botbaba'
 	| 'bookingmood'
 	| 'botpress'
 	| 'botsonic'
@@ -593,10 +627,13 @@ export type AllProviders =
 	| 'box'
 	| 'boxhero'
 	| 'brandfetch'
+	| 'breathehr'
 	| 'brex'
 	| 'brightdata'
 	| 'browseai'
 	| 'browserless'
+	| 'browsertool'
+	| 'bubble'
 	| 'bugsnag'
 	| 'buildkite'
 	| 'cal'
@@ -604,6 +641,8 @@ export type AllProviders =
 	| 'canva'
 	| 'canvas'
 	| 'capsulecrm'
+	| 'castingwords'
+	| 'certifier'
 	| 'chatbotkit'
 	| 'chatfai'
 	| 'circleci'
@@ -614,6 +653,7 @@ export type AllProviders =
 	| 'cloudinary'
 	| 'collegefootballdata'
 	| 'confluence'
+	| 'connecteam'
 	| 'contentfulgraphql'
 	| 'contextsevenmcp'
 	| 'crowterminal'
@@ -621,6 +661,7 @@ export type AllProviders =
 	| 'customgpt'
 	| 'databricks'
 	| 'datadog'
+	| 'datarobot'
 	| 'deepseek'
 	| 'devinmcp'
 	| 'diffbot'
@@ -632,6 +673,8 @@ export type AllProviders =
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
+	| 'dropboxsign'
+	| 'dynapictures'
 	| 'epicgames'
 	| 'exa'
 	| 'facebook'
@@ -707,6 +750,8 @@ export type AllProviders =
 	| 'resend'
 	| 'retailed'
 	| 'salesforce'
+	| 'sapsuccessfactors'
+	| 'scaleai'
 	| 'scrapegraphai'
 	| 'securitytrails'
 	| 'sendgrid'
@@ -729,8 +774,10 @@ export type AllProviders =
 	| 'telegram'
 	| 'textrazor'
 	| 'ticktick'
-	| 'tisane'
 	| 'timecamp'
+	| 'timelink'
+	| 'tinyurl'
+	| 'tisane'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
@@ -750,6 +797,7 @@ export type AllProviders =
 	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
+	| 'worldnewsapi'
 	| 'wiza'
 	| 'workday'
 	| 'workiom'
@@ -757,6 +805,7 @@ export type AllProviders =
 	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
+	| 'zohoinventory'
 	| 'zohomail'
 	| 'zoom'
 	| 'zoominfo'
