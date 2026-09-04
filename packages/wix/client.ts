@@ -108,7 +108,19 @@ export async function makeWixRequest<T>(
 	// header can never replace the credential.
 	const customHeaders: Record<string, string> = {};
 	for (const [key, value] of Object.entries(headers ?? {})) {
-		if (key.toLowerCase() === 'authorization') continue;
+		// Authorization is always derived from the stored token, and the
+		// scope headers are always derived from the validated siteId /
+		// accountId options. WHATWG `Headers` merges case variants into a
+		// comma-separated value, so any caller-supplied casing of these
+		// three headers would corrupt the real one and is dropped here.
+		const lowerKey = key.toLowerCase();
+		if (
+			lowerKey === 'authorization' ||
+			lowerKey === 'wix-site-id' ||
+			lowerKey === 'wix-account-id'
+		) {
+			continue;
+		}
 		customHeaders[key] = value;
 	}
 	const config: OpenAPIConfig = {

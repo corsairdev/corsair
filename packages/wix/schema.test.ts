@@ -138,23 +138,25 @@ describe('Wix query filter grammar', () => {
 		).toBeDefined();
 	});
 
-	it('rejects a field mapped to a bare primitive', () => {
-		expect(() =>
+	it('accepts Wix scalar equality shorthand for a field', () => {
+		// The Wix API Query Language documents `{"field": "value"}` as the
+		// equality shorthand for `{"field": {"$eq": "value"}}`.
+		expect(
 			WixEndpointInputSchemas.queryContacts.parse({
 				filter: { name: 'Ada' },
 			}),
-		).toThrow();
-		expect(() =>
+		).toBeDefined();
+		expect(
 			WixEndpointInputSchemas.queryContacts.parse({
 				filter: { age: 30 },
 			}),
-		).toThrow();
+		).toBeDefined();
 	});
 
 	it('rejects by-filter updates with malformed filters', () => {
 		expect(() =>
 			WixEndpointInputSchemas.bulkUpdateProductsByFilter.parse({
-				filter: { visible: true },
+				filter: { visible: () => 'not JSON' },
 				update: { visible: false },
 			}),
 		).toThrow();

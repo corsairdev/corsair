@@ -46,13 +46,18 @@ const WixJsonValueSchema: z.ZodType<WixJson> = z.lazy(() =>
 ) as z.ZodType<WixJson>;
 
 /**
- * Wix query-language filter: `{ [fieldPath]: { [operator]: value } }`.
- * Logical operators hold arrays (`$and`/`$or`) or a nested filter (`$not`),
- * so every filter value is an operator object or a filter array — a bare
- * primitive is malformed and is rejected before reaching the API.
+ * Wix query-language filter. The Wix API Query Language supports two forms
+ * per field path: scalar equality shorthand (`{ "status": "DONE" }`) and
+ * explicit operator objects (`{ "status": { "$eq": "DONE" } }`). Logical
+ * operators hold arrays (`$and`/`$or`) or a nested filter (`$not`). Every
+ * value is validated as JSON so garbage fails locally.
  */
 export type WixFilter = {
 	[fieldPath: string]:
+		| string
+		| number
+		| boolean
+		| null
 		| { [operator: string]: WixJson }
 		| WixFilter[]
 		| WixFilter;
@@ -61,6 +66,10 @@ const WixFilterSchema: z.ZodType<WixFilter> = z.lazy(() =>
 	z.record(
 		z.string(),
 		z.union([
+			z.string(),
+			z.number(),
+			z.boolean(),
+			z.null(),
 			z.record(z.string(), WixJsonValueSchema),
 			z.array(WixFilterSchema),
 		]),
@@ -113,12 +122,37 @@ const BulkActionMetadataSchema = z
  * Wix resources returned in query and bulk-action responses are objects
  * carrying string `id` and, when versioned, string `revision` fields
  * (int64 encoded). Typing them rejects malformed resource payloads while
- * tolerating resources that legitimately omit them.
+ * tolerating resources that legitimately omit them. Wix response bodies are
+ * JSON, so every item value is additionally validated recursively as JSON —
+ * non-JSON garbage (functions, class instances, `undefined`) in nested
+ * fields fails loudly instead of reaching consumers.
  */
-const WixItemSchema = z.looseObject({
-	id: z.string().optional(),
-	revision: z.string().optional(),
-});
+const WixItemSchema = z
+	.looseObject({
+		id: z.string().optional(),
+		revision: z.string().optional(),
+	})
+	.refine((item) => Object.values(item).every(isWixJson), {
+		message: 'Wix item contains a non-JSON value',
+	});
+
+function isWixJson(value: unknown): boolean {
+	if (
+		value === null ||
+		typeof value === 'string' ||
+		typeof value === 'number' ||
+		typeof value === 'boolean'
+	) {
+		return true;
+	}
+	if (Array.isArray(value)) {
+		return value.every(isWixJson);
+	}
+	if (typeof value === 'object' && value !== null) {
+		return Object.values(value).every(isWixJson);
+	}
+	return false;
+}
 
 type WixQueryResponse<ItemsField extends string> = {
 	[field in ItemsField]?: z.infer<typeof WixItemSchema>[];
@@ -945,7 +979,12 @@ export type CheckDomainAvailabilityResponse = z.infer<
 
 const GetFolderBySiteInputSchema = z.looseObject({
 	...SiteScopeFields,
-	siteId: z.string(),
+	// Path parameter for /site-folders/v2/folders/sites/{targetSiteId}.
+	// Named distinctly from the `siteId` scope field so the site whose
+	// folder is fetched is independent of the request's scope headers:
+	// the same input drives both a path segment and a scope header when
+	// they share a name, which blocks account-scoped calls.
+	targetSiteId: z.string(),
 });
 export type GetFolderBySiteInput = z.infer<typeof GetFolderBySiteInputSchema>;
 const GetFolderBySiteResponseSchema = z.looseObject({

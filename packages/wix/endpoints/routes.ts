@@ -723,11 +723,11 @@ export const wixRoutes: WixRoute[] = [
 		group: 'sites',
 		name: 'getFolderBySite',
 		method: 'GET',
-		path: '/site-folders/v1/folders/by-site/{siteId}',
+		path: '/site-folders/v2/folders/sites/{targetSiteId}',
 		specCode: 'WIX_GET_FOLDER_BY_SITE',
 		description:
 			'Tool to retrieve folder information for a specific site by site ID. Use when you need to get the parent folder details of a site. Note: If the specified site is at root level, the returned folder object will be empty.',
-		pathParams: ['siteId'],
+		pathParams: ['targetSiteId'],
 		riskLevel: 'read',
 	},
 	{
@@ -735,7 +735,7 @@ export const wixRoutes: WixRoute[] = [
 		group: 'sites',
 		name: 'queryFolders',
 		method: 'POST',
-		path: '/site-folders/v1/folders/query',
+		path: '/site-folders/v2/folders/query',
 		specCode: 'WIX_QUERY_FOLDERS',
 		description:
 			'Tool to retrieve a list of site folders with optional paging, filtering, and sorting. Use when you need to organize and manage Wix sites by folders in an account.',

@@ -122,6 +122,36 @@ describe('makeWixRequest plumbing', () => {
 		},
 	);
 
+	it.each([['wix-site-id'], ['WIX-SITE-ID'], ['Wix-Site-Id']])(
+		'never lets a custom %s header corrupt the site scope',
+		async (header) => {
+			await makeWixRequest('/apps/v1/instance', 'tok', {
+				headers: { [header]: 'forged' },
+				siteId: 'site-1',
+			});
+			const [config] = mockRequest.mock.calls[0] as [
+				{ HEADERS: Record<string, string> },
+			];
+			expect(config.HEADERS['wix-site-id']).toBe('site-1');
+			expect(Object.values(config.HEADERS)).not.toContain('forged');
+		},
+	);
+
+	it.each([['wix-account-id'], ['WIX-ACCOUNT-ID'], ['Wix-Account-Id']])(
+		'never lets a custom %s header corrupt the account scope',
+		async (header) => {
+			await makeWixRequest('/apps/v1/instance', 'tok', {
+				headers: { [header]: 'forged' },
+				accountId: 'account-1',
+			});
+			const [config] = mockRequest.mock.calls[0] as [
+				{ HEADERS: Record<string, string> },
+			];
+			expect(config.HEADERS['wix-account-id']).toBe('account-1');
+			expect(Object.values(config.HEADERS)).not.toContain('forged');
+		},
+	);
+
 	it('rejects requests that set both siteId and accountId', async () => {
 		await expect(
 			makeWixRequest('/site-properties/v4/properties', 'tok', {

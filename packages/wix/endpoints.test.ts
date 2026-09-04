@@ -289,6 +289,43 @@ describe('Wix endpoints', () => {
 		expect(path).toBe('/contacts/v4/contacts/query');
 	});
 
+	it('accepts Wix scalar equality shorthand in the typed filter field', async () => {
+		const fn = endpointFn('contacts', 'query');
+		await fn(mockCtx, { siteId: 's', filter: { status: 'DONE' } });
+
+		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{ body?: { query?: { filter?: unknown } } },
+		];
+		expect(options.body?.query?.filter).toEqual({ status: 'DONE' });
+	});
+
+	it('accepts explicit operator objects alongside the scalar shorthand', async () => {
+		const fn = endpointFn('contacts', 'query');
+		await fn(mockCtx, {
+			siteId: 's',
+			filter: { lastName: { $startsWith: 'Mu' } },
+		});
+
+		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{ body?: { query?: { filter?: unknown } } },
+		];
+		expect(options.body?.query?.filter).toEqual({
+			lastName: { $startsWith: 'Mu' },
+		});
+	});
+
+	it('rejects non-JSON filter values before reaching the API', async () => {
+		const fn = endpointFn('contacts', 'query');
+		await expect(
+			fn(mockCtx, { siteId: 's', filter: { status: () => 'oops' } }),
+		).rejects.toThrow();
+		expect(mockMakeWixRequest).not.toHaveBeenCalled();
+	});
+
 	it('excludes snake_case path param duplicates from the request body', async () => {
 		const fn = endpointFn('contacts', 'addLabels');
 		await fn(mockCtx, {
@@ -350,6 +387,32 @@ describe('Wix endpoints', () => {
 		mockMakeWixRequest.mockResolvedValueOnce({ contacts: 'not-an-array' });
 		const fn = endpointFn('contacts', 'query');
 		await expect(fn(mockCtx, { siteId: 's' })).rejects.toThrow();
+	});
+
+	it('rejects response items containing non-JSON values', async () => {
+		mockMakeWixRequest.mockResolvedValueOnce({
+			contacts: [{ id: 'c1', nested: { callback: () => 'oops' } }],
+		});
+		const fn = endpointFn('contacts', 'query');
+		await expect(fn(mockCtx, { siteId: 's' })).rejects.toThrow(/non-JSON/i);
+		expect(mockMakeWixRequest).toHaveBeenCalledTimes(1);
+	});
+
+	it('accepts response items whose nested values are all JSON', async () => {
+		mockMakeWixRequest.mockResolvedValueOnce({
+			contacts: [
+				{
+					id: 'c1',
+					revision: '1',
+					info: { phones: [{ tag: 'MAIN', number: '+15550001' }] },
+				},
+			],
+		});
+		const fn = endpointFn('contacts', 'query');
+		const result = (await fn(mockCtx, { siteId: 's' })) as {
+			contacts?: { id?: string }[];
+		};
+		expect(result.contacts?.[0]?.id).toBe('c1');
 	});
 
 	it('sends GET query params as query, not body', async () => {
