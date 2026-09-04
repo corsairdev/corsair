@@ -1,7 +1,7 @@
 {
   "id": "aimlapi",
-  "displayName": "AimlApi",
-  "description": "AimlApi plugin for Corsair",
+  "displayName": "AIML API",
+  "description": "Unified API gateway for accessing many AI and machine learning models.",
   "npmPackageName": "@corsair-dev/aimlapi",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

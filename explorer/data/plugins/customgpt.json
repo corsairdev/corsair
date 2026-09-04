@@ -1,7 +1,7 @@
 {
   "id": "customgpt",
   "displayName": "CustomGPT",
-  "description": "CustomGPT plugin for Corsair",
+  "description": "Platform for building custom ChatGPT-style agents trained on your business content.",
   "npmPackageName": "@corsair-dev/customgpt",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "brex",
   "displayName": "Brex",
-  "description": "Brex plugin for Corsair",
+  "description": "Corporate card and spend management platform for startups and growing businesses.",
   "npmPackageName": "@corsair-dev/brex",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

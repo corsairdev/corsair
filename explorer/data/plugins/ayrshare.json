@@ -1,7 +1,7 @@
 {
   "id": "ayrshare",
   "displayName": "Ayrshare",
-  "description": "Ayrshare plugin for Corsair",
+  "description": "Social media API for posting, scheduling, and analytics across multiple platforms.",
   "npmPackageName": "@corsair-dev/ayrshare",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

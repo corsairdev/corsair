@@ -1,7 +1,7 @@
 {
   "id": "apibible",
   "displayName": "API.Bible",
-  "description": "API.Bible plugin for Corsair",
+  "description": "Bible content API for accessing scripture text, versions, and passage lookups.",
   "npmPackageName": "@corsair-dev/apibible",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "sentry",
   "displayName": "Sentry",
-  "description": "Sentry plugin for Corsair",
+  "description": "Application monitoring for error tracking, performance tracing, and release health insights.",
   "npmPackageName": "@corsair-dev/sentry",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -137,7 +137,7 @@
     {
       "path": "sentry.api.issues.delete",
       "shortPath": "issues.delete",
-      "description": "Permanently delete an issue [DESTRUCTIVE]",
+      "description": "Permanently delete an issue",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -779,7 +779,7 @@
     {
       "path": "sentry.api.projects.delete",
       "shortPath": "projects.delete",
-      "description": "Permanently delete a project [DESTRUCTIVE]",
+      "description": "Permanently delete a project",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -1103,7 +1103,7 @@
     {
       "path": "sentry.api.releases.delete",
       "shortPath": "releases.delete",
-      "description": "Delete a release [DESTRUCTIVE]",
+      "description": "Delete a release",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -1412,7 +1412,7 @@
     {
       "path": "sentry.api.teams.delete",
       "shortPath": "teams.delete",
-      "description": "Delete a team [DESTRUCTIVE]",
+      "description": "Delete a team",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {

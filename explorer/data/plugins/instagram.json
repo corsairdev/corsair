@@ -1,7 +1,7 @@
 {
   "id": "instagram",
   "displayName": "Instagram",
-  "description": "Instagram plugin for Corsair",
+  "description": "Social media platform for photos, reels, stories, and business content publishing via Meta APIs.",
   "npmPackageName": "@corsair-dev/instagram",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

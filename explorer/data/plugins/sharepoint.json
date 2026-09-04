@@ -1,7 +1,7 @@
 {
   "id": "sharepoint",
-  "displayName": "Sharepoint",
-  "description": "Sharepoint plugin for Corsair",
+  "displayName": "SharePoint",
+  "description": "Microsoft collaboration platform for document libraries, sites, lists, and intranet content.",
   "npmPackageName": "@corsair-dev/sharepoint",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -468,7 +468,7 @@
     {
       "path": "sharepoint.api.drive.deleteVersion",
       "shortPath": "drive.deleteVersion",
-      "description": "Delete a specific version of a drive item [DESTRUCTIVE]",
+      "description": "Delete a specific version of a drive item",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1102,7 +1102,7 @@
     {
       "path": "sharepoint.api.folders.delete",
       "shortPath": "folders.delete",
-      "description": "Delete a SharePoint folder and all its contents [DESTRUCTIVE]",
+      "description": "Delete a SharePoint folder and all its contents",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1511,7 +1511,7 @@
     {
       "path": "sharepoint.api.items.delete",
       "shortPath": "items.delete",
-      "description": "Permanently delete a SharePoint list item [DESTRUCTIVE]",
+      "description": "Permanently delete a SharePoint list item",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2002,7 +2002,7 @@
     {
       "path": "sharepoint.api.lists.delete",
       "shortPath": "lists.delete",
-      "description": "Delete a SharePoint list by GUID [DESTRUCTIVE]",
+      "description": "Delete a SharePoint list by GUID",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2028,7 +2028,7 @@
     {
       "path": "sharepoint.api.lists.deleteByTitle",
       "shortPath": "lists.deleteByTitle",
-      "description": "Delete a SharePoint list by title [DESTRUCTIVE]",
+      "description": "Delete a SharePoint list by title",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2554,7 +2554,7 @@
     {
       "path": "sharepoint.api.recycleBin.deletePermanent",
       "shortPath": "recycleBin.deletePermanent",
-      "description": "Permanently delete an item from the recycle bin [DESTRUCTIVE]",
+      "description": "Permanently delete an item from the recycle bin",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -3158,7 +3158,7 @@
     {
       "path": "sharepoint.api.users.remove",
       "shortPath": "users.remove",
-      "description": "Remove a user from the SharePoint site [DESTRUCTIVE]",
+      "description": "Remove a user from the SharePoint site",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

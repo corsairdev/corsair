@@ -1,7 +1,7 @@
 {
   "id": "intercom",
   "displayName": "Intercom",
-  "description": "Intercom plugin for Corsair",
+  "description": "Customer messaging platform for support chat, product tours, and user engagement.",
   "npmPackageName": "@corsair-dev/intercom",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -400,7 +400,7 @@
     {
       "path": "intercom.api.articles.delete",
       "shortPath": "articles.delete",
-      "description": "Delete an article [DESTRUCTIVE]",
+      "description": "Delete an article",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -801,7 +801,7 @@
     {
       "path": "intercom.api.collections.delete",
       "shortPath": "collections.delete",
-      "description": "Delete a collection [DESTRUCTIVE]",
+      "description": "Delete a collection",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1166,7 +1166,7 @@
     {
       "path": "intercom.api.companies.delete",
       "shortPath": "companies.delete",
-      "description": "Delete a company [DESTRUCTIVE]",
+      "description": "Delete a company",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1797,7 +1797,7 @@
     {
       "path": "intercom.api.contacts.delete",
       "shortPath": "contacts.delete",
-      "description": "Delete a contact [DESTRUCTIVE]",
+      "description": "Delete a contact",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

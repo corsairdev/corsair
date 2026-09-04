@@ -1,7 +1,7 @@
 {
   "id": "buildkite",
   "displayName": "Buildkite",
-  "description": "Buildkite plugin for Corsair",
+  "description": "Continuous integration platform for running scalable pipelines and software build automation.",
   "npmPackageName": "@corsair-dev/buildkite",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

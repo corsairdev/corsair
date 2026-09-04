@@ -1,7 +1,7 @@
 {
   "id": "tavilymcp",
-  "displayName": "TavilyMcp",
-  "description": "TavilyMcp plugin for Corsair",
+  "displayName": "Tavily MCP",
+  "description": "MCP server exposing Tavily web search tools for AI agent research workflows.",
   "npmPackageName": "@corsair-dev/tavilymcp",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

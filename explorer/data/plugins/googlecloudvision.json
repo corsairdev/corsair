@@ -1,7 +1,7 @@
 {
   "id": "googlecloudvision",
   "displayName": "Google Cloud Vision",
-  "description": "Google Cloud Vision plugin for Corsair",
+  "description": "Image analysis API for labeling, OCR, face detection, and visual content understanding.",
   "npmPackageName": "@corsair-dev/googlecloudvision",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

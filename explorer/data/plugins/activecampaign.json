@@ -1,7 +1,7 @@
 {
   "id": "activecampaign",
   "displayName": "ActiveCampaign",
-  "description": "ActiveCampaign plugin for Corsair",
+  "description": "Marketing automation platform for email campaigns, CRM, and customer journey workflows.",
   "npmPackageName": "@corsair-dev/activecampaign",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,0 +1,124 @@
+---
+title: Database
+description: "Dynapictures local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Dynapictures plugin syncs data locally. Use `corsair.dynapictures.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Media
+
+Path: `dynapictures.db.media.search`
+
+```ts
+const rows = await corsair.dynapictures.db.media.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `folder` | `boolean` | equals |
+| `mimeType` | `string` | equals, contains, startsWith, endsWith, in |
+| `filename` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `animated` | `boolean` | equals |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `thumbnailUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateCreated` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateUpdated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Templates
+
+Path: `dynapictures.db.templates.search`
+
+```ts
+const rows = await corsair.dynapictures.db.templates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `thumbnail` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateCreated` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateUpdated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhooks
+
+Path: `dynapictures.db.webhooks.search`
+
+```ts
+const rows = await corsair.dynapictures.db.webhooks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uid` | `string` | equals, contains, startsWith, endsWith, in |
+| `eventType` | `string` | equals, contains, startsWith, endsWith, in |
+| `targetUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `designUid` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateCreated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Workspaces
+
+Path: `dynapictures.db.workspaces.search`
+
+```ts
+const rows = await corsair.dynapictures.db.workspaces.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateCreated` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateUpdated` | `string` | equals, contains, startsWith, endsWith, in |
+| `memberRole` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

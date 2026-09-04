@@ -1,7 +1,7 @@
 {
   "id": "merriamwebsterdict",
-  "displayName": "Merriam-Webster Dictionary",
-  "description": "Merriam-Webster Dictionary plugin for Corsair",
+  "displayName": "Merriam-Webster",
+  "description": "Dictionary API for definitions, thesaurus entries, and English language reference data.",
   "npmPackageName": "@corsair-dev/merriamwebsterdict",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

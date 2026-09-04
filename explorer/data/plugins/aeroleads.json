@@ -1,7 +1,7 @@
 {
   "id": "aeroleads",
-  "displayName": "Aeroleads",
-  "description": "Aeroleads plugin for Corsair",
+  "displayName": "AeroLeads",
+  "description": "B2B lead generation tool for finding business emails and prospect contact data.",
   "npmPackageName": "@corsair-dev/aeroleads",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

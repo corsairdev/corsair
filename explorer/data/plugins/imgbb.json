@@ -1,7 +1,7 @@
 {
   "id": "imgbb",
   "displayName": "ImgBB",
-  "description": "ImgBB plugin for Corsair",
+  "description": "Free image hosting service for uploading, storing, and sharing images via direct links.",
   "npmPackageName": "@corsair-dev/imgbb",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

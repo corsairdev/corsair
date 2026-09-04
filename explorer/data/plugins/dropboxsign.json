@@ -1,7 +1,7 @@
 {
   "id": "dropboxsign",
   "displayName": "Dropbox Sign",
-  "description": "Dropbox Sign plugin for Corsair",
+  "description": "E-signature platform for sending, signing, and tracking legally binding document agreements.",
   "npmPackageName": "@corsair-dev/dropboxsign",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "groqcloud",
-  "displayName": "GroqCloud",
-  "description": "GroqCloud plugin for Corsair",
+  "displayName": "Groq",
+  "description": "Fast AI inference API for low-latency LLM chat completions and language model hosting.",
   "npmPackageName": "@corsair-dev/groqcloud",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

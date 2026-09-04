@@ -1,5 +1,5 @@
 displayName: Gmail
-description: "Gmail plugin for Corsair — messages, threads, labels, drafts, and email events."
+description: Google email service for sending, reading, organizing messages, labels, and inbox automation.
 examples:
   read:
     path: messages.list
@@ -11,10 +11,10 @@ examples:
       raw: RnJvbTogbWVAZXhhbXBsZS5jb20NClRvOiB0ZWFtbWF0ZUBleGFtcGxlLmNvbQ0KU3ViamVjdDogSGVsbG8gZnJvbSBDb3JzYWlyDQpDb250ZW50LVR5cGU6IHRleHQvcGxhaW47IGNoYXJzZXQ9dXRmLTgNCg0KSGVsbG8gZnJvbSBDb3JzYWly
 dbExample:
   entity: messages
-  note: "Search synced messages without hitting Gmail."
+  note: Search synced messages without hitting Gmail.
   limit: 50
 exampleWebhook:
   path: messageChanged
-  note: "Fires when a Gmail message is received, deleted, or has its labels changed."
+  note: Fires when a Gmail message is received, deleted, or has its labels changed.
   after: |
     console.log('Gmail event:', result.data);

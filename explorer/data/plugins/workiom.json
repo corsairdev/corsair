@@ -1,7 +1,7 @@
 {
   "id": "workiom",
   "displayName": "Workiom",
-  "description": "Workiom plugin for Corsair",
+  "description": "No-code work management platform combining databases, automations, and team workflows.",
   "npmPackageName": "@corsair-dev/workiom",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
