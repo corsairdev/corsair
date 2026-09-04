@@ -301,6 +301,193 @@ describe('all Amara endpoint handlers', () => {
 			'k',
 		);
 
+		// Teams Projects
+		mockRequest.mockResolvedValueOnce({
+			objects: [{ slug: 'proj1', name: 'Project 1' }],
+		});
+		await Teams.listProjects(ctx(), { team_slug: 'ability', limit: 5 });
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/projects/',
+			'k',
+			{ query: { limit: 5 } },
+		);
+
+		mockRequest.mockResolvedValueOnce({
+			slug: 'proj1',
+			name: 'Project 1',
+		});
+		await Teams.getProject(ctx(), {
+			team_slug: 'ability',
+			project_slug: 'proj1',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/projects/proj1/',
+			'k',
+		);
+
+		mockRequest.mockResolvedValueOnce({
+			slug: 'proj1',
+			name: 'Project 1',
+		});
+		await Teams.createProject(ctx(), {
+			team_slug: 'ability',
+			slug: 'proj1',
+			name: 'Project 1',
+			description: 'desc',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/projects/',
+			'k',
+			{
+				method: 'POST',
+				body: { slug: 'proj1', name: 'Project 1', description: 'desc' },
+			},
+		);
+
+		mockRequest.mockResolvedValueOnce({
+			slug: 'proj1',
+			name: 'Project 1 Updated',
+		});
+		await Teams.updateProject(ctx(), {
+			team_slug: 'ability',
+			project_slug: 'proj1',
+			name: 'Project 1 Updated',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/projects/proj1/',
+			'k',
+			{
+				method: 'PUT',
+				body: { name: 'Project 1 Updated' },
+			},
+		);
+
+		mockRequest.mockResolvedValueOnce({ ok: true });
+		await Teams.deleteProject(ctx(), {
+			team_slug: 'ability',
+			project_slug: 'proj1',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/projects/proj1/',
+			'k',
+			{
+				method: 'DELETE',
+			},
+		);
+
+		// Teams Members
+		mockRequest.mockResolvedValueOnce({
+			objects: [{ user: 'alice', role: 'manager' }],
+		});
+		await Teams.listMembers(ctx(), { team_slug: 'ability', limit: 10 });
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/members/',
+			'k',
+			{ query: { limit: 10 } },
+		);
+
+		mockRequest.mockResolvedValueOnce({
+			user: 'alice',
+			role: 'manager',
+		});
+		await Teams.getMember(ctx(), {
+			team_slug: 'ability',
+			username: 'alice',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/members/alice/',
+			'k',
+		);
+
+		mockRequest.mockResolvedValueOnce({
+			user: 'bob',
+			role: 'contributor',
+		});
+		await Teams.addMember(ctx(), {
+			team_slug: 'ability',
+			user: 'bob',
+			role: 'contributor',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/members/',
+			'k',
+			{
+				method: 'POST',
+				body: { user: 'bob', role: 'contributor' },
+			},
+		);
+
+		mockRequest.mockResolvedValueOnce({
+			user: 'bob',
+			role: 'manager',
+		});
+		await Teams.updateMember(ctx(), {
+			team_slug: 'ability',
+			username: 'bob',
+			role: 'manager',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/members/bob/',
+			'k',
+			{
+				method: 'PUT',
+				body: { role: 'manager' },
+			},
+		);
+
+		mockRequest.mockResolvedValueOnce({ ok: true });
+		await Teams.removeMember(ctx(), {
+			team_slug: 'ability',
+			username: 'bob',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/members/bob/',
+			'k',
+			{
+				method: 'DELETE',
+			},
+		);
+
+		// Teams Tasks
+		mockRequest.mockResolvedValueOnce({
+			objects: [{ id: 12, type: 'Translate', priority: 1 }],
+		});
+		await Teams.listTasks(ctx(), {
+			team_slug: 'ability',
+			type: 'Translate',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith('teams/ability/tasks/', 'k', {
+			query: { type: 'Translate' },
+		});
+
+		mockRequest.mockResolvedValueOnce({
+			id: 12,
+			type: 'Translate',
+			priority: 1,
+		});
+		await Teams.getTask(ctx(), {
+			team_slug: 'ability',
+			task_id: 12,
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/tasks/12/',
+			'k',
+		);
+
+		// Teams Applications
+		mockRequest.mockResolvedValueOnce({
+			objects: [{ id: 99, status: 'pending' }],
+		});
+		await Teams.listApplications(ctx(), {
+			team_slug: 'ability',
+			status: 'pending',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/applications/',
+			'k',
+			{ query: { status: 'pending' } },
+		);
+
 		mockRequest.mockResolvedValueOnce({ objects: [activity] });
 		await Activity.list(ctx(), { limit: 1, type: 9 });
 		expect(mockRequest).toHaveBeenLastCalledWith('activity/', 'k', {

@@ -104,6 +104,19 @@ export type AmaraEndpoints = {
 	teamsList: AmaraEndpoint<'teamsList'>;
 	teamsGetDetails: AmaraEndpoint<'teamsGetDetails'>;
 	teamsGetLanguages: AmaraEndpoint<'teamsGetLanguages'>;
+	teamsListProjects: AmaraEndpoint<'teamsListProjects'>;
+	teamsGetProject: AmaraEndpoint<'teamsGetProject'>;
+	teamsCreateProject: AmaraEndpoint<'teamsCreateProject'>;
+	teamsUpdateProject: AmaraEndpoint<'teamsUpdateProject'>;
+	teamsDeleteProject: AmaraEndpoint<'teamsDeleteProject'>;
+	teamsListMembers: AmaraEndpoint<'teamsListMembers'>;
+	teamsGetMember: AmaraEndpoint<'teamsGetMember'>;
+	teamsAddMember: AmaraEndpoint<'teamsAddMember'>;
+	teamsUpdateMember: AmaraEndpoint<'teamsUpdateMember'>;
+	teamsRemoveMember: AmaraEndpoint<'teamsRemoveMember'>;
+	teamsListTasks: AmaraEndpoint<'teamsListTasks'>;
+	teamsGetTask: AmaraEndpoint<'teamsGetTask'>;
+	teamsListApplications: AmaraEndpoint<'teamsListApplications'>;
 	activityList: AmaraEndpoint<'activityList'>;
 	activityGet: AmaraEndpoint<'activityGet'>;
 	languagesListAvailable: AmaraEndpoint<'languagesListAvailable'>;
@@ -146,6 +159,19 @@ const amaraEndpointsNested = {
 		list: TeamsEndpoints.list,
 		getDetails: TeamsEndpoints.getDetails,
 		getLanguages: TeamsEndpoints.getLanguages,
+		listProjects: TeamsEndpoints.listProjects,
+		getProject: TeamsEndpoints.getProject,
+		createProject: TeamsEndpoints.createProject,
+		updateProject: TeamsEndpoints.updateProject,
+		deleteProject: TeamsEndpoints.deleteProject,
+		listMembers: TeamsEndpoints.listMembers,
+		getMember: TeamsEndpoints.getMember,
+		addMember: TeamsEndpoints.addMember,
+		updateMember: TeamsEndpoints.updateMember,
+		removeMember: TeamsEndpoints.removeMember,
+		listTasks: TeamsEndpoints.listTasks,
+		getTask: TeamsEndpoints.getTask,
+		listApplications: TeamsEndpoints.listApplications,
 	},
 	activity: {
 		list: ActivityEndpoints.list,
@@ -270,6 +296,58 @@ export const amaraEndpointSchemas = {
 	'teams.getLanguages': {
 		input: AmaraEndpointInputSchemas.teamsGetLanguages,
 		output: AmaraEndpointOutputSchemas.teamsGetLanguages,
+	},
+	'teams.listProjects': {
+		input: AmaraEndpointInputSchemas.teamsListProjects,
+		output: AmaraEndpointOutputSchemas.teamsListProjects,
+	},
+	'teams.getProject': {
+		input: AmaraEndpointInputSchemas.teamsGetProject,
+		output: AmaraEndpointOutputSchemas.teamsGetProject,
+	},
+	'teams.createProject': {
+		input: AmaraEndpointInputSchemas.teamsCreateProject,
+		output: AmaraEndpointOutputSchemas.teamsCreateProject,
+	},
+	'teams.updateProject': {
+		input: AmaraEndpointInputSchemas.teamsUpdateProject,
+		output: AmaraEndpointOutputSchemas.teamsUpdateProject,
+	},
+	'teams.deleteProject': {
+		input: AmaraEndpointInputSchemas.teamsDeleteProject,
+		output: AmaraEndpointOutputSchemas.teamsDeleteProject,
+	},
+	'teams.listMembers': {
+		input: AmaraEndpointInputSchemas.teamsListMembers,
+		output: AmaraEndpointOutputSchemas.teamsListMembers,
+	},
+	'teams.getMember': {
+		input: AmaraEndpointInputSchemas.teamsGetMember,
+		output: AmaraEndpointOutputSchemas.teamsGetMember,
+	},
+	'teams.addMember': {
+		input: AmaraEndpointInputSchemas.teamsAddMember,
+		output: AmaraEndpointOutputSchemas.teamsAddMember,
+	},
+	'teams.updateMember': {
+		input: AmaraEndpointInputSchemas.teamsUpdateMember,
+		output: AmaraEndpointOutputSchemas.teamsUpdateMember,
+	},
+	'teams.removeMember': {
+		input: AmaraEndpointInputSchemas.teamsRemoveMember,
+		output: AmaraEndpointOutputSchemas.teamsRemoveMember,
+	},
+	'teams.listTasks': {
+		input: AmaraEndpointInputSchemas.teamsListTasks,
+		output: AmaraEndpointOutputSchemas.teamsListTasks,
+	},
+	'teams.getTask': {
+		input: AmaraEndpointInputSchemas.teamsGetTask,
+		output: AmaraEndpointOutputSchemas.teamsGetTask,
+	},
+	'teams.listApplications': {
+		input: AmaraEndpointInputSchemas.teamsListApplications,
+		output: AmaraEndpointOutputSchemas.teamsListApplications,
 	},
 	'activity.list': {
 		input: AmaraEndpointInputSchemas.activityList,
@@ -397,6 +475,58 @@ const amaraEndpointMeta = {
 	'teams.getLanguages': {
 		riskLevel: 'read',
 		description: 'Get preferred/blacklisted language URIs for a team',
+	},
+	'teams.listProjects': {
+		riskLevel: 'read',
+		description: 'List projects within a team',
+	},
+	'teams.getProject': {
+		riskLevel: 'read',
+		description: 'Get details for a specific team project',
+	},
+	'teams.createProject': {
+		riskLevel: 'write',
+		description: 'Create a new project in a team',
+	},
+	'teams.updateProject': {
+		riskLevel: 'write',
+		description: 'Update a team project',
+	},
+	'teams.deleteProject': {
+		riskLevel: 'write',
+		description: 'Delete a project from a team',
+	},
+	'teams.listMembers': {
+		riskLevel: 'read',
+		description: 'List members of a team',
+	},
+	'teams.getMember': {
+		riskLevel: 'read',
+		description: 'Get details for a specific team member',
+	},
+	'teams.addMember': {
+		riskLevel: 'write',
+		description: 'Add a new member to a team',
+	},
+	'teams.updateMember': {
+		riskLevel: 'write',
+		description: 'Update member role in a team',
+	},
+	'teams.removeMember': {
+		riskLevel: 'write',
+		description: 'Remove a member from a team',
+	},
+	'teams.listTasks': {
+		riskLevel: 'read',
+		description: 'List tasks within a team with optional filters',
+	},
+	'teams.getTask': {
+		riskLevel: 'read',
+		description: 'Get details for a specific team task',
+	},
+	'teams.listApplications': {
+		riskLevel: 'read',
+		description: 'List membership applications for a team',
 	},
 	'activity.list': {
 		riskLevel: 'read',
