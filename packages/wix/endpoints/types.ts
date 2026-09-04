@@ -22,29 +22,57 @@ const SortItemSchema = z
 	.loose();
 
 /**
+ * Any JSON-encodable value. Wix request bodies are JSON, so nested patch and
+ * filter operands are validated recursively as JSON — garbage such as
+ * `undefined` values, functions, or class instances fails locally with a
+ * deterministic error instead of reaching Wix.
+ */
+export type WixJson =
+	| string
+	| number
+	| boolean
+	| null
+	| WixJson[]
+	| { [key: string]: WixJson };
+const WixJsonValueSchema: z.ZodType<WixJson> = z.lazy(() =>
+	z.union([
+		z.string(),
+		z.number(),
+		z.boolean(),
+		z.null(),
+		z.array(WixJsonValueSchema),
+		z.record(z.string(), WixJsonValueSchema),
+	]),
+) as z.ZodType<WixJson>;
+
+/**
  * Wix query-language filter: `{ [fieldPath]: { [operator]: value } }`.
  * Logical operators hold arrays (`$and`/`$or`) or a nested filter (`$not`),
  * so every filter value is an operator object or a filter array — a bare
  * primitive is malformed and is rejected before reaching the API.
  */
-type WixFilter = {
+export type WixFilter = {
 	[fieldPath: string]:
-		| { [operator: string]: unknown }
+		| { [operator: string]: WixJson }
 		| WixFilter[]
 		| WixFilter;
 };
 const WixFilterSchema: z.ZodType<WixFilter> = z.lazy(() =>
 	z.record(
 		z.string(),
-		z.union([z.record(z.string(), z.unknown()), z.array(WixFilterSchema)]),
+		z.union([
+			z.record(z.string(), WixJsonValueSchema),
+			z.array(WixFilterSchema),
+		]),
 	),
 ) as z.ZodType<WixFilter>;
 
 /**
- * Entity patch bodies (bulk `update` etc.) are objects keyed by field path;
- * Wix validates the actual fields server-side.
+ * Entity patch bodies (bulk `update` etc.) are objects keyed by field path
+ * whose values must be JSON-encodable; Wix validates the actual fields
+ * server-side.
  */
-const WixEntityPatchSchema = z.record(z.string(), z.unknown());
+const WixEntityPatchSchema = z.record(z.string(), WixJsonValueSchema);
 
 /**
  * Proto-style field mask used by Wix update endpoints.

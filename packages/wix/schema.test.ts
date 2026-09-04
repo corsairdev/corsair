@@ -160,6 +160,29 @@ describe('Wix query filter grammar', () => {
 		).toThrow();
 	});
 
+	it('accepts deeply nested JSON patch and filter payloads', () => {
+		const parsed = WixEndpointInputSchemas.bulkUpdateProductsByFilter.parse({
+			filter: { visible: { $eq: true } },
+			update: { product: { variants: [1, 'x', { sku: null }] } },
+		});
+		expect(parsed).toBeDefined();
+	});
+
+	it('rejects non-JSON values in patch payloads', () => {
+		expect(() =>
+			WixEndpointInputSchemas.bulkUpdateProductsByFilter.parse({
+				filter: { visible: { $eq: true } },
+				update: { visible: undefined },
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointInputSchemas.bulkUpdateProductsByFilter.parse({
+				filter: { visible: { $eq: true } },
+				update: { visible: () => 'nope' },
+			}),
+		).toThrow();
+	});
+
 	it('rejects string field masks', () => {
 		expect(() =>
 			WixEndpointInputSchemas.bulkUpdateContacts.parse({
