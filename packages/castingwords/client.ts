@@ -17,28 +17,16 @@ export class CastingwordsAPIError extends Error {
 	}
 }
 
+/** Official Store API v4: https://castingwords.com/docs/developer/SimpleAPI.html */
 export const CASTINGWORDS_API_BASE = 'https://castingwords.com/store/API4';
 
-type FormValue = string | number | boolean | string[] | undefined;
+type JsonValue = string | number | boolean | string[] | undefined;
 
 type RequestOptions = {
 	method?: 'GET' | 'POST';
 	query?: Record<string, string | number | boolean | undefined>;
-	form?: Record<string, FormValue>;
+	body?: Record<string, JsonValue>;
 };
-
-export function toFormBody(fields: Record<string, FormValue>): string {
-	const params = new URLSearchParams();
-	for (const [key, value] of Object.entries(fields)) {
-		if (value === undefined) continue;
-		if (Array.isArray(value)) {
-			for (const item of value) params.append(key, item);
-			continue;
-		}
-		params.append(key, String(value));
-	}
-	return params.toString();
-}
 
 export async function makeCastingwordsRequest<T>(
 	endpoint: string,
@@ -52,21 +40,18 @@ export async function makeCastingwordsRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
-		HEADERS: {
-			Accept: 'application/json',
-		},
+		HEADERS: { Accept: 'application/json' },
 	};
 
-	const formBody = options.form
-		? toFormBody({ api_key: apiKey, ...options.form })
-		: undefined;
+	const jsonBody =
+		method === 'POST' ? { api_key: apiKey, ...options.body } : undefined;
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
 		query: method === 'GET' ? { api_key: apiKey, ...options.query } : undefined,
-		body: formBody,
-		mediaType: formBody ? 'application/x-www-form-urlencoded' : undefined,
+		body: jsonBody,
+		mediaType: jsonBody ? 'application/json' : undefined,
 	};
 
 	try {

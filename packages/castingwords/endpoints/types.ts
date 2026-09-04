@@ -1,4 +1,12 @@
 import { z } from 'zod';
+import {
+	CastingwordsAudiofile,
+	CastingwordsInvoice,
+	CastingwordsOrder,
+	CastingwordsPrepayBalance,
+	CastingwordsSku,
+	CastingwordsWebhook,
+} from '../schema/database';
 
 const EmptyInputSchema = z.object({});
 
@@ -34,33 +42,12 @@ const TranscriptExtensionSchema = z.enum([
 	'vtt',
 ]);
 
-const AudiofileSchema = z
-	.object({
-		id: z.union([z.string(), z.number()]).optional(),
-		statename: z.string().optional(),
-		names: z.string().optional(),
-		notes: z.string().optional(),
-		originallink: z.string().optional(),
-		title: z.string().optional(),
-		duration: z.union([z.string(), z.number()]).optional(),
-		description: z.string().optional(),
-		quality_stars: z.union([z.string(), z.number()]).optional(),
-		orders: z.array(z.union([z.string(), z.number()])).optional(),
-		invoices: z.array(z.union([z.string(), z.number()])).optional(),
-		total: z.union([z.string(), z.number()]).optional(),
-	})
-	.loose();
-
-const InvoiceItemSchema = z
-	.object({
-		id: z.union([z.string(), z.number()]).optional(),
-		sku: z.string().optional(),
-		quantity: z.union([z.string(), z.number()]).optional(),
-		price: z.union([z.string(), z.number()]).optional(),
-		audiofile: z.union([z.string(), z.number()]).optional(),
-		total: z.union([z.string(), z.number()]).optional(),
-	})
-	.loose();
+const WebhookEventSchema = z.enum([
+	'TRANSCRIPT_COMPLETE',
+	'DIFFICULT_AUDIO',
+	'REFUND_ISSUED',
+	'ORDER_ON_HOLD',
+]);
 
 const SuccessResponseSchema = z
 	.object({
@@ -69,13 +56,88 @@ const SuccessResponseSchema = z
 	})
 	.loose();
 
+export const CASTINGWORDS_SKU_CATALOG: z.infer<typeof CastingwordsSku>[] = [
+	{
+		sku: 'TRANS14',
+		kind: 'order',
+		description: 'Budget Transcription with a target of 14 days.',
+	},
+	{
+		sku: 'TRANS2',
+		kind: 'order',
+		description: '1 Day Expert Transcription',
+	},
+	{
+		sku: 'TRANS6',
+		kind: 'order',
+		description: '6 Day Transcription',
+	},
+	{
+		sku: 'TRANS7',
+		kind: 'order',
+		description: '7 Day Transcription',
+	},
+	{
+		sku: 'EMSR02',
+		kind: 'order',
+		description: 'Advanced Machine Transcription',
+	},
+	{
+		sku: 'DIFFQ2',
+		kind: 'order',
+		description: 'Difficult Audio',
+	},
+	{
+		sku: 'TSTMP1',
+		kind: 'order',
+		description: 'Timestamps',
+	},
+	{
+		sku: 'CAPTION1',
+		kind: 'order',
+		description: 'Captions/Subtitles',
+	},
+	{
+		sku: 'DIFFQ2',
+		kind: 'upgrade',
+		description: 'Difficult Audio Upgrade',
+	},
+	{
+		sku: 'TSTMP1',
+		kind: 'upgrade',
+		description: 'Timestamps',
+	},
+	{
+		sku: 'CAPTION1',
+		kind: 'upgrade',
+		description: 'Subtitles/Captions',
+	},
+	{
+		sku: 'EDIT01',
+		kind: 'upgrade',
+		description: 'Extra Editing',
+	},
+	{
+		sku: 'UPGRD1',
+		kind: 'upgrade',
+		description: 'Upgrade TRANS14 to TRANS6',
+	},
+	{
+		sku: 'UPGRD2',
+		kind: 'upgrade',
+		description: 'Upgrade TRANS14 to TRANS2',
+	},
+	{
+		sku: 'UPGRD3',
+		kind: 'upgrade',
+		description: 'Upgrade TRANS6 to TRANS2',
+	},
+];
+
 export const CastingwordsEndpointInputSchemas = {
 	createOrder: z.object({
-		url: z.string().url(),
-		sku: z
-			.array(OrderSkuSchema)
-			.min(1)
-			.describe('CastingWords SKU(s) to order'),
+		url: z.union([z.string().url(), z.array(z.string().url()).min(1)]),
+		sku: z.array(OrderSkuSchema).min(1),
 		test: z.boolean().optional(),
 		notes: z.string().optional(),
 		names: z.array(z.string()).optional(),
@@ -102,54 +164,29 @@ export const CastingwordsEndpointInputSchemas = {
 		invoiceId: z.union([z.string(), z.number()]),
 	}),
 	getWebhook: EmptyInputSchema,
-	setWebhook: z.object({
+	registerWebhook: z.object({
 		webhook: z.string().url(),
 	}),
+	testWebhook: z.object({
+		event: WebhookEventSchema,
+	}),
+	listSkus: EmptyInputSchema,
 } as const;
 
 export const CastingwordsEndpointOutputSchemas = {
-	createOrder: z
-		.object({
-			audiofiles: z.array(z.union([z.string(), z.number()])),
-			order: z.union([z.string(), z.number()]),
-			message: z.string().optional(),
-			hold: z.string().optional(),
-		})
-		.loose(),
-	getPrepayBalance: z.object({ balance: z.coerce.number() }).loose(),
+	createOrder: CastingwordsOrder,
+	getPrepayBalance: CastingwordsPrepayBalance,
 	getAudiofileDetails: z
-		.object({ audiofile: AudiofileSchema.optional() })
+		.object({ audiofile: CastingwordsAudiofile.optional() })
 		.loose(),
 	getTranscript: z.string(),
 	orderUpgrade: SuccessResponseSchema,
 	refundAudiofile: SuccessResponseSchema,
-	getInvoice: z
-		.object({
-			id: z.union([z.string(), z.number()]),
-			purchase_order: z.union([z.string(), z.number()]).nullable().optional(),
-			createtime: z.string().optional(),
-			paidtime: z.string().nullable().optional(),
-			total: z.union([z.string(), z.number()]).optional(),
-			items: z.array(InvoiceItemSchema).optional(),
-			state: z.enum(['PAID', 'SUBMITTED', 'OPEN', 'CREATED']).optional(),
-		})
-		.loose(),
-	getWebhook: z
-		.object({
-			webhook: z
-				.union([z.string().url(), z.literal('')])
-				.nullable()
-				.optional(),
-		})
-		.loose(),
-	setWebhook: z
-		.object({
-			webhook: z
-				.union([z.string().url(), z.literal('')])
-				.nullable()
-				.optional(),
-		})
-		.loose(),
+	getInvoice: CastingwordsInvoice,
+	getWebhook: CastingwordsWebhook,
+	registerWebhook: CastingwordsWebhook,
+	testWebhook: CastingwordsWebhook,
+	listSkus: z.object({ skus: z.array(CastingwordsSku) }),
 } as const;
 
 export type CastingwordsEndpointInputs = {
@@ -187,5 +224,11 @@ export type GetInvoiceInput = CastingwordsEndpointInputs['getInvoice'];
 export type GetInvoiceResponse = CastingwordsEndpointOutputs['getInvoice'];
 export type GetWebhookInput = CastingwordsEndpointInputs['getWebhook'];
 export type GetWebhookResponse = CastingwordsEndpointOutputs['getWebhook'];
-export type SetWebhookInput = CastingwordsEndpointInputs['setWebhook'];
-export type SetWebhookResponse = CastingwordsEndpointOutputs['setWebhook'];
+export type RegisterWebhookInput =
+	CastingwordsEndpointInputs['registerWebhook'];
+export type RegisterWebhookResponse =
+	CastingwordsEndpointOutputs['registerWebhook'];
+export type TestWebhookInput = CastingwordsEndpointInputs['testWebhook'];
+export type TestWebhookResponse = CastingwordsEndpointOutputs['testWebhook'];
+export type ListSkusInput = CastingwordsEndpointInputs['listSkus'];
+export type ListSkusResponse = CastingwordsEndpointOutputs['listSkus'];

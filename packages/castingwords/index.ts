@@ -20,10 +20,12 @@ import {
 	getPrepayBalance,
 	getTranscript,
 	getWebhook,
+	listSkus,
 	orderUpgrade,
 	refundAudiofile,
-	setWebhook,
-} from './endpoints';
+	registerWebhook,
+	testWebhook,
+} from './endpoints/handlers';
 import type {
 	CastingwordsEndpointInputs,
 	CastingwordsEndpointOutputs,
@@ -70,25 +72,29 @@ export type CastingwordsEndpoints = {
 	refundAudiofile: CastingwordsEndpoint<'refundAudiofile'>;
 	getInvoice: CastingwordsEndpoint<'getInvoice'>;
 	getWebhook: CastingwordsEndpoint<'getWebhook'>;
-	setWebhook: CastingwordsEndpoint<'setWebhook'>;
+	registerWebhook: CastingwordsEndpoint<'registerWebhook'>;
+	testWebhook: CastingwordsEndpoint<'testWebhook'>;
+	listSkus: CastingwordsEndpoint<'listSkus'>;
 };
 
 const castingwordsEndpointsNested = {
-	createOrder: { create: createOrder },
+	order: { create: createOrder },
 	prepayBalance: { get: getPrepayBalance },
-	audiofileDetails: { get: getAudiofileDetails },
+	audiofile: { get: getAudiofileDetails },
 	transcript: { get: getTranscript },
 	upgrade: { create: orderUpgrade },
 	refund: { create: refundAudiofile },
 	invoice: { get: getInvoice },
 	webhook: {
 		get: getWebhook,
-		set: setWebhook,
+		register: registerWebhook,
+		test: testWebhook,
 	},
+	skus: { list: listSkus },
 } as const;
 
 const castingwordsEndpointSchemas = {
-	'createOrder.create': {
+	'order.create': {
 		input: CastingwordsEndpointInputSchemas.createOrder,
 		output: CastingwordsEndpointOutputSchemas.createOrder,
 	},
@@ -96,7 +102,7 @@ const castingwordsEndpointSchemas = {
 		input: CastingwordsEndpointInputSchemas.getPrepayBalance,
 		output: CastingwordsEndpointOutputSchemas.getPrepayBalance,
 	},
-	'audiofileDetails.get': {
+	'audiofile.get': {
 		input: CastingwordsEndpointInputSchemas.getAudiofileDetails,
 		output: CastingwordsEndpointOutputSchemas.getAudiofileDetails,
 	},
@@ -120,62 +126,77 @@ const castingwordsEndpointSchemas = {
 		input: CastingwordsEndpointInputSchemas.getWebhook,
 		output: CastingwordsEndpointOutputSchemas.getWebhook,
 	},
-	'webhook.set': {
-		input: CastingwordsEndpointInputSchemas.setWebhook,
-		output: CastingwordsEndpointOutputSchemas.setWebhook,
+	'webhook.register': {
+		input: CastingwordsEndpointInputSchemas.registerWebhook,
+		output: CastingwordsEndpointOutputSchemas.registerWebhook,
+	},
+	'webhook.test': {
+		input: CastingwordsEndpointInputSchemas.testWebhook,
+		output: CastingwordsEndpointOutputSchemas.testWebhook,
+	},
+	'skus.list': {
+		input: CastingwordsEndpointInputSchemas.listSkus,
+		output: CastingwordsEndpointOutputSchemas.listSkus,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof castingwordsEndpointsNested
 >;
 
 const castingwordsEndpointMeta = {
-	'createOrder.create': {
+	'order.create': {
 		riskLevel: 'write',
 		description:
-			'Create a new CastingWords transcription order from a public media URL',
+			'Create a transcription order for public audio/video URLs (API4 order_url)',
 	},
 	'prepayBalance.get': {
 		riskLevel: 'read',
-		description: 'Get the current CastingWords prepaid balance',
+		description: 'Get the current prepaid balance in USD',
 	},
-	'audiofileDetails.get': {
+	'audiofile.get': {
 		riskLevel: 'read',
-		description:
-			'Get the current state and details of a CastingWords audiofile',
+		description: 'Get audiofile details including current state',
 	},
 	'transcript.get': {
 		riskLevel: 'read',
-		description: 'Retrieve the transcript for a CastingWords audiofile',
+		description:
+			'Get a completed transcript (txt, doc, rtf, html, srt, docx, tstxt, vtt)',
 	},
 	'upgrade.create': {
 		riskLevel: 'write',
-		description: 'Order one or more upgrades for a CastingWords audiofile',
+		description: 'Order upgrades for an audiofile (timestamps, captions, etc.)',
 	},
 	'refund.create': {
 		riskLevel: 'destructive',
 		description:
-			'Refund a CastingWords audiofile before transcription work begins',
+			'Cancel and refund an audiofile before transcription work starts',
 	},
 	'invoice.get': {
 		riskLevel: 'read',
-		description: 'Get details for a CastingWords invoice',
+		description: 'Get invoice details and line items',
 	},
 	'webhook.get': {
 		riskLevel: 'read',
-		description: 'Get the registered CastingWords webhook URL',
+		description: 'Get the registered account webhook URL',
 	},
-	'webhook.set': {
+	'webhook.register': {
 		riskLevel: 'write',
-		description: 'Set the CastingWords webhook URL',
+		description: 'Register a webhook URL for CastingWords event notifications',
+	},
+	'webhook.test': {
+		riskLevel: 'write',
+		description: 'Request a test webhook POST for a documented event type',
+	},
+	'skus.list': {
+		riskLevel: 'read',
+		description:
+			'List documented CastingWords SKUs from Store API v4 (no live sku endpoint)',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof castingwordsEndpointsNested
 >;
 
 export const castingwordsAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 const defaultAuthType: AuthTypes = 'api_key';
@@ -250,10 +271,14 @@ export type {
 	GetTranscriptResponse,
 	GetWebhookInput,
 	GetWebhookResponse,
+	ListSkusInput,
+	ListSkusResponse,
 	OrderUpgradeInput,
 	OrderUpgradeResponse,
 	RefundAudiofileInput,
 	RefundAudiofileResponse,
-	SetWebhookInput,
-	SetWebhookResponse,
+	RegisterWebhookInput,
+	RegisterWebhookResponse,
+	TestWebhookInput,
+	TestWebhookResponse,
 } from './endpoints/types';
