@@ -84,8 +84,8 @@ export const BaseProviders = [
 	'boloforms',
 	'boltiot',
 	'bonsai',
-	'botbaba',
 	'bookingmood',
+	'botbaba',
 	'botpress',
 	'botsonic',
 	'bouncer',
@@ -213,6 +213,7 @@ export const BaseProviders = [
 	'removebg',
 	'resend',
 	'retailed',
+	'runpod',
 	'salesforce',
 	'sapsuccessfactors',
 	'scaleai',
@@ -261,10 +262,10 @@ export const BaseProviders = [
 	'webvizio',
 	'whatsapp',
 	'witai',
-	'worldnewsapi',
 	'wiza',
 	'workday',
 	'workiom',
+	'worldnewsapi',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -347,8 +348,8 @@ export const ProviderDisplayNames = {
 	boloforms: 'Boloforms',
 	boltiot: 'Bolt IoT',
 	bonsai: 'Bonsai',
-	botbaba: 'Botbaba',
 	bookingmood: 'Bookingmood',
+	botbaba: 'Botbaba',
 	botpress: 'Botpress',
 	botsonic: 'Botsonic',
 	bouncer: 'Bouncer',
@@ -476,6 +477,7 @@ export const ProviderDisplayNames = {
 	removebg: 'remove.bg',
 	resend: 'Resend',
 	retailed: 'Retailed',
+	runpod: 'Runpod',
 	salesforce: 'Salesforce',
 	sapsuccessfactors: 'SAP SuccessFactors',
 	scaleai: 'Scale AI',
@@ -524,10 +526,10 @@ export const ProviderDisplayNames = {
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
-	worldnewsapi: 'World News API',
 	wiza: 'Wiza',
 	workday: 'Workday',
 	workiom: 'Workiom',
+	worldnewsapi: 'World News API',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -617,8 +619,8 @@ export type AllProviders =
 	| 'boloforms'
 	| 'boltiot'
 	| 'bonsai'
-	| 'botbaba'
 	| 'bookingmood'
+	| 'botbaba'
 	| 'botpress'
 	| 'botsonic'
 	| 'bouncer'
@@ -746,6 +748,7 @@ export type AllProviders =
 	| 'removebg'
 	| 'resend'
 	| 'retailed'
+	| 'runpod'
 	| 'salesforce'
 	| 'sapsuccessfactors'
 	| 'scaleai'
@@ -794,10 +797,10 @@ export type AllProviders =
 	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
-	| 'worldnewsapi'
 	| 'wiza'
 	| 'workday'
 	| 'workiom'
+	| 'worldnewsapi'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'
