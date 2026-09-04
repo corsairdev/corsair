@@ -1,0 +1,58 @@
+{
+  "name": "@corsair-dev/mastra",
+  "version": "0.1.0",
+  "description": "Corsair ToolProvider for Mastra. Expose 200+ integrations to Mastra agents with managed OAuth and credentials that stay in your own database.",
+  "keywords": [
+    "mastra",
+    "tool-provider",
+    "ai-agents",
+    "tools",
+    "tool-calling",
+    "integrations",
+    "managed-oauth",
+    "corsair"
+  ],
+  "author": "Corsair (https://corsair.dev)",
+  "license": "Apache-2.0",
+  "homepage": "https://corsair.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/mastra"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "dev-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup && tsc -p tsconfig.build.json",
+    "build:watch": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "corsair": "workspace:*",
+    "zod": "^4.1.13"
+  },
+  "peerDependencies": {
+    "@mastra/core": ">=1.0.0"
+  },
+  "devDependencies": {
+    "@mastra/core": "^1.64.0",
+    "@types/node": "^22.0.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.8.0"
+  },
+  "files": [
+    "dist"
+  ]
+}
