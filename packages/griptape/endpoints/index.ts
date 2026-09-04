@@ -5,12 +5,9 @@ import {
 	remove as assistantRemove,
 	cancelRun as assistantRunCancel,
 	createRun as assistantRunCreate,
-	getErrorDetails as assistantRunErrorDetails,
 	listEvents as assistantRunEvents,
 	getRun as assistantRunGet,
 	listRuns as assistantRunList,
-	listLogs as assistantRunLogs,
-	getResult as assistantRunResult,
 	update as assistantUpdate,
 } from './assistants';
 import {
@@ -193,9 +190,6 @@ export const AssistantRun = {
 	list: assistantRunList,
 	get: assistantRunGet,
 	cancel: assistantRunCancel,
-	result: assistantRunResult,
-	errorDetails: assistantRunErrorDetails,
-	logs: assistantRunLogs,
 	events: assistantRunEvents,
 };
 

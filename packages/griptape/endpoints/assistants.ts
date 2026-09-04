@@ -208,68 +208,6 @@ export const cancelRun: GriptapeEndpoints['assistantRunCancel'] = async (
 	return response;
 };
 
-export const getResult: GriptapeEndpoints['assistantRunResult'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeGriptapeRequest<
-		GriptapeEndpointOutputs['assistantRunResult']
-	>(`assistant-runs/${input.assistant_run_id}`, ctx.key, {
-		method: 'GET',
-	});
-
-	await logEventFromContext(
-		ctx,
-		'griptape.assistantRun.result',
-		{ ...input },
-		'completed',
-	);
-
-	return response;
-};
-
-export const getErrorDetails: GriptapeEndpoints['assistantRunErrorDetails'] =
-	async (ctx, input) => {
-		const response = await makeGriptapeRequest<
-			GriptapeEndpointOutputs['assistantRunErrorDetails']
-		>(`assistant-runs/${input.assistant_run_id}`, ctx.key, {
-			method: 'GET',
-		});
-
-		await logEventFromContext(
-			ctx,
-			'griptape.assistantRun.errorDetails',
-			{ ...input },
-			'completed',
-		);
-
-		return response;
-	};
-
-export const listLogs: GriptapeEndpoints['assistantRunLogs'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeGriptapeRequest<
-		GriptapeEndpointOutputs['assistantRunLogs']
-	>(`assistant-runs/${input.assistant_run_id}/events`, ctx.key, {
-		method: 'GET',
-		query: {
-			limit: input.limit,
-			offset: input.offset,
-		},
-	});
-
-	await logEventFromContext(
-		ctx,
-		'griptape.assistantRun.logs',
-		{ ...input },
-		'completed',
-	);
-
-	return response;
-};
-
 export const listEvents: GriptapeEndpoints['assistantRunEvents'] = async (
 	ctx,
 	input,

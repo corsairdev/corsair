@@ -95,9 +95,6 @@ export type GriptapeEndpoints = {
 	assistantRunList: GriptapeEndpoint<'assistantRunList'>;
 	assistantRunGet: GriptapeEndpoint<'assistantRunGet'>;
 	assistantRunCancel: GriptapeEndpoint<'assistantRunCancel'>;
-	assistantRunResult: GriptapeEndpoint<'assistantRunResult'>;
-	assistantRunErrorDetails: GriptapeEndpoint<'assistantRunErrorDetails'>;
-	assistantRunLogs: GriptapeEndpoint<'assistantRunLogs'>;
 	assistantRunEvents: GriptapeEndpoint<'assistantRunEvents'>;
 	threadList: GriptapeEndpoint<'threadList'>;
 	threadCreate: GriptapeEndpoint<'threadCreate'>;
@@ -305,18 +302,6 @@ export const griptapeEndpointSchemas = {
 	'assistantRun.cancel': {
 		input: GriptapeEndpointInputSchemas.assistantRunCancel,
 		output: GriptapeEndpointOutputSchemas.assistantRunCancel,
-	},
-	'assistantRun.result': {
-		input: GriptapeEndpointInputSchemas.assistantRunResult,
-		output: GriptapeEndpointOutputSchemas.assistantRunResult,
-	},
-	'assistantRun.errorDetails': {
-		input: GriptapeEndpointInputSchemas.assistantRunErrorDetails,
-		output: GriptapeEndpointOutputSchemas.assistantRunErrorDetails,
-	},
-	'assistantRun.logs': {
-		input: GriptapeEndpointInputSchemas.assistantRunLogs,
-		output: GriptapeEndpointOutputSchemas.assistantRunLogs,
 	},
 	'assistantRun.events': {
 		input: GriptapeEndpointInputSchemas.assistantRunEvents,
@@ -883,18 +868,6 @@ const griptapeEndpointMeta = {
 	'assistantRun.cancel': {
 		riskLevel: 'write',
 		description: 'Cancel an assistant run',
-	},
-	'assistantRun.result': {
-		riskLevel: 'read',
-		description: 'Fetch the final result of an assistant run',
-	},
-	'assistantRun.errorDetails': {
-		riskLevel: 'read',
-		description: 'Fetch error details for an assistant run',
-	},
-	'assistantRun.logs': {
-		riskLevel: 'read',
-		description: 'Retrieve the execution timeline for an assistant run',
 	},
 	'assistantRun.events': {
 		riskLevel: 'read',
