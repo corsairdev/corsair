@@ -1,14 +1,17 @@
 import 'dotenv/config';
 import { createCorsair } from 'corsair/core';
-import { createCorsairOrm } from 'corsair/orm';
-import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { plain } from './index';
 
 async function createPlainClient() {
 	const apiKey = process.env.PLAIN_API_KEY;
-	if (!apiKey) {
+	const kek = process.env.CORSAIR_KEK;
+	if (!apiKey || !kek) {
 		return null;
 	}
+
+	const { createIntegrationAndAccount, createTestDatabase } = await import(
+		'corsair/tests'
+	);
 
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'plain', 'default');
@@ -16,7 +19,7 @@ async function createPlainClient() {
 	const corsair = createCorsair({
 		plugins: [plain({})],
 		database: testDb.db,
-		kek: process.env.CORSAIR_KEK!,
+		kek,
 	});
 
 	await corsair.plain.keys.issue_new_dek();
@@ -33,6 +36,7 @@ describe('Plain plugin integration', () => {
 		}
 
 		const { corsair, testDb } = setup;
+		const { createCorsairOrm } = await import('corsair/orm');
 		const orm = createCorsairOrm(testDb.database);
 
 		const users = await corsair.plain.api.graphql.run({

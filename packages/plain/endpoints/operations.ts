@@ -1,10 +1,31 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { makePlainRequest } from '../client';
+import { makePlainRequest, PlainAPIError } from '../client';
 import type { PlainEndpoints } from '../index';
 import type { PlainEndpointOutputs } from './types';
 import { PlainEndpointInputSchemas, PlainEndpointOutputSchemas } from './types';
 
 type PlainContext = Parameters<PlainEndpoints['getCustomerById']>[0];
+
+function throwIfMutationPayloadError(payload: unknown, operationName: string) {
+	if (!payload || typeof payload !== 'object') {
+		return;
+	}
+
+	const error = (payload as { error?: unknown }).error;
+	if (!error || typeof error !== 'object') {
+		return;
+	}
+
+	const message = (error as { message?: unknown }).message;
+	if (typeof message !== 'string' || message.length === 0) {
+		return;
+	}
+
+	const code = (error as { code?: unknown }).code;
+	throw new PlainAPIError(`${operationName}: ${message}`, {
+		code: typeof code === 'string' ? code : undefined,
+	});
+}
 
 async function requestParsed<TOutput extends keyof PlainEndpointOutputs>(
 	ctx: PlainContext,
@@ -188,15 +209,17 @@ export const upsertCustomer: PlainEndpoints['upsertCustomer'] = async (
 		{ input: parsed },
 		'UpsertCustomer',
 		'runGraphqlQuery',
-	).then((response) =>
-		PlainEndpointOutputSchemas.upsertCustomer.parse(
-			(
-				response.data as {
-					upsertCustomer?: PlainEndpointOutputs['upsertCustomer'];
-				}
-			).upsertCustomer ?? {},
-		),
-	);
+	).then((response) => {
+		const payload = (
+			response.data as {
+				upsertCustomer?: PlainEndpointOutputs['upsertCustomer'] & {
+					error?: { message?: string; code?: string | null } | null;
+				};
+			}
+		).upsertCustomer;
+		throwIfMutationPayloadError(payload, 'UpsertCustomer');
+		return PlainEndpointOutputSchemas.upsertCustomer.parse(payload ?? {});
+	});
 };
 
 export const deleteCustomer: PlainEndpoints['deleteCustomer'] = async (
@@ -204,7 +227,7 @@ export const deleteCustomer: PlainEndpoints['deleteCustomer'] = async (
 	input,
 ) => {
 	const parsed = PlainEndpointInputSchemas.deleteCustomer.parse(input);
-	await requestParsed(
+	const response = await requestParsed(
 		ctx,
 		'plain.customers.delete',
 		parsed,
@@ -220,6 +243,18 @@ export const deleteCustomer: PlainEndpoints['deleteCustomer'] = async (
 		'DeleteCustomer',
 		'runGraphqlQuery',
 	);
+
+	throwIfMutationPayloadError(
+		(
+			response.data as {
+				deleteCustomer?: {
+					error?: { message?: string; code?: string | null } | null;
+				};
+			}
+		).deleteCustomer,
+		'DeleteCustomer',
+	);
+
 	return { success: true };
 };
 
@@ -250,12 +285,17 @@ export const createThread: PlainEndpoints['createThread'] = async (
 		{ input: parsed },
 		'CreateThread',
 		'runGraphqlQuery',
-	).then((response) =>
-		PlainEndpointOutputSchemas.createThread.parse(
-			(response.data as { createThread?: PlainEndpointOutputs['createThread'] })
-				.createThread ?? {},
-		),
-	);
+	).then((response) => {
+		const payload = (
+			response.data as {
+				createThread?: PlainEndpointOutputs['createThread'] & {
+					error?: { message?: string; code?: string | null } | null;
+				};
+			}
+		).createThread;
+		throwIfMutationPayloadError(payload, 'CreateThread');
+		return PlainEndpointOutputSchemas.createThread.parse(payload ?? {});
+	});
 };
 
 export const getThreadById: PlainEndpoints['getThreadById'] = async (
@@ -461,7 +501,7 @@ export const sendMessage: PlainEndpoints['sendMessage'] = async (
 	input,
 ) => {
 	const parsed = PlainEndpointInputSchemas.sendMessage.parse(input);
-	await requestParsed(
+	const response = await requestParsed(
 		ctx,
 		'plain.threads.reply',
 		{ threadId: parsed.threadId },
@@ -477,6 +517,18 @@ export const sendMessage: PlainEndpoints['sendMessage'] = async (
 		'ReplyToThread',
 		'runGraphqlQuery',
 	);
+
+	throwIfMutationPayloadError(
+		(
+			response.data as {
+				replyToThread?: {
+					error?: { message?: string; code?: string | null } | null;
+				};
+			}
+		).replyToThread,
+		'ReplyToThread',
+	);
+
 	return { success: true };
 };
 
@@ -507,15 +559,17 @@ export const updateThread: PlainEndpoints['updateThread'] = async (
 		{ input: parsed },
 		'UpdateThreadTitle',
 		'runGraphqlQuery',
-	).then((response) =>
-		PlainEndpointOutputSchemas.updateThread.parse(
-			(
-				response.data as {
-					updateThreadTitle?: PlainEndpointOutputs['updateThread'];
-				}
-			).updateThreadTitle ?? {},
-		),
-	);
+	).then((response) => {
+		const payload = (
+			response.data as {
+				updateThreadTitle?: PlainEndpointOutputs['updateThread'] & {
+					error?: { message?: string; code?: string | null } | null;
+				};
+			}
+		).updateThreadTitle;
+		throwIfMutationPayloadError(payload, 'UpdateThreadTitle');
+		return PlainEndpointOutputSchemas.updateThread.parse(payload ?? {});
+	});
 };
 
 export const getUserById: PlainEndpoints['getUserById'] = async (
@@ -544,7 +598,7 @@ export const getUserById: PlainEndpoints['getUserById'] = async (
 
 export const deleteUser: PlainEndpoints['deleteUser'] = async (ctx, input) => {
 	const parsed = PlainEndpointInputSchemas.deleteUser.parse(input);
-	await requestParsed(
+	const response = await requestParsed(
 		ctx,
 		'plain.users.delete',
 		parsed,
@@ -560,6 +614,18 @@ export const deleteUser: PlainEndpoints['deleteUser'] = async (ctx, input) => {
 		'DeleteUser',
 		'runGraphqlQuery',
 	);
+
+	throwIfMutationPayloadError(
+		(
+			response.data as {
+				deleteUser?: {
+					error?: { message?: string; code?: string | null } | null;
+				};
+			}
+		).deleteUser,
+		'DeleteUser',
+	);
+
 	return { success: true };
 };
 
@@ -613,15 +679,17 @@ export const updateCompany: PlainEndpoints['updateCompany'] = async (
 		{ input: parsed },
 		'UpsertCompany',
 		'runGraphqlQuery',
-	).then((response) =>
-		PlainEndpointOutputSchemas.updateCompany.parse(
-			(
-				response.data as {
-					upsertCompany?: PlainEndpointOutputs['updateCompany'];
-				}
-			).upsertCompany ?? {},
-		),
-	);
+	).then((response) => {
+		const payload = (
+			response.data as {
+				upsertCompany?: PlainEndpointOutputs['updateCompany'] & {
+					error?: { message?: string; code?: string | null } | null;
+				};
+			}
+		).upsertCompany;
+		throwIfMutationPayloadError(payload, 'UpsertCompany');
+		return PlainEndpointOutputSchemas.updateCompany.parse(payload ?? {});
+	});
 };
 
 export const fetchTier: PlainEndpoints['fetchTier'] = async (ctx, input) => {
@@ -718,15 +786,17 @@ export const createCustomerGroup: PlainEndpoints['createCustomerGroup'] =
 			{ input: parsed },
 			'CreateCustomerGroup',
 			'runGraphqlQuery',
-		).then((response) =>
-			PlainEndpointOutputSchemas.createCustomerGroup.parse(
-				(
-					response.data as {
-						createCustomerGroup?: PlainEndpointOutputs['createCustomerGroup'];
-					}
-				).createCustomerGroup,
-			),
-		);
+		).then((response) => {
+			const payload = (
+				response.data as {
+					createCustomerGroup?: PlainEndpointOutputs['createCustomerGroup'] & {
+						error?: { message?: string; code?: string | null } | null;
+					};
+				}
+			).createCustomerGroup;
+			throwIfMutationPayloadError(payload, 'CreateCustomerGroup');
+			return PlainEndpointOutputSchemas.createCustomerGroup.parse(payload);
+		});
 	};
 
 export const listCustomerGroups: PlainEndpoints['listCustomerGroups'] = async (
@@ -820,22 +890,24 @@ export const addCustomerToGroup: PlainEndpoints['addCustomerToGroup'] = async (
 		{ input: parsed },
 		'AddCustomerToCustomerGroups',
 		'runGraphqlQuery',
-	).then((response) =>
-		PlainEndpointOutputSchemas.addCustomerToGroup.parse(
-			(
-				response.data as {
-					addCustomerToCustomerGroups?: PlainEndpointOutputs['addCustomerToGroup'];
-				}
-			).addCustomerToCustomerGroups,
-		),
-	);
+	).then((response) => {
+		const payload = (
+			response.data as {
+				addCustomerToCustomerGroups?: PlainEndpointOutputs['addCustomerToGroup'] & {
+					error?: { message?: string; code?: string | null } | null;
+				};
+			}
+		).addCustomerToCustomerGroups;
+		throwIfMutationPayloadError(payload, 'AddCustomerToCustomerGroups');
+		return PlainEndpointOutputSchemas.addCustomerToGroup.parse(payload);
+	});
 };
 
 export const removeCustomerFromGroup: PlainEndpoints['removeCustomerFromGroup'] =
 	async (ctx, input) => {
 		const parsed =
 			PlainEndpointInputSchemas.removeCustomerFromGroup.parse(input);
-		await requestParsed(
+		const response = await requestParsed(
 			ctx,
 			'plain.customerGroups.removeCustomer',
 			{ customerId: parsed.customerId },
@@ -851,6 +923,18 @@ export const removeCustomerFromGroup: PlainEndpoints['removeCustomerFromGroup'] 
 			'RemoveCustomerFromCustomerGroups',
 			'runGraphqlQuery',
 		);
+
+		throwIfMutationPayloadError(
+			(
+				response.data as {
+					removeCustomerFromCustomerGroups?: {
+						error?: { message?: string; code?: string | null } | null;
+					};
+				}
+			).removeCustomerFromCustomerGroups,
+			'RemoveCustomerFromCustomerGroups',
+		);
+
 		return { success: true };
 	};
 

@@ -318,7 +318,7 @@ const plainEndpointMeta = {
 		description: 'Remove a customer from one or more customer groups.',
 	},
 	'graphql.run': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Run an arbitrary GraphQL query or mutation.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof plainEndpointsNested>;

@@ -1,5 +1,5 @@
 import { AuthMissingError } from 'corsair/core';
-import { makePlainRequest } from './client';
+import { makePlainRequest, PlainAPIError } from './client';
 import { plain, plainEndpointSchemas } from './index';
 
 jest.mock('./client', () => ({
@@ -96,6 +96,7 @@ describe('Plain plugin', () => {
 		]);
 		expect(Object.keys(plainEndpointSchemas).sort()).toEqual(paths);
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(paths);
+		expect(plugin.endpointMeta?.['graphql.run']?.riskLevel).toBe('write');
 		expect(plugin.webhooks).toEqual({});
 		expect(plugin.pluginWebhookMatcher).toBeUndefined();
 	});
@@ -482,5 +483,85 @@ describe('Plain plugin', () => {
 		expect(result.data).toEqual({
 			myWorkspace: { id: 'ws_123', name: 'Plain Workspace' },
 		});
+	});
+
+	it('throws PlainAPIError when mutation payload contains error', async () => {
+		mockMakePlainRequest.mockResolvedValue({
+			upsertCustomer: {
+				error: {
+					message: 'Customer identifier is invalid',
+					code: 'BAD_INPUT',
+				},
+			},
+		});
+
+		const plugin = plain();
+		await expect(
+			plugin.endpoints!.customers.upsert(mockCtx, {
+				identifier: { emailAddress: 'ada@example.com' },
+				onCreate: { fullName: 'Ada Lovelace' },
+				onUpdate: { fullName: { value: 'Ada Lovelace' } },
+			}),
+		).rejects.toMatchObject({
+			name: 'PlainAPIError',
+			code: 'BAD_INPUT',
+			message: 'UpsertCustomer: Customer identifier is invalid',
+		});
+	});
+
+	it('does not return success when delete payload includes an error', async () => {
+		mockMakePlainRequest.mockResolvedValue({
+			deleteCustomer: {
+				error: {
+					message: 'Cannot delete linked customer',
+					code: 'CONFLICT',
+				},
+			},
+		});
+
+		const plugin = plain();
+		await expect(
+			plugin.endpoints!.customers.delete(mockCtx, {
+				customerId: 'cus_123',
+			}),
+		).rejects.toBeInstanceOf(PlainAPIError);
+	});
+
+	it('does not return success when thread reply payload includes an error', async () => {
+		mockMakePlainRequest.mockResolvedValue({
+			replyToThread: {
+				error: {
+					message: 'Thread is closed',
+					code: 'THREAD_CLOSED',
+				},
+			},
+		});
+
+		const plugin = plain();
+		await expect(
+			plugin.endpoints!.threads.sendMessage(mockCtx, {
+				threadId: 'th_123',
+				textContent: 'Thanks for the update',
+			}),
+		).rejects.toMatchObject({ code: 'THREAD_CLOSED' });
+	});
+
+	it('does not return success when remove customer from group payload includes an error', async () => {
+		mockMakePlainRequest.mockResolvedValue({
+			removeCustomerFromCustomerGroups: {
+				error: {
+					message: 'Customer is not in group',
+					code: 'NOT_FOUND',
+				},
+			},
+		});
+
+		const plugin = plain();
+		await expect(
+			plugin.endpoints!.customerGroups.removeCustomer(mockCtx, {
+				customerId: 'cus_123',
+				customerGroupIdentifiers: [{ customerGroupKey: 'enterprise' }],
+			}),
+		).rejects.toMatchObject({ code: 'NOT_FOUND' });
 	});
 });
