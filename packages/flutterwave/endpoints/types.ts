@@ -63,7 +63,7 @@ const RouteSpecificInputSchemas = {
 type RouteKey = (typeof flutterwaveRoutes)[number]['key'];
 
 type InputSchemaMap = {
-	[K in RouteKey]: typeof FlutterwaveRequestInputSchema;
+	[K in RouteKey]: z.ZodTypeAny;
 };
 
 type OutputSchemaMap = {
@@ -82,7 +82,40 @@ export const FlutterwaveEndpointInputSchemas: InputSchemaMap = asSchemaMap(
 	FlutterwaveRequestInputSchema,
 );
 
+const createBeneficiaryFlatSchema = FlutterwaveRequestInputSchema.extend({
+	account_number: BeneficiaryBodySchema.shape.account_number,
+	account_bank: BeneficiaryBodySchema.shape.account_bank,
+	beneficiary_name: BeneficiaryBodySchema.shape.beneficiary_name,
+}).catchall(z.unknown());
+
+const createBulkVirtualAccountsFlatSchema =
+	FlutterwaveRequestInputSchema.extend({
+		batch_ref: BulkVirtualAccountsBodySchema.shape.batch_ref,
+		bulk_data: BulkVirtualAccountsBodySchema.shape.bulk_data,
+		is_permanent: BulkVirtualAccountsBodySchema.shape.is_permanent,
+	}).catchall(z.unknown());
+
+FlutterwaveEndpointInputSchemas.createBeneficiary = z.union([
+	RouteSpecificInputSchemas.createBeneficiary.extend({
+		body: BeneficiaryBodySchema,
+	}),
+	createBeneficiaryFlatSchema,
+]);
+
+FlutterwaveEndpointInputSchemas.createBulkVirtualAccountNumbers = z.union([
+	RouteSpecificInputSchemas.createBulkVirtualAccountNumbers.extend({
+		body: BulkVirtualAccountsBodySchema,
+	}),
+	createBulkVirtualAccountsFlatSchema,
+]);
+
 for (const [key, schema] of Object.entries(RouteSpecificInputSchemas)) {
+	if (
+		key === 'createBeneficiary' ||
+		key === 'createBulkVirtualAccountNumbers'
+	) {
+		continue;
+	}
 	FlutterwaveEndpointInputSchemas[key as RouteKey] =
 		schema as (typeof FlutterwaveEndpointInputSchemas)[RouteKey];
 }

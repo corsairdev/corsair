@@ -242,6 +242,14 @@ describe('Flutterwave representative endpoints', () => {
 		).toBe(true);
 		expect(
 			createBeneficiarySchema!.safeParse({
+				account_number: '0690000040',
+				account_bank: '044',
+				beneficiary_name: 'Alexis Sanchez',
+			}).success,
+		).toBe(true);
+		expect(createBeneficiarySchema!.safeParse({}).success).toBe(false);
+		expect(
+			createBeneficiarySchema!.safeParse({
 				body: {
 					account_number: '0690000040',
 					bank_code: '044',
@@ -265,6 +273,20 @@ describe('Flutterwave representative endpoints', () => {
 				},
 			}).success,
 		).toBe(true);
+		expect(
+			createBulkVirtualAccountsSchema!.safeParse({
+				batch_ref: 'batch-ref-1',
+				bulk_data: [
+					{
+						firstname: 'Alexis',
+						lastname: 'Sanchez',
+						email: 'user@example.com',
+						bvn: '12345678901',
+					},
+				],
+			}).success,
+		).toBe(true);
+		expect(createBulkVirtualAccountsSchema!.safeParse({}).success).toBe(false);
 		expect(
 			createBulkVirtualAccountsSchema!.safeParse({
 				body: {

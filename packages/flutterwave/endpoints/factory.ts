@@ -82,7 +82,7 @@ function buildBody(
 		typeof input.body === 'object' &&
 		!Array.isArray(input.body)
 	) {
-		return input.body;
+		return input.body as Record<string, unknown>;
 	}
 
 	const pathParams = new Set(route.pathParams ?? []);
@@ -123,7 +123,10 @@ export async function executeFlutterwaveOperation(
 			method: route.method,
 			body: buildBody(route, input),
 			query: buildQuery(route, input),
-			headers: input.headers,
+			headers:
+				typeof input.headers === 'object' && input.headers
+					? (input.headers as Record<string, string>)
+					: undefined,
 		},
 	);
 
