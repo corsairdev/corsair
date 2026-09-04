@@ -1,0 +1,1217 @@
+---
+title: API
+description: "API reference for OpenRouter: every `openrouter.api.*` operation with input and output types."
+---
+
+Every `openrouter.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Chat Completions
+
+### create
+
+`chatCompletions.create`
+
+Generate an AI response via OpenRouter with automatic multi-provider routing, retries, and fallbacks; supports tool calling, structured output, reasoning, and provider/route overrides
+
+**Risk:** `write`
+
+```ts
+await corsair.openrouter.api.chatCompletions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+| `stream` | `false` | No | — |
+| `temperature` | `number` | No | — |
+| `topP` | `number` | No | — |
+| `maxTokens` | `number` | No | — |
+| `maxCompletionTokens` | `number` | No | — |
+| `n` | `number` | No | — |
+| `stop` | `string \| string[]` | No | — |
+| `presencePenalty` | `number` | No | — |
+| `frequencyPenalty` | `number` | No | — |
+| `logitBias` | `object` | No | — |
+| `user` | `string` | No | — |
+| `responseFormat` | `object` | No | — |
+| `tools` | `object[]` | No | — |
+| `toolChoice` | `object` | No | — |
+| `reasoning` | `object` | No | — |
+| `transforms` | `string[]` | No | — |
+| `models` | `string[]` | No | — |
+| `route` | `string` | No | — |
+| `provider` | `object` | No | — |
+| `plugins` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+(
+  {
+    role: system,
+    content: string
+  } | {
+    role: assistant,
+    content?: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: input_audio,
+        input_audio: {
+          data: string,
+          format: string
+        }
+      }
+    )[] | null,
+    tool_calls?: {
+      id: string,
+      type: function,
+      function: {
+        name: string,
+        arguments: string
+      }
+    }[]
+  } | {
+    role: user,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: input_audio,
+        input_audio: {
+          data: string,
+          format: string
+        }
+      }
+    )[]
+  } | {
+    role: tool,
+    tool_call_id: string,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: input_audio,
+        input_audio: {
+          data: string,
+          format: string
+        }
+      }
+    )[]
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="logitBias full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="responseFormat full type">
+
+```ts
+{
+  type: text | json_object | json_schema,
+  json_schema?: {
+    name: string,
+    strict?: boolean,
+    schema?: {
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+{
+  type: function,
+  function: {
+    name: string,
+    description?: string,
+    parameters?: {
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="toolChoice full type">
+
+```ts
+string | {
+  type: function,
+  function: {
+    name: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="reasoning full type">
+
+```ts
+{
+  effort?: none | minimal | low | medium | high | xhigh | max,
+  summary?: auto | concise | detailed | null
+}
+```
+</Accordion>
+
+<Accordion title="provider full type">
+
+```ts
+{
+  order?: string[],
+  allow_fallbacks?: boolean,
+  ignore?: string[],
+  require_parameters?: boolean,
+  data_collection?: string,
+  zdr?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="plugins full type">
+
+```ts
+{
+  name: string,
+  max_tokens?: number,
+  num_images_per_prompt?: number,
+  image_format?: string,
+  num_prompts?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `chat.completion` | Yes | — |
+| `created` | `number` | Yes | — |
+| `model` | `string` | Yes | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `object` | No | — |
+| `provider` | `string` | No | — |
+| `models` | `string[]` | No | — |
+| `native_tool_calls` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index: number,
+  message: {
+    role: assistant,
+    content?: string | null,
+    tool_calls?: {
+      id: string,
+      type: function,
+      function: {
+        name: string,
+        arguments: string
+      }
+    }[],
+    reasoning?: string | null,
+    reasoning_details?: {
+    }[]
+  },
+  finish_reason?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens: number,
+  completion_tokens: number,
+  total_tokens: number,
+  prompt_tokens_details?: {
+    cached_tokens?: number,
+    cache_write_tokens?: number,
+    audio_tokens?: number,
+    video_tokens?: number
+  },
+  completion_tokens_details?: {
+    reasoning_tokens?: number,
+    audio_tokens?: number,
+    image_tokens?: number
+  },
+  cost?: number,
+  is_byok?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Credits
+
+### list
+
+`credits.list`
+
+Get the account credit balance and usage with a management API key
+
+**Risk:** `read`
+
+```ts
+await corsair.openrouter.api.credits.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  total_credits: number,
+  total_usage: number,
+  limit_reached?: boolean,
+  prepaid?: number,
+  billed_prepaid?: number,
+  soft_limit?: number,
+  pending_balance?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Embeddings
+
+### create
+
+`embeddings.create`
+
+Generate vector embeddings for one or more input strings using a supported embedding model
+
+**Risk:** `write`
+
+```ts
+await corsair.openrouter.api.embeddings.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `input` | `object[]` | Yes | — |
+| `encodingFormat` | `float \| base64` | No | — |
+| `dimensions` | `number` | No | — |
+| `user` | `string` | No | — |
+| `inputType` | `string` | No | — |
+| `provider` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+string | string[] | number[] | number[][] | {
+}[]
+```
+</Accordion>
+
+<Accordion title="provider full type">
+
+```ts
+{
+  order?: string[],
+  allow_fallbacks?: boolean,
+  ignore?: string[],
+  require_parameters?: boolean,
+  data_collection?: string,
+  zdr?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `object` | `list` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `model` | `string` | Yes | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  index?: number,
+  object: embedding,
+  embedding: number[] | string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens: number,
+  total_tokens: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Generations
+
+### get
+
+`generations.get`
+
+Fetch request and usage metadata for a previous generation by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.openrouter.api.generations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  model?: string,
+  provider?: string,
+  provider_name?: string | null,
+  api_type?: string | null,
+  created_at?: string,
+  streamed?: boolean | null,
+  finish_reason?: string | null,
+  total_cost?: number | null,
+  prompt_tokens?: number,
+  completion_tokens?: number,
+  total_tokens?: number,
+  usage?: number | {
+  },
+  tokens_prompt?: number | null,
+  tokens_completion?: number | null,
+  provider_responses?: any[] | null,
+  provider_response?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Key
+
+### get
+
+`key.get`
+
+Get metadata about the current API key, including usage, limits, and rate limits
+
+**Risk:** `read`
+
+```ts
+await corsair.openrouter.api.key.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  label?: string,
+  usage: number,
+  usage_daily?: number,
+  usage_weekly?: number,
+  usage_monthly?: number,
+  byok_usage?: number,
+  byok_usage_daily?: number,
+  byok_usage_weekly?: number,
+  byok_usage_monthly?: number,
+  limit?: number | null,
+  limit_reset?: string | null,
+  limit_remaining?: number | null,
+  include_byok_in_limit?: boolean,
+  creator_user_id?: string | null,
+  is_free_tier?: boolean,
+  is_management_key?: boolean,
+  is_provisioning_key?: boolean,
+  rate_limit?: {
+    requests: number,
+    interval: string
+  },
+  expires_at?: string | null,
+  created_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### create
+
+`messages.create`
+
+Create a message via OpenRouter's Anthropic Messages API, with support for system prompts and multi-part content
+
+**Risk:** `write`
+
+```ts
+await corsair.openrouter.api.messages.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `maxTokens` | `number` | No | — |
+| `messages` | `object[]` | Yes | — |
+| `system` | `string` | No | — |
+| `temperature` | `number` | No | — |
+| `topP` | `number` | No | — |
+| `stopSequences` | `string[]` | No | — |
+| `tools` | `object[]` | No | — |
+| `toolChoice` | `object` | No | — |
+| `thinking` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: user | assistant,
+  content: string | (
+    {
+      type: text,
+      text: string
+    } | {
+      type: image,
+      source: {
+        type: base64,
+        media_type: string,
+        data: string
+      } | {
+        type: url,
+        url: string
+      }
+    } | {
+      type: document,
+      source: {
+        type: base64,
+        media_type: string,
+        data: string
+      } | {
+        type: url,
+        url: string
+      } | {
+        type: text,
+        media_type: text/plain,
+        data: string
+      } | {
+        type: content,
+        content: string | (
+          {
+            type: text,
+            text: string
+          } | {
+            type: image,
+            source: {
+              type: base64,
+              media_type: string,
+              data: string
+            } | {
+              type: url,
+              url: string
+            }
+          }
+        )[]
+      } | {
+        type: file,
+        file_id: string
+      },
+      title?: string | null,
+      context?: string | null,
+      citations?: {
+        enabled?: boolean
+      } | null
+    } | {
+      type: tool_use,
+      id: string,
+      name: string,
+      input: {
+      }
+    } | {
+      type: tool_result,
+      tool_use_id: string,
+      content: string | any[],
+      is_error?: boolean
+    } | {
+      type: thinking,
+      thinking: string,
+      signature?: string
+    } | {
+      type: redacted_thinking,
+      data: string
+    }
+  )[]
+}[]
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+{
+  name: string,
+  description?: string,
+  input_schema: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="toolChoice full type">
+
+```ts
+{
+  type: tool,
+  name: string
+} | {
+  type: auto | any | none
+}
+```
+</Accordion>
+
+<Accordion title="thinking full type">
+
+```ts
+{
+  type: enabled,
+  budget_tokens: number
+} | {
+  type: disabled
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `message` | Yes | — |
+| `role` | `assistant` | Yes | — |
+| `model` | `string` | Yes | — |
+| `stop_reason` | `string` | No | — |
+| `content` | `object[]` | Yes | — |
+| `usage` | `object` | Yes | — |
+| `provider` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+(
+  {
+    type: text,
+    text: string,
+    citations?: any[] | null
+  } | {
+    type: thinking,
+    thinking: string,
+    signature?: string
+  } | {
+    type: redacted_thinking,
+    data: string
+  } | {
+    type: tool_use,
+    id: string,
+    name: string,
+    input: {
+    }
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  input_tokens: number,
+  output_tokens: number,
+  cache_read_input_tokens?: number | null,
+  cache_creation_input_tokens?: number | null,
+  output_tokens_details?: {
+    thinking_tokens?: number
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Model Endpoints
+
+### list
+
+`modelEndpoints.list`
+
+List the individual endpoints serving a model, with per-provider pricing, latency, and throughput
+
+**Risk:** `read`
+
+```ts
+await corsair.openrouter.api.modelEndpoints.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `author` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  created?: number,
+  description?: string,
+  architecture?: {
+  },
+  endpoints: {
+    name: string,
+    model_id?: string,
+    model_name?: string,
+    provider_name: string,
+    tag?: string,
+    context_length?: number,
+    max_completion_tokens?: number | null,
+    max_prompt_tokens?: number | null,
+    quantization?: string | null,
+    pricing?: {
+    },
+    supported_parameters?: string[],
+    status?: number,
+    uptime_last_30m?: number | null,
+    uptime_last_5m?: number | null,
+    uptime_last_1d?: number | null,
+    supports_implicit_caching?: boolean,
+    supports_voice_cloning?: boolean,
+    latency_last_30m?: {
+      p50?: number,
+      p75?: number,
+      p90?: number,
+      p99?: number
+    } | null,
+    throughput_last_30m?: {
+      p50?: number,
+      p75?: number,
+      p90?: number,
+      p99?: number
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### count
+
+`models.count`
+
+Get the total count of models available on OpenRouter
+
+**Risk:** `read`
+
+```ts
+await corsair.openrouter.api.models.count({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`models.list`
+
+List all models available on OpenRouter, including pricing, context length, and supported parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.openrouter.api.models.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  created?: number,
+  description?: string,
+  context_length?: number,
+  pricing?: {
+  },
+  architecture?: {
+    modality?: string,
+    input_modalities?: string[],
+    output_modalities?: string[],
+    tokenizer?: string,
+    instruct_type?: string | null
+  },
+  top_provider?: {
+    context_length?: number | null,
+    max_completion_tokens?: number | null,
+    is_moderated?: boolean
+  },
+  per_request_limits?: {
+    prompt_tokens?: string | null,
+    completion_tokens?: string | null
+  } | null,
+  supported_parameters?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEmbeddings
+
+`models.listEmbeddings`
+
+List all embedding models available on OpenRouter
+
+**Risk:** `read`
+
+```ts
+await corsair.openrouter.api.models.listEmbeddings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  created?: number,
+  description?: string,
+  context_length?: number,
+  pricing?: {
+  },
+  architecture?: {
+    modality?: string,
+    input_modalities?: string[],
+    output_modalities?: string[],
+    tokenizer?: string,
+    instruct_type?: string | null
+  },
+  top_provider?: {
+    context_length?: number | null,
+    max_completion_tokens?: number | null,
+    is_moderated?: boolean
+  },
+  per_request_limits?: {
+    prompt_tokens?: string | null,
+    completion_tokens?: string | null
+  } | null,
+  supported_parameters?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUser
+
+`models.listUser`
+
+List models filtered by the authenticated user’s provider preferences, privacy settings, and guardrails
+
+**Risk:** `read`
+
+```ts
+await corsair.openrouter.api.models.listUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  created?: number,
+  description?: string,
+  context_length?: number,
+  pricing?: {
+  },
+  architecture?: {
+    modality?: string,
+    input_modalities?: string[],
+    output_modalities?: string[],
+    tokenizer?: string,
+    instruct_type?: string | null
+  },
+  top_provider?: {
+    context_length?: number | null,
+    max_completion_tokens?: number | null,
+    is_moderated?: boolean
+  },
+  per_request_limits?: {
+    prompt_tokens?: string | null,
+    completion_tokens?: string | null
+  } | null,
+  supported_parameters?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Providers
+
+### list
+
+`providers.list`
+
+List the providers available on OpenRouter with their privacy policies and data-center regions
+
+**Risk:** `read`
+
+```ts
+await corsair.openrouter.api.providers.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  slug: string,
+  privacy_policy_url?: string | null,
+  terms_of_service_url?: string | null,
+  status_page_url?: string | null,
+  headquarters?: string | null,
+  datacenters?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Zdr
+
+### list
+
+`zdr.list`
+
+List the Zero-Data Residency (ZDR) endpoint specification for the account
+
+**Risk:** `read`
+
+```ts
+await corsair.openrouter.api.zdr.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  model_id?: string,
+  model_name?: string,
+  provider_name: string,
+  tag?: string,
+  context_length?: number,
+  max_completion_tokens?: number | null,
+  max_prompt_tokens?: number | null,
+  quantization?: string | null,
+  pricing?: {
+  },
+  supported_parameters?: string[],
+  status?: number,
+  uptime_last_30m?: number | null,
+  uptime_last_5m?: number | null,
+  uptime_last_1d?: number | null,
+  supports_implicit_caching?: boolean,
+  supports_voice_cloning?: boolean,
+  latency_last_30m?: {
+    p50?: number,
+    p75?: number,
+    p90?: number,
+    p99?: number
+  } | null,
+  throughput_last_30m?: {
+    p50?: number,
+    p75?: number,
+    p90?: number,
+    p99?: number
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

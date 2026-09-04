@@ -1,14 +1,14 @@
 ---
 title: Overview
-description: "Slack plugin for Corsair"
+description: "Slack plugin for Corsair — messages, channels, reactions, and workspace events."
 ---
 
-Use **Slack** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+Use **Slack** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
 - 45 typed API operations
-- 5 database entities synced for fast `.search()` / `.list()` queries
+- 5 synced entities (`channels`, `files`, `messages`, `userGroups`, `users`) for fast `.search()` / `.list()`
 - 9 incoming webhook event types
 
 ## Setup
@@ -16,147 +16,186 @@ Use **Slack** through Corsair: one client, typed API calls, optional local DB sy
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/slack
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/slack
 ```
+```bash yarn
+yarn add corsair @corsair-dev/slack
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/slack
+```
+```bash bun
+bun add corsair @corsair-dev/slack
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { slack } from '@corsair-dev/slack';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [slack()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { slack } from '@corsair-dev/slack';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [slack()],
+	plugins: [
+		slack({
+			authType: 'managed',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/slack/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=slack
+<Tab title="Managed OAuth (Recommended)">
+
+No setup required. Corsair hosts the OAuth app for **Slack** — your tenants connect through Hub when they sign in.
+
+Provider walkthrough: [Get Credentials](/plugins/slack/get-credentials).
+
+```ts
+slack({
+	authType: 'managed',
+})
 ```
 
-Use the key names documented in [Get Credentials](/plugins/slack/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+More: [Managed OAuth](/concepts/auth#managed)
+
 </Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=slack --tenant=<tenantId>
-```
+<Tab title="API Key">
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-</Step>
+Provider walkthrough: [Get Credentials](/plugins/slack/get-credentials).
 
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 slack()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=slack` (see [Get Credentials](/plugins/slack/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 <Tab title="OAuth 2.0">
 
-```ts corsair.ts
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Slack OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/slack/get-credentials).
+
+```ts
 slack({
-    authType: 'oauth_2',
+	authType: 'oauth_2',
 })
 ```
-
-Store credentials with `pnpm corsair setup --plugin=slack` (see [Get Credentials](/plugins/slack/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
 </Tabs>
 
-## Webhooks
+</Step>
 
-This plugin registers **9** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-See [Webhooks](/plugins/slack/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'slack',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
 
-## Query synced data
-
-Synced entities support `corsair.slack.db.<entity>.search()` and `.list()`. See [Database](/plugins/slack/database) for filters and operators.
-
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `admin.conversationsGetTeams`
+**List channels**
 
 ```ts
-await corsair.slack.api.admin.conversationsGetTeams({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.channels.list({});
 ```
 
 
-**Write-style (write):** `admin.conversationsSetTeams`
+**Post a message**
 
 ```ts
-await corsair.slack.api.admin.conversationsSetTeams({});
+const tenant = corsair.withTenant('acme');
+await tenant.slack.api.messages.post({ channel: 'C01234567', text: 'Hello from Corsair' });
 ```
 
 
-See the full list on the [API](/plugins/slack/api) page. Use `pnpm corsair list --plugin=slack` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/slack/api) page.
 
----
+## Query synced data
 
-## Hooks
+Search synced channels without hitting Slack's API.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/slack/webhooks) page for payload types.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.slack.db.channels.search({
+	data: { is_archived: false },
+	limit: 50,
+});
+```
 
----
+Synced entities: `channels`, `files`, `messages`, `userGroups`, `users`. See [Database](/plugins/slack/database) for filters and operators.
 
-## Reference
+## Webhooks
 
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/slack/api) |
-| Database | [Database](/plugins/slack/database) |
-| Webhooks | [Webhooks](/plugins/slack/webhooks) |
-| Credentials | [Get credentials](/plugins/slack/get-credentials) |
+React when someone posts in a channel — `messages.message` is the common entry point.
 
+```ts
+slack({
+    webhookHooks: {
+        messages: {
+            message: {
+                after: async (ctx, result) => {
+                    const text = result.data?.text;
+                    console.log('Slack message:', text);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/slack/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/slack/api">
+    Every `slack.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/slack/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/slack/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/slack/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

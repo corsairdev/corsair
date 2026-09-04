@@ -3,137 +3,126 @@ title: Overview
 description: "Addresszen plugin for Corsair"
 ---
 
-Use **Addresszen** through Corsair: one client, typed API calls, optional local DB sync.
+Use **Addresszen** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
 - 4 typed API operations
-- 4 database entities synced for fast `.search()` / `.list()` queries
+- 4 synced entities (`autocompleteResults`, `keyAvailability`, `resolvedAddresses`, `verifiedAddresses`) for fast `.search()` / `.list()`
 
 ## Setup
 
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/addresszen
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/addresszen
 ```
+```bash yarn
+yarn add corsair @corsair-dev/addresszen
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/addresszen
+```
+```bash bun
+bun add corsair @corsair-dev/addresszen
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { addresszen } from '@corsair-dev/addresszen';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [addresszen()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { addresszen } from '@corsair-dev/addresszen';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [addresszen()],
+	plugins: [
+		addresszen(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/addresszen/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=addresszen
-```
+<Tab title="API Key (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/addresszen/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=addresszen --tenant=<tenantId>
-```
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
-
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 addresszen()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=addresszen` (see [Get Credentials](/plugins/addresszen/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 </Tabs>
 
+</Step>
 
-## Query synced data
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-Synced entities support `corsair.addresszen.db.<entity>.search()` and `.list()`. See [Database](/plugins/addresszen/database) for filters and operators.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'addresszen',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
+
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `autocomplete.addresses`
+**`autocomplete.addresses`**
 
 ```ts
-await corsair.addresszen.api.autocomplete.addresses({});
+const tenant = corsair.withTenant('acme');
+await tenant.addresszen.api.autocomplete.addresses({});
 ```
 
 
-**Write-style (write):** `—`
+**Write**
 
-_No write-style endpoint inferred; pick any operation from the reference below._
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/addresszen/api) reference._
 
 
-See the full list on the [API](/plugins/addresszen/api) page. Use `pnpm corsair list --plugin=addresszen` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/addresszen/api) page.
 
----
+## Query synced data
 
-## Hooks
+Synced entities support `tenant.addresszen.db.<entity>.search()` and `.list()`: `autocompleteResults`, `keyAvailability`, `resolvedAddresses`, `verifiedAddresses`.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+See [Database](/plugins/addresszen/database) for filters and operators.
 
----
+## What's next
 
-## Reference
-
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/addresszen/api) |
-| Database | [Database](/plugins/addresszen/database) |
-| Credentials | [Get credentials](/plugins/addresszen/get-credentials) |
-
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/addresszen/api">
+    Every `addresszen.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/addresszen/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
