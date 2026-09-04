@@ -96,19 +96,21 @@ export const corsair = createCorsair({
 });
 ```
 
-`db` is the app's own database handle. No database yet? The fast path is SQLite:
+`db` is the app's own database handle. No database yet? For local development the fast path is SQLite:
 
 ```ts
 import Database from "better-sqlite3";
-const db = new Database("corsair.db");
+const db = new Database("corsair.db"); // local dev only
 ```
 
-Postgres, Drizzle, and Prisma work too; see [database](https://docs.corsair.dev/concepts/database.md).
+Corsair does not create its tables for you: `createCorsair` expects them and `setupCorsair` only warns when they are missing. Run the migration once before the first call. The SQL for all five tables is in [database](https://docs.corsair.dev/concepts/database.md) (`sqlite3 corsair.db < migration.sql`).
+
+A local SQLite file will not persist on serverless hosts like Vercel, where instances do not share a filesystem, so state and encrypted credentials can be lost or split. In production use Postgres or another durable, shared database. Drizzle and Prisma work too; see [database](https://docs.corsair.dev/concepts/database.md).
 
 | Field | What it is |
 | --- | --- |
 | `kek` | Envelope key. Wraps a per-connection DEK that encrypts each credential. |
-| `database` | The app's DB handle. Corsair creates five tables (`corsair_integrations`, `corsair_accounts`, `corsair_entities`, `corsair_events`, `corsair_permissions`). |
+| `database` | The app's DB handle. Corsair uses five tables (`corsair_integrations`, `corsair_accounts`, `corsair_entities`, `corsair_events`, `corsair_permissions`); create them with the migration above. |
 | `hub` | `{ projectApiKey, signingSecret }` for Hub mode. |
 | `plugins` | Configured plugin factories, e.g. `github({ authType: "managed" })`. |
 | `multiTenancy` | `true` scopes everything per end user; `false` is for the app's own tools. |
@@ -148,7 +150,7 @@ The user authorizes on Hub's hosted page, and the tokens land encrypted in the u
 
 ### React apps: Corsair Connect
 
-On a React frontend, wrap the app once and write no connect or reconnect handling. When any Corsair call fails because the tenant hasn't connected a plugin (or a credential expired and a reconnect is required), the provider opens a connect dialog on its own and the user fixes it inline.
+On a React frontend, wrap the app once in `CorsairProvider`. When a Corsair call fails because the tenant hasn't connected a plugin (or a credential expired and a reconnect is required), a connect dialog surfaces and the user fixes it inline. Two paths make that reliable in production: server reads gate through the error boundary, and mutations wrap in `call(fn)`.
 
 ```tsx
 // app/providers.tsx
@@ -166,8 +168,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
 }
 ```
 
-- The dialog opens for any failed call with no per-call code (`captureUnhandled`, on by default). `baseURL` defaults to `/api/corsair`; `appearance` is `"light"`, `"dark"`, or `"auto"`.
-- `useConnections()` gives `connect(plugin)` for a proactive "Connect X" button, `call(fn)` to wrap a mutation so it re-runs itself after connect, and `isConnected(plugin)` for button state.
+- `useConnections()` gives `connect(plugin)` for a proactive "Connect X" button, `call(fn)` to wrap a mutation so the dialog opens and the mutation re-runs after connect, and `isConnected(plugin)` for button state. Wrapping mutations in `call` is the reliable path.
+- `captureUnhandled` (on by default) also auto-opens the dialog for an unwrapped call, but treat it as a convenience, not the mechanism you lean on: it detects the failure by error markers that production can redact, and even when it fires it only opens the dialog, it can't resume the original call. Set it `false` to drive everything through `call`, `connect`, and the boundary. `baseURL` defaults to `/api/corsair`; `appearance` is `"light"`, `"dark"`, or `"auto"`.
 - A Server Component that reads Corsair data throws to its segment's `error.tsx` (Next.js App Router). Re-export the boundary there and the read retries once connected:
 
 ```tsx

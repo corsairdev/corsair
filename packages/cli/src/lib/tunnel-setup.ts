@@ -24,7 +24,7 @@ export async function enrollDevTunnel(opts: {
 		console.log(
 			[
 				'[corsair] the frpc tunnel binary is missing. It installs as the @corsair-dev/frpc-* optional dependency. To fix:',
-				'  reinstall with optional dependencies enabled:  npm i corsair   (or pnpm add / yarn add)',
+				'  reinstall with optional dependencies enabled:  npm i corsair  (or pnpm add corsair / yarn add corsair)',
 				'  offline or locked registry: set CORSAIR_FRP_BIN to an frpc path',
 				'  frpc binaries (any platform): https://github.com/fatedier/frp/releases',
 			].join('\n'),

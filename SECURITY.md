@@ -21,8 +21,9 @@ current version before reporting, in case the issue is already resolved.
 
 ## Scope
 
-This repository is the Corsair SDK and its integration plugins. Credentials are
-encrypted with your own KEK and stored in your database; the KEK, signing
-secret, and tenant tokens never leave your environment. Reports that involve
-credential handling, the delivery-URL/webhook signature path, or the dev tunnel
-are especially welcome.
+This repository is the Corsair SDK and its integration plugins. Your KEK stays
+in your environment and encrypts each credential at rest in your own database.
+Hub runs managed OAuth and delivers the resulting credentials to your backend's
+signed delivery endpoint (and through the dev tunnel in local development).
+Reports that involve credential handling, the delivery and signature path, or
+the dev tunnel are especially welcome.
