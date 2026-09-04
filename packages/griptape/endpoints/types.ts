@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+const NonEmptyId = z.string().min(1);
+
 export const AssistantDetailSchema = z.object({
 	assistant_id: z.uuid(),
 	created_at: z.string().datetime(),
@@ -18,7 +20,7 @@ export const AssistantDetailSchema = z.object({
 });
 
 const AssistantGetInputSchema = z.object({
-	assistant_id: z.uuid(),
+	assistant_id: NonEmptyId,
 });
 
 const AssistantGetResponseSchema = AssistantDetailSchema;
@@ -90,10 +92,8 @@ const LimitOffsetQuerySchema = z.object({
  * Cloud-managed. Callers pass the documented Cloud fields as an object. */
 const MutationBodySchema = z.record(z.string(), z.unknown());
 
-const NonEmptyId = z.string().min(1);
-
 // ---------------------------------------------------------------------------
-// Per-operation input schemas (143 ops; op key -> spec operationId in comment)
+// Per-operation input schemas (140 ops; op key -> spec operationId in comment)
 // ---------------------------------------------------------------------------
 
 const AssistantCreateInputSchema = z.object({
@@ -537,9 +537,6 @@ export type GriptapeEndpointInputs = {
 	assistantRunList: z.infer<typeof AssistantRunListInputSchema>;
 	assistantRunGet: z.infer<typeof AssistantRunIdInputSchema>;
 	assistantRunCancel: z.infer<typeof AssistantRunIdInputSchema>;
-	assistantRunResult: z.infer<typeof AssistantRunIdInputSchema>;
-	assistantRunErrorDetails: z.infer<typeof AssistantRunIdInputSchema>;
-	assistantRunLogs: z.infer<typeof AssistantRunEventsInputSchema>;
 	assistantRunEvents: z.infer<typeof AssistantRunEventsInputSchema>;
 	threadList: z.infer<typeof ThreadListInputSchema>;
 	threadCreate: z.infer<typeof ThreadCreateInputSchema>;
@@ -685,9 +682,6 @@ export type GriptapeEndpointOutputs = {
 	assistantRunList: z.infer<typeof CloudListSchema>;
 	assistantRunGet: z.infer<typeof CloudObjectSchema>;
 	assistantRunCancel: z.infer<typeof CloudObjectSchema>;
-	assistantRunResult: z.infer<typeof CloudObjectSchema>;
-	assistantRunErrorDetails: z.infer<typeof CloudObjectSchema>;
-	assistantRunLogs: z.infer<typeof CloudListSchema>;
 	assistantRunEvents: z.infer<typeof CloudListSchema>;
 	threadList: z.infer<typeof CloudListSchema>;
 	threadCreate: z.infer<typeof CloudObjectSchema>;
@@ -831,9 +825,6 @@ export const GriptapeEndpointInputSchemas = {
 	assistantRunList: AssistantRunListInputSchema,
 	assistantRunGet: AssistantRunIdInputSchema,
 	assistantRunCancel: AssistantRunIdInputSchema,
-	assistantRunResult: AssistantRunIdInputSchema,
-	assistantRunErrorDetails: AssistantRunIdInputSchema,
-	assistantRunLogs: AssistantRunEventsInputSchema,
 	assistantRunEvents: AssistantRunEventsInputSchema,
 	threadList: ThreadListInputSchema,
 	threadCreate: ThreadCreateInputSchema,
@@ -977,9 +968,6 @@ export const GriptapeEndpointOutputSchemas = {
 	assistantRunList: CloudListSchema,
 	assistantRunGet: CloudObjectSchema,
 	assistantRunCancel: CloudObjectSchema,
-	assistantRunResult: CloudObjectSchema,
-	assistantRunErrorDetails: CloudObjectSchema,
-	assistantRunLogs: CloudListSchema,
 	assistantRunEvents: CloudListSchema,
 	threadList: CloudListSchema,
 	threadCreate: CloudObjectSchema,
