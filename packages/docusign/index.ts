@@ -1,4 +1,10 @@
-import type { RequiredPluginEndpointMeta } from 'corsair/core';
+import type {
+	KeyBuilderContext,
+	PickAuth,
+	PluginAuthConfig,
+	RequiredPluginEndpointMeta,
+} from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { DocusignAuthOptions } from './client';
 import { DocusignClient } from './client';
 import * as endpoints from './endpoints';
@@ -63,6 +69,24 @@ export const docusignEndpointMeta = {
 	...endpoints.generatedEndpointMeta,
 } satisfies RequiredPluginEndpointMeta<typeof docusignEndpointsNested>;
 
+export const docusignAuthConfig = {
+	oauth_2: {
+		account: ['account_id', 'base_uri'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
+export type DocusignPluginOptions = {
+	accessToken: string;
+	accountId: string;
+	baseUri?: string;
+	authType?: PickAuth<'oauth_2'>;
+};
+
+export type DocusignKeyBuilderContext = KeyBuilderContext<
+	DocusignPluginOptions,
+	typeof docusignAuthConfig
+>;
+
 export const endpointMeta = docusignEndpointMeta;
 export const endpointSchemas = endpoints.docusignEndpointSchemas;
 
@@ -75,12 +99,47 @@ export const docusignPlugin = {
 		type: 'oauth2' as const,
 		fields: ['accessToken', 'accountId', 'baseUri'],
 	},
+	authConfig: docusignAuthConfig,
 	createClient: (options: DocusignAuthOptions) => new DocusignClient(options),
 	endpoints: docusignEndpointsNested,
 	endpointMeta: docusignEndpointMeta,
 	endpointSchemas: endpoints.docusignEndpointSchemas,
 	errorHandlers: errorHandlers.docusignErrorHandlers,
 	schema,
+	keyBuilder: async (
+		ctx: DocusignKeyBuilderContext,
+		source: 'endpoint' | 'webhook',
+	) => {
+		if (source !== 'endpoint') {
+			throw new AuthMissingError('docusign', 'oauth_2');
+		}
+		const factory = ctx.options as Partial<DocusignAuthOptions> | undefined;
+		if (
+			typeof factory?.accessToken === 'string' &&
+			factory.accessToken.length > 0 &&
+			typeof factory?.accountId === 'string' &&
+			factory.accountId.length > 0
+		) {
+			return JSON.stringify({
+				accessToken: factory.accessToken,
+				accountId: factory.accountId,
+				...(typeof factory.baseUri === 'string' && factory.baseUri.length > 0
+					? { baseUri: factory.baseUri }
+					: {}),
+			});
+		}
+		const accessToken = await ctx.keys?.get_access_token?.();
+		const accountId = await ctx.keys?.get_account_id?.();
+		const baseUri = await ctx.keys?.get_base_uri?.();
+		if (!accessToken || !accountId) {
+			throw new AuthMissingError('docusign', 'oauth_2');
+		}
+		return JSON.stringify({
+			accessToken,
+			accountId,
+			...(baseUri ? { baseUri } : {}),
+		});
+	},
 };
 
 export const docusign = (config?: Record<string, unknown>) => ({
@@ -88,7 +147,12 @@ export const docusign = (config?: Record<string, unknown>) => ({
 	// Core forwards `plugin.options` into the runtime context (`ctx.options`),
 	// so credentials must live under `options` — not only `config` — for
 	// bound endpoints to resolve their client at runtime.
-	...(config && { config, options: config }),
+	// `authType` makes the runtime provision the tenant key manager so the
+	// keyBuilder can resolve per-tenant credentials.
+	...(config && {
+		config,
+		options: { authType: 'oauth_2', ...config },
+	}),
 });
 
 export default docusign;
