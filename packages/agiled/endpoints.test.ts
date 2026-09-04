@@ -197,4 +197,12 @@ describe('Agiled contacts.list', () => {
 		expect(result.data).toHaveLength(1);
 		expect(result.current_page).toBe(2);
 	});
+
+	it('rejects responses that violate the contacts output schema', async () => {
+		mockRequest.mockResolvedValue({ items: [{ id: 1 }] });
+
+		await expect(
+			endpoints.contacts.list(mockCtx, { page: 1, limit: 25 }),
+		).rejects.toThrow(/failed schema validation/);
+	});
 });
