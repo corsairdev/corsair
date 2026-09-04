@@ -1,7 +1,4 @@
-import type {
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-} from 'corsair/core';
+import type { RequiredPluginEndpointMeta } from 'corsair/core';
 import { flutterwaveOperations } from './operations';
 import { flutterwaveRoutes } from './routes';
 import {

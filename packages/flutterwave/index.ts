@@ -17,10 +17,6 @@ import {
 	flutterwaveEndpointsNested,
 	flutterwaveEndpointMeta as generatedFlutterwaveEndpointMeta,
 } from './endpoints';
-import type {
-	FlutterwaveEndpointInputs,
-	FlutterwaveEndpointOutputs,
-} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { FlutterwaveSchema } from './schema';
 
