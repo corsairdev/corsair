@@ -21,8 +21,40 @@ const SortItemSchema = z
 	})
 	.loose();
 
+/**
+ * Wix query-language filter: `{ [fieldPath]: { [operator]: value } }`.
+ * Logical operators hold arrays (`$and`/`$or`) or a nested filter (`$not`),
+ * so every filter value is an operator object or a filter array — a bare
+ * primitive is malformed and is rejected before reaching the API.
+ */
+type WixFilter = {
+	[fieldPath: string]:
+		| { [operator: string]: unknown }
+		| WixFilter[]
+		| WixFilter;
+};
+const WixFilterSchema: z.ZodType<WixFilter> = z.lazy(() =>
+	z.record(
+		z.string(),
+		z.union([z.record(z.string(), z.unknown()), z.array(WixFilterSchema)]),
+	),
+) as z.ZodType<WixFilter>;
+
+/**
+ * Entity patch bodies (bulk `update` etc.) are objects keyed by field path;
+ * Wix validates the actual fields server-side.
+ */
+const WixEntityPatchSchema = z.record(z.string(), z.unknown());
+
+/**
+ * Proto-style field mask used by Wix update endpoints.
+ */
+const FieldMaskSchema = z.looseObject({
+	fields: z.array(z.string()).optional(),
+});
+
 const QueryOptionFields = {
-	filter: z.record(z.string(), z.unknown()).optional(),
+	filter: WixFilterSchema.optional(),
 	sort: z.array(SortItemSchema).optional(),
 	paging: PagingSchema.optional(),
 	limit: z.number().int().min(0).max(1000).optional(),
@@ -49,7 +81,16 @@ const BulkActionMetadataSchema = z
 	})
 	.loose();
 
-const WixItemSchema = z.looseObject({});
+/**
+ * Wix resources returned in query and bulk-action responses are objects
+ * carrying string `id` and, when versioned, string `revision` fields
+ * (int64 encoded). Typing them rejects malformed resource payloads while
+ * tolerating resources that legitimately omit them.
+ */
+const WixItemSchema = z.looseObject({
+	id: z.string().optional(),
+	revision: z.string().optional(),
+});
 
 type WixQueryResponse<ItemsField extends string> = {
 	[field in ItemsField]?: z.infer<typeof WixItemSchema>[];
@@ -95,16 +136,16 @@ export type ListContactsResponse = z.infer<typeof ListContactsResponseSchema>;
 
 const BulkUpdateContactsInputSchema = z.looseObject({
 	...SiteScopeFields,
-	items: z.array(z.looseObject({})).optional(),
-	filter: z.record(z.string(), z.unknown()).optional(),
+	items: z.array(WixItemSchema).optional(),
+	filter: WixFilterSchema.optional(),
 	search: z.string().optional(),
-	fieldMask: z.looseObject({}).optional(),
+	fieldMask: FieldMaskSchema.optional(),
 });
 export type BulkUpdateContactsInput = z.infer<
 	typeof BulkUpdateContactsInputSchema
 >;
 const BulkUpdateContactsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkUpdateContactsResponse = z.infer<
@@ -119,7 +160,7 @@ const AddContactLabelsInputSchema = z.looseObject({
 export type AddContactLabelsInput = z.infer<typeof AddContactLabelsInputSchema>;
 const AddContactLabelsResponseSchema = z.looseObject({
 	id: z.string().optional(),
-	revision: z.number().optional(),
+	revision: z.string().optional(),
 });
 export type AddContactLabelsResponse = z.infer<
 	typeof AddContactLabelsResponseSchema
@@ -133,7 +174,7 @@ const UnlabelContactInputSchema = z.looseObject({
 export type UnlabelContactInput = z.infer<typeof UnlabelContactInputSchema>;
 const UnlabelContactResponseSchema = z.looseObject({
 	id: z.string().optional(),
-	revision: z.number().optional(),
+	revision: z.string().optional(),
 });
 export type UnlabelContactResponse = z.infer<
 	typeof UnlabelContactResponseSchema
@@ -144,7 +185,7 @@ export type ListContactsFacetsInput = z.infer<
 	typeof ListContactsFacetsInputSchema
 >;
 const ListContactsFacetsResponseSchema = z.looseObject({
-	facets: z.array(z.looseObject({})).optional(),
+	facets: z.array(WixItemSchema).optional(),
 });
 export type ListContactsFacetsResponse = z.infer<
 	typeof ListContactsFacetsResponseSchema
@@ -158,7 +199,7 @@ export type QueryContactsFacetsInput = z.infer<
 	typeof QueryContactsFacetsInputSchema
 >;
 const QueryContactsFacetsResponseSchema = z.looseObject({
-	facets: z.array(z.looseObject({})).optional(),
+	facets: z.array(WixItemSchema).optional(),
 });
 export type QueryContactsFacetsResponse = z.infer<
 	typeof QueryContactsFacetsResponseSchema
@@ -196,7 +237,7 @@ export type BulkDeleteProductsInput = z.infer<
 	typeof BulkDeleteProductsInputSchema
 >;
 const BulkDeleteProductsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteProductsResponse = z.infer<
@@ -211,7 +252,7 @@ export type BulkDeleteInventoryItemsInput = z.infer<
 	typeof BulkDeleteInventoryItemsInputSchema
 >;
 const BulkDeleteInventoryItemsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteInventoryItemsResponse = z.infer<
@@ -224,7 +265,7 @@ const BulkDeleteBrandsInputSchema = z.looseObject({
 });
 export type BulkDeleteBrandsInput = z.infer<typeof BulkDeleteBrandsInputSchema>;
 const BulkDeleteBrandsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteBrandsResponse = z.infer<
@@ -239,7 +280,7 @@ export type BulkGetOrCreateBrandsInput = z.infer<
 	typeof BulkGetOrCreateBrandsInputSchema
 >;
 const BulkGetOrCreateBrandsResponseSchema = z.looseObject({
-	brands: z.array(z.looseObject({})).optional(),
+	brands: z.array(WixItemSchema).optional(),
 });
 export type BulkGetOrCreateBrandsResponse = z.infer<
 	typeof BulkGetOrCreateBrandsResponseSchema
@@ -247,15 +288,15 @@ export type BulkGetOrCreateBrandsResponse = z.infer<
 
 const BulkUpdateProductsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: z.record(z.string(), z.unknown()),
-	update: z.looseObject({}).optional(),
+	filter: WixFilterSchema,
+	update: WixEntityPatchSchema.optional(),
 	fields: z.array(z.string()).optional(),
 });
 export type BulkUpdateProductsByFilterInput = z.infer<
 	typeof BulkUpdateProductsByFilterInputSchema
 >;
 const BulkUpdateProductsByFilterResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkUpdateProductsByFilterResponse = z.infer<
@@ -264,14 +305,14 @@ export type BulkUpdateProductsByFilterResponse = z.infer<
 
 const BulkUpdateInventoryItemsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: z.record(z.string(), z.unknown()),
-	update: z.looseObject({}).optional(),
+	filter: WixFilterSchema,
+	update: WixEntityPatchSchema.optional(),
 });
 export type BulkUpdateInventoryItemsByFilterInput = z.infer<
 	typeof BulkUpdateInventoryItemsByFilterInputSchema
 >;
 const BulkUpdateInventoryItemsByFilterResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkUpdateInventoryItemsByFilterResponse = z.infer<
@@ -280,13 +321,13 @@ export type BulkUpdateInventoryItemsByFilterResponse = z.infer<
 
 const BulkUpdateCustomizationsInputSchema = z.looseObject({
 	...SiteScopeFields,
-	updates: z.array(z.looseObject({})).min(1),
+	updates: z.array(WixItemSchema).min(1),
 });
 export type BulkUpdateCustomizationsInput = z.infer<
 	typeof BulkUpdateCustomizationsInputSchema
 >;
 const BulkUpdateCustomizationsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkUpdateCustomizationsResponse = z.infer<
@@ -295,13 +336,13 @@ export type BulkUpdateCustomizationsResponse = z.infer<
 
 const BulkCreateProductsWithInventoryInputSchema = z.looseObject({
 	...SiteScopeFields,
-	products: z.array(z.looseObject({})).min(1).max(100),
+	products: z.array(WixItemSchema).min(1).max(100),
 });
 export type BulkCreateProductsWithInventoryInput = z.infer<
 	typeof BulkCreateProductsWithInventoryInputSchema
 >;
 const BulkCreateProductsWithInventoryResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkCreateProductsWithInventoryResponse = z.infer<
@@ -310,14 +351,14 @@ export type BulkCreateProductsWithInventoryResponse = z.infer<
 
 const BulkRemoveInfoSectionsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: z.record(z.string(), z.unknown()),
+	filter: WixFilterSchema,
 	infoSectionIds: z.array(z.string()).min(1),
 });
 export type BulkRemoveInfoSectionsByFilterInput = z.infer<
 	typeof BulkRemoveInfoSectionsByFilterInputSchema
 >;
 const BulkRemoveInfoSectionsByFilterResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkRemoveInfoSectionsByFilterResponse = z.infer<
@@ -357,7 +398,7 @@ export type DeleteProductOptionsInput = z.infer<
 >;
 const DeleteProductOptionsResponseSchema = z.looseObject({
 	id: z.string().optional(),
-	revision: z.number().optional(),
+	revision: z.string().optional(),
 });
 export type DeleteProductOptionsResponse = z.infer<
 	typeof DeleteProductOptionsResponseSchema
@@ -366,14 +407,14 @@ export type DeleteProductOptionsResponse = z.infer<
 const SetCustomizationChoicesInputSchema = z.looseObject({
 	...SiteScopeFields,
 	customizationId: z.string(),
-	choices: z.array(z.looseObject({})).min(1),
+	choices: z.array(WixItemSchema).min(1),
 });
 export type SetCustomizationChoicesInput = z.infer<
 	typeof SetCustomizationChoicesInputSchema
 >;
 const SetCustomizationChoicesResponseSchema = z.looseObject({
 	id: z.string().optional(),
-	revision: z.number().optional(),
+	revision: z.string().optional(),
 });
 export type SetCustomizationChoicesResponse = z.infer<
 	typeof SetCustomizationChoicesResponseSchema
@@ -381,13 +422,13 @@ export type SetCustomizationChoicesResponse = z.infer<
 
 const UpdateInventoryVariantsInputSchema = z.looseObject({
 	...SiteScopeFields,
-	updates: z.array(z.looseObject({})).min(1),
+	updates: z.array(WixItemSchema).min(1),
 });
 export type UpdateInventoryVariantsInput = z.infer<
 	typeof UpdateInventoryVariantsInputSchema
 >;
 const UpdateInventoryVariantsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type UpdateInventoryVariantsResponse = z.infer<
@@ -413,7 +454,7 @@ export type GetCollectionBySlugResponse = z.infer<
 const ListCurrenciesInputSchema = z.looseObject({ ...SiteScopeFields });
 export type ListCurrenciesInput = z.infer<typeof ListCurrenciesInputSchema>;
 const ListCurrenciesResponseSchema = z.looseObject({
-	currencies: z.array(z.looseObject({})).optional(),
+	currencies: z.array(WixItemSchema).optional(),
 });
 export type ListCurrenciesResponse = z.infer<
 	typeof ListCurrenciesResponseSchema
@@ -453,11 +494,11 @@ export type QueryEcomOrdersResponse = z.infer<
 
 const BulkUpdateOrdersInputSchema = z.looseObject({
 	...SiteScopeFields,
-	updates: z.array(z.looseObject({})).min(1).max(100),
+	updates: z.array(WixItemSchema).min(1).max(100),
 });
 export type BulkUpdateOrdersInput = z.infer<typeof BulkUpdateOrdersInputSchema>;
 const BulkUpdateOrdersResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkUpdateOrdersResponse = z.infer<
@@ -474,7 +515,7 @@ export type BulkUpdateOrderTagsInput = z.infer<
 	typeof BulkUpdateOrderTagsInputSchema
 >;
 const BulkUpdateOrderTagsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 });
 export type BulkUpdateOrderTagsResponse = z.infer<
 	typeof BulkUpdateOrderTagsResponseSchema
@@ -489,7 +530,7 @@ export type RemoveTipFromOrderInput = z.infer<
 >;
 const RemoveTipFromOrderResponseSchema = z.looseObject({
 	id: z.string().optional(),
-	revision: z.number().optional(),
+	revision: z.string().optional(),
 });
 export type RemoveTipFromOrderResponse = z.infer<
 	typeof RemoveTipFromOrderResponseSchema
@@ -503,7 +544,7 @@ export type BulkDeleteAbandonedCheckoutsInput = z.infer<
 	typeof BulkDeleteAbandonedCheckoutsInputSchema
 >;
 const BulkDeleteAbandonedCheckoutsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteAbandonedCheckoutsResponse = z.infer<
@@ -518,7 +559,7 @@ export type ListInvoicesByOrderIdsInput = z.infer<
 	typeof ListInvoicesByOrderIdsInputSchema
 >;
 const ListInvoicesByOrderIdsResponseSchema = z.looseObject({
-	invoices: z.array(z.looseObject({})).optional(),
+	invoices: z.array(WixItemSchema).optional(),
 });
 export type ListInvoicesByOrderIdsResponse = z.infer<
 	typeof ListInvoicesByOrderIdsResponseSchema
@@ -558,7 +599,7 @@ export type BulkDeleteBookingsServicesInput = z.infer<
 	typeof BulkDeleteBookingsServicesInputSchema
 >;
 const BulkDeleteBookingsServicesResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteBookingsServicesResponse = z.infer<
@@ -567,13 +608,13 @@ export type BulkDeleteBookingsServicesResponse = z.infer<
 
 const BulkDeleteBookingsServicesByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: z.record(z.string(), z.unknown()),
+	filter: WixFilterSchema,
 });
 export type BulkDeleteBookingsServicesByFilterInput = z.infer<
 	typeof BulkDeleteBookingsServicesByFilterInputSchema
 >;
 const BulkDeleteBookingsServicesByFilterResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteBookingsServicesByFilterResponse = z.infer<
@@ -607,7 +648,7 @@ export type QueryExtendedBookingsResponse = z.infer<
 
 const CountExtendedBookingsInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: z.record(z.string(), z.unknown()).optional(),
+	filter: WixFilterSchema.optional(),
 	search: z.string().optional(),
 });
 export type CountExtendedBookingsInput = z.infer<
@@ -635,7 +676,7 @@ export type ListBookingsSessionsResponse = z.infer<
 
 const UpdateStaffMemberTagsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: z.record(z.string(), z.unknown()),
+	filter: WixFilterSchema,
 	assignTags: z.array(z.string()).optional(),
 	unassignTags: z.array(z.string()).optional(),
 });
@@ -643,7 +684,7 @@ export type UpdateStaffMemberTagsByFilterInput = z.infer<
 	typeof UpdateStaffMemberTagsByFilterInputSchema
 >;
 const UpdateStaffMemberTagsByFilterResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type UpdateStaffMemberTagsByFilterResponse = z.infer<
@@ -685,7 +726,7 @@ export type GetMembersCustomFieldApplicationsInput = z.infer<
 	typeof GetMembersCustomFieldApplicationsInputSchema
 >;
 const GetMembersCustomFieldApplicationsResponseSchema = z.looseObject({
-	applications: z.array(z.looseObject({})).optional(),
+	applications: z.array(WixItemSchema).optional(),
 });
 export type GetMembersCustomFieldApplicationsResponse = z.infer<
 	typeof GetMembersCustomFieldApplicationsResponseSchema
@@ -699,7 +740,7 @@ export type GetRolesCustomFieldApplicationsInput = z.infer<
 	typeof GetRolesCustomFieldApplicationsInputSchema
 >;
 const GetRolesCustomFieldApplicationsResponseSchema = z.looseObject({
-	applications: z.array(z.looseObject({})).optional(),
+	applications: z.array(WixItemSchema).optional(),
 });
 export type GetRolesCustomFieldApplicationsResponse = z.infer<
 	typeof GetRolesCustomFieldApplicationsResponseSchema
@@ -708,7 +749,7 @@ export type GetRolesCustomFieldApplicationsResponse = z.infer<
 const GetRolesInfoInputSchema = z.looseObject({ ...SiteScopeFields });
 export type GetRolesInfoInput = z.infer<typeof GetRolesInfoInputSchema>;
 const GetRolesInfoResponseSchema = z.looseObject({
-	roles: z.array(z.looseObject({})).optional(),
+	roles: z.array(WixItemSchema).optional(),
 });
 export type GetRolesInfoResponse = z.infer<typeof GetRolesInfoResponseSchema>;
 
@@ -913,7 +954,7 @@ export type GetSitePluginsPlacementStatusInput = z.infer<
 	typeof GetSitePluginsPlacementStatusInputSchema
 >;
 const GetSitePluginsPlacementStatusResponseSchema = z.looseObject({
-	placements: z.array(z.looseObject({})).optional(),
+	placements: z.array(WixItemSchema).optional(),
 });
 export type GetSitePluginsPlacementStatusResponse = z.infer<
 	typeof GetSitePluginsPlacementStatusResponseSchema
@@ -971,7 +1012,7 @@ export type DeleteSenderEmailResponse = z.infer<
 
 const UpdateReferralProgramInputSchema = z.looseObject({
 	...SiteScopeFields,
-	revision: z.number().optional(),
+	revision: z.string().optional(),
 	program: z.looseObject({}).optional(),
 });
 export type UpdateReferralProgramInput = z.infer<
@@ -991,7 +1032,7 @@ export type GetCurrentMemberCouponsInput = z.infer<
 	typeof GetCurrentMemberCouponsInputSchema
 >;
 const GetCurrentMemberCouponsResponseSchema = z.looseObject({
-	coupons: z.array(z.looseObject({})).optional(),
+	coupons: z.array(WixItemSchema).optional(),
 });
 export type GetCurrentMemberCouponsResponse = z.infer<
 	typeof GetCurrentMemberCouponsResponseSchema
@@ -1045,7 +1086,7 @@ export type BulkDeleteFormSchemasInput = z.infer<
 	typeof BulkDeleteFormSchemasInputSchema
 >;
 const BulkDeleteFormSchemasResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteFormSchemasResponse = z.infer<
@@ -1098,7 +1139,7 @@ export type RemoveDeletedFieldsInput = z.infer<
 >;
 const RemoveDeletedFieldsResponseSchema = z.looseObject({
 	id: z.string().optional(),
-	revision: z.number().optional(),
+	revision: z.string().optional(),
 });
 export type RemoveDeletedFieldsResponse = z.infer<
 	typeof RemoveDeletedFieldsResponseSchema
@@ -1132,13 +1173,13 @@ export type QueryEventsGraphqlResponse = z.infer<
 
 const BulkDeleteRsvpsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: z.record(z.string(), z.unknown()),
+	filter: WixFilterSchema,
 });
 export type BulkDeleteRsvpsByFilterInput = z.infer<
 	typeof BulkDeleteRsvpsByFilterInputSchema
 >;
 const BulkDeleteRsvpsByFilterResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteRsvpsByFilterResponse = z.infer<
@@ -1147,13 +1188,13 @@ export type BulkDeleteRsvpsByFilterResponse = z.infer<
 
 const BulkDeleteTicketDefinitionsInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: z.record(z.string(), z.unknown()),
+	filter: WixFilterSchema,
 });
 export type BulkDeleteTicketDefinitionsInput = z.infer<
 	typeof BulkDeleteTicketDefinitionsInputSchema
 >;
 const BulkDeleteTicketDefinitionsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteTicketDefinitionsResponse = z.infer<
@@ -1283,7 +1324,7 @@ export type BulkDeleteMenuModifiersInput = z.infer<
 	typeof BulkDeleteMenuModifiersInputSchema
 >;
 const BulkDeleteMenuModifiersResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteMenuModifiersResponse = z.infer<
@@ -1298,7 +1339,7 @@ export type BulkDeleteMenuVariantsInput = z.infer<
 	typeof BulkDeleteMenuVariantsInputSchema
 >;
 const BulkDeleteMenuVariantsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteMenuVariantsResponse = z.infer<
@@ -1326,7 +1367,7 @@ export type BulkDeleteNotificationRecipientsInput = z.infer<
 	typeof BulkDeleteNotificationRecipientsInputSchema
 >;
 const BulkDeleteNotificationRecipientsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteNotificationRecipientsResponse = z.infer<
@@ -1353,7 +1394,7 @@ export type CalculateFirstAvailableSlotsInput = z.infer<
 	typeof CalculateFirstAvailableSlotsInputSchema
 >;
 const CalculateFirstAvailableSlotsResponseSchema = z.looseObject({
-	slots: z.array(z.looseObject({})).optional(),
+	slots: z.array(WixItemSchema).optional(),
 });
 export type CalculateFirstAvailableSlotsResponse = z.infer<
 	typeof CalculateFirstAvailableSlotsResponseSchema
@@ -1369,7 +1410,7 @@ export type BulkDeleteBillableItemsInput = z.infer<
 	typeof BulkDeleteBillableItemsInputSchema
 >;
 const BulkDeleteBillableItemsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteBillableItemsResponse = z.infer<
@@ -1378,13 +1419,13 @@ export type BulkDeleteBillableItemsResponse = z.infer<
 
 const BulkUpdateBillableItemsInputSchema = z.looseObject({
 	...SiteScopeFields,
-	updates: z.array(z.looseObject({})).min(1),
+	updates: z.array(WixItemSchema).min(1),
 });
 export type BulkUpdateBillableItemsInput = z.infer<
 	typeof BulkUpdateBillableItemsInputSchema
 >;
 const BulkUpdateBillableItemsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkUpdateBillableItemsResponse = z.infer<
@@ -1410,7 +1451,7 @@ export type ListDefaultTaxGroupsInput = z.infer<
 	typeof ListDefaultTaxGroupsInputSchema
 >;
 const ListDefaultTaxGroupsResponseSchema = z.looseObject({
-	taxGroups: z.array(z.looseObject({})).optional(),
+	taxGroups: z.array(WixItemSchema).optional(),
 });
 export type ListDefaultTaxGroupsResponse = z.infer<
 	typeof ListDefaultTaxGroupsResponseSchema
@@ -1424,7 +1465,7 @@ export type ListDefaultTaxGroupsByAppIdsInput = z.infer<
 	typeof ListDefaultTaxGroupsByAppIdsInputSchema
 >;
 const ListDefaultTaxGroupsByAppIdsResponseSchema = z.looseObject({
-	taxGroups: z.array(z.looseObject({})).optional(),
+	taxGroups: z.array(WixItemSchema).optional(),
 });
 export type ListDefaultTaxGroupsByAppIdsResponse = z.infer<
 	typeof ListDefaultTaxGroupsByAppIdsResponseSchema
@@ -1494,7 +1535,7 @@ export type SetDefaultReceiptPresetResponse = z.infer<
 const UpdateReceiptPresetInputSchema = z.looseObject({
 	...SiteScopeFields,
 	presetId: z.string(),
-	revision: z.number().optional(),
+	revision: z.string().optional(),
 	preset: z.looseObject({}).optional(),
 });
 export type UpdateReceiptPresetInput = z.infer<
@@ -1502,7 +1543,7 @@ export type UpdateReceiptPresetInput = z.infer<
 >;
 const UpdateReceiptPresetResponseSchema = z.looseObject({
 	id: z.string().optional(),
-	revision: z.number().optional(),
+	revision: z.string().optional(),
 });
 export type UpdateReceiptPresetResponse = z.infer<
 	typeof UpdateReceiptPresetResponseSchema
@@ -1513,7 +1554,7 @@ export type UpdateReceiptPresetResponse = z.infer<
 const AddSpecialPermissionsInputSchema = z.looseObject({
 	...SiteScopeFields,
 	collectionId: z.string(),
-	permissions: z.array(z.looseObject({})).optional(),
+	permissions: z.array(WixItemSchema).optional(),
 });
 export type AddSpecialPermissionsInput = z.infer<
 	typeof AddSpecialPermissionsInputSchema
@@ -1634,7 +1675,7 @@ export type BulkUpdateStorageItemTagsInput = z.infer<
 	typeof BulkUpdateStorageItemTagsInputSchema
 >;
 const BulkUpdateStorageItemTagsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 });
 export type BulkUpdateStorageItemTagsResponse = z.infer<
 	typeof BulkUpdateStorageItemTagsResponseSchema
@@ -1642,7 +1683,7 @@ export type BulkUpdateStorageItemTagsResponse = z.infer<
 
 const BulkUpdateStorageItemTagsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: z.record(z.string(), z.unknown()),
+	filter: WixFilterSchema,
 	assignTags: z.array(z.string()).optional(),
 	unassignTags: z.array(z.string()).optional(),
 });
@@ -1683,7 +1724,7 @@ export type QueryModerationRulesResponse = z.infer<
 const UpdateModerationRuleInputSchema = z.looseObject({
 	...SiteScopeFields,
 	ruleId: z.string(),
-	revision: z.number().optional(),
+	revision: z.string().optional(),
 	rule: z.looseObject({}).optional(),
 });
 export type UpdateModerationRuleInput = z.infer<
@@ -1691,7 +1732,7 @@ export type UpdateModerationRuleInput = z.infer<
 >;
 const UpdateModerationRuleResponseSchema = z.looseObject({
 	id: z.string().optional(),
-	revision: z.number().optional(),
+	revision: z.string().optional(),
 });
 export type UpdateModerationRuleResponse = z.infer<
 	typeof UpdateModerationRuleResponseSchema
@@ -1778,14 +1819,14 @@ export type UpdateReviewModerationStatusResponse = z.infer<
 
 const BulkUpdateReviewModerationStatusInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: z.record(z.string(), z.unknown()).optional(),
+	filter: WixFilterSchema.optional(),
 	moderationStatus: z.string(),
 });
 export type BulkUpdateReviewModerationStatusInput = z.infer<
 	typeof BulkUpdateReviewModerationStatusInputSchema
 >;
 const BulkUpdateReviewModerationStatusResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkUpdateReviewModerationStatusResponse = z.infer<
@@ -1824,7 +1865,7 @@ export type BulkDeleteBenefitItemsInput = z.infer<
 	typeof BulkDeleteBenefitItemsInputSchema
 >;
 const BulkDeleteBenefitItemsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteBenefitItemsResponse = z.infer<
@@ -1834,13 +1875,13 @@ export type BulkDeleteBenefitItemsResponse = z.infer<
 const BulkDeleteBenefitItemsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
 	namespace: z.string().optional(),
-	filter: z.record(z.string(), z.unknown()).optional(),
+	filter: WixFilterSchema.optional(),
 });
 export type BulkDeleteBenefitItemsByFilterInput = z.infer<
 	typeof BulkDeleteBenefitItemsByFilterInputSchema
 >;
 const BulkDeleteBenefitItemsByFilterResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteBenefitItemsByFilterResponse = z.infer<
@@ -1855,7 +1896,7 @@ export type BulkDeletePoolDefinitionsInput = z.infer<
 	typeof BulkDeletePoolDefinitionsInputSchema
 >;
 const BulkDeletePoolDefinitionsResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeletePoolDefinitionsResponse = z.infer<
@@ -1884,7 +1925,7 @@ export type BulkDeleteTranslationContentInput = z.infer<
 	typeof BulkDeleteTranslationContentInputSchema
 >;
 const BulkDeleteTranslationContentResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteTranslationContentResponse = z.infer<
@@ -1893,13 +1934,13 @@ export type BulkDeleteTranslationContentResponse = z.infer<
 
 const BulkUpdateTranslationContentByKeyInputSchema = z.looseObject({
 	...SiteScopeFields,
-	items: z.array(z.looseObject({})).min(1),
+	items: z.array(WixItemSchema).min(1),
 });
 export type BulkUpdateTranslationContentByKeyInput = z.infer<
 	typeof BulkUpdateTranslationContentByKeyInputSchema
 >;
 const BulkUpdateTranslationContentByKeyResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkUpdateTranslationContentByKeyResponse = z.infer<
@@ -1927,7 +1968,7 @@ export type ListAppPermissionsInput = z.infer<
 	typeof ListAppPermissionsInputSchema
 >;
 const ListAppPermissionsResponseSchema = z.looseObject({
-	permissions: z.array(z.looseObject({})).optional(),
+	permissions: z.array(WixItemSchema).optional(),
 });
 export type ListAppPermissionsResponse = z.infer<
 	typeof ListAppPermissionsResponseSchema
@@ -1941,7 +1982,7 @@ export type ListAppPlansByAppIdInput = z.infer<
 	typeof ListAppPlansByAppIdInputSchema
 >;
 const ListAppPlansByAppIdResponseSchema = z.looseObject({
-	plans: z.array(z.looseObject({})).optional(),
+	plans: z.array(WixItemSchema).optional(),
 });
 export type ListAppPlansByAppIdResponse = z.infer<
 	typeof ListAppPlansByAppIdResponseSchema
@@ -1952,7 +1993,7 @@ export type GetPurchaseHistoryInput = z.infer<
 	typeof GetPurchaseHistoryInputSchema
 >;
 const GetPurchaseHistoryResponseSchema = z.looseObject({
-	purchases: z.array(z.looseObject({})).optional(),
+	purchases: z.array(WixItemSchema).optional(),
 });
 export type GetPurchaseHistoryResponse = z.infer<
 	typeof GetPurchaseHistoryResponseSchema
@@ -1980,13 +2021,13 @@ export type DeleteUserFavoriteResponse = z.infer<
 
 const BulkDeleteReportsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: z.record(z.string(), z.unknown()),
+	filter: WixFilterSchema,
 });
 export type BulkDeleteReportsByFilterInput = z.infer<
 	typeof BulkDeleteReportsByFilterInputSchema
 >;
 const BulkDeleteReportsByFilterResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type BulkDeleteReportsByFilterResponse = z.infer<
@@ -1995,7 +2036,7 @@ export type BulkDeleteReportsByFilterResponse = z.infer<
 
 const UpdateOperationGroupTagsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: z.record(z.string(), z.unknown()),
+	filter: WixFilterSchema,
 	assignTags: z.array(z.string()).optional(),
 	unassignTags: z.array(z.string()).optional(),
 });
@@ -2003,7 +2044,7 @@ export type UpdateOperationGroupTagsByFilterInput = z.infer<
 	typeof UpdateOperationGroupTagsByFilterInputSchema
 >;
 const UpdateOperationGroupTagsByFilterResponseSchema = z.looseObject({
-	results: z.array(z.looseObject({})).optional(),
+	results: z.array(WixItemSchema).optional(),
 	bulkActionMetadata: BulkActionMetadataSchema.optional(),
 });
 export type UpdateOperationGroupTagsByFilterResponse = z.infer<

@@ -115,6 +115,65 @@ describe('Wix input schemas reject invalid input', () => {
 	});
 });
 
+describe('Wix query filter grammar', () => {
+	it('accepts operator-object filters', () => {
+		const parsed = WixEndpointInputSchemas.queryContacts.parse({
+			filter: { name: { $eq: 'Ada' } },
+		});
+		expect(parsed).toBeDefined();
+	});
+
+	it('accepts logical operators with filter arrays', () => {
+		const parsed = WixEndpointInputSchemas.queryContacts.parse({
+			filter: {
+				$or: [{ name: { $eq: 'Ada' } }, { email: { $ne: 'x@example.com' } }],
+			},
+		});
+		expect(parsed).toBeDefined();
+	});
+
+	it('accepts an empty filter', () => {
+		expect(
+			WixEndpointInputSchemas.queryContacts.parse({ filter: {} }),
+		).toBeDefined();
+	});
+
+	it('rejects a field mapped to a bare primitive', () => {
+		expect(() =>
+			WixEndpointInputSchemas.queryContacts.parse({
+				filter: { name: 'Ada' },
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointInputSchemas.queryContacts.parse({
+				filter: { age: 30 },
+			}),
+		).toThrow();
+	});
+
+	it('rejects by-filter updates with malformed filters', () => {
+		expect(() =>
+			WixEndpointInputSchemas.bulkUpdateProductsByFilter.parse({
+				filter: { visible: true },
+				update: { visible: false },
+			}),
+		).toThrow();
+	});
+
+	it('rejects string field masks', () => {
+		expect(() =>
+			WixEndpointInputSchemas.bulkUpdateContacts.parse({
+				fieldMask: 'name.first',
+			}),
+		).toThrow();
+		expect(
+			WixEndpointInputSchemas.bulkUpdateContacts.parse({
+				fieldMask: { fields: ['name.first'] },
+			}),
+		).toBeDefined();
+	});
+});
+
 describe('Wix output schemas', () => {
 	it('parses representative query responses', () => {
 		const contacts = WixEndpointOutputSchemas.queryContacts.parse({
@@ -141,6 +200,28 @@ describe('Wix output schemas', () => {
 			: false;
 		const typeCheck: ContactsIsArray = true;
 		expect(typeCheck).toBe(true);
+	});
+
+	it('rejects mistyped resource payloads in query responses', () => {
+		expect(() =>
+			WixEndpointOutputSchemas.queryContacts.parse({
+				contacts: [{ id: 123 }],
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointOutputSchemas.queryContacts.parse({
+				contacts: [{ revision: 3 }],
+			}),
+		).toThrow();
+	});
+
+	it('rejects mistyped bulk action results', () => {
+		expect(() =>
+			WixEndpointOutputSchemas.bulkDeleteProducts.parse({
+				results: [{ id: 42 }],
+				bulkActionMetadata: { totalSuccesses: 0, totalFailures: 0 },
+			}),
+		).toThrow();
 	});
 
 	it('parses bulk action responses', () => {
