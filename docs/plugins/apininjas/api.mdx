@@ -1,0 +1,6028 @@
+---
+title: API
+description: "API reference for API Ninjas: every `apininjas.api.*` operation with input and output types."
+---
+
+Every `apininjas.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Calendar
+
+### holidays
+
+`calendar.holidays`
+
+Returns a list of holiday entries for a given country and year [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.calendar.holidays({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `year` | `number` | No | — |
+| `type` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  country?: string | null,
+  iso?: string | null,
+  year?: number | null,
+  date?: string | null,
+  day?: string | null,
+  name?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### isPublicHoliday
+
+`calendar.isPublicHoliday`
+
+Returns whether a given date is a public holiday for a given country
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.calendar.isPublicHoliday({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+| `country` | `string` | No | — |
+| `is_public_holiday` | `boolean` | No | — |
+| `public_holiday_name` | `string` | No | — |
+
+
+
+---
+
+### isWorkingDay
+
+`calendar.isWorkingDay`
+
+Returns whether a given date is a working day for a given country
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.calendar.isWorkingDay({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `weekend` | `string` | No | — |
+| `public_holidays` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+| `country` | `string` | No | — |
+| `day_of_week` | `string` | No | — |
+| `is_workday` | `boolean` | No | — |
+| `public_holiday_name` | `string` | No | — |
+| `non_working_reason` | `string[]` | No | — |
+
+
+
+---
+
+### publicHolidays
+
+`calendar.publicHolidays`
+
+Returns a list of public holidays for a given country and year [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.calendar.publicHolidays({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `year` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  local_name?: string | null,
+  date?: string | null,
+  country?: string | null,
+  year?: number | null,
+  regions?: string[] | null,
+  federal?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### timezone
+
+`calendar.timezone`
+
+Get timezone info by city/state/country or location coordinates (latitude/longitude)
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.calendar.timezone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timezone` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timezone` | `string` | No | — |
+| `utc_offset` | `number` | No | — |
+| `local_time` | `string` | No | — |
+| `city` | `string` | No | — |
+
+
+
+---
+
+### workingDays
+
+`calendar.workingDays`
+
+Returns a list of working days and non-working days for a given country and year/month
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.calendar.workingDays({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `year` | `number` | No | — |
+| `month` | `number` | No | — |
+| `weekend` | `string` | No | — |
+| `public_holidays` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `num_working_days` | `number` | No | — |
+| `num_non_working_days` | `number` | No | — |
+| `working_days` | `string[]` | No | — |
+| `non_working_days` | `object[]` | No | — |
+| `year` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="non_working_days full type">
+
+```ts
+{
+  date?: string | null,
+  reasons?: string[] | null,
+  holiday_name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### worldTime
+
+`calendar.worldTime`
+
+Get the current date and time by city/state/country, location coordinates (latitude/longitude), or timezone [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.calendar.worldTime({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timezone` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timezone` | `string` | No | — |
+| `datetime` | `string` | No | — |
+| `date` | `string` | No | — |
+| `year` | `string` | No | — |
+| `month` | `string` | No | — |
+| `day` | `string` | No | — |
+| `hour` | `string` | No | — |
+| `minute` | `string` | No | — |
+| `second` | `string` | No | — |
+| `day_of_week` | `string` | No | — |
+
+
+
+---
+
+## Economics
+
+### gdp
+
+`economics.gdp`
+
+Get GDP data from given parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.gdp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+| `year` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  country?: string | null,
+  year?: number | null,
+  gdp_growth?: number | null,
+  gdp_nominal?: number | null,
+  gdp_per_capita_nominal?: number | null,
+  gdp_ppp?: number | null,
+  gdp_per_capita_ppp?: number | null,
+  gdp_ppp_share?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### incomeTax
+
+`economics.incomeTax`
+
+Returns comprehensive income tax information including tax brackets and rates at both federal and state/provincial levels (where applicable)
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.incomeTax({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `year` | `number` | Yes | — |
+| `regions` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+| `year` | `number` | No | — |
+| `fica` | `string` | No | — |
+| `states` | `string` | No | — |
+| `federal` | `object` | No | — |
+| `provinces` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="federal full type">
+
+```ts
+{
+  married?: {
+    brackets?: {
+      rate?: number | null,
+      min?: number | null,
+      max?: number | string | null
+    }[] | null
+  } | null,
+  married_separate?: {
+    brackets?: {
+      rate?: number | null,
+      min?: number | null,
+      max?: number | string | null
+    }[] | null
+  } | null,
+  single?: {
+    brackets?: {
+      rate?: number | null,
+      min?: number | null,
+      max?: number | string | null
+    }[] | null
+  } | null,
+  head_of_household?: {
+    brackets?: {
+      rate?: number | null,
+      min?: number | null,
+      max?: number | string | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### incomeTaxCalculator
+
+`economics.incomeTaxCalculator`
+
+Returns comprehensive annual tax calculations including federal, state/provincial, and FICA taxes where applicable
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.incomeTaxCalculator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `region` | `string` | Yes | — |
+| `income` | `number` | Yes | — |
+| `tax_year` | `string` | No | — |
+| `filing_status` | `string` | Yes | — |
+| `deductions` | `string` | No | — |
+| `credits` | `string` | No | — |
+| `self_employed` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+| `region` | `string` | No | — |
+| `income` | `number` | No | — |
+| `taxable_income` | `number` | No | — |
+| `deductions` | `number` | No | — |
+| `credits` | `number` | No | — |
+| `tax_year` | `string` | No | — |
+| `federal_effective_rate` | `number` | No | — |
+| `federal_taxes_owed` | `number` | No | — |
+| `fica_social_security` | `string` | No | — |
+| `fica_social_security_rate` | `number \| string` | No | — |
+| `fica_social_security_cap` | `number \| string` | No | — |
+| `fica_medicare` | `string` | No | — |
+| `fica_medicare_rate` | `number \| string` | No | — |
+| `fica_total` | `number \| string` | No | — |
+| `region_effective_rate` | `number \| string` | No | — |
+| `region_taxes_owed` | `string` | No | — |
+| `total_taxes_owed` | `string` | No | — |
+| `income_after_tax` | `string` | No | — |
+| `total_effective_tax_rate` | `number \| string` | No | — |
+
+
+
+---
+
+### inflation
+
+`economics.inflation`
+
+Returns current monthly and annual inflation percentages [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.inflation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  country?: string | null,
+  country_code?: string | null,
+  type?: string | null,
+  period?: number | string | null,
+  monthly_rate_pct?: number | string | null,
+  yearly_rate_pct?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### interestRate
+
+`economics.interestRate`
+
+Get a specific interest rate by name
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.interestRate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rate` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rate_name` | `string` | No | — |
+| `rate_pct` | `number \| string` | No | — |
+| `last_updated` | `string` | No | — |
+
+
+
+---
+
+### mortgageCalculator
+
+`economics.mortgageCalculator`
+
+Returns monthly payment, annual payment, and interest rate information based on given mortgage parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.mortgageCalculator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `loan_amount` | `number` | No | — |
+| `home_value` | `string` | No | — |
+| `downpayment` | `number` | No | — |
+| `interest_rate` | `number` | Yes | — |
+| `duration_years` | `number` | No | — |
+| `monthly_hoa` | `number` | No | — |
+| `annual_property_tax` | `number` | No | — |
+| `annual_home_insurance` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monthly_payment` | `object` | No | — |
+| `annual_payment` | `object` | No | — |
+| `total_interest_paid` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="monthly_payment full type">
+
+```ts
+{
+  total?: number | null,
+  mortgage?: number | null,
+  property_tax?: number | null,
+  hoa?: number | null,
+  annual_home_ins?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="annual_payment full type">
+
+```ts
+{
+  total?: number | null,
+  mortgage?: number | null,
+  property_tax?: number | null,
+  hoa?: number | null,
+  home_insurance?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mortgageRate
+
+`economics.mortgageRate`
+
+Returns the daily 30-year and 15-year fixed-rate mortgage (FRM) data
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.mortgageRate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+| `min_date` | `number` | No | — |
+| `max_date` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  date?: string | null,
+  frm_30?: string | null,
+  frm_15?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### population
+
+`economics.population`
+
+Get population data from given parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.population({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+| `min_population` | `number` | No | — |
+| `max_population` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `historical_population` | `object[]` | No | — |
+| `population_forecast` | `object[]` | No | — |
+| `country_name` | `string` | No | — |
+| `population` | `number \| string` | No | — |
+| `yearly_change_percentage` | `number \| string` | No | — |
+| `yearly_change` | `string` | No | — |
+| `migrants` | `number \| string` | No | — |
+| `median_age` | `string` | No | — |
+| `fertility_rate` | `number \| string` | No | — |
+| `density` | `string` | No | — |
+| `urban_population_pct` | `number \| string` | No | — |
+| `urban_population` | `number \| string` | No | — |
+| `percentage_of_world_population` | `number \| string` | No | — |
+| `rank` | `number \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="historical_population full type">
+
+```ts
+{
+  year?: number | null,
+  population?: number | null,
+  yearly_change_percentage?: number | null,
+  yearly_change?: number | null,
+  migrants?: number | null,
+  median_age?: number | null,
+  fertility_rate?: number | null,
+  density?: number | null,
+  urban_population_pct?: number | null,
+  urban_population?: number | null,
+  percentage_of_world_population?: number | null,
+  rank?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="population_forecast full type">
+
+```ts
+{
+  year?: number | null,
+  population?: number | null,
+  yearly_change_percentage?: number | null,
+  yearly_change?: number | null,
+  migrants?: number | string | null,
+  median_age?: number | null,
+  fertility_rate?: number | null,
+  density?: number | null,
+  urban_population_pct?: number | null,
+  urban_population?: number | null,
+  percentage_of_world_population?: number | null,
+  rank?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### propertyTax
+
+`economics.propertyTax`
+
+Returns a list of regions and corresponding 25th, 50th (median), and 75th percentile effective property tax rates
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.propertyTax({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `string` | No | — |
+| `county` | `string` | No | — |
+| `city` | `string` | No | — |
+| `zip` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  state?: string | null,
+  county?: string | null,
+  city?: string | null,
+  zip?: string | null,
+  property_tax_25th_percentile?: number | null,
+  property_tax_50th_percentile?: number | null,
+  property_tax_75th_percentile?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### salesTax
+
+`economics.salesTax`
+
+Returns one or more sales tax breakdowns by ZIP code according to the specified parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.salesTax({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zip_code` | `string` | No | — |
+| `street_address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  zip_code?: string | null,
+  state_rate?: string | null,
+  city_rate?: number | string | null,
+  county_rate?: number | string | null,
+  additional_rate?: number | string | null,
+  total_rate?: number | string | null,
+  street_address?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### salesTaxCalculator
+
+`economics.salesTaxCalculator`
+
+Calculates sales tax for a given amount and location
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.salesTaxCalculator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | — |
+| `zip_code` | `string` | No | — |
+| `street_address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  zip_code?: string | null,
+  pre_tax_amount?: string | null,
+  state_rate?: number | null,
+  total_rate?: number | string | null,
+  city_rate?: number | string | null,
+  county_rate?: number | string | null,
+  additional_rate?: number | string | null,
+  state_tax?: number | null,
+  city_tax?: string | null,
+  county_tax?: string | null,
+  additional_tax?: string | null,
+  total_tax?: string | null,
+  total_price?: number | string | null,
+  street_address?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unemployment
+
+`economics.unemployment`
+
+Get unemployment data for a given country
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.unemployment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+| `year` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  country?: string | null,
+  year?: number | null,
+  unemployment_rate?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### vatRates
+
+`economics.vatRates`
+
+Returns VAT rates for a specified EU country
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.economics.vatRates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `type` | `number` | No | — |
+| `min_date` | `number` | No | — |
+| `max_date` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  country?: string | null,
+  type?: string | null,
+  rate?: number | string | null,
+  date?: string | null,
+  category?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Entertainment
+
+### advice
+
+`entertainment.advice`
+
+Returns a random piece of life advice
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.advice({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `advice` | `string` | No | — |
+
+
+
+---
+
+### bucketList
+
+`entertainment.bucketList`
+
+Returns a random bucket list idea
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.bucketList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `string` | No | — |
+
+
+
+---
+
+### chuckNorris
+
+`entertainment.chuckNorris`
+
+Returns a Chuck Norris joke
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.chuckNorris({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `joke` | `string` | No | — |
+
+
+
+---
+
+### dadJokes
+
+`entertainment.dadJokes`
+
+Returns one (or more) random dad jokes
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.dadJokes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  joke?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### factOfTheDay
+
+`entertainment.factOfTheDay`
+
+Returns a single fact for the current day
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.factOfTheDay({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  fact?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### facts
+
+`entertainment.facts`
+
+Returns one (or more) random facts
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.facts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  fact?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### generateSudoku
+
+`entertainment.generateSudoku`
+
+Generate a new Sudoku puzzle with specified parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.generateSudoku({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `difficulty` | `string` | No | — |
+| `seed` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `puzzle` | `number \| null[][]` | No | — |
+| `solution` | `number \| null[][]` | No | — |
+
+
+
+---
+
+### hobbies
+
+`entertainment.hobbies`
+
+Returns a random hobby and a Wikipedia link detailing the hobby
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.hobbies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hobby` | `string` | No | — |
+| `link` | `string` | No | — |
+| `category` | `string` | No | — |
+
+
+
+---
+
+### horoscope
+
+`entertainment.horoscope`
+
+Returns the daily horoscope for a specific zodiac sign
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.horoscope({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zodiac` | `string` | Yes | — |
+| `date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+| `sign` | `string` | No | — |
+| `horoscope` | `string` | No | — |
+
+
+
+---
+
+### jokeOfTheDay
+
+`entertainment.jokeOfTheDay`
+
+Returns a single joke for the current day
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.jokeOfTheDay({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  joke?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### jokes
+
+`entertainment.jokes`
+
+Returns one (or more) random funny jokes
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.jokes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  joke?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### quoteOfTheDay
+
+`entertainment.quoteOfTheDay`
+
+Returns a single aphoristic quote for the current day
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.quoteOfTheDay({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  quote?: string | null,
+  author?: string | null,
+  work?: string | null,
+  categories?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### quotes
+
+`entertainment.quotes`
+
+Returns high-quality quotes with advanced filtering by categories (include/exclude), author, work, and pagination support [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.quotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `string` | No | — |
+| `exclude_categories` | `string` | No | — |
+| `author` | `string` | No | — |
+| `work` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  quote?: string | null,
+  author?: string | null,
+  work?: string | null,
+  categories?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### randomQuotes
+
+`entertainment.randomQuotes`
+
+Returns random high-quality quotes with advanced filtering by categories (include/exclude), author, and work [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.randomQuotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `string` | No | — |
+| `exclude_categories` | `string` | No | — |
+| `author` | `string` | No | — |
+| `work` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  quote?: string | null,
+  author?: string | null,
+  work?: string | null,
+  categories?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### riddles
+
+`entertainment.riddles`
+
+Returns one or more random riddles
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.riddles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  title?: string | null,
+  question?: string | null,
+  answer?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### solveSudoku
+
+`entertainment.solveSudoku`
+
+Solve an existing Sudoku puzzle
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.solveSudoku({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `puzzle` | `number[][]` | Yes | — |
+| `width` | `number` | Yes | — |
+| `height` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `solution` | `number \| null[][]` | No | — |
+
+
+
+---
+
+### trivia
+
+`entertainment.trivia`
+
+Returns a random trivia question and answer
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.trivia({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  category?: string | null,
+  question?: string | null,
+  answer?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### triviaOfTheDay
+
+`entertainment.triviaOfTheDay`
+
+Returns a single trivia question and answer for the current day
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.entertainment.triviaOfTheDay({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  category?: string | null,
+  question?: string | null,
+  answer?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Health
+
+### caloriesBurned
+
+`health.caloriesBurned`
+
+Returns the calories burned per hour and total calories burned according to given parameters for given activities (up to 10)
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.health.caloriesBurned({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `activity` | `string` | Yes | — |
+| `weight` | `number` | No | — |
+| `duration` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  calories_per_hour?: number | null,
+  duration_minutes?: number | null,
+  total_calories?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### cocktails
+
+`health.cocktails`
+
+Returns up to 10 cocktail recipes matching the search parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.health.cocktails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `ingredients` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ingredients?: string[] | null,
+  instructions?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### exercises
+
+`health.exercises`
+
+Returns up to 5 exercises that satisfy the given parameters [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.health.exercises({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `muscle` | `string` | No | — |
+| `difficulty` | `string` | No | — |
+| `equipments` | `string` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  type?: string | null,
+  muscle?: string | null,
+  difficulty?: string | null,
+  instructions?: string | null,
+  equipments?: string[] | null,
+  safety_info?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### nutrition
+
+`health.nutrition`
+
+This endpoint uses AI to automatically read any text and extract every food item it contains, along with the right portion for each
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.health.nutrition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  calories?: number | string | null,
+  serving_size_g?: number | string | null,
+  fat_total_g?: number | string | null,
+  fat_saturated_g?: number | string | null,
+  fat_trans_g?: number | string | null,
+  protein_g?: number | string | null,
+  sodium_mg?: number | string | null,
+  potassium_mg?: number | string | null,
+  cholesterol_mg?: number | string | null,
+  carbohydrates_total_g?: number | string | null,
+  fiber_g?: number | string | null,
+  sugar_g?: number | string | null,
+  added_sugars_g?: number | string | null,
+  net_carbs_g?: number | string | null,
+  iron_mg?: number | string | null,
+  calcium_mg?: number | string | null,
+  magnesium_mg?: number | string | null,
+  zinc_mg?: number | string | null,
+  vitamin_a_mcg?: string | null,
+  vitamin_c_mg?: number | string | null,
+  vitamin_d_mcg?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### recipes
+
+`health.recipes`
+
+Get a list of recipes for a given recipe name or ingredient(s)
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.health.recipes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `ingredients` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  title?: string | null,
+  ingredients?: {
+    name?: string | null,
+    quantity?: number | null,
+    unit?: string | null
+  }[] | null,
+  servings?: string | null,
+  instructions?: string[] | null,
+  nutrition?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Internet
+
+### dnsRecords
+
+`internet.dnsRecords`
+
+Returns a list of DNS records associated with a particular domain
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.internet.dnsRecords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  record_type?: string | null,
+  value?: string | null,
+  mname?: string | null,
+  rname?: string | null,
+  serial?: number | null,
+  refresh?: number | null,
+  retry?: number | null,
+  expire?: number | null,
+  ttl?: number | null,
+  AAAA?: string | null,
+  CNAME?: string | null,
+  MX?: string | null,
+  NS?: string | null,
+  PTR?: string | null,
+  SRV?: string | null,
+  SOA?: string | null,
+  TXT?: string | null,
+  CAA?: string | null,
+  priority?: string | null,
+  mname,
+  rname,
+  serial,
+  refresh,
+  retry,
+  expire,
+  ttl?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### domain
+
+`internet.domain`
+
+Returns availability, registration lifecycle, and email/hosting intelligence for a given domain name
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.internet.domain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `available` | `boolean` | No | — |
+| `creation_date` | `number` | No | — |
+| `expiration_date` | `number` | No | — |
+| `registrar` | `string` | No | — |
+| `age_days` | `number` | No | — |
+| `updated_date` | `number \| string` | No | — |
+| `domain_status` | `string[] \| string` | No | — |
+| `has_mx` | `boolean \| string` | No | — |
+| `is_free_email_provider` | `boolean \| string` | No | — |
+| `risky_tld` | `boolean \| string` | No | — |
+| `is_disposable_email_domain` | `boolean \| string` | No | — |
+| `is_custom_domain` | `boolean \| string` | No | — |
+| `mx_provider` | `string` | No | — |
+| `is_parked` | `boolean \| string` | No | — |
+| `ip` | `string` | No | — |
+| `hosting_provider` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+---
+
+### ipLookup
+
+`internet.ipLookup`
+
+Returns the location of the IP address specified
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.internet.ipLookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_valid` | `boolean` | No | — |
+| `country` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `region_code` | `string` | No | — |
+| `region` | `string` | No | — |
+| `city` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `isp` | `string` | No | — |
+| `address` | `string` | No | — |
+| `is_datacenter` | `boolean \| string` | No | — |
+| `is_hosting` | `boolean \| string` | No | — |
+| `is_tor` | `boolean \| string` | No | — |
+| `is_vpn` | `boolean \| string` | No | — |
+| `is_icloud_relay` | `boolean \| string` | No | — |
+| `is_bogon` | `boolean \| string` | No | — |
+| `is_abuser` | `boolean \| string` | No | — |
+| `threat_level` | `string` | No | — |
+| `asn` | `string` | No | — |
+| `asn_name` | `string` | No | — |
+| `route` | `string` | No | — |
+| `abuse_email` | `string` | No | — |
+
+
+
+---
+
+### mxRecords
+
+`internet.mxRecords`
+
+Returns a list of MX records associated with a particular domain
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.internet.mxRecords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  priority?: number | null,
+  value?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### scrape
+
+`internet.scrape`
+
+Returns the HTML or plaintext data scraped from a given URL
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.internet.scrape({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `text_only` | `boolean` | No | — |
+| `user_agent` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | No | — |
+
+
+
+---
+
+### urlLookup
+
+`internet.urlLookup`
+
+Returns the location of the IP address hosting the URL domain
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.internet.urlLookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_valid` | `boolean` | No | — |
+| `country` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `region_code` | `string` | No | — |
+| `region` | `string` | No | — |
+| `city` | `string` | No | — |
+| `zip` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `isp` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### userAgent
+
+`internet.userAgent`
+
+Generates a realistic user agent string based on optional parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.internet.userAgent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brand` | `string` | No | — |
+| `model` | `string` | No | — |
+| `os` | `string` | No | — |
+| `browser` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_agent` | `string` | No | — |
+
+
+
+---
+
+### webpage
+
+`internet.webpage`
+
+Returns the URL information and web page metadata from a given URL
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.internet.webpage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `url_path` | `string` | No | — |
+| `url_parameters` | `object` | No | — |
+| `page_title` | `string` | No | — |
+| `page_description` | `string` | No | — |
+| `meta_tags` | `object` | No | — |
+| `favicon` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="url_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta_tags full type">
+
+```ts
+{
+  viewport?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### whois
+
+`internet.whois`
+
+Returns domain registration details (e.g. registrar, contact information, expiration date, name servers) for a given domain name [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.internet.whois({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain_name` | `string` | No | — |
+| `registrar` | `string` | No | — |
+| `registrar_url` | `string` | No | — |
+| `whois_server` | `string` | No | — |
+| `updated_date` | `number \| string` | No | — |
+| `creation_date` | `number \| string` | No | — |
+| `expiration_date` | `number \| string` | No | — |
+| `name_servers` | `string[] \| string` | No | — |
+| `dnssec` | `string` | No | — |
+| `emails` | `string` | No | — |
+
+
+
+---
+
+## Location
+
+### airQuality
+
+`location.airQuality`
+
+Get air quality by city or location coordinates (latitude/longitude)
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.airQuality({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CO` | `object` | No | — |
+| `NO2` | `object` | No | — |
+| `O3` | `object` | No | — |
+| `SO2` | `object` | No | — |
+| `PM2.5` | `object` | No | — |
+| `PM10` | `object` | No | — |
+| `overall_aqi` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="CO full type">
+
+```ts
+{
+  concentration?: number | null,
+  aqi?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="NO2 full type">
+
+```ts
+{
+  concentration?: number | null,
+  aqi?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="O3 full type">
+
+```ts
+{
+  concentration?: number | null,
+  aqi?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="SO2 full type">
+
+```ts
+{
+  concentration?: number | null,
+  aqi?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="PM2.5 full type">
+
+```ts
+{
+  concentration?: number | null,
+  aqi?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="PM10 full type">
+
+```ts
+{
+  concentration?: number | null,
+  aqi?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cities
+
+`location.cities`
+
+Get city data from either a name or population range
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.cities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `country` | `string` | No | — |
+| `min_lat` | `number` | No | — |
+| `max_lat` | `number` | No | — |
+| `min_lon` | `number` | No | — |
+| `max_lon` | `number` | No | — |
+| `min_population` | `number` | No | — |
+| `max_population` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  country?: string | null,
+  population?: number | null,
+  is_capital?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### country
+
+`location.country`
+
+Get country data from given parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.country({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `min_gdp` | `number` | No | — |
+| `max_gdp` | `number` | No | — |
+| `min_population` | `number` | No | — |
+| `max_population` | `number` | No | — |
+| `min_area` | `number` | No | — |
+| `max_area` | `number` | No | — |
+| `min_unemployment` | `number` | No | — |
+| `max_unemployment` | `number` | No | — |
+| `min_gdp_growth` | `number` | No | — |
+| `max_gdp_growth` | `number` | No | — |
+| `min_infant_mortality` | `number` | No | — |
+| `max_infant_mortality` | `number` | No | — |
+| `min_fertility` | `number` | No | — |
+| `max_fertility` | `number` | No | — |
+| `min_urban_pop_rate` | `number` | No | — |
+| `max_urban_pop_rate` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  gdp?: number | null,
+  sex_ratio?: number | null,
+  surface_area?: number | null,
+  life_expectancy_male?: number | null,
+  unemployment?: number | null,
+  imports?: number | null,
+  homicide_rate?: number | null,
+  currency?: {
+    code?: string | null,
+    name?: string | null
+  } | null,
+  iso2?: string | null,
+  employment_services?: number | null,
+  employment_industry?: number | null,
+  urban_population_growth?: number | null,
+  secondary_school_enrollment_female?: number | null,
+  employment_agriculture?: number | null,
+  capital?: string | null,
+  co2_emissions?: number | null,
+  forested_area?: number | null,
+  tourists?: number | null,
+  exports?: number | null,
+  life_expectancy_female?: number | null,
+  post_secondary_enrollment_female?: number | null,
+  post_secondary_enrollment_male?: number | null,
+  primary_school_enrollment_female?: number | null,
+  infant_mortality?: number | null,
+  gdp_growth?: number | null,
+  threatened_species?: number | null,
+  population?: number | null,
+  urban_population?: number | null,
+  secondary_school_enrollment_male?: number | null,
+  name?: string | null,
+  pop_growth?: number | null,
+  region?: string | null,
+  pop_density?: number | null,
+  internet_users?: number | null,
+  gdp_per_capita?: number | null,
+  fertility?: number | null,
+  refugees?: number | null,
+  primary_school_enrollment_male?: number | null,
+  telephone_country_codes?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### county
+
+`location.county`
+
+Returns details for one or more counties matching the input parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.county({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `county` | `string` | No | — |
+| `zipcode` | `string` | No | — |
+| `state` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  county_name?: string | null,
+  county_fips?: string | null,
+  state_code?: string | null,
+  state_name?: string | null,
+  latitude?: number | string | null,
+  longitude?: number | string | null,
+  zip_codes?: string[] | string | null,
+  timezone?: string | null,
+  population?: number | null,
+  median_age?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### evChargers
+
+`location.evChargers`
+
+find ev charging stations
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.evChargers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lon` | `number` | Yes | — |
+| `distance` | `number` | No | — |
+| `level` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  is_active?: boolean | null,
+  name?: string | null,
+  address?: string | null,
+  city?: string | null,
+  region?: string | null,
+  country?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  connections?: {
+    type_name?: string | null,
+    type_official?: string | null,
+    level?: number | null,
+    num_connectors?: number | null
+  }[] | null,
+  latitude,
+  longitude?: string | null,
+  type_official?: string | null,
+  level?: string | null,
+  num_connectors?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### geocode
+
+`location.geocode`
+
+Get current city coordinates by city and country name
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.geocode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `city` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+| `zipcode` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  country?: string | null,
+  state?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### hospitals
+
+`location.hospitals`
+
+Get hospital data based on given parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.hospitals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zipcode` | `string` | No | — |
+| `county` | `string` | No | — |
+| `min_latitude` | `number` | No | — |
+| `max_latitude` | `number` | No | — |
+| `min_longitude` | `number` | No | — |
+| `max_longitude` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  care_type?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zipcode?: string | null,
+  county?: string | null,
+  location_area_code?: string | null,
+  fips_code?: string | null,
+  timezone?: string | null,
+  latitude?: string | null,
+  longitude?: string | null,
+  phone_number?: string | null,
+  website?: string | null,
+  ownership?: string | null,
+  bedcount?: number | null,
+  address,
+  city,
+  state,
+  zipcode?: string | null,
+  latitude,
+  longitude?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### postalCode
+
+`location.postalCode`
+
+Returns a list of postal code details matching the input parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.postalCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postal_code` | `string` | No | — |
+| `city` | `string` | No | — |
+| `province` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  city?: string | null,
+  province?: string | null,
+  postal_code?: string | null,
+  area_code?: string | null,
+  timezone?: string | null,
+  lat?: string | null,
+  lon?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### reverseGeocode
+
+`location.reverseGeocode`
+
+Returns a list of cities that contain a given latitude and longitude
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.reverseGeocode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lon` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  country?: string | null,
+  state?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### universities
+
+`location.universities`
+
+Returns information about universities matching the provided filters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.universities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `country` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `min_faculty_ratio` | `number` | No | — |
+| `max_faculty_ratio` | `number` | No | — |
+| `min_enrolled` | `number` | No | — |
+| `max_enrolled` | `number` | No | — |
+| `min_tuition` | `number` | No | — |
+| `max_tuition` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  degree_types?: string[] | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  county?: string | null,
+  timezone?: string | null,
+  latitude?: string | null,
+  longitude?: string | null,
+  phone?: string | null,
+  website?: string | null,
+  institution_type?: string | null,
+  years?: string | null,
+  enrollment?: string | null,
+  student_faculty_ratio?: string | null,
+  email?: string | null,
+  tuition?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### weather
+
+`location.weather`
+
+Get current weather, wind speed and direction, humidity, and temperature data by city, ZIP code, or geolocation coordinates (latitude/longitude) [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.weather({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `zip` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cloud_pct` | `number` | No | — |
+| `temp` | `number` | No | — |
+| `feels_like` | `number` | No | — |
+| `humidity` | `number` | No | — |
+| `min_temp` | `number` | No | — |
+| `max_temp` | `number` | No | — |
+| `wind_speed` | `number` | No | — |
+| `wind_degrees` | `number` | No | — |
+| `sunrise` | `number` | No | — |
+| `sunset` | `number` | No | — |
+
+
+
+---
+
+### weatherForecast
+
+`location.weatherForecast`
+
+Returns a 5-day weather forecast in 3-hour intervals for a given city [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.weatherForecast({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `zip` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  timestamp?: number | null,
+  temp?: number | null,
+  feels_like?: number | null,
+  humidity?: number | null,
+  min_temp?: number | null,
+  max_temp?: number | null,
+  weather?: string | null,
+  cloud_pct?: number | null,
+  wind_speed?: number | null,
+  wind_degrees?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### zipCode
+
+`location.zipCode`
+
+Returns a list of ZIP Code details matching the input parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.location.zipCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zip` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  zip_code?: string | null,
+  valid?: boolean | string | null,
+  city?: string | null,
+  state?: string | null,
+  county?: string | null,
+  timezone?: string | null,
+  area_codes?: string[] | string | null,
+  country?: string | null,
+  lat?: string | null,
+  lon?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Markets
+
+### bitcoin
+
+`markets.bitcoin`
+
+Returns the latest Bitcoin price in USD and 24-hour market data
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.bitcoin({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `price` | `string` | No | — |
+| `timestamp` | `number` | No | — |
+| `24h_price_change` | `string` | No | — |
+| `24h_price_change_percent` | `string` | No | — |
+| `24h_high` | `string` | No | — |
+| `24h_low` | `string` | No | — |
+| `24h_volume` | `string` | No | — |
+
+
+
+---
+
+### commodityPrice
+
+`markets.commodityPrice`
+
+Returns the current price information for one or more commodities
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.commodityPrice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `names` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `unit` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exchange` | `string` | No | — |
+| `name` | `string` | No | — |
+| `value` | `string` | No | — |
+| `unit` | `string` | No | — |
+| `currency_unit` | `string` | No | — |
+| `price` | `number` | No | — |
+| `change_24h_percent` | `number` | No | — |
+| `change_24h` | `number` | No | — |
+| `low_24h` | `number` | No | — |
+| `high_24h` | `number` | No | — |
+| `previous_close` | `number` | No | — |
+| `updated` | `number` | No | — |
+| `high_52w` | `string` | No | — |
+
+
+
+---
+
+### convertCurrency
+
+`markets.convertCurrency`
+
+Converts an existing currency and amount into a new currency [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.convertCurrency({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `have` | `string` | Yes | — |
+| `want` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `old_amount` | `number \| string` | No | — |
+| `old_currency` | `string` | No | — |
+| `new_amount` | `number \| string` | No | — |
+| `new_currency` | `string` | No | — |
+| `timestamp` | `number \| string` | No | — |
+
+
+
+---
+
+### cryptoPrice
+
+`markets.cryptoPrice`
+
+Returns the current price and current time (in UNIX timestamp in seconds) for any cryptocurrency symbol
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.cryptoPrice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | No | — |
+| `price` | `string` | No | — |
+| `timestamp` | `number` | No | — |
+
+
+
+---
+
+### earnings
+
+`markets.earnings`
+
+Returns a JSON array of detailed earnings reports, each with comprehensive financial statements and key performance metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.earnings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | No | — |
+| `cik` | `string` | No | — |
+| `period` | `string` | No | — |
+| `year` | `number` | No | — |
+| `quarter` | `number` | No | — |
+| `date` | `string` | No | — |
+| `date_start` | `string` | No | — |
+| `date_end` | `string` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  company_info?: {
+    ticker?: string | null,
+    cik?: string | null,
+    company_name?: string | null,
+    fiscal_year?: number | null,
+    fiscal_quarter?: number | null
+  } | null,
+  income_statement?: {
+    weighted_average_shares_basic?: number | null,
+    weighted_average_shares_diluted?: number | null,
+    earnings_per_share_basic?: number | null,
+    earnings_per_share_diluted?: number | null,
+    total_revenue?: number | null,
+    cost_of_revenue?: number | null,
+    gross_profit?: number | null,
+    research_and_development?: number | null,
+    general_and_administrative?: number | null,
+    sales_and_marketing?: number | null,
+    operating_income?: number | null,
+    interest_expense?: string | null,
+    tax_provision?: number | null,
+    net_income?: number | null,
+    net_income_available_to_common?: string | null,
+    depreciation_and_amortization?: number | null,
+    stock_based_compensation?: number | null
+  } | null,
+  balance_sheet?: {
+    cash_and_equivalents?: number | null,
+    accounts_receivable?: number | null,
+    inventory?: number | null,
+    current_assets?: number | null,
+    property_plant_equipment?: number | null,
+    goodwill?: string | null,
+    intangible_assets?: number | null,
+    total_assets?: number | null,
+    accounts_payable?: number | null,
+    current_liabilities?: number | null,
+    long_term_debt?: number | null,
+    total_debt?: number | null,
+    total_liabilities?: number | null,
+    stockholders_equity?: number | null,
+    retained_earnings?: number | null,
+    working_capital?: number | null,
+    temporary_equity?: string | null
+  } | null,
+  cash_flow?: {
+    operating_cash_flow?: number | null,
+    capital_expenditures?: number | null,
+    free_cash_flow?: number | null,
+    dividends_paid?: number | null,
+    share_repurchases?: number | null,
+    net_cash_investing?: number | null,
+    net_cash_financing?: number | null
+  } | null,
+  filing_info?: {
+    filing_type?: string | null,
+    filing_date?: string | null,
+    period_end_date?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### earningsCalendar
+
+`markets.earningsCalendar`
+
+Returns a list of past earnings results and upcoming earnings dates
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.earningsCalendar({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | No | — |
+| `date` | `string` | No | — |
+| `date_start` | `string` | No | — |
+| `date_end` | `string` | No | — |
+| `show_upcoming` | `boolean` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  date?: string | null,
+  ticker?: string | null,
+  earnings_timing?: string | null,
+  earnings_call_timestamp?: number | string | null,
+  actual_revenue?: number | null,
+  estimated_revenue?: number | string | null,
+  revenue_difference?: number | string | null,
+  revenue_difference_pct?: number | string | null,
+  actual_eps?: number | null,
+  estimated_eps?: number | string | null,
+  eps_difference?: number | string | null,
+  eps_difference_pct?: number | string | null,
+  report_date_status?: string | null,
+  date_confirmed?: string | null,
+  report_datetime?: string | null,
+  sec_8k_url?: string | null,
+  eps_beat_miss?: string | null,
+  revenue_beat_miss?: string | null,
+  eps_surprise_streak?: string | null,
+  avg_eps_surprise_pct_4q?: string | null,
+  eps_sue?: string | null,
+  last_earnings_move_pct?: string | null,
+  avg_earnings_move_pct?: string | null,
+  days_to_next_earnings?: string | null,
+  next_earnings_date?: string | null,
+  has_transcript?: string | null,
+  surprise_history?: string | null,
+  fiscal_year?: number | null,
+  fiscal_quarter?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### earningsTranscript
+
+`markets.earningsTranscript`
+
+Returns the earnings transcript for a given company earning quarter [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.earningsTranscript({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | No | — |
+| `cik` | `string` | No | — |
+| `year` | `number` | No | — |
+| `quarter` | `number` | No | — |
+| `qa_only` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+| `timestamp` | `number \| string` | No | — |
+| `ticker` | `string` | No | — |
+| `cik` | `string` | No | — |
+| `year` | `number \| string` | No | — |
+| `quarter` | `string` | No | — |
+| `earnings_timing` | `string` | No | — |
+| `transcript` | `string` | No | — |
+| `participants` | `string[] \| string` | No | — |
+| `summary` | `string` | No | — |
+| `guidance` | `string` | No | — |
+| `risk_factors` | `string` | No | — |
+| `overall_sentiment` | `string` | No | — |
+| `overall_sentiment_rationale` | `string` | No | — |
+| `transcript_split` | `string` | No | — |
+
+
+
+---
+
+### etf
+
+`markets.etf`
+
+Returns comprehensive information about any ETF by its ticker
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.etf({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etf_ticker` | `string` | No | — |
+| `price` | `number \| string` | No | — |
+| `etf_name` | `string` | No | — |
+| `isin` | `string` | No | — |
+| `cusip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `domicile` | `string` | No | — |
+| `expense_ratio` | `number \| string` | No | — |
+| `aum` | `string` | No | — |
+| `aum_currency` | `string` | No | — |
+| `aum_usd` | `number \| string` | No | — |
+| `holdings` | `string[] \| string` | No | — |
+| `num_holdings` | `number \| string` | No | — |
+
+
+
+---
+
+### exchangeRate
+
+`markets.exchangeRate`
+
+Returns the exchange rate for a given currency pair [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.exchangeRate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pair` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency_pair` | `string` | No | — |
+| `exchange_rate` | `number \| string` | No | — |
+| `timestamp` | `number \| string` | No | — |
+
+
+
+---
+
+### insiderTransactions
+
+`markets.insiderTransactions`
+
+Returns a list of insider trading transactions that match the specified filters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.insiderTransactions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | No | — |
+| `cik` | `string` | No | — |
+| `name` | `string` | No | — |
+| `form_type` | `string` | No | — |
+| `transaction_type` | `string` | No | — |
+| `transaction_code` | `string` | No | — |
+| `transaction_date` | `string` | No | — |
+| `min_transaction_date` | `number` | No | — |
+| `max_transaction_date` | `number` | No | — |
+| `insider_type` | `string` | No | — |
+| `min_transaction_value` | `number` | No | — |
+| `max_transaction_value` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  accession_number?: string | null,
+  form?: string | null,
+  filing_date?: string | null,
+  sec_filing_url?: string | null,
+  cik?: string | null,
+  ticker?: string | null,
+  company_name?: string | null,
+  insider_name?: string | null,
+  insider_position?: string | null,
+  transaction_code?: string | null,
+  transaction_name?: string | null,
+  transaction_type?: string | null,
+  transaction_price?: number | null,
+  shares?: number | null,
+  transaction_value?: number | null,
+  pre_transaction_shares?: number | null,
+  pre_transaction_shares_value?: number | null,
+  remaining_shares?: number | null,
+  remaining_shares_value?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### marketCap
+
+`markets.marketCap`
+
+Returns the current market cap data for any given company ticker
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.marketCap({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | No | — |
+| `name` | `string` | No | — |
+| `market_cap` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `updated` | `number` | No | — |
+
+
+
+---
+
+### mutualFund
+
+`markets.mutualFund`
+
+Returns comprehensive information about any Mutual Fund by its ticker
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.mutualFund({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fund_ticker` | `string` | No | — |
+| `fund_name` | `string` | No | — |
+| `isin` | `string` | No | — |
+| `cusip` | `string` | No | — |
+| `country` | `string` | No | — |
+| `expense_ratio` | `string` | No | — |
+| `aum` | `number \| string` | No | — |
+| `price` | `number \| string` | No | — |
+| `holdings` | `string[] \| string` | No | — |
+| `num_holdings` | `number \| string` | No | — |
+
+
+
+---
+
+### secFilings
+
+`markets.secFilings`
+
+Returns a list of SEC filing information (including the submission URL) corresponding to the given search parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.secFilings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+| `filing` | `string` | Yes | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ticker?: string | null,
+  filing_date?: string | null,
+  filing_url?: string | null,
+  form_type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sp500
+
+`markets.sp500`
+
+Returns S&P 500 index constituents, filterable by ticker, company name, sector or the date the company joined the index
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.sp500({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | No | — |
+| `name` | `string` | No | — |
+| `sector` | `string` | No | — |
+| `date_added` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ticker?: string | null,
+  company_name?: string | null,
+  sector?: string | null,
+  date_added?: string | null,
+  cik?: string | null,
+  sub_industry?: string | null,
+  headquarters?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### stockExchanges
+
+`markets.stockExchanges`
+
+Returns detailed information about stock exchanges matching the specified criteria
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.stockExchanges({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mic` | `string` | No | — |
+| `name` | `string` | No | — |
+| `city` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  mic?: string | null,
+  name?: string | null,
+  city?: string | null,
+  country?: string | null,
+  iso2?: string | null,
+  description?: string | null,
+  address?: string | null,
+  website?: string | null,
+  founded?: string | null,
+  num_listings?: number | null,
+  market_cap_usd?: number | null,
+  market_cap?: number | string | null,
+  currency?: string | null,
+  timezone?: string | null,
+  market_open?: string | null,
+  market_close?: string | null,
+  is_market_open?: boolean | string | null,
+  closed_reason?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### stockPrice
+
+`markets.stockPrice`
+
+Returns price information for any given ticker symbol
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.stockPrice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | No | — |
+| `name` | `string` | No | — |
+| `price` | `number` | No | — |
+| `exchange` | `string` | No | — |
+| `updated` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `volume` | `number` | No | — |
+
+
+
+---
+
+### ticker
+
+`markets.ticker`
+
+Returns comprehensive company profile information including company name, CEO, address, financial data, exchange information, identifiers...
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.ticker({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `ticker` | `string` | No | — |
+| `chief_executive_officer` | `string` | No | — |
+| `address` | `object` | No | — |
+| `latest_price` | `number \| string` | No | — |
+| `latest_market_cap` | `number \| string` | No | — |
+| `latest_dividend` | `string` | No | — |
+| `cik` | `string` | No | — |
+| `cusip` | `string` | No | — |
+| `isin` | `string` | No | — |
+| `exchange` | `string` | No | — |
+| `website` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `ipo_date` | `string` | No | — |
+| `latest_earnings` | `object` | No | — |
+| `sector` | `string` | No | — |
+| `industry` | `string` | No | — |
+| `sic_code` | `string` | No | — |
+| `sic_description` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="latest_earnings full type">
+
+```ts
+{
+  year?: number | null,
+  quarter?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tickerList
+
+`markets.tickerList`
+
+Returns a list of all available companies and their ticker symbols
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.markets.tickerList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ticker?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Reference
+
+### animals
+
+`reference.animals`
+
+Returns up to 10 results matching the input name parameter
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.reference.animals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  taxonomy?: {
+    kingdom?: string | null,
+    phylum?: string | null,
+    class?: string | null,
+    order?: string | null,
+    family?: string | null,
+    genus?: string | null,
+    scientific_name?: string | null
+  } | null,
+  locations?: string[] | null,
+  characteristics?: {
+    prey?: string | null,
+    name_of_young?: string | null,
+    group_behavior?: string | null,
+    estimated_population_size?: string | null,
+    biggest_threat?: string | null,
+    most_distinctive_feature?: string | null,
+    gestation_period?: string | null,
+    habitat?: string | null,
+    diet?: string | null,
+    average_litter_size?: string | null,
+    lifestyle?: string | null,
+    common_name?: string | null,
+    number_of_species?: string | null,
+    location?: string | null,
+    slogan?: string | null,
+    group?: string | null,
+    color?: string | null,
+    skin_type?: string | null,
+    top_speed?: string | null,
+    lifespan?: string | null,
+    weight?: string | null,
+    height?: string | null,
+    age_of_sexual_maturity?: string | null,
+    age_of_weaning?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### babyNames
+
+`reference.babyNames`
+
+Returns 10 baby name results
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.reference.babyNames({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gender` | `string` | No | — |
+| `popular_only` | `boolean` | No | — |
+
+
+
+**Output:** `string[]`
+
+
+---
+
+### cats
+
+`reference.cats`
+
+Get a list of cat breeds matching specified parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.reference.cats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `min_weight` | `number` | No | — |
+| `max_weight` | `number` | No | — |
+| `min_life_expectancy` | `number` | No | — |
+| `max_life_expectancy` | `number` | No | — |
+| `shedding` | `string` | No | — |
+| `family_friendly` | `string` | No | — |
+| `playfulness` | `string` | No | — |
+| `grooming` | `string` | No | — |
+| `other_pets_friendly` | `string` | No | — |
+| `children_friendly` | `string` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  length?: string | null,
+  origin?: string | null,
+  image_link?: string | null,
+  family_friendly?: number | null,
+  shedding?: number | null,
+  general_health?: number | null,
+  playfulness?: number | null,
+  meowing?: number | null,
+  children_friendly?: number | null,
+  stranger_friendly?: number | null,
+  grooming?: number | null,
+  intelligence?: number | null,
+  other_pets_friendly?: number | null,
+  min_weight?: number | null,
+  max_weight?: number | null,
+  min_life_expectancy?: number | null,
+  max_life_expectancy?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### celebrities
+
+`reference.celebrities`
+
+Returns a list of up to 30 celebrities that match the search parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.reference.celebrities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `min_net_worth` | `number` | No | — |
+| `max_net_worth` | `number` | No | — |
+| `nationality` | `string` | No | — |
+| `min_height` | `number` | No | — |
+| `max_height` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  net_worth?: number | null,
+  gender?: string | null,
+  nationality?: string | null,
+  occupation?: string[] | null,
+  height?: number | null,
+  birthday?: string | null,
+  age?: number | null,
+  is_alive?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### dayInHistory
+
+`reference.dayInHistory`
+
+Returns historical events that occurred on a specific date [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.reference.dayInHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `month` | `number` | No | — |
+| `day` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  year?: number | null,
+  month?: number | null,
+  day?: number | null,
+  event?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### dogs
+
+`reference.dogs`
+
+Get a list of dog breeds matching specified parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.reference.dogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `min_height` | `number` | No | — |
+| `max_height` | `number` | No | — |
+| `min_weight` | `number` | No | — |
+| `max_weight` | `number` | No | — |
+| `min_life_expectancy` | `number` | No | — |
+| `max_life_expectancy` | `number` | No | — |
+| `shedding` | `string` | No | — |
+| `barking` | `string` | No | — |
+| `energy` | `string` | No | — |
+| `protectiveness` | `string` | No | — |
+| `trainability` | `string` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  image_link?: string | null,
+  good_with_children?: number | null,
+  good_with_other_dogs?: number | null,
+  shedding?: number | null,
+  grooming?: number | null,
+  drooling?: number | null,
+  coat_length?: number | null,
+  good_with_strangers?: number | null,
+  playfulness?: number | null,
+  protectiveness?: number | null,
+  trainability?: number | null,
+  energy?: number | null,
+  barking?: number | null,
+  min_life_expectancy?: number | null,
+  max_life_expectancy?: number | null,
+  max_height_male?: number | null,
+  max_height_female?: number | null,
+  max_weight_male?: number | null,
+  max_weight_female?: number | null,
+  min_height_male?: number | null,
+  min_height_female?: number | null,
+  min_weight_male?: number | null,
+  min_weight_female?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### historicalEvents
+
+`reference.historicalEvents`
+
+Returns a list of up to 10 events that match the search parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.reference.historicalEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | No | — |
+| `year` | `number` | No | — |
+| `month` | `number` | No | — |
+| `day` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  year?: string | null,
+  month?: string | null,
+  day?: string | null,
+  event?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### historicalFigures
+
+`reference.historicalFigures`
+
+Returns a list of up to 10 people that match the search parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.reference.historicalFigures({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  title?: string | null,
+  info?: {
+    born?: string | null,
+    died?: string | null,
+    rank?: any[] | string | null,
+    unit?: string[] | null,
+    house?: string | null,
+    issue?: string | null,
+    reign?: string | null,
+    burial?: string | null,
+    father?: string | null,
+    mother?: string | null,
+    spouse?: any[] | string | null,
+    religion?: string | null,
+    successor?: string | null,
+    allegiance?: string | null,
+    preceded_by?: string | null,
+    predecessor?: string | null,
+    battles/wars?: string[] | null,
+    succeeded_by?: string | null,
+    prime_minister?: string | null,
+    service/branch?: any[] | string | null,
+    vice_president?: string | null,
+    years_of_service?: string | null,
+    in_office?: string | null,
+    coronation?: string | null,
+    issuedetail?: string | null,
+    regent?: string | null,
+    genre?: string | null,
+    period?: string | null,
+    children?: string | null,
+    occupation?: string | null,
+    citizenship?: string | null,
+    notable_works?: string | null,
+    commands_held?: string | null,
+    genres?: string | null,
+    labels?: string | null,
+    birth_name?: string | null,
+    instruments?: string | null,
+    years_active?: string | null,
+    also_known_as?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### planets
+
+`reference.planets`
+
+Get a list of planets matching specified parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.reference.planets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `min_mass` | `number` | No | — |
+| `max_mass` | `number` | No | — |
+| `min_radius` | `number` | No | — |
+| `max_radius` | `number` | No | — |
+| `min_period` | `number` | No | — |
+| `max_period` | `number` | No | — |
+| `min_temperature` | `number` | No | — |
+| `max_temperature` | `number` | No | — |
+| `min_distance_light_year` | `number` | No | — |
+| `max_distance_light_year` | `number` | No | — |
+| `min_semi_major_axis` | `number` | No | — |
+| `max_semi_major_axis` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  mass?: number | null,
+  radius?: number | null,
+  period?: number | null,
+  semi_major_axis?: number | null,
+  temperature?: number | null,
+  distance_light_year?: number | null,
+  host_star_mass?: number | null,
+  host_star_temperature?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### stars
+
+`reference.stars`
+
+Get a list of stars matching specified parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.reference.stars({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `constellation` | `string` | No | — |
+| `min_apparent_magnitude` | `number` | No | — |
+| `max_apparent_magnitude` | `number` | No | — |
+| `min_absolute_magnitude` | `number` | No | — |
+| `max_absolute_magnitude` | `number` | No | — |
+| `min_distance_light_year` | `number` | No | — |
+| `max_distance_light_year` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  constellation?: string | null,
+  right_ascension?: string | null,
+  declination?: string | null,
+  apparent_magnitude?: string | null,
+  absolute_magnitude?: string | null,
+  distance_light_year?: string | null,
+  spectral_class?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Text
+
+### dictionary
+
+`text.dictionary`
+
+Returns a string containing definitions for a given word
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.text.dictionary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `word` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `definition` | `string` | No | — |
+| `word` | `string` | No | — |
+| `valid` | `boolean` | No | — |
+
+
+
+---
+
+### embeddings
+
+`text.embeddings`
+
+Returns a 768-dimensional vector as an array that encodes the meaning of any given input text
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.text.embeddings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `embeddings` | `number[]` | No | — |
+
+
+
+---
+
+### language
+
+`text.language`
+
+Returns the language name and 2-letter ISO language code for a given block of text string
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.text.language({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iso` | `string` | No | — |
+| `language` | `string` | No | — |
+
+
+
+---
+
+### loremIpsum
+
+`text.loremIpsum`
+
+Returns one or more paragraphs of lorem ipsum placeholder text
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.text.loremIpsum({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `max_length` | `number` | No | — |
+| `paragraphs` | `number` | No | — |
+| `start_with_lorem_ipsum` | `boolean` | No | — |
+| `random` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | No | — |
+
+
+
+---
+
+### profanityFilter
+
+`text.profanityFilter`
+
+Returns the censored version (bad words replaced with asterisks) of any given text and whether the text contains profanity
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.text.profanityFilter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `original` | `string` | No | — |
+| `censored` | `string` | No | — |
+| `has_profanity` | `boolean` | No | — |
+
+
+
+---
+
+### randomWord
+
+`text.randomWord`
+
+Returns a random word [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.text.randomWord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `string[]`
+
+
+---
+
+### rhymes
+
+`text.rhymes`
+
+Returns a list of rhyming words for any given word
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.text.rhymes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `word` | `string` | Yes | — |
+
+
+
+**Output:** `string[]`
+
+
+---
+
+### sentiment
+
+`text.sentiment`
+
+Returns sentiment analysis score and overall sentiment for a given block of text
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.text.sentiment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `score` | `number` | No | — |
+| `text` | `string` | No | — |
+| `sentiment` | `string` | No | — |
+
+
+
+---
+
+### similarity
+
+`text.similarity`
+
+Returns a similarity score between 0 and 1 (1 is similar and 0 is dissimilar) of two given texts
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.text.similarity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text_1` | `string` | Yes | — |
+| `text_2` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `similarity` | `number` | No | — |
+
+
+
+---
+
+### spellCheck
+
+`text.spellCheck`
+
+Returns spelling corrections and suggestions for any given text
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.text.spellCheck({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `original` | `string` | No | — |
+| `corrected` | `string` | No | — |
+| `corrections` | `object[]` | No | — |
+| `index` | `string` | No | — |
+| `correction` | `string` | No | — |
+| `candidates` | `string[] \| string` | No | — |
+
+<AccordionGroup>
+<Accordion title="corrections full type">
+
+```ts
+{
+  word?: string | null,
+  index?: number | null,
+  correction?: string | null,
+  candidates?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### thesaurus
+
+`text.thesaurus`
+
+Returns a list of synonyms and a list of antonyms for a given word
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.text.thesaurus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `word` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `word` | `string` | No | — |
+| `synonyms` | `string[]` | No | — |
+| `antonyms` | `string[]` | No | — |
+
+
+
+---
+
+## Transport
+
+### aircraft
+
+`transport.aircraft`
+
+Returns a list of aircrafts that match the given parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.transport.aircraft({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `manufacturer` | `string` | No | — |
+| `model` | `string` | No | — |
+| `engine_type` | `string` | No | — |
+| `min_speed` | `number` | No | — |
+| `max_speed` | `number` | No | — |
+| `min_range` | `number` | No | — |
+| `max_range` | `number` | No | — |
+| `min_length` | `number` | No | — |
+| `max_length` | `number` | No | — |
+| `min_height` | `number` | No | — |
+| `max_height` | `number` | No | — |
+| `min_wingspan` | `number` | No | — |
+| `max_wingspan` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  manufacturer?: string | null,
+  model?: string | null,
+  engine_type?: string | null,
+  max_speed_knots?: string | null,
+  ceiling_ft?: string | null,
+  gross_weight_lbs?: string | null,
+  length_ft?: string | null,
+  height_ft?: string | null,
+  wing_span_ft?: string | null,
+  range_nautical_miles?: string | null,
+  engine_thrust_lb_ft?: number | string | null,
+  cruise_speed_knots?: number | string | null,
+  takeoff_ground_run_ft?: number | string | null,
+  landing_ground_roll_ft?: number | string | null,
+  empty_weight_lbs?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### airlines
+
+`transport.airlines`
+
+Returns airline details including fleet composition, base airport and branding assets, by name, IATA code or ICAO code
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.transport.airlines({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `iata` | `string` | No | — |
+| `icao` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  country?: string | null,
+  year_created?: string | null,
+  base?: string | null,
+  iata?: string | null,
+  icao?: string | null,
+  fleet?: {
+    A359?: number | null,
+    A388?: number | null,
+    B38M?: number | null,
+    B738?: number | null,
+    B744?: number | null,
+    B772?: number | null,
+    B773?: number | null,
+    B77W?: number | null,
+    B78X?: number | null,
+    total?: number | null
+  } | null,
+  logo_url?: string | null,
+  brandmark_url?: string | null,
+  tail_logo_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### airports
+
+`transport.airports`
+
+Returns a list of up to 10 airport results
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.transport.airports({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iata` | `string` | No | — |
+| `icao` | `string` | No | — |
+| `name` | `string` | No | — |
+| `country` | `string` | No | — |
+| `region` | `string` | No | — |
+| `city` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `min_elevation` | `number` | No | — |
+| `max_elevation` | `number` | No | — |
+| `size` | `string` | No | — |
+| `has_iata` | `boolean` | No | — |
+| `min_runway_length` | `number` | No | — |
+| `type` | `string` | No | — |
+| `scheduled_service` | `boolean` | No | — |
+| `continent` | `string` | No | — |
+| `surface` | `string` | No | — |
+| `has_lights` | `boolean` | No | — |
+| `q` | `string` | No | — |
+| `include_closed` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `order` | `string` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  icao?: string | null,
+  ident?: string | null,
+  iata?: string | null,
+  name?: string | null,
+  city?: string | null,
+  region?: string | null,
+  region_code?: string | null,
+  country?: string | null,
+  country_name?: string | null,
+  continent?: string | null,
+  elevation_ft?: number | null,
+  elevation_m?: number | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  timezone?: string | null,
+  type?: string | null,
+  size?: string | null,
+  scheduled_service?: boolean | null,
+  is_closed?: boolean | null,
+  gps_code?: string | null,
+  local_code?: string | null,
+  home_link?: string | null,
+  wikipedia_link?: string | null,
+  keywords?: string[] | null,
+  num_runways?: number | null,
+  longest_runway_ft?: number | null,
+  runways?: {
+    length?: number | null,
+    width?: number | null,
+    has_lights?: boolean | null,
+    surface?: string | null,
+    surface_category?: string | null,
+    closed?: boolean | null,
+    le_ident?: string | null,
+    he_ident?: string | null,
+    le_heading_deg?: number | null,
+    he_heading_deg?: number | null
+  }[] | null,
+  estimated_annual_passengers?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### cars
+
+`transport.cars`
+
+Get car data from given parameters [deprecated by the provider]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.transport.cars({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `make` | `string` | No | — |
+| `model` | `string` | Yes | — |
+| `trim` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  city_mpg?: number | string | null,
+  class?: string | null,
+  combination_mpg?: number | string | null,
+  cylinders?: number | null,
+  displacement?: number | null,
+  drive?: string | null,
+  fuel_type?: string | null,
+  highway_mpg?: number | string | null,
+  make?: string | null,
+  model?: string | null,
+  transmission?: string | null,
+  year?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### electricVehicles
+
+`transport.electricVehicles`
+
+Get electric vehicle data from given parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.transport.electricVehicles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `make` | `string` | No | — |
+| `model` | `string` | No | — |
+| `min_year` | `number` | No | — |
+| `max_year` | `number` | No | — |
+| `min_range` | `number` | No | — |
+| `max_range` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  make?: string | null,
+  model?: string | null,
+  year_start?: string | null,
+  battery_capacity?: string | null,
+  battery_type?: string | null,
+  battery_number_of_cells?: string | null,
+  battery_architecture?: string | null,
+  battery_useable_capacity?: string | null,
+  battery_cathode_material?: string | null,
+  battery_pack_configuration?: string | null,
+  battery_voltage?: string | null,
+  battery_form_factor?: string | null,
+  battery_name?: string | null,
+  charge_port?: string | null,
+  charge_port_location?: string | null,
+  charge_power?: string | null,
+  charge_speed?: string | null,
+  charge_power_max?: string | null,
+  charge_power_10p_80p?: string | null,
+  autocharge_supported?: string | null,
+  plug_charge_supported?: string | null,
+  supported_charging_protocol?: string | null,
+  preconditioning_possible?: string | null,
+  acceleration_0_100_kmh?: string | null,
+  top_speed?: string | null,
+  electric_range?: number | string | null,
+  total_power?: string | null,
+  total_torque?: string | null,
+  drive?: string | null,
+  vehicle_consumption?: string | null,
+  co2_emissions?: string | null,
+  vehicle_fuel_equivalent?: string | null,
+  rated_consumption?: string | null,
+  rated_fuel_equivalent?: string | null,
+  length?: string | null,
+  width?: string | null,
+  width_with_mirrors?: string | null,
+  height?: string | null,
+  wheelbase?: string | null,
+  gross_vehicle_weight?: string | null,
+  max_payload?: string | null,
+  cargo_volume?: string | null,
+  cargo_volume_frunk?: string | null,
+  seats?: string | null,
+  turning_circle?: string | null,
+  platform?: string | null,
+  car_body?: string | null,
+  segment?: string | null,
+  length,
+  width,
+  height?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### helicopters
+
+`transport.helicopters`
+
+Get helicopter technical specifications that match the given parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.transport.helicopters({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `manufacturer` | `string` | No | — |
+| `model` | `string` | No | — |
+| `min_speed` | `number` | No | — |
+| `max_speed` | `number` | No | — |
+| `min_range` | `number` | No | — |
+| `max_range` | `number` | No | — |
+| `min_length` | `number` | No | — |
+| `max_length` | `number` | No | — |
+| `min_height` | `number` | No | — |
+| `max_height` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  manufacturer?: string | null,
+  model?: string | null,
+  max_speed_sl_knots?: string | null,
+  cruise_speed_sl_knots?: string | null,
+  vne_speed_knots?: string | null,
+  range_nautical_miles?: string | null,
+  fuel_consumption_gallons_pr_hr?: string | null,
+  fuel_capacity_gallons?: string | null,
+  fuel_opt_gallons?: string | null,
+  gross_external_load_lbs?: string | null,
+  external_load_limit_lbs?: string | null,
+  main_rotor_diameter_ft?: string | null,
+  num_blades?: string | null,
+  blade_material?: string | null,
+  storage_width_ft?: string | null,
+  length_ft?: string | null,
+  height_ft?: string | null,
+  cruise_time_min?: number | string | null,
+  rotor_type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### motorcycles
+
+`transport.motorcycles`
+
+Returns up to 30 motorcycle results matching the input name parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.transport.motorcycles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `make` | `string` | No | — |
+| `model` | `string` | No | — |
+| `year` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  make?: string | null,
+  model?: string | null,
+  year?: string | null,
+  type?: string | null,
+  displacement?: string | null,
+  engine?: string | null,
+  compression?: string | null,
+  bore_stroke?: string | null,
+  valves_per_cylinder?: string | null,
+  fuel_system?: string | null,
+  fuel_control?: string | null,
+  lubrication?: string | null,
+  cooling?: string | null,
+  gearbox?: string | null,
+  transmission?: string | null,
+  clutch?: string | null,
+  frame?: string | null,
+  front_suspension?: string | null,
+  front_wheel_travel?: string | null,
+  rear_suspension?: string | null,
+  rear_wheel_travel?: string | null,
+  front_tire?: string | null,
+  rear_tire?: string | null,
+  front_brakes?: string | null,
+  rear_brakes?: string | null,
+  seat_height?: string | null,
+  ground_clearance?: string | null,
+  wheelbase?: string | null,
+  fuel_capacity?: string | null,
+  starter?: string | null,
+  power?: string | null,
+  torque?: string | null,
+  top_speed?: string | null,
+  fuel_consumption?: string | null,
+  emission?: string | null,
+  total_weight?: string | null,
+  total_height?: string | null,
+  total_length?: string | null,
+  total_width?: string | null,
+  ignition?: string | null,
+  dry_weight?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### vin
+
+`transport.vin`
+
+Returns key vehicle information including manufacturer, country of origin, and model year for a given VIN
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.transport.vin({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vin` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vin` | `string` | No | — |
+| `country` | `string` | No | — |
+| `manufacturer` | `string` | No | — |
+| `model` | `string` | No | — |
+| `class` | `string` | No | — |
+| `region` | `string` | No | — |
+| `wmi` | `string` | No | — |
+| `vds` | `string` | No | — |
+| `vis` | `string` | No | — |
+| `year` | `number` | No | — |
+
+
+
+---
+
+## Utility
+
+### barcode
+
+`utility.barcode`
+
+Returns a barcode image binary specified by input parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.utility.barcode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `format` | `string` | No | — |
+| `include_text` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content_type` | `string` | Yes | — |
+| `encoding` | `text \| lossy-text` | Yes | — |
+| `data` | `string` | Yes | — |
+
+
+
+---
+
+### convertUnit
+
+`utility.convertUnit`
+
+Returns conversions between different units of the same measurement type
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.utility.convertUnit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | — |
+| `unit` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `unit` | `string` | No | — |
+| `amount` | `number` | No | — |
+| `conversions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="conversions full type">
+
+```ts
+{
+  meter?: number | null,
+  kilometer?: number | null,
+  centimeter?: number | null,
+  millimeter?: number | null,
+  micrometer?: number | null,
+  nanometer?: number | null,
+  mile?: number | null,
+  yard?: number | null,
+  foot?: number | null,
+  inch?: number | null,
+  nautical_mile?: number | null,
+  furlong?: number | null,
+  light_year?: number | null,
+  astronomical_unit?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### counter
+
+`utility.counter`
+
+Fetch and possibly update a counter
+
+**Risk:** `write`
+
+```ts
+await corsair.apininjas.api.utility.counter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `hit` | `boolean` | No | — |
+| `value` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `value` | `number` | No | — |
+
+
+
+---
+
+### countryFlag
+
+`utility.countryFlag`
+
+Get a country's flag as SVG image URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.utility.countryFlag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+| `square_image_url` | `string` | No | — |
+| `rectangle_image_url` | `string` | No | — |
+
+
+
+---
+
+### emoji
+
+`utility.emoji`
+
+Returns a list of emojis according to input parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.utility.emoji({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `code` | `string` | No | — |
+| `group` | `string` | No | — |
+| `subgroup` | `string` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  code?: string | null,
+  character?: string | null,
+  image?: string | null,
+  name?: string | null,
+  group?: string | null,
+  subgroup?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### logo
+
+`utility.logo`
+
+Get a list of company names, ticker symbols, and logo image URLs matching the input parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.utility.logo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `ticker` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  image?: string | null,
+  ticker?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### password
+
+`utility.password`
+
+Returns a random password string adhering to the specified parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.utility.password({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `length` | `number` | No | — |
+| `exclude_numbers` | `boolean` | No | — |
+| `exclude_special_chars` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `random_password` | `string` | No | — |
+
+
+
+---
+
+### qrCode
+
+`utility.qrCode`
+
+Returns a QRCode image binary specified by input parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.utility.qrCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | Yes | — |
+| `format` | `string` | No | — |
+| `size` | `number` | No | — |
+| `fg_color` | `string` | No | — |
+| `bg_color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content_type` | `string` | Yes | — |
+| `encoding` | `text \| lossy-text` | Yes | — |
+| `data` | `string` | Yes | — |
+
+
+
+---
+
+### randomImage
+
+`utility.randomImage`
+
+Returns a random image in JPEG format [premium plan required]
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.utility.randomImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content_type` | `string` | Yes | — |
+| `encoding` | `text \| lossy-text` | Yes | — |
+| `data` | `string` | Yes | — |
+
+
+
+---
+
+### randomUser
+
+`utility.randomUser`
+
+Returns fake random user profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.utility.randomUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `gender` | `string` | No | — |
+| `min_age` | `number` | No | — |
+| `max_age` | `number` | No | — |
+| `locale` | `string` | No | — |
+| `fields` | `string` | No | — |
+| `exclude` | `string` | No | — |
+| `seed` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  username?: string | null,
+  password?: string | null,
+  email?: string | null,
+  name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  prefix?: string | null,
+  suffix?: string | null,
+  phone?: string | null,
+  cell?: string | null,
+  address?: string | null,
+  street_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  latitude?: number | null,
+  longitude?: number | null,
+  timezone?: string | null,
+  dob?: string | null,
+  age?: number | null,
+  gender?: string | null,
+  job?: string | null,
+  company?: string | null,
+  company_email?: string | null,
+  ssn?: string | null,
+  credit_card?: string | null,
+  credit_card_provider?: string | null,
+  iban?: string | null,
+  ipv4?: string | null,
+  ipv6?: string | null,
+  mac_address?: string | null,
+  user_agent?: string | null,
+  url?: string | null,
+  domain?: string | null,
+  picture?: string | null,
+  avatar?: string | null,
+  uuid?: string | null,
+  md5?: string | null,
+  sha1?: string | null,
+  sha256?: string | null,
+  locale?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Validation
+
+### bin
+
+`validation.bin`
+
+Returns detailed information about a bank based on the BIN number provided
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.validation.bin({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bin` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  bin?: string | null,
+  country_iso2?: string | null,
+  country?: string | null,
+  brand?: string | null,
+  type?: string | null,
+  categories?: string[] | string | null,
+  issuer?: string | null,
+  is_valid?: boolean | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### disposableEmail
+
+`validation.disposableEmail`
+
+Returns metadata for a given email address, including whether it is from a disposable email provider
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.validation.disposableEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `is_disposable` | `boolean` | No | — |
+
+
+
+---
+
+### email
+
+`validation.email`
+
+Returns metadata (including whether it is valid) for a given email address
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.validation.email({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_valid` | `boolean` | No | — |
+| `email` | `string` | No | — |
+| `is_disposable` | `boolean` | No | — |
+| `is_public` | `boolean` | No | — |
+| `main_category` | `string` | No | — |
+| `sub_category` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `local_part` | `string` | No | — |
+
+
+
+---
+
+### iban
+
+`validation.iban`
+
+Returns detailed information on a given IBAN
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.validation.iban({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iban` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iban` | `string` | No | — |
+| `bank_name` | `string` | No | — |
+| `bank_address` | `string` | No | — |
+| `account_number` | `string` | No | — |
+| `bank_code` | `string` | No | — |
+| `country` | `string` | No | — |
+| `checksum` | `string` | No | — |
+| `valid` | `boolean \| string` | No | — |
+| `invalid_reason` | `string` | No | — |
+| `bban` | `string` | No | — |
+| `swift_code` | `string` | No | — |
+
+
+
+---
+
+### phone
+
+`validation.phone`
+
+Returns metadata (including whether it is valid) for a given phone number
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.validation.phone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | Yes | — |
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_valid` | `boolean` | No | — |
+| `is_formatted_properly` | `boolean` | No | — |
+| `country` | `string` | No | — |
+| `location` | `string` | No | — |
+| `timezones` | `string[]` | No | — |
+| `format_national` | `string` | No | — |
+| `format_international` | `string` | No | — |
+| `format_e164` | `string` | No | — |
+| `country_code` | `number` | No | — |
+| `line_type` | `string` | No | — |
+| `is_mobile` | `boolean \| string` | No | — |
+| `format_rfc3966` | `string` | No | — |
+| `is_possible` | `boolean \| string` | No | — |
+
+
+
+---
+
+### routingNumber
+
+`validation.routingNumber`
+
+Returns detailed information about a bank based on its routing number
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.validation.routingNumber({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `routing_number` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  bank_name?: string | null,
+  routing_number?: string | null,
+  street_address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip_code?: string | null,
+  country?: string | null,
+  county?: string | null,
+  timezone?: string | null,
+  latitude?: string | null,
+  longitude?: string | null,
+  phone_number?: number | string | null,
+  ach_supported?: boolean | null,
+  fedwire_supported?: boolean | null,
+  checksum_valid?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### swiftCode
+
+`validation.swiftCode`
+
+Returns a list of bank information (including SWIFT/BIC Code) that match the input parameter
+
+**Risk:** `read`
+
+```ts
+await corsair.apininjas.api.validation.swiftCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `swift` | `string` | No | — |
+| `bank` | `string` | No | — |
+| `city` | `string` | No | — |
+| `country` | `string` | No | — |
+| `routing_number` | `string` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  swift_code?: string | null,
+  bank_name?: string | null,
+  address?: string | null,
+  city?: string | null,
+  region?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  country_code?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

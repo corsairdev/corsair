@@ -1,0 +1,4670 @@
+---
+title: API
+description: "API reference for Habitica: every `habitica.api.*` operation with input and output types."
+---
+
+Every `habitica.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Auth
+
+### login
+
+`auth.login`
+
+Exchange a password for an API token
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.auth.login({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `apiToken` | `string` | No | — |
+| `newUser` | `boolean` | No | — |
+| `username` | `string` | No | — |
+
+
+
+---
+
+### register
+
+`auth.register`
+
+Register a new Habitica account and mint its credential
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.auth.register({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+| `confirmPassword` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `apiToken` | `string` | No | — |
+| `newUser` | `boolean` | No | — |
+| `username` | `string` | No | — |
+
+
+
+---
+
+### social
+
+`auth.social`
+
+Authenticate through a social provider
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.auth.social({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `facebook \| google \| apple` | Yes | — |
+| `authResponse` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="authResponse full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `apiToken` | `string` | No | — |
+| `newUser` | `boolean` | No | — |
+| `username` | `string` | No | — |
+
+
+
+---
+
+## Challenges
+
+### clone
+
+`challenges.clone`
+
+Duplicate a challenge
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.challenges.clone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `challengeId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `shortName` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `official` | `boolean` | No | — |
+| `prize` | `number` | No | — |
+| `memberCount` | `number` | No | — |
+| `leader` | `object` | No | — |
+| `group` | `object` | No | — |
+| `tasksOrder` | `object` | No | — |
+| `categories` | `object[]` | No | — |
+| `flags` | `object` | No | — |
+| `flagCount` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="leader full type">
+
+```ts
+{
+  id?: string | null,
+  _id?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  _id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  privacy?: string | null,
+  summary?: string | null,
+  leader?: string | null,
+  categories?: {
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="tasksOrder full type">
+
+```ts
+{
+  habits?: string[] | null,
+  dailys?: string[] | null,
+  todos?: string[] | null,
+  rewards?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="flags full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`challenges.create`
+
+Create a challenge in a group
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.challenges.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `shortName` | `string` | Yes | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `prize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `shortName` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `official` | `boolean` | No | — |
+| `prize` | `number` | No | — |
+| `memberCount` | `number` | No | — |
+| `leader` | `object` | No | — |
+| `group` | `object` | No | — |
+| `tasksOrder` | `object` | No | — |
+| `categories` | `object[]` | No | — |
+| `flags` | `object` | No | — |
+| `flagCount` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="leader full type">
+
+```ts
+{
+  id?: string | null,
+  _id?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  _id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  privacy?: string | null,
+  summary?: string | null,
+  leader?: string | null,
+  categories?: {
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="tasksOrder full type">
+
+```ts
+{
+  habits?: string[] | null,
+  dailys?: string[] | null,
+  todos?: string[] | null,
+  rewards?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="flags full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`challenges.delete`
+
+Permanently delete a challenge and its tasks
+
+**Risk:** `destructive`
+
+```ts
+await corsair.habitica.api.challenges.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `challengeId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### exportCsv
+
+`challenges.exportCsv`
+
+Export a challenge as CSV
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.challenges.exportCsv({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `challengeId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`challenges.get`
+
+Retrieve a challenge
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.challenges.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `challengeId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `shortName` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `official` | `boolean` | No | — |
+| `prize` | `number` | No | — |
+| `memberCount` | `number` | No | — |
+| `leader` | `object` | No | — |
+| `group` | `object` | No | — |
+| `tasksOrder` | `object` | No | — |
+| `categories` | `object[]` | No | — |
+| `flags` | `object` | No | — |
+| `flagCount` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="leader full type">
+
+```ts
+{
+  id?: string | null,
+  _id?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  _id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  privacy?: string | null,
+  summary?: string | null,
+  leader?: string | null,
+  categories?: {
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="tasksOrder full type">
+
+```ts
+{
+  habits?: string[] | null,
+  dailys?: string[] | null,
+  todos?: string[] | null,
+  rewards?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="flags full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### join
+
+`challenges.join`
+
+Join a challenge
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.challenges.join({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `challengeId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `shortName` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `official` | `boolean` | No | — |
+| `prize` | `number` | No | — |
+| `memberCount` | `number` | No | — |
+| `leader` | `object` | No | — |
+| `group` | `object` | No | — |
+| `tasksOrder` | `object` | No | — |
+| `categories` | `object[]` | No | — |
+| `flags` | `object` | No | — |
+| `flagCount` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="leader full type">
+
+```ts
+{
+  id?: string | null,
+  _id?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  _id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  privacy?: string | null,
+  summary?: string | null,
+  leader?: string | null,
+  categories?: {
+  }[] | null
+}
+```
+</Accordion>
+
+<Accordion title="tasksOrder full type">
+
+```ts
+{
+  habits?: string[] | null,
+  dailys?: string[] | null,
+  todos?: string[] | null,
+  rewards?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="flags full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### leave
+
+`challenges.leave`
+
+Leave a challenge
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.challenges.leave({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `challengeId` | `string` | Yes | — |
+| `keep` | `keep-all \| remove-all` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listByGroup
+
+`challenges.listByGroup`
+
+List a group's challenges
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.challenges.listByGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  _id?: string | null,
+  name?: string | null,
+  shortName?: string | null,
+  summary?: string | null,
+  description?: string | null,
+  official?: boolean | null,
+  prize?: number | null,
+  memberCount?: number | null,
+  leader?: {
+    id?: string | null,
+    _id?: string | null
+  } | null,
+  group?: {
+    id?: string | null,
+    _id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    privacy?: string | null,
+    summary?: string | null,
+    leader?: string | null,
+    categories?: {
+    }[] | null
+  } | null,
+  tasksOrder?: {
+    habits?: string[] | null,
+    dailys?: string[] | null,
+    todos?: string[] | null,
+    rewards?: string[] | null
+  } | null,
+  categories?: {
+  }[] | null,
+  flags?: {
+  } | null,
+  flagCount?: number | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listForUser
+
+`challenges.listForUser`
+
+List the challenges the account takes part in
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.challenges.listForUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | — |
+| `member` | `boolean` | No | — |
+| `owned` | `owned \| not_owned` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  _id?: string | null,
+  name?: string | null,
+  shortName?: string | null,
+  summary?: string | null,
+  description?: string | null,
+  official?: boolean | null,
+  prize?: number | null,
+  memberCount?: number | null,
+  leader?: {
+    id?: string | null,
+    _id?: string | null
+  } | null,
+  group?: {
+    id?: string | null,
+    _id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    privacy?: string | null,
+    summary?: string | null,
+    leader?: string | null,
+    categories?: {
+    }[] | null
+  } | null,
+  tasksOrder?: {
+    habits?: string[] | null,
+    dailys?: string[] | null,
+    todos?: string[] | null,
+    rewards?: string[] | null
+  } | null,
+  categories?: {
+  }[] | null,
+  flags?: {
+  } | null,
+  flagCount?: number | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Chat
+
+### deleteMessage
+
+`chat.deleteMessage`
+
+Permanently delete a chat message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.habitica.api.chat.deleteMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `chatId` | `string` | Yes | — |
+| `previousMsg` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`chat.list`
+
+Read a group's chat messages
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.chat.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  _id?: string | null,
+  timestamp?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### markSeen
+
+`chat.markSeen`
+
+Mark a group's chat as read
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.chat.markSeen({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Content
+
+### dismissNews
+
+`content.dismissNews`
+
+Dismiss the current announcement
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.content.dismissNews({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`content.get`
+
+Fetch the whole game content catalogue
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.content.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getByType
+
+`content.getByType`
+
+Fetch the content catalogue with named categories EXCLUDED
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.content.getByType({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `language` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### marketGear
+
+`content.marketGear`
+
+List gear for sale in the market
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.content.marketGear({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### modelPaths
+
+`content.modelPaths`
+
+List a model's field paths and types
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.content.modelPaths({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `user \| tag \| challenge \| group \| habit \| daily \| todo \| reward` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### news
+
+`content.news`
+
+Read the latest Bailey announcement
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.content.news({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### status
+
+`content.status`
+
+Check that the Habitica API is up
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.content.status({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### timeTravelers
+
+`content.timeTravelers`
+
+List the Time Travellers shop stock
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.content.timeTravelers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### validateCoupon
+
+`content.validateCoupon`
+
+Check whether a coupon code is valid
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.content.validateCoupon({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### worldState
+
+`content.worldState`
+
+Read world events and the world boss
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.content.worldState({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Exports
+
+### history
+
+`exports.history`
+
+Export task history as CSV
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.exports.history({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+
+
+
+---
+
+### inbox
+
+`exports.inbox`
+
+Export the inbox as HTML
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.exports.inbox({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+
+
+
+---
+
+### userData
+
+`exports.userData`
+
+Export the whole account as JSON (contains the account email)
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.exports.userData({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Groups
+
+### create
+
+`groups.create`
+
+Create a party or guild
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.groups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `party \| guild` | Yes | — |
+| `privacy` | `private \| public` | No | — |
+| `description` | `string` | No | — |
+| `summary` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `privacy` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `leader` | `object` | No | — |
+| `memberCount` | `number` | No | — |
+| `challengeCount` | `number` | No | — |
+| `balance` | `number` | No | — |
+| `managers` | `object` | No | — |
+| `categories` | `object[]` | No | — |
+| `quest` | `object` | No | — |
+| `leaderOnly` | `object` | No | — |
+| `tasksOrder` | `object` | No | — |
+| `purchased` | `object` | No | — |
+| `cron` | `object` | No | — |
+| `bannedWordsAllowed` | `boolean` | No | — |
+| `chatLimitCount` | `number` | No | — |
+| `logo` | `string` | No | — |
+| `leaderMessage` | `string` | No | — |
+| `chat` | `any[]` | No | — |
+| `archive` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="leader full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="managers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="quest full type">
+
+```ts
+{
+  key?: string | null,
+  active?: boolean | null,
+  leader?: string | null,
+  progress?: {
+    hp?: number | null,
+    collect?: {
+    } | null,
+    rage?: number | null
+  } | null,
+  members?: {
+  } | null,
+  extra?: {
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="leaderOnly full type">
+
+```ts
+{
+  challenges?: boolean | null,
+  getGems?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="tasksOrder full type">
+
+```ts
+{
+  habits?: string[] | null,
+  dailys?: string[] | null,
+  todos?: string[] | null,
+  rewards?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="purchased full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="cron full type">
+
+```ts
+{
+  lastProcessed?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="archive full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`groups.get`
+
+Retrieve a group by id
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.groups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `privacy` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `leader` | `object` | No | — |
+| `memberCount` | `number` | No | — |
+| `challengeCount` | `number` | No | — |
+| `balance` | `number` | No | — |
+| `managers` | `object` | No | — |
+| `categories` | `object[]` | No | — |
+| `quest` | `object` | No | — |
+| `leaderOnly` | `object` | No | — |
+| `tasksOrder` | `object` | No | — |
+| `purchased` | `object` | No | — |
+| `cron` | `object` | No | — |
+| `bannedWordsAllowed` | `boolean` | No | — |
+| `chatLimitCount` | `number` | No | — |
+| `logo` | `string` | No | — |
+| `leaderMessage` | `string` | No | — |
+| `chat` | `any[]` | No | — |
+| `archive` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="leader full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="managers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="quest full type">
+
+```ts
+{
+  key?: string | null,
+  active?: boolean | null,
+  leader?: string | null,
+  progress?: {
+    hp?: number | null,
+    collect?: {
+    } | null,
+    rage?: number | null
+  } | null,
+  members?: {
+  } | null,
+  extra?: {
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="leaderOnly full type">
+
+```ts
+{
+  challenges?: boolean | null,
+  getGems?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="tasksOrder full type">
+
+```ts
+{
+  habits?: string[] | null,
+  dailys?: string[] | null,
+  todos?: string[] | null,
+  rewards?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="purchased full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="cron full type">
+
+```ts
+{
+  lastProcessed?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="archive full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getParty
+
+`groups.getParty`
+
+Retrieve the account's party
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.groups.getParty({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `privacy` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `leader` | `object` | No | — |
+| `memberCount` | `number` | No | — |
+| `challengeCount` | `number` | No | — |
+| `balance` | `number` | No | — |
+| `managers` | `object` | No | — |
+| `categories` | `object[]` | No | — |
+| `quest` | `object` | No | — |
+| `leaderOnly` | `object` | No | — |
+| `tasksOrder` | `object` | No | — |
+| `purchased` | `object` | No | — |
+| `cron` | `object` | No | — |
+| `bannedWordsAllowed` | `boolean` | No | — |
+| `chatLimitCount` | `number` | No | — |
+| `logo` | `string` | No | — |
+| `leaderMessage` | `string` | No | — |
+| `chat` | `any[]` | No | — |
+| `archive` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="leader full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="managers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="quest full type">
+
+```ts
+{
+  key?: string | null,
+  active?: boolean | null,
+  leader?: string | null,
+  progress?: {
+    hp?: number | null,
+    collect?: {
+    } | null,
+    rage?: number | null
+  } | null,
+  members?: {
+  } | null,
+  extra?: {
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="leaderOnly full type">
+
+```ts
+{
+  challenges?: boolean | null,
+  getGems?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="tasksOrder full type">
+
+```ts
+{
+  habits?: string[] | null,
+  dailys?: string[] | null,
+  todos?: string[] | null,
+  rewards?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="purchased full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="cron full type">
+
+```ts
+{
+  lastProcessed?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="archive full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTavern
+
+`groups.getTavern`
+
+Retrieve the Tavern
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.groups.getTavern({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `privacy` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `leader` | `object` | No | — |
+| `memberCount` | `number` | No | — |
+| `challengeCount` | `number` | No | — |
+| `balance` | `number` | No | — |
+| `managers` | `object` | No | — |
+| `categories` | `object[]` | No | — |
+| `quest` | `object` | No | — |
+| `leaderOnly` | `object` | No | — |
+| `tasksOrder` | `object` | No | — |
+| `purchased` | `object` | No | — |
+| `cron` | `object` | No | — |
+| `bannedWordsAllowed` | `boolean` | No | — |
+| `chatLimitCount` | `number` | No | — |
+| `logo` | `string` | No | — |
+| `leaderMessage` | `string` | No | — |
+| `chat` | `any[]` | No | — |
+| `archive` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="leader full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="managers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="quest full type">
+
+```ts
+{
+  key?: string | null,
+  active?: boolean | null,
+  leader?: string | null,
+  progress?: {
+    hp?: number | null,
+    collect?: {
+    } | null,
+    rage?: number | null
+  } | null,
+  members?: {
+  } | null,
+  extra?: {
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="leaderOnly full type">
+
+```ts
+{
+  challenges?: boolean | null,
+  getGems?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="tasksOrder full type">
+
+```ts
+{
+  habits?: string[] | null,
+  dailys?: string[] | null,
+  todos?: string[] | null,
+  rewards?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="purchased full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="cron full type">
+
+```ts
+{
+  lastProcessed?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="archive full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invite
+
+`groups.invite`
+
+Invite people to a group
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.groups.invite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `uuids` | `string[]` | No | — |
+| `emails` | `object[]` | No | — |
+| `usernames` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### inviteToQuest
+
+`groups.inviteToQuest`
+
+Invite the party to a quest
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.groups.inviteToQuest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `questKey` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### leave
+
+`groups.leave`
+
+Leave a group
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.groups.leave({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `keep` | `keep-all \| remove-all` | No | — |
+| `keepChallenges` | `remain-in-challenges \| leave-challenges` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`groups.list`
+
+List groups by type
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `paginate` | `boolean` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  _id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  privacy?: string | null,
+  summary?: string | null,
+  description?: string | null,
+  leader?: string | {
+  } | null,
+  memberCount?: number | null,
+  challengeCount?: number | null,
+  balance?: number | null,
+  managers?: {
+  } | null,
+  categories?: {
+  }[] | null,
+  quest?: {
+    key?: string | null,
+    active?: boolean | null,
+    leader?: string | null,
+    progress?: {
+      hp?: number | null,
+      collect?: {
+      } | null,
+      rage?: number | null
+    } | null,
+    members?: {
+    } | null,
+    extra?: {
+    } | null
+  } | null,
+  leaderOnly?: {
+    challenges?: boolean | null,
+    getGems?: boolean | null
+  } | null,
+  tasksOrder?: {
+    habits?: string[] | null,
+    dailys?: string[] | null,
+    todos?: string[] | null,
+    rewards?: string[] | null
+  } | null,
+  purchased?: {
+  } | null,
+  cron?: {
+    lastProcessed?: string | null
+  } | null,
+  bannedWordsAllowed?: boolean | null,
+  chatLimitCount?: number | null,
+  logo?: string | null,
+  leaderMessage?: string | null,
+  chat?: any[] | null,
+  archive?: string | {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listMembers
+
+`groups.listMembers`
+
+List a group's members
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.groups.listMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `lastId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `includeAllPublicFields` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  _id?: string | null,
+  auth?: {
+  } | null,
+  profile?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeMember
+
+`groups.removeMember`
+
+Remove a member from the party
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.groups.removeMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `memberId` | `string` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`groups.update`
+
+Update a group's properties
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.groups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `privacy` | `private \| public` | No | — |
+| `leader` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `privacy` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `leader` | `object` | No | — |
+| `memberCount` | `number` | No | — |
+| `challengeCount` | `number` | No | — |
+| `balance` | `number` | No | — |
+| `managers` | `object` | No | — |
+| `categories` | `object[]` | No | — |
+| `quest` | `object` | No | — |
+| `leaderOnly` | `object` | No | — |
+| `tasksOrder` | `object` | No | — |
+| `purchased` | `object` | No | — |
+| `cron` | `object` | No | — |
+| `bannedWordsAllowed` | `boolean` | No | — |
+| `chatLimitCount` | `number` | No | — |
+| `logo` | `string` | No | — |
+| `leaderMessage` | `string` | No | — |
+| `chat` | `any[]` | No | — |
+| `archive` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="leader full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="managers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="quest full type">
+
+```ts
+{
+  key?: string | null,
+  active?: boolean | null,
+  leader?: string | null,
+  progress?: {
+    hp?: number | null,
+    collect?: {
+    } | null,
+    rage?: number | null
+  } | null,
+  members?: {
+  } | null,
+  extra?: {
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="leaderOnly full type">
+
+```ts
+{
+  challenges?: boolean | null,
+  getGems?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="tasksOrder full type">
+
+```ts
+{
+  habits?: string[] | null,
+  dailys?: string[] | null,
+  todos?: string[] | null,
+  rewards?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="purchased full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="cron full type">
+
+```ts
+{
+  lastProcessed?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="archive full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.tags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `challenge` | `boolean` | No | — |
+| `group` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Permanently delete a tag
+
+**Risk:** `destructive`
+
+```ts
+await corsair.habitica.api.tags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tagId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`tags.list`
+
+List every tag on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.tags.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  challenge?: boolean | null,
+  group?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`tags.update`
+
+Rename a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.tags.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tagId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `challenge` | `boolean` | No | — |
+| `group` | `string` | No | — |
+
+
+
+---
+
+## Tasks
+
+### addTag
+
+`tasks.addTag`
+
+Apply an existing tag to a task
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.tasks.addTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `tagId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `type` | `string` | No | — |
+| `text` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `alias` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `value` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `attribute` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `challenge` | `object` | No | — |
+| `group` | `object` | No | — |
+| `reminders` | `object[]` | No | — |
+| `byHabitica` | `boolean` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `up` | `boolean` | No | — |
+| `down` | `boolean` | No | — |
+| `counterUp` | `number` | No | — |
+| `counterDown` | `number` | No | — |
+| `frequency` | `string` | No | — |
+| `history` | `object[]` | No | — |
+| `checklist` | `object[]` | No | — |
+| `collapseChecklist` | `boolean` | No | — |
+| `completed` | `boolean` | No | — |
+| `streak` | `number` | No | — |
+| `repeat` | `object` | No | — |
+| `everyX` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `daysOfMonth` | `number[]` | No | — |
+| `weeksOfMonth` | `number[]` | No | — |
+| `isDue` | `boolean` | No | — |
+| `nextDue` | `string[]` | No | — |
+| `yesterDaily` | `boolean` | No | — |
+| `date` | `string` | No | — |
+| `dateCompleted` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="challenge full type">
+
+```ts
+{
+  shortName?: string | null,
+  id?: string | null,
+  taskId?: string | null,
+  broken?: string | null,
+  winner?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  assignedDate?: string | null,
+  assigningUsername?: string | null,
+  assignedUsers?: string[] | null,
+  assignedUsersDetail?: {
+  } | null,
+  taskId?: string | null,
+  managerNotes?: string | null,
+  completedBy?: {
+    userId?: string | null,
+    date?: string | null
+  } | null,
+  approval?: {
+    required?: boolean | null,
+    approved?: boolean | null,
+    requested?: boolean | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="reminders full type">
+
+```ts
+{
+  id?: string | null,
+  startDate?: string | null,
+  time?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="history full type">
+
+```ts
+{
+  date?: number | null,
+  value?: number | null,
+  scoredUp?: number | null,
+  scoredDown?: number | null,
+  isDue?: boolean | null,
+  completed?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="checklist full type">
+
+```ts
+{
+  id?: string | null,
+  text?: string | null,
+  completed?: boolean | null,
+  linkId?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="repeat full type">
+
+```ts
+{
+  m?: boolean | null,
+  t?: boolean | null,
+  w?: boolean | null,
+  th?: boolean | null,
+  f?: boolean | null,
+  s?: boolean | null,
+  su?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`tasks.create`
+
+Create a habit, daily, todo or reward
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `type` | `habit \| daily \| todo \| reward` | Yes | — |
+| `notes` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `priority` | `number` | No | — |
+| `attribute` | `str \| int \| con \| per` | No | — |
+| `checklist` | `object[]` | No | — |
+| `collapseChecklist` | `boolean` | No | — |
+| `up` | `boolean` | No | — |
+| `down` | `boolean` | No | — |
+| `date` | `string` | No | — |
+| `frequency` | `daily \| weekly \| monthly \| yearly` | No | — |
+| `repeat` | `object` | No | — |
+| `everyX` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `value` | `number` | No | — |
+| `reminders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="checklist full type">
+
+```ts
+{
+  text: string,
+  completed?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="repeat full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="reminders full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `type` | `string` | No | — |
+| `text` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `alias` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `value` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `attribute` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `challenge` | `object` | No | — |
+| `group` | `object` | No | — |
+| `reminders` | `object[]` | No | — |
+| `byHabitica` | `boolean` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `up` | `boolean` | No | — |
+| `down` | `boolean` | No | — |
+| `counterUp` | `number` | No | — |
+| `counterDown` | `number` | No | — |
+| `frequency` | `string` | No | — |
+| `history` | `object[]` | No | — |
+| `checklist` | `object[]` | No | — |
+| `collapseChecklist` | `boolean` | No | — |
+| `completed` | `boolean` | No | — |
+| `streak` | `number` | No | — |
+| `repeat` | `object` | No | — |
+| `everyX` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `daysOfMonth` | `number[]` | No | — |
+| `weeksOfMonth` | `number[]` | No | — |
+| `isDue` | `boolean` | No | — |
+| `nextDue` | `string[]` | No | — |
+| `yesterDaily` | `boolean` | No | — |
+| `date` | `string` | No | — |
+| `dateCompleted` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="challenge full type">
+
+```ts
+{
+  shortName?: string | null,
+  id?: string | null,
+  taskId?: string | null,
+  broken?: string | null,
+  winner?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  assignedDate?: string | null,
+  assigningUsername?: string | null,
+  assignedUsers?: string[] | null,
+  assignedUsersDetail?: {
+  } | null,
+  taskId?: string | null,
+  managerNotes?: string | null,
+  completedBy?: {
+    userId?: string | null,
+    date?: string | null
+  } | null,
+  approval?: {
+    required?: boolean | null,
+    approved?: boolean | null,
+    requested?: boolean | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="reminders full type">
+
+```ts
+{
+  id?: string | null,
+  startDate?: string | null,
+  time?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="history full type">
+
+```ts
+{
+  date?: number | null,
+  value?: number | null,
+  scoredUp?: number | null,
+  scoredDown?: number | null,
+  isDue?: boolean | null,
+  completed?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="checklist full type">
+
+```ts
+{
+  id?: string | null,
+  text?: string | null,
+  completed?: boolean | null,
+  linkId?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="repeat full type">
+
+```ts
+{
+  m?: boolean | null,
+  t?: boolean | null,
+  w?: boolean | null,
+  th?: boolean | null,
+  f?: boolean | null,
+  s?: boolean | null,
+  su?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createChallengeTask
+
+`tasks.createChallengeTask`
+
+Add a task to a challenge
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.tasks.createChallengeTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `challengeId` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `type` | `habit \| daily \| todo \| reward` | Yes | — |
+| `notes` | `string` | No | — |
+| `priority` | `number` | No | — |
+| `attribute` | `str \| int \| con \| per` | No | — |
+| `checklist` | `object[]` | No | — |
+| `up` | `boolean` | No | — |
+| `down` | `boolean` | No | — |
+| `date` | `string` | No | — |
+| `value` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="checklist full type">
+
+```ts
+{
+  text: string,
+  completed?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  _id?: string | null,
+  type?: string | null,
+  text?: string | null,
+  notes?: string | null,
+  alias?: string | null,
+  tags?: string[] | null,
+  value?: number | null,
+  priority?: number | null,
+  attribute?: string | null,
+  userId?: string | null,
+  challenge?: {
+    shortName?: string | null,
+    id?: string | null,
+    taskId?: string | null,
+    broken?: string | null,
+    winner?: string | null
+  } | null,
+  group?: {
+    id?: string | null,
+    assignedDate?: string | null,
+    assigningUsername?: string | null,
+    assignedUsers?: string[] | null,
+    assignedUsersDetail?: {
+    } | null,
+    taskId?: string | null,
+    managerNotes?: string | null,
+    completedBy?: {
+      userId?: string | null,
+      date?: string | null
+    } | null,
+    approval?: {
+      required?: boolean | null,
+      approved?: boolean | null,
+      requested?: boolean | null
+    } | null
+  } | null,
+  reminders?: {
+    id?: string | null,
+    startDate?: string | null,
+    time?: string | null
+  }[] | null,
+  byHabitica?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  up?: boolean | null,
+  down?: boolean | null,
+  counterUp?: number | null,
+  counterDown?: number | null,
+  frequency?: string | null,
+  history?: {
+    date?: number | null,
+    value?: number | null,
+    scoredUp?: number | null,
+    scoredDown?: number | null,
+    isDue?: boolean | null,
+    completed?: boolean | null
+  }[] | null,
+  checklist?: {
+    id?: string | null,
+    text?: string | null,
+    completed?: boolean | null,
+    linkId?: string | null
+  }[] | null,
+  collapseChecklist?: boolean | null,
+  completed?: boolean | null,
+  streak?: number | null,
+  repeat?: {
+    m?: boolean | null,
+    t?: boolean | null,
+    w?: boolean | null,
+    th?: boolean | null,
+    f?: boolean | null,
+    s?: boolean | null,
+    su?: boolean | null
+  } | null,
+  everyX?: number | null,
+  startDate?: string | null,
+  daysOfMonth?: number[] | null,
+  weeksOfMonth?: number[] | null,
+  isDue?: boolean | null,
+  nextDue?: string[] | null,
+  yesterDaily?: boolean | null,
+  date?: string | null,
+  dateCompleted?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Permanently delete a task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.habitica.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteChecklistItem
+
+`tasks.deleteChecklistItem`
+
+Remove a checklist item from a task
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.tasks.deleteChecklistItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `itemId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `type` | `string` | No | — |
+| `text` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `alias` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `value` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `attribute` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `challenge` | `object` | No | — |
+| `group` | `object` | No | — |
+| `reminders` | `object[]` | No | — |
+| `byHabitica` | `boolean` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `up` | `boolean` | No | — |
+| `down` | `boolean` | No | — |
+| `counterUp` | `number` | No | — |
+| `counterDown` | `number` | No | — |
+| `frequency` | `string` | No | — |
+| `history` | `object[]` | No | — |
+| `checklist` | `object[]` | No | — |
+| `collapseChecklist` | `boolean` | No | — |
+| `completed` | `boolean` | No | — |
+| `streak` | `number` | No | — |
+| `repeat` | `object` | No | — |
+| `everyX` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `daysOfMonth` | `number[]` | No | — |
+| `weeksOfMonth` | `number[]` | No | — |
+| `isDue` | `boolean` | No | — |
+| `nextDue` | `string[]` | No | — |
+| `yesterDaily` | `boolean` | No | — |
+| `date` | `string` | No | — |
+| `dateCompleted` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="challenge full type">
+
+```ts
+{
+  shortName?: string | null,
+  id?: string | null,
+  taskId?: string | null,
+  broken?: string | null,
+  winner?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  assignedDate?: string | null,
+  assigningUsername?: string | null,
+  assignedUsers?: string[] | null,
+  assignedUsersDetail?: {
+  } | null,
+  taskId?: string | null,
+  managerNotes?: string | null,
+  completedBy?: {
+    userId?: string | null,
+    date?: string | null
+  } | null,
+  approval?: {
+    required?: boolean | null,
+    approved?: boolean | null,
+    requested?: boolean | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="reminders full type">
+
+```ts
+{
+  id?: string | null,
+  startDate?: string | null,
+  time?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="history full type">
+
+```ts
+{
+  date?: number | null,
+  value?: number | null,
+  scoredUp?: number | null,
+  scoredDown?: number | null,
+  isDue?: boolean | null,
+  completed?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="checklist full type">
+
+```ts
+{
+  id?: string | null,
+  text?: string | null,
+  completed?: boolean | null,
+  linkId?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="repeat full type">
+
+```ts
+{
+  m?: boolean | null,
+  t?: boolean | null,
+  w?: boolean | null,
+  th?: boolean | null,
+  f?: boolean | null,
+  s?: boolean | null,
+  su?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Retrieve any task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `type` | `string` | No | — |
+| `text` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `alias` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `value` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `attribute` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `challenge` | `object` | No | — |
+| `group` | `object` | No | — |
+| `reminders` | `object[]` | No | — |
+| `byHabitica` | `boolean` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `up` | `boolean` | No | — |
+| `down` | `boolean` | No | — |
+| `counterUp` | `number` | No | — |
+| `counterDown` | `number` | No | — |
+| `frequency` | `string` | No | — |
+| `history` | `object[]` | No | — |
+| `checklist` | `object[]` | No | — |
+| `collapseChecklist` | `boolean` | No | — |
+| `completed` | `boolean` | No | — |
+| `streak` | `number` | No | — |
+| `repeat` | `object` | No | — |
+| `everyX` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `daysOfMonth` | `number[]` | No | — |
+| `weeksOfMonth` | `number[]` | No | — |
+| `isDue` | `boolean` | No | — |
+| `nextDue` | `string[]` | No | — |
+| `yesterDaily` | `boolean` | No | — |
+| `date` | `string` | No | — |
+| `dateCompleted` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="challenge full type">
+
+```ts
+{
+  shortName?: string | null,
+  id?: string | null,
+  taskId?: string | null,
+  broken?: string | null,
+  winner?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  assignedDate?: string | null,
+  assigningUsername?: string | null,
+  assignedUsers?: string[] | null,
+  assignedUsersDetail?: {
+  } | null,
+  taskId?: string | null,
+  managerNotes?: string | null,
+  completedBy?: {
+    userId?: string | null,
+    date?: string | null
+  } | null,
+  approval?: {
+    required?: boolean | null,
+    approved?: boolean | null,
+    requested?: boolean | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="reminders full type">
+
+```ts
+{
+  id?: string | null,
+  startDate?: string | null,
+  time?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="history full type">
+
+```ts
+{
+  date?: number | null,
+  value?: number | null,
+  scoredUp?: number | null,
+  scoredDown?: number | null,
+  isDue?: boolean | null,
+  completed?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="checklist full type">
+
+```ts
+{
+  id?: string | null,
+  text?: string | null,
+  completed?: boolean | null,
+  linkId?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="repeat full type">
+
+```ts
+{
+  m?: boolean | null,
+  t?: boolean | null,
+  w?: boolean | null,
+  th?: boolean | null,
+  f?: boolean | null,
+  s?: boolean | null,
+  su?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List the account's tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `habits \| dailys \| todos \| rewards \| completedTodos \| _allCompletedTodos` | No | — |
+| `dueDate` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  _id?: string | null,
+  type?: string | null,
+  text?: string | null,
+  notes?: string | null,
+  alias?: string | null,
+  tags?: string[] | null,
+  value?: number | null,
+  priority?: number | null,
+  attribute?: string | null,
+  userId?: string | null,
+  challenge?: {
+    shortName?: string | null,
+    id?: string | null,
+    taskId?: string | null,
+    broken?: string | null,
+    winner?: string | null
+  } | null,
+  group?: {
+    id?: string | null,
+    assignedDate?: string | null,
+    assigningUsername?: string | null,
+    assignedUsers?: string[] | null,
+    assignedUsersDetail?: {
+    } | null,
+    taskId?: string | null,
+    managerNotes?: string | null,
+    completedBy?: {
+      userId?: string | null,
+      date?: string | null
+    } | null,
+    approval?: {
+      required?: boolean | null,
+      approved?: boolean | null,
+      requested?: boolean | null
+    } | null
+  } | null,
+  reminders?: {
+    id?: string | null,
+    startDate?: string | null,
+    time?: string | null
+  }[] | null,
+  byHabitica?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  up?: boolean | null,
+  down?: boolean | null,
+  counterUp?: number | null,
+  counterDown?: number | null,
+  frequency?: string | null,
+  history?: {
+    date?: number | null,
+    value?: number | null,
+    scoredUp?: number | null,
+    scoredDown?: number | null,
+    isDue?: boolean | null,
+    completed?: boolean | null
+  }[] | null,
+  checklist?: {
+    id?: string | null,
+    text?: string | null,
+    completed?: boolean | null,
+    linkId?: string | null
+  }[] | null,
+  collapseChecklist?: boolean | null,
+  completed?: boolean | null,
+  streak?: number | null,
+  repeat?: {
+    m?: boolean | null,
+    t?: boolean | null,
+    w?: boolean | null,
+    th?: boolean | null,
+    f?: boolean | null,
+    s?: boolean | null,
+    su?: boolean | null
+  } | null,
+  everyX?: number | null,
+  startDate?: string | null,
+  daysOfMonth?: number[] | null,
+  weeksOfMonth?: number[] | null,
+  isDue?: boolean | null,
+  nextDue?: string[] | null,
+  yesterDaily?: boolean | null,
+  date?: string | null,
+  dateCompleted?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listChallengeTasks
+
+`tasks.listChallengeTasks`
+
+List a challenge's tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.tasks.listChallengeTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `challengeId` | `string` | Yes | — |
+| `type` | `habits \| dailys \| todos \| rewards` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  _id?: string | null,
+  type?: string | null,
+  text?: string | null,
+  notes?: string | null,
+  alias?: string | null,
+  tags?: string[] | null,
+  value?: number | null,
+  priority?: number | null,
+  attribute?: string | null,
+  userId?: string | null,
+  challenge?: {
+    shortName?: string | null,
+    id?: string | null,
+    taskId?: string | null,
+    broken?: string | null,
+    winner?: string | null
+  } | null,
+  group?: {
+    id?: string | null,
+    assignedDate?: string | null,
+    assigningUsername?: string | null,
+    assignedUsers?: string[] | null,
+    assignedUsersDetail?: {
+    } | null,
+    taskId?: string | null,
+    managerNotes?: string | null,
+    completedBy?: {
+      userId?: string | null,
+      date?: string | null
+    } | null,
+    approval?: {
+      required?: boolean | null,
+      approved?: boolean | null,
+      requested?: boolean | null
+    } | null
+  } | null,
+  reminders?: {
+    id?: string | null,
+    startDate?: string | null,
+    time?: string | null
+  }[] | null,
+  byHabitica?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  up?: boolean | null,
+  down?: boolean | null,
+  counterUp?: number | null,
+  counterDown?: number | null,
+  frequency?: string | null,
+  history?: {
+    date?: number | null,
+    value?: number | null,
+    scoredUp?: number | null,
+    scoredDown?: number | null,
+    isDue?: boolean | null,
+    completed?: boolean | null
+  }[] | null,
+  checklist?: {
+    id?: string | null,
+    text?: string | null,
+    completed?: boolean | null,
+    linkId?: string | null
+  }[] | null,
+  collapseChecklist?: boolean | null,
+  completed?: boolean | null,
+  streak?: number | null,
+  repeat?: {
+    m?: boolean | null,
+    t?: boolean | null,
+    w?: boolean | null,
+    th?: boolean | null,
+    f?: boolean | null,
+    s?: boolean | null,
+    su?: boolean | null
+  } | null,
+  everyX?: number | null,
+  startDate?: string | null,
+  daysOfMonth?: number[] | null,
+  weeksOfMonth?: number[] | null,
+  isDue?: boolean | null,
+  nextDue?: string[] | null,
+  yesterDaily?: boolean | null,
+  date?: string | null,
+  dateCompleted?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### move
+
+`tasks.move`
+
+Move a task to a position in its list
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.tasks.move({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `position` | `number` | Yes | — |
+
+
+
+**Output:** `string[]`
+
+
+---
+
+### score
+
+`tasks.score`
+
+Score a task up or down
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.tasks.score({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `direction` | `up \| down` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delta` | `number` | No | — |
+| `_tmp` | `object` | No | — |
+| `hp` | `number` | No | — |
+| `mp` | `number` | No | — |
+| `exp` | `number` | No | — |
+| `gp` | `number` | No | — |
+| `lvl` | `number` | No | — |
+| `class` | `string` | No | — |
+| `points` | `number` | No | — |
+| `str` | `number` | No | — |
+| `con` | `number` | No | — |
+| `int` | `number` | No | — |
+| `per` | `number` | No | — |
+| `buffs` | `object` | No | — |
+| `training` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="_tmp full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="buffs full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="training full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unlinkAllChallengeTasks
+
+`tasks.unlinkAllChallengeTasks`
+
+Unlink every task of a challenge, optionally deleting members' copies
+
+**Risk:** `destructive`
+
+```ts
+await corsair.habitica.api.tasks.unlinkAllChallengeTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `challengeId` | `string` | Yes | — |
+| `keep` | `keep-all \| remove-all` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `priority` | `number` | No | — |
+| `attribute` | `str \| int \| con \| per` | No | — |
+| `collapseChecklist` | `boolean` | No | — |
+| `checklist` | `object[]` | No | — |
+| `up` | `boolean` | No | — |
+| `down` | `boolean` | No | — |
+| `date` | `string` | No | — |
+| `frequency` | `daily \| weekly \| monthly \| yearly` | No | — |
+| `repeat` | `object` | No | — |
+| `everyX` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `value` | `number` | No | — |
+| `reminders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="checklist full type">
+
+```ts
+{
+  text: string,
+  completed?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="repeat full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="reminders full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `type` | `string` | No | — |
+| `text` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `alias` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `value` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `attribute` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `challenge` | `object` | No | — |
+| `group` | `object` | No | — |
+| `reminders` | `object[]` | No | — |
+| `byHabitica` | `boolean` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `up` | `boolean` | No | — |
+| `down` | `boolean` | No | — |
+| `counterUp` | `number` | No | — |
+| `counterDown` | `number` | No | — |
+| `frequency` | `string` | No | — |
+| `history` | `object[]` | No | — |
+| `checklist` | `object[]` | No | — |
+| `collapseChecklist` | `boolean` | No | — |
+| `completed` | `boolean` | No | — |
+| `streak` | `number` | No | — |
+| `repeat` | `object` | No | — |
+| `everyX` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `daysOfMonth` | `number[]` | No | — |
+| `weeksOfMonth` | `number[]` | No | — |
+| `isDue` | `boolean` | No | — |
+| `nextDue` | `string[]` | No | — |
+| `yesterDaily` | `boolean` | No | — |
+| `date` | `string` | No | — |
+| `dateCompleted` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="challenge full type">
+
+```ts
+{
+  shortName?: string | null,
+  id?: string | null,
+  taskId?: string | null,
+  broken?: string | null,
+  winner?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  assignedDate?: string | null,
+  assigningUsername?: string | null,
+  assignedUsers?: string[] | null,
+  assignedUsersDetail?: {
+  } | null,
+  taskId?: string | null,
+  managerNotes?: string | null,
+  completedBy?: {
+    userId?: string | null,
+    date?: string | null
+  } | null,
+  approval?: {
+    required?: boolean | null,
+    approved?: boolean | null,
+    requested?: boolean | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="reminders full type">
+
+```ts
+{
+  id?: string | null,
+  startDate?: string | null,
+  time?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="history full type">
+
+```ts
+{
+  date?: number | null,
+  value?: number | null,
+  scoredUp?: number | null,
+  scoredDown?: number | null,
+  isDue?: boolean | null,
+  completed?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="checklist full type">
+
+```ts
+{
+  id?: string | null,
+  text?: string | null,
+  completed?: boolean | null,
+  linkId?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="repeat full type">
+
+```ts
+{
+  m?: boolean | null,
+  t?: boolean | null,
+  w?: boolean | null,
+  th?: boolean | null,
+  f?: boolean | null,
+  s?: boolean | null,
+  su?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateChecklistItem
+
+`tasks.updateChecklistItem`
+
+Update a checklist item's text
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.tasks.updateChecklistItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `itemId` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `type` | `string` | No | — |
+| `text` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `alias` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `value` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `attribute` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `challenge` | `object` | No | — |
+| `group` | `object` | No | — |
+| `reminders` | `object[]` | No | — |
+| `byHabitica` | `boolean` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `up` | `boolean` | No | — |
+| `down` | `boolean` | No | — |
+| `counterUp` | `number` | No | — |
+| `counterDown` | `number` | No | — |
+| `frequency` | `string` | No | — |
+| `history` | `object[]` | No | — |
+| `checklist` | `object[]` | No | — |
+| `collapseChecklist` | `boolean` | No | — |
+| `completed` | `boolean` | No | — |
+| `streak` | `number` | No | — |
+| `repeat` | `object` | No | — |
+| `everyX` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `daysOfMonth` | `number[]` | No | — |
+| `weeksOfMonth` | `number[]` | No | — |
+| `isDue` | `boolean` | No | — |
+| `nextDue` | `string[]` | No | — |
+| `yesterDaily` | `boolean` | No | — |
+| `date` | `string` | No | — |
+| `dateCompleted` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="challenge full type">
+
+```ts
+{
+  shortName?: string | null,
+  id?: string | null,
+  taskId?: string | null,
+  broken?: string | null,
+  winner?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  assignedDate?: string | null,
+  assigningUsername?: string | null,
+  assignedUsers?: string[] | null,
+  assignedUsersDetail?: {
+  } | null,
+  taskId?: string | null,
+  managerNotes?: string | null,
+  completedBy?: {
+    userId?: string | null,
+    date?: string | null
+  } | null,
+  approval?: {
+    required?: boolean | null,
+    approved?: boolean | null,
+    requested?: boolean | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="reminders full type">
+
+```ts
+{
+  id?: string | null,
+  startDate?: string | null,
+  time?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="history full type">
+
+```ts
+{
+  date?: number | null,
+  value?: number | null,
+  scoredUp?: number | null,
+  scoredDown?: number | null,
+  isDue?: boolean | null,
+  completed?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="checklist full type">
+
+```ts
+{
+  id?: string | null,
+  text?: string | null,
+  completed?: boolean | null,
+  linkId?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="repeat full type">
+
+```ts
+{
+  m?: boolean | null,
+  t?: boolean | null,
+  w?: boolean | null,
+  th?: boolean | null,
+  f?: boolean | null,
+  s?: boolean | null,
+  su?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### addPushDevice
+
+`user.addPushDevice`
+
+Register a push-notification device
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.user.addPushDevice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `regId` | `string` | Yes | — |
+| `type` | `android \| ios` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteMessage
+
+`user.deleteMessage`
+
+Permanently delete an inbox message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.habitica.api.user.deleteMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deletePushDevice
+
+`user.deletePushDevice`
+
+Unregister a push-notification device
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.user.deletePushDevice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `regId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### equip
+
+`user.equip`
+
+Equip or unequip gear, a pet, a mount or a costume
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.user.equip({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `equipped \| costume \| pet \| mount \| background` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`user.get`
+
+Read the account's user document
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.user.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userFields` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### markNotificationSeen
+
+`user.markNotificationSeen`
+
+Mark one notification as seen
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.user.markNotificationSeen({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notificationId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### markNotificationsSeen
+
+`user.markNotificationsSeen`
+
+Mark several notifications as seen
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.user.markNotificationsSeen({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notificationIds` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### movePinnedItem
+
+`user.movePinnedItem`
+
+Reorder a pinned reward
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.user.movePinnedItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+| `position` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### readCard
+
+`user.readCard`
+
+Mark a received card as read
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.user.readCard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cardType` | `birthday \| greeting \| nye \| thankyou \| valentine` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### reset
+
+`user.reset`
+
+Reset the account, deleting every task and returning to level 1
+
+**Risk:** `destructive`
+
+```ts
+await corsair.habitica.api.user.reset({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`user.update`
+
+Update user fields by dot path
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.user.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updates` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="updates full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register an outbound webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `label` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `type` | `taskActivity \| groupChatReceived \| userActivity \| questActivity` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `label` | `string` | No | — |
+| `url` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `failures` | `number` | No | — |
+| `lastFailureAt` | `string` | No | — |
+| `options` | `object` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  created?: boolean | null,
+  updated?: boolean | null,
+  deleted?: boolean | null,
+  scored?: boolean | null,
+  checklistScored?: boolean | null,
+  groupId?: string | null,
+  petHatched?: boolean | null,
+  mountRaised?: boolean | null,
+  leveledUp?: boolean | null,
+  questStarted?: boolean | null,
+  questFinished?: boolean | null,
+  questInvited?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the account's outbound webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.habitica.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  label?: string | null,
+  url?: string | null,
+  enabled?: boolean | null,
+  failures?: number | null,
+  lastFailureAt?: string | null,
+  options?: {
+    created?: boolean | null,
+    updated?: boolean | null,
+    deleted?: boolean | null,
+    scored?: boolean | null,
+    checklistScored?: boolean | null,
+    groupId?: string | null,
+    petHatched?: boolean | null,
+    mountRaised?: boolean | null,
+    leveledUp?: boolean | null,
+    questStarted?: boolean | null,
+    questFinished?: boolean | null,
+    questInvited?: boolean | null
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### subscribe
+
+`webhooks.subscribe`
+
+Enable an existing webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.habitica.api.webhooks.subscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `label` | `string` | No | — |
+| `url` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `failures` | `number` | No | — |
+| `lastFailureAt` | `string` | No | — |
+| `options` | `object` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  created?: boolean | null,
+  updated?: boolean | null,
+  deleted?: boolean | null,
+  scored?: boolean | null,
+  checklistScored?: boolean | null,
+  groupId?: string | null,
+  petHatched?: boolean | null,
+  mountRaised?: boolean | null,
+  leveledUp?: boolean | null,
+  questStarted?: boolean | null,
+  questFinished?: boolean | null,
+  questInvited?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

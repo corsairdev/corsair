@@ -1,0 +1,1826 @@
+---
+title: API
+description: "API reference for Diffbot: every `diffbot.api.*` operation with input and output types."
+---
+
+Every `diffbot.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getAccount
+
+`account.getAccount`
+
+Retrieve Diffbot account details, credit balance, and plan usage
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.account.getAccount({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `plan` | `string` | No | — |
+| `planStart` | `string` | No | — |
+| `planCalls` | `number` | No | — |
+| `apiCalls` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Bulk
+
+### createBulk
+
+`bulk.createBulk`
+
+Submit an asynchronous bulk extract job to process multiple URLs
+
+**Risk:** `write`
+
+```ts
+await corsair.diffbot.api.bulk.createBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the bulk job (unique per token) |
+| `apiUrl` | `string` | Yes | Full Diffbot Extract API URL (e.g. "https://api.diffbot.com/v3/article") |
+| `urls` | `string[]` | Yes | Array of URLs to process with the Extract API |
+| `notifyEmail` | `string` | No | Email to notify when processing is completed |
+| `maxRounds` | `number` | No | Max rounds of URL processing |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `string` | No | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### getBulkData
+
+`bulk.getBulkData`
+
+Download extracted results from a completed bulk extract job
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.bulk.getBulkData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the completed bulk job to download |
+| `format` | `json \| csv` | No | Download format (default json) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `data` | `any` | No | — |
+
+
+
+---
+
+### listBulkJobs
+
+`bulk.listBulkJobs`
+
+List all bulk extract jobs associated with the token
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.bulk.listBulkJobs({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobs` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### startBulk
+
+`bulk.startBulk`
+
+Start a bulk extract job using query parameters
+
+**Risk:** `write`
+
+```ts
+await corsair.diffbot.api.bulk.startBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Unique name for the bulk extract job |
+| `apiUrl` | `string` | Yes | Full Diffbot Extract API URL |
+| `urls` | `string` | Yes | Comma-separated or space-separated list of URLs to process |
+| `notifyEmail` | `string` | No | Notification email address |
+| `maxRounds` | `number` | No | Max rounds of URL processing |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `string` | No | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### stopBulkJob
+
+`bulk.stopBulkJob`
+
+Pause or stop an active bulk extract job
+
+**Risk:** `write`
+
+```ts
+await corsair.diffbot.api.bulk.stopBulkJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the bulk extract job to pause/stop |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `string` | No | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Crawl
+
+### getCrawlData
+
+`crawl.getCrawlData`
+
+Download extracted data from a completed crawl job
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.crawl.getCrawlData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the completed crawl job to download |
+| `format` | `json \| csv` | No | Download format (default json) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `data` | `any` | No | — |
+
+
+
+---
+
+### manageCrawl
+
+`crawl.manageCrawl`
+
+Inspect, pause, restart, or delete crawl jobs
+
+**Risk:** `write`
+
+```ts
+await corsair.diffbot.api.crawl.manageCrawl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | The name of the crawl job to inspect or modify |
+| `pause` | `number` | No | Set to 1 to pause an active crawl job, 0 to resume |
+| `restart` | `number` | No | Set to 1 to restart a completed/paused crawl job |
+| `delete` | `number` | No | Set to 1 to delete a crawl job and its data |
+| `roundProxy` | `number` | No | Set to 1 to rotate proxy IP on each round |
+| `maxRounds` | `number` | No | Update max rounds |
+| `maxHops` | `number` | No | Update max hops |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobs` | `object[]` | No | — |
+| `response` | `string` | No | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### startCrawl
+
+`crawl.startCrawl`
+
+Initiate a website crawl job starting from seed URLs
+
+**Risk:** `write`
+
+```ts
+await corsair.diffbot.api.crawl.startCrawl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Unique name for the crawl job |
+| `seeds` | `string` | Yes | Space-separated seed URL(s) from which the crawl begins |
+| `apiUrl` | `string` | Yes | Full Diffbot Extract API URL used to process pages (e.g. "https://api.diffbot.com/v3/article") |
+| `maxHops` | `number` | No | Max depth of links to crawl from seeds (default -1 for no limit) |
+| `maxRounds` | `number` | No | Max rounds of repeat crawling for recurring crawls |
+| `maxTags` | `number` | No | Max tags to extract per page |
+| `crawlSubdomains` | `number` | No | Set to 1 to crawl subdomains of seeds |
+| `notifyEmail` | `string` | No | Email notification upon crawl completion |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `string` | No | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Custom Api
+
+### createCustomApi
+
+`customApi.createCustomApi`
+
+Create or update custom API rules and selectors for URL patterns
+
+**Risk:** `write`
+
+```ts
+await corsair.diffbot.api.customApi.createCustomApi({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api` | `string` | Yes | Name of the custom API (e.g. "myCustomArticleApi") |
+| `url` | `string` | Yes | Sample URL that this custom API applies to |
+| `pattern` | `string` | No | URL regex pattern to match pages for this custom API |
+| `rules` | `object` | No | Extraction rules and CSS selector definitions |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `string` | No | — |
+| `api` | `string` | No | — |
+| `url` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### deleteCustomApi
+
+`customApi.deleteCustomApi`
+
+Delete custom API definitions for a given URL pattern
+
+**Risk:** `destructive`
+
+```ts
+await corsair.diffbot.api.customApi.deleteCustomApi({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api` | `string` | Yes | Name of the custom API to delete |
+| `url` | `string` | No | URL pattern or test URL of the custom API |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `string` | No | — |
+| `api` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### listCustomApis
+
+`customApi.listCustomApis`
+
+List all custom API definitions configured on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.customApi.listCustomApis({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customApis` | `object[]` | No | — |
+| `apis` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customApis full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="apis full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Enhance
+
+### combineEntityProfiles
+
+`enhance.combineEntityProfiles`
+
+Combine entity profiles into a unified view with organization affiliations
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.enhance.combineEntityProfiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Person name |
+| `type` | `string` | No | Entity type (defaults to Person) |
+| `email` | `string` | No | Email address |
+| `employer` | `string` | No | Employer name or organization |
+| `url` | `string` | No | Profile URL or organization homepage |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `number` | No | — |
+| `hits` | `number` | No | — |
+| `kgversion` | `string` | No | — |
+| `data` | `object[]` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enhanceEntity
+
+`enhance.enhanceEntity`
+
+Enrich person or organization data with Knowledge Graph records
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.enhance.enhanceEntity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Entity name (person or organization) |
+| `type` | `string` | No | Entity type filter: "Organization" or "Person" |
+| `email` | `string` | No | Email address of the entity |
+| `employer` | `string` | No | Current employer of a Person entity |
+| `url` | `string` | No | Homepage or profile URL (e.g. LinkedIn / Website) |
+| `phone` | `string` | No | Phone number |
+| `location` | `string` | No | Location or address |
+| `size` | `number` | No | Number of matching entity records to return |
+| `refresh` | `boolean` | No | Force refresh data from live web sources |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `number` | No | — |
+| `hits` | `number` | No | — |
+| `kgversion` | `string` | No | — |
+| `request_ctx` | `object` | No | — |
+| `data` | `object[]` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_ctx full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getKgCoverageReportById
+
+`enhance.getKgCoverageReportById`
+
+Download Knowledge Graph coverage report by report ID
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.enhance.getKgCoverageReportById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportId` | `string` | Yes | Coverage report ID generated from DQL query or bulk job |
+| `bulkjobId` | `string` | No | Optional bulkjob ID associated with the report |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `coverage` | `object` | No | — |
+| `data` | `any` | No | — |
+| `csv` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="coverage full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resolveLostId
+
+`enhance.resolveLostId`
+
+Resolve lost or legacy identifiers to canonical Knowledge Graph entities
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.enhance.resolveLostId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The lost or non-canonical identifier to resolve |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `canonicalId` | `string` | No | — |
+| `diffbotUri` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `hits` | `number` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Extract
+
+### extractJob
+
+`extract.extractJob`
+
+Extract structured job posting data including compensation, requirements, and company info
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.extract.extractJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the job posting page |
+| `fields` | `string` | No | Optional fields to return |
+| `timeout` | `number` | No | Timeout in milliseconds |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request` | `object` | No | — |
+| `objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  pageUrl?: string,
+  api?: string,
+  version?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  type?: job,
+  title?: string,
+  description?: string,
+  company?: {
+  },
+  locations?: string[],
+  employmentType?: string,
+  compensation?: {
+  },
+  requirements?: string[],
+  skills?: string[],
+  postedDate?: string,
+  pageUrl?: string,
+  humanLanguage?: string,
+  diffbotUri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### extractList
+
+`extract.extractList`
+
+Extract structured items from list-style pages, catalogs, and news indexes
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.extract.extractList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the list / directory / index page |
+| `fields` | `string` | No | Optional fields to return |
+| `timeout` | `number` | No | Timeout in milliseconds |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request` | `object` | No | — |
+| `objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  pageUrl?: string,
+  api?: string,
+  version?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  type?: list,
+  title?: string,
+  numItems?: number,
+  items?: {
+  }[],
+  pageUrl?: string,
+  humanLanguage?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAnalyze
+
+`extract.getAnalyze`
+
+Automatically analyze web page to determine its type and extract structured data
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.extract.getAnalyze({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL to analyze — Diffbot auto-detects the page type |
+| `fields` | `string` | No | Comma-separated list of optional fields |
+| `timeout` | `number` | No | Timeout in milliseconds |
+| `fallback` | `string` | No | API to fall back to if page type cannot be detected (e.g. "article") |
+| `discussion` | `false \| true` | No | Set to "false" to disable comment extraction |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request` | `object` | No | — |
+| `type` | `string` | No | Detected page type (article, product, discussion, etc.) |
+| `humanLanguage` | `string` | No | — |
+| `title` | `string` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  pageUrl?: string,
+  api?: string,
+  version?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getArticle
+
+`extract.getArticle`
+
+Extract article title, text, author, date, and metadata from any URL
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.extract.getArticle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the article to extract |
+| `fields` | `string` | No | Comma-separated list of optional fields (e.g. "links,meta") |
+| `timeout` | `number` | No | Timeout in milliseconds (default 30000) |
+| `paging` | `false \| true` | No | Set to "false" to disable automatic pagination following |
+| `maxTags` | `number` | No | Maximum number of tags to return |
+| `naturalLanguage` | `string` | No | Language hint for NLP |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request` | `object` | No | — |
+| `objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  pageUrl?: string,
+  api?: string,
+  version?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  type?: article,
+  title?: string,
+  text?: string,
+  html?: string,
+  date?: string,
+  estimatedDate?: string,
+  author?: string,
+  authorUrl?: string,
+  siteName?: string,
+  pageUrl?: string,
+  resolvedPageUrl?: string,
+  humanLanguage?: string,
+  numPages?: number,
+  nextPage?: string,
+  nextPages?: string[],
+  images?: {
+    url?: string,
+    title?: string,
+    width?: number,
+    height?: number,
+    naturalWidth?: number,
+    naturalHeight?: number,
+    primary?: boolean,
+    xpath?: string,
+    attrTitle?: string,
+    attrAlt?: string,
+    caption?: string
+  }[],
+  videos?: {
+  }[],
+  tags?: {
+    id?: number,
+    label: string,
+    uri?: string,
+    types?: string[],
+    score?: number,
+    count?: number,
+    prevalence?: number,
+    rdfTypes?: string[]
+  }[],
+  links?: string[],
+  breadcrumb?: {
+    link?: string,
+    name?: string
+  }[],
+  publisherRegion?: string,
+  publisherCountry?: string,
+  sentiment?: number,
+  diffbotUri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDiscussion
+
+`extract.getDiscussion`
+
+Extract structured discussion threads, forum posts, and comments from web pages
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.extract.getDiscussion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the discussion / forum / comment page |
+| `fields` | `string` | No | Optional fields to return |
+| `timeout` | `number` | No | Timeout in milliseconds |
+| `maxTags` | `number` | No | Max tags to return |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request` | `object` | No | — |
+| `objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  pageUrl?: string,
+  api?: string,
+  version?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  type?: discussion,
+  title?: string,
+  text?: string,
+  numPosts?: number,
+  numParticipants?: number,
+  participants?: string[],
+  rssUrl?: string,
+  posts?: {
+  }[],
+  pageUrl?: string,
+  humanLanguage?: string,
+  diffbotUri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getEvent
+
+`extract.getEvent`
+
+Extract event details including dates, venues, organizers, and descriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.extract.getEvent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the event page to extract |
+| `fields` | `string` | No | Optional fields to return |
+| `timeout` | `number` | No | Timeout in milliseconds |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request` | `object` | No | — |
+| `objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  pageUrl?: string,
+  api?: string,
+  version?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  type?: event,
+  title?: string,
+  description?: string,
+  startDate?: string,
+  endDate?: string,
+  location?: string,
+  venue?: {
+  },
+  organizer?: string,
+  ticketUrl?: string,
+  pageUrl?: string,
+  humanLanguage?: string,
+  diffbotUri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getImage
+
+`extract.getImage`
+
+Extract detailed image information including dimensions and recognition data
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.extract.getImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the page or image to extract |
+| `fields` | `string` | No | Optional fields to return |
+| `timeout` | `number` | No | Timeout in milliseconds |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request` | `object` | No | — |
+| `objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  pageUrl?: string,
+  api?: string,
+  version?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  type?: image,
+  url?: string,
+  title?: string,
+  naturalHeight?: number,
+  naturalWidth?: number,
+  width?: number,
+  height?: number,
+  primary?: boolean,
+  xpath?: string,
+  attrTitle?: string,
+  attrAlt?: string,
+  caption?: string,
+  pageUrl?: string,
+  humanLanguage?: string,
+  diffbotUri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProduct
+
+`extract.getProduct`
+
+Extract product price, availability, images, and specifications from any e-commerce URL
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.extract.getProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the product page to extract |
+| `fields` | `string` | No | Comma-separated list of optional fields |
+| `timeout` | `number` | No | Timeout in milliseconds (default 30000) |
+| `discussion` | `false \| true` | No | Set to "false" to disable review/discussion extraction |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request` | `object` | No | — |
+| `objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  pageUrl?: string,
+  api?: string,
+  version?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  type?: product,
+  title?: string,
+  text?: string,
+  brand?: string,
+  offerPrice?: string,
+  offerPriceDetails?: {
+    amount?: number,
+    symbol?: string,
+    text?: string
+  },
+  regularPrice?: string,
+  saveAmount?: string,
+  shippingAmount?: string,
+  availability?: boolean,
+  sku?: string,
+  mpn?: string,
+  upc?: string,
+  isbn?: string,
+  images?: {
+    url?: string,
+    title?: string,
+    width?: number,
+    height?: number,
+    naturalWidth?: number,
+    naturalHeight?: number,
+    primary?: boolean,
+    xpath?: string,
+    attrTitle?: string,
+    attrAlt?: string,
+    caption?: string
+  }[],
+  offers?: {
+  }[],
+  colors?: string[],
+  pageUrl?: string,
+  humanLanguage?: string,
+  tags?: {
+    id?: number,
+    label: string,
+    uri?: string,
+    types?: string[],
+    score?: number,
+    count?: number,
+    prevalence?: number,
+    rdfTypes?: string[]
+  }[],
+  diffbotUri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVideo
+
+`extract.getVideo`
+
+Extract structured metadata from videos including embed HTML and durations
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.extract.getVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the video page to extract |
+| `fields` | `string` | No | Optional fields to return |
+| `timeout` | `number` | No | Timeout in milliseconds |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request` | `object` | No | — |
+| `objects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  pageUrl?: string,
+  api?: string,
+  version?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  type?: video,
+  url?: string,
+  title?: string,
+  naturalHeight?: number,
+  naturalWidth?: number,
+  duration?: number,
+  viewCount?: number,
+  uploadDate?: string,
+  author?: string,
+  embedUrl?: string,
+  html?: string,
+  pageUrl?: string,
+  humanLanguage?: string,
+  diffbotUri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Kg Bulk Enhance
+
+### createKgBulkEnhance
+
+`kgBulkEnhance.createKgBulkEnhance`
+
+Submit an asynchronous bulk enhance job for multiple entities
+
+**Risk:** `write`
+
+```ts
+await corsair.diffbot.api.kgBulkEnhance.createKgBulkEnhance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entities` | `object[]` | Yes | Array of entity objects to enhance |
+| `notifyEmail` | `string` | No | Email address to notify upon job completion |
+| `name` | `string` | No | Custom name for the bulk job |
+
+<AccordionGroup>
+<Accordion title="entities full type">
+
+```ts
+{
+  name?: string,
+  type?: string,
+  email?: string,
+  employer?: string,
+  url?: string,
+  phone?: string,
+  location?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | No | — |
+| `job_id` | `string` | No | — |
+| `status` | `string` | No | — |
+| `total` | `number` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### deleteKgEnhanceBulkjob
+
+`kgBulkEnhance.deleteKgEnhanceBulkjob`
+
+Delete a Knowledge Graph bulk enhance job and its results
+
+**Risk:** `destructive`
+
+```ts
+await corsair.diffbot.api.kgBulkEnhance.deleteKgEnhanceBulkjob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | Yes | The ID of the bulk enhance job to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### downloadBulkResults
+
+`kgBulkEnhance.downloadBulkResults`
+
+Download bulk enhance results with filtering and custom output formats
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.kgBulkEnhance.downloadBulkResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | Yes | The ID of the bulk enhance job to download |
+| `format` | `json \| jsonl \| csv \| xls \| xlsx` | No | Export format |
+| `filter` | `string` | No | DQL filter criteria to apply to the output |
+| `fields` | `string` | No | Comma-separated list of fields to include |
+| `head` | `number` | No | Number of records to export |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `data` | `object[]` | No | — |
+| `raw` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBulkJobStatus
+
+`kgBulkEnhance.getBulkJobStatus`
+
+Poll the status and progress of a Knowledge Graph bulk enhance job
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.kgBulkEnhance.getBulkJobStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | Yes | The ID of the bulk enhance job to check |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `jobStatus` | `object` | No | — |
+| `total` | `number` | No | — |
+| `completed` | `number` | No | — |
+| `failed` | `number` | No | — |
+| `progress` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobStatus full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBulkResults
+
+`kgBulkEnhance.getBulkResults`
+
+Download results of a completed Knowledge Graph bulk enhance job
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.kgBulkEnhance.getBulkResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | Yes | The ID of the bulk enhance job to download |
+| `format` | `json \| jsonl \| csv \| xls \| xlsx` | No | Download output format (default jsonl) |
+| `head` | `number` | No | Preview only the first N results from the job |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `data` | `object[]` | No | — |
+| `raw` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBulkSingleResult
+
+`kgBulkEnhance.getBulkSingleResult`
+
+Download single enriched entity result from a bulk enhance job by index
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.kgBulkEnhance.getBulkSingleResult({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | Yes | The bulk enhance job ID |
+| `jobIndex` | `number` | Yes | Zero-indexed position of the entity record within the bulk job |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | No | — |
+| `jobIndex` | `number` | No | — |
+| `data` | `object` | No | — |
+| `entity` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="entity full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBulkJobsStatusForToken
+
+`kgBulkEnhance.listBulkJobsStatusForToken`
+
+List all Knowledge Graph bulk enhance jobs and their statuses for token
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.kgBulkEnhance.listBulkJobsStatusForToken({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobs` | `object[]` | No | — |
+| `bulkjobs` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkjobs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stopKgBulkJobById
+
+`kgBulkEnhance.stopKgBulkJobById`
+
+Stop or pause an active Knowledge Graph bulk enhance job by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.diffbot.api.kgBulkEnhance.stopKgBulkJobById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | Yes | The ID of the bulk enhance job to pause/stop |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulkjobId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Search
+
+### search
+
+`search.search`
+
+Search the Diffbot Knowledge Graph using DQL (Diffbot Query Language)
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.search.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | DQL query string (e.g. "type:Organization name:\\"OpenAI\\"") |
+| `entityType` | `string` | No | Entity type filter prepended to query (e.g. "Organization") |
+| `queryType` | `query \| text \| queryTextFallback \| crawl` | No | Execution mode for the DQL request |
+| `size` | `number` | No | Number of results to return |
+| `from` | `number` | No | Zero-indexed offset for pagination |
+| `col` | `string` | No | Crawl collection name to query |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `number` | No | — |
+| `hits` | `number` | No | — |
+| `results` | `number` | No | — |
+| `kgversion` | `string` | No | — |
+| `diffbot_type` | `string` | No | — |
+| `facet` | `object` | No | — |
+| `data` | `object[]` | No | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="facet full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchCrawlData
+
+`search.searchCrawlData`
+
+Query crawl job collections using DQL or keyword search
+
+**Risk:** `read`
+
+```ts
+await corsair.diffbot.api.search.searchCrawlData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `col` | `string` | Yes | The name of the crawl job collection to search |
+| `query` | `string` | Yes | Search query string or DQL filter |
+| `num` | `number` | No | Number of results to return (max 25) |
+| `start` | `number` | No | Zero-indexed offset for pagination |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request` | `object` | No | — |
+| `results` | `object[]` | No | — |
+| `numResults` | `number` | No | — |
+| `hits` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  pageUrl?: string,
+  api?: string,
+  version?: number
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

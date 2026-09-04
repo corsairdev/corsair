@@ -3,141 +3,131 @@ title: Overview
 description: "Neon plugin for Corsair"
 ---
 
-Use **Neon** through Corsair: one client, typed API calls, optional local DB sync.
+Use **Neon** through Corsair: one client, typed API calls, local DB sync.
 
 Neon exposes project, branch, database, role, compute endpoint, auth, organization, and infrastructure workflows for serverless Postgres. Use Corsair permissions for destructive actions such as deleting projects, dropping branches or databases, revoking API keys, or removing VPC endpoints.
 
 **What you get:**
 
 - 110 typed API operations
-- 8 database entities synced for fast `.search()` / `.list()` queries
+- 8 synced entities (`apiKeys`, `branches`, `computeEndpoints`, `databases`, `organizations`, `projects`, and 2 more) for fast `.search()` / `.list()`
 
 ## Setup
 
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/neon
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/neon
 ```
+```bash yarn
+yarn add corsair @corsair-dev/neon
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/neon
+```
+```bash bun
+bun add corsair @corsair-dev/neon
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { neon } from '@corsair-dev/neon';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [neon()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { neon } from '@corsair-dev/neon';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [neon()],
+	plugins: [
+		neon(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/neon/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=neon
-```
+<Tab title="API Key (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/neon/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=neon --tenant=<tenantId>
-```
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
-
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 neon()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=neon` (see [Get Credentials](/plugins/neon/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 </Tabs>
 
+</Step>
 
-## Query synced data
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-Synced entities support `corsair.neon.db.<entity>.search()` and `.list()`. See [Database](/plugins/neon/database) for filters and operators.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'neon',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
+
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `apiKeys.listApiKeys`
+**`apiKeys.listApiKeys`**
 
 ```ts
-await corsair.neon.api.apiKeys.listApiKeys({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.apiKeys.listApiKeys({});
 ```
 
 
-**Write-style (write):** `apiKeys.createApiKey`
+**`apiKeys.createApiKey`**
 
 ```ts
-await corsair.neon.api.apiKeys.createApiKey({});
+const tenant = corsair.withTenant('acme');
+await tenant.neon.api.apiKeys.createApiKey({});
 ```
 
 
-See the full list on the [API](/plugins/neon/api) page. Use `pnpm corsair list --plugin=neon` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/neon/api) page.
 
----
+## Query synced data
 
-## Hooks
+Synced entities support `tenant.neon.db.<entity>.search()` and `.list()`: `apiKeys`, `branches`, `computeEndpoints`, `databases`, `organizations`, `projects`, `roles`, `snapshots`.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+See [Database](/plugins/neon/database) for filters and operators.
 
----
+## What's next
 
-## Reference
-
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/neon/api) |
-| Database | [Database](/plugins/neon/database) |
-| Credentials | [Get credentials](/plugins/neon/get-credentials) |
-
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/neon/api">
+    Every `neon.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/neon/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
