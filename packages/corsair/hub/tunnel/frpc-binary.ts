@@ -50,14 +50,13 @@ function binName(): string {
 }
 
 /**
- * Where the postinstall step drops the downloaded frpc. Kept in lockstep with
- * `scripts/postinstall-frpc.mjs` — both derive it from homedir + FRPC_VERSION.
- * duplicated in that standalone install script (it can't import TS);
- * a shared frpc-version.json is the upgrade path if this drifts.
+ * A local cache location for a manually placed frpc, e.g. a binary left by an
+ * older corsair version or dropped in by hand. Derived from homedir and
+ * FRPC_VERSION.
  */
 export function frpcCacheBinary(): string {
 	// The platform-arch segment keeps a shared $HOME (devcontainer/NFS) from
-	// serving a wrong-arch binary. Kept in lockstep with postinstall-frpc.mjs.
+	// serving a wrong-arch binary.
 	return join(
 		homedir(),
 		'.cache',
@@ -72,9 +71,9 @@ export function frpcCacheBinary(): string {
 /**
  * Absolute path to a runnable frpc for this platform. Resolution order: an
  * explicit `CORSAIR_FRP_BIN` override, then this platform's optional-dependency
- * package (the esbuild pattern — no install script, so pnpm never blocks it),
- * then the postinstall download cache as a fallback. Throws with an install hint
- * if none resolves.
+ * package `@corsair-dev/frpc-<platform>` (the esbuild pattern, npm-native, no
+ * install script), then a local cache if one is present. Throws with an install
+ * hint if none resolves.
  */
 /**
  * Ensure the resolved frpc binary carries the executable bit. Published npm
@@ -108,9 +107,10 @@ export function resolveFrpcBinary(): string {
 	const cached = frpcCacheBinary();
 	if (existsSync(cached)) return ensureExecutable(cached);
 
-	// pnpm 10 skips a dependency's postinstall until the consumer approves its
-	// build, which leaves this cache empty — name that remedy explicitly.
+	// The platform binary ships as an optional dependency, so it's absent only
+	// when optional deps were skipped (e.g. --no-optional) or the platform is
+	// unsupported.
 	throw new Error(
-		`frpc binary not found for ${frpcPlatformKey()}. If you use pnpm, run \`pnpm approve-builds corsair\` (or add corsair to onlyBuiltDependencies) and reinstall; otherwise reinstall corsair, or set CORSAIR_FRP_BIN to an frpc path (https://github.com/fatedier/frp/releases).`,
+		`frpc binary not found for ${frpcPlatformKey()}. The @corsair-dev/frpc-${frpcPlatformKey()} package installs automatically as an optional dependency; if you disabled optional dependencies, reinstall with them enabled, or set CORSAIR_FRP_BIN to an frpc path (https://github.com/fatedier/frp/releases).`,
 	);
 }
