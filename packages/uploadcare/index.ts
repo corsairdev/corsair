@@ -27,7 +27,6 @@ import { UploadcareSchema } from './schema';
 import { UploadcareWebhooksList } from './webhooks';
 import { errorHandlers } from './error-handlers';
 import { matchUploadcareTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveUploadcareOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export type UploadcarePluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -234,10 +233,31 @@ export function uploadcare<const T extends UploadcarePluginOptions>(
 		endpointSchemas: uploadcareEndpointSchemas,
 		webhookSchemas: uploadcareWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
-			return true;
+			const headers = request.headers;
+			if (
+				'x-uc-signature' in headers ||
+				'x-uploadcare-signature' in headers
+			) {
+				return true;
+			}
+			const body =
+				typeof request.body === 'string'
+					? (() => {
+							try {
+								return JSON.parse(request.body);
+							} catch {
+								return null;
+							}
+						})()
+					: request.body;
+			return (
+				body !== null &&
+				typeof body === 'object' &&
+				'event' in body &&
+				'data' in body
+			);
 		},
 		pluginTenantWebhookMatcher: matchUploadcareTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveUploadcareOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

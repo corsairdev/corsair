@@ -1,8 +1,11 @@
-import { makeUploadcareRequest } from './client';
+import { makeUploadcareRequest, UploadcareAPIError } from './client';
 import {
 	UploadcareEndpointInputSchemas,
 	UploadcareEndpointOutputSchemas,
 } from './endpoints/types';
+import { verifyUploadcareWebhookSignature } from './webhooks/types';
+import { errorHandlers } from './error-handlers';
+import { ApiError } from 'corsair/http';
 
 const TEST_API_KEY = 'test_public_key:test_secret_key';
 
@@ -138,5 +141,112 @@ describe('Uploadcare Plugin Unit & Schema Tests', () => {
 			expect(authHeader).toBe('Uploadcare.Simple test_public_key:test_secret_key');
 			expect(acceptHeader).toBe('application/vnd.uploadcare-v0.7+json');
 		});
+
+		it('preserves request body on DELETE requests (e.g. batchDelete)', async () => {
+			const fetchMock = jest.fn().mockResolvedValue({
+				ok: true,
+				status: 200,
+				headers: new Headers({ 'content-type': 'application/json' }),
+				json: async () => ({ status: 'ok', result: [] }),
+				text: async () => JSON.stringify({ status: 'ok', result: [] }),
+			});
+
+			global.fetch = fetchMock as any;
+
+			await makeUploadcareRequest('files/storage/', TEST_API_KEY, {
+				method: 'DELETE',
+				body: ['uuid-1', 'uuid-2'],
+			});
+
+			expect(fetchMock).toHaveBeenCalled();
+			const callArgs = fetchMock.mock.calls[0];
+			expect(callArgs[1].method).toBe('DELETE');
+			expect(callArgs[1].body).toBe(JSON.stringify(['uuid-1', 'uuid-2']));
+		});
+
+		it('preserves status and error body on ApiError', async () => {
+			const fetchMock = jest.fn().mockResolvedValue({
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				headers: new Headers({
+					'content-type': 'application/json',
+				}),
+				json: async () => ({ detail: 'Invalid parameter' }),
+				text: async () => JSON.stringify({ detail: 'Invalid parameter' }),
+			});
+
+			global.fetch = fetchMock as any;
+
+			let caughtError: UploadcareAPIError | null = null;
+			try {
+				await makeUploadcareRequest('project/', TEST_API_KEY, { method: 'GET' });
+			} catch (err: any) {
+				caughtError = err;
+			}
+
+			expect(caughtError).toBeInstanceOf(UploadcareAPIError);
+			expect(caughtError?.status).toBe(400);
+			expect(caughtError?.message).toBe('Invalid parameter');
+		});
+	});
+
+	describe('Error Handlers', () => {
+		it('matches 429 status and returns retryAfter', async () => {
+			const uploadcareErr = new UploadcareAPIError('Throttled', undefined, 429, {}, 30);
+			const isMatch = errorHandlers.RATE_LIMIT_ERROR.match(uploadcareErr);
+			expect(isMatch).toBe(true);
+
+			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(uploadcareErr);
+			expect(result.headersRetryAfterMs).toBe(30);
+		});
+
+		it('matches 401 status for auth errors', async () => {
+			const uploadcareErr = new UploadcareAPIError('Unauthorized', undefined, 401);
+			const isMatch = errorHandlers.AUTH_ERROR.match(uploadcareErr);
+			expect(isMatch).toBe(true);
+		});
+	});
+
+	describe('Webhook Signature Verification', () => {
+		it('verifies valid HMAC-SHA256 signature', () => {
+			const crypto = require('crypto');
+			const secret = 'my_secret';
+			const rawBody = JSON.stringify({ event: 'file.uploaded', data: { uuid: '123' } });
+			const signature = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+
+			const req = {
+				headers: { 'x-uc-signature': `v1=${signature}` },
+				rawBody,
+				body: JSON.parse(rawBody),
+			} as any;
+
+			const result = verifyUploadcareWebhookSignature(req, secret);
+			expect(result.valid).toBe(true);
+		});
+
+		it('rejects invalid signature', () => {
+			const req = {
+				headers: { 'x-uc-signature': 'v1=invalid_hash' },
+				rawBody: '{"event":"file.uploaded"}',
+				body: { event: 'file.uploaded' },
+			} as any;
+
+			const result = verifyUploadcareWebhookSignature(req, 'my_secret');
+			expect(result.valid).toBe(false);
+			expect(result.error).toBe('Invalid webhook signature');
+		});
+
+		it('rejects missing secret or header', () => {
+			const req = {
+				headers: {},
+				rawBody: '{}',
+				body: {},
+			} as any;
+
+			expect(verifyUploadcareWebhookSignature(req, '').valid).toBe(false);
+			expect(verifyUploadcareWebhookSignature(req, 'secret').valid).toBe(false);
+		});
 	});
 });
+

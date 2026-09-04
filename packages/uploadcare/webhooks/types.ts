@@ -1,4 +1,5 @@
 import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import * as crypto from 'crypto';
 import { z } from 'zod';
 
 export const UploadcareWebhookPayloadSchema = z.object({
@@ -51,5 +52,47 @@ export function verifyUploadcareWebhookSignature(
 	request: WebhookRequest<UploadcareWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	return { valid: true };
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
+	const rawHeader =
+		request.headers['x-uc-signature'] ||
+		request.headers['x-uploadcare-signature'];
+	const signatureHeader = Array.isArray(rawHeader) ? rawHeader[0] : rawHeader;
+
+	if (!signatureHeader) {
+		return { valid: false, error: 'Missing webhook signature header' };
+	}
+
+	const rawBody = request.rawBody;
+	if (typeof rawBody !== 'string' || !rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const signature = signatureHeader.replace(/^(v1=|sha256=)/i, '').trim();
+
+	try {
+		const expectedDigest = crypto
+			.createHmac('sha256', secret)
+			.update(rawBody)
+			.digest('hex');
+
+		const isValid = crypto.timingSafeEqual(
+			Buffer.from(signature.toLowerCase()),
+			Buffer.from(expectedDigest.toLowerCase()),
+		);
+
+		if (!isValid) {
+			return { valid: false, error: 'Invalid webhook signature' };
+		}
+
+		return { valid: true };
+	} catch {
+		return { valid: false, error: 'Invalid webhook signature' };
+	}
 }
+

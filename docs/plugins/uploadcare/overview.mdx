@@ -3,11 +3,12 @@ title: Overview
 description: "Uploadcare plugin for Corsair"
 ---
 
-Use **Uploadcare** through Corsair: one client, typed API calls, and incoming webhooks.
+Use **Uploadcare** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
 - 13 typed API operations
+- 2 synced entities (`UploadcareFile`, `UploadcareGroup`) for fast `.search()` / `.list()`
 - 1 incoming webhook event types
 
 ## Setup
@@ -107,6 +108,12 @@ await tenant.uploadcare.api.files.batchDelete({});
 
 See the full list on the [API](/plugins/uploadcare/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.uploadcare.db.<entity>.search()` and `.list()`: `UploadcareFile`, `UploadcareGroup`.
+
+See [Database](/plugins/uploadcare/database) for filters and operators.
+
 ## Webhooks
 
 This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
@@ -118,6 +125,9 @@ See [Webhooks](/plugins/uploadcare/webhooks) for every event path and payload sh
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/uploadcare/api">
     Every `uploadcare.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/uploadcare/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Webhooks" href="/plugins/uploadcare/webhooks">
     Event paths, payloads, and `webhookHooks` examples.
