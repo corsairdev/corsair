@@ -261,8 +261,9 @@ describe('messages/reports/webforms/signup endpoints', () => {
 			password: 'secret123',
 		});
 
-		expect(mockRequest).toHaveBeenCalledWith('../signup', 'campayn-key', {
+		expect(mockRequest).toHaveBeenCalledWith('signup', 'campayn-key', {
 			method: 'POST',
+			baseUrl: 'https://campayn.com',
 			body: {
 				email: 'new@example.com',
 				first_name: 'New',

@@ -61,6 +61,31 @@ describe('makeCampaynRequest', () => {
 		);
 	});
 
+	it('supports overriding base URL for non-versioned endpoints', async () => {
+		mockRequest.mockResolvedValue({ success: 1, msg: 'New user created' });
+
+		await makeCampaynRequest('signup', 'test-key', {
+			method: 'POST',
+			baseUrl: 'https://campayn.com',
+			body: {
+				email: 'new@example.com',
+				first_name: 'New',
+				last_name: 'User',
+				password: 'secret123',
+			},
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://campayn.com',
+			}),
+			expect.objectContaining({
+				method: 'POST',
+				url: 'signup',
+			}),
+		);
+	});
+
 	it('maps ApiError to CampaynAPIError with code and status', async () => {
 		mockRequest.mockRejectedValue(
 			new ApiError(

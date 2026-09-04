@@ -72,12 +72,13 @@ export async function makeCampaynRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		baseUrl?: string;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, baseUrl = CAMPAYN_API_BASE } = options;
 
 	const config: OpenAPIConfig = {
-		BASE: CAMPAYN_API_BASE,
+		BASE: baseUrl,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
