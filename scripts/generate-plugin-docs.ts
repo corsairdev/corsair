@@ -871,28 +871,60 @@ function formatWebhookHookSnippet(
 	exportKey: string,
 	shortPath: string,
 	afterBody: string,
+	authType: string | undefined,
+	defaultAuthType: string | undefined,
+	factoryOptions: Record<string, unknown> | undefined,
+	indent = '',
 ): string {
+	const opts: Record<string, unknown> = { ...(factoryOptions ?? {}) };
+	if (authType && authType !== defaultAuthType) {
+		opts.authType = authType;
+	}
+
+	const pad = `${indent}\t`;
+	const lines: string[] = [`${indent}${exportKey}({`];
+
+	for (const [k, v] of Object.entries(opts)) {
+		if (typeof v === 'string') {
+			lines.push(
+				`${pad}${k}: '${v.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}',`,
+			);
+		} else if (typeof v === 'number' || typeof v === 'boolean') {
+			lines.push(`${pad}${k}: ${String(v)},`);
+		} else if (v === null) {
+			lines.push(`${pad}${k}: null,`);
+		} else {
+			lines.push(`${pad}${k}: ${JSON.stringify(v)},`);
+		}
+	}
+
 	const segments = shortPath.split('.').filter(Boolean);
 	if (segments.length === 0) {
-		return `${exportKey}({\n    webhookHooks: {},\n})`;
+		lines.push(`${pad}webhookHooks: {},`);
+		lines.push(`${indent})`);
+		return lines.join('\n');
 	}
-	const lines: string[] = [`${exportKey}({`, `    webhookHooks: {`];
+
+	lines.push(`${pad}webhookHooks: {`);
 	for (let i = 0; i < segments.length; i++) {
-		lines.push(`${'    '.repeat(i + 2)}${segments[i]}: {`);
+		lines.push(`${pad}${'\t'.repeat(i + 1)}${segments[i]}: {`);
 	}
 	lines.push(
-		`${'    '.repeat(segments.length + 2)}after: async (ctx, result) => {`,
+		`${pad}${'\t'.repeat(segments.length + 1)}after: async (ctx, result) => {`,
 	);
 	for (const line of afterBody.trim().split('\n')) {
 		lines.push(
-			line.length === 0 ? '' : `${'    '.repeat(segments.length + 3)}${line}`,
+			line.length === 0
+				? ''
+				: `${pad}${'\t'.repeat(segments.length + 2)}${line}`,
 		);
 	}
-	lines.push(`${'    '.repeat(segments.length + 2)}}`);
+	lines.push(`${pad}${'\t'.repeat(segments.length + 1)}}`);
 	for (let i = segments.length - 1; i >= 0; i--) {
-		lines.push(`${'    '.repeat(i + 2)}},`);
+		lines.push(`${pad}${'\t'.repeat(i + 1)}},`);
 	}
-	lines.push(`    },`, `})`);
+	lines.push(`${pad}},`);
+	lines.push(`${indent})`);
 	return lines.join('\n');
 }
 
@@ -1102,7 +1134,15 @@ See [Database](${base}/database) for filters and operators.
 ${note}
 
 \`\`\`ts
-${formatWebhookHookSnippet(exportKey, shortPath, afterBody)}
+import { createCorsair } from 'corsair';
+import { ${exportKey} } from '${npmPackageName}';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+${formatWebhookHookSnippet(exportKey, shortPath, afterBody, recommendedAuth, defaultAuthType, docsConfig.factory?.options, '\t\t')}
+	],
+});
 \`\`\`
 
 Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](${base}/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
@@ -1186,6 +1226,7 @@ import { createCorsair } from 'corsair';
 import { ${exportKey} } from '${npmPackageName}';
 
 export const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [
 ${setupPluginCall},
 	],
@@ -1452,8 +1493,9 @@ function buildApiMdx(
 			sections.push(`\`${ep.shortPath}\`${desc}${risk}`);
 			sections.push('');
 			const [, ...pathParts] = ep.path.split('.');
-			const callExpr = `corsair.${pluginId}.${pathParts.join('.')}`;
+			const callExpr = `tenant.${pluginId}.${pathParts.join('.')}`;
 			sections.push('```ts');
+			sections.push(`const tenant = corsair.withTenant('acme');`);
 			sections.push(`await ${callExpr}({});`);
 			sections.push('```');
 			sections.push('');
@@ -1499,7 +1541,8 @@ function buildDbMdx(
 		blocks.push('');
 		blocks.push(
 			'```ts',
-			`const rows = await corsair.${pluginId}.db.${ent.entityName}.search({`,
+			`const tenant = corsair.withTenant('acme');`,
+			`const rows = await tenant.${pluginId}.db.${ent.entityName}.search({`,
 			`    data: { /* filters below */ },`,
 			`    limit: 100,`,
 			`    offset: 0,`,
