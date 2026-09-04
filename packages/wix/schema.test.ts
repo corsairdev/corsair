@@ -74,7 +74,7 @@ describe('Wix input schemas accept valid input', () => {
 			const result = schema.safeParse({});
 			if (result.success) optionalOnly += 1;
 		}
-		expect(optionalOnly).toBeGreaterThan(50);
+		expect(optionalOnly).toBeGreaterThanOrEqual(50);
 	});
 });
 
@@ -168,7 +168,7 @@ describe('Wix query filter grammar', () => {
 			{ amount: { $gt: 10 } },
 			{ tags: { $hasSome: ['a', 'b'] } },
 			{ name: { $startsWith: 'Ad' } },
-			{ slug: { $urlized: ['ada-lovelace'] } },
+			{ slug: { $urlized: 'ada-lovelace' } },
 			{ archived: { $exists: true } },
 			{ $or: [{ status: 'DONE' }, { status: { $ne: 'VOID' } }] },
 			{ $not: { status: 'VOID' } },
@@ -189,7 +189,10 @@ describe('Wix query filter grammar', () => {
 			{ name: { $startsWith: 5 } }, // $startsWith requires a string
 			{ archived: { $exists: 'yes' } }, // $exists requires a boolean
 			{ $and: [] }, // logical operators require a non-empty array
+			{ $and: ['DONE'] }, // logical operands must be nested filter objects
+			{ $or: ['PUBLISHED'] }, // scalar logical operand
 			{ $not: 5 }, // $not requires a nested filter
+			{ slug: { $urlized: ['ada-lovelace'] } }, // $urlized takes a scalar string
 			{ $wibble: { $eq: 1 } }, // unknown logical key
 		];
 		for (const filter of rejected) {

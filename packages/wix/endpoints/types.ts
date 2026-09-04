@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { WixContact, WixOrder, WixProduct } from '../schema/database';
 
 // ── shared primitives ──────────────────────────────────────────────────────
 
@@ -97,11 +98,9 @@ function isWixFilterOperand(operator: string, value: unknown): boolean {
 		case '$contains':
 			return typeof value === 'string';
 		case '$urlized':
-			return (
-				Array.isArray(value) &&
-				value.length > 0 &&
-				value.every((v) => typeof v === 'string')
-			);
+			// Documented operand: a single string that Wix URLizes before
+			// comparing (e.g. 'ada-lovelace').
+			return typeof value === 'string' && value.length > 0;
 		case '$exists':
 			return typeof value === 'boolean';
 		default:
@@ -129,7 +128,15 @@ function isWixFilter(value: unknown): boolean {
 				if (
 					!Array.isArray(operand) ||
 					operand.length === 0 ||
-					!operand.every(isWixFilter)
+					// Logical operands must be nested filter objects — a bare
+					// scalar is not a filter expression.
+					!operand.every(
+						(el) =>
+							typeof el === 'object' &&
+							el !== null &&
+							!Array.isArray(el) &&
+							isWixFilter(el),
+					)
 				) {
 					return false;
 				}
@@ -241,6 +248,24 @@ function isWixJson(value: unknown): boolean {
 	return false;
 }
 
+/**
+ * Typed entity schemas keep their field-level checks (e.g. `order.status`
+ * must be a string) while retaining the recursive JSON-encodability
+ * guarantee every item array provides.
+ */
+function typedItemSchema(schema: z.ZodTypeAny): z.ZodTypeAny {
+	return schema.refine(
+		(item) => Object.values(item as Record<string, unknown>).every(isWixJson),
+		{
+			message: 'Wix item contains a non-JSON value',
+		},
+	);
+}
+
+const WixContactItemSchema = typedItemSchema(WixContact);
+const WixProductItemSchema = typedItemSchema(WixProduct);
+const WixOrderItemSchema = typedItemSchema(WixOrder);
+
 type WixQueryResponse<ItemsField extends string> = {
 	[field in ItemsField]?: z.infer<typeof WixItemSchema>[];
 } & {
@@ -252,12 +277,17 @@ type WixQueryResponse<ItemsField extends string> = {
  * string index signature, so consumers could not see e.g. `contacts` as an
  * array. The narrow assertion restores the literal-key output type; the
  * runtime loose-object parse behavior is unchanged.
+ *
+ * Endpoints whose resource type has a hand-written entity schema pass it as
+ * `itemSchema` so known fields (e.g. `product.name`, `order.status`) are
+ * type-checked, not just JSON-encodability-checked.
  */
 function queryResponse<ItemsField extends string>(
 	itemsField: ItemsField,
+	itemSchema: z.ZodTypeAny = WixItemSchema,
 ): z.ZodType<WixQueryResponse<ItemsField>> {
 	return z.looseObject({
-		[itemsField]: z.array(WixItemSchema).optional(),
+		[itemsField]: z.array(itemSchema).optional(),
 		pagingMetadata: PagingMetadataSchema.optional(),
 	}) as unknown as z.ZodType<WixQueryResponse<ItemsField>>;
 }
@@ -269,7 +299,10 @@ const QueryContactsInputSchema = z.looseObject({
 	...QueryOptionFields,
 });
 export type QueryContactsInput = z.infer<typeof QueryContactsInputSchema>;
-const QueryContactsResponseSchema = queryResponse('contacts');
+const QueryContactsResponseSchema = queryResponse(
+	'contacts',
+	WixContactItemSchema,
+);
 export type QueryContactsResponse = z.infer<typeof QueryContactsResponseSchema>;
 
 const ListContactsInputSchema = z.looseObject({
@@ -280,7 +313,10 @@ const ListContactsInputSchema = z.looseObject({
 	fields: z.array(z.string()).optional(),
 });
 export type ListContactsInput = z.infer<typeof ListContactsInputSchema>;
-const ListContactsResponseSchema = queryResponse('contacts');
+const ListContactsResponseSchema = queryResponse(
+	'contacts',
+	WixContactItemSchema,
+);
 export type ListContactsResponse = z.infer<typeof ListContactsResponseSchema>;
 
 const BulkUpdateContactsInputSchema = z.looseObject({
@@ -361,7 +397,10 @@ const SearchProductsInputSchema = z.looseObject({
 	...QueryOptionFields,
 });
 export type SearchProductsInput = z.infer<typeof SearchProductsInputSchema>;
-const SearchProductsResponseSchema = queryResponse('products');
+const SearchProductsResponseSchema = queryResponse(
+	'products',
+	WixProductItemSchema,
+);
 export type SearchProductsResponse = z.infer<
 	typeof SearchProductsResponseSchema
 >;
@@ -485,7 +524,7 @@ export type BulkUpdateCustomizationsResponse = z.infer<
 
 const BulkCreateProductsWithInventoryInputSchema = z.looseObject({
 	...SiteScopeFields,
-	products: z.array(WixItemSchema).min(1).max(100),
+	products: z.array(WixProductItemSchema).min(1).max(100),
 });
 export type BulkCreateProductsWithInventoryInput = z.infer<
 	typeof BulkCreateProductsWithInventoryInputSchema
@@ -636,7 +675,10 @@ const QueryEcomOrdersInputSchema = z.looseObject({
 	...QueryOptionFields,
 });
 export type QueryEcomOrdersInput = z.infer<typeof QueryEcomOrdersInputSchema>;
-const QueryEcomOrdersResponseSchema = queryResponse('orders');
+const QueryEcomOrdersResponseSchema = queryResponse(
+	'orders',
+	WixOrderItemSchema,
+);
 export type QueryEcomOrdersResponse = z.infer<
 	typeof QueryEcomOrdersResponseSchema
 >;
@@ -1316,9 +1358,10 @@ export type FindEventResponse = z.infer<typeof FindEventResponseSchema>;
 
 const QueryEventsGraphqlInputSchema = z.looseObject({
 	...SiteScopeFields,
-	// GraphQL body contract: the caller supplies the GraphQL document and
-	// optional variables; a legacy `filter` is forwarded as `variables.filter`.
-	query: z.string().optional(),
+	// GraphQL body contract: a non-empty GraphQL document is required —
+	// filter-only inputs are invalid because they carry no query document.
+	// Optional variables; a legacy `filter` is forwarded as `variables.filter`.
+	query: z.string().min(1),
 	variables: z.record(z.string(), WixJsonValueSchema).optional(),
 	filter: WixFilterSchema.optional(),
 });

@@ -92,6 +92,8 @@ function sampleInput(
 		limit: 5,
 		offset: 0,
 	};
+	// GraphQL routes require a non-empty GraphQL document.
+	if (route.graphql) input.query = 'query Events { events { id } }';
 	for (const param of route.pathParams ?? []) {
 		if (input[param] === undefined) input[param] = `test-${param}`;
 	}
@@ -415,6 +417,41 @@ describe('Wix endpoints', () => {
 		expect(result.contacts?.[0]?.id).toBe('c1');
 	});
 
+	it('rejects typed-entity violations in query responses', async () => {
+		mockMakeWixRequest.mockResolvedValueOnce({
+			orders: [{ id: 'o1', revision: '1', status: 5 }],
+		});
+		const fn = endpointFn('orders', 'query');
+		await expect(fn(mockCtx, { siteId: 's' })).rejects.toThrow();
+
+		mockMakeWixRequest.mockResolvedValueOnce({
+			products: [{ id: 'p1', revision: '1', name: 123 }],
+		});
+		const search = endpointFn('stores', 'searchProducts');
+		await expect(search(mockCtx, { siteId: 's' })).rejects.toThrow();
+	});
+
+	it('accepts valid typed-entity response items', async () => {
+		mockMakeWixRequest.mockResolvedValueOnce({
+			orders: [{ id: 'o1', revision: '1', status: 'INITIALIZED' }],
+		});
+		const fn = endpointFn('orders', 'query');
+		const result = (await fn(mockCtx, { siteId: 's' })) as {
+			orders?: { status?: string }[];
+		};
+		expect(result.orders?.[0]?.status).toBe('INITIALIZED');
+	});
+
+	it('rejects malformed typed fields in bulk product payloads', async () => {
+		const fn = endpointFn('stores', 'bulkCreateProductsWithInventory');
+		await expect(
+			fn(mockCtx, {
+				siteId: 's',
+				products: [{ name: 123 }],
+			} as never),
+		).rejects.toThrow();
+	});
+
 	it('sends GET query params as query, not body', async () => {
 		const fn = endpointFn('contacts', 'list');
 		await fn(mockCtx, { siteId: 's', limit: 5, offset: 0 });
@@ -470,12 +507,15 @@ describe('Wix endpoints', () => {
 					query?: unknown;
 					variables?: { filter?: unknown };
 				};
+				query?: Record<string, unknown>;
 			},
 		];
 		expect(typeof options.body?.query).toBe('string');
 		expect(options.body?.variables?.filter).toEqual({
 			status: 'PUBLISHED',
 		});
+		// The GraphQL document must never leak into URL parameters.
+		expect(options.query).toBeUndefined();
 	});
 
 	it('sends a top-level filter for countExtendedBookings (no query envelope)', async () => {

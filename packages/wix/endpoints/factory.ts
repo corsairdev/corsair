@@ -78,11 +78,14 @@ export function resolvePath(
 }
 
 function buildQuery(route: WixRoute, input: WixEndpointInput) {
-	// For queryBody routes the query options belong in the POST body
-	// (`{ query: {...} }`), not in the URL query string.
-	const queryBag = route.queryBody
-		? {}
-		: ((input.query ?? {}) as Record<string, unknown>);
+	// For queryBody and graphql routes the query options belong in the POST
+	// body (`{ query: {...} }` or the GraphQL document), not in the URL
+	// query string. For graphql routes `input.query` is the GraphQL document
+	// itself and must never leak into URL parameters.
+	const queryBag =
+		route.queryBody || route.graphql
+			? {}
+			: ((input.query ?? {}) as Record<string, unknown>);
 	const query: Record<string, unknown> = { ...queryBag };
 	for (const key of route.queryParams ?? []) {
 		const value = input[key] ?? input[camelToSnake(key)];
