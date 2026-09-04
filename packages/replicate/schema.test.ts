@@ -15,6 +15,3 @@ describe('Replicate schema', () => {
 		}
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

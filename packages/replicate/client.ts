@@ -1,11 +1,15 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export class ReplicateAPIError extends Error {
 	constructor(
 		message: string,
-		public readonly code?: string,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'ReplicateAPIError';
@@ -14,49 +18,78 @@ export class ReplicateAPIError extends Error {
 
 const REPLICATE_API_BASE = 'https://api.replicate.com/v1';
 
-export async function makeReplicateRequest<T>(
-	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	const { method = 'GET', body, query } = options;
+const REPLICATE_NO_TRANSPORT_RETRIES: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'retry-after',
+	},
+};
 
-	const config: OpenAPIConfig = {
+function buildConfig(token: string): OpenAPIConfig {
+	return {
 		BASE: REPLICATE_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
+			Authorization: `Bearer ${token}`,
 		},
 	};
+}
 
-	const requestOptions: ApiRequestOptions = {
+async function rawRequest<T>(
+	token: string,
+	options: ApiRequestOptions,
+): Promise<T> {
+	try {
+		return await request<T>(buildConfig(token), options, {
+			rateLimitConfig: REPLICATE_NO_TRANSPORT_RETRIES,
+		});
+	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
+		if (error instanceof Error) {
+			throw new ReplicateAPIError(error.message);
+		}
+		throw new ReplicateAPIError('Unknown Replicate API error');
+	}
+}
+
+type RequestMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
+
+type RequestInit = {
+	method?: RequestMethod;
+	query?: Record<string, string | number | boolean | undefined>;
+	body?: Record<string, unknown>;
+	headers?: Record<string, string | undefined>;
+	mediaType?: string;
+	formData?: Record<string, unknown>;
+};
+
+export async function makeReplicateRequest<T>(
+	endpoint: string,
+	apiKey: string,
+	init: RequestInit = {},
+): Promise<T> {
+	const { method = 'GET', query, body, headers, mediaType, formData } = init;
+
+	const options: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
 		query,
+		headers,
+		body: method === 'POST' || method === 'PATCH' ? body : undefined,
+		mediaType:
+			mediaType ??
+			(method === 'POST' || method === 'PATCH'
+				? 'application/json; charset=utf-8'
+				: undefined),
+		formData,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-    } catch (error) {
-            if (error instanceof ApiError) {
-                    throw error;
-            }
-			if (error instanceof Error) {
-                    throw new ReplicateAPIError(error.message);
-            }
-			throw new ReplicateAPIError('Unknown Replicate API error');
-       }
+	return rawRequest<T>(apiKey, options);
 }
