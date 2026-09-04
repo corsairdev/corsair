@@ -62,6 +62,30 @@ describe('griptape error handlers', () => {
 			).toBe(true);
 		});
 
+		it('matches a standalone 429 token on plain errors', () => {
+			expect(
+				handlerFor('RATE_LIMIT_ERROR').match(
+					new Error('request failed with 429'),
+					errorContext,
+				),
+			).toBe(true);
+		});
+
+		it('does not match 429 embedded in a larger number', () => {
+			expect(
+				handlerFor('RATE_LIMIT_ERROR').match(
+					new Error('quota reference 4290 exceeded'),
+					errorContext,
+				),
+			).toBe(false);
+			expect(
+				handlerFor('RATE_LIMIT_ERROR').match(
+					new Error('request id 14295 failed'),
+					errorContext,
+				),
+			).toBe(false);
+		});
+
 		it('does not match unrelated errors', () => {
 			expect(
 				handlerFor('RATE_LIMIT_ERROR').match(

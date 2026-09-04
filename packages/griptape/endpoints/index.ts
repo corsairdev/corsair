@@ -11,7 +11,6 @@ import {
 	listRuns as assistantRunList,
 	listLogs as assistantRunLogs,
 	getResult as assistantRunResult,
-	retryRun as assistantRunRetry,
 	update as assistantUpdate,
 } from './assistants';
 import {
@@ -195,7 +194,6 @@ export const AssistantRun = {
 	get: assistantRunGet,
 	cancel: assistantRunCancel,
 	result: assistantRunResult,
-	retry: assistantRunRetry,
 	errorDetails: assistantRunErrorDetails,
 	logs: assistantRunLogs,
 	events: assistantRunEvents,

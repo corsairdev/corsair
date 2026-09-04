@@ -106,6 +106,10 @@ export const createRun: GriptapeEndpoints['assistantRunCreate'] = async (
 	ctx,
 	input,
 ) => {
+	// Note: the `model` field (and any credentials referenced by knowledge
+	// bases/tools) is executed server-side by Griptape Cloud's Assistant
+	// orchestration API — this is a resource-API call, not a direct LLM
+	// provider call, so it intentionally does not route via llm.corsair.dev.
 	const response = await makeGriptapeRequest<
 		GriptapeEndpointOutputs['assistantRunCreate']
 	>(`assistants/${input.assistant_id}/runs`, ctx.key, {
@@ -217,26 +221,6 @@ export const getResult: GriptapeEndpoints['assistantRunResult'] = async (
 	await logEventFromContext(
 		ctx,
 		'griptape.assistantRun.result',
-		{ ...input },
-		'completed',
-	);
-
-	return response;
-};
-
-export const retryRun: GriptapeEndpoints['assistantRunRetry'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeGriptapeRequest<
-		GriptapeEndpointOutputs['assistantRunRetry']
-	>(`assistant-runs/${input.assistant_run_id}`, ctx.key, {
-		method: 'GET',
-	});
-
-	await logEventFromContext(
-		ctx,
-		'griptape.assistantRun.retry',
 		{ ...input },
 		'completed',
 	);

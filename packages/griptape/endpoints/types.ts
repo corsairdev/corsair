@@ -538,7 +538,6 @@ export type GriptapeEndpointInputs = {
 	assistantRunGet: z.infer<typeof AssistantRunIdInputSchema>;
 	assistantRunCancel: z.infer<typeof AssistantRunIdInputSchema>;
 	assistantRunResult: z.infer<typeof AssistantRunIdInputSchema>;
-	assistantRunRetry: z.infer<typeof AssistantRunIdInputSchema>;
 	assistantRunErrorDetails: z.infer<typeof AssistantRunIdInputSchema>;
 	assistantRunLogs: z.infer<typeof AssistantRunEventsInputSchema>;
 	assistantRunEvents: z.infer<typeof AssistantRunEventsInputSchema>;
@@ -687,7 +686,6 @@ export type GriptapeEndpointOutputs = {
 	assistantRunGet: z.infer<typeof CloudObjectSchema>;
 	assistantRunCancel: z.infer<typeof CloudObjectSchema>;
 	assistantRunResult: z.infer<typeof CloudObjectSchema>;
-	assistantRunRetry: z.infer<typeof CloudObjectSchema>;
 	assistantRunErrorDetails: z.infer<typeof CloudObjectSchema>;
 	assistantRunLogs: z.infer<typeof CloudListSchema>;
 	assistantRunEvents: z.infer<typeof CloudListSchema>;
@@ -834,7 +832,6 @@ export const GriptapeEndpointInputSchemas = {
 	assistantRunGet: AssistantRunIdInputSchema,
 	assistantRunCancel: AssistantRunIdInputSchema,
 	assistantRunResult: AssistantRunIdInputSchema,
-	assistantRunRetry: AssistantRunIdInputSchema,
 	assistantRunErrorDetails: AssistantRunIdInputSchema,
 	assistantRunLogs: AssistantRunEventsInputSchema,
 	assistantRunEvents: AssistantRunEventsInputSchema,
@@ -981,7 +978,6 @@ export const GriptapeEndpointOutputSchemas = {
 	assistantRunGet: CloudObjectSchema,
 	assistantRunCancel: CloudObjectSchema,
 	assistantRunResult: CloudObjectSchema,
-	assistantRunRetry: CloudObjectSchema,
 	assistantRunErrorDetails: CloudObjectSchema,
 	assistantRunLogs: CloudListSchema,
 	assistantRunEvents: CloudListSchema,

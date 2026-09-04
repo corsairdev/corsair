@@ -444,31 +444,6 @@ describe('griptape assistant runs', () => {
 		});
 	});
 
-	describe('retryRun', () => {
-		it('sends GET /assistant-runs/{assistant_run_id} for the current run state', async () => {
-			const mockResponse = {
-				assistant_run_id: runId,
-				status: 'running',
-			};
-
-			mockRequest.mockResolvedValueOnce(mockResponse);
-
-			const result = await Assistants.retryRun(ctx, {
-				assistant_run_id: runId,
-			});
-
-			expect(mockRequest).toHaveBeenCalledWith(
-				expect.objectContaining({ BASE: 'https://cloud.griptape.ai/api' }),
-				expect.objectContaining({
-					method: 'GET',
-					url: `assistant-runs/${runId}`,
-				}),
-			);
-
-			expect(result).toEqual(mockResponse);
-		});
-	});
-
 	describe('getErrorDetails', () => {
 		it('sends GET /assistant-runs/{assistant_run_id} carrying embedded error details', async () => {
 			const mockResponse = {
@@ -1165,7 +1140,11 @@ describe('function.list', () => {
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({ BASE: 'https://cloud.griptape.ai/api' }),
-			expect.objectContaining({ method: 'GET', url: 'functions' }),
+			expect.objectContaining({
+				method: 'GET',
+				url: 'functions',
+				query: { page: 1, page_size: 10 },
+			}),
 		);
 
 		expect(result).toEqual(mockResponse);
@@ -3534,8 +3513,8 @@ describe('griptape registry completeness', () => {
 		return names;
 	}
 
-	it('exposes 144 wired endpoints', () => {
-		expect(flattenEndpoints()).toHaveLength(144);
+	it('exposes 143 wired endpoints', () => {
+		expect(flattenEndpoints()).toHaveLength(143);
 	});
 
 	it('defaults to api_key auth', () => {
@@ -3553,7 +3532,7 @@ describe('griptape registry completeness', () => {
 			expect(schemas[name]).toBeDefined();
 			expect(meta[name]).toBeDefined();
 		}
-		expect(Object.keys(schemas)).toHaveLength(144);
+		expect(Object.keys(schemas)).toHaveLength(143);
 	});
 });
 
@@ -3575,3 +3554,4 @@ describe('griptape endpoints scaffold', () => {
 		expect(src).not.toContain("from './example'");
 	});
 });
+

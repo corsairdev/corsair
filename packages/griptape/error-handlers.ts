@@ -8,7 +8,9 @@ export const errorHandlers: CorsairErrorHandler = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			// Word-bounded so substrings like "1429" or "4290" don't
+			// misclassify unrelated errors as rate limits.
+			return msg.includes('rate_limited') || /\b429\b/.test(msg);
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;

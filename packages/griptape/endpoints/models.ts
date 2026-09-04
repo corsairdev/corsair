@@ -139,7 +139,9 @@ export const createAuthConfig: GriptapeEndpoints['modelCreateAuthConfig'] =
 		await logEventFromContext(
 			ctx,
 			'griptape.model.createAuthConfig',
-			{ ...input },
+			// Never persist the auth-config body (CWE-532): it can carry
+			// provider credentials.
+			{},
 			'completed',
 		);
 
@@ -178,7 +180,9 @@ export const updateAuthConfig: GriptapeEndpoints['modelUpdateAuthConfig'] =
 		await logEventFromContext(
 			ctx,
 			'griptape.model.updateAuthConfig',
-			{ ...input },
+			// Never persist the auth-config body (CWE-532): it can carry
+			// provider credentials.
+			{ auth_config_id: input.auth_config_id },
 			'completed',
 		);
 

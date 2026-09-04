@@ -34,7 +34,8 @@ export const create: GriptapeEndpoints['secretCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'griptape.secret.create',
-		{ ...input },
+		// Never persist the secret body (CWE-532): it carries the secret value.
+		{},
 		'completed',
 	);
 
@@ -69,7 +70,8 @@ export const update: GriptapeEndpoints['secretUpdate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'griptape.secret.update',
-		{ ...input },
+		// Never persist the secret body (CWE-532): it carries the secret value.
+		{ secret_id: input.secret_id },
 		'completed',
 	);
 

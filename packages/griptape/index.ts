@@ -96,7 +96,6 @@ export type GriptapeEndpoints = {
 	assistantRunGet: GriptapeEndpoint<'assistantRunGet'>;
 	assistantRunCancel: GriptapeEndpoint<'assistantRunCancel'>;
 	assistantRunResult: GriptapeEndpoint<'assistantRunResult'>;
-	assistantRunRetry: GriptapeEndpoint<'assistantRunRetry'>;
 	assistantRunErrorDetails: GriptapeEndpoint<'assistantRunErrorDetails'>;
 	assistantRunLogs: GriptapeEndpoint<'assistantRunLogs'>;
 	assistantRunEvents: GriptapeEndpoint<'assistantRunEvents'>;
@@ -310,10 +309,6 @@ export const griptapeEndpointSchemas = {
 	'assistantRun.result': {
 		input: GriptapeEndpointInputSchemas.assistantRunResult,
 		output: GriptapeEndpointOutputSchemas.assistantRunResult,
-	},
-	'assistantRun.retry': {
-		input: GriptapeEndpointInputSchemas.assistantRunRetry,
-		output: GriptapeEndpointOutputSchemas.assistantRunRetry,
 	},
 	'assistantRun.errorDetails': {
 		input: GriptapeEndpointInputSchemas.assistantRunErrorDetails,
@@ -892,10 +887,6 @@ const griptapeEndpointMeta = {
 	'assistantRun.result': {
 		riskLevel: 'read',
 		description: 'Fetch the final result of an assistant run',
-	},
-	'assistantRun.retry': {
-		riskLevel: 'write',
-		description: 'Retry a failed assistant run (returns current run state)',
 	},
 	'assistantRun.errorDetails': {
 		riskLevel: 'read',

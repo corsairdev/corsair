@@ -31,8 +31,12 @@ describeLive('Griptape live API', () => {
 			{ method: 'GET', query: { page: 1, page_size: 1 } },
 		);
 		const first = listed.assistants[0];
+		// A valid account can have an empty first page — nothing to get.
+		if (!first) {
+			expect(listed.assistants).toEqual([]);
+			return;
+		}
 		expect(first).toBeDefined();
-		if (!first) return;
 
 		const response = await makeGriptapeRequest<AssistantGetResponse>(
 			`assistants/${first.assistant_id}`,

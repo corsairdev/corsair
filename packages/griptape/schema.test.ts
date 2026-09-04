@@ -143,7 +143,6 @@ const ROWS: Row[] = [
 	['assistantRunGet', { assistant_run_id: 'r' }, {}, 'object'],
 	['assistantRunCancel', { assistant_run_id: 'r' }, {}, 'object'],
 	['assistantRunResult', { assistant_run_id: 'r' }, {}, 'object'],
-	['assistantRunRetry', { assistant_run_id: 'r' }, {}, 'object'],
 	['assistantRunErrorDetails', { assistant_run_id: 'r' }, {}, 'object'],
 	[
 		'assistantRunLogs',
@@ -353,8 +352,8 @@ describe('griptape endpoint schema coverage', () => {
 	it('covers every registered endpoint exactly once', () => {
 		const keys = Object.keys(GriptapeEndpointInputSchemas);
 
-		expect(ROWS).toHaveLength(144);
-		expect(new Set(ROWS.map(([key]) => key)).size).toBe(144);
+		expect(ROWS).toHaveLength(143);
+		expect(new Set(ROWS.map(([key]) => key)).size).toBe(143);
 		expect([...ROWS.map(([key]) => key)].sort()).toEqual([...keys].sort());
 	});
 
@@ -402,3 +401,4 @@ describe('griptape endpoint schema coverage', () => {
 		});
 	}
 });
+
