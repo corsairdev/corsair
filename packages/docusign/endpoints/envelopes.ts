@@ -71,7 +71,7 @@ export const createRecipientViewUrl = async (
 	const {
 		envelopeId,
 		authenticationMethod = 'none',
-		recipientId = '1',
+		recipientId,
 		...rest
 	} = input;
 

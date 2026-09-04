@@ -101,6 +101,7 @@ describe('DocuSign Plugin Conformance & Tests', () => {
 				userName: 'Jane Doe',
 				email: 'jane@example.com',
 				returnUrl: 'https://example.com/callback',
+				recipientId: '1',
 			});
 			expect(res).toBeDefined();
 		});
