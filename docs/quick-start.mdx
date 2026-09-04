@@ -46,8 +46,8 @@ Create a project in the [Hub dashboard](https://hub.corsair.dev/dashboard) and c
 
 ```bash .env
 CORSAIR_KEK=your-generated-kek
-CORSAIR_DEV_API_KEY=ck_dev_...
-CORSAIR_DEV_SIGNING_SECRET=...
+CORSAIR_API_KEY=ck_dev_...
+CORSAIR_SIGNING_SECRET=...
 ```
 
 <Warning>
@@ -60,7 +60,7 @@ Keep your KEK safe. Lose it and you lose access to every stored credential. Trea
 
 ## Create the database
 
-Corsair stores data in five tables. SQLite is the fastest way to start:
+Corsair stores data in six tables. SQLite is the fastest way to start:
 
 <CodeGroup>
 ```bash npm
@@ -136,6 +136,13 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     expires_at TEXT NOT NULL,
     error TEXT
 );
+
+CREATE TABLE IF NOT EXISTS corsair_connects (
+    tenant_id TEXT PRIMARY KEY,
+    plugin TEXT NOT NULL,
+    connect_url TEXT NOT NULL,
+    requested_at TEXT NOT NULL
+);
 ```
 
 </Accordion>
@@ -182,8 +189,8 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
     multiTenancy: true, // gives every user their own credentials; enables corsair.withTenant(id)
     hub: {
-        projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-        signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+        projectApiKey: process.env.CORSAIR_API_KEY!,
+        signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
     },
 });
 ```
@@ -254,7 +261,7 @@ Load your app so the mounted route gets its first hit. That request registers yo
     Building a product? Flip one flag and every user gets their own data and credentials.
   </Card>
   <Card title="Database options" href="/concepts/database">
-    Postgres, Drizzle, Prisma, and the five tables Corsair uses.
+    Postgres, Drizzle, Prisma, and the six tables Corsair uses.
   </Card>
   <Card title="Provisioning" href="/concepts/provisioning">
     Seed credentials and provision tenants from the `corsair` CLI or `setupCorsair`.

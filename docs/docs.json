@@ -1033,7 +1033,7 @@
                 ]
               },
               {
-                "group": "Github",
+                "group": "GitHub",
                 "pages": [
                   "plugins/github/overview",
                   "plugins/github/get-credentials",
@@ -1078,7 +1078,7 @@
                 ]
               },
               {
-                "group": "Google calendar",
+                "group": "Google Calendar",
                 "pages": [
                   "plugins/googlecalendar/overview",
                   "plugins/googlecalendar/get-credentials",
@@ -1198,7 +1198,7 @@
                 ]
               },
               {
-                "group": "Hubspot",
+                "group": "HubSpot",
                 "pages": [
                   "plugins/hubspot/overview",
                   "plugins/hubspot/get-credentials",
@@ -1478,7 +1478,7 @@
                 ]
               },
               {
-                "group": "Posthog",
+                "group": "PostHog",
                 "pages": [
                   "plugins/posthog/overview",
                   "plugins/posthog/get-credentials",
