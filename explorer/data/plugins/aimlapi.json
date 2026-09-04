@@ -1,0 +1,1919 @@
+{
+  "id": "aimlapi",
+  "displayName": "AIML API",
+  "description": "Unified API gateway for accessing many AI and machine learning models.",
+  "npmPackageName": "@corsair-dev/aimlapi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 29,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "aimlapi.api.assistants.create",
+      "shortPath": "assistants.create",
+      "description": "Create a new AIMLAPI assistant.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "toolResources",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topP",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.assistants.delete",
+      "shortPath": "assistants.delete",
+      "description": "Delete an assistant.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistantId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.assistants.get",
+      "shortPath": "assistants.get",
+      "description": "Retrieve an assistant by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistantId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.assistants.list",
+      "shortPath": "assistants.list",
+      "description": "List configured assistants.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.assistants.update",
+      "shortPath": "assistants.update",
+      "description": "Update an assistant definition.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistantId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "toolResources",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topP",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.batches.list",
+      "shortPath": "batches.list",
+      "description": "List or retrieve batch processing status and results.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.billing.getBalance",
+      "shortPath": "billing.getBalance",
+      "description": "Retrieve account billing balance.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "current_balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.chat.createCompletion",
+      "shortPath": "chat.createCompletion",
+      "description": "Generate a chat completion using an AIMLAPI-compatible model.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: string, content: string }[]"
+          },
+          {
+            "key": "maxTokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topP",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequencyPenalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "presencePenalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "toolChoice",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "responseFormat",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index?: number, message: { role: string, content: string }, finish_reason?: string, finishReason?: string }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.luma.getGeneration",
+      "shortPath": "luma.getGeneration",
+      "description": "Retrieve a Luma video generation by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "video",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.messages.create",
+      "shortPath": "messages.create",
+      "description": "Create a message in a thread.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.messages.delete",
+      "shortPath": "messages.delete",
+      "description": "Delete a message.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Retrieve a message by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages in a thread.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "runId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.messages.update",
+      "shortPath": "messages.update",
+      "description": "Update a message.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.models.list",
+      "shortPath": "models.list",
+      "description": "List models currently available to the AIMLAPI account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, type?: string, name?: string, provider?: string, info?: { name?: string, developer?: string, description?: string, contextLength?: number, maxTokens?: number, url?: string, docsUrl?: string, docs_url?: string, releasedAt?: string }, features?: string[], endpoints?: string[], aliases?: string[], tags?: string[], metadata?: {} }[] | { object?: string, data: { id: string, type?: string, name?: string, provider?: string, info?: { name?: string, developer?: string, description?: string, contextLength?: number, maxTokens?: number, url?: string, docsUrl?: string, docs_url?: string, releasedAt?: string }, features?: string[], endpoints?: string[], aliases?: string[], tags?: string[], metadata?: {} }[], has_more?: boolean, first_id?: string, last_id?: string }"
+      }
+    },
+    {
+      "path": "aimlapi.api.models.listWithDetails",
+      "shortPath": "models.listWithDetails",
+      "description": "List models with pagination metadata and expanded details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, type?: string, name?: string, provider?: string, info?: { name?: string, developer?: string, description?: string, contextLength?: number, maxTokens?: number, url?: string, docsUrl?: string, docs_url?: string, releasedAt?: string }, features?: string[], endpoints?: string[], aliases?: string[], tags?: string[], metadata?: {} }[] | { object?: string, data: { id: string, type?: string, name?: string, provider?: string, info?: { name?: string, developer?: string, description?: string, contextLength?: number, maxTokens?: number, url?: string, docsUrl?: string, docs_url?: string, releasedAt?: string }, features?: string[], endpoints?: string[], aliases?: string[], tags?: string[], metadata?: {} }[], has_more?: boolean, first_id?: string, last_id?: string }"
+      }
+    },
+    {
+      "path": "aimlapi.api.responses.get",
+      "shortPath": "responses.get",
+      "description": "Retrieve a response by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "startingAfter",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includeObfuscation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.runs.cancel",
+      "shortPath": "runs.cancel",
+      "description": "Cancel an in-progress run.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.runs.create",
+      "shortPath": "runs.create",
+      "description": "Create a run for a thread and assistant.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assistantId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "additionalInstructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.runs.get",
+      "shortPath": "runs.get",
+      "description": "Retrieve a run by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.runs.list",
+      "shortPath": "runs.list",
+      "description": "List runs for a thread.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.runs.submitToolOutputs",
+      "shortPath": "runs.submitToolOutputs",
+      "description": "Submit tool outputs for a run.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "toolOutputs",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.runs.update",
+      "shortPath": "runs.update",
+      "description": "Update a run.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.runSteps.get",
+      "shortPath": "runSteps.get",
+      "description": "Retrieve a single run step.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.runSteps.list",
+      "shortPath": "runSteps.list",
+      "description": "List run steps for a run.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.threads.create",
+      "shortPath": "threads.create",
+      "description": "Create an AIMLAPI thread.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": true,
+            "type": "{ role: string, content: string }[]"
+          },
+          {
+            "key": "toolResources",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.threads.delete",
+      "shortPath": "threads.delete",
+      "description": "Delete a thread.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.threads.get",
+      "shortPath": "threads.get",
+      "description": "Retrieve a thread by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aimlapi.api.threads.update",
+      "shortPath": "threads.update",
+      "description": "Update thread metadata or resources.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "toolResources",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "aimlapi.db.assistants.search",
+      "entityName": "assistants",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "aimlapi.db.batches.search",
+      "entityName": "batches",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "aimlapi.db.models.search",
+      "entityName": "models",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provider",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "aimlapi.db.threads.search",
+      "entityName": "threads",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

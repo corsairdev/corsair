@@ -1,0 +1,1580 @@
+{
+  "id": "instagram",
+  "displayName": "Instagram",
+  "description": "Social media platform for photos, reels, stories, and business content publishing via Meta APIs.",
+  "npmPackageName": "@corsair-dev/instagram",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 23,
+    "webhooks": 3,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "instagram.api.carousel.post",
+      "shortPath": "carousel.post",
+      "description": "create a carousel container for publishing on instagram.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID (IG User ID) of the Instagram professional account that will publish the carousel post."
+          },
+          {
+            "key": "children",
+            "optional": false,
+            "type": "string[]",
+            "description": "An array of media container IDs that will be included in the carousel. A carousel must contain at least two media items."
+          },
+          {
+            "key": "media_type",
+            "optional": false,
+            "type": "string",
+            "description": "The type of media container to create. For carousel posts, this is typically set to CAROUSEL."
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string",
+            "description": "Optional caption text that will be displayed with the carousel post."
+          },
+          {
+            "key": "share_to_feed",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the carousel post should be shared to the Instagram profile feed."
+          },
+          {
+            "key": "collaborators",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional list of Instagram User IDs to invite as collaborators on the carousel post."
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "string",
+            "description": "Optional Facebook Location ID to associate a location with the carousel post."
+          },
+          {
+            "key": "product_tags",
+            "optional": true,
+            "type": "{ product_id: string }[]",
+            "description": "Optional list of Instagram Shopping products to tag in the carousel."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The media container ID that can be used to check processing status or publish the media."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.comments.get",
+      "shortPath": "comments.get",
+      "description": "get details about a specific comment on an instagram media object.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram Comment ID of the comment whose details should be retrieved."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Optional search query or filter used when retrieving comment details."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The unique Instagram Comment ID."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The text content of the comment."
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean",
+            "description": "Indicates whether the comment is hidden from public view."
+          },
+          {
+            "key": "like_count",
+            "optional": true,
+            "type": "number",
+            "description": "The total number of likes received by the comment."
+          },
+          {
+            "key": "legacy_instagram_comment_id",
+            "optional": true,
+            "type": "string",
+            "description": "The legacy Instagram comment identifier, if available."
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string",
+            "description": "The ISO 8601 timestamp indicating when the comment was created."
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the parent comment if this comment is a reply."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ id: string, username: string }",
+            "description": "Information about the user who created the comment."
+          },
+          {
+            "key": "media",
+            "optional": true,
+            "type": "{ id: string, media_product_type?: string }",
+            "description": "Information about the media on which the comment was posted."
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the Instagram user associated with the comment."
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "The Instagram username of the comment author."
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{ id: string, text?: string, timestamp?: string }[]",
+            "description": "The list of replies associated with this comment."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "list comments on an instagram media object.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram Media ID of the post, Reel, video, or carousel whose comments should be retrieved."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Optional search query used to filter comments by text, username, or other supported criteria."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, text?: string, timestamp?: string, username?: string }[]",
+            "description": "The list of comments associated with the requested Instagram media."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.comments.remove",
+      "shortPath": "comments.remove",
+      "description": "delete a comment on an instagram media object.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram Comment ID of the comment that should be permanently deleted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates whether the comment update operation completed successfully."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.comments.reply",
+      "shortPath": "comments.reply",
+      "description": "reply to a comment on an instagram media object.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram Comment ID of the comment that should receive a reply."
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "The text content of the reply to post in response to the specified comment."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The unique ID of the newly created reply comment."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.comments.send",
+      "shortPath": "comments.send",
+      "description": "send a comment on an instagram media object.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram Media ID of the post, Reel, video, Story, or carousel on which the comment will be created."
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "The text content of the comment to post on the specified Instagram media."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The unique ID of the newly created Instagram comment."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.comments.update",
+      "shortPath": "comments.update",
+      "description": "update a comment on an instagram media object.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram Comment ID of the comment to update."
+          },
+          {
+            "key": "hide",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the comment should be hidden. Set to true to hide the comment or false to unhide it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates whether the comment update operation completed successfully."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.conversations.get",
+      "shortPath": "conversations.get",
+      "description": "get messages in a conversation on instagram messaging.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram conversation or message thread ID whose messages should be retrieved."
+          },
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Facebook Page ID connected to the Instagram professional account that owns the conversation."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Optional search query used to filter messages within the conversation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, message?: string, created_time?: string, from?: { id?: string, username?: string }, attachments?: { data?: { id?: string, mime_type?: string, name?: string, image_data?: {}, video_data?: {}, file_url?: string }[] } }[]",
+            "description": "The list of messages contained within the specified conversation."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "list conversations on instagram messaging.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Facebook Page ID connected to the Instagram professional account whose conversations should be retrieved."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Optional search query used to filter conversations by participant, message content, or other supported criteria."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }[]",
+            "description": "The list of Instagram conversations associated with the connected account."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.image.post",
+      "shortPath": "image.post",
+      "description": "create an image container for publishing on instagram.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID (IG User ID) of the Instagram professional account that will publish the image."
+          },
+          {
+            "key": "image_url",
+            "optional": false,
+            "type": "string",
+            "description": "A publicly accessible URL of the image to be uploaded to Instagram."
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string",
+            "description": "Optional caption text that will be displayed with the Instagram post."
+          },
+          {
+            "key": "alt_text",
+            "optional": true,
+            "type": "string",
+            "description": "Optional accessibility description of the image for screen readers."
+          },
+          {
+            "key": "is_carousel_item",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set to true if this image will be added as an item in a carousel post rather than published as a standalone post."
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "string",
+            "description": "Optional Facebook Location ID to associate a location with the Instagram post."
+          },
+          {
+            "key": "user_tags",
+            "optional": true,
+            "type": "{ username: string, x: number, y: number }[]",
+            "description": "Optional list of Instagram users to tag in the image along with their positions."
+          },
+          {
+            "key": "product_tags",
+            "optional": true,
+            "type": "{ product_id: string, x: number, y: number }[]",
+            "description": "Optional list of products to tag in the image for Instagram Shopping."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The media container ID that can be used to check processing status or publish the media."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.image.story",
+      "shortPath": "image.story",
+      "description": "create an image story container for publishing on instagram.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID (IG User ID) of the Instagram professional account that will publish the Story."
+          },
+          {
+            "key": "image_url",
+            "optional": false,
+            "type": "string",
+            "description": "A publicly accessible URL of the image to be uploaded as an Instagram Story."
+          },
+          {
+            "key": "user_tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional list of Instagram usernames or user IDs to mention or tag in the Story."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The media container ID that can be used to check processing status or publish the media."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.media.get",
+      "shortPath": "media.get",
+      "description": "get details about a specific media object.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram Media ID of the post, reel, story, carousel, or video to retrieve."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Optional search query or filter used when retrieving media-related information."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The unique Instagram Media ID."
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string",
+            "description": "The caption text associated with the media."
+          },
+          {
+            "key": "media_type",
+            "optional": false,
+            "type": "IMAGE | VIDEO | CAROUSEL_ALBUM",
+            "description": "The type of Instagram media, such as IMAGE, VIDEO, REELS, STORY, or CAROUSEL_ALBUM."
+          },
+          {
+            "key": "media_url",
+            "optional": true,
+            "type": "string",
+            "description": "The URL of the media asset. May be null or unavailable for certain media types."
+          },
+          {
+            "key": "thumbnail_url",
+            "optional": true,
+            "type": "string",
+            "description": "The URL of the media thumbnail image, typically available for videos and reels."
+          },
+          {
+            "key": "permalink",
+            "optional": false,
+            "type": "string",
+            "description": "The permanent public URL to view the media on Instagram."
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string",
+            "description": "The ISO 8601 timestamp indicating when the media was created."
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram username that published the media."
+          },
+          {
+            "key": "like_count",
+            "optional": false,
+            "type": "number",
+            "description": "The total number of likes received by the media."
+          },
+          {
+            "key": "comments_count",
+            "optional": false,
+            "type": "number",
+            "description": "The total number of comments on the media."
+          },
+          {
+            "key": "is_comment_enabled",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates whether commenting is enabled for the media."
+          },
+          {
+            "key": "children",
+            "optional": true,
+            "type": "{ data: { id: string, media_type: IMAGE | VIDEO, media_url: string }[] }",
+            "description": "Carousel child media items. Present only for carousel posts."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date",
+            "description": "The date and time when this record was created in the local system."
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date",
+            "description": "The date and time when this record was last updated in the local system."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.media.insights",
+      "shortPath": "media.insights",
+      "description": "get insights for a specific media object.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram Media ID of the post, Reel, Story, video, or carousel whose insights should be retrieved."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "IMAGE | VIDEO | REELS | STORY | CAROUSEL_ALBUM",
+            "description": "The type of Instagram media for which insights are being requested."
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "string",
+            "description": "Optional insight metric to retrieve, such as impressions, reach, engagement, saved, likes, comments, shares, plays, or other supported Instagram insight metrics."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]",
+            "description": "A collection of insight metrics and values returned for the requested Instagram media."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.media.list",
+      "shortPath": "media.list",
+      "description": "list media objects on the instagram account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID (IG User ID) of the Instagram professional account or createro account whose media should be retrieved."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Optional search keyword or filter to narrow the media results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, caption?: string, media_type: IMAGE | VIDEO | CAROUSEL_ALBUM, media_url?: string | null, thumbnail_url?: string | null, permalink: string, timestamp: string, username: string, like_count: number, comments_count: number, is_comment_enabled: boolean, children?: { data: { id: string, media_type: IMAGE | VIDEO, media_url: string }[] }, createdAt?: Date | null, updatedAt?: Date | null }[]",
+            "description": "The list of Instagram media objects returned by the request."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string }",
+            "description": "Pagination information used to navigate through additional pages of media results."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.media.status",
+      "shortPath": "media.status",
+      "description": "get the status of a media container.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "container_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram media container ID whose processing status should be retrieved."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram media container ID whose status was requested."
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "IN_PROGRESS | FINISHED | ERROR | EXPIRED",
+            "description": "The current processing status of the media container. IN_PROGRESS indicates processing is ongoing, FINISHED indicates the media is ready to publish, ERROR indicates processing failed, and EXPIRED indicates the container is no longer valid."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "get details about a specific message on instagram messaging.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Facebook Page ID connected to the Instagram professional account that owns the message."
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "The unique ID of the Instagram Direct Message to retrieve."
+          },
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "A search query or filter string used when retrieving message details."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The unique identifier of the message."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "The text content of the message."
+          },
+          {
+            "key": "created_time",
+            "optional": true,
+            "type": "string",
+            "description": "The timestamp indicating when the message was created."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ id?: string, username?: string }",
+            "description": "Information about the user who sent the message."
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ data?: { id?: string, mime_type?: string, name?: string, image_data?: {}, video_data?: {}, file_url?: string }[] }",
+            "description": "Attachment data associated with the message, such as images, videos, files, or other media."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "send a message in instagram messaging.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Facebook Page ID connected to the Instagram professional account that will send the message."
+          },
+          {
+            "key": "recipient",
+            "optional": false,
+            "type": "string",
+            "description": "The recipient Instagram-scoped user ID (IGSID) or Messenger user ID that will receive the message."
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ text?: string, attachment?: { type: image | video | audio | file | template, payload: {} }, attachments?: { type: image | video | audio | file | template, payload: {} }[], quick_replies?: { content_type: text, title: string, payload: string }[] }",
+            "description": "The message content, including text, attachments, and optional quick replies."
+          },
+          {
+            "key": "messaging_type",
+            "optional": true,
+            "type": "RESPONSE | UPDATE | MESSAGE_TAG",
+            "description": "The type of message being sent. Determines how Meta categorizes and delivers the message."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Required for certain MESSAGE_TAG messages. Specifies the approved message tag used for the message."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipient_id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the user who received the message."
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "The unique identifier of the message that was sent."
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number",
+            "description": "The Unix timestamp indicating when the message was sent."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.profile.get",
+      "shortPath": "profile.get",
+      "description": "read the user instagram profile.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID (IG User ID) of the Instagram account."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Optional search query or keyword used to filter related Instagram user data."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ig_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "biography",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile_picture_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "followers_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "follows_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "media_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.profile.insights",
+      "shortPath": "profile.insights",
+      "description": "get insights for the instagram business account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID (IG User ID) of the Instagram professional account whose insights should be retrieved."
+          },
+          {
+            "key": "metric",
+            "optional": false,
+            "type": "string",
+            "description": "One or more Instagram insight metrics to retrieve, such as impressions, reach, profile_views, follower_count, accounts_engaged, or other supported account-level metrics."
+          },
+          {
+            "key": "period",
+            "optional": false,
+            "type": "string",
+            "description": "The aggregation period for the requested metrics, such as day, week, days_28, lifetime, or other supported periods."
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "string",
+            "description": "Required for demographics-related metrics. Specifies how far back Instagram should look when calculating the requested data."
+          },
+          {
+            "key": "metric_type",
+            "optional": true,
+            "type": "string",
+            "description": "Optional metric category or calculation type used when requesting specific insight metrics."
+          },
+          {
+            "key": "breakdown",
+            "optional": true,
+            "type": "string",
+            "description": "Optional dimension by which to break down the results, such as age, gender, country, city, or other supported demographic categories."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "Optional start date or timestamp for the insights query. Results will include data from this point onward."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string",
+            "description": "Optional end date or timestamp for the insights query. Results will include data up to this point."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]",
+            "description": "A collection of insight metrics and values returned for the requested Instagram media."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.publish.publish_media",
+      "shortPath": "publish.publish_media",
+      "description": "publish media on instagram.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID (IG User ID) of the Instagram professional account that will publish the media."
+          },
+          {
+            "key": "creation_id",
+            "optional": false,
+            "type": "string",
+            "description": "The media container ID returned by a previous media container creation request. This container will be published to Instagram."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The media container ID that can be used to check processing status or publish the media."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.reel.post",
+      "shortPath": "reel.post",
+      "description": "create a reel container for publishing on instagram.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID (IG User ID) of the Instagram professional account that will publish the Reel."
+          },
+          {
+            "key": "video_url",
+            "optional": false,
+            "type": "string",
+            "description": "A publicly accessible URL of the video file to be uploaded as an Instagram Reel."
+          },
+          {
+            "key": "media_type",
+            "optional": false,
+            "type": "string",
+            "description": "The type of media container to create. For Reels, this is typically set to REELS."
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string",
+            "description": "Optional caption text that will accompany the Reel when published."
+          },
+          {
+            "key": "share_to_feed",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the Reel should also be shared to the Instagram profile feed in addition to the Reels tab."
+          },
+          {
+            "key": "collaborators",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional list of Instagram User IDs to invite as collaborators on the Reel."
+          },
+          {
+            "key": "cover_url",
+            "optional": true,
+            "type": "string",
+            "description": "Optional publicly accessible URL of a custom cover image to use as the Reel thumbnail."
+          },
+          {
+            "key": "audio_name",
+            "optional": true,
+            "type": "string",
+            "description": "Optional name of the audio track associated with the Reel."
+          },
+          {
+            "key": "thumb_offset",
+            "optional": true,
+            "type": "number",
+            "description": "Optional timestamp offset in milliseconds used to generate the Reel thumbnail from the video."
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "string",
+            "description": "Optional Facebook Location ID to associate a location with the Reel."
+          },
+          {
+            "key": "user_tags",
+            "optional": true,
+            "type": "{ username: string, x: number, y: number }[]",
+            "description": "Optional list of Instagram users to tag in the Reel."
+          },
+          {
+            "key": "trial_params",
+            "optional": true,
+            "type": "any",
+            "description": "Optional experimental or trial parameters supported by the Instagram API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The media container ID that can be used to check processing status or publish the media."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.video.container",
+      "shortPath": "video.container",
+      "description": "create a video carousel container for publishing on instagram.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID (IG User ID) of the Instagram professional account that will publish the video."
+          },
+          {
+            "key": "video_url",
+            "optional": false,
+            "type": "string",
+            "description": "A publicly accessible URL of the video to be uploaded to Instagram."
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string",
+            "description": "Optional caption text that will be displayed with the video post."
+          },
+          {
+            "key": "alt_text",
+            "optional": true,
+            "type": "string",
+            "description": "Optional accessibility description of the video for screen readers."
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "string",
+            "description": "Optional Facebook Location ID to associate a location with the video post."
+          },
+          {
+            "key": "user_tags",
+            "optional": true,
+            "type": "{ username: string, x: number, y: number }[]",
+            "description": "Optional list of Instagram users to tag in the video along with their positions."
+          },
+          {
+            "key": "product_tags",
+            "optional": true,
+            "type": "{ product_id: string, x: number, y: number }[]",
+            "description": "Optional list of Instagram Shopping products to tag in the video."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The media container ID that can be used to check processing status or publish the media."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.video.story",
+      "shortPath": "video.story",
+      "description": "create a video story container for publishing on instagram.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID (IG User ID) of the Instagram professional account that will publish the Story."
+          },
+          {
+            "key": "video_url",
+            "optional": false,
+            "type": "string",
+            "description": "A publicly accessible URL of the video to be uploaded as an Instagram Story."
+          },
+          {
+            "key": "user_tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional list of Instagram usernames or user IDs to mention or tag in the Story."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The media container ID that can be used to check processing status or publish the media."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "instagram.webhooks.comments",
+      "shortPath": "comments",
+      "description": "Represents an Instagram comment webhook event containing information about a comment, including the commenter, media, comment text, and related metadata.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "instagram"
+          },
+          {
+            "key": "entry",
+            "optional": false,
+            "type": "{ id: string, time: number, changes: { field: comments, value: { from: { id: string, username: string }, comment_id?: string, parent_id?: string, text?: string, media: { id: string, ad_id?: string, ad_title?: string, original_media_id?: string, media_product_type?: string } } }[] }[]"
+          }
+        ]
+      },
+      "responseType": "{ id: string, text?: string, timestamp?: string, username?: string, type: comments }",
+      "usageExample": "instagram({\n    webhookHooks: {\n        comments: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "instagram.webhooks.messageReceived",
+      "shortPath": "messageReceived",
+      "description": "A Instagram message was received, sent or seen",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "instagram"
+          },
+          {
+            "key": "entry",
+            "optional": false,
+            "type": "{ id: string, time: number, messaging: { sender: { id: string }, recipient: { id: string }, timestamp: number, message?: { mid?: string, text?: string, is_echo?: boolean }, reaction?: { mid: string, action: string, reaction: string, emoji: string } }[] }[]"
+          }
+        ]
+      },
+      "responseType": "{ type: messageReceived, accountId?: string, senderId?: string, recipientId?: string, messageId: string, text?: string, timestamp?: number, isEcho: boolean }",
+      "usageExample": "instagram({\n    webhookHooks: {\n        messageReceived: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "instagram.webhooks.url_verification",
+      "shortPath": "url_verification",
+      "description": "Represents a webhook URL verification challenge from Meta. Used to verify that the webhook endpoint is owned and controlled by the application.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "subscribe"
+          },
+          {
+            "key": "verify_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "challenge",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ type: url_verification, challenge: string }",
+      "usageExample": "instagram({\n    webhookHooks: {\n        url_verification: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "instagram.db.comments.search",
+      "entityName": "comments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timestamp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "instagram.db.conversations.search",
+      "entityName": "conversations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "conversationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "instagram.db.media.search",
+      "entityName": "media",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "media_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "caption",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "instagram.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "messageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "conversationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "senderId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recipient",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "senderName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "instagram.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ig_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "biography",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profile_picture_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "followers_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "follows_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "media_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

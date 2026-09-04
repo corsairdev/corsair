@@ -1,0 +1,2179 @@
+{
+  "id": "linear",
+  "displayName": "Linear",
+  "description": "Issue tracking tool for software teams managing projects, cycles, and product roadmaps.",
+  "npmPackageName": "@corsair-dev/linear",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 18,
+    "webhooks": 9,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "organization_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "organization_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "linear.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Post a comment on an issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issueId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "issue",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "editedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archivedAt",
+            "optional": true,
+            "type": "Date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Delete a comment",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "linear.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List comments on an issue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issueId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nodes",
+            "optional": false,
+            "type": "{ id: string, body: string, issue: { id: string, title: string, description?: string | null, priority: 0 | 1 | 2 | 3 | 4, estimate?: number | null, sortOrder: number, number: number, identifier: string, url: string, state: { id: string, name: string, type: backlog | unstarted | started | completed | canceled, color: string, position: number, description?: string | null, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, createdAt?: Date | null, updatedAt?: Date | null }, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, assignee?: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null } | null, creator: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }, project?: { id: string, name: string, description?: string | null, icon?: string | null, color?: string | null, state: backlog | planned | started | paused | completed | canceled, priority: number, sortOrder: number, startDate?: Date | null, targetDate?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, lead?: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null } | null, teams: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }[], createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, cycle?: { id: string, number: number, name?: string | null, description?: string | null, startsAt?: Date | null, endsAt?: Date | null, completedAt?: Date | null, team: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, labels: { id: string, name: string, description?: string | null, color: string, team?: { id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null } | null, createdAt?: Date | null, updatedAt?: Date | null, parent: lazy }[], subscribers: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }[], dueDate?: Date | null, startedAt?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, triagedAt?: Date | null, snoozedUntilAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: lazy }, user: { id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }, editedAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: lazy }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": false,
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.comments.update",
+      "shortPath": "comments.update",
+      "description": "Update a comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "{ body?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "issue",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "editedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archivedAt",
+            "optional": true,
+            "type": "Date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.issues.create",
+      "shortPath": "issues.create",
+      "description": "Create a new issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "0 | 1 | 2 | 3 | 4"
+          },
+          {
+            "key": "estimate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stateId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cycleId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labelIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subscriberIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "0 | 1 | 2 | 3 | 4"
+          },
+          {
+            "key": "estimate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "{ id: string, name: string, type: backlog | unstarted | started | completed | canceled, color?: string, position?: number }"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id: string, name: string, key: string }"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.issues.delete",
+      "shortPath": "issues.delete",
+      "description": "Permanently delete an issue [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "linear.api.issues.get",
+      "shortPath": "issues.get",
+      "description": "Get a specific issue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": false,
+            "type": "0 | 1 | 2 | 3 | 4"
+          },
+          {
+            "key": "estimate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortOrder",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "{ id: string, name: string, type: backlog | unstarted | started | completed | canceled, color?: string, position?: number }"
+          },
+          {
+            "key": "team",
+            "optional": false,
+            "type": "{ id: string, name: string, key: string }"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+          },
+          {
+            "key": "creator",
+            "optional": false,
+            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id: string, name: string, state: backlog | planned | started | paused | completed | canceled }"
+          },
+          {
+            "key": "cycle",
+            "optional": true,
+            "type": "{ id: string, number: number, name?: string | null }"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ nodes: { id: string, name: string, color: string }[] }"
+          },
+          {
+            "key": "subscribers",
+            "optional": true,
+            "type": "{ nodes: { id: string, name: string, displayName: string, email?: string | null }[] }"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "canceledAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "triagedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "snoozedUntilAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archivedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "lazy"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.issues.list",
+      "shortPath": "issues.list",
+      "description": "List issues in a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nodes",
+            "optional": false,
+            "type": "{ id: string, title: string, description?: string | null, priority: 0 | 1 | 2 | 3 | 4, estimate?: number | null, sortOrder: number, number: number, identifier: string, url: string, state: { id: string, name: string, type: backlog | unstarted | started | completed | canceled, color?: string, position?: number }, team: { id: string, name: string, key: string }, assignee?: { id: string, name: string, displayName: string, email?: string | null } | null, creator: { id: string, name: string, displayName: string, email?: string | null }, project?: { id: string, name: string, state: backlog | planned | started | paused | completed | canceled } | null, cycle?: { id: string, number: number, name?: string | null } | null, labels?: { nodes: { id: string, name: string, color: string }[] } | null, subscribers?: { nodes: { id: string, name: string, displayName: string, email?: string | null }[] } | null, dueDate?: Date | null, startedAt?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, triagedAt?: Date | null, snoozedUntilAt?: Date | null, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null, parent: lazy }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": false,
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.issues.update",
+      "shortPath": "issues.update",
+      "description": "Update an existing issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "{ title?: string, description?: string, assigneeId?: string, priority?: 0 | 1 | 2 | 3 | 4, estimate?: number, stateId?: string, projectId?: string, cycleId?: string, parentId?: string, labelIds?: string[], subscriberIds?: string[], dueDate?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "0 | 1 | 2 | 3 | 4"
+          },
+          {
+            "key": "estimate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "{ id: string, name: string, type: backlog | unstarted | started | completed | canceled, color?: string, position?: number }"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id: string, name: string, key: string }"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "teamIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "leadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "planned | started | paused | completed | canceled"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "backlog | planned | started | paused | completed | canceled"
+          },
+          {
+            "key": "priority",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "targetDate",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "canceledAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "lead",
+            "optional": true,
+            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+          },
+          {
+            "key": "teams",
+            "optional": false,
+            "type": "{ nodes: { id: string, name: string, key: string }[] }"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archivedAt",
+            "optional": true,
+            "type": "Date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Permanently delete a project [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "linear.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a specific project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "backlog | planned | started | paused | completed | canceled"
+          },
+          {
+            "key": "priority",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sortOrder",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "targetDate",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "canceledAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "lead",
+            "optional": true,
+            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+          },
+          {
+            "key": "teams",
+            "optional": false,
+            "type": "{ nodes: { id: string, name: string, key: string }[] }"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects in a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nodes",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, icon?: string | null, color?: string | null, state: backlog | planned | started | paused | completed | canceled, priority: number, sortOrder: number, startDate?: Date | null, targetDate?: Date | null, completedAt?: Date | null, canceledAt?: Date | null, lead?: { id: string, name: string, displayName: string, email?: string | null } | null, teams: { nodes: { id: string, name: string, key: string }[] }, createdAt?: Date | null, updatedAt?: Date | null }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": false,
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update an existing project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "{ name?: string, description?: string, icon?: string, color?: string, teamIds?: string[], leadId?: string, state?: planned | started | paused | completed | canceled, priority?: number, startDate?: string, targetDate?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "backlog | planned | started | paused | completed | canceled"
+          },
+          {
+            "key": "priority",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "targetDate",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "canceledAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "lead",
+            "optional": true,
+            "type": "{ id: string, name: string, displayName: string, email?: string | null }"
+          },
+          {
+            "key": "teams",
+            "optional": true,
+            "type": "{ nodes: { id: string, name: string, key: string }[] }"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archivedAt",
+            "optional": true,
+            "type": "Date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Get a specific team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "archivedAt",
+            "optional": true,
+            "type": "Date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nodes",
+            "optional": false,
+            "type": "{ id: string, name: string, key: string, description?: string | null, icon?: string | null, color?: string | null, private: boolean, createdAt?: Date | null, updatedAt?: Date | null, archivedAt?: Date | null }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": false,
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a specific user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "avatarUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "admin",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linear.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nodes",
+            "optional": false,
+            "type": "{ id: string, name: string, email?: string | null, displayName: string, avatarUrl?: string | null, active: boolean, admin: boolean, createdAt?: Date | null, updatedAt?: Date | null }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": false,
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "linear.webhooks.comments.create",
+      "shortPath": "comments.create",
+      "description": "A comment was added to an issue",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "create"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Comment"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, body: string, editedAt?: string, createdAt: string, updatedAt: string, issueId: string, userId: string }"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ action: create, type: Comment, data: { id: string, body: string, editedAt?: string, createdAt: string, updatedAt: string, issueId: string, userId: string }, url: string, createdAt: string, organizationId: string, webhookId: string }",
+      "usageExample": "linear({\n    webhookHooks: {\n        comments: {\n            create: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "linear.webhooks.comments.remove",
+      "shortPath": "comments.remove",
+      "description": "A comment was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "remove"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Comment"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, body: string, editedAt?: string, createdAt: string, updatedAt: string, issueId: string, userId: string }"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ action: remove, type: Comment, data: { id: string, body: string, editedAt?: string, createdAt: string, updatedAt: string, issueId: string, userId: string }, url: string, createdAt: string, organizationId: string, webhookId: string }",
+      "usageExample": "linear({\n    webhookHooks: {\n        comments: {\n            remove: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "linear.webhooks.comments.update",
+      "shortPath": "comments.update",
+      "description": "A comment was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "update"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Comment"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, body: string, editedAt?: string, createdAt: string, updatedAt: string, issueId: string, userId: string }"
+          },
+          {
+            "key": "updatedFrom",
+            "optional": true,
+            "type": "{ id?: string, body?: string, editedAt?: string, createdAt?: string, updatedAt?: string, issueId?: string, userId?: string }"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ action: update, type: Comment, data: { id: string, body: string, editedAt?: string, createdAt: string, updatedAt: string, issueId: string, userId: string }, updatedFrom?: { id?: string, body?: string, editedAt?: string, createdAt?: string, updatedAt?: string, issueId?: string, userId?: string }, url: string, createdAt: string, organizationId: string, webhookId: string }",
+      "usageExample": "linear({\n    webhookHooks: {\n        comments: {\n            update: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "linear.webhooks.issues.create",
+      "shortPath": "issues.create",
+      "description": "A new issue was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "create"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Issue"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, identifier: string, title: string, description?: string, priority: 0 | 1 | 2 | 3 | 4, estimate?: number, sortOrder: number, startedAt?: string, completedAt?: string, canceledAt?: string, autoArchivedAt?: string, autoClosedAt?: string, dueDate?: string, trashed?: boolean, snoozedUntilAt?: string, previousIdentifiers: string[], createdAt: string, updatedAt: string, branchName: string, customerTicketCount: number, stateId: string, teamId: string, creatorId: string }"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ action: create, type: Issue, data: { id: string, identifier: string, title: string, description?: string, priority: 0 | 1 | 2 | 3 | 4, estimate?: number, sortOrder: number, startedAt?: string, completedAt?: string, canceledAt?: string, autoArchivedAt?: string, autoClosedAt?: string, dueDate?: string, trashed?: boolean, snoozedUntilAt?: string, previousIdentifiers: string[], createdAt: string, updatedAt: string, branchName: string, customerTicketCount: number, stateId: string, teamId: string, creatorId: string }, url: string, createdAt: string, organizationId: string, webhookId: string }",
+      "usageExample": "linear({\n    webhookHooks: {\n        issues: {\n            create: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "linear.webhooks.issues.remove",
+      "shortPath": "issues.remove",
+      "description": "An issue was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "remove"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Issue"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, identifier: string, title: string, description?: string, priority: 0 | 1 | 2 | 3 | 4, estimate?: number, sortOrder: number, startedAt?: string, completedAt?: string, canceledAt?: string, autoArchivedAt?: string, autoClosedAt?: string, dueDate?: string, trashed?: boolean, snoozedUntilAt?: string, previousIdentifiers: string[], createdAt: string, updatedAt: string, branchName: string, customerTicketCount: number, stateId: string, teamId: string, creatorId: string }"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ action: remove, type: Issue, data: { id: string, identifier: string, title: string, description?: string, priority: 0 | 1 | 2 | 3 | 4, estimate?: number, sortOrder: number, startedAt?: string, completedAt?: string, canceledAt?: string, autoArchivedAt?: string, autoClosedAt?: string, dueDate?: string, trashed?: boolean, snoozedUntilAt?: string, previousIdentifiers: string[], createdAt: string, updatedAt: string, branchName: string, customerTicketCount: number, stateId: string, teamId: string, creatorId: string }, url: string, createdAt: string, organizationId: string, webhookId: string }",
+      "usageExample": "linear({\n    webhookHooks: {\n        issues: {\n            remove: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "linear.webhooks.issues.update",
+      "shortPath": "issues.update",
+      "description": "An issue was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "update"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Issue"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, identifier: string, title: string, description?: string, priority: 0 | 1 | 2 | 3 | 4, estimate?: number, sortOrder: number, startedAt?: string, completedAt?: string, canceledAt?: string, autoArchivedAt?: string, autoClosedAt?: string, dueDate?: string, trashed?: boolean, snoozedUntilAt?: string, previousIdentifiers: string[], createdAt: string, updatedAt: string, branchName: string, customerTicketCount: number, stateId: string, teamId: string, creatorId: string }"
+          },
+          {
+            "key": "updatedFrom",
+            "optional": true,
+            "type": "{ id?: string, identifier?: string, title?: string, description?: string, priority?: 0 | 1 | 2 | 3 | 4, estimate?: number, sortOrder?: number, startedAt?: string, completedAt?: string, canceledAt?: string, autoArchivedAt?: string, autoClosedAt?: string, dueDate?: string, trashed?: boolean, snoozedUntilAt?: string, previousIdentifiers?: string[], createdAt?: string, updatedAt?: string, branchName?: string, customerTicketCount?: number, stateId?: string, teamId?: string, creatorId?: string }"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ action: update, type: Issue, data: { id: string, identifier: string, title: string, description?: string, priority: 0 | 1 | 2 | 3 | 4, estimate?: number, sortOrder: number, startedAt?: string, completedAt?: string, canceledAt?: string, autoArchivedAt?: string, autoClosedAt?: string, dueDate?: string, trashed?: boolean, snoozedUntilAt?: string, previousIdentifiers: string[], createdAt: string, updatedAt: string, branchName: string, customerTicketCount: number, stateId: string, teamId: string, creatorId: string }, updatedFrom?: { id?: string, identifier?: string, title?: string, description?: string, priority?: 0 | 1 | 2 | 3 | 4, estimate?: number, sortOrder?: number, startedAt?: string, completedAt?: string, canceledAt?: string, autoArchivedAt?: string, autoClosedAt?: string, dueDate?: string, trashed?: boolean, snoozedUntilAt?: string, previousIdentifiers?: string[], createdAt?: string, updatedAt?: string, branchName?: string, customerTicketCount?: number, stateId?: string, teamId?: string, creatorId?: string }, url: string, createdAt: string, organizationId: string, webhookId: string }",
+      "usageExample": "linear({\n    webhookHooks: {\n        issues: {\n            update: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "linear.webhooks.projects.create",
+      "shortPath": "projects.create",
+      "description": "A new project was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "create"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Project"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string, icon?: string, color?: string, priority: 0 | 1 | 2 | 3 | 4, sortOrder: number, state: planned | started | paused | completed | canceled, progress: number, url: string, startDate?: string, targetDate?: string, completedAt?: string, canceledAt?: string, startedAt?: string, completedScopeHistory: number[], inProgressScopeHistory: number[], scope: number, createdAt: string, updatedAt: string }"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ action: create, type: Project, data: { id: string, name: string, description?: string, icon?: string, color?: string, priority: 0 | 1 | 2 | 3 | 4, sortOrder: number, state: planned | started | paused | completed | canceled, progress: number, url: string, startDate?: string, targetDate?: string, completedAt?: string, canceledAt?: string, startedAt?: string, completedScopeHistory: number[], inProgressScopeHistory: number[], scope: number, createdAt: string, updatedAt: string }, url: string, createdAt: string, organizationId: string, webhookId: string }",
+      "usageExample": "linear({\n    webhookHooks: {\n        projects: {\n            create: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "linear.webhooks.projects.remove",
+      "shortPath": "projects.remove",
+      "description": "A project was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "remove"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Project"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string, icon?: string, color?: string, priority: 0 | 1 | 2 | 3 | 4, sortOrder: number, state: planned | started | paused | completed | canceled, progress: number, url: string, startDate?: string, targetDate?: string, completedAt?: string, canceledAt?: string, startedAt?: string, completedScopeHistory: number[], inProgressScopeHistory: number[], scope: number, createdAt: string, updatedAt: string }"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ action: remove, type: Project, data: { id: string, name: string, description?: string, icon?: string, color?: string, priority: 0 | 1 | 2 | 3 | 4, sortOrder: number, state: planned | started | paused | completed | canceled, progress: number, url: string, startDate?: string, targetDate?: string, completedAt?: string, canceledAt?: string, startedAt?: string, completedScopeHistory: number[], inProgressScopeHistory: number[], scope: number, createdAt: string, updatedAt: string }, url: string, createdAt: string, organizationId: string, webhookId: string }",
+      "usageExample": "linear({\n    webhookHooks: {\n        projects: {\n            remove: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "linear.webhooks.projects.update",
+      "shortPath": "projects.update",
+      "description": "A project was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "update"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Project"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string, icon?: string, color?: string, priority: 0 | 1 | 2 | 3 | 4, sortOrder: number, state: planned | started | paused | completed | canceled, progress: number, url: string, startDate?: string, targetDate?: string, completedAt?: string, canceledAt?: string, startedAt?: string, completedScopeHistory: number[], inProgressScopeHistory: number[], scope: number, createdAt: string, updatedAt: string }"
+          },
+          {
+            "key": "updatedFrom",
+            "optional": true,
+            "type": "{ id?: string, name?: string, description?: string, icon?: string, color?: string, priority?: 0 | 1 | 2 | 3 | 4, sortOrder?: number, state?: planned | started | paused | completed | canceled, progress?: number, url?: string, startDate?: string, targetDate?: string, completedAt?: string, canceledAt?: string, startedAt?: string, completedScopeHistory?: number[], inProgressScopeHistory?: number[], scope?: number, createdAt?: string, updatedAt?: string }"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ action: update, type: Project, data: { id: string, name: string, description?: string, icon?: string, color?: string, priority: 0 | 1 | 2 | 3 | 4, sortOrder: number, state: planned | started | paused | completed | canceled, progress: number, url: string, startDate?: string, targetDate?: string, completedAt?: string, canceledAt?: string, startedAt?: string, completedScopeHistory: number[], inProgressScopeHistory: number[], scope: number, createdAt: string, updatedAt: string }, updatedFrom?: { id?: string, name?: string, description?: string, icon?: string, color?: string, priority?: 0 | 1 | 2 | 3 | 4, sortOrder?: number, state?: planned | started | paused | completed | canceled, progress?: number, url?: string, startDate?: string, targetDate?: string, completedAt?: string, canceledAt?: string, startedAt?: string, completedScopeHistory?: number[], inProgressScopeHistory?: number[], scope?: number, createdAt?: string, updatedAt?: string }, url: string, createdAt: string, organizationId: string, webhookId: string }",
+      "usageExample": "linear({\n    webhookHooks: {\n        projects: {\n            update: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "linear.db.comments.search",
+      "entityName": "comments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "issueId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "editedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "archivedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "linear.db.issues.search",
+      "entityName": "issues",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "estimate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sortOrder",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "number",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "identifier",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "stateId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teamId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assigneeId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creatorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cycleId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dueDate",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "startedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "completedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "canceledAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "triagedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "snoozedUntilAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "archivedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "linear.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "icon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sortOrder",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "startDate",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "targetDate",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "completedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "canceledAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "leadId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "archivedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "linear.db.teams.search",
+      "entityName": "teams",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "icon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "archivedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "linear.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatarUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "admin",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

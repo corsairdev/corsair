@@ -323,7 +323,7 @@ const trelloEndpointMeta = {
 	'boards.update': { riskLevel: 'write', description: 'Update a board' },
 	'boards.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a board [DESTRUCTIVE]',
+		description: 'Delete a board',
 	},
 	'lists.get': { riskLevel: 'read', description: 'Get a list by ID' },
 	'lists.list': { riskLevel: 'read', description: 'List all lists on a board' },
@@ -342,7 +342,7 @@ const trelloEndpointMeta = {
 	'cards.update': { riskLevel: 'write', description: 'Update a card' },
 	'cards.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a card [DESTRUCTIVE]',
+		description: 'Delete a card',
 	},
 	'cards.move': {
 		riskLevel: 'write',
@@ -361,7 +361,7 @@ const trelloEndpointMeta = {
 	'labels.update': { riskLevel: 'write', description: 'Update a label' },
 	'labels.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a label [DESTRUCTIVE]',
+		description: 'Delete a label',
 	},
 	'checklists.get': { riskLevel: 'read', description: 'Get a checklist by ID' },
 	'checklists.create': {
@@ -370,7 +370,7 @@ const trelloEndpointMeta = {
 	},
 	'checklists.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a checklist [DESTRUCTIVE]',
+		description: 'Delete a checklist',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof trelloEndpointsNested>;
 

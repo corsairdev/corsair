@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "You.com Web Search plugin for Corsair"
+description: "AI search engine API for web answers, citations, and research-oriented query results."
 ---
 
-Use **You.com Web Search** through Corsair: one client, typed API calls, local DB sync.
+Use **You.com** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -45,8 +45,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```

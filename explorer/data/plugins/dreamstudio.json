@@ -1,0 +1,313 @@
+{
+  "id": "dreamstudio",
+  "displayName": "DreamStudio",
+  "description": "Stability AI image generation service for creating artwork from text prompts.",
+  "npmPackageName": "@corsair-dev/dreamstudio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "dreamstudio.api.engines.list",
+      "shortPath": "engines.list",
+      "description": "List Stability engines available to this API key. The v1 API returns the full list with no pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "engines",
+            "optional": false,
+            "type": "{ id: string, name: string, description: string, type: AUDIO | CLASSIFICATION | PICTURE | STORAGE | TEXT | VIDEO }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dreamstudio.api.generation.imageFromImage",
+      "shortPath": "generation.imageFromImage",
+      "description": "Generate a new image from an init image and text prompts via POST /v1/generation/{engine_id}/image-to-image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "engine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Engine id from GET /v1/engines/list"
+          },
+          {
+            "key": "init_image",
+            "optional": false,
+            "type": "string",
+            "description": "Init image as base64 or a data URL"
+          },
+          {
+            "key": "text_prompts",
+            "optional": false,
+            "type": "{ text: string, weight?: number }[]"
+          },
+          {
+            "key": "init_image_mode",
+            "optional": false,
+            "type": "IMAGE_STRENGTH | STEP_SCHEDULE"
+          },
+          {
+            "key": "image_strength",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "step_schedule_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "step_schedule_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cfg_scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "clip_guidance_preset",
+            "optional": true,
+            "type": "FAST_BLUE | FAST_GREEN | NONE | SIMPLE | SLOW | SLOWER | SLOWEST"
+          },
+          {
+            "key": "sampler",
+            "optional": true,
+            "type": "DDIM | DDPM | K_DPMPP_2M | K_DPMPP_2S_ANCESTRAL | K_DPM_2 | K_DPM_2_ANCESTRAL | K_EULER | K_EULER_ANCESTRAL | K_HEUN | K_LMS"
+          },
+          {
+            "key": "samples",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "style_preset",
+            "optional": true,
+            "type": "3d-model | analog-film | anime | cinematic | comic-book | digital-art | enhance | fantasy-art | isometric | line-art | low-poly | modeling-compound | neon-punk | origami | photographic | pixel-art | tile-texture"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "artifacts",
+            "optional": false,
+            "type": "{ base64: string, finishReason: CONTENT_FILTERED | ERROR | SUCCESS, seed: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dreamstudio.api.user.account",
+      "shortPath": "user.account",
+      "description": "Get the authenticated Stability user id, email, organizations, and profile picture",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizations",
+            "optional": false,
+            "type": "{ id: string, name: string, role: string, is_default: boolean }[]"
+          },
+          {
+            "key": "profile_picture",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dreamstudio.api.user.balance",
+      "shortPath": "user.balance",
+      "description": "Get the credit balance of the Stability account tied to the API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "dreamstudio.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profile_picture",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dreamstudio.db.balances.search",
+      "entityName": "balances",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "credits",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dreamstudio.db.engines.search",
+      "entityName": "engines",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dreamstudio.db.images.search",
+      "entityName": "images",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "base64",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "seed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dreamstudio.db.organizations.search",
+      "entityName": "organizations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_default",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

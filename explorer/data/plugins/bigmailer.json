@@ -1,0 +1,5439 @@
+{
+  "id": "bigmailer",
+  "displayName": "BigMailer",
+  "description": "Email marketing platform built for Amazon SES with lists, campaigns, and automations.",
+  "npmPackageName": "@corsair-dev/bigmailer",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 57,
+    "webhooks": 0,
+    "db": 13
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bigmailer.api.auth.me",
+      "shortPath": "auth.me",
+      "description": "Check the authenticated API key and account configuration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "bigmailer.api.brandProperties.create",
+      "shortPath": "brandProperties.create",
+      "description": "Create a brand property",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mergeTagName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isHtml",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stringValue",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merge_tag_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_html",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "string_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.brandProperties.delete",
+      "shortPath": "brandProperties.delete",
+      "description": "Permanently delete a brand property",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brandPropertyId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "bigmailer.api.brandProperties.get",
+      "shortPath": "brandProperties.get",
+      "description": "Retrieve a brand property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brandPropertyId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merge_tag_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_html",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "string_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.brandProperties.list",
+      "shortPath": "brandProperties.list",
+      "description": "List a brand's custom merge-tag properties",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, merge_tag_name?: string | null, is_html?: boolean | null, string_value?: string | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.brandProperties.update",
+      "shortPath": "brandProperties.update",
+      "description": "Update a brand property",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brandPropertyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mergeTagName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isHtml",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stringValue",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merge_tag_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_html",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "string_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.brands.create",
+      "shortPath": "brands.create",
+      "description": "Create a brand",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fromName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bounceDangerPercent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxSoftBounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unsubscribeText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_soft_bounces",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bounce_danger_percent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unsubscribe_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_contacts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "engagement",
+            "optional": true,
+            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null }"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.brands.get",
+      "shortPath": "brands.get",
+      "description": "Retrieve a brand",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_soft_bounces",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bounce_danger_percent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unsubscribe_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_contacts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "engagement",
+            "optional": true,
+            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null }"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.brands.list",
+      "shortPath": "brands.list",
+      "description": "List brands in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, from_name?: string | null, from_email?: string | null, filter_soft_bounces?: boolean | null, max_soft_bounces?: number | null, bounce_danger_percent?: number | null, unsubscribe_text?: string | null, connection_id?: string | null, contact_limit?: number | null, num_contacts?: number | null, engagement?: { num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null } | null, url?: string | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.brands.update",
+      "shortPath": "brands.update",
+      "description": "Update a brand's settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bounceDangerPercent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxSoftBounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unsubscribeText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_soft_bounces",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bounce_danger_percent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unsubscribe_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_contacts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "engagement",
+            "optional": true,
+            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null }"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.bulkCampaigns.create",
+      "shortPath": "bulkCampaigns.create",
+      "description": "Create a bulk campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ email: string, name?: string }"
+          },
+          {
+            "key": "recipientName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "{ email: string, name?: string }"
+          },
+          {
+            "key": "linkParams",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoText",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trackOpens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trackClicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trackTextClicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "segmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageTypeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "listIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excludedListIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "scheduledFor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "throttlingType",
+            "optional": true,
+            "type": "none | burst"
+          },
+          {
+            "key": "throttlingAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "throttlingPeriod",
+            "optional": true,
+            "type": "900 | 1800 | 3600 | 7200"
+          },
+          {
+            "key": "suppressionListId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "recipient_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auto_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "link_params",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "track_opens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "track_clicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "track_text_clicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "segment_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_type_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "suppression_list_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excluded_list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "scheduled_for",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "throttling_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "throttling_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "throttling_period",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_sent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_rejected",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_clicks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_total_clicks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_opens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_total_opens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_hard_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_complaints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_unsubscribes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "started",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delayed_until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.bulkCampaigns.get",
+      "shortPath": "bulkCampaigns.get",
+      "description": "Retrieve a bulk campaign, including its send metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "recipient_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auto_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "link_params",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "track_opens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "track_clicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "track_text_clicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "segment_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_type_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "suppression_list_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excluded_list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "scheduled_for",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "throttling_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "throttling_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "throttling_period",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_sent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_rejected",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_clicks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_total_clicks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_opens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_total_opens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_hard_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_complaints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_unsubscribes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "started",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delayed_until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.bulkCampaigns.list",
+      "shortPath": "bulkCampaigns.list",
+      "description": "List a brand's bulk (marketing) campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, status?: string | null, subject?: string | null, from?: { email?: string | null, name?: string | null } | null, recipient_name?: string | null, reply_to?: { email?: string | null, name?: string | null } | null, html?: string | null, text?: string | null, preview?: string | null, auto_text?: boolean | null, link_params?: string | null, track_opens?: boolean | null, track_clicks?: boolean | null, track_text_clicks?: boolean | null, segment_id?: string | null, message_type_id?: string | null, suppression_list_id?: string | null, list_ids?: string[] | null, excluded_list_ids?: string[] | null, scheduled_for?: number | null, throttling_type?: string | null, throttling_amount?: number | null, throttling_period?: number | null, num_sent?: number | null, num_rejected?: number | null, num_clicks?: number | null, num_total_clicks?: number | null, num_opens?: number | null, num_total_opens?: number | null, num_hard_bounces?: number | null, num_soft_bounces?: number | null, num_complaints?: number | null, num_unsubscribes?: number | null, started?: number | null, sent?: number | null, delayed_until?: number | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.bulkCampaigns.update",
+      "shortPath": "bulkCampaigns.update",
+      "description": "Update a bulk campaign - set ready:true to activate sending or scheduling",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ email: string, name?: string }"
+          },
+          {
+            "key": "recipientName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "{ email: string, name?: string }"
+          },
+          {
+            "key": "linkParams",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoText",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trackOpens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trackClicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trackTextClicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "segmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageTypeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "listIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excludedListIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "scheduledFor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "throttlingType",
+            "optional": true,
+            "type": "none | burst"
+          },
+          {
+            "key": "throttlingAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "throttlingPeriod",
+            "optional": true,
+            "type": "900 | 1800 | 3600 | 7200"
+          },
+          {
+            "key": "suppressionListId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "recipient_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auto_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "link_params",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "track_opens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "track_clicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "track_text_clicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "segment_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_type_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "suppression_list_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excluded_list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "scheduled_for",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "throttling_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "throttling_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "throttling_period",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_sent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_rejected",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_clicks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_total_clicks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_opens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_total_opens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_hard_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_complaints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_unsubscribes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "started",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delayed_until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.connections.list",
+      "shortPath": "connections.list",
+      "description": "List a brand's email-delivery connections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, name?: string | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fieldValues",
+            "optional": true,
+            "type": "{ name: string, string?: string, date?: string, integer?: number }[]"
+          },
+          {
+            "key": "listIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unsubscribeAll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unsubscribeIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "validate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brand_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_values",
+            "optional": true,
+            "type": "{ name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[]"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unsubscribe_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unsubscribe_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "num_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_hard_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_complaints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.contacts.createBatch",
+      "shortPath": "contacts.createBatch",
+      "description": "Upload up to 1,000 contacts for asynchronous processing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ email: string, fieldValues?: { name: string, string?: string, date?: string, integer?: number }[], listIds?: string[], unsubscribeAll?: boolean, unsubscribeIds?: string[], customId?: string }[]"
+          },
+          {
+            "key": "validate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "num_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_new_not_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_validation_credits_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ email?: string | null, id?: string | null, custom_id?: string | null, success?: boolean | null, code?: string | null, message?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Permanently delete a contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Retrieve a contact by id or email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brand_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_values",
+            "optional": true,
+            "type": "{ name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[]"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unsubscribe_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unsubscribe_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "num_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_hard_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_complaints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.contacts.getBatch",
+      "shortPath": "contacts.getBatch",
+      "description": "Check a contact batch's processing status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "batchId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "num_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_new_not_created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_updated",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_validation_credits_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ email?: string | null, id?: string | null, custom_id?: string | null, success?: boolean | null, code?: string | null, message?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List a brand's contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, brand_id?: string | null, email?: string | null, field_values?: { name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[] | null, list_ids?: string[] | null, unsubscribe_all?: boolean | null, unsubscribe_ids?: string[] | null, num_soft_bounces?: number | null, num_hard_bounces?: number | null, num_complaints?: number | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldValues",
+            "optional": true,
+            "type": "{ name: string, string?: string, date?: string, integer?: number }[]"
+          },
+          {
+            "key": "listIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unsubscribeAll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unsubscribeIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "fieldValuesOp",
+            "optional": true,
+            "type": "add | remove | replace"
+          },
+          {
+            "key": "listIdsOp",
+            "optional": true,
+            "type": "add | remove | replace"
+          },
+          {
+            "key": "unsubscribeIdsOp",
+            "optional": true,
+            "type": "add | remove | replace"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brand_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_values",
+            "optional": true,
+            "type": "{ name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[]"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unsubscribe_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unsubscribe_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "num_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_hard_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_complaints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.contacts.upsert",
+      "shortPath": "contacts.upsert",
+      "description": "Create or update a contact by id or email address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fieldValues",
+            "optional": true,
+            "type": "{ name: string, string?: string, date?: string, integer?: number }[]"
+          },
+          {
+            "key": "listIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unsubscribeAll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unsubscribeIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "validate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brand_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field_values",
+            "optional": true,
+            "type": "{ name?: string | null, string?: string | null, date?: string | null, integer?: number | null }[]"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unsubscribe_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unsubscribe_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "num_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_hard_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_complaints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.fields.create",
+      "shortPath": "fields.create",
+      "description": "Create a custom contact field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "text | date | integer"
+          },
+          {
+            "key": "mergeTagName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sampleValue",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merge_tag_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sample_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.fields.delete",
+      "shortPath": "fields.delete",
+      "description": "Permanently delete a custom contact field",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "bigmailer.api.fields.get",
+      "shortPath": "fields.get",
+      "description": "Retrieve a custom contact field",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merge_tag_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sample_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.fields.list",
+      "shortPath": "fields.list",
+      "description": "List a brand's custom contact fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, merge_tag_name?: string | null, sample_value?: string | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.fields.update",
+      "shortPath": "fields.update",
+      "description": "Update a custom contact field's name or sample value",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mergeTagName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sampleValue",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merge_tag_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sample_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create a contact list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "num_contacts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "engagement",
+            "optional": true,
+            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null }"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Delete a contact list (its contacts are not deleted)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "bigmailer.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Retrieve a contact list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "num_contacts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "engagement",
+            "optional": true,
+            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null }"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List a brand's contact lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, all?: boolean | null, num_contacts?: number | null, engagement?: { num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null } | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.lists.update",
+      "shortPath": "lists.update",
+      "description": "Rename a contact list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "num_contacts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "engagement",
+            "optional": true,
+            "type": "{ num_opened?: number | null, percent_opened?: number | null, num_clicked?: number | null, percent_clicked?: number | null }"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.messageTypes.list",
+      "shortPath": "messageTypes.list",
+      "description": "List a brand's message-type categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "all | account | user"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, name?: string | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.segments.create",
+      "shortPath": "segments.create",
+      "description": "Create a segment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "operator",
+            "optional": false,
+            "type": "all | any"
+          },
+          {
+            "key": "conditions",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "operator",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conditions",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.segments.delete",
+      "shortPath": "segments.delete",
+      "description": "Permanently delete a segment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segmentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.segments.get",
+      "shortPath": "segments.get",
+      "description": "Retrieve a segment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segmentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "operator",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conditions",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.segments.list",
+      "shortPath": "segments.list",
+      "description": "List a brand's segments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, operator?: string | null, conditions?: any[] | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.segments.update",
+      "shortPath": "segments.update",
+      "description": "Update a segment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segmentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "operator",
+            "optional": true,
+            "type": "all | any"
+          },
+          {
+            "key": "conditions",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "operator",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conditions",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.senders.list",
+      "shortPath": "senders.list",
+      "description": "List a brand's verified sender identities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, identity_type?: string | null, Identity?: string | null, BounceDomain?: string | null, DnsRecords?: any | null, BounceDnsRecords?: any | null, share_type?: string | null, verified?: boolean | null, bounce_verified?: boolean | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.suppressionLists.create",
+      "shortPath": "suppressionLists.create",
+      "description": "Upload a campaign suppression list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.suppressionLists.get",
+      "shortPath": "suppressionLists.get",
+      "description": "Retrieve a campaign suppression list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "suppressionListId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.suppressionLists.list",
+      "shortPath": "suppressionLists.list",
+      "description": "List a brand's campaign suppression lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, file_name?: string | null, file_size?: number | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email | page"
+          },
+          {
+            "key": "sharedWithAccount",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shared_with_account",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Permanently delete a template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Retrieve a template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shared_with_account",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List a brand's templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, shared_with_account?: boolean | null, html?: string | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Update a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "email | page"
+          },
+          {
+            "key": "sharedWithAccount",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shared_with_account",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.transactionalCampaigns.create",
+      "shortPath": "transactionalCampaigns.create",
+      "description": "Create a transactional campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ email: string, name?: string }"
+          },
+          {
+            "key": "recipientName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "{ email: string, name?: string }"
+          },
+          {
+            "key": "linkParams",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoText",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trackOpens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trackClicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trackTextClicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "messageTypeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "recipient_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auto_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "link_params",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "track_opens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "track_clicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "track_text_clicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message_type_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "num_sent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_rejected",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_clicks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_opens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_hard_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_complaints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_unsubscribes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "started",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.transactionalCampaigns.get",
+      "shortPath": "transactionalCampaigns.get",
+      "description": "Retrieve a transactional campaign, including its send metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "recipient_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auto_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "link_params",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "track_opens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "track_clicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "track_text_clicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message_type_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "num_sent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_rejected",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_clicks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_opens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_hard_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_complaints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_unsubscribes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "started",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.transactionalCampaigns.list",
+      "shortPath": "transactionalCampaigns.list",
+      "description": "List a brand's transactional campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, status?: string | null, subject?: string | null, from?: { email?: string | null, name?: string | null } | null, recipient_name?: string | null, reply_to?: { email?: string | null, name?: string | null } | null, html?: string | null, text?: string | null, preview?: string | null, auto_text?: boolean | null, link_params?: string | null, track_opens?: boolean | null, track_clicks?: boolean | null, track_text_clicks?: boolean | null, message_type_id?: string | null, list_id?: string | null, num_sent?: number | null, num_rejected?: number | null, num_clicks?: number | null, num_opens?: number | null, num_hard_bounces?: number | null, num_soft_bounces?: number | null, num_complaints?: number | null, num_unsubscribes?: number | null, started?: number | null, sent?: number | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.transactionalCampaigns.update",
+      "shortPath": "transactionalCampaigns.update",
+      "description": "Update a transactional campaign - set ready:true to activate it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ email: string, name?: string }"
+          },
+          {
+            "key": "recipientName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "{ email: string, name?: string }"
+          },
+          {
+            "key": "linkParams",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoText",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trackOpens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trackClicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trackTextClicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "messageTypeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "recipient_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "{ email?: string | null, name?: string | null }"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auto_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "link_params",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "track_opens",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "track_clicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "track_text_clicks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message_type_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "num_sent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_rejected",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_clicks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_opens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_hard_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_soft_bounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_complaints",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_unsubscribes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "started",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.users.create",
+      "shortPath": "users.create",
+      "description": "Invite a new user to the account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "admin | account_manager | brand_manager | campaign_manager | campaign_viewer | template_manager"
+          },
+          {
+            "key": "allowedBrands",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "invitationMessage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowed_brands",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "is_activated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_owner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Remove a user from the account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "bigmailer.api.users.get",
+      "shortPath": "users.get",
+      "description": "Retrieve an account user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowed_brands",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "is_activated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_owner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.users.list",
+      "shortPath": "users.list",
+      "description": "List account users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, email?: string | null, role?: string | null, allowed_brands?: string[] | null, is_activated?: boolean | null, is_owner?: boolean | null, created?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigmailer.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a user's email, role, or allowed brands",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "admin | account_manager | brand_manager | campaign_manager | campaign_viewer | template_manager"
+          },
+          {
+            "key": "allowedBrands",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowed_brands",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "is_activated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_owner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "bigmailer.db.brandProperties.search",
+      "entityName": "brandProperties",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "merge_tag_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_html",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "string_value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigmailer.db.brands.search",
+      "entityName": "brands",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "filter_soft_bounces",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "max_soft_bounces",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "bounce_danger_percent",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "unsubscribe_text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "connection_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact_limit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_contacts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigmailer.db.bulkCampaigns.search",
+      "entityName": "bulkCampaigns",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recipient_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "preview",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "auto_text",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "link_params",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "track_opens",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "track_clicks",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "track_text_clicks",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "segment_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message_type_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "suppression_list_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduled_for",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "throttling_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "throttling_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "throttling_period",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_sent",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_rejected",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_clicks",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_total_clicks",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_opens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_total_opens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_hard_bounces",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_soft_bounces",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_complaints",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_unsubscribes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "started",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sent",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "delayed_until",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigmailer.db.connections.search",
+      "entityName": "connections",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigmailer.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "brand_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unsubscribe_all",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "num_soft_bounces",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_hard_bounces",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_complaints",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigmailer.db.fields.search",
+      "entityName": "fields",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "merge_tag_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sample_value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigmailer.db.lists.search",
+      "entityName": "lists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "all",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "num_contacts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigmailer.db.messageTypes.search",
+      "entityName": "messageTypes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigmailer.db.segments.search",
+      "entityName": "segments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "operator",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigmailer.db.senders.search",
+      "entityName": "senders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "identity_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Identity",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "BounceDomain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "share_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "verified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "bounce_verified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigmailer.db.suppressionLists.search",
+      "entityName": "suppressionLists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigmailer.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shared_with_account",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "html",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigmailer.db.transactionalCampaigns.search",
+      "entityName": "transactionalCampaigns",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recipient_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "preview",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "auto_text",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "link_params",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "track_opens",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "track_clicks",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "track_text_clicks",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "message_type_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "list_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "num_sent",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_rejected",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_clicks",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_opens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_hard_bounces",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_soft_bounces",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_complaints",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_unsubscribes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "started",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sent",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

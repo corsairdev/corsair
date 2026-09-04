@@ -1,0 +1,1050 @@
+{
+  "id": "googlemeet",
+  "displayName": "Google Meet",
+  "description": "Video conferencing service for scheduling and managing online meetings and calls.",
+  "npmPackageName": "@corsair-dev/googlemeet",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 18,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googlemeet.api.conferenceRecords.get",
+      "shortPath": "conferenceRecords.get",
+      "description": "Get a conference record",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "space",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fixedExternalMeetingId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expireTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.conferenceRecords.list",
+      "shortPath": "conferenceRecords.list",
+      "description": "List conference records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conferenceRecords",
+            "optional": true,
+            "type": "{ name?: string, space?: string, fixedExternalMeetingId?: string, startTime?: string, endTime?: string, expireTime?: string }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.participants.get",
+      "shortPath": "participants.get",
+      "description": "Get a participant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signedInUser",
+            "optional": true,
+            "type": "{ user?: string, displayName?: string }"
+          },
+          {
+            "key": "anonymousUser",
+            "optional": true,
+            "type": "{ displayName?: string }"
+          },
+          {
+            "key": "phoneUser",
+            "optional": true,
+            "type": "{ displayName?: string }"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.participants.list",
+      "shortPath": "participants.list",
+      "description": "List participants",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "participants",
+            "optional": true,
+            "type": "{ name?: string, signedInUser?: { user?: string, displayName?: string }, anonymousUser?: { displayName?: string }, phoneUser?: { displayName?: string }, startTime?: string, endTime?: string }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.participantSessions.get",
+      "shortPath": "participantSessions.get",
+      "description": "Get a participant session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.participantSessions.list",
+      "shortPath": "participantSessions.list",
+      "description": "List participant sessions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "participantSessions",
+            "optional": true,
+            "type": "{ name?: string, startTime?: string, endTime?: string }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.recordings.get",
+      "shortPath": "recordings.get",
+      "description": "Get a recording",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "STATE_UNSPECIFIED | STARTED | ENDED | FILE_GENERATED"
+          },
+          {
+            "key": "driveDestination",
+            "optional": true,
+            "type": "{ file?: string, exportUri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.recordings.list",
+      "shortPath": "recordings.list",
+      "description": "List recordings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "{ name?: string, startTime?: string, endTime?: string, state?: STATE_UNSPECIFIED | STARTED | ENDED | FILE_GENERATED, driveDestination?: { file?: string, exportUri?: string } }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.smartNotes.get",
+      "shortPath": "smartNotes.get",
+      "description": "Get smart notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "STATE_UNSPECIFIED | STARTED | ENDED | FILE_GENERATED"
+          },
+          {
+            "key": "docsDestination",
+            "optional": true,
+            "type": "{ document?: string, exportUri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.smartNotes.list",
+      "shortPath": "smartNotes.list",
+      "description": "List smart notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "smartNotes",
+            "optional": true,
+            "type": "{ name?: string, startTime?: string, endTime?: string, state?: STATE_UNSPECIFIED | STARTED | ENDED | FILE_GENERATED, docsDestination?: { document?: string, exportUri?: string } }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.spaces.create",
+      "shortPath": "spaces.create",
+      "description": "Create a new meeting space",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space",
+            "optional": true,
+            "type": "{ config?: { accessType?: ACCESS_TYPE_UNSPECIFIED | OPEN | TRUSTED | RESTRICTED, entryPointAccess?: ENTRY_POINT_ACCESS_UNSPECIFIED | CREATOR_APP_ONLY | ALL, moderation?: MODERATION_UNSPECIFIED | OFF | ON, moderationRestrictions?: { chatRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, reactionRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, presentRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, defaultJoinAsViewerType?: DEFAULT_JOIN_AS_VIEWER_TYPE_UNSPECIFIED | ON | OFF }, attendanceReportGenerationType?: ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED | DO_NOT_GENERATE | GENERATE_REPORT, artifactConfig?: { recordingConfig?: { autoRecordingGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF }, transcriptionConfig?: { autoTranscriptionGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF }, smartNotesConfig?: { autoSmartNotesGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF } } } }"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meetingUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meetingCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{ accessType?: ACCESS_TYPE_UNSPECIFIED | OPEN | TRUSTED | RESTRICTED, entryPointAccess?: ENTRY_POINT_ACCESS_UNSPECIFIED | CREATOR_APP_ONLY | ALL, moderation?: MODERATION_UNSPECIFIED | OFF | ON, moderationRestrictions?: { chatRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, reactionRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, presentRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, defaultJoinAsViewerType?: DEFAULT_JOIN_AS_VIEWER_TYPE_UNSPECIFIED | ON | OFF }, attendanceReportGenerationType?: ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED | DO_NOT_GENERATE | GENERATE_REPORT, artifactConfig?: { recordingConfig?: { autoRecordingGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF }, transcriptionConfig?: { autoTranscriptionGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF }, smartNotesConfig?: { autoSmartNotesGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF } } }"
+          },
+          {
+            "key": "activeConference",
+            "optional": true,
+            "type": "{ conferenceRecord?: string }"
+          },
+          {
+            "key": "phoneAccess",
+            "optional": true,
+            "type": "{ languageCode?: string, phoneNumber?: string, pin?: string, regionCode?: string }[]"
+          },
+          {
+            "key": "gatewaySipAccess",
+            "optional": true,
+            "type": "{ uri?: string, sipAccessCode?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.spaces.endActiveConference",
+      "shortPath": "spaces.endActiveConference",
+      "description": "End an active conference",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlemeet.api.spaces.get",
+      "shortPath": "spaces.get",
+      "description": "Get a meeting space",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meetingUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meetingCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{ accessType?: ACCESS_TYPE_UNSPECIFIED | OPEN | TRUSTED | RESTRICTED, entryPointAccess?: ENTRY_POINT_ACCESS_UNSPECIFIED | CREATOR_APP_ONLY | ALL, moderation?: MODERATION_UNSPECIFIED | OFF | ON, moderationRestrictions?: { chatRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, reactionRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, presentRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, defaultJoinAsViewerType?: DEFAULT_JOIN_AS_VIEWER_TYPE_UNSPECIFIED | ON | OFF }, attendanceReportGenerationType?: ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED | DO_NOT_GENERATE | GENERATE_REPORT, artifactConfig?: { recordingConfig?: { autoRecordingGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF }, transcriptionConfig?: { autoTranscriptionGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF }, smartNotesConfig?: { autoSmartNotesGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF } } }"
+          },
+          {
+            "key": "activeConference",
+            "optional": true,
+            "type": "{ conferenceRecord?: string }"
+          },
+          {
+            "key": "phoneAccess",
+            "optional": true,
+            "type": "{ languageCode?: string, phoneNumber?: string, pin?: string, regionCode?: string }[]"
+          },
+          {
+            "key": "gatewaySipAccess",
+            "optional": true,
+            "type": "{ uri?: string, sipAccessCode?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.spaces.patch",
+      "shortPath": "spaces.patch",
+      "description": "Update a meeting space",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updateMask",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "space",
+            "optional": true,
+            "type": "{ config?: { accessType?: ACCESS_TYPE_UNSPECIFIED | OPEN | TRUSTED | RESTRICTED, entryPointAccess?: ENTRY_POINT_ACCESS_UNSPECIFIED | CREATOR_APP_ONLY | ALL, moderation?: MODERATION_UNSPECIFIED | OFF | ON, moderationRestrictions?: { chatRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, reactionRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, presentRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, defaultJoinAsViewerType?: DEFAULT_JOIN_AS_VIEWER_TYPE_UNSPECIFIED | ON | OFF }, attendanceReportGenerationType?: ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED | DO_NOT_GENERATE | GENERATE_REPORT, artifactConfig?: { recordingConfig?: { autoRecordingGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF }, transcriptionConfig?: { autoTranscriptionGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF }, smartNotesConfig?: { autoSmartNotesGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF } } } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meetingUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meetingCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{ accessType?: ACCESS_TYPE_UNSPECIFIED | OPEN | TRUSTED | RESTRICTED, entryPointAccess?: ENTRY_POINT_ACCESS_UNSPECIFIED | CREATOR_APP_ONLY | ALL, moderation?: MODERATION_UNSPECIFIED | OFF | ON, moderationRestrictions?: { chatRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, reactionRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, presentRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION, defaultJoinAsViewerType?: DEFAULT_JOIN_AS_VIEWER_TYPE_UNSPECIFIED | ON | OFF }, attendanceReportGenerationType?: ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED | DO_NOT_GENERATE | GENERATE_REPORT, artifactConfig?: { recordingConfig?: { autoRecordingGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF }, transcriptionConfig?: { autoTranscriptionGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF }, smartNotesConfig?: { autoSmartNotesGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF } } }"
+          },
+          {
+            "key": "activeConference",
+            "optional": true,
+            "type": "{ conferenceRecord?: string }"
+          },
+          {
+            "key": "phoneAccess",
+            "optional": true,
+            "type": "{ languageCode?: string, phoneNumber?: string, pin?: string, regionCode?: string }[]"
+          },
+          {
+            "key": "gatewaySipAccess",
+            "optional": true,
+            "type": "{ uri?: string, sipAccessCode?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.transcriptEntries.get",
+      "shortPath": "transcriptEntries.get",
+      "description": "Get a transcript entry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "participant",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.transcriptEntries.list",
+      "shortPath": "transcriptEntries.list",
+      "description": "List transcript entries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcriptEntries",
+            "optional": true,
+            "type": "{ name?: string, participant?: string, text?: string, languageCode?: string, startTime?: string, endTime?: string }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.transcripts.get",
+      "shortPath": "transcripts.get",
+      "description": "Get a transcript",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "STATE_UNSPECIFIED | STARTED | ENDED | FILE_GENERATED"
+          },
+          {
+            "key": "docsDestination",
+            "optional": true,
+            "type": "{ document?: string, exportUri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlemeet.api.transcripts.list",
+      "shortPath": "transcripts.list",
+      "description": "List transcripts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcripts",
+            "optional": true,
+            "type": "{ name?: string, startTime?: string, endTime?: string, state?: STATE_UNSPECIFIED | STARTED | ENDED | FILE_GENERATED, docsDestination?: { document?: string, exportUri?: string } }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "googlemeet.db.conferenceRecords.search",
+      "entityName": "conferenceRecords",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "space",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fixedExternalMeetingId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expireTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlemeet.db.participants.search",
+      "entityName": "participants",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlemeet.db.recordings.search",
+      "entityName": "recordings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlemeet.db.smartNotes.search",
+      "entityName": "smartNotes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlemeet.db.spaces.search",
+      "entityName": "spaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "meetingUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "meetingCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlemeet.db.transcripts.search",
+      "entityName": "transcripts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

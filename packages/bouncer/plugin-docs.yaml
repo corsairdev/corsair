@@ -1,2 +1,2 @@
-# Overrides for scripts/generate-plugin-docs.ts
 displayName: Bouncer
+description: Email verification API for validating addresses, reducing bounces, and improving deliverability.

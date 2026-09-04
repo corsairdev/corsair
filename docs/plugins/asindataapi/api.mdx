@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for AsinDataApi: every `asindataapi.api.*` operation with input and output types."
+description: "API reference for AsinData API: every `asindataapi.api.*` operation with input and output types."
 ---
 
 Every `asindataapi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -241,7 +241,7 @@ await corsair.asindataapi.api.collections.create({});
 
 `collections.delete`
 
-Delete a Collection [DESTRUCTIVE]
+Delete a Collection
 
 **Risk:** `destructive`
 
@@ -725,7 +725,7 @@ await corsair.asindataapi.api.destinations.create({});
 
 `destinations.delete`
 
-Delete a Destination [DESTRUCTIVE]
+Delete a Destination
 
 **Risk:** `destructive`
 
@@ -1485,7 +1485,7 @@ await corsair.asindataapi.api.requests.add({});
 
 `requests.clear`
 
-Bulk-delete multiple Requests from a Collection by their IDs [DESTRUCTIVE]
+Bulk-delete multiple Requests from a Collection by their IDs
 
 **Risk:** `destructive`
 
@@ -1532,7 +1532,7 @@ await corsair.asindataapi.api.requests.clear({});
 
 `requests.delete`
 
-Delete a single Request from a Collection [DESTRUCTIVE]
+Delete a single Request from a Collection
 
 **Risk:** `destructive`
 

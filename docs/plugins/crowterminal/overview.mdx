@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "CrowTerminal plugin for Corsair"
+description: "Financial terminal API for market data, trading tools, and investment research workflows."
 ---
 
-Use **CrowTerminal** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+Use **Crow Terminal** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
@@ -46,8 +46,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```

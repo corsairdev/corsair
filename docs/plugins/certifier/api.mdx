@@ -1,0 +1,633 @@
+---
+title: API
+description: "API reference for Certifier: every `certifier.api.*` operation with input and output types."
+---
+
+Every `certifier.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attributes
+
+### list
+
+`attributes.list`
+
+List attribute definitions available for credentials, with pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.certifier.api.attributes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  tag?: string,
+  name?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Credential Interactions
+
+### list
+
+`credentialInteractions.list`
+
+List credential interaction events, optionally filtered by credential.
+
+**Risk:** `read`
+
+```ts
+await corsair.certifier.api.credentialInteractions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `credentialId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  credentialId?: string,
+  eventType?: string,
+  triggeredBy?: string,
+  triggeredAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Credentials
+
+### createIssueSend
+
+`credentials.createIssueSend`
+
+Create, issue, and send a credential in a single request.
+
+**Risk:** `write`
+
+```ts
+await corsair.certifier.api.credentials.createIssueSend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `recipient` | `object` | Yes | — |
+| `issueDate` | `string` | No | — |
+| `expiryDate` | `string` | No | — |
+| `customAttributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipient full type">
+
+```ts
+{
+  name: string,
+  email: string
+}
+```
+</Accordion>
+
+<Accordion title="customAttributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `publicId` | `string` | No | — |
+| `groupId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `recipient` | `object` | No | — |
+| `issueDate` | `string` | No | — |
+| `expiryDate` | `string` | No | — |
+| `attributes` | `object` | No | — |
+| `customAttributes` | `object` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipient full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="customAttributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`credentials.list`
+
+List credentials with cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.certifier.api.credentials.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  publicId?: string,
+  groupId?: string,
+  status?: string,
+  recipient?: {
+    id?: string,
+    name?: string,
+    email?: string
+  },
+  issueDate?: string | null,
+  expiryDate?: string | null,
+  attributes?: {
+  },
+  customAttributes?: {
+  },
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`credentials.search`
+
+Search credentials with AND/OR/NOT filters, sort, and pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.certifier.api.credentials.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `object` | Yes | — |
+| `sort` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  property: id | createdAt | updatedAt | issueDate | expiryDate,
+  order: asc | desc
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  publicId?: string,
+  groupId?: string,
+  status?: string,
+  recipient?: {
+    id?: string,
+    name?: string,
+    email?: string
+  },
+  issueDate?: string | null,
+  expiryDate?: string | null,
+  attributes?: {
+  },
+  customAttributes?: {
+  },
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`credentials.send`
+
+Send an issued credential by email.
+
+**Risk:** `write`
+
+```ts
+await corsair.certifier.api.credentials.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deliveryMethod` | `email` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `publicId` | `string` | No | — |
+| `groupId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `recipient` | `object` | No | — |
+| `issueDate` | `string` | No | — |
+| `expiryDate` | `string` | No | — |
+| `attributes` | `object` | No | — |
+| `customAttributes` | `object` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipient full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="customAttributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Designs
+
+### list
+
+`designs.list`
+
+List certificate and badge design templates.
+
+**Risk:** `read`
+
+```ts
+await corsair.certifier.api.designs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  type?: string,
+  previewUrl?: string | null,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Templates
+
+### list
+
+`emailTemplates.list`
+
+List email templates used for credential delivery.
+
+**Risk:** `read`
+
+```ts
+await corsair.certifier.api.emailTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  subject?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### list
+
+`groups.list`
+
+List credential templates (groups) with pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.certifier.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  designIds?: string[],
+  certificateDesignId?: string | null,
+  badgeDesignId?: string | null,
+  emailTemplateId?: string | null,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

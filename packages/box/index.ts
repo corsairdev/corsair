@@ -291,7 +291,7 @@ const boxEndpointMeta = {
 	},
 	'files.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Box file [DESTRUCTIVE]',
+		description: 'Delete a Box file',
 	},
 	'files.download': {
 		riskLevel: 'read',
@@ -319,7 +319,7 @@ const boxEndpointMeta = {
 	},
 	'folders.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Box folder [DESTRUCTIVE]',
+		description: 'Delete a Box folder',
 	},
 	'folders.search': {
 		riskLevel: 'read',

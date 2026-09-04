@@ -1,0 +1,1012 @@
+{
+  "id": "hashnode",
+  "displayName": "Hashnode",
+  "description": "Developer blogging platform for publishing articles, newsletters, and technical content.",
+  "npmPackageName": "@corsair-dev/hashnode",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "hashnode.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List comments on a post",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post",
+            "optional": false,
+            "type": "{ comments: { edges: { node: { id: string, content: { html?: string, markdown?: string, text?: string }, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, totalReactions: number, dateAdded: string }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.drafts.create",
+      "shortPath": "drafts.create",
+      "description": "Create a new draft",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publicationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentMarkdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ slug: string, name?: string }[]"
+          },
+          {
+            "key": "seriesId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disableComments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "originalArticleURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publishedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ enableTableOfContent?: boolean, delist?: boolean, activateNewsletter?: boolean, slugOverridden?: boolean }"
+          },
+          {
+            "key": "metaTags",
+            "optional": true,
+            "type": "{ title?: string, description?: string, image?: string }"
+          },
+          {
+            "key": "coverImageOptions",
+            "optional": true,
+            "type": "{ coverImageURL?: string, coverImageAttribution?: string, coverImagePhotographer?: string, isCoverAttributionHidden?: boolean, stickCoverToBottom?: boolean }"
+          },
+          {
+            "key": "publishAs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "coAuthors",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createDraft",
+            "optional": false,
+            "type": "{ draft: { id: string, title?: string | null, subtitle?: string | null, slug?: string | null, content?: { markdown?: string, html?: string, text?: string } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, coverImage?: { url?: string | null, attribution?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, publication?: { id: string, title: string } | null, series?: { id: string, name: string, slug: string } | null, updatedAt: string, scheduledDate?: string | null, readTimeInMinutes?: number, isSubmittedForReview?: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.drafts.delete",
+      "shortPath": "drafts.delete",
+      "description": "Delete a draft [DESTRUCTIVE - IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "draftId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleteDraft",
+            "optional": false,
+            "type": "{ draft?: { id: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.drafts.get",
+      "shortPath": "drafts.get",
+      "description": "Get a draft by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "{ id: string, title?: string | null, subtitle?: string | null, slug?: string | null, content?: { markdown?: string, html?: string, text?: string } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, coverImage?: { url?: string | null, attribution?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, publication?: { id: string, title: string } | null, series?: { id: string, name: string, slug: string } | null, updatedAt: string, scheduledDate?: string | null, readTimeInMinutes?: number, isSubmittedForReview?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.drafts.publish",
+      "shortPath": "drafts.publish",
+      "description": "Publish a draft as a post",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "draftId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publishDraft",
+            "optional": false,
+            "type": "{ post: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.drafts.update",
+      "shortPath": "drafts.update",
+      "description": "Update an existing draft",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "draftId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentMarkdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ slug: string, name?: string }[]"
+          },
+          {
+            "key": "seriesId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disableComments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "originalArticleURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publishedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ enableTableOfContent?: boolean, delist?: boolean, activateNewsletter?: boolean, slugOverridden?: boolean }"
+          },
+          {
+            "key": "metaTags",
+            "optional": true,
+            "type": "{ title?: string, description?: string, image?: string }"
+          },
+          {
+            "key": "coverImageOptions",
+            "optional": true,
+            "type": "{ coverImageURL?: string, coverImageAttribution?: string, coverImagePhotographer?: string, isCoverAttributionHidden?: boolean, stickCoverToBottom?: boolean }"
+          },
+          {
+            "key": "publishAs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "coAuthors",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updateDraft",
+            "optional": false,
+            "type": "{ draft: { id: string, title?: string | null, subtitle?: string | null, slug?: string | null, content?: { markdown?: string, html?: string, text?: string } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, coverImage?: { url?: string | null, attribution?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, publication?: { id: string, title: string } | null, series?: { id: string, name: string, slug: string } | null, updatedAt: string, scheduledDate?: string | null, readTimeInMinutes?: number, isSubmittedForReview?: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.feed.list",
+      "shortPath": "feed.list",
+      "description": "Get the global feed of posts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ tags?: string[], excludeTags?: string[], publications?: string[], excludePublications?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "feed",
+            "optional": false,
+            "type": "{ edges: { node: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.images.createUploadURL",
+      "shortPath": "images.createUploadURL",
+      "description": "Create a presigned image upload URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createImageUploadURL",
+            "optional": false,
+            "type": "{ presignedPost: { url: string, fields: {} } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.me",
+      "shortPath": "me",
+      "description": "Get the current authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "me",
+            "optional": false,
+            "type": "{ id: string, name: string, username: string, email: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.pages.get",
+      "shortPath": "pages.get",
+      "description": "Get a static page by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publication",
+            "optional": false,
+            "type": "{ staticPage?: { id: string, title: string, slug: string, content?: { html?: string, markdown?: string, text?: string } | null, hidden?: boolean, ogMetaData?: { image?: string | null } | null, seo?: { title?: string | null, description?: string | null } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.pages.list",
+      "shortPath": "pages.list",
+      "description": "List static pages in a publication",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publication",
+            "optional": false,
+            "type": "{ staticPages: { edges: { node: { id: string, title: string, slug: string, content?: { html?: string, markdown?: string, text?: string } | null, hidden?: boolean, ogMetaData?: { image?: string | null } | null, seo?: { title?: string | null, description?: string | null } | null }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.posts.get",
+      "shortPath": "posts.get",
+      "description": "Get a single post by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post",
+            "optional": true,
+            "type": "{ id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.posts.getBySlug",
+      "shortPath": "posts.getBySlug",
+      "description": "Get a post by publication host and slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publication",
+            "optional": false,
+            "type": "{ post?: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.posts.list",
+      "shortPath": "posts.list",
+      "description": "List posts in a publication",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ tagSlugs?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publication",
+            "optional": false,
+            "type": "{ posts: { edges: { node: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null }, totalDocuments?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.posts.publish",
+      "shortPath": "posts.publish",
+      "description": "Publish a new post",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "publicationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentMarkdown",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "coverImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ slug: string, name?: string }[]"
+          },
+          {
+            "key": "originalArticleURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metaTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metaDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ogImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disableComments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDelisted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableToc",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "publishAs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "coAuthors",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "seriesId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publishedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publishPost",
+            "optional": false,
+            "type": "{ post: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.posts.search",
+      "shortPath": "posts.search",
+      "description": "Search posts within a publication",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "DATE_PUBLISHED_ASC | DATE_PUBLISHED_DESC"
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{ query?: string, publicationId: string, deletedOnly?: boolean, authorIds?: string[], tagIds?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchPostsOfPublication",
+            "optional": false,
+            "type": "{ edges: { node: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.posts.update",
+      "shortPath": "posts.update",
+      "description": "Update an existing post",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentMarkdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "coverImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ slug: string, name?: string }[]"
+          },
+          {
+            "key": "originalArticleURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metaTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metaDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ogImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disableComments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDelisted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableToc",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "publishAs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "coAuthors",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "seriesId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publishedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updatePost",
+            "optional": false,
+            "type": "{ post: { id: string, title: string, subtitle?: string | null, slug: string, brief: string, url: string, coverImage?: { url?: string | null, isPortrait?: boolean, attribution?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, publication?: { id: string, title: string, url?: string | null, displayTitle?: string | null } | null, tags?: { id: string, name: string, slug: string }[] | null, content?: { html?: string, markdown?: string, text?: string } | null, seo?: { title?: string | null, description?: string | null } | null, ogMetaData?: { image?: string | null } | null, publishedAt: string, updatedAt?: string | null, readTimeInMinutes: number, reactionCount: number, responseCount: number, replyCount?: number, series?: { id: string, name: string, slug: string } | null, featured?: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.publications.get",
+      "shortPath": "publications.get",
+      "description": "Get a publication by host",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publication",
+            "optional": true,
+            "type": "{ id: string, title: string, displayTitle?: string | null, url?: string | null, favicon?: string | null, about?: { text?: string | null, html?: string, markdown?: string } | null, seo?: { title?: string | null, description?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, ogMetaData?: { image?: string | null } | null, isTeam?: boolean, links?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, followersCount?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.publications.list",
+      "shortPath": "publications.list",
+      "description": "List publications for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "me",
+            "optional": false,
+            "type": "{ publications: { edges: { node: { id: string, title: string, displayTitle?: string | null, url?: string | null, favicon?: string | null, about?: { text?: string | null, html?: string, markdown?: string } | null, seo?: { title?: string | null, description?: string | null } | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null, ogMetaData?: { image?: string | null } | null, isTeam?: boolean, links?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, followersCount?: number | null }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.series.get",
+      "shortPath": "series.get",
+      "description": "Get a series by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "series",
+            "optional": true,
+            "type": "{ id: string, name: string, slug: string, description?: { text?: string | null, html?: string, markdown?: string } | null, coverImage?: string | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.series.list",
+      "shortPath": "series.list",
+      "description": "List series in a publication",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publication",
+            "optional": false,
+            "type": "{ seriesList: { edges: { node: { id: string, name: string, slug: string, description?: { text?: string | null, html?: string, markdown?: string } | null, coverImage?: string | null, author?: { id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null } | null }, cursor: string }[], pageInfo: { hasNextPage: boolean, endCursor?: string | null } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.tags.get",
+      "shortPath": "tags.get",
+      "description": "Get a tag by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "{ id: string, name: string, slug: string, tagline?: string | null, logo?: string | null, postsCount?: number, followersCount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hashnode.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a user by username",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string, name: string, username: string, profilePicture?: string | null, coverImage?: string | null, bio?: { text?: string | null, html?: string, markdown?: string } | null, socialMediaLinks?: { twitter?: string | null, github?: string | null, linkedin?: string | null, website?: string | null } | null, location?: string | null, dateJoined?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

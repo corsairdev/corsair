@@ -1,0 +1,2160 @@
+{
+  "id": "breathehr",
+  "displayName": "Breathe HR",
+  "description": "HR software for employee records, leave management, and small business people ops.",
+  "npmPackageName": "@corsair-dev/breathehr",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 50,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "breathehr.api.absences.list",
+      "shortPath": "absences.list",
+      "description": "List absences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "Holiday | OtherLeave"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rotacloud",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "other_leave_reason_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exclude_cancelled_absences",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "absences",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string, type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.account.get",
+      "shortPath": "account.get",
+      "description": "Retrieve Breathe HR account details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ id?: number, name?: string, domain?: string, uuid?: string, using_rta?: boolean, health_and_safety_enabled?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.benefits.list",
+      "shortPath": "benefits.list",
+      "description": "List employee benefits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.bonuses.list",
+      "shortPath": "bonuses.list",
+      "description": "List employee bonuses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.changeRequests.list",
+      "shortPath": "changeRequests.list",
+      "description": "List change requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.companyDocuments.list",
+      "shortPath": "companyDocuments.list",
+      "description": "List company documents",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.companyProjects.list",
+      "shortPath": "companyProjects.list",
+      "description": "List company projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.companyTrainingTypes.list",
+      "shortPath": "companyTrainingTypes.list",
+      "description": "List company training types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.departments.list",
+      "shortPath": "departments.list",
+      "description": "List departments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.departments.listAbsences",
+      "shortPath": "departments.listAbsences",
+      "description": "List absences for a department",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exclude_cancelled_absences",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "absences",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string, type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.departments.listBenefits",
+      "shortPath": "departments.listBenefits",
+      "description": "List benefits for a department",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.departments.listBonuses",
+      "shortPath": "departments.listBonuses",
+      "description": "List bonuses for a department",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.departments.listLeaveRequests",
+      "shortPath": "departments.listLeaveRequests",
+      "description": "List leave requests for a department",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exclude_cancelled_requests",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leave_requests",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string, type?: string, status?: string, notes?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.departments.listSalaries",
+      "shortPath": "departments.listSalaries",
+      "description": "List salaries for a department",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.divisions.list",
+      "shortPath": "divisions.list",
+      "description": "List divisions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.employeeExpenseClaims.list",
+      "shortPath": "employeeExpenseClaims.list",
+      "description": "List employee expense claims",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state_filter",
+            "optional": true,
+            "type": "submitted | approved | completed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.employeeExpenseClaims.update",
+      "shortPath": "employeeExpenseClaims.update",
+      "description": "Approve or reject an expense claim",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "approve",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "approver_rejector_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rejection_reason",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "breathehr.api.employeeExpenses.delete",
+      "shortPath": "employeeExpenses.delete",
+      "description": "Delete an employee expense",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.employeeExpenses.get",
+      "shortPath": "employeeExpenses.get",
+      "description": "Get an employee expense by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employee_expenses",
+            "optional": true,
+            "type": "{ id?: number, amount?: number | string, description?: string, expense_date?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.employeeExpenses.list",
+      "shortPath": "employeeExpenses.list",
+      "description": "List employee expenses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_claimed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employee_expenses",
+            "optional": true,
+            "type": "{ id?: number, amount?: number | string, description?: string, expense_date?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.employeeJobs.list",
+      "shortPath": "employeeJobs.list",
+      "description": "List employee jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.employees.create",
+      "shortPath": "employees.create",
+      "description": "Create an employee",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "company_join_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hr",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dob",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "person_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "division",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "working_pattern",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "working_pattern_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "holiday_allowance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "holiday_allowance_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "middle_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "work_mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "home_telephone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personal_mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employee_ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_or_part_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receives_statutory_holidays",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employees",
+            "optional": true,
+            "type": "{ id?: number, account_id?: number, first_name?: string, last_name?: string, email?: string | null, job_title?: string | null, status?: string, join_date?: string, company_join_date?: string, job_start_date?: string | null, department?: { id?: number | string, name?: string } | null, division?: { id?: number | string, name?: string } | null, location?: { id?: number | string, name?: string } | null, working_pattern?: { id?: number | string, name?: string } | null, holiday_allowance?: { id?: number | string, name?: string } | null, line_manager?: { id?: number | string, name?: string } | null, hr?: boolean, created_at?: string, updated_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.employees.createChangeRequest",
+      "shortPath": "employees.createChangeRequest",
+      "description": "Create an employee change request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "field",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "breathehr.api.employees.createExpense",
+      "shortPath": "employees.createExpense",
+      "description": "Create an employee expense",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employee_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expense_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payable_to_employee",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "company_expense_type_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "vat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "miles",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "client_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_receipt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "company_project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "chargeable_to_client",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "company_mileage_rate_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employee_expenses",
+            "optional": true,
+            "type": "{ id?: number, amount?: number | string, description?: string, expense_date?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.employees.createExpenseClaim",
+      "shortPath": "employees.createExpenseClaim",
+      "description": "Create an employee expense claim",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employee_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "employee_expense_ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "breathehr.api.employees.createSickness",
+      "shortPath": "employees.createSickness",
+      "description": "Create an employee sickness record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "company_sicknesstype_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "half_day",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "half_end",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "half_start",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "review_notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "half_end_am_pm",
+            "optional": true,
+            "type": "am | pm"
+          },
+          {
+            "key": "half_start_am_pm",
+            "optional": true,
+            "type": "am | pm"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sicknesses",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string | null, status?: string, reason?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.employees.get",
+      "shortPath": "employees.get",
+      "description": "Get an employee by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employees",
+            "optional": true,
+            "type": "{ id?: number, account_id?: number, first_name?: string, last_name?: string, email?: string | null, job_title?: string | null, status?: string, join_date?: string, company_join_date?: string, job_start_date?: string | null, department?: { id?: number | string, name?: string } | null, division?: { id?: number | string, name?: string } | null, location?: { id?: number | string, name?: string } | null, working_pattern?: { id?: number | string, name?: string } | null, holiday_allowance?: { id?: number | string, name?: string } | null, line_manager?: { id?: number | string, name?: string } | null, hr?: boolean, created_at?: string, updated_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.employees.list",
+      "shortPath": "employees.list",
+      "description": "List employees with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "hr | line_manager | either"
+          },
+          {
+            "key": "rotacloud",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employees",
+            "optional": true,
+            "type": "{ id?: number, account_id?: number, first_name?: string, last_name?: string, email?: string | null, job_title?: string | null, status?: string, join_date?: string, company_join_date?: string, job_start_date?: string | null, department?: { id?: number | string, name?: string } | null, division?: { id?: number | string, name?: string } | null, location?: { id?: number | string, name?: string } | null, working_pattern?: { id?: number | string, name?: string } | null, holiday_allowance?: { id?: number | string, name?: string } | null, line_manager?: { id?: number | string, name?: string } | null, hr?: boolean, created_at?: string, updated_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.employees.listAbsences",
+      "shortPath": "employees.listAbsences",
+      "description": "List absences for an employee",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exclude_cancelled_absences",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "absences",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string, type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.employees.listBenefits",
+      "shortPath": "employees.listBenefits",
+      "description": "List benefits for an employee",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.employees.listBonuses",
+      "shortPath": "employees.listBonuses",
+      "description": "List bonuses for an employee",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.employees.listChangeRequests",
+      "shortPath": "employees.listChangeRequests",
+      "description": "List change requests for an employee",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.employees.listHolidayYears",
+      "shortPath": "employees.listHolidayYears",
+      "description": "List holiday years for an employee",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "for_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.employees.listLeaveRequests",
+      "shortPath": "employees.listLeaveRequests",
+      "description": "List leave requests for an employee",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "exclude_cancelled_requests",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leave_requests",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string, type?: string, status?: string, notes?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.employees.listSalaries",
+      "shortPath": "employees.listSalaries",
+      "description": "List salaries for an employee",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.employeeTrainingCourses.delete",
+      "shortPath": "employeeTrainingCourses.delete",
+      "description": "Delete an employee training course",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.employeeTrainingCourses.list",
+      "shortPath": "employeeTrainingCourses.list",
+      "description": "List employee training courses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.employeeTrainingCourses.update",
+      "shortPath": "employeeTrainingCourses.update",
+      "description": "Update an employee training course",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outcome",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "half_day",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "start_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "followup_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "half_day_am_pm",
+            "optional": true,
+            "type": "am | pm"
+          },
+          {
+            "key": "company_training_type_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remuneration_currency_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "company_training_category_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "company_training_provider_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "breathehr.api.holidayAllowances.list",
+      "shortPath": "holidayAllowances.list",
+      "description": "List holiday allowances",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.leaveRequests.approve",
+      "shortPath": "leaveRequests.approve",
+      "description": "Approve a leave request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leave_requests",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string, type?: string, status?: string, notes?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.leaveRequests.get",
+      "shortPath": "leaveRequests.get",
+      "description": "Get a leave request by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leave_requests",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string, type?: string, status?: string, notes?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.leaveRequests.getCancelling",
+      "shortPath": "leaveRequests.getCancelling",
+      "description": "Get the leave request being cancelled",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leave_requests",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string, type?: string, status?: string, notes?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.leaveRequests.list",
+      "shortPath": "leaveRequests.list",
+      "description": "List leave requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rotacloud",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exclude_cancelled_requests",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leave_requests",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string, type?: string, status?: string, notes?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.leaveRequests.reject",
+      "shortPath": "leaveRequests.reject",
+      "description": "Reject a leave request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rejection_reason",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leave_requests",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string, type?: string, status?: string, notes?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.locations.list",
+      "shortPath": "locations.list",
+      "description": "List locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.otherLeaveReasons.list",
+      "shortPath": "otherLeaveReasons.list",
+      "description": "List other leave reasons",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.salaries.list",
+      "shortPath": "salaries.list",
+      "description": "List salaries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "breathehr.api.sicknesses.list",
+      "shortPath": "sicknesses.list",
+      "description": "List sickness records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rotacloud",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sicknesses",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string | null, status?: string, reason?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.sicknesses.update",
+      "shortPath": "sicknesses.update",
+      "description": "Update a sickness record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "half_day",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "half_end",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "half_start",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "review_notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "half_end_am_pm",
+            "optional": true,
+            "type": "am | pm"
+          },
+          {
+            "key": "half_start_am_pm",
+            "optional": true,
+            "type": "am | pm"
+          },
+          {
+            "key": "company_sicknesstype_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sicknesses",
+            "optional": true,
+            "type": "{ id?: number, start_date?: string, end_date?: string | null, status?: string, reason?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "breathehr.api.workingPatterns.list",
+      "shortPath": "workingPatterns.list",
+      "description": "List working patterns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "breathehr.db.absences.search",
+      "entityName": "absences",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "start_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "end_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "breathehr.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "using_rta",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "health_and_safety_enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "breathehr.db.departments.search",
+      "entityName": "departments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "breathehr.db.employeeExpenses.search",
+      "entityName": "employeeExpenses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expense_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "breathehr.db.employees.search",
+      "entityName": "employees",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "account_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "join_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company_join_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_start_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hr",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "breathehr.db.leaveRequests.search",
+      "entityName": "leaveRequests",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "start_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "end_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "breathehr.db.sicknesses.search",
+      "entityName": "sicknesses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "start_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "end_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}
