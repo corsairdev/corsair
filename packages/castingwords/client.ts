@@ -3,6 +3,7 @@ import { ApiError, request } from 'corsair/http';
 
 export class CastingwordsAPIError extends Error {
 	public readonly status?: number;
+	// API error bodies vary by endpoint; unknown forces callers to narrow before use.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
@@ -57,12 +58,18 @@ export async function makeCastingwordsRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new CastingwordsAPIError(error.message, { cause: error });
-		}
-		if (error instanceof Error) {
-			throw new CastingwordsAPIError(error.message, { cause: error });
-		}
-		throw new CastingwordsAPIError('Unknown CastingWords API error');
+		return handleRequestError(error);
 	}
+}
+
+// Catch values are untyped at runtime; unknown forces narrowing to ApiError/Error
+// before rethrowing as CastingwordsAPIError.
+function handleRequestError(error: unknown): never {
+	if (error instanceof ApiError) {
+		throw new CastingwordsAPIError(error.message, { cause: error });
+	}
+	if (error instanceof Error) {
+		throw new CastingwordsAPIError(error.message, { cause: error });
+	}
+	throw new CastingwordsAPIError('Unknown CastingWords API error');
 }

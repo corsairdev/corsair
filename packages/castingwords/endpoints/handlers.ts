@@ -17,8 +17,19 @@ import {
 
 type Ctx = { key: string };
 
+// Event payloads differ per operation; unknown keeps the logger generic.
 function log(ctx: Ctx, name: string, data: Record<string, unknown>) {
 	return logEventFromContext(ctx as never, name, data, 'completed');
+}
+
+// Store API v4 bodies vary (JSON object, webhook URL string, or transcript
+// text); unknown forces Zod parse before use.
+function wire(
+	endpoint: string,
+	apiKey: string,
+	options?: Parameters<typeof makeCastingwordsRequest>[2],
+): Promise<unknown> {
+	return makeCastingwordsRequest<unknown>(endpoint, apiKey, options);
 }
 
 function asWebhook(response: unknown) {
@@ -28,30 +39,23 @@ function asWebhook(response: unknown) {
 }
 
 export async function createOrder(ctx: Ctx, input: CreateOrderInput) {
-	const response = await makeCastingwordsRequest<unknown>(
-		'order_url',
-		ctx.key,
-		{
-			method: 'POST',
-			body: {
-				url: input.url,
-				sku: input.sku,
-				test: input.test ? '1' : undefined,
-				notes: input.notes,
-				names: input.names,
-			},
+	const response = await wire('order_url', ctx.key, {
+		method: 'POST',
+		body: {
+			url: input.url,
+			sku: input.sku,
+			test: input.test ? '1' : undefined,
+			notes: input.notes,
+			names: input.names,
 		},
-	);
+	});
 	const parsed = CastingwordsEndpointOutputSchemas.createOrder.parse(response);
 	await log(ctx, 'castingwords.create_order', { url: input.url });
 	return parsed;
 }
 
 export async function getPrepayBalance(ctx: Ctx) {
-	const response = await makeCastingwordsRequest<unknown>(
-		'prepay_balance',
-		ctx.key,
-	);
+	const response = await wire('prepay_balance', ctx.key);
 	const parsed =
 		CastingwordsEndpointOutputSchemas.getPrepayBalance.parse(response);
 	await log(ctx, 'castingwords.get_prepay_balance', {});
@@ -62,7 +66,7 @@ export async function getAudiofileDetails(
 	ctx: Ctx,
 	input: GetAudiofileDetailsInput,
 ) {
-	const response = await makeCastingwordsRequest<unknown>(
+	const response = await wire(
 		`audiofile/${encodeURIComponent(String(input.audiofileId))}`,
 		ctx.key,
 	);
@@ -75,7 +79,7 @@ export async function getAudiofileDetails(
 }
 
 export async function getTranscript(ctx: Ctx, input: GetTranscriptInput) {
-	const response = await makeCastingwordsRequest<unknown>(
+	const response = await wire(
 		`audiofile/${encodeURIComponent(String(input.audiofileId))}/transcript.${input.extension}`,
 		ctx.key,
 		input.test ? { method: 'POST', body: { test: '1' } } : {},
@@ -90,7 +94,7 @@ export async function getTranscript(ctx: Ctx, input: GetTranscriptInput) {
 }
 
 export async function orderUpgrade(ctx: Ctx, input: OrderUpgradeInput) {
-	const response = await makeCastingwordsRequest<unknown>(
+	const response = await wire(
 		`audiofile/${encodeURIComponent(String(input.audiofileId))}/upgrade`,
 		ctx.key,
 		{
@@ -109,7 +113,7 @@ export async function orderUpgrade(ctx: Ctx, input: OrderUpgradeInput) {
 }
 
 export async function refundAudiofile(ctx: Ctx, input: RefundAudiofileInput) {
-	const response = await makeCastingwordsRequest<unknown>(
+	const response = await wire(
 		`audiofile/${encodeURIComponent(String(input.audiofileId))}/refund`,
 		ctx.key,
 		{ method: 'POST', body: { test: input.test ? '1' : undefined } },
@@ -124,7 +128,7 @@ export async function refundAudiofile(ctx: Ctx, input: RefundAudiofileInput) {
 }
 
 export async function getInvoice(ctx: Ctx, input: GetInvoiceInput) {
-	const response = await makeCastingwordsRequest<unknown>(
+	const response = await wire(
 		`invoice/${encodeURIComponent(String(input.invoiceId))}`,
 		ctx.key,
 	);
@@ -134,16 +138,14 @@ export async function getInvoice(ctx: Ctx, input: GetInvoiceInput) {
 }
 
 export async function getWebhook(ctx: Ctx) {
-	const parsed = asWebhook(
-		await makeCastingwordsRequest<unknown>('webhook', ctx.key),
-	);
+	const parsed = asWebhook(await wire('webhook', ctx.key));
 	await log(ctx, 'castingwords.get_webhook', {});
 	return parsed;
 }
 
 export async function registerWebhook(ctx: Ctx, input: RegisterWebhookInput) {
 	const parsed = asWebhook(
-		await makeCastingwordsRequest<unknown>('webhook', ctx.key, {
+		await wire('webhook', ctx.key, {
 			method: 'POST',
 			body: { webhook: input.webhook },
 		}),
@@ -154,11 +156,7 @@ export async function registerWebhook(ctx: Ctx, input: RegisterWebhookInput) {
 
 export async function testWebhook(ctx: Ctx, input: TestWebhookInput) {
 	const parsed = asWebhook(
-		await makeCastingwordsRequest<unknown>(
-			`webhook/test/${input.event}`,
-			ctx.key,
-			{ method: 'POST' },
-		),
+		await wire(`webhook/test/${input.event}`, ctx.key, { method: 'POST' }),
 	);
 	await log(ctx, 'castingwords.test_webhook', { event: input.event });
 	return parsed;
