@@ -97,6 +97,7 @@ export const BaseProviders = [
 	'brightdata',
 	'browseai',
 	'browserless',
+	'browsertool',
 	'bubble',
 	'bugsnag',
 	'buildkite',
@@ -105,6 +106,7 @@ export const BaseProviders = [
 	'canva',
 	'canvas',
 	'capsulecrm',
+	'castingwords',
 	'certifier',
 	'chatbotkit',
 	'chatfai',
@@ -213,6 +215,7 @@ export const BaseProviders = [
 	'retailed',
 	'salesforce',
 	'sapsuccessfactors',
+	'scaleai',
 	'scrapegraphai',
 	'securitytrails',
 	'sendgrid',
@@ -266,6 +269,7 @@ export const BaseProviders = [
 	'youcom',
 	'youtube',
 	'zendesk',
+	'zohoinventory',
 	'zohomail',
 	'zoom',
 	'zoominfo',
@@ -356,6 +360,7 @@ export const ProviderDisplayNames = {
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
 	browserless: 'Browserless',
+	browsertool: 'Browser Tool',
 	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
@@ -364,6 +369,7 @@ export const ProviderDisplayNames = {
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
 	capsulecrm: 'Capsule CRM',
+	castingwords: 'CastingWords',
 	certifier: 'Certifier',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
@@ -472,6 +478,7 @@ export const ProviderDisplayNames = {
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
 	sapsuccessfactors: 'SAP SuccessFactors',
+	scaleai: 'Scale AI',
 	scrapegraphai: 'ScrapeGraphAI',
 	securitytrails: 'SecurityTrails',
 	sendgrid: 'SendGrid',
@@ -525,6 +532,7 @@ export const ProviderDisplayNames = {
 	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
+	zohoinventory: 'Zoho Inventory',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
 	zoominfo: 'ZoomInfo',
@@ -622,6 +630,7 @@ export type AllProviders =
 	| 'brightdata'
 	| 'browseai'
 	| 'browserless'
+	| 'browsertool'
 	| 'bubble'
 	| 'bugsnag'
 	| 'buildkite'
@@ -630,6 +639,7 @@ export type AllProviders =
 	| 'canva'
 	| 'canvas'
 	| 'capsulecrm'
+	| 'castingwords'
 	| 'certifier'
 	| 'chatbotkit'
 	| 'chatfai'
@@ -738,6 +748,7 @@ export type AllProviders =
 	| 'retailed'
 	| 'salesforce'
 	| 'sapsuccessfactors'
+	| 'scaleai'
 	| 'scrapegraphai'
 	| 'securitytrails'
 	| 'sendgrid'
@@ -791,6 +802,7 @@ export type AllProviders =
 	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
+	| 'zohoinventory'
 	| 'zohomail'
 	| 'zoom'
 	| 'zoominfo'

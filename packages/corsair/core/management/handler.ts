@@ -258,13 +258,16 @@ const ROUTES: Route[] = [
 		method: 'POST',
 		pattern: '/connect/request/clear',
 		handler: async ({ internal, body, scopedTenant }) => {
+			const parsed = body as { tenantId?: string; plugin?: string } | undefined;
 			const tenantId =
-				resolveScopedTenant(
-					scopedTenant,
-					(body as { tenantId?: string } | undefined)?.tenantId,
-				) ?? 'default';
+				resolveScopedTenant(scopedTenant, parsed?.tenantId) ?? 'default';
 			if (internal.database) {
-				await clearConnectRequest(internal.database, tenantId);
+				await clearConnectRequest(
+					internal.database,
+					tenantId,
+					undefined,
+					parsed?.plugin,
+				);
 			}
 			return json(200, { ok: true });
 		},
