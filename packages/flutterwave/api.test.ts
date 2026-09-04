@@ -218,4 +218,67 @@ describe('Flutterwave representative endpoints', () => {
 			);
 		}
 	});
+
+	it('enforces route-specific input schemas for provider-required fields', () => {
+		const createBeneficiarySchema =
+			flutterwaveEndpointSchemas['beneficiaries.create']?.input;
+		const createBulkVirtualAccountsSchema =
+			flutterwaveEndpointSchemas['bulkVirtualAccounts.create']?.input;
+		const getBulkTokenizedChargeSchema =
+			flutterwaveEndpointSchemas['bulkTokenizedCharges.get']?.input;
+
+		expect(createBeneficiarySchema).toBeDefined();
+		expect(createBulkVirtualAccountsSchema).toBeDefined();
+		expect(getBulkTokenizedChargeSchema).toBeDefined();
+
+		expect(
+			createBeneficiarySchema!.safeParse({
+				body: {
+					account_number: '0690000040',
+					account_bank: '044',
+					beneficiary_name: 'Alexis Sanchez',
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			createBeneficiarySchema!.safeParse({
+				body: {
+					account_number: '0690000040',
+					bank_code: '044',
+					full_name: 'Alexis Sanchez',
+				},
+			}).success,
+		).toBe(false);
+
+		expect(
+			createBulkVirtualAccountsSchema!.safeParse({
+				body: {
+					batch_ref: 'batch-ref-1',
+					bulk_data: [
+						{
+							firstname: 'Alexis',
+							lastname: 'Sanchez',
+							email: 'user@example.com',
+							bvn: '12345678901',
+						},
+					],
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			createBulkVirtualAccountsSchema!.safeParse({
+				body: {
+					batch_ref: 'batch-ref-1',
+					bulk_data: [{ email: 'user@example.com', tx_ref: 'tx-ref-1' }],
+				},
+			}).success,
+		).toBe(false);
+
+		expect(
+			getBulkTokenizedChargeSchema!.safeParse({ bulk_id: 1001 }).success,
+		).toBe(true);
+		expect(
+			getBulkTokenizedChargeSchema!.safeParse({ bulk_id: 'bulk-1' }).success,
+		).toBe(false);
+	});
 });

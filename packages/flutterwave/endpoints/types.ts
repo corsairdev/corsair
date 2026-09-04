@@ -20,6 +20,46 @@ const FlutterwaveResponseSchema = z
 	})
 	.catchall(z.unknown());
 
+const BeneficiaryBodySchema = z.object({
+	account_number: z.string().min(1),
+	account_bank: z.string().min(1),
+	beneficiary_name: z.string().min(1),
+});
+
+const BulkVirtualAccountEntrySchema = z
+	.object({
+		firstname: z.string().min(1),
+		lastname: z.string().min(1),
+		email: z.string().email(),
+		bvn: z.string().min(1).optional(),
+		nin: z.string().min(1).optional(),
+	})
+	.refine((value) => Boolean(value.bvn || value.nin), {
+		message: 'either bvn or nin is required',
+	});
+
+const BulkVirtualAccountsBodySchema = z.object({
+	batch_ref: z.string().min(1),
+	bulk_data: z.array(BulkVirtualAccountEntrySchema).min(1),
+	is_permanent: z.boolean().optional(),
+});
+
+const BulkTokenizedChargePathSchema = z.object({
+	bulk_id: z.number().int().positive(),
+});
+
+const RouteSpecificInputSchemas = {
+	createBeneficiary: FlutterwaveRequestInputSchema.extend({
+		body: BeneficiaryBodySchema.optional(),
+	}).catchall(z.unknown()),
+	createBulkVirtualAccountNumbers: FlutterwaveRequestInputSchema.extend({
+		body: BulkVirtualAccountsBodySchema.optional(),
+	}).catchall(z.unknown()),
+	getBulkTokenizedCharge: FlutterwaveRequestInputSchema.extend({
+		bulk_id: BulkTokenizedChargePathSchema.shape.bulk_id,
+	}).catchall(z.unknown()),
+} as const;
+
 type RouteKey = (typeof flutterwaveRoutes)[number]['key'];
 
 type InputSchemaMap = {
@@ -41,6 +81,11 @@ function asSchemaMap<TSchema extends z.ZodTypeAny>(
 export const FlutterwaveEndpointInputSchemas: InputSchemaMap = asSchemaMap(
 	FlutterwaveRequestInputSchema,
 );
+
+for (const [key, schema] of Object.entries(RouteSpecificInputSchemas)) {
+	FlutterwaveEndpointInputSchemas[key as RouteKey] =
+		schema as (typeof FlutterwaveEndpointInputSchemas)[RouteKey];
+}
 
 export const FlutterwaveEndpointOutputSchemas: OutputSchemaMap = asSchemaMap(
 	FlutterwaveResponseSchema,

@@ -37,8 +37,8 @@ export const flutterwaveRoutes = [
 		riskLevel: 'write' as const,
 		testInput: {
 			account_number: '0690000040',
-			bank_code: '044',
-			full_name: 'Alexis Sanchez',
+			account_bank: '044',
+			beneficiary_name: 'Alexis Sanchez',
 		},
 	},
 	{
@@ -73,7 +73,15 @@ export const flutterwaveRoutes = [
 		riskLevel: 'write' as const,
 		testInput: {
 			batch_ref: 'batch-ref-1',
-			bulk_data: [{ email: 'user@example.com', tx_ref: 'tx-ref-1' }],
+			bulk_data: [
+				{
+					firstname: 'Alexis',
+					lastname: 'Sanchez',
+					email: 'user@example.com',
+					bvn: '12345678901',
+				},
+			],
+			is_permanent: true,
 		},
 	},
 	{
@@ -296,7 +304,7 @@ export const flutterwaveRoutes = [
 		description: 'Get status of bulk tokenized charges.',
 		riskLevel: 'read' as const,
 		pathParams: ['bulk_id'],
-		testInput: { bulk_id: 'bulk-1' },
+		testInput: { bulk_id: 1001 },
 	},
 	{
 		key: 'getBulkVirtualAccount',
