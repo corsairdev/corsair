@@ -65,7 +65,7 @@ export const CreateRecipientViewUrlInputSchema = z.object({
 	email: z.string(),
 	returnUrl: z.string(),
 	authenticationMethod: z.string().optional(),
-	recipientId: z.string().optional(),
+	recipientId: z.string(),
 	clientUserId: z.string().optional(),
 });
 
