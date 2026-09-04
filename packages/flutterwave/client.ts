@@ -11,7 +11,6 @@ export class FlutterwaveAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
 const FLUTTERWAVE_API_BASE = 'https://api.flutterwave.com/v3';
 
 export async function makeFlutterwaveRequest<T>(
@@ -21,9 +20,10 @@ export async function makeFlutterwaveRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		headers?: Record<string, string>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, headers } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: FLUTTERWAVE_API_BASE,
@@ -34,6 +34,7 @@ export async function makeFlutterwaveRequest<T>(
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${apiKey}`,
+			...headers,
 		},
 	};
 
@@ -45,7 +46,7 @@ export async function makeFlutterwaveRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {

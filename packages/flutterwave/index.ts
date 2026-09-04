@@ -1,43 +1,43 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import {
+	flutterwaveEndpointSchemas,
+	flutterwaveEndpointsNested,
+	flutterwaveEndpointMeta as generatedFlutterwaveEndpointMeta,
+} from './endpoints';
 import type {
 	FlutterwaveEndpointInputs,
 	FlutterwaveEndpointOutputs,
 } from './endpoints/types';
-import {
-	FlutterwaveEndpointInputSchemas,
-	FlutterwaveEndpointOutputSchemas,
-} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { FlutterwaveSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveFlutterwaveOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchFlutterwaveTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, FlutterwaveWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
+
+export const flutterwaveEndpointMeta =
+	generatedFlutterwaveEndpointMeta satisfies RequiredPluginEndpointMeta<
+		typeof flutterwaveEndpointsNested
+	>;
+
+export const typedFlutterwaveEndpointSchemas =
+	flutterwaveEndpointSchemas as unknown as RequiredPluginEndpointSchemas<
+		typeof flutterwaveEndpointsNested
+	>;
 
 export type FlutterwavePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalFlutterwavePlugin['hooks'];
-	webhookHooks?: InternalFlutterwavePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof flutterwaveEndpointsNested>;
 };
@@ -54,76 +54,13 @@ export type FlutterwaveBoundEndpoints = BindEndpoints<
 	typeof flutterwaveEndpointsNested
 >;
 
-type FlutterwaveEndpoint<K extends keyof FlutterwaveEndpointOutputs> =
-	CorsairEndpoint<
-		FlutterwaveContext,
-		FlutterwaveEndpointInputs[K],
-		FlutterwaveEndpointOutputs[K]
-	>;
-
-export type FlutterwaveEndpoints = {
-	initializePayment: FlutterwaveEndpoint<'initializePayment'>;
-};
-
-type FlutterwaveWebhook<
-	K extends keyof FlutterwaveWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<FlutterwaveContext, TEvent, FlutterwaveWebhookOutputs[K]>;
-
-export type FlutterwaveWebhooks = {
-	example: FlutterwaveWebhook<'example', ExampleEvent>;
-};
-
-export type FlutterwaveBoundWebhooks = BindWebhooks<FlutterwaveWebhooks>;
-
-const flutterwaveEndpointsNested = {
-	payments: {
-		initialize: Example.initializePayment,
-	},
-} as const;
-
-const flutterwaveWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
-
-export const flutterwaveEndpointSchemas = {
-	'payments.initialize': {
-		input: FlutterwaveEndpointInputSchemas.initializePayment,
-		output: FlutterwaveEndpointOutputSchemas.initializePayment,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<
-	typeof flutterwaveEndpointsNested
->;
-
-const flutterwaveWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof flutterwaveWebhooksNested
->;
+export type FlutterwaveEndpoints = typeof flutterwaveEndpointsNested;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const flutterwaveEndpointMeta = {
-	'payments.initialize': {
-		riskLevel: 'write',
-		description: 'Initialize a Flutterwave payment',
-	},
-} as const satisfies RequiredPluginEndpointMeta<
-	typeof flutterwaveEndpointsNested
->;
-
 export const flutterwaveAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['account_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -132,7 +69,7 @@ export type BaseFlutterwavePlugin<T extends FlutterwavePluginOptions> =
 		'flutterwave',
 		typeof FlutterwaveSchema,
 		typeof flutterwaveEndpointsNested,
-		typeof flutterwaveWebhooksNested,
+		{},
 		T,
 		typeof defaultAuthType
 	>;
@@ -154,68 +91,41 @@ export function flutterwave<const T extends FlutterwavePluginOptions>(
 
 	return {
 		id: 'flutterwave',
-		authConfig: flutterwaveAuthConfig,
 		schema: FlutterwaveSchema,
 		options,
+		authConfig: flutterwaveAuthConfig,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: flutterwaveEndpointsNested,
-		webhooks: flutterwaveWebhooksNested,
+		webhooks: {},
 		endpointMeta: flutterwaveEndpointMeta,
-		endpointSchemas: flutterwaveEndpointSchemas,
-		webhookSchemas: flutterwaveWebhookSchemas,
-
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-
-			return 'verif-hash' in headers;
-		},
-
-		pluginTenantWebhookMatcher: matchFlutterwaveTenantWebhook,
-
-		oauthWebhookTenantLinkResolver: resolveFlutterwaveOAuthWebhookTenantLink,
-
+		endpointSchemas: typedFlutterwaveEndpointSchemas,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-
 		keyBuilder: async (ctx: FlutterwaveKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const result = await ctx.keys.get_webhook_signature();
-				return result ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const result = await ctx.keys.get_api_key();
-				return result ?? '';
+				const key = await ctx.keys.get_api_key();
+				if (!key) {
+					throw new AuthMissingError('flutterwave', 'api_key');
+				}
+				return key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const result = await ctx.keys.get_access_token();
-				return result ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('flutterwave', 'api_key');
 		},
 	} satisfies InternalFlutterwavePlugin;
 }
 
 export type {
+	FlutterwaveEndpointInput,
 	FlutterwaveEndpointInputs,
 	FlutterwaveEndpointOutputs,
-	InitializePaymentInput,
-	InitializePaymentResponse,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	FlutterwaveWebhookOutputs,
-} from './webhooks/types';
+
+export { flutterwaveEndpointsNested, flutterwaveEndpointSchemas };

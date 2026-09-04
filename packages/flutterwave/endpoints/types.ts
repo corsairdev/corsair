@@ -1,58 +1,64 @@
 import { z } from 'zod';
+import { flutterwaveRoutes } from './routes';
 
-const InitializePaymentInputSchema = z.object({
-	tx_ref: z.string().min(1),
-	amount: z.number().positive(),
-	currency: z.string().default('NGN'),
-	redirect_url: z.string().url(),
+const QueryParamSchema = z.union([z.string(), z.number(), z.boolean()]);
 
-	customer: z.object({
-		email: z.string().email(),
-		name: z.string().optional(),
-		phonenumber: z.string().optional(),
-	}),
+export const FlutterwaveRequestInputSchema = z
+	.object({
+		body: z.record(z.string(), z.unknown()).optional(),
+		query: z.record(z.string(), QueryParamSchema).optional(),
+		headers: z.record(z.string(), z.string()).optional(),
+	})
+	.catchall(z.unknown());
 
-	customizations: z
-		.object({
-			title: z.string().optional(),
-			description: z.string().optional(),
-			logo: z.string().url().optional(),
-		})
-		.optional(),
-});
+const FlutterwaveResponseSchema = z
+	.object({
+		status: z.string().optional(),
+		message: z.string().optional(),
+		meta: z.record(z.string(), z.unknown()).optional(),
+		data: z.unknown().optional(),
+	})
+	.catchall(z.unknown());
 
-export type InitializePaymentInput = z.infer<
-	typeof InitializePaymentInputSchema
->;
+type RouteKey = (typeof flutterwaveRoutes)[number]['key'];
 
-const InitializePaymentResponseSchema = z.object({
-	status: z.string(),
-	message: z.string(),
+type InputSchemaMap = {
+	[K in RouteKey]: typeof FlutterwaveRequestInputSchema;
+};
 
-	data: z
-		.object({
-			link: z.string().url().optional(),
-		})
-		.passthrough()
-		.optional(),
-});
+type OutputSchemaMap = {
+	[K in RouteKey]: typeof FlutterwaveResponseSchema;
+};
 
-export type InitializePaymentResponse = z.infer<
-	typeof InitializePaymentResponseSchema
->;
+function asSchemaMap<TSchema extends z.ZodTypeAny>(
+	schema: TSchema,
+): { [K in RouteKey]: TSchema } {
+	return Object.fromEntries(
+		flutterwaveRoutes.map((route) => [route.key, schema]),
+	) as { [K in RouteKey]: TSchema };
+}
+
+export const FlutterwaveEndpointInputSchemas: InputSchemaMap = asSchemaMap(
+	FlutterwaveRequestInputSchema,
+);
+
+export const FlutterwaveEndpointOutputSchemas: OutputSchemaMap = asSchemaMap(
+	FlutterwaveResponseSchema,
+);
 
 export type FlutterwaveEndpointInputs = {
-	initializePayment: InitializePaymentInput;
+	[K in keyof typeof FlutterwaveEndpointInputSchemas]: z.infer<
+		(typeof FlutterwaveEndpointInputSchemas)[K]
+	>;
 };
 
 export type FlutterwaveEndpointOutputs = {
-	initializePayment: InitializePaymentResponse;
+	[K in keyof typeof FlutterwaveEndpointOutputSchemas]: z.infer<
+		(typeof FlutterwaveEndpointOutputSchemas)[K]
+	>;
 };
 
-export const FlutterwaveEndpointInputSchemas = {
-	initializePayment: InitializePaymentInputSchema,
-} as const;
-
-export const FlutterwaveEndpointOutputSchemas = {
-	initializePayment: InitializePaymentResponseSchema,
-} as const;
+export type FlutterwaveEndpointInput =
+	FlutterwaveEndpointInputs[keyof FlutterwaveEndpointInputs] & {
+		[key: string]: unknown;
+	};
