@@ -478,6 +478,21 @@ describe('Wix endpoints', () => {
 		expect(options.siteId).toBeUndefined();
 	});
 
+	it('forwards the configured authType to makeWixRequest', async () => {
+		const fn = endpointFn('contacts', 'list');
+		await fn({ ...mockCtx, options: { authType: 'api_key' } } as WixContext, {
+			siteId: 's',
+			limit: 1,
+		});
+
+		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{ authType?: string },
+		];
+		expect(options.authType).toBe('api_key');
+	});
+
 	it('sends search inside the query envelope for query-body endpoints', async () => {
 		const fn = endpointFn('stores', 'searchProducts');
 		await fn(mockCtx, { siteId: 's', search: 'running shoes' });

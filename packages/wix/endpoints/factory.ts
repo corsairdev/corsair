@@ -224,6 +224,7 @@ export async function requestWixOperation(
 		headers,
 		siteId,
 		accountId,
+		authType: ctx.options?.authType,
 	});
 }
 

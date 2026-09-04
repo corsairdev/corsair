@@ -58,12 +58,21 @@ const WIX_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+export type WixAuthType = 'api_key' | 'oauth_2';
+
 export type WixRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: unknown;
 	query?: Record<string, unknown>;
 	headers?: Record<string, string>;
 	baseUrl?: string;
+	/**
+	 * Which credential `token` holds. OAuth access tokens authenticate as
+	 * `Authorization: Bearer <token>`; API keys authenticate as the raw
+	 * `Authorization: <token>` value. Defaults to the plugin default
+	 * (`oauth_2`).
+	 */
+	authType?: WixAuthType;
 	/**
 	 * Site-level scoping for API key auth. Sent as the `wix-site-id` header.
 	 * Required on site-level calls when authenticating with an API key.
@@ -89,6 +98,7 @@ export async function makeWixRequest<T>(
 		baseUrl,
 		siteId,
 		accountId,
+		authType = 'oauth_2',
 	} = options;
 	const resolvedBase = resolveWixBase(baseUrl);
 
@@ -100,12 +110,12 @@ export async function makeWixRequest<T>(
 		);
 	}
 
-	// Wix REST authenticates with the raw token in the Authorization header
-	// (`Authorization: <token>`, no Bearer prefix). Do NOT set TOKEN here:
-	// corsair's request() overwrites Authorization with `Bearer ${TOKEN}`,
-	// which Wix rejects. Custom headers are merged first and any
-	// case-insensitive Authorization entry is stripped so a caller-supplied
-	// header can never replace the credential.
+	// Auth: OAuth access tokens use `Authorization: Bearer <token>` while API
+	// keys use the raw `Authorization: <token>` value (no Bearer prefix).
+	// Do NOT set TOKEN here: corsair's request() overwrites Authorization
+	// with `Bearer ${TOKEN}`, which breaks API-key auth. Custom headers are
+	// merged first and any case-insensitive Authorization entry is stripped
+	// so a caller-supplied header can never replace the credential.
 	const customHeaders: Record<string, string> = {};
 	for (const [key, value] of Object.entries(headers ?? {})) {
 		// Authorization is always derived from the stored token, and the
@@ -131,7 +141,7 @@ export async function makeWixRequest<T>(
 		HEADERS: {
 			'Content-Type': 'application/json',
 			...customHeaders,
-			Authorization: token,
+			Authorization: authType === 'oauth_2' ? `Bearer ${token}` : token,
 			...(siteId ? { 'wix-site-id': siteId } : {}),
 			...(accountId ? { 'wix-account-id': accountId } : {}),
 		},
@@ -151,8 +161,16 @@ export async function makeWixRequest<T>(
 	};
 
 	try {
+		// Automatic 429 retries are limited to safe (GET/HEAD/OPTIONS) and
+		// idempotent (DELETE) methods. POST/PUT/PATCH bodies such as
+		// bulkCreateProductsWithInventory and bulkDeleteProducts are not
+		// idempotent and Wix offers no stable idempotency key here, so a
+		// throttled write must surface instead of silently re-executing.
+		const retryable = ['GET', 'HEAD', 'OPTIONS', 'DELETE'].includes(method);
 		return await request<T>(config, requestOptions, {
-			rateLimitConfig: WIX_RATE_LIMIT_CONFIG,
+			rateLimitConfig: retryable
+				? WIX_RATE_LIMIT_CONFIG
+				: { ...WIX_RATE_LIMIT_CONFIG, enabled: false, maxRetries: 0 },
 		});
 	} catch (error) {
 		if (error instanceof ApiError || error instanceof Error) {

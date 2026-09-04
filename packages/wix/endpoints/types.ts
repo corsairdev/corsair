@@ -1293,6 +1293,8 @@ export type BulkDeleteFormSchemasResponse = z.infer<
 const QueryDeletedFormsInputSchema = z.looseObject({
 	...SiteScopeFields,
 	...QueryOptionFields,
+	// Wix requires a namespace filter for deleted-form queries.
+	filter: WixFilterSchema,
 });
 export type QueryDeletedFormsInput = z.infer<
 	typeof QueryDeletedFormsInputSchema
@@ -1305,6 +1307,8 @@ export type QueryDeletedFormsResponse = z.infer<
 const QueryFormSubmissionsByNamespaceInputSchema = z.looseObject({
 	...SiteScopeFields,
 	...QueryOptionFields,
+	// Wix requires a namespace filter (`$eq`) for submissions-by-namespace.
+	filter: WixFilterSchema,
 });
 export type QueryFormSubmissionsByNamespaceInput = z.infer<
 	typeof QueryFormSubmissionsByNamespaceInputSchema
@@ -1318,6 +1322,8 @@ export type QueryFormSubmissionsByNamespaceResponse = z.infer<
 const QueryFormsFormSubmissionsInputSchema = z.looseObject({
 	...SiteScopeFields,
 	...QueryOptionFields,
+	// Wix requires a namespace filter for form-submissions queries.
+	filter: WixFilterSchema,
 });
 export type QueryFormsFormSubmissionsInput = z.infer<
 	typeof QueryFormsFormSubmissionsInputSchema

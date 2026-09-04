@@ -35,11 +35,12 @@ describe('makeWixRequest plumbing', () => {
 		mockRequest.mockResolvedValue({ ok: true });
 	});
 
-	it('passes base, raw auth header, and rate-limit config through', async () => {
+	it('passes base, raw api-key auth header, and no-retry config for POST through', async () => {
 		await makeWixRequest('/contacts/v4/contacts/query', 'tok', {
 			method: 'POST',
 			body: { query: {} },
 			siteId: 'site-1',
+			authType: 'api_key',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -65,9 +66,25 @@ describe('makeWixRequest plumbing', () => {
 		expect(options.method).toBe('POST');
 		expect(options.url).toBe('/contacts/v4/contacts/query');
 		expect(options.mediaType).toBe('application/json; charset=utf-8');
+		// POST writes are not idempotent: 429s must surface, not auto-retry.
+		expect(extra.rateLimitConfig.enabled).toBe(false);
+		expect(extra.rateLimitConfig.maxRetries).toBe(0);
+		expect(extra.rateLimitConfig.headerNames.retryAfter).toBe('Retry-After');
+	});
+
+	it('formats oauth_2 credentials as Bearer and retries safe GETs', async () => {
+		await makeWixRequest('/contacts/v4/contacts', 'tok', {
+			query: { limit: 5 },
+		});
+
+		const [config, , extra] = mockRequest.mock.calls[0] as [
+			{ HEADERS: Record<string, string> },
+			unknown,
+			{ rateLimitConfig: { enabled: boolean; maxRetries: number } },
+		];
+		expect(config.HEADERS.Authorization).toBe('Bearer tok');
 		expect(extra.rateLimitConfig.enabled).toBe(true);
 		expect(extra.rateLimitConfig.maxRetries).toBe(3);
-		expect(extra.rateLimitConfig.headerNames.retryAfter).toBe('Retry-After');
 	});
 
 	it('sends query on GET and body on POST', async () => {
@@ -97,6 +114,7 @@ describe('makeWixRequest plumbing', () => {
 	it('merges custom headers without dropping auth', async () => {
 		await makeWixRequest('/apps/v1/instance', 'tok', {
 			headers: { 'X-Custom': 'yes' },
+			authType: 'api_key',
 		});
 		const [config] = mockRequest.mock.calls[0] as [
 			{ HEADERS: Record<string, string> },
@@ -114,6 +132,7 @@ describe('makeWixRequest plumbing', () => {
 		async (header, value) => {
 			await makeWixRequest('/apps/v1/instance', 'tok', {
 				headers: { [header]: value },
+				authType: 'api_key',
 			});
 			const [config] = mockRequest.mock.calls[0] as [
 				{ HEADERS: Record<string, string> },
@@ -276,13 +295,17 @@ describe('makeWixRequest transport', () => {
 		mockRequest.mockReset();
 	});
 
-	it('hits www.wixapis.com with the raw token (no Bearer prefix)', async () => {
+	it('hits www.wixapis.com with the raw api-key token (no Bearer prefix)', async () => {
 		mockFetch({ contacts: [] });
 
 		const result = await makeWixRequest<{ contacts: unknown[] }>(
 			'/contacts/v4/contacts/query',
 			'tok',
-			{ method: 'POST', body: { query: { paging: { limit: 1 } } } },
+			{
+				method: 'POST',
+				body: { query: { paging: { limit: 1 } } },
+				authType: 'api_key',
+			},
 		);
 
 		expect(captured?.url).toBe(`${WIX_API_BASE}/contacts/v4/contacts/query`);
@@ -292,6 +315,18 @@ describe('makeWixRequest transport', () => {
 			query: { paging: { limit: 1 } },
 		});
 		expect(result).toEqual({ contacts: [] });
+	});
+
+	it('hits www.wixapis.com with Bearer for oauth_2 (default)', async () => {
+		mockFetch({ contacts: [] });
+
+		await makeWixRequest<{ contacts: unknown[] }>(
+			'/contacts/v4/contacts/query',
+			'tok',
+			{ method: 'POST', body: { query: { paging: { limit: 1 } } } },
+		);
+
+		expect(captured?.headers.authorization).toBe('Bearer tok');
 	});
 
 	it('sends wix-site-id for site-level API key calls', async () => {

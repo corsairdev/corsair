@@ -74,7 +74,9 @@ describe('Wix input schemas accept valid input', () => {
 			const result = schema.safeParse({});
 			if (result.success) optionalOnly += 1;
 		}
-		expect(optionalOnly).toBeGreaterThanOrEqual(50);
+		// Three form queries require a namespace filter, so fewer routes
+		// accept an empty object than before.
+		expect(optionalOnly).toBeGreaterThanOrEqual(47);
 	});
 });
 
@@ -112,6 +114,21 @@ describe('Wix input schemas reject invalid input', () => {
 		expect(() =>
 			WixEndpointInputSchemas.queryContacts.parse({ limit: 5000 }),
 		).toThrow();
+	});
+
+	it('rejects namespaced form queries without a filter', () => {
+		for (const key of [
+			'queryDeletedForms',
+			'queryFormSubmissionsByNamespace',
+			'queryFormsFormSubmissions',
+		] as const) {
+			expect(() => WixEndpointInputSchemas[key].parse({})).toThrow();
+			expect(
+				WixEndpointInputSchemas[key].parse({
+					filter: { namespace: { $eq: 'wix-forms' } },
+				}),
+			).toBeDefined();
+		}
 	});
 });
 
