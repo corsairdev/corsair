@@ -10,11 +10,13 @@ examples:
     title: Get rows
     args:
       spreadsheetId: 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms
+      range: "'Class Data'!A:Z"
   write:
     path: sheets.appendRow
     title: Append a row
     args:
-      spreadsheetId: 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms
+      spreadsheetId: your-spreadsheet-id
+      sheetName: Sheet1
       values:
         - Hello
         - from Corsair

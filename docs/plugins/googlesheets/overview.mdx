@@ -96,7 +96,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.googlesheets.api.sheets.getRows({ spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms' });
+await tenant.googlesheets.api.sheets.getRows({ spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms', range: '\'Class Data\'!A:Z' });
 ```
 
 
@@ -105,7 +105,8 @@ await tenant.googlesheets.api.sheets.getRows({ spreadsheetId: '1BxiMVs0XRA5nFMdK
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.googlesheets.api.sheets.appendRow({
-	spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
+	spreadsheetId: 'your-spreadsheet-id',
+	sheetName: 'Sheet1',
 	values: ['Hello', 'from Corsair'],
 });
 ```
