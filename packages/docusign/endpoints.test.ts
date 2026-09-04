@@ -141,6 +141,22 @@ describe('DocuSign generated endpoints', () => {
 		},
 	);
 
+	it('routes service_information to the api root', async () => {
+		const client = makeClient();
+		await client.request('/service_information');
+		const call = mockRequest.mock.calls[0];
+		if (!call) throw new Error('expected corsair/http request to be called');
+		expect(call[0].BASE).toBe('https://demo.docusign.net/restapi');
+	});
+
+	it('routes versioned paths to the version root', async () => {
+		const client = makeClient();
+		await client.request('/v2.1/diagnostics/settings');
+		const call = mockRequest.mock.calls[0];
+		if (!call) throw new Error('expected corsair/http request to be called');
+		expect(call[0].BASE).toBe('https://demo.docusign.net/restapi/v2.1');
+	});
+
 	it('listOAuthUserInfo calls the OAuth userinfo endpoint', async () => {
 		const client = makeClient();
 		mockRequest.mockResolvedValue({ sub: 'user-1' });
@@ -170,6 +186,23 @@ describe('DocuSign generated endpoints', () => {
 		);
 		expect(res.names).toEqual(['Jane Doe']);
 		expect(res.count).toBe(1);
+	});
+
+	it('fetchRecipientNamesForEmail finds non-signer recipient types', async () => {
+		const client = makeClient();
+		mockRequest.mockResolvedValue({
+			recipients: {
+				signers: [],
+				agents: [{ email: 'agent@example.com', name: 'Agent Alice' }],
+				editors: [{ email: 'agent@example.com', userName: 'Editor Ed' }],
+			},
+		});
+		const res = await endpoints.fetchRecipientNamesForEmail(
+			{ client },
+			{ envelopeId: 'env_1', email: 'agent@example.com' },
+		);
+		expect(res.names).toEqual(['Agent Alice', 'Editor Ed']);
+		expect(res.count).toBe(2);
 	});
 
 	it('getWorkspaceFile preserves binary response data', async () => {
