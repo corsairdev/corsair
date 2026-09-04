@@ -141,9 +141,12 @@ describe('Replicate endpoint contracts', () => {
 			previous: null,
 			results: [deployment],
 		});
-		await deploymentsList(ctx as never, {});
+		await deploymentsList(ctx as never, { cursor: 'deployments-cursor' });
 		expect(mockRequest).toHaveBeenCalledWith('/deployments', ctx.key, {
 			method: 'GET',
+			query: {
+				cursor: 'deployments-cursor',
+			},
 		});
 	});
 

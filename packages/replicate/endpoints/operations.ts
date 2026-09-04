@@ -78,16 +78,24 @@ export const deploymentsList: ReplicateEndpoints['deploymentsList'] = async (
 	ctx,
 	rawInput,
 ) => {
-	ReplicateEndpointInputSchemas.deploymentsList.parse(rawInput);
+	const input = ReplicateEndpointInputSchemas.deploymentsList.parse(rawInput);
 	const paginatedResponse = PaginatedDeploymentsResponseSchema.parse(
 		await makeReplicateRequest('/deployments', ctx.key, {
 			method: 'GET',
+			query: {
+				cursor: input.cursor,
+			},
 		}),
 	);
 	const response = ReplicateEndpointOutputSchemas.deploymentsList.parse(
 		paginatedResponse.results,
 	);
-	await logEventFromContext(ctx, 'replicate.deployments.list', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'replicate.deployments.list',
+		{ cursor: input.cursor },
+		'completed',
+	);
 	return response;
 };
 

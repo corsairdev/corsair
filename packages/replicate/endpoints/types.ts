@@ -244,7 +244,9 @@ export const ReplicateEndpointInputSchemas = {
 		cursor: z.string().min(1).optional(),
 	}),
 	collectionsGet: z.object({ collectionSlug: z.string().min(1) }),
-	deploymentsList: EmptyInputSchema,
+	deploymentsList: z.object({
+		cursor: z.string().min(1).optional(),
+	}),
 	deploymentsCreate: z.object({
 		name: z.string().min(1),
 		model: z.string().min(1),
