@@ -11,6 +11,11 @@ import {
  * saved. That value becomes the HMAC key for `x-hook-signature` on all
  * requests (including the first). A 200 is required for Zoho to persist the
  * subscription.
+ *
+ * The endpoint is unauthenticated, so the secret is only persisted when the
+ * account has none stored yet; a different secret for an already-configured
+ * account is refused rather than overwriting a signing key an attacker could
+ * then forge events with.
  * @see https://www.zoho.com/mail/help/dev-platform/webhook.html#secure-webhooks
  */
 export const handshake: ZohoMailWebhooks['handshake'] = {
@@ -28,11 +33,27 @@ export const handshake: ZohoMailWebhooks['handshake'] = {
 		}
 
 		try {
-			await ctx.keys.set_webhook_signature(hookSecret);
+			await ctx.keys.set_webhook_signature_if_absent(hookSecret);
 		} catch (error) {
+			// The store throws this exact message only when a different secret is
+			// already configured; refuse rather than overwrite a signing key an
+			// attacker could then forge events with.
+			if (
+				error instanceof Error &&
+				error.message === 'Webhook signature already configured'
+			) {
+				console.warn(
+					'[corsair:zohomail] Rejected x-hook-secret for an account that already has one configured',
+				);
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Webhook signing secret is already configured',
+				};
+			}
 			console.warn(
 				'[corsair:zohomail] Failed to persist webhook secret:',
-				error,
+				error instanceof Error ? error.message : String(error),
 			);
 			return {
 				success: false,

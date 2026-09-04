@@ -288,13 +288,25 @@ async function handleWebhookTunnel(
 	}
 
 	if (result.response && result.response.success === false) {
+		// Deliver the handler status to the original sender (e.g. 401 on a
+		// rejected handshake). Marking the tunnel envelope failed would show up
+		// as a transport error instead.
 		return {
-			status: 'failed',
-			retryable: false,
-			error:
-				typeof result.response.error === 'string'
-					? result.response.error
-					: 'Webhook handler failed',
+			status: 'ok',
+			webhookResponse: {
+				status: result.response.statusCode ?? 401,
+				body: {
+					success: false,
+					error:
+						typeof result.response.error === 'string'
+							? result.response.error
+							: 'Webhook handler failed',
+					...(result.response.data !== undefined && {
+						data: result.response.data,
+					}),
+				},
+				headers: result.responseHeaders,
+			},
 		};
 	}
 

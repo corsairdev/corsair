@@ -7,7 +7,9 @@ type ChallengeRequest = Parameters<typeof challenge.handler>[1];
 function createContext(storedSecret: string | null) {
 	const keys = {
 		get_webhook_signature: jest.fn().mockResolvedValue(storedSecret),
-		set_webhook_signature: jest.fn().mockResolvedValue(undefined),
+		set_webhook_signature_if_absent: jest
+			.fn()
+			.mockResolvedValue({ created: true }),
 	};
 
 	return { ctx: { keys } as unknown as ChallengeContext, keys };
@@ -43,7 +45,9 @@ describe('asana challenge webhook', () => {
 				createRequest({ 'x-hook-secret': 'asana-secret' }),
 			);
 
-			expect(keys.set_webhook_signature).toHaveBeenCalledWith('asana-secret');
+			expect(keys.set_webhook_signature_if_absent).toHaveBeenCalledWith(
+				'asana-secret',
+			);
 			expect(result.success).toBe(true);
 			expect(result.responseHeaders).toEqual({
 				'X-Hook-Secret': 'asana-secret',
@@ -62,13 +66,11 @@ describe('asana challenge webhook', () => {
 				createRequest({ 'x-hook-secret': 'attacker-secret' }),
 			);
 
-			expect(keys.set_webhook_signature).not.toHaveBeenCalled();
+			expect(keys.set_webhook_signature_if_absent).not.toHaveBeenCalled();
 			expect(result.success).toBe(false);
 			expect(result.statusCode).toBe(401);
-			// The sender's value must not be echoed back.
 			expect(result.responseHeaders).toBeUndefined();
 			expect(result.data).toBeUndefined();
-			// Operators need a signal; the rejection is otherwise invisible.
 			expect(warn).toHaveBeenCalledTimes(1);
 
 			warn.mockRestore();
@@ -83,7 +85,7 @@ describe('asana challenge webhook', () => {
 				createRequest({ 'x-hook-secret': 'bbbbbbbb' }),
 			);
 
-			expect(keys.set_webhook_signature).not.toHaveBeenCalled();
+			expect(keys.set_webhook_signature_if_absent).not.toHaveBeenCalled();
 			expect(result.success).toBe(false);
 			expect(result.statusCode).toBe(401);
 
@@ -98,7 +100,7 @@ describe('asana challenge webhook', () => {
 				createRequest({ 'x-hook-secret': 'asana-secret' }),
 			);
 
-			expect(keys.set_webhook_signature).not.toHaveBeenCalled();
+			expect(keys.set_webhook_signature_if_absent).not.toHaveBeenCalled();
 			expect(result.success).toBe(true);
 			expect(result.responseHeaders).toEqual({
 				'X-Hook-Secret': 'asana-secret',
@@ -114,13 +116,15 @@ describe('asana challenge webhook', () => {
 
 			expect(result.success).toBe(false);
 			expect(result.statusCode).toBe(400);
-			expect(keys.set_webhook_signature).not.toHaveBeenCalled();
+			expect(keys.set_webhook_signature_if_absent).not.toHaveBeenCalled();
 			expect(keys.get_webhook_signature).not.toHaveBeenCalled();
 		});
 
 		it('does not echo a secret it failed to persist', async () => {
 			const { ctx, keys } = createContext(null);
-			keys.set_webhook_signature.mockRejectedValue(new Error('db down'));
+			keys.set_webhook_signature_if_absent.mockRejectedValue(
+				new Error('db down'),
+			);
 			const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
 			const result = await challenge.handler(
@@ -131,6 +135,29 @@ describe('asana challenge webhook', () => {
 			expect(result.success).toBe(false);
 			expect(result.statusCode).toBe(500);
 			expect(result.responseHeaders).toBeUndefined();
+
+			warn.mockRestore();
+		});
+
+		it('returns 401 when a concurrent writer already stored a different secret', async () => {
+			const { ctx, keys } = createContext(null);
+			keys.get_webhook_signature
+				.mockResolvedValueOnce(null)
+				.mockResolvedValueOnce('already-stored');
+			keys.set_webhook_signature_if_absent.mockRejectedValue(
+				new Error('Webhook signature already configured'),
+			);
+			const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+			const result = await challenge.handler(
+				ctx,
+				createRequest({ 'x-hook-secret': 'asana-secret' }),
+			);
+
+			expect(result.success).toBe(false);
+			expect(result.statusCode).toBe(401);
+			expect(result.responseHeaders).toBeUndefined();
+			expect(warn).toHaveBeenCalled();
 
 			warn.mockRestore();
 		});

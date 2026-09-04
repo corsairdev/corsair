@@ -71,35 +71,48 @@ async function writeEncryptedAccountLinkField(options: {
 	accountId: string;
 	link: WebhookTenantLink;
 }): Promise<void> {
-	const account = await options.database.db
-		.selectFrom('corsair_accounts')
-		.selectAll()
-		.where('id', '=', options.accountId)
-		.executeTakeFirst();
+	// Optimistic CAS on the encrypted config blob — same race class as account
+	// key-manager set_* (e.g. concurrent webhook_signature registration).
+	for (let attempt = 0; attempt < 5; attempt++) {
+		const account = await options.database.db
+			.selectFrom('corsair_accounts')
+			.selectAll()
+			.where('id', '=', options.accountId)
+			.executeTakeFirst();
 
-	if (!account?.dek) {
-		throw new Error(`Account '${options.accountId}' has no DEK.`);
+		if (!account?.dek) {
+			throw new Error(`Account '${options.accountId}' has no DEK.`);
+		}
+
+		const dek = await decryptDEK(account.dek, options.kek);
+		const storedConfig = parseConfig(account.config) as Record<string, string>;
+		let decryptedConfig: Record<string, string> = {};
+
+		if (Object.keys(storedConfig).length > 0) {
+			decryptedConfig = decryptConfig(storedConfig, dek);
+		}
+
+		decryptedConfig[options.link.linkType] = options.link.externalId;
+		const encryptedConfig = encryptConfig(decryptedConfig, dek);
+
+		const result = await options.database.db
+			.updateTable('corsair_accounts')
+			.set({
+				config: encryptedConfig,
+				updated_at: new Date(),
+			})
+			.where('id', '=', account.id)
+			.where('config', '=', account.config as any)
+			.executeTakeFirst();
+
+		if (result.numUpdatedRows !== undefined && result.numUpdatedRows > 0n) {
+			return;
+		}
 	}
 
-	const dek = await decryptDEK(account.dek, options.kek);
-	const storedConfig = parseConfig(account.config) as Record<string, string>;
-	let decryptedConfig: Record<string, string> = {};
-
-	if (Object.keys(storedConfig).length > 0) {
-		decryptedConfig = decryptConfig(storedConfig, dek);
-	}
-
-	decryptedConfig[options.link.linkType] = options.link.externalId;
-	const encryptedConfig = encryptConfig(decryptedConfig, dek);
-
-	await options.database.db
-		.updateTable('corsair_accounts')
-		.set({
-			config: encryptedConfig,
-			updated_at: new Date(),
-		})
-		.where('id', '=', account.id)
-		.execute();
+	throw new Error(
+		`Failed to write webhook tenant link atomically for account '${options.accountId}'`,
+	);
 }
 
 export async function setWebhookTenantLink(options: {
