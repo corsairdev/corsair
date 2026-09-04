@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Twilio plugin for Corsair"
+description: "Twilio plugin for Corsair — SMS, calls, and message events."
 ---
 
 Use **Twilio** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -90,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`calls.get`**
+**List messages**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.twilio.api.calls.get({});
+await tenant.twilio.api.messages.list({});
 ```
 
 
-**`calls.create`**
+**Send a message**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.twilio.api.calls.create({});
+await tenant.twilio.api.messages.send({ To: '+15555550100', From: '+15555550101', Body: 'Hello from Corsair' });
 ```
 
 
@@ -110,15 +110,37 @@ See the full list on the [API](/plugins/twilio/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.twilio.db.<entity>.search()` and `.list()`: `calls`, `messages`.
+Search synced messages without hitting Twilio.
 
-See [Database](/plugins/twilio/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.twilio.db.messages.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `calls`, `messages`. See [Database](/plugins/twilio/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **3** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when an inbound SMS arrives.
 
-See [Webhooks](/plugins/twilio/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+twilio({
+    webhookHooks: {
+        message: {
+            received: {
+                after: async (ctx, result) => {
+                    console.log('Twilio message:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/twilio/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
