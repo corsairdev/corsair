@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Outlook plugin for Corsair"
+description: "Outlook plugin for Corsair — mail, calendar, and message events."
 ---
 
 Use **Outlook** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -109,19 +109,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`calendars.get`**
+**List messages**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.outlook.api.calendars.get({});
+await tenant.outlook.api.messages.list({});
 ```
 
 
-**`calendars.create`**
+**Send a message**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.outlook.api.calendars.create({});
+await tenant.outlook.api.messages.send({ to: 'you@example.com', subject: 'Hello from Corsair', body: 'Hello from Corsair' });
 ```
 
 
@@ -129,15 +129,37 @@ See the full list on the [API](/plugins/outlook/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.outlook.db.<entity>.search()` and `.list()`: `calendars`, `contacts`, `events`, `folders`, `messages`.
+Search synced mail without hitting Outlook.
 
-See [Database](/plugins/outlook/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.outlook.db.messages.search({
+	data: { isRead: false },
+	limit: 50,
+});
+```
+
+Synced entities: `calendars`, `contacts`, `events`, `folders`, `messages`. See [Database](/plugins/outlook/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **6** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a new Outlook message arrives.
 
-See [Webhooks](/plugins/outlook/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+outlook({
+    webhookHooks: {
+        messages: {
+            newMessage: {
+                after: async (ctx, result) => {
+                    console.log('Outlook message:', result.corsairEntityId);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/outlook/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
