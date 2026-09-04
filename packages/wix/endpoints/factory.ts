@@ -110,8 +110,23 @@ function buildQueryBody(input: WixEndpointInput): Record<string, unknown> {
 	}
 	if (input.fields !== undefined) query.fields = input.fields;
 	if (input.fieldsets !== undefined) query.fieldsets = input.fieldsets;
-	const body: Record<string, unknown> = { query };
-	if (input.search !== undefined) body.search = input.search;
+	if (input.search !== undefined) query.search = input.search;
+	return { query };
+}
+
+/**
+ * GraphQL endpoints speak `{ query: <document string>, variables: {...} }`.
+ * The caller supplies the GraphQL document; any legacy `filter` input is
+ * forwarded as a variable so existing call sites keep working.
+ */
+function buildGraphqlBody(input: WixEndpointInput): Record<string, unknown> {
+	const body: Record<string, unknown> = {};
+	if (input.query !== undefined) body.query = input.query;
+	const variables: Record<string, unknown> = {
+		...((input.variables ?? {}) as Record<string, unknown>),
+	};
+	if (input.filter !== undefined) variables.filter = input.filter;
+	if (Object.keys(variables).length > 0) body.variables = variables;
 	return body;
 }
 
@@ -126,6 +141,10 @@ function requestBody(route: WixRoute, input: WixEndpointInput): unknown {
 	const queryParams = new Set(
 		(route.queryParams ?? []).flatMap((key) => [key, camelToSnake(key)]),
 	);
+
+	if (route.graphql) {
+		return buildGraphqlBody(input);
+	}
 
 	if (route.queryBody) {
 		const body = buildQueryBody(input);

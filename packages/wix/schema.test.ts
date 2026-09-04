@@ -162,6 +162,43 @@ describe('Wix query filter grammar', () => {
 		).toThrow();
 	});
 
+	it('accepts documented Wix filter operators with shape-valid operands', () => {
+		const accepted = [
+			{ status: { $eq: 'DONE' } },
+			{ amount: { $gt: 10 } },
+			{ tags: { $hasSome: ['a', 'b'] } },
+			{ name: { $startsWith: 'Ad' } },
+			{ slug: { $urlized: ['ada-lovelace'] } },
+			{ archived: { $exists: true } },
+			{ $or: [{ status: 'DONE' }, { status: { $ne: 'VOID' } }] },
+			{ $not: { status: 'VOID' } },
+		];
+		for (const filter of accepted) {
+			expect(
+				WixEndpointInputSchemas.queryContacts.parse({ filter }),
+			).toBeDefined();
+		}
+	});
+
+	it('rejects JSON-valid but grammatically malformed Wix filters', () => {
+		const rejected = [
+			{ status: { $not: 5 } }, // $not is logical, not a comparison operand
+			{ status: { $sw: 'A' } }, // unknown operator
+			{ tags: { $in: [] } }, // $in requires a non-empty array
+			{ tags: { $in: 'a' } }, // $in requires an array
+			{ name: { $startsWith: 5 } }, // $startsWith requires a string
+			{ archived: { $exists: 'yes' } }, // $exists requires a boolean
+			{ $and: [] }, // logical operators require a non-empty array
+			{ $not: 5 }, // $not requires a nested filter
+			{ $wibble: { $eq: 1 } }, // unknown logical key
+		];
+		for (const filter of rejected) {
+			expect(() =>
+				WixEndpointInputSchemas.queryContacts.parse({ filter }),
+			).toThrow();
+		}
+	});
+
 	it('accepts deeply nested JSON patch and filter payloads', () => {
 		const parsed = WixEndpointInputSchemas.bulkUpdateProductsByFilter.parse({
 			filter: { visible: { $eq: true } },

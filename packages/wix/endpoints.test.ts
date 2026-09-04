@@ -440,6 +440,55 @@ describe('Wix endpoints', () => {
 		expect(options.accountId).toBe('account-1');
 		expect(options.siteId).toBeUndefined();
 	});
+
+	it('sends search inside the query envelope for query-body endpoints', async () => {
+		const fn = endpointFn('stores', 'searchProducts');
+		await fn(mockCtx, { siteId: 's', search: 'running shoes' });
+
+		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{ body?: { query?: { search?: unknown; filter?: unknown } } },
+		];
+		expect(options.body?.query?.search).toBe('running shoes');
+		expect(options.body).not.toHaveProperty('search');
+	});
+
+	it('sends the GraphQL body contract for queryEventsGraphql', async () => {
+		const fn = endpointFn('events', 'queryEventsGraphql');
+		await fn(mockCtx, {
+			siteId: 's',
+			query: 'query Events { events { id } }',
+			filter: { status: 'PUBLISHED' },
+		} as never);
+
+		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{
+				body?: {
+					query?: unknown;
+					variables?: { filter?: unknown };
+				};
+			},
+		];
+		expect(typeof options.body?.query).toBe('string');
+		expect(options.body?.variables?.filter).toEqual({
+			status: 'PUBLISHED',
+		});
+	});
+
+	it('sends a top-level filter for countExtendedBookings (no query envelope)', async () => {
+		const fn = endpointFn('bookings', 'countExtendedBookings');
+		await fn(mockCtx, { siteId: 's', filter: { status: 'CONFIRMED' } });
+
+		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{ body?: Record<string, unknown> },
+		];
+		expect(options.body).toEqual({ filter: { status: 'CONFIRMED' } });
+	});
 });
 
 describe('Wix route helpers', () => {

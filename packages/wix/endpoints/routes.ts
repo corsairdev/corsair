@@ -19,6 +19,12 @@ export type WixRoute = {
 	 * POST body. Enables limit/offset pagination support.
 	 */
 	queryBody?: boolean;
+	/**
+	 * True when the endpoint speaks GraphQL: the POST body must be
+	 * `{ query: <GraphQL document string>, variables: {...} }`, not the
+	 * Wix `{ query: {...} }` options envelope.
+	 */
+	graphql?: boolean;
 	riskLevel: EndpointRiskLevel;
 	irreversible?: boolean;
 };
@@ -497,8 +503,7 @@ export const wixRoutes: WixRoute[] = [
 		path: '/bookings/v2/extended-bookings/count',
 		specCode: 'WIX_COUNT_EXTENDED_BOOKINGS',
 		description:
-			'Tool to count extended bookings matching specified filter criteria. Use when you need to get the total number of bookings without retrieving the full booking data.',
-		queryBody: true,
+			'Tool to count extended bookings matching specified filter criteria. Use when you need to get the total number of bookings without retrieving the full booking data. Note: unlike query endpoints, the filter is sent at the top level of the body, not wrapped in a query envelope.',
 		riskLevel: 'read',
 	},
 	{
@@ -956,7 +961,7 @@ export const wixRoutes: WixRoute[] = [
 		specCode: 'WIX_QUERY_EVENTS_EVENTS',
 		description:
 			'Tool to query events using the deprecated eventsEvents GraphQL endpoint. Returns event items and pagination info. Note: This endpoint is deprecated and will be replaced with Events V3 Query Events endpoint.',
-		queryBody: true,
+		graphql: true,
 		riskLevel: 'read',
 	},
 	{

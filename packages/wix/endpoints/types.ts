@@ -49,8 +49,11 @@ const WixJsonValueSchema: z.ZodType<WixJson> = z.lazy(() =>
  * Wix query-language filter. The Wix API Query Language supports two forms
  * per field path: scalar equality shorthand (`{ "status": "DONE" }`) and
  * explicit operator objects (`{ "status": { "$eq": "DONE" } }`). Logical
- * operators hold arrays (`$and`/`$or`) or a nested filter (`$not`). Every
- * value is validated as JSON so garbage fails locally.
+ * operators hold arrays (`$and`/`$or`) or a nested filter (`$not`). Only the
+ * operators documented by the Wix API Query Language are accepted, and each
+ * operator's operand is shape-checked (e.g. `$in` requires a non-empty array
+ * of scalars, `$exists` requires a boolean) so JSON-valid but semantically
+ * malformed filters fail local validation before reaching Wix.
  */
 export type WixFilter = {
 	[fieldPath: string]:
@@ -59,21 +62,105 @@ export type WixFilter = {
 		| boolean
 		| null
 		| { [operator: string]: WixJson }
-		| WixFilter[]
 		| WixFilter;
 };
+
+function isWixFilterScalar(value: unknown): boolean {
+	return (
+		typeof value === 'string' ||
+		typeof value === 'number' ||
+		typeof value === 'boolean' ||
+		value === null
+	);
+}
+
+function isWixFilterOperand(operator: string, value: unknown): boolean {
+	switch (operator) {
+		case '$eq':
+		case '$ne':
+		case '$gt':
+		case '$gte':
+		case '$lt':
+		case '$lte':
+			return isWixFilterScalar(value);
+		case '$in':
+		case '$nin':
+		case '$hasSome':
+		case '$hasAll':
+			return (
+				Array.isArray(value) &&
+				value.length > 0 &&
+				value.every(isWixFilterScalar)
+			);
+		case '$startsWith':
+		case '$endsWith':
+		case '$contains':
+			return typeof value === 'string';
+		case '$urlized':
+			return (
+				Array.isArray(value) &&
+				value.length > 0 &&
+				value.every((v) => typeof v === 'string')
+			);
+		case '$exists':
+			return typeof value === 'boolean';
+		default:
+			return false;
+	}
+}
+
+const WixLogicalArrayOperators = new Set(['$and', '$or']);
+const WixLogicalSingleOperators = new Set(['$not']);
+
+function isWixFilter(value: unknown): boolean {
+	if (isWixFilterScalar(value)) {
+		return true;
+	}
+	if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+		return false;
+	}
+	const entries = Object.entries(value as Record<string, unknown>);
+	if (entries.length === 0) {
+		return true;
+	}
+	for (const [key, operand] of entries) {
+		if (key.startsWith('$')) {
+			if (WixLogicalArrayOperators.has(key)) {
+				if (
+					!Array.isArray(operand) ||
+					operand.length === 0 ||
+					!operand.every(isWixFilter)
+				) {
+					return false;
+				}
+			} else if (WixLogicalSingleOperators.has(key)) {
+				if (
+					typeof operand !== 'object' ||
+					operand === null ||
+					Array.isArray(operand) ||
+					!isWixFilter(operand)
+				) {
+					return false;
+				}
+			} else if (isWixFilterOperand(key, operand)) {
+				// Documented comparison/string/list operator — valid operand shape.
+				continue;
+			} else {
+				// Unknown `$` operator or shape-invalid operand.
+				return false;
+			}
+		} else if (!isWixFilter(operand)) {
+			return false;
+		}
+	}
+	return true;
+}
+
 const WixFilterSchema: z.ZodType<WixFilter> = z.lazy(() =>
-	z.record(
-		z.string(),
-		z.union([
-			z.string(),
-			z.number(),
-			z.boolean(),
-			z.null(),
-			z.record(z.string(), WixJsonValueSchema),
-			z.array(WixFilterSchema),
-		]),
-	),
+	z.record(z.string(), WixJsonValueSchema).refine(isWixFilter, {
+		message:
+			'Not a valid Wix query-language filter: field paths must map to scalar equality shorthands or documented operators ($eq, $ne, $gt, $gte, $lt, $lte, $in, $nin, $hasSome, $hasAll, $startsWith, $endsWith, $contains, $urlized, $exists) with shape-valid operands; logical operators ($and, $or, $not) nest filters.',
+	}),
 ) as z.ZodType<WixFilter>;
 
 /**
@@ -710,8 +797,9 @@ export type QueryExtendedBookingsResponse = z.infer<
 
 const CountExtendedBookingsInputSchema = z.looseObject({
 	...SiteScopeFields,
+	// Documented request body: `{ "filter": {...} }` at the top level —
+	// this count endpoint does not use the `{ query: {...} }` envelope.
 	filter: WixFilterSchema.optional(),
-	search: z.string().optional(),
 });
 export type CountExtendedBookingsInput = z.infer<
 	typeof CountExtendedBookingsInputSchema
@@ -1228,12 +1316,20 @@ export type FindEventResponse = z.infer<typeof FindEventResponseSchema>;
 
 const QueryEventsGraphqlInputSchema = z.looseObject({
 	...SiteScopeFields,
-	...QueryOptionFields,
+	// GraphQL body contract: the caller supplies the GraphQL document and
+	// optional variables; a legacy `filter` is forwarded as `variables.filter`.
+	query: z.string().optional(),
+	variables: z.record(z.string(), WixJsonValueSchema).optional(),
+	filter: WixFilterSchema.optional(),
 });
 export type QueryEventsGraphqlInput = z.infer<
 	typeof QueryEventsGraphqlInputSchema
 >;
-const QueryEventsGraphqlResponseSchema = queryResponse('events');
+const QueryEventsGraphqlResponseSchema = z.looseObject({
+	// GraphQL responses arrive as a `{ data, errors }` envelope.
+	data: z.record(z.string(), WixJsonValueSchema).optional(),
+	errors: z.array(z.record(z.string(), WixJsonValueSchema)).optional(),
+});
 export type QueryEventsGraphqlResponse = z.infer<
 	typeof QueryEventsGraphqlResponseSchema
 >;
