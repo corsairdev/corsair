@@ -1,13 +1,21 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class DadataruAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
+	public readonly status?: number;
+	public readonly statusText?: string;
+	public readonly body?: unknown;
+	public readonly retryAfter?: number | string;
+
+	constructor(message: string, options?: { cause?: Error }) {
+		super(message, options);
 		this.name = 'DadataruAPIError';
+		if (options?.cause instanceof ApiError) {
+			this.status = options.cause.status;
+			this.statusText = options.cause.statusText;
+			this.body = options.cause.body;
+			this.retryAfter = options.cause.retryAfter;
+		}
 	}
 }
 
@@ -62,7 +70,10 @@ export async function makeDadataruRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body,
+		body:
+			method === 'POST' || method === 'PUT' || method === 'PATCH'
+				? body
+				: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query: method === 'GET' ? query : undefined,
 	};
@@ -70,6 +81,21 @@ export async function makeDadataruRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof DadataruAPIError) {
+			throw error;
+		}
+		if (error instanceof ApiError) {
+			const bodyDetail =
+				error.body == null
+					? ''
+					: typeof error.body === 'string'
+						? error.body
+						: JSON.stringify(error.body);
+			const message = bodyDetail
+				? `${error.statusText || 'API Error'}: ${bodyDetail}`
+				: error.statusText || 'Unknown API Error';
+			throw new DadataruAPIError(message, { cause: error });
+		}
 		if (error instanceof Error) {
 			throw new DadataruAPIError(error.message);
 		}
