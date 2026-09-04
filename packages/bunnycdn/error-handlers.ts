@@ -1,5 +1,5 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
@@ -21,6 +21,14 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.status === 401) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 404) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('not_found') || msg.includes('404');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
