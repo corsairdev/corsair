@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { Suspense } from 'react';
 
 import { IntegrationSearch } from './integration-search';
 import { OssIntegrationsResults } from './oss-integrations-results';
@@ -27,12 +28,16 @@ function OssIntegrationsShellInner({
 	return (
 		<>
 			<div className="mb-6">
-				<ViewTabs activeView={view} />
+				<Suspense fallback={null}>
+					<ViewTabs activeView={view} />
+				</Suspense>
 			</div>
 
 			{view === 'integrations' ? (
 				<div className="mb-4 space-y-3">
-					<IntegrationSearch defaultValue={q} />
+					<Suspense fallback={null}>
+						<IntegrationSearch defaultValue={q} />
+					</Suspense>
 					{tagFilter}
 				</div>
 			) : null}

@@ -21,6 +21,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			changeFrequency: 'yearly',
 			priority: 0.3,
 		},
+		{
+			url: 'https://corsair.dev/compare/composio',
+			changeFrequency: 'monthly',
+			priority: 0.7,
+		},
+		{
+			url: 'https://corsair.dev/compare/nango',
+			changeFrequency: 'monthly',
+			priority: 0.7,
+		},
 		...posts.map((post) => ({
 			url: `https://corsair.dev/blog/${post.slug}`,
 			lastModified: post.publishedAt,
