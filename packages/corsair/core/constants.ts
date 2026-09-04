@@ -13,7 +13,6 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'dropboxsign',
 	'ably',
 	'abstract',
 	'abuseipdb',
@@ -103,6 +102,7 @@ export const BaseProviders = [
 	'clockify',
 	'cloudflare',
 	'cloudinary',
+	'coinbase',
 	'collegefootballdata',
 	'confluence',
 	'contentfulgraphql',
@@ -122,6 +122,7 @@ export const BaseProviders = [
 	'doppler',
 	'dreamstudio',
 	'dropbox',
+	'dropboxsign',
 	'epicgames',
 	'exa',
 	'facebook',
@@ -333,6 +334,7 @@ export const ProviderDisplayNames = {
 	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
+	coinbase: 'Coinbase',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	contentfulgraphql: 'Contentful GraphQL',
@@ -571,6 +573,7 @@ export type AllProviders =
 	| 'clockify'
 	| 'cloudflare'
 	| 'cloudinary'
+	| 'coinbase'
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'contentfulgraphql'
