@@ -163,6 +163,7 @@ export const BaseProviders = [
 	'googlemeet',
 	'googlesheets',
 	'grafana',
+	'griptape',
 	'groqcloud',
 	'habitica',
 	'hackernews',
@@ -426,6 +427,7 @@ export const ProviderDisplayNames = {
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
+	griptape: 'Griptape',
 	groqcloud: 'GroqCloud',
 	habitica: 'Habitica',
 	hackernews: 'Hacker News',
@@ -696,6 +698,7 @@ export type AllProviders =
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
+	| 'griptape'
 	| 'groqcloud'
 	| 'habitica'
 	| 'hackernews'
