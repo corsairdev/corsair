@@ -102,7 +102,7 @@ const routeCases: RouteCase[] = [
 	},
 	{
 		endpoint: 'properties.list',
-		input: { filter: 'accounts/123' },
+		input: { filter: 'parent:accounts/123' },
 		base: ADMIN_BASE,
 		method: 'GET',
 		url: '/v1alpha/properties',

@@ -50,7 +50,7 @@ from Admin, Data Streams, Measurement Protocol API secrets, plus either
 - `dataStreams.listMeasurementProtocolSecrets` returns `secretValue`. It is
   a write so readonly agent mode cannot dump stream secrets.
 - `properties.list` (v1alpha, deprecated) needs a `filter` like
-  `accounts/{account}` or `firebaseProjects/{project}`.
+  `parent:accounts/{account}` or `firebase_project:projects/{project}`.
 - Admin API `name` / `parent` values are full resource names, e.g.
   `properties/123` or `properties/123/customDimensions/456`. A bare
   numeric ID 404s. Reports (`property`) and `properties.update` also
