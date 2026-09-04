@@ -1,6 +1,8 @@
+import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, ApiResult } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import { GriptapeAPIError, makeGriptapeRequest } from './client';
+import { griptape } from './index';
 
 jest.mock('corsair/http', () => ({
 	...jest.requireActual('corsair/http'),
@@ -196,5 +198,51 @@ describe('makeGriptapeRequest request wiring', () => {
 			expect.anything(),
 			expect.objectContaining({ method: 'DELETE', body: undefined }),
 		);
+	});
+});
+
+describe('griptape keyBuilder', () => {
+	it('returns options.key for endpoint calls', async () => {
+		const plugin = griptape({ key: 'from-options' });
+
+		await expect(
+			plugin.keyBuilder?.({ authType: 'api_key' } as never, 'endpoint'),
+		).resolves.toBe('from-options');
+	});
+
+	it('returns the stored api key when options.key is absent', async () => {
+		const plugin = griptape();
+
+		await expect(
+			plugin.keyBuilder?.(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: async () => 'from-store' },
+				} as never,
+				'endpoint',
+			),
+		).resolves.toBe('from-store');
+	});
+
+	it('throws AuthMissingError when the api key is missing', async () => {
+		const plugin = griptape();
+
+		await expect(
+			plugin.keyBuilder?.(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: async () => undefined },
+				} as never,
+				'endpoint',
+			),
+		).rejects.toThrow(AuthMissingError);
+	});
+
+	it('throws AuthMissingError for non-endpoint sources', async () => {
+		const plugin = griptape({ key: 'from-options' });
+
+		await expect(
+			plugin.keyBuilder?.({ authType: 'api_key' } as never, 'webhook'),
+		).rejects.toThrow(AuthMissingError);
 	});
 });
