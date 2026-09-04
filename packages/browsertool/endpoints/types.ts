@@ -6,12 +6,14 @@ import { BrowserToolExecution } from '../schema/database';
  * (camelCase as published: task, secrets, startUrl, sessionId, fileId, taskId, lastStepSeen).
  */
 
-const CreateTaskInput = z.object({
-	task: z.string().min(1),
-	secrets: z.record(z.string(), z.string()).optional(),
-	startUrl: z.string().url().optional(),
-	sessionId: z.string().min(1).optional(),
-});
+const CreateTaskInput = z
+	.object({
+		task: z.string().min(1),
+		secrets: z.record(z.string(), z.string()).optional(),
+		startUrl: z.string().url().optional(),
+		sessionId: z.string().min(1).optional(),
+	})
+	.strict();
 
 const GetOutputFileInput = z.object({
 	fileId: z.string().min(1),

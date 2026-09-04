@@ -27,8 +27,21 @@ async function run<K extends keyof typeof TOOL>(
 		parsed as Record<string, unknown>,
 	);
 	const output = BrowserToolEndpointOutputSchemas[key].parse(raw);
-	await logEventFromContext(ctx as never, event, parsed, 'completed');
+	await logEventFromContext(
+		ctx as never,
+		event,
+		auditPayload(parsed),
+		'completed',
+	);
 	return output;
+}
+
+function auditPayload(parsed: unknown): Record<string, unknown> {
+	if (parsed === null || typeof parsed !== 'object') {
+		return {};
+	}
+	const { secrets: _secrets, ...rest } = parsed as Record<string, unknown>;
+	return rest;
 }
 
 /** Official: BROWSER_TOOL_CREATE_TASK — https://docs.composio.dev/toolkits/browser_tool */

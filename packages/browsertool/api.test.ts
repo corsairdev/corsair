@@ -249,6 +249,17 @@ describe('official endpoints', () => {
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
+
+	it('does not log create-task secrets', async () => {
+		await pluginEndpoints().tasks.create(mockCtx, {
+			task: 'Log in',
+			secrets: { 'https://example.com': 'user:pass' },
+		});
+		expect(mockRequest.mock.calls[0][1].body.arguments.secrets).toEqual({
+			'https://example.com': 'user:pass',
+		});
+		expect(mockLog.mock.calls[0]?.[2]).toEqual({ task: 'Log in' });
+	});
 });
 
 describe('official schemas', () => {
@@ -267,7 +278,7 @@ describe('official schemas', () => {
 				task: 'x',
 				start_url: 'https://example.com',
 			}),
-		).not.toThrow();
+		).toThrow();
 		expect(
 			BrowserToolEndpointInputSchemas.createTask.parse({
 				task: 'x',
