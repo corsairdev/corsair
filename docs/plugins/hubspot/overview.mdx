@@ -1,14 +1,14 @@
 ---
 title: Overview
-description: "Hubspot plugin for Corsair"
+description: "HubSpot plugin for Corsair — contacts, companies, deals, tickets, and CRM events."
 ---
 
-Use **Hubspot** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+Use **HubSpot** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
 - 35 typed API operations
-- 5 database entities synced for fast `.search()` / `.list()` queries
+- 5 synced entities (`companies`, `contacts`, `deals`, `engagements`, `tickets`) for fast `.search()` / `.list()`
 - 12 incoming webhook event types
 
 ## Setup
@@ -16,147 +16,183 @@ Use **Hubspot** through Corsair: one client, typed API calls, optional local DB 
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/hubspot
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/hubspot
 ```
+```bash yarn
+yarn add corsair @corsair-dev/hubspot
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/hubspot
+```
+```bash bun
+bun add corsair @corsair-dev/hubspot
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { hubspot } from '@corsair-dev/hubspot';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [hubspot()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { hubspot } from '@corsair-dev/hubspot';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [hubspot()],
+	plugins: [
+		hubspot({
+			authType: 'managed',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/hubspot/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=hubspot
+<Tab title="Managed OAuth (Recommended)">
+
+No setup required. Corsair hosts the OAuth app for **HubSpot** — your tenants connect through Hub when they sign in.
+
+Provider walkthrough: [Get Credentials](/plugins/hubspot/get-credentials).
+
+```ts
+hubspot({
+	authType: 'managed',
+})
 ```
 
-Use the key names documented in [Get Credentials](/plugins/hubspot/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+More: [Managed OAuth](/concepts/auth#managed)
+
 </Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=hubspot --tenant=<tenantId>
-```
+<Tab title="API Key">
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-</Step>
+Provider walkthrough: [Get Credentials](/plugins/hubspot/get-credentials).
 
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 hubspot()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=hubspot` (see [Get Credentials](/plugins/hubspot/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 <Tab title="OAuth 2.0">
 
-```ts corsair.ts
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your HubSpot OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/hubspot/get-credentials).
+
+```ts
 hubspot({
-    authType: 'oauth_2',
+	authType: 'oauth_2',
 })
 ```
-
-Store credentials with `pnpm corsair setup --plugin=hubspot` (see [Get Credentials](/plugins/hubspot/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
 </Tabs>
 
-## Webhooks
+</Step>
 
-This plugin registers **12** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-See [Webhooks](/plugins/hubspot/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'hubspot',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
 
-## Query synced data
-
-Synced entities support `corsair.hubspot.db.<entity>.search()` and `.list()`. See [Database](/plugins/hubspot/database) for filters and operators.
-
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `companies.get`
+**Get contacts**
 
 ```ts
-await corsair.hubspot.api.companies.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contacts.getMany({});
 ```
 
 
-**Write-style (write):** `companies.create`
+**Create a contact**
 
 ```ts
-await corsair.hubspot.api.companies.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.hubspot.api.contacts.create({});
 ```
 
 
-See the full list on the [API](/plugins/hubspot/api) page. Use `pnpm corsair list --plugin=hubspot` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/hubspot/api) page.
 
----
+## Query synced data
 
-## Hooks
+Search synced contacts without hitting HubSpot.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/hubspot/webhooks) page for payload types.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.hubspot.db.contacts.search({
+	data: {},
+	limit: 50,
+});
+```
 
----
+Synced entities: `companies`, `contacts`, `deals`, `engagements`, `tickets`. See [Database](/plugins/hubspot/database) for filters and operators.
 
-## Reference
+## Webhooks
 
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/hubspot/api) |
-| Database | [Database](/plugins/hubspot/database) |
-| Webhooks | [Webhooks](/plugins/hubspot/webhooks) |
-| Credentials | [Get credentials](/plugins/hubspot/get-credentials) |
+Fires when a new contact is created in HubSpot.
 
+```ts
+hubspot({
+    webhookHooks: {
+        contactCreated: {
+            after: async (ctx, result) => {
+                console.log('HubSpot contact created:', result.data);
+            }
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/hubspot/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/hubspot/api">
+    Every `hubspot.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/hubspot/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/hubspot/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/hubspot/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

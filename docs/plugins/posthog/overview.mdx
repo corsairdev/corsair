@@ -1,14 +1,14 @@
 ---
 title: Overview
-description: "Posthog plugin for Corsair"
+description: "PostHog plugin for Corsair — analytics events and event capture."
 ---
 
-Use **Posthog** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+Use **PostHog** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
 - 5 typed API operations
-- 1 database entity synced for fast `.search()` / `.list()` queries
+- 1 synced entity (`events`) for fast `.search()` / `.list()`
 - 1 incoming webhook event types
 
 ## Setup
@@ -16,132 +16,150 @@ Use **Posthog** through Corsair: one client, typed API calls, optional local DB 
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/posthog
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/posthog
 ```
+```bash yarn
+yarn add corsair @corsair-dev/posthog
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/posthog
+```
+```bash bun
+bun add corsair @corsair-dev/posthog
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { posthog } from '@corsair-dev/posthog';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [posthog()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { posthog } from '@corsair-dev/posthog';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [posthog()],
+	plugins: [
+		posthog(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/posthog/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=posthog
-```
+<Tab title="API Key (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/posthog/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=posthog --tenant=<tenantId>
-```
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
+Provider walkthrough: [Get Credentials](/plugins/posthog/get-credentials).
 
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 posthog()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=posthog` (see [Get Credentials](/plugins/posthog/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 </Tabs>
 
-## Webhooks
+</Step>
 
-This plugin registers **1** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-See [Webhooks](/plugins/posthog/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'posthog',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
 
-## Query synced data
-
-Synced entities support `corsair.posthog.db.<entity>.search()` and `.list()`. See [Database](/plugins/posthog/database) for filters and operators.
-
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `—`
+**Read**
 
-_No read-style endpoint inferred; pick any operation from the reference below._
+_No read-style endpoint inferred; pick any operation from the [API](/plugins/posthog/api) reference._
 
 
-**Write-style (write):** `events.aliasCreate`
+**Capture an event**
 
 ```ts
-await corsair.posthog.api.events.aliasCreate({});
+const tenant = corsair.withTenant('acme');
+await tenant.posthog.api.events.eventCreate({ distinct_id: 'abc123', event: 'corsair_example' });
 ```
 
 
-See the full list on the [API](/plugins/posthog/api) page. Use `pnpm corsair list --plugin=posthog` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/posthog/api) page.
 
----
+## Query synced data
 
-## Hooks
+Search synced events without hitting PostHog.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/posthog/webhooks) page for payload types.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.posthog.db.events.search({
+	data: {},
+	limit: 50,
+});
+```
 
----
+Synced entities: `events`. See [Database](/plugins/posthog/database) for filters and operators.
 
-## Reference
+## Webhooks
 
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/posthog/api) |
-| Database | [Database](/plugins/posthog/database) |
-| Webhooks | [Webhooks](/plugins/posthog/webhooks) |
-| Credentials | [Get credentials](/plugins/posthog/get-credentials) |
+Fires when a PostHog event is captured.
 
+```ts
+posthog({
+    webhookHooks: {
+        events: {
+            captured: {
+                after: async (ctx, result) => {
+                    console.log('PostHog event captured:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/posthog/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/posthog/api">
+    Every `posthog.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/posthog/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/posthog/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/posthog/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

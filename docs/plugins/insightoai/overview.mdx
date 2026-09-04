@@ -3,7 +3,7 @@ title: Overview
 description: "Insighto.ai plugin for Corsair"
 ---
 
-Use **Insighto.ai** through Corsair: one client, typed API calls, optional local DB sync.
+Use **Insighto.ai** through Corsair: one client, typed API calls.
 
 **What you get:**
 
@@ -14,135 +14,121 @@ Use **Insighto.ai** through Corsair: one client, typed API calls, optional local
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/insightoai
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/insightoai
 ```
+```bash yarn
+yarn add corsair @corsair-dev/insightoai
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/insightoai
+```
+```bash bun
+bun add corsair @corsair-dev/insightoai
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { insightoai } from '@corsair-dev/insightoai';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [insightoai()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { insightoai } from '@corsair-dev/insightoai';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [insightoai()],
+	plugins: [
+		insightoai(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/insightoai/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=insightoai
-```
+<Tab title="API Key (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/insightoai/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=insightoai --tenant=<tenantId>
-```
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
-
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 insightoai()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=insightoai` (see [Get Credentials](/plugins/insightoai/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 <Tab title="OAuth 2.0">
 
-```ts corsair.ts
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Insighto.ai OAuth app.
+
+```ts
 insightoai({
-    authType: 'oauth_2',
+	authType: 'oauth_2',
 })
 ```
-
-Store credentials with `pnpm corsair setup --plugin=insightoai` (see [Get Credentials](/plugins/insightoai/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
 </Tabs>
 
+</Step>
 
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'insightoai',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `agency.getAgencyBillingPlan`
+**`agency.getAgencyBillingPlan`**
 
 ```ts
-await corsair.insightoai.api.agency.getAgencyBillingPlan({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.agency.getAgencyBillingPlan({});
 ```
 
 
-**Write-style (write):** `agency.createAgency`
+**`agency.createAgency`**
 
 ```ts
-await corsair.insightoai.api.agency.createAgency({});
+const tenant = corsair.withTenant('acme');
+await tenant.insightoai.api.agency.createAgency({});
 ```
 
 
-See the full list on the [API](/plugins/insightoai/api) page. Use `pnpm corsair list --plugin=insightoai` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/insightoai/api) page.
 
----
+## What's next
 
-## Hooks
-
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
-
----
-
-## Reference
-
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/insightoai/api) |
-| Credentials | [Get credentials](/plugins/insightoai/get-credentials) |
-
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/insightoai/api">
+    Every `insightoai.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

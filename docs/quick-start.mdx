@@ -1,0 +1,262 @@
+---
+title: Quick start
+description: A working integration in five steps, powered by Hub.
+---
+
+import { GenerateKEK } from '/snippets/generate-kek.mdx';
+import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
+import MountHandlerNextjs from '/snippets/mount-handler-nextjs.mdx';
+
+Hub hosts the OAuth connect, approval, and webhook surfaces, so there are no connect pages, callback routes, or per-environment redirect URIs to build. Credentials are encrypted and stored in your own database. Hub stores none.
+
+<Steps>
+
+<Step>
+
+## Install
+
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/github
+```
+```bash yarn
+yarn add corsair @corsair-dev/github
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/github
+```
+```bash bun
+bun add corsair @corsair-dev/github
+```
+</CodeGroup>
+
+<Tip>
+`@corsair-dev/github` is one plugin. Every service is its own `@corsair-dev/*` package. Find the one you need, and its exact install id, in the [**Plugins**](/guides/plugins) catalog.
+</Tip>
+
+</Step>
+
+<Step>
+
+## Set your environment
+
+Create a project in the [Hub dashboard](https://hub.corsair.dev/dashboard) and copy the **development** API key and signing secret. Then generate a KEK. Corsair encrypts every stored credential with it:
+
+<GenerateKEK />
+
+```bash .env
+CORSAIR_KEK=your-generated-kek
+CORSAIR_API_KEY=ck_dev_...
+CORSAIR_SIGNING_SECRET=...
+```
+
+<Warning>
+Keep your KEK safe. Lose it and you lose access to every stored credential. Treat it like a root password.
+</Warning>
+
+</Step>
+
+<Step>
+
+## Create the database
+
+Corsair stores data in five tables. SQLite is the fastest way to start:
+
+<CodeGroup>
+```bash npm
+npm install better-sqlite3
+```
+```bash yarn
+yarn add better-sqlite3
+```
+```bash pnpm
+pnpm install better-sqlite3
+```
+```bash bun
+bun add better-sqlite3
+```
+</CodeGroup>
+
+<Accordion title="View migration SQL">
+
+```sql migration.sql
+CREATE TABLE IF NOT EXISTS corsair_integrations (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    config TEXT NOT NULL DEFAULT '{}',
+    dek TEXT NULL
+);
+
+CREATE TABLE IF NOT EXISTS corsair_accounts (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    tenant_id TEXT NOT NULL,
+    integration_id TEXT NOT NULL,
+    config TEXT NOT NULL DEFAULT '{}',
+    dek TEXT NULL,
+    FOREIGN KEY (integration_id) REFERENCES corsair_integrations(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_entities (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    account_id TEXT NOT NULL,
+    entity_id TEXT NOT NULL,
+    entity_type TEXT NOT NULL,
+    version TEXT NOT NULL,
+    data TEXT NOT NULL DEFAULT '{}',
+    FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_events (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    account_id TEXT NOT NULL,
+    event_type TEXT NOT NULL,
+    payload TEXT NOT NULL DEFAULT '{}',
+    status TEXT,
+    FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS corsair_permissions (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    token TEXT NOT NULL,
+    plugin TEXT NOT NULL,
+    endpoint TEXT NOT NULL,
+    args TEXT NOT NULL,
+    tenant_id TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    expires_at TEXT NOT NULL,
+    error TEXT
+);
+```
+
+</Accordion>
+
+<Tabs>
+  <Tab title="macOS / Linux">
+
+```bash
+sqlite3 corsair.db < migration.sql
+```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+Get-Content migration.sql | sqlite3 corsair.db
+```
+
+  </Tab>
+</Tabs>
+
+Using Postgres, Drizzle, or Prisma instead? See [Database](/concepts/database) for each option.
+
+</Step>
+
+<Step>
+
+## Configure Corsair
+
+Wire your database, KEK, and Hub keys together in `src/server/corsair.ts`:
+
+```ts src/server/corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+
+const db = new Database('corsair.db');
+
+export const corsair = createCorsair({
+    plugins: [github({ authType: 'managed' })],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+    multiTenancy: true, // gives every user their own credentials; enables corsair.withTenant(id)
+    hub: {
+        projectApiKey: process.env.CORSAIR_API_KEY!,
+        signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+    },
+});
+```
+
+Mount the handler once. It serves Hub delivery and the management API. In development, Hub auto-detects your localhost delivery URL:
+
+<MountHandlerNextjs />
+
+<Note>
+This quick-start uses Next.js. The instance above is the same on every framework; only the mount line changes. See [Frameworks](/frameworks/next) for Express, Node, SvelteKit, Hono, and the rest.
+</Note>
+
+Add more plugins later, like `slack()`, `linear()`, or `gmail()`, by appending to the array.
+
+</Step>
+
+<Step>
+
+## Connect and call
+
+Mint a connect link and send the user to it. Hub hosts the connect page and delivers the result back to your app, with no connect page or OAuth callback to build:
+
+```ts connect.ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+    plugin: 'github',
+    tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+Once connected, call any endpoint. Responses are also cached in your database for instant reads:
+
+```ts usage.ts
+const repos = await corsair.github.api.repositories.list({});
+```
+
+Want an agent to call endpoints on its own? See [MCP Adapters](/mcp-adapters/mcp-adapters).
+
+</Step>
+
+<Step>
+
+## Run it
+
+```bash
+npm run dev
+```
+
+Load your app so the mounted route gets its first hit. That request registers your delivery URL with Hub, and the **App sync** dot in the dashboard header turns green. A green dot means Hub can reach your app and the connect flow is live.
+
+</Step>
+
+</Steps>
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Use with AI" href="/mcp-adapters/mcp-adapters">
+    Give an agent the three Corsair tools and let it discover and call any endpoint.
+  </Card>
+  <Card title="Hub overview" href="/hub/overview">
+    How the relay works, and why Hub stores none of your credentials.
+  </Card>
+  <Card title="Environments" href="/hub/environments">
+    Development vs production keys. Switch to production when you deploy.
+  </Card>
+  <Card title="Multi-tenancy" href="/concepts/multi-tenancy">
+    Building a product? Flip one flag and every user gets their own data and credentials.
+  </Card>
+  <Card title="Database options" href="/concepts/database">
+    Postgres, Drizzle, Prisma, and the five tables Corsair uses.
+  </Card>
+  <Card title="Provisioning" href="/concepts/provisioning">
+    Seed credentials and provision tenants from the `corsair` CLI or `setupCorsair`.
+  </Card>
+</CardGroup>
