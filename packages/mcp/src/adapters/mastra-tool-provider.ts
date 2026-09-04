@@ -29,7 +29,7 @@ type PluginConnectionState =
 // so the provider does not depend on Corsair's internal management types.
 interface CorsairManage {
 	plugins: { list(): Promise<Array<{ id: string }>> };
-	status: {
+	connectionStatus: {
 		get(query?: {
 			tenantId?: string;
 		}): Promise<Record<string, PluginConnectionState>>;
@@ -280,7 +280,9 @@ export class CorsairToolProvider implements ToolProvider {
 	async getAuthStatus(authId: string): Promise<AuthFlowStatus> {
 		const decoded = decodeConnectionId(authId);
 		if (!decoded) return 'failed';
-		const status = await this.manage.status.get({ tenantId: decoded.tenantId });
+		const status = await this.manage.connectionStatus.get({
+			tenantId: decoded.tenantId,
+		});
 		return mapAuthStatus(status[decoded.toolkit]);
 	}
 
@@ -302,7 +304,7 @@ export class CorsairToolProvider implements ToolProvider {
 			byTenant.set(tenantId, group);
 		}
 		for (const [tenantId, items] of byTenant) {
-			const status = await this.manage.status.get({ tenantId });
+			const status = await this.manage.connectionStatus.get({ tenantId });
 			for (const item of items) {
 				result[item.connectionId] = {
 					connected: status[item.toolkit] === 'connected',
@@ -323,7 +325,7 @@ export class CorsairToolProvider implements ToolProvider {
 				userId,
 				toolkit: opts.toolkit,
 			});
-			const status = await this.manage.status.get({ tenantId });
+			const status = await this.manage.connectionStatus.get({ tenantId });
 			if (status[opts.toolkit] === 'connected') {
 				items.push({
 					connectionId: encodeConnectionId(tenantId, opts.toolkit),
