@@ -28,7 +28,18 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (statusOf(error) === 429) return true;
 			const code = codeOf(error);
-			if (code === 43 || code === '43') return true;
+			if (
+				code === 43 ||
+				code === '43' ||
+				code === 44 ||
+				code === '44' ||
+				code === 45 ||
+				code === '45' ||
+				code === 1070 ||
+				code === '1070'
+			) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('429') ||
@@ -42,6 +53,11 @@ export const errorHandlers = {
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
+				retryAfterMs = error.retryAfter;
+			} else if (
+				error instanceof ZohoInventoryAPIError &&
+				error.retryAfter !== undefined
+			) {
 				retryAfterMs = error.retryAfter;
 			}
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };

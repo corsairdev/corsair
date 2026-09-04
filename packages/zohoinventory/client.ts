@@ -1,12 +1,16 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
+const ALLOWED_API_HOST =
+	/^(www\.)?zohoapis\.(com|eu|in|com\.au|jp|ca|com\.cn|sa)$/;
+
 export class ZohoInventoryAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly status?: number,
 		public readonly code?: number | string,
 		public readonly body?: unknown,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'ZohoInventoryAPIError';
@@ -14,9 +18,9 @@ export class ZohoInventoryAPIError extends Error {
 }
 
 /**
- * Zoho operates region-specific datacenters.
- * The OAuth (accounts.zoho.*) and Inventory API (zohoapis.*) hosts share the same top-level domain per region.
- * @see https://www.zoho.com/inventory/api/v1/
+ * Zoho Inventory datacenters.
+ * @see https://www.zoho.com/inventory/api/v1/introduction/
+ * @see https://www.zoho.com/inventory/api/v1/oauth/
  */
 export type ZohoInventoryRegion =
 	| 'us'
@@ -39,20 +43,41 @@ const REGION_TLD: Record<ZohoInventoryRegion, string> = {
 	sa: 'sa',
 };
 
+/** Canada OAuth uses accounts.zohocloud.ca; API stays on zohoapis.ca. */
+const OAUTH_HOST: Record<ZohoInventoryRegion, string> = {
+	us: 'accounts.zoho.com',
+	eu: 'accounts.zoho.eu',
+	in: 'accounts.zoho.in',
+	au: 'accounts.zoho.com.au',
+	jp: 'accounts.zoho.jp',
+	ca: 'accounts.zohocloud.ca',
+	cn: 'accounts.zoho.com.cn',
+	sa: 'accounts.zoho.sa',
+};
+
 function regionTld(region?: ZohoInventoryRegion): string {
 	return REGION_TLD[region ?? 'us'] ?? REGION_TLD.us;
 }
 
-/**
- * Strips all trailing slashes from a URL string without regular expressions
- * to prevent polynomial backtracking (ReDoS) warnings on untrusted input.
- */
 export function stripTrailingSlashes(str: string): string {
 	let end = str.length;
-	while (end > 0 && str.charCodeAt(end - 1) === 47 /* '/' */) {
+	while (end > 0 && str.charCodeAt(end - 1) === 47) {
 		end--;
 	}
 	return str.slice(0, end);
+}
+
+export function isAllowedZohoApiDomain(apiDomain: string): boolean {
+	try {
+		const parsed = new URL(
+			apiDomain.includes('://') ? apiDomain : `https://${apiDomain}`,
+		);
+		return (
+			parsed.protocol === 'https:' && ALLOWED_API_HOST.test(parsed.hostname)
+		);
+	} catch {
+		return false;
+	}
 }
 
 export function zohoInventoryApiBase(
@@ -60,9 +85,13 @@ export function zohoInventoryApiBase(
 	apiDomain?: string,
 ): string {
 	const trimmedDomain = apiDomain?.trim();
-	if (trimmedDomain) {
-		const cleanDomain = stripTrailingSlashes(trimmedDomain);
-		return `${cleanDomain}/inventory/v1`;
+	if (trimmedDomain && isAllowedZohoApiDomain(trimmedDomain)) {
+		const parsed = new URL(
+			trimmedDomain.includes('://')
+				? stripTrailingSlashes(trimmedDomain)
+				: `https://${stripTrailingSlashes(trimmedDomain)}`,
+		);
+		return `${parsed.origin}/inventory/v1`;
 	}
 	return `https://www.zohoapis.${regionTld(region)}/inventory/v1`;
 }
@@ -70,42 +99,139 @@ export function zohoInventoryApiBase(
 export function zohoInventoryOAuthAuthUrl(
 	region?: ZohoInventoryRegion,
 ): string {
-	return `https://accounts.zoho.${regionTld(region)}/oauth/v2/auth`;
+	return `https://${OAUTH_HOST[region ?? 'us']}/oauth/v2/auth`;
 }
 
 export function zohoInventoryOAuthTokenUrl(
 	region?: ZohoInventoryRegion,
 ): string {
-	return `https://accounts.zoho.${regionTld(region)}/oauth/v2/token`;
+	return `https://${OAUTH_HOST[region ?? 'us']}/oauth/v2/token`;
 }
 
 export type ZohoInventoryRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
+	formData?: Record<string, string | Blob>;
 	region?: ZohoInventoryRegion;
 	apiDomain?: string;
+	binary?: boolean;
 };
 
-/**
- * Zoho Inventory authenticates with `Authorization: Zoho-oauthtoken <token>`.
- */
+function headersFor(token: string): Record<string, string> {
+	return { Authorization: `Zoho-oauthtoken ${token}` };
+}
+
+function throwIfZohoError(res: unknown): void {
+	if (
+		res &&
+		typeof res === 'object' &&
+		'code' in res &&
+		typeof (res as { code: unknown }).code === 'number' &&
+		(res as { code: number }).code !== 0
+	) {
+		const zohoError = res as { code: number; message?: string };
+		throw new ZohoInventoryAPIError(
+			zohoError.message || `Zoho Inventory error code ${zohoError.code}`,
+			undefined,
+			zohoError.code,
+			res,
+		);
+	}
+}
+
+function wrapError(error: unknown): never {
+	if (error instanceof ZohoInventoryAPIError) throw error;
+	if (error instanceof ApiError) {
+		let message = error.message;
+		let zohoCode: number | string | undefined;
+		if (error.body && typeof error.body === 'object') {
+			const errorBody = error.body as Record<string, unknown>;
+			if (typeof errorBody.message === 'string') message = errorBody.message;
+			if (
+				typeof errorBody.code === 'number' ||
+				typeof errorBody.code === 'string'
+			) {
+				zohoCode = errorBody.code;
+			}
+		}
+		throw new ZohoInventoryAPIError(
+			message,
+			error.status,
+			zohoCode,
+			error.body,
+			error.retryAfter,
+		);
+	}
+	if (error instanceof Error) {
+		const status =
+			'status' in error &&
+			typeof (error as { status: unknown }).status === 'number'
+				? (error as { status: number }).status
+				: undefined;
+		throw new ZohoInventoryAPIError(error.message, status);
+	}
+	throw new ZohoInventoryAPIError('Unknown error');
+}
+
 export async function makeZohoInventoryRequest<T>(
 	endpoint: string,
 	token: string,
 	options: ZohoInventoryRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, region, apiDomain } = options;
+	const {
+		method = 'GET',
+		body,
+		query,
+		formData,
+		region,
+		apiDomain,
+		binary,
+	} = options;
+	const base = zohoInventoryApiBase(region, apiDomain);
+
+	if (binary) {
+		const params = new URLSearchParams();
+		for (const [key, value] of Object.entries(query ?? {})) {
+			if (value !== undefined) params.set(key, String(value));
+		}
+		const qs = params.toString();
+		const url = `${base}${endpoint}${qs ? `?${qs}` : ''}`;
+		const response = await fetch(url, {
+			method,
+			headers: headersFor(token),
+		});
+		if (!response.ok) {
+			let zohoCode: number | string | undefined;
+			let message = response.statusText;
+			try {
+				const errBody = (await response.json()) as {
+					code?: number | string;
+					message?: string;
+				};
+				if (typeof errBody.message === 'string') message = errBody.message;
+				zohoCode = errBody.code;
+			} catch {
+				// PDF/error body was not JSON
+			}
+			throw new ZohoInventoryAPIError(message, response.status, zohoCode);
+		}
+		const bytes = Buffer.from(await response.arrayBuffer());
+		return {
+			content_type: response.headers.get('content-type') ?? 'application/pdf',
+			content_base64: bytes.toString('base64'),
+		} as T;
+	}
 
 	const config: OpenAPIConfig = {
-		BASE: zohoInventoryApiBase(region, apiDomain),
+		BASE: base,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
 		HEADERS: {
-			'Content-Type': 'application/json',
-			Authorization: `Zoho-oauthtoken ${token}`,
+			...headersFor(token),
+			...(formData ? {} : { 'Content-Type': 'application/json' }),
 		},
 	};
 
@@ -113,72 +239,20 @@ export async function makeZohoInventoryRequest<T>(
 		method,
 		url: endpoint,
 		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
+			!formData && (method === 'POST' || method === 'PUT' || method === 'PATCH')
 				? body
 				: undefined,
-		mediaType: 'application/json',
-		query: method === 'GET' ? query : undefined,
+		formData,
+		mediaType: formData ? undefined : 'application/json',
+		query,
 	};
 
 	try {
 		const res = await request<T>(config, requestOptions);
-
-		// Check if Zoho returned an error payload wrapped inside a 200 response
-		if (
-			res &&
-			typeof res === 'object' &&
-			'code' in res &&
-			typeof (res as { code: unknown }).code === 'number' &&
-			(res as { code: number }).code !== 0
-		) {
-			const zohoError = res as { code: number; message?: string };
-			throw new ZohoInventoryAPIError(
-				zohoError.message || `Zoho Inventory error code ${zohoError.code}`,
-				undefined,
-				zohoError.code,
-				res,
-			);
-		}
-
+		throwIfZohoError(res);
 		return res;
 	} catch (error) {
-		if (error instanceof ZohoInventoryAPIError) {
-			throw error;
-		}
-
-		if (error instanceof ApiError) {
-			let message = error.message;
-			let zohoCode: number | string | undefined;
-			if (error.body && typeof error.body === 'object') {
-				const errorBody = error.body as Record<string, unknown>;
-				if (typeof errorBody.message === 'string') {
-					message = errorBody.message;
-				}
-				if (
-					typeof errorBody.code === 'number' ||
-					typeof errorBody.code === 'string'
-				) {
-					zohoCode = errorBody.code;
-				}
-			}
-			throw new ZohoInventoryAPIError(
-				message,
-				error.status,
-				zohoCode,
-				error.body,
-			);
-		}
-
-		if (error instanceof Error) {
-			const status =
-				'status' in error &&
-				typeof (error as { status: unknown }).status === 'number'
-					? (error as { status: number }).status
-					: undefined;
-			throw new ZohoInventoryAPIError(error.message, status);
-		}
-
-		throw new ZohoInventoryAPIError('Unknown error');
+		wrapError(error);
 	}
 }
 
@@ -209,10 +283,6 @@ export type ZohoInventoryRequestContext = {
 	_refreshAuth?: () => Promise<string>;
 };
 
-/**
- * Wrapper around makeZohoInventoryRequest that retries once on 401 by force-refreshing
- * the access token via ctx._refreshAuth.
- */
 export async function makeAuthenticatedZohoInventoryRequest<T>(
 	endpoint: string,
 	ctx: ZohoInventoryRequestContext,

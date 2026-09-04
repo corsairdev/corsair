@@ -19,6 +19,17 @@ describe('ZohoInventory schema', () => {
 		}
 	});
 
+	it('declares official inventory entities', () => {
+		expect(Object.keys(ZohoInventorySchema.entities).sort()).toEqual([
+			'contacts',
+			'creditNotes',
+			'invoices',
+			'items',
+			'organizations',
+			'salesOrders',
+		]);
+	});
+
 	it('validates ZohoInventoryOrganizationEntity', () => {
 		const org = ZohoInventoryOrganizationEntity.parse({
 			id: 'org_123',

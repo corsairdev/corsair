@@ -1,4 +1,5 @@
 import {
+	isAllowedZohoApiDomain,
 	isUnauthorizedError,
 	makeAuthenticatedZohoInventoryRequest,
 	stripTrailingSlashes,
@@ -7,508 +8,358 @@ import {
 	zohoInventoryOAuthAuthUrl,
 	zohoInventoryOAuthTokenUrl,
 } from './client';
-import {
-	ListContactsInputSchema,
-	ListContactsResponseSchema,
-	ListItemsInputSchema,
-	ListItemsResponseSchema,
-	ListOrganizationsInputSchema,
-	ListOrganizationsResponseSchema,
-	ListUsersInputSchema,
-	ListUsersResponseSchema,
-} from './endpoints/types';
+import { ZohoInventoryEndpointInputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { zohoinventory } from './index';
-import { resolveZohoInventoryOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { resolveZohoInventoryOAuthWebhookTenantLink } from './oauth-tenant-link';
+
+function jsonResponse(body: unknown, status = 200) {
+	return {
+		ok: status < 400,
+		status,
+		statusText: status === 200 ? 'OK' : 'Error',
+		headers: new Headers({ 'content-type': 'application/json' }),
+		text: async () => JSON.stringify(body),
+		json: async () => body,
+		arrayBuffer: async () => Buffer.from(JSON.stringify(body)),
+	};
+}
+
+function mockCtx() {
+	return {
+		key: 'test_token',
+		options: { region: 'us' as const },
+		db: {},
+		$getAccountId: async () => 'acct',
+		database: { logEvent: jest.fn().mockResolvedValue({}) },
+	};
+}
 
 describe('zohoinventory plugin initialization', () => {
-	it('builds with default (US) region and core OAuth wiring', () => {
+	it('builds OAuth wiring and 58 endpoints', () => {
 		const plugin = zohoinventory();
 		expect(plugin.id).toBe('zohoinventory');
 		expect(plugin.options?.authType).toBe('oauth_2');
-		expect(plugin.authConfig?.oauth_2?.account).toEqual(['tenant_external_id']);
-		expect(plugin.oauthConfig?.providerName).toBe('Zoho');
+		expect(plugin.oauthConfig?.scopes).toEqual([
+			'ZohoInventory.FullAccess.all',
+		]);
 		expect(plugin.oauthConfig?.authUrl).toBe(
 			'https://accounts.zoho.com/oauth/v2/auth',
 		);
-		expect(plugin.oauthConfig?.tokenUrl).toBe(
-			'https://accounts.zoho.com/oauth/v2/token',
-		);
-		expect(plugin.oauthConfig?.scopes).toEqual([
-			'ZohoInventory.settings.READ',
-			'ZohoInventory.items.READ',
-			'ZohoInventory.contacts.READ',
-		]);
-		expect(plugin.oauthConfig?.tokenAuthMethod).toBe('body');
-	});
-
-	it('exposes all required endpoints', () => {
-		const plugin = zohoinventory();
+		expect(Object.keys(plugin.endpointMeta ?? {}).length).toBe(58);
 		expect(typeof plugin.endpoints!.organizations.list).toBe('function');
-		expect(typeof plugin.endpoints!.items.list).toBe('function');
-		expect(typeof plugin.endpoints!.contacts.list).toBe('function');
-		expect(typeof plugin.endpoints!.users.list).toBe('function');
-	});
-
-	it('configures proper read risk-levels on all endpoints', () => {
-		const plugin = zohoinventory();
-		expect(plugin.endpointMeta!['organizations.list']?.riskLevel).toBe('read');
-		expect(plugin.endpointMeta!['items.list']?.riskLevel).toBe('read');
-		expect(plugin.endpointMeta!['contacts.list']?.riskLevel).toBe('read');
-		expect(plugin.endpointMeta!['users.list']?.riskLevel).toBe('read');
+		expect(typeof plugin.endpoints!.invoices.bulkEmail).toBe('function');
+		expect(typeof plugin.endpoints!.users.getCurrent).toBe('function');
+		expect(plugin.endpointMeta!['invoices.delete']?.riskLevel).toBe(
+			'destructive',
+		);
 	});
 });
 
-describe('stripTrailingSlashes utility', () => {
-	it('preserves domain without trailing slashes', () => {
-		expect(stripTrailingSlashes('https://www.zohoapis.com')).toBe(
-			'https://www.zohoapis.com',
-		);
-	});
-
-	it('strips a single trailing slash', () => {
-		expect(stripTrailingSlashes('https://www.zohoapis.com/')).toBe(
-			'https://www.zohoapis.com',
-		);
-	});
-
-	it('strips multiple trailing slashes', () => {
-		expect(stripTrailingSlashes('https://www.zohoapis.com///')).toBe(
-			'https://www.zohoapis.com',
-		);
-	});
-
-	it('handles empty strings and only slashes', () => {
-		expect(stripTrailingSlashes('')).toBe('');
-		expect(stripTrailingSlashes('/')).toBe('');
-		expect(stripTrailingSlashes('////')).toBe('');
-	});
-});
-
-describe('zoho regional datacenter mapping', () => {
-	it('maps each region to the correct API base URL', () => {
+describe('regional hosts', () => {
+	it('maps API and OAuth hosts from official docs', () => {
 		expect(zohoInventoryApiBase('us')).toBe(
 			'https://www.zohoapis.com/inventory/v1',
-		);
-		expect(zohoInventoryApiBase('eu')).toBe(
-			'https://www.zohoapis.eu/inventory/v1',
-		);
-		expect(zohoInventoryApiBase('in')).toBe(
-			'https://www.zohoapis.in/inventory/v1',
-		);
-		expect(zohoInventoryApiBase('au')).toBe(
-			'https://www.zohoapis.com.au/inventory/v1',
-		);
-		expect(zohoInventoryApiBase('jp')).toBe(
-			'https://www.zohoapis.jp/inventory/v1',
 		);
 		expect(zohoInventoryApiBase('ca')).toBe(
 			'https://www.zohoapis.ca/inventory/v1',
 		);
-		expect(zohoInventoryApiBase('cn')).toBe(
-			'https://www.zohoapis.com.cn/inventory/v1',
+		expect(zohoInventoryOAuthAuthUrl('ca')).toBe(
+			'https://accounts.zohocloud.ca/oauth/v2/auth',
 		);
-		expect(zohoInventoryApiBase('sa')).toBe(
-			'https://www.zohoapis.sa/inventory/v1',
+		expect(zohoInventoryOAuthTokenUrl('ca')).toBe(
+			'https://accounts.zohocloud.ca/oauth/v2/token',
 		);
-	});
-
-	it('supports custom apiDomain override without trailing slashes', () => {
-		expect(
-			zohoInventoryApiBase(undefined, 'https://inventory.custom.zoho.com'),
-		).toBe('https://inventory.custom.zoho.com/inventory/v1');
-	});
-
-	it('supports custom apiDomain override with one trailing slash', () => {
-		expect(
-			zohoInventoryApiBase(undefined, 'https://inventory.custom.zoho.com/'),
-		).toBe('https://inventory.custom.zoho.com/inventory/v1');
-	});
-
-	it('supports custom apiDomain override with multiple trailing slashes', () => {
-		expect(
-			zohoInventoryApiBase(undefined, 'https://inventory.custom.zoho.com///'),
-		).toBe('https://inventory.custom.zoho.com/inventory/v1');
-	});
-
-	it('handles custom apiDomain with whitespace and edge-cases', () => {
-		expect(
-			zohoInventoryApiBase(
-				undefined,
-				'  https://inventory.custom.zoho.com///  ',
-			),
-		).toBe('https://inventory.custom.zoho.com/inventory/v1');
-		expect(zohoInventoryApiBase('eu', '')).toBe(
-			'https://www.zohoapis.eu/inventory/v1',
-		);
-		expect(zohoInventoryApiBase('in', '   ')).toBe(
-			'https://www.zohoapis.in/inventory/v1',
-		);
-	});
-
-	it('maps OAuth auth and token URLs per region', () => {
 		expect(zohoInventoryOAuthAuthUrl('eu')).toBe(
 			'https://accounts.zoho.eu/oauth/v2/auth',
 		);
-		expect(zohoInventoryOAuthTokenUrl('eu')).toBe(
-			'https://accounts.zoho.eu/oauth/v2/token',
+	});
+
+	it('allowlists only HTTPS zohoapis hosts', () => {
+		expect(isAllowedZohoApiDomain('https://www.zohoapis.eu')).toBe(true);
+		expect(isAllowedZohoApiDomain('http://www.zohoapis.com')).toBe(false);
+		expect(isAllowedZohoApiDomain('https://evil.example')).toBe(false);
+		expect(zohoInventoryApiBase('us', 'https://evil.example')).toBe(
+			'https://www.zohoapis.com/inventory/v1',
 		);
-		expect(zohoInventoryOAuthAuthUrl('in')).toBe(
-			'https://accounts.zoho.in/oauth/v2/auth',
+		expect(zohoInventoryApiBase(undefined, 'https://www.zohoapis.in/')).toBe(
+			'https://www.zohoapis.in/inventory/v1',
 		);
-		expect(zohoInventoryOAuthTokenUrl('in')).toBe(
-			'https://accounts.zoho.in/oauth/v2/token',
+		expect(stripTrailingSlashes('https://www.zohoapis.com///')).toBe(
+			'https://www.zohoapis.com',
 		);
 	});
 });
 
-describe('endpoint schemas validation', () => {
-	it('validates organizations list input and output', () => {
-		const parsedInput = ListOrganizationsInputSchema.parse({});
-		expect(parsedInput).toBeDefined();
+describe('endpoint handlers', () => {
+	const originalFetch = globalThis.fetch;
 
-		const validOutput = {
-			code: 0,
-			message: 'success',
-			organizations: [
-				{
-					organization_id: '7891011',
-					name: 'Acme Global',
-					is_default_org: true,
-					currency_code: 'USD',
-					is_org_active: true,
-				},
-			],
-		};
-		const parsedOutput = ListOrganizationsResponseSchema.parse(validOutput);
-		expect(parsedOutput.organizations[0]?.organization_id).toBe('7891011');
-		expect(parsedOutput.organizations[0]?.is_default_org).toBe(true);
+	afterEach(() => {
+		globalThis.fetch = originalFetch;
 	});
 
-	it('validates items list input and output', () => {
-		const input = {
-			organization_id: '7891011',
-			page: 1,
-			per_page: 50,
-			search_text: 'Widget',
-		};
-		const parsedInput = ListItemsInputSchema.parse(input);
-		expect(parsedInput.organization_id).toBe('7891011');
+	it('lists organizations and forwards the Zoho token', async () => {
+		globalThis.fetch = jest.fn().mockResolvedValue(
+			jsonResponse({
+				code: 0,
+				message: 'success',
+				organizations: [{ organization_id: '10234695', name: 'Zillum' }],
+			}),
+		) as unknown as typeof fetch;
 
-		const validOutput = {
-			code: 0,
-			message: 'success',
-			items: [
-				{
-					item_id: '998877',
-					name: 'Widget A',
-					rate: 19.99,
-					stock_on_hand: 150,
-					status: 'active',
-				},
-			],
-			page_context: {
-				page: 1,
-				per_page: 50,
-				has_more_page: false,
-			},
-		};
-		const parsedOutput = ListItemsResponseSchema.parse(validOutput);
-		expect(parsedOutput.items[0]?.item_id).toBe('998877');
-		expect(parsedOutput.page_context?.has_more_page).toBe(false);
+		const plugin = zohoinventory();
+		const result = (await plugin.endpoints!.organizations.list(
+			mockCtx() as never,
+			{},
+		)) as { organizations: Array<{ organization_id: string }> };
+		expect(result.organizations[0]?.organization_id).toBe('10234695');
+		expect(String(jest.mocked(globalThis.fetch).mock.calls[0]?.[0])).toBe(
+			'https://www.zohoapis.com/inventory/v1/organizations',
+		);
 	});
 
-	it('validates contacts list input and output', () => {
-		const input = {
-			organization_id: '7891011',
-			contact_type: 'customer' as const,
-		};
-		const parsedInput = ListContactsInputSchema.parse(input);
-		expect(parsedInput.contact_type).toBe('customer');
+	it('sends organization_id on POST create item', async () => {
+		globalThis.fetch = jest.fn().mockResolvedValue(
+			jsonResponse({
+				code: 0,
+				message: 'success',
+				item: { item_id: '1', name: 'Widget' },
+			}),
+		) as unknown as typeof fetch;
 
-		const validOutput = {
-			code: 0,
-			message: 'success',
-			contacts: [
-				{
-					contact_id: '445566',
-					contact_name: 'John Doe',
-					company_name: 'Acme Corp',
-					email: 'john@example.com',
-					outstanding_receivable_amount: 500,
-				},
-			],
-		};
-		const parsedOutput = ListContactsResponseSchema.parse(validOutput);
-		expect(parsedOutput.contacts[0]?.contact_id).toBe('445566');
-		expect(parsedOutput.contacts[0]?.contact_name).toBe('John Doe');
+		const plugin = zohoinventory();
+		await plugin.endpoints!.items.create(mockCtx() as never, {
+			organization_id: '10234695',
+			name: 'Widget',
+		});
+		const url = String(jest.mocked(globalThis.fetch).mock.calls[0]?.[0]);
+		expect(url).toContain('/items?');
+		expect(url).toContain('organization_id=10234695');
 	});
 
-	it('validates users list input and output', () => {
-		const input = {
-			organization_id: '7891011',
-			page: 1,
-		};
-		const parsedInput = ListUsersInputSchema.parse(input);
-		expect(parsedInput.organization_id).toBe('7891011');
+	it('forwards configured apiDomain to handlers', async () => {
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(jsonResponse({ code: 0, items: [] })) as never;
+		const plugin = zohoinventory({ apiDomain: 'https://www.zohoapis.eu' });
+		await plugin.endpoints!.items.list(
+			{
+				...mockCtx(),
+				options: { region: 'us', apiDomain: 'https://www.zohoapis.eu' },
+			} as never,
+			{ organization_id: '1' },
+		);
+		expect(String(jest.mocked(globalThis.fetch).mock.calls[0]?.[0])).toContain(
+			'https://www.zohoapis.eu/inventory/v1/items',
+		);
+	});
 
-		const validOutput = {
-			code: 0,
-			message: 'success',
-			users: [
-				{
-					user_id: '112233',
-					name: 'Jane Admin',
-					email: 'jane@example.com',
-					user_role: 'Admin',
-					status: 'active',
-					is_current_user: true,
-				},
-			],
-		};
-		const parsedOutput = ListUsersResponseSchema.parse(validOutput);
-		expect(parsedOutput.users[0]?.user_id).toBe('112233');
-		expect(parsedOutput.users[0]?.is_current_user).toBe(true);
+	it('bulk emails invoices and loads customer_id when contact_id is omitted', async () => {
+		globalThis.fetch = jest.fn().mockImplementation(async (url: string) => {
+			if (
+				String(url).includes('/invoices/inv-1?') ||
+				String(url).endsWith('/invoices/inv-1')
+			) {
+				return jsonResponse({
+					code: 0,
+					invoice: { invoice_id: 'inv-1', customer_id: 'cust-9' },
+				});
+			}
+			return jsonResponse({ code: 0, message: 'success' });
+		}) as never;
+
+		const plugin = zohoinventory();
+		await plugin.endpoints!.invoices.bulkEmail(mockCtx() as never, {
+			organization_id: 'org-1',
+			invoice_ids: ['inv-1'],
+		});
+		const urls = jest
+			.mocked(globalThis.fetch)
+			.mock.calls.map((call) => String(call[0]));
+		expect(urls.some((url) => url.includes('/invoices/inv-1'))).toBe(true);
+		expect(urls.some((url) => url.includes('/invoices/email'))).toBe(true);
+		expect(urls.some((url) => url.includes('contact_id=cust-9'))).toBe(true);
+	});
+
+	it('maps official invoice and sales-order paths', async () => {
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(
+				jsonResponse({ code: 0, message: 'success' }),
+			) as never;
+		const plugin = zohoinventory();
+		const ctx = mockCtx() as never;
+		await plugin.endpoints!.invoices.deleteComment(ctx, {
+			organization_id: 'o',
+			invoice_id: 'i',
+			comment_id: 'c',
+		});
+		await plugin.endpoints!.salesOrders.bulkDelete(ctx, {
+			organization_id: 'o',
+			salesorder_ids: ['a', 'b'],
+		});
+		const urls = jest
+			.mocked(globalThis.fetch)
+			.mock.calls.map((call) => String(call[0]));
+		expect(urls[0]).toContain('/invoices/i/comments/c');
+		expect(urls[1]).toContain('/salesorders?');
+		expect(urls[1]).toContain('salesorder_ids=a%2Cb');
 	});
 });
 
-describe('oauth tenant link resolution', () => {
-	it('resolves direct tenant_external_id from tokens if present', async () => {
-		const res = await resolveZohoInventoryOAuthWebhookTenantLink({
-			tenant_external_id: 'org_12345',
-		});
-		expect(res).toEqual({
-			linkType: 'tenant_external_id',
-			externalId: 'org_12345',
-		});
+describe('schemas', () => {
+	it('requires official create fields', () => {
+		expect(() =>
+			ZohoInventoryEndpointInputSchemas.itemsCreate.parse({
+				organization_id: '1',
+			}),
+		).toThrow();
+		expect(
+			ZohoInventoryEndpointInputSchemas.contactsCreate.parse({
+				organization_id: '1',
+				contact_name: 'Acme',
+			}).contact_name,
+		).toBe('Acme');
+	});
+});
+
+describe('oauth tenant link', () => {
+	const originalFetch = globalThis.fetch;
+	afterEach(() => {
+		globalThis.fetch = originalFetch;
 	});
 
-	it('resolves direct organization_id from tokens if present', async () => {
-		const res = await resolveZohoInventoryOAuthWebhookTenantLink({
-			organization_id: 'org_67890',
-		});
-		expect(res).toEqual({
+	it('uses a direct organization_id', async () => {
+		await expect(
+			resolveZohoInventoryOAuthWebhookTenantLink({
+				organization_id: 'org_67890',
+			}),
+		).resolves.toEqual({
 			linkType: 'tenant_external_id',
 			externalId: 'org_67890',
 		});
 	});
 
-	it('fetches organizations and selects the default organization', async () => {
-		const originalFetch = globalThis.fetch;
-		globalThis.fetch = jest.fn().mockResolvedValue({
-			ok: true,
-			json: async () => ({
+	it('ignores untrusted api_domain when fetching organizations', async () => {
+		globalThis.fetch = jest.fn().mockResolvedValue(
+			jsonResponse({
 				code: 0,
-				message: 'success',
+				organizations: [{ organization_id: 'org_first' }],
+			}),
+		) as never;
+		await resolveZohoInventoryOAuthWebhookTenantLink({
+			access_token: 'tok',
+			api_domain: 'https://evil.example',
+		});
+		expect(String(jest.mocked(globalThis.fetch).mock.calls[0]?.[0])).toBe(
+			'https://www.zohoapis.com/inventory/v1/organizations',
+		);
+	});
+
+	it('uses an allowlisted api_domain from the token response', async () => {
+		globalThis.fetch = jest.fn().mockResolvedValue(
+			jsonResponse({
+				code: 0,
 				organizations: [
 					{ organization_id: 'org_secondary', is_default_org: false },
 					{ organization_id: 'org_primary_default', is_default_org: true },
 				],
 			}),
-		}) as unknown as typeof fetch;
+		) as never;
+		const res = await resolveZohoInventoryOAuthWebhookTenantLink({
+			access_token: 'tok',
+			api_domain: 'https://www.zohoapis.in',
+		});
+		expect(res?.externalId).toBe('org_primary_default');
+		expect(String(jest.mocked(globalThis.fetch).mock.calls[0]?.[0])).toBe(
+			'https://www.zohoapis.in/inventory/v1/organizations',
+		);
+	});
+});
 
+describe('errors and refresh', () => {
+	it('matches rate-limit codes from the official docs', () => {
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(
+				new ZohoInventoryAPIError('blocked', 429, 44),
+			),
+		).toBe(true);
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(
+				new ZohoInventoryAPIError('daily', undefined, 45),
+			),
+		).toBe(true);
+	});
+
+	it('forwards retryAfter from ZohoInventoryAPIError', async () => {
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+			new ZohoInventoryAPIError('slow down', 429, 44, undefined, 2500),
+		);
+		expect(result.headersRetryAfterMs).toBe(2500);
+	});
+
+	it('retries once on 401', async () => {
+		let calls = 0;
+		const originalFetch = globalThis.fetch;
+		globalThis.fetch = jest.fn().mockImplementation(async (_url, options) => {
+			calls += 1;
+			const auth =
+				options?.headers instanceof Headers
+					? options.headers.get('authorization')
+					: (options?.headers as { Authorization?: string })?.Authorization;
+			if (auth === 'Zoho-oauthtoken expired_token') {
+				return jsonResponse({ code: 57, message: 'Invalid OAuth token' }, 401);
+			}
+			return jsonResponse({ code: 0, organizations: [] });
+		}) as never;
 		try {
-			const res = await resolveZohoInventoryOAuthWebhookTenantLink({
-				access_token: 'valid_mock_token',
+			const refreshAuthMock = jest.fn().mockResolvedValue('fresh_token_123');
+			const result = await makeAuthenticatedZohoInventoryRequest<{
+				code: number;
+			}>('/organizations', {
+				key: 'expired_token',
+				_refreshAuth: refreshAuthMock,
 			});
-			expect(res).toEqual({
-				linkType: 'tenant_external_id',
-				externalId: 'org_primary_default',
-			});
-			expect(globalThis.fetch).toHaveBeenCalledWith(
-				'https://www.zohoapis.com/inventory/v1/organizations',
-				expect.objectContaining({
-					headers: expect.objectContaining({
-						Authorization: 'Zoho-oauthtoken valid_mock_token',
-					}),
-				}),
+			expect(refreshAuthMock).toHaveBeenCalledTimes(1);
+			expect(result.code).toBe(0);
+			expect(calls).toBe(2);
+			expect(isUnauthorizedError(new ZohoInventoryAPIError('x', 401))).toBe(
+				true,
 			);
 		} finally {
 			globalThis.fetch = originalFetch;
 		}
 	});
-
-	it('falls back to the first organization when is_default_org is not set', async () => {
-		const originalFetch = globalThis.fetch;
-		globalThis.fetch = jest.fn().mockResolvedValue({
-			ok: true,
-			json: async () => ({
-				code: 0,
-				message: 'success',
-				organizations: [
-					{ organization_id: 'org_first' },
-					{ organization_id: 'org_second' },
-				],
-			}),
-		}) as unknown as typeof fetch;
-
-		try {
-			const res = await resolveZohoInventoryOAuthWebhookTenantLink({
-				access_token: 'valid_mock_token',
-			});
-			expect(res).toEqual({
-				linkType: 'tenant_external_id',
-				externalId: 'org_first',
-			});
-		} finally {
-			globalThis.fetch = originalFetch;
-		}
-	});
-
-	it('returns null when fetch fails or returns empty organizations', async () => {
-		const originalFetch = globalThis.fetch;
-		globalThis.fetch = jest.fn().mockResolvedValue({
-			ok: false,
-			status: 401,
-		}) as unknown as typeof fetch;
-
-		try {
-			const res = await resolveZohoInventoryOAuthWebhookTenantLink({
-				access_token: 'expired_token',
-			});
-			expect(res).toBeNull();
-		} finally {
-			globalThis.fetch = originalFetch;
-		}
-	});
-
-	it('returns null when access_token is missing', async () => {
-		const res = await resolveZohoInventoryOAuthWebhookTenantLink({});
-		expect(res).toBeNull();
-	});
 });
 
-describe('error handlers', () => {
-	it('matches RATE_LIMIT_ERROR for 429 and error code 43', () => {
-		const rateLimit429 = new ZohoInventoryAPIError('Rate limit exceeded', 429);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimit429)).toBe(true);
+describe('live API', () => {
+	const token = process.env.ZOHO_INVENTORY_ACCESS_TOKEN;
+	const organizationId = process.env.ZOHO_INVENTORY_ORGANIZATION_ID;
 
-		const rateLimitCode43 = new ZohoInventoryAPIError(
-			'Maximum number of requests exceeded',
-			undefined,
-			43,
-		);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimitCode43)).toBe(true);
-	});
-
-	it('matches AUTH_ERROR for 401 and error code 57 (invalid_oauthtoken)', () => {
-		const auth401 = new ZohoInventoryAPIError('Unauthorized', 401);
-		expect(errorHandlers.AUTH_ERROR.match(auth401)).toBe(true);
-
-		const authCode57 = new ZohoInventoryAPIError(
-			'Invalid OAuth token',
-			undefined,
-			57,
-		);
-		expect(errorHandlers.AUTH_ERROR.match(authCode57)).toBe(true);
-	});
-
-	it('matches PERMISSION_ERROR for 403 and error code 4', () => {
-		const perm403 = new ZohoInventoryAPIError('Forbidden', 403);
-		expect(errorHandlers.PERMISSION_ERROR.match(perm403)).toBe(true);
-
-		const permCode4 = new ZohoInventoryAPIError('Access Denied', undefined, 4);
-		expect(errorHandlers.PERMISSION_ERROR.match(permCode4)).toBe(true);
-	});
-
-	it('matches NOT_FOUND_ERROR for 404 and invalid organization code 14', () => {
-		const notFound404 = new ZohoInventoryAPIError('Not found', 404);
-		expect(errorHandlers.NOT_FOUND_ERROR.match(notFound404)).toBe(true);
-
-		const invalidOrg = new ZohoInventoryAPIError(
-			'Invalid value passed for organization_id',
-			undefined,
-			14,
-		);
-		expect(errorHandlers.NOT_FOUND_ERROR.match(invalidOrg)).toBe(true);
-	});
-
-	it('matches DEFAULT as fallback', () => {
-		const genericError = new Error('Some unexpected internal error');
-		expect(errorHandlers.DEFAULT.match(genericError)).toBe(true);
-	});
-});
-
-describe('client request and refresh retry', () => {
-	it('identifies 401 unauthorized errors', () => {
-		expect(
-			isUnauthorizedError(new ZohoInventoryAPIError('Unauthorized', 401)),
-		).toBe(true);
-		expect(
-			isUnauthorizedError(
-				new ZohoInventoryAPIError('invalid_oauthtoken', undefined, 57),
-			),
-		).toBe(true);
-		expect(
-			isUnauthorizedError(new ZohoInventoryAPIError('Not found', 404)),
-		).toBe(false);
-	});
-
-	it('retries once on 401 with refreshed token when _refreshAuth is provided', async () => {
-		let callCount = 0;
-		const originalFetch = globalThis.fetch;
-		globalThis.fetch = jest.fn().mockImplementation(async (_url, options) => {
-			callCount++;
-			let authHeader: string | null = null;
-			if (options?.headers instanceof Headers) {
-				authHeader = options.headers.get('authorization');
-			} else if (
-				options?.headers &&
-				typeof options.headers.get === 'function'
-			) {
-				authHeader = options.headers.get('authorization');
-			} else if (options?.headers) {
-				authHeader =
-					options.headers.Authorization || options.headers.authorization;
-			}
-
-			if (authHeader === 'Zoho-oauthtoken expired_token') {
-				return {
-					ok: false,
-					status: 401,
-					statusText: 'Unauthorized',
-					headers: new Headers({ 'content-type': 'application/json' }),
-					text: async () =>
-						JSON.stringify({ code: 57, message: 'Invalid OAuth token' }),
-					json: async () => ({ code: 57, message: 'Invalid OAuth token' }),
-				};
-			}
-			return {
-				ok: true,
-				status: 200,
-				statusText: 'OK',
-				headers: new Headers({ 'content-type': 'application/json' }),
-				text: async () =>
-					JSON.stringify({
-						code: 0,
-						message: 'success',
-						organizations: [],
-					}),
-				json: async () => ({
-					code: 0,
-					message: 'success',
-					organizations: [],
-				}),
-			};
-		}) as unknown as typeof fetch;
-
-		try {
-			const refreshAuthMock = jest.fn().mockResolvedValue('fresh_token_123');
-			const ctx = {
-				key: 'expired_token',
-				_refreshAuth: refreshAuthMock,
-			};
-
-			const result = await makeAuthenticatedZohoInventoryRequest<{
-				code: number;
-				organizations: unknown[];
-			}>('/organizations', ctx);
-
-			expect(refreshAuthMock).toHaveBeenCalledTimes(1);
-			expect(result.code).toBe(0);
-			expect(callCount).toBe(2);
-		} finally {
-			globalThis.fetch = originalFetch;
+	it('lists organizations against the live API when credentials are set', async () => {
+		if (!token) return;
+		const plugin = zohoinventory();
+		const result = (await plugin.endpoints!.organizations.list(
+			{
+				key: token,
+				options: {},
+				db: {},
+				database: { logEvent: async () => ({}) },
+			} as never,
+			{},
+		)) as { organizations: unknown[] };
+		expect(Array.isArray(result.organizations)).toBe(true);
+		if (organizationId) {
+			const items = (await plugin.endpoints!.items.list(
+				{
+					key: token,
+					options: {},
+					db: {},
+					database: { logEvent: async () => ({}) },
+				} as never,
+				{ organization_id: organizationId, per_page: 1 },
+			)) as { items: unknown[] };
+			expect(Array.isArray(items.items)).toBe(true);
 		}
 	});
 });

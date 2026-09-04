@@ -1,16 +1,12 @@
 import type { TokenResponse, WebhookTenantMatch } from 'corsair/core';
 import { toExternalId } from 'corsair/core';
-import { zohoInventoryApiBase } from '../client';
-import type { ZohoOrganization, ZohoOrganizationsListResponse } from '../types';
+import { zohoInventoryApiBase } from './client';
+import type { ZohoOrganization, ZohoOrganizationsListResponse } from './types';
 
-/**
- * Called after OAuth exchange to discover and store the Zoho Inventory organization_id
- * on the corsair account configuration as tenant_external_id.
- */
+/** After OAuth, store organization_id as tenant_external_id. */
 export async function resolveZohoInventoryOAuthWebhookTenantLink(
 	tokens: TokenResponse,
 ): Promise<WebhookTenantMatch | null> {
-	// 1. Direct tenant identifier in token response if provided
 	const directId = toExternalId(
 		tokens.tenant_external_id ?? tokens.organization_id,
 	);
@@ -21,11 +17,10 @@ export async function resolveZohoInventoryOAuthWebhookTenantLink(
 	const accessToken = tokens.access_token;
 	if (!accessToken) return null;
 
-	// 2. Fetch organizations from Zoho Inventory API using the authenticated token
 	try {
-		const apiDomain =
+		const rawDomain =
 			typeof tokens.api_domain === 'string' ? tokens.api_domain : undefined;
-		const base = zohoInventoryApiBase(undefined, apiDomain);
+		const base = zohoInventoryApiBase(undefined, rawDomain);
 		const response = await fetch(`${base}/organizations`, {
 			method: 'GET',
 			headers: {
@@ -38,13 +33,10 @@ export async function resolveZohoInventoryOAuthWebhookTenantLink(
 
 		const payload = (await response.json()) as ZohoOrganizationsListResponse;
 		const organizations: ZohoOrganization[] = payload.organizations ?? [];
-
 		if (organizations.length === 0) return null;
 
-		// Select default organization, or fall back to the first available organization
 		const selectedOrg =
 			organizations.find((org) => org.is_default_org) ?? organizations[0];
-
 		const organizationId = toExternalId(selectedOrg?.organization_id);
 		return organizationId
 			? { linkType: 'tenant_external_id', externalId: organizationId }
