@@ -101,6 +101,7 @@ export const BaseProviders = [
 	'bubble',
 	'bugsnag',
 	'buildkite',
+	'bunnycdn',
 	'cal',
 	'calendly',
 	'canva',
@@ -364,6 +365,7 @@ export const ProviderDisplayNames = {
 	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
+	bunnycdn: 'Bunnycdn',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
@@ -634,6 +636,7 @@ export type AllProviders =
 	| 'bubble'
 	| 'bugsnag'
 	| 'buildkite'
+	| 'bunnycdn'
 	| 'cal'
 	| 'calendly'
 	| 'canva'
