@@ -401,4 +401,3 @@ describe('griptape endpoint schema coverage', () => {
 		});
 	}
 });
-

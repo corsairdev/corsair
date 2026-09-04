@@ -3554,4 +3554,3 @@ describe('griptape endpoints scaffold', () => {
 		expect(src).not.toContain("from './example'");
 	});
 });
-
