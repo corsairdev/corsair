@@ -2,11 +2,6 @@ import {
 	BenzingaEndpointInputSchemas,
 	BenzingaEndpointOutputSchemas,
 } from './endpoints/types';
-import {
-	BenzingaWebhookPayloadSchema,
-	computeBenzingaSignature,
-	verifyBenzingaWebhookSignature,
-} from './webhooks/types';
 
 describe('Benzinga endpoint schemas', () => {
 	it('accepts a fully populated news query', () => {
@@ -108,7 +103,7 @@ describe('Benzinga endpoint schemas', () => {
 		expect(splits.date_search_field).toBe('ex');
 	});
 
-	it('validates ipos, economics and webhook-test inputs', () => {
+	it('validates ipos and economics inputs', () => {
 		const ipos = BenzingaEndpointInputSchemas.listIpos.parse({
 			ipo_date: '2024-01-09',
 			date_from: '2024-01-01',
@@ -125,27 +120,7 @@ describe('Benzinga endpoint schemas', () => {
 			event_category: 'Employment',
 		});
 		expect(economics.country).toBe('USA');
-
-		const webhookTest = BenzingaEndpointInputSchemas.testWebhookDelivery.parse({
-			destination: 'https://example.com/webhook',
-			version: 'webhook/v1',
-			kind: 'News/v1',
-		});
-		expect(webhookTest.kind).toBe('News/v1');
-		expect(() =>
-			BenzingaEndpointInputSchemas.testWebhookDelivery.parse({
-				destination: 'not-a-url',
-				version: 'webhook/v1',
-				kind: 'News/v1',
-			}),
-		).toThrow();
-		expect(() =>
-			BenzingaEndpointInputSchemas.testWebhookDelivery.parse({
-				destination: 'https://example.com/webhook',
-				version: 'webhook/v9',
-				kind: 'News/v1',
-			}),
-		).toThrow();
+		expect(economics.event_name).toBe('CPI');
 	});
 
 	it('parses representative news, earnings and ratings payloads', () => {
@@ -195,64 +170,5 @@ describe('Benzinga endpoint schemas', () => {
 		});
 		expect(ratings.ratings).toHaveLength(1);
 		expect(ratings.ratings[0]?.rating_current).toBe('Buy');
-	});
-});
-
-describe('Benzinga webhook signature', () => {
-	const rawBody = JSON.stringify({
-		id: 'delivery-1',
-		api_version: 'webhook/v1',
-		kind: 'News/v1',
-		data: { ticker: 'AAPL' },
-	});
-	const secret = 'test-webhook-secret';
-
-	it('accepts a correctly signed delivery', () => {
-		const signature = `sha256=${computeBenzingaSignature(rawBody, secret)}`;
-		const payload = BenzingaWebhookPayloadSchema.parse(JSON.parse(rawBody));
-		const result = verifyBenzingaWebhookSignature(
-			{
-				payload,
-				headers: { 'x-bz-signature': signature },
-				rawBody,
-			},
-			secret,
-		);
-		expect(result.valid).toBe(true);
-		expect(result.error).toBeUndefined();
-	});
-
-	it('rejects missing, empty-secret and forged signatures', () => {
-		const payload = BenzingaWebhookPayloadSchema.parse(JSON.parse(rawBody));
-		const missing = verifyBenzingaWebhookSignature(
-			{ payload, headers: {}, rawBody },
-			secret,
-		);
-		expect(missing.valid).toBe(false);
-		expect(missing.error).toContain('Missing X-Bz-Signature');
-
-		const forged = verifyBenzingaWebhookSignature(
-			{
-				payload,
-				headers: { 'x-bz-signature': 'sha256=0'.repeat(8) },
-				rawBody,
-			},
-			secret,
-		);
-		expect(forged.valid).toBe(false);
-		expect(forged.error).toContain('Signature verification failed');
-
-		const noSecret = verifyBenzingaWebhookSignature(
-			{
-				payload,
-				headers: {
-					'x-bz-signature': `sha256=${computeBenzingaSignature(rawBody, secret)}`,
-				},
-				rawBody,
-			},
-			'',
-		);
-		expect(noSecret.valid).toBe(false);
-		expect(noSecret.error).toContain('Missing webhook secret');
 	});
 });

@@ -19,9 +19,9 @@ describe('Benzinga schema', () => {
 });
 
 describe('Benzinga endpoint registry', () => {
-	it('registers all ten endpoints with input and output schemas', () => {
+	it('registers all nine endpoints with input and output schemas', () => {
 		const keys = Object.keys(benzingaEndpointSchemas);
-		expect(keys).toHaveLength(10);
+		expect(keys).toHaveLength(9);
 		expect(keys).toContain('news.get');
 		expect(keys).toContain('news.listChannels');
 		expect(keys).toContain('calendar.listEarnings');
@@ -31,7 +31,6 @@ describe('Benzinga endpoint registry', () => {
 		expect(keys).toContain('calendar.listIpos');
 		expect(keys).toContain('calendar.listSplits');
 		expect(keys).toContain('calendar.listEconomics');
-		expect(keys).toContain('webhook.testDelivery');
 		for (const key of keys) {
 			const entry =
 				benzingaEndpointSchemas[key as keyof typeof benzingaEndpointSchemas];
@@ -53,8 +52,8 @@ describe('Benzinga endpoint registry', () => {
 		expect(benzingaEndpointSchemas['calendar.listRatings'].input).toBe(
 			BenzingaEndpointInputSchemas.listRatings,
 		);
-		expect(benzingaEndpointSchemas['webhook.testDelivery'].input).toBe(
-			BenzingaEndpointInputSchemas.testWebhookDelivery,
+		expect(benzingaEndpointSchemas['calendar.listEconomics'].input).toBe(
+			BenzingaEndpointInputSchemas.listEconomics,
 		);
 	});
 });

@@ -1,20 +1,18 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	getNews,
 	listDividends,
@@ -25,7 +23,6 @@ import {
 	listNewsChannels,
 	listRatings,
 	listSplits,
-	testWebhookDelivery,
 } from './endpoints';
 import type {
 	BenzingaEndpointInputs,
@@ -37,21 +34,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BenzingaSchema } from './schema';
-import { BenzingaWebhooks } from './webhooks';
-import { resolveBenzingaOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchBenzingaTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	BenzingaWebhookOutputs,
-	BenzingaWebhookPayload,
-} from './webhooks/types';
-import { BenzingaWebhookPayloadSchema } from './webhooks/types';
 
 export type BenzingaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalBenzingaPlugin['hooks'];
-	webhookHooks?: InternalBenzingaPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof benzingaEndpointsNested>;
 };
@@ -85,19 +72,7 @@ export type BenzingaEndpoints = {
 	listIpos: BenzingaEndpoint<'listIpos'>;
 	listSplits: BenzingaEndpoint<'listSplits'>;
 	listEconomics: BenzingaEndpoint<'listEconomics'>;
-	testWebhookDelivery: BenzingaEndpoint<'testWebhookDelivery'>;
 };
-
-type BenzingaWebhook<
-	K extends keyof BenzingaWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<BenzingaContext, TEvent, BenzingaWebhookOutputs[K]>;
-
-export type BenzingaWebhooks = {
-	data: BenzingaWebhook<'data', BenzingaWebhookPayload>;
-};
-
-export type BenzingaBoundWebhooks = BindWebhooks<BenzingaWebhooks>;
 
 const benzingaEndpointsNested = {
 	news: {
@@ -112,15 +87,6 @@ const benzingaEndpointsNested = {
 		listIpos,
 		listSplits,
 		listEconomics,
-	},
-	webhook: {
-		testDelivery: testWebhookDelivery,
-	},
-} as const;
-
-const benzingaWebhooksNested = {
-	data: {
-		data: BenzingaWebhooks.data,
 	},
 } as const;
 
@@ -161,23 +127,8 @@ export const benzingaEndpointSchemas = {
 		input: BenzingaEndpointInputSchemas.listEconomics,
 		output: BenzingaEndpointOutputSchemas.listEconomics,
 	},
-	'webhook.testDelivery': {
-		input: BenzingaEndpointInputSchemas.testWebhookDelivery,
-		output: BenzingaEndpointOutputSchemas.testWebhookDelivery,
-	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof benzingaEndpointsNested
->;
-
-const benzingaWebhookSchemas = {
-	'data.data': {
-		description:
-			'Benzinga Data Webhook Engine delivery (X-BZ-Delivery + HMAC-SHA256)',
-		payload: BenzingaWebhookPayloadSchema,
-		response: BenzingaWebhookPayloadSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof benzingaWebhooksNested
 >;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -228,23 +179,17 @@ const benzingaEndpointMeta = {
 		description:
 			'List economic calendar data (GET /api/v2.1/calendar/economics, page/pagesize pagination)',
 	},
-	'webhook.testDelivery': {
-		riskLevel: 'write',
-		description: 'Trigger a test webhook delivery (GET /api/v1/webhook/test)',
-	},
 } as const satisfies RequiredPluginEndpointMeta<typeof benzingaEndpointsNested>;
 
 export const benzingaAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseBenzingaPlugin<T extends BenzingaPluginOptions> = CorsairPlugin<
 	'benzinga',
 	typeof BenzingaSchema,
 	typeof benzingaEndpointsNested,
-	typeof benzingaWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
@@ -253,17 +198,6 @@ export type InternalBenzingaPlugin = BaseBenzingaPlugin<BenzingaPluginOptions>;
 
 export type ExternalBenzingaPlugin<T extends BenzingaPluginOptions> =
 	BaseBenzingaPlugin<T>;
-
-function hasBenzingaDeliveryHeaders(
-	headers: Record<string, string | string[] | undefined>,
-): boolean {
-	return (
-		'x-bz-delivery' in headers ||
-		'X-BZ-Delivery' in headers ||
-		'x-bz-signature' in headers ||
-		'X-Bz-Signature' in headers
-	);
-}
 
 export function benzinga<const T extends BenzingaPluginOptions>(
 	incomingOptions: BenzingaPluginOptions & T = {} as BenzingaPluginOptions & T,
@@ -279,20 +213,11 @@ export function benzinga<const T extends BenzingaPluginOptions>(
 		schema: BenzingaSchema,
 		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: benzingaEndpointsNested,
-		webhooks: benzingaWebhooksNested,
+		webhooks: {},
 		endpointMeta: benzingaEndpointMeta,
 		endpointSchemas: benzingaEndpointSchemas,
-		webhookSchemas: benzingaWebhookSchemas,
-
-		pluginWebhookMatcher: (request) => {
-			return hasBenzingaDeliveryHeaders(request.headers);
-		},
-
-		pluginTenantWebhookMatcher: matchBenzingaTenantWebhook,
-
-		oauthWebhookTenantLinkResolver: resolveBenzingaOAuthWebhookTenantLink,
+		pluginWebhookMatcher: undefined,
 
 		errorHandlers: {
 			...errorHandlers,
@@ -300,23 +225,25 @@ export function benzinga<const T extends BenzingaPluginOptions>(
 		},
 
 		keyBuilder: async (ctx: BenzingaKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			const res = await ctx.keys.get_api_key();
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
+				const res = await ctx.keys.get_api_key();
+				if (!res) {
+					console.error(
+						'[BENZINGA] API key missing — connect Benzinga or pass key in plugin options.',
+					);
+					throw new AuthMissingError('benzinga', 'api_key');
+				}
+				return res;
+			}
 
-			return res ?? '';
+			console.error(
+				'[BENZINGA] Authentication required for Benzinga API requests.',
+			);
+			throw new AuthMissingError('benzinga', 'api_key');
 		},
 	} satisfies InternalBenzingaPlugin;
 }
@@ -326,6 +253,7 @@ export type {
 	BenzingaEndpointOutputs,
 	GetNewsInput,
 	GetNewsResponse,
+	Ipo,
 	ListDividendsInput,
 	ListDividendsResponse,
 	ListEarningsInput,
@@ -342,10 +270,4 @@ export type {
 	ListRatingsResponse,
 	ListSplitsInput,
 	ListSplitsResponse,
-	TestWebhookDeliveryInput,
-	TestWebhookDeliveryResponse,
 } from './endpoints/types';
-export type {
-	BenzingaWebhookOutputs,
-	BenzingaWebhookPayload,
-} from './webhooks/types';

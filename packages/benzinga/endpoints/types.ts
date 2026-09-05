@@ -463,48 +463,6 @@ const ListEconomicsResponseSchema = z.object({
 
 export type ListEconomicsResponse = z.infer<typeof ListEconomicsResponseSchema>;
 
-// ─── webhook.testDelivery ───
-// GET /api/v1/webhook/test
-// https://docs.benzinga.com/api-reference/webhook-api/test-webhook-delivery
-const TestWebhookDeliveryInputSchema = z.object({
-	destination: z.string().url(),
-	version: z.literal('webhook/v1'),
-	kind: z.enum([
-		'News/v1',
-		'Signals/v1',
-		'Earnings/v1',
-		'Ratings/v1',
-		'Dividends/v1',
-		'IPOs/v1',
-		'Guidance/v1',
-		'Splits/v1',
-		'OptionActivity/v1',
-		'Conference/v1',
-		'Economics/v1',
-		'Offerings/v1',
-		'MA/v1',
-		'Retail/v1',
-		'FDA/v1',
-		'WIIMs/v1',
-		'SECInsiderTransaction/v1',
-		'GovernmentTrade/v1',
-	]),
-});
-
-export type TestWebhookDeliveryInput = z.infer<
-	typeof TestWebhookDeliveryInputSchema
->;
-
-const TestWebhookDeliveryResponseSchema = z
-	.object({
-		status: z.string(),
-	})
-	.loose();
-
-export type TestWebhookDeliveryResponse = z.infer<
-	typeof TestWebhookDeliveryResponseSchema
->;
-
 export type BenzingaEndpointInputs = {
 	getNews: GetNewsInput;
 	listNewsChannels: ListNewsChannelsInput;
@@ -515,7 +473,6 @@ export type BenzingaEndpointInputs = {
 	listIpos: ListIposInput;
 	listSplits: ListSplitsInput;
 	listEconomics: ListEconomicsInput;
-	testWebhookDelivery: TestWebhookDeliveryInput;
 };
 
 export type BenzingaEndpointOutputs = {
@@ -528,7 +485,6 @@ export type BenzingaEndpointOutputs = {
 	listIpos: ListIposResponse;
 	listSplits: ListSplitsResponse;
 	listEconomics: ListEconomicsResponse;
-	testWebhookDelivery: TestWebhookDeliveryResponse;
 };
 
 export const BenzingaEndpointInputSchemas = {
@@ -541,7 +497,6 @@ export const BenzingaEndpointInputSchemas = {
 	listIpos: ListIposInputSchema,
 	listSplits: ListSplitsInputSchema,
 	listEconomics: ListEconomicsInputSchema,
-	testWebhookDelivery: TestWebhookDeliveryInputSchema,
 } as const;
 
 export const BenzingaEndpointOutputSchemas = {
@@ -554,5 +509,4 @@ export const BenzingaEndpointOutputSchemas = {
 	listIpos: ListIposResponseSchema,
 	listSplits: ListSplitsResponseSchema,
 	listEconomics: ListEconomicsResponseSchema,
-	testWebhookDelivery: TestWebhookDeliveryResponseSchema,
 } as const;

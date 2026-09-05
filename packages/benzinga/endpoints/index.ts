@@ -7,7 +7,6 @@ import { listIpos } from './ipos';
 import { getNews } from './news';
 import { listRatings } from './ratings';
 import { listSplits } from './splits';
-import { testWebhookDelivery } from './webhook-test';
 
 export { listNewsChannels } from './channels';
 export { listDividends } from './dividends';
@@ -19,7 +18,6 @@ export { getNews } from './news';
 export { listRatings } from './ratings';
 export { listSplits } from './splits';
 export * from './types';
-export { testWebhookDelivery } from './webhook-test';
 
 export const BenzingaEndpointFns = {
 	getNews,
@@ -31,5 +29,4 @@ export const BenzingaEndpointFns = {
 	listIpos,
 	listSplits,
 	listEconomics,
-	testWebhookDelivery,
 } as const;
