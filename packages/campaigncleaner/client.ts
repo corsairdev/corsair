@@ -99,7 +99,7 @@ async function makeCampaignCleanerBinaryRequest<T>(
 			const retryAfterHeader = response.headers.get('Retry-After');
 
 			const retryAfter = retryAfterHeader
-				? Number(retryAfterHeader)
+				? Number(retryAfterHeader) * 1000
 				: undefined;
 
 			let message = `Campaign Cleaner API request failed with status ${response.status}`;
