@@ -1,19 +1,17 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
+	WebhookTree,
 } from 'corsair/core';
 import { Person } from './endpoints';
 import type {
@@ -26,18 +24,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ChMeetingsSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveChMeetingsOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchChMeetingsTenantWebhook } from './webhooks/tenant-matcher';
-import type { ChMeetingsWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type ChMeetingsPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalChMeetingsPlugin['hooks'];
-	webhookHooks?: InternalChMeetingsPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof chMeetingsEndpointsNested>;
 };
@@ -65,26 +56,9 @@ export type ChMeetingsEndpoints = {
 	personGet: ChMeetingsEndpoint<'personGet'>;
 };
 
-type ChMeetingsWebhook<
-	K extends keyof ChMeetingsWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ChMeetingsContext, TEvent, ChMeetingsWebhookOutputs[K]>;
-
-export type ChMeetingsWebhooks = {
-	example: ChMeetingsWebhook<'example', ExampleEvent>;
-};
-
-export type ChMeetingsBoundWebhooks = BindWebhooks<ChMeetingsWebhooks>;
-
 const chMeetingsEndpointsNested = {
 	person: {
 		get: Person.get,
-	},
-} as const;
-
-const chMeetingsWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
 	},
 } as const;
 
@@ -95,16 +69,6 @@ export const chMeetingsEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof chMeetingsEndpointsNested
->;
-
-const chMeetingsWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof chMeetingsWebhooksNested
 >;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -122,9 +86,6 @@ export const chMeetingsAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseChMeetingsPlugin<T extends ChMeetingsPluginOptions> =
@@ -132,7 +93,7 @@ export type BaseChMeetingsPlugin<T extends ChMeetingsPluginOptions> =
 		'chmeetings',
 		typeof ChMeetingsSchema,
 		typeof chMeetingsEndpointsNested,
-		typeof chMeetingsWebhooksNested,
+		WebhookTree,
 		T,
 		typeof defaultAuthType
 	>;
@@ -157,44 +118,22 @@ export function chmeetings<const T extends ChMeetingsPluginOptions>(
 		schema: ChMeetingsSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: chMeetingsEndpointsNested,
-		webhooks: chMeetingsWebhooksNested,
+		webhooks: {},
 		endpointMeta: chMeetingsEndpointMeta,
 		endpointSchemas: chMeetingsEndpointSchemas,
-		webhookSchemas: chMeetingsWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-chmeetings-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchChMeetingsTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveChMeetingsOAuthWebhookTenantLink,
+		webhookSchemas: {},
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ChMeetingsKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
 				return res ?? '';
 			}
 
@@ -210,7 +149,3 @@ export type {
 	PersonGetInput,
 	PersonGetResponse,
 } from './endpoints/types';
-export type {
-	ChMeetingsWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
