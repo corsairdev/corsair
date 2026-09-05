@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeWhautomateRequest } from '../client';
 import type { WhautomateEndpoints } from '../index';
 import type { WhautomateEndpointOutputs } from './types';
+import { WhautomateEndpointOutputSchemas } from './types';
 
 export const getBroadcasts: WhautomateEndpoints['getBroadcasts'] = async (
 	ctx,
@@ -16,10 +17,16 @@ export const getBroadcasts: WhautomateEndpoints['getBroadcasts'] = async (
 
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getBroadcasts']
-	>(ctx.options.apiHost!, ctx.key, '/broadcasts', {
-		method: 'GET',
-		query,
-	});
+	>(
+		ctx.options.apiHost!,
+		ctx.key,
+		'/broadcasts',
+		WhautomateEndpointOutputSchemas.getBroadcasts,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -36,9 +43,15 @@ export const getBroadcastById: WhautomateEndpoints['getBroadcastById'] = async (
 ) => {
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getBroadcastById']
-	>(ctx.options.apiHost!, ctx.key, `/broadcasts/${input.id}`, {
-		method: 'GET',
-	});
+	>(
+		ctx.options.apiHost!,
+		ctx.key,
+		`/broadcasts/${input.id}`,
+		WhautomateEndpointOutputSchemas.getBroadcastById,
+		{
+			method: 'GET',
+		},
+	);
 
 	await logEventFromContext(
 		ctx,

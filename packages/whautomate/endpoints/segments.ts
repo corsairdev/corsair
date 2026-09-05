@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeWhautomateRequest } from '../client';
 import type { WhautomateEndpoints } from '../index';
 import type { WhautomateEndpointOutputs } from './types';
+import { WhautomateEndpointOutputSchemas } from './types';
 
 export const getSegments: WhautomateEndpoints['getSegments'] = async (
 	ctx,
@@ -14,10 +15,16 @@ export const getSegments: WhautomateEndpoints['getSegments'] = async (
 
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getSegments']
-	>(ctx.options.apiHost!, ctx.key, '/segments', {
-		method: 'GET',
-		query,
-	});
+	>(
+		ctx.options.apiHost!,
+		ctx.key,
+		'/segments',
+		WhautomateEndpointOutputSchemas.getSegments,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -34,9 +41,15 @@ export const deleteSegment: WhautomateEndpoints['deleteSegment'] = async (
 ) => {
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['deleteSegment']
-	>(ctx.options.apiHost!, ctx.key, `/segments/${input.id}`, {
-		method: 'DELETE',
-	});
+	>(
+		ctx.options.apiHost!,
+		ctx.key,
+		`/segments/${input.id}`,
+		WhautomateEndpointOutputSchemas.deleteSegment,
+		{
+			method: 'DELETE',
+		},
+	);
 
 	await logEventFromContext(
 		ctx,

@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeWhautomateRequest } from '../client';
 import type { WhautomateEndpoints } from '../index';
 import type { WhautomateEndpointOutputs } from './types';
+import { WhautomateEndpointOutputSchemas } from './types';
 
 export const addContact: WhautomateEndpoints['addContact'] = async (
 	ctx,
@@ -9,10 +10,16 @@ export const addContact: WhautomateEndpoints['addContact'] = async (
 ) => {
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['addContact']
-	>(ctx.options.apiHost!, ctx.key, '/contacts', {
-		method: 'POST',
-		body: input,
-	});
+	>(
+		ctx.options.apiHost!,
+		ctx.key,
+		'/contacts',
+		WhautomateEndpointOutputSchemas.addContact,
+		{
+			method: 'POST',
+			body: input,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -35,10 +42,16 @@ export const getContacts: WhautomateEndpoints['getContacts'] = async (
 
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getContacts']
-	>(ctx.options.apiHost!, ctx.key, '/contacts', {
-		method: 'GET',
-		query,
-	});
+	>(
+		ctx.options.apiHost!,
+		ctx.key,
+		'/contacts',
+		WhautomateEndpointOutputSchemas.getContacts,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -60,10 +73,16 @@ export const getMessagesOfContact: WhautomateEndpoints['getMessagesOfContact'] =
 
 		const result = await makeWhautomateRequest<
 			WhautomateEndpointOutputs['getMessagesOfContact']
-		>(ctx.options.apiHost!, ctx.key, `/contacts/${contactId}/messages`, {
-			method: 'GET',
-			query,
-		});
+		>(
+			ctx.options.apiHost!,
+			ctx.key,
+			`/contacts/${contactId}/messages`,
+			WhautomateEndpointOutputSchemas.getMessagesOfContact,
+			{
+				method: 'GET',
+				query,
+			},
+		);
 
 		await logEventFromContext(
 			ctx,

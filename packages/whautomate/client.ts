@@ -6,6 +6,8 @@ export class WhautomateAPIError extends Error {
 		message: string,
 		public readonly code?: string,
 		public readonly body?: unknown,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'WhautomateAPIError';
@@ -16,6 +18,7 @@ export async function makeWhautomateRequest<T>(
 	apiHost: string,
 	apiKey: string,
 	endpoint: string,
+	outputSchema: import('zod').ZodType<T>,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
@@ -24,15 +27,18 @@ export async function makeWhautomateRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
+	const baseUrl = apiHost.replace(/\/$/, '');
+	const fullUrl = baseUrl.endsWith('/v1') ? baseUrl : `${baseUrl}/v1`;
+
 	const config: OpenAPIConfig = {
-		BASE: apiHost.replace(/\/$/, ''),
+		BASE: fullUrl,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			'APPOINTO-TOKEN': apiKey,
+			'x-api-key': apiKey,
 		},
 	};
 
@@ -49,7 +55,14 @@ export async function makeWhautomateRequest<T>(
 
 	try {
 		const response = await request<T>(config, requestOptions);
-		return response;
+		const parseResult = outputSchema.safeParse(response);
+		if (!parseResult.success) {
+			console.warn(
+				`[whautomate] Response validation failed for ${endpoint}:`,
+				parseResult.error.flatten(),
+			);
+		}
+		return parseResult.data ?? response;
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const bodyMessage =
@@ -61,6 +74,8 @@ export async function makeWhautomateRequest<T>(
 				bodyMessage,
 				String(error.status),
 				error.body,
+				error.status,
+				error.retryAfter,
 			);
 		}
 		if (error instanceof Error) {

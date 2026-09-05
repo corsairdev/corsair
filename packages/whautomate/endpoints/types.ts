@@ -12,7 +12,8 @@ const DateRangeSchema = z.object({
 
 const AddContactInputSchema = z.object({
 	name: z.string(),
-	phone: z.string().optional(),
+	phoneNumber: z.string(),
+	location: z.string(),
 	email: z.string().optional(),
 	avatar: z.string().optional(),
 	segmentId: z.string().optional(),
@@ -240,12 +241,14 @@ const ServiceSchema = z
 const StaffSchema = z
 	.object({
 		id: z.string(),
-		name: z.string(),
+		firstName: z.string(),
+		lastName: z.string(),
 		email: z.string().nullable().optional(),
 		phone: z.string().nullable().optional(),
 		avatar: z.string().nullable().optional(),
 		role: z.string().nullable().optional(),
-		isActive: z.boolean().optional(),
+		active: z.boolean().optional(),
+		locations: z.array(z.string()).optional(),
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
 	})
@@ -253,12 +256,19 @@ const StaffSchema = z
 
 const StaffAvailabilityBlockSchema = z
 	.object({
-		id: z.string(),
-		staffId: z.string(),
-		startTime: z.string(),
-		endTime: z.string(),
-		reason: z.string().nullable().optional(),
-		recurring: z.boolean().optional(),
+		staff: z.object({
+			id: z.string(),
+			firstName: z.string(),
+			lastName: z.string(),
+		}),
+		date: z.string(),
+		slots: z.array(
+			z.object({
+				start: z.string(),
+				end: z.string(),
+				available: z.boolean(),
+			}),
+		),
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
 	})

@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeWhautomateRequest } from '../client';
 import type { WhautomateEndpoints } from '../index';
 import type { WhautomateEndpointOutputs } from './types';
+import { WhautomateEndpointOutputSchemas } from './types';
 
 export const getStaffs: WhautomateEndpoints['getStaffs'] = async (
 	ctx,
@@ -14,10 +15,16 @@ export const getStaffs: WhautomateEndpoints['getStaffs'] = async (
 
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getStaffs']
-	>(ctx.options.apiHost!, ctx.key, '/staff', {
-		method: 'GET',
-		query,
-	});
+	>(
+		ctx.options.apiHost!,
+		ctx.key,
+		'/staff',
+		WhautomateEndpointOutputSchemas.getStaffs,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -34,9 +41,15 @@ export const getStaffById: WhautomateEndpoints['getStaffById'] = async (
 ) => {
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getStaffById']
-	>(ctx.options.apiHost!, ctx.key, `/staff/${input.id}`, {
-		method: 'GET',
-	});
+	>(
+		ctx.options.apiHost!,
+		ctx.key,
+		`/staff/${input.id}`,
+		WhautomateEndpointOutputSchemas.getStaffById,
+		{
+			method: 'GET',
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -56,10 +69,16 @@ export const getStaffAvailabilityBlocks: WhautomateEndpoints['getStaffAvailabili
 
 		const result = await makeWhautomateRequest<
 			WhautomateEndpointOutputs['getStaffAvailabilityBlocks']
-		>(ctx.options.apiHost!, ctx.key, `/staff/${staffId}/availability-blocks`, {
-			method: 'GET',
-			query,
-		});
+		>(
+			ctx.options.apiHost!,
+			ctx.key,
+			`/staff/${staffId}/availability-blocks`,
+			WhautomateEndpointOutputSchemas.getStaffAvailabilityBlocks,
+			{
+				method: 'GET',
+				query,
+			},
+		);
 
 		await logEventFromContext(
 			ctx,

@@ -59,7 +59,8 @@ describe('Whautomate endpoint schemas', () => {
 		it('addContact accepts valid input', () => {
 			const input = {
 				name: 'John Doe',
-				phone: '+1234567890',
+				phoneNumber: '+1234567890',
+				location: 'New York, NY',
 				email: 'john@example.com',
 				avatar: 'https://example.com/avatar.png',
 				segmentId: 'seg_123',
@@ -67,13 +68,15 @@ describe('Whautomate endpoint schemas', () => {
 			};
 			const result = WhautomateEndpointInputSchemas.addContact.parse(input);
 			expect(result.name).toBe('John Doe');
-			expect(result.phone).toBe('+1234567890');
+			expect(result.phoneNumber).toBe('+1234567890');
+			expect(result.location).toBe('New York, NY');
 		});
 
 		it('addContact requires name', () => {
 			expect(() =>
 				WhautomateEndpointInputSchemas.addContact.parse({
-					phone: '+1234567890',
+					phoneNumber: '+1234567890',
+					location: 'New York, NY',
 				}),
 			).toThrow();
 		});
@@ -296,12 +299,19 @@ describe('Whautomate endpoint schemas', () => {
 		it('getStaffAvailabilityBlocks output parses bare array', () => {
 			const output = [
 				{
-					id: 'block_1',
-					staffId: 'staff_1',
-					startTime: '2024-01-01T09:00:00Z',
-					endTime: '2024-01-01T10:00:00Z',
-					reason: 'Break',
-					recurring: true,
+					staff: {
+						id: 'staff_1',
+						firstName: 'John',
+						lastName: 'Doe',
+					},
+					date: '2024-01-01',
+					slots: [
+						{
+							start: '2024-01-01T09:00:00Z',
+							end: '2024-01-01T10:00:00Z',
+							available: true,
+						},
+					],
 					createdAt: '2024-01-01T00:00:00Z',
 					updatedAt: '2024-01-01T00:00:00Z',
 				},
@@ -311,7 +321,9 @@ describe('Whautomate endpoint schemas', () => {
 					output,
 				);
 			expect(result).toHaveLength(1);
-			expect(result[0]!.staffId).toBe('staff_1');
+			expect(result[0]!.staff.id).toBe('staff_1');
+			expect(result[0]!.date).toBe('2024-01-01');
+			expect(result[0]!.slots).toHaveLength(1);
 		});
 
 		it('addContact output parses bare object', () => {
@@ -362,10 +374,15 @@ describe('Whautomate endpoint schemas', () => {
 			type AddContactInput = WhautomateEndpointInputs['addContact'];
 			type GetContactsInput = WhautomateEndpointInputs['getContacts'];
 
-			const addInput: AddContactInput = { name: 'Test' };
+			const addInput: AddContactInput = {
+				name: 'Test',
+				phoneNumber: '+1234567890',
+				location: 'Test Location',
+			};
 			const getInput: GetContactsInput = { page: 1, limit: 10 };
 
 			expect(addInput.name).toBe('Test');
+			expect(addInput.phoneNumber).toBe('+1234567890');
 			expect(getInput.page).toBe(1);
 		});
 

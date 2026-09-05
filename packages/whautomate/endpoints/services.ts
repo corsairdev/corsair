@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeWhautomateRequest } from '../client';
 import type { WhautomateEndpoints } from '../index';
 import type { WhautomateEndpointOutputs } from './types';
+import { WhautomateEndpointOutputSchemas } from './types';
 
 export const getServices: WhautomateEndpoints['getServices'] = async (
 	ctx,
@@ -16,10 +17,16 @@ export const getServices: WhautomateEndpoints['getServices'] = async (
 
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getServices']
-	>(ctx.options.apiHost!, ctx.key, '/services', {
-		method: 'GET',
-		query,
-	});
+	>(
+		ctx.options.apiHost!,
+		ctx.key,
+		'/services',
+		WhautomateEndpointOutputSchemas.getServices,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -36,9 +43,15 @@ export const getServiceById: WhautomateEndpoints['getServiceById'] = async (
 ) => {
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getServiceById']
-	>(ctx.options.apiHost!, ctx.key, `/services/${input.id}`, {
-		method: 'GET',
-	});
+	>(
+		ctx.options.apiHost!,
+		ctx.key,
+		`/services/${input.id}`,
+		WhautomateEndpointOutputSchemas.getServiceById,
+		{
+			method: 'GET',
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -56,10 +69,16 @@ export const updateService: WhautomateEndpoints['updateService'] = async (
 	const { id, ...body } = input;
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['updateService']
-	>(ctx.options.apiHost!, ctx.key, `/services/${id}`, {
-		method: 'PATCH',
-		body,
-	});
+	>(
+		ctx.options.apiHost!,
+		ctx.key,
+		`/services/${id}`,
+		WhautomateEndpointOutputSchemas.updateService,
+		{
+			method: 'PATCH',
+			body,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,

@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeWhautomateRequest } from '../client';
 import type { WhautomateEndpoints } from '../index';
 import type { WhautomateEndpointOutputs } from './types';
+import { WhautomateEndpointOutputSchemas } from './types';
 
 export const getServiceCategories: WhautomateEndpoints['getServiceCategories'] =
 	async (ctx, input) => {
@@ -11,10 +12,16 @@ export const getServiceCategories: WhautomateEndpoints['getServiceCategories'] =
 
 		const result = await makeWhautomateRequest<
 			WhautomateEndpointOutputs['getServiceCategories']
-		>(ctx.options.apiHost!, ctx.key, '/service-categories', {
-			method: 'GET',
-			query,
-		});
+		>(
+			ctx.options.apiHost!,
+			ctx.key,
+			'/service-categories',
+			WhautomateEndpointOutputSchemas.getServiceCategories,
+			{
+				method: 'GET',
+				query,
+			},
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -29,9 +36,15 @@ export const deleteServiceCategory: WhautomateEndpoints['deleteServiceCategory']
 	async (ctx, input) => {
 		const result = await makeWhautomateRequest<
 			WhautomateEndpointOutputs['deleteServiceCategory']
-		>(ctx.options.apiHost!, ctx.key, `/service-categories/${input.id}`, {
-			method: 'DELETE',
-		});
+		>(
+			ctx.options.apiHost!,
+			ctx.key,
+			`/service-categories/${input.id}`,
+			WhautomateEndpointOutputSchemas.deleteServiceCategory,
+			{
+				method: 'DELETE',
+			},
+		);
 
 		await logEventFromContext(
 			ctx,

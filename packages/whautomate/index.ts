@@ -348,8 +348,14 @@ export function whautomate<const T extends WhautomatePluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				const apiKey = await ctx.keys.get_api_key();
+				const apiHost = await (
+					ctx.keys as unknown as { get_api_host: () => Promise<string | null> }
+				).get_api_host();
+				if (apiHost) {
+					ctx.options.apiHost = apiHost;
+				}
+				return apiKey ?? '';
 			}
 
 			return '';
