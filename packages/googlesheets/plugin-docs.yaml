@@ -1,2 +1,30 @@
 displayName: Google Sheets
 description: Web-based spreadsheets for managing, visualizing, and analyzing data collaboratively online.
+
+examples:
+  read:
+    path: sheets.getRows
+    title: Get rows
+    args:
+      spreadsheetId: 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms
+      range: "'Class Data'!A:Z"
+  write:
+    path: sheets.appendRow
+    title: Append a row
+    args:
+      spreadsheetId: your-spreadsheet-id
+      sheetName: Sheet1
+      values:
+        - Hello
+        - from Corsair
+
+dbExample:
+  entity: rows
+  note: "Search synced rows without hitting Sheets."
+  limit: 50
+
+exampleWebhook:
+  path: rangeUpdated
+  note: "Fires when a range of cells is updated. Replace the `googlesheets()` call in the setup's `plugins` array with this configured call so the hook is registered."
+  after: |
+    console.log('Sheet range updated:', result.data);
