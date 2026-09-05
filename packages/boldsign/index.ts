@@ -27,7 +27,7 @@ import { errorHandlers } from './error-handlers';
 import { BoldsignSchema } from './schema';
 
 export type BoldsignPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'oauth_2'>;
 	key?: string;
 	hooks?: InternalBoldsignPlugin['hooks'];
 	webhookHooks?: InternalBoldsignPlugin['webhookHooks'];
@@ -233,7 +233,6 @@ const boldsignEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof boldsignEndpointsNested>;
 
 export const boldsignAuthConfig = {
-	api_key: {},
 	oauth_2: {},
 } as const satisfies PluginAuthConfig;
 
@@ -285,14 +284,6 @@ export function boldsign<const T extends BoldsignPluginOptions>(
 				return options.key;
 			}
 
-			if (ctx.authType === 'api_key') {
-				const apiKey = await ctx.keys.get_api_key();
-				if (!apiKey) {
-					throw new AuthMissingError('boldsign', 'api_key');
-				}
-				return apiKey;
-			}
-
 			if (ctx.authType === 'oauth_2') {
 				const accessToken = await ctx.keys.get_access_token();
 				if (!accessToken) {
@@ -301,7 +292,7 @@ export function boldsign<const T extends BoldsignPluginOptions>(
 				return accessToken;
 			}
 
-			throw new AuthMissingError('boldsign', 'api_key');
+			throw new AuthMissingError('boldsign', 'oauth_2');
 		},
 	} satisfies InternalBoldsignPlugin;
 }

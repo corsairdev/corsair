@@ -32,17 +32,17 @@ describe('makeBoldsignRequest', () => {
 		mockRequest.mockResolvedValue({});
 	});
 
-	it('sends the X-API-KEY header for api_key auth against the production base URL', async () => {
+	it('sends a Bearer token for oauth_2 (the sole auth type) against the production base URL', async () => {
 		await makeBoldsignRequest(
 			'/v1/document/list',
-			{ key: KEY, authType: 'api_key' },
+			{ key: KEY, authType: 'oauth_2' },
 			{ method: 'GET' },
 		);
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				BASE: 'https://api.boldsign.com',
-				HEADERS: expect.objectContaining({ 'X-API-KEY': KEY }),
+				HEADERS: expect.objectContaining({ Authorization: `Bearer ${KEY}` }),
 			}),
 			expect.objectContaining({ method: 'GET', url: '/v1/document/list' }),
 			expect.objectContaining({

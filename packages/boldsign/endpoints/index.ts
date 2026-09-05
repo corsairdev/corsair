@@ -24,9 +24,9 @@ function toUploadFile(base64Content: string, mimeType: string): string {
 }
 
 function authTypeFromContext(ctx: {
-	options?: { authType?: 'api_key' | 'oauth_2' };
-}): 'api_key' | 'oauth_2' {
-	// Default matches the plugin's defaultAuthType (oauth_2 in index.ts).
+	options?: { authType?: 'oauth_2' };
+}): 'oauth_2' {
+	// OAuth 2.0 is the plugin's sole auth type (defaultAuthType in index.ts).
 	return ctx.options?.authType ?? 'oauth_2';
 }
 
@@ -173,6 +173,9 @@ export const Documents = {
 			BoldsignEndpointInputSchemas.extendDocumentExpiry.parse(input);
 		// Body keys use the PascalCase names from
 		// https://developers.boldsign.com/documents/extend-document-expiry
+		// unknown: this call returns no content (see NoContentResponseSchema
+		// below), so no narrower response type exists; the actual payload is
+		// validated right after this call.
 		const response = await makeBoldsignRequest<unknown>(
 			'/v1/document/extendExpiry',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
@@ -205,6 +208,9 @@ export const Documents = {
 		// Query param is lowercase `documentId` and body keys use the
 		// PascalCase names from
 		// https://developers.boldsign.com/documents/remove-authentication-from-the-document
+		// unknown: this call returns 204 No Content (see
+		// NoContentResponseSchema below), so no narrower response type exists;
+		// the actual payload is validated right after this call.
 		const response = await makeBoldsignRequest<unknown>(
 			'/v1/document/RemoveAuthentication',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },

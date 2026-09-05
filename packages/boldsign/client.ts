@@ -29,7 +29,7 @@ const BOLDSIGN_RATE_LIMIT_CONFIG: RateLimitConfig = {
 
 export type BoldsignRequestContext = {
 	key: string;
-	authType?: 'api_key' | 'oauth_2';
+	authType?: 'oauth_2';
 };
 
 type QueryValue =
@@ -54,14 +54,11 @@ export async function makeBoldsignRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 	const key = typeof ctxOrKey === 'string' ? ctxOrKey : ctxOrKey.key;
-	// Default matches the plugin's defaultAuthType (oauth_2 in index.ts).
-	const authType =
-		typeof ctxOrKey === 'string' ? 'oauth_2' : (ctxOrKey.authType ?? 'oauth_2');
-
-	const headers: Record<string, string> =
-		authType === 'oauth_2'
-			? { Authorization: `Bearer ${key}` }
-			: { 'X-API-KEY': key };
+	// OAuth 2.0 is the plugin's sole auth type, so every request carries the
+	// access token as a Bearer token.
+	const headers: Record<string, string> = {
+		Authorization: `Bearer ${key}`,
+	};
 
 	if (!(typeof FormData !== 'undefined' && body instanceof FormData)) {
 		headers['Content-Type'] = 'application/json';
