@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 import { agentql } from '@corsair-dev/agentql';
-import { chmeetings } from '@corsair-dev/chmeetings';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
@@ -15,6 +14,7 @@ import { slack } from '@corsair-dev/slack';
 import { twilio } from '@corsair-dev/twilio';
 import { vapi } from '@corsair-dev/vapi';
 import { createCorsair } from 'corsair';
+
 import { sqlite } from '../db';
 
 const hubProjectApiKey = process.env.CORSAIR_API_KEY!;
@@ -38,7 +38,6 @@ export const corsair = createCorsair({
 	},
 	plugins: [
 		// github({ authType: 'managed' }),
-		chmeetings({ key: process.env.CHMEETINGS_API_KEY }),
 		slack({
 			permissions: {
 				mode: 'cautious',
