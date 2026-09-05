@@ -17,6 +17,7 @@ import {
 	completeOAuthCallback,
 	createConnectLink,
 	createTenant,
+	disconnectConnection,
 	getConnectionStatus,
 	getPermission,
 	getPermissionByToken,
@@ -27,7 +28,11 @@ import {
 	ok,
 	resolveConnect,
 } from './operations';
-import type { CreateConnectLinkInput, OAuthCallbackInput } from './types';
+import type {
+	CreateConnectLinkInput,
+	DisconnectInput,
+	OAuthCallbackInput,
+} from './types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Management HTTP handler — framework-agnostic (Request) => Promise<Response>.
@@ -270,6 +275,18 @@ const ROUTES: Route[] = [
 				);
 			}
 			return json(200, { ok: true });
+		},
+	},
+	{
+		method: 'POST',
+		pattern: '/disconnect',
+		handler: async ({ internal, body, scopedTenant }) => {
+			const input = body as DisconnectInput;
+			const tenantId = resolveScopedTenant(scopedTenant, input.tenantId);
+			return json(
+				200,
+				await disconnectConnection(internal, { ...input, tenantId }),
+			);
 		},
 	},
 ];

@@ -24,6 +24,8 @@ import type {
 	ConnectLink,
 	CreateConnectLinkInput,
 	CreateTenantInput,
+	DisconnectInput,
+	DisconnectResult,
 	ManagementOk,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
@@ -280,6 +282,60 @@ export async function getConnectionStatus(
 	}
 
 	return result;
+}
+
+/**
+ * Removes a tenant's stored connection for a plugin: deletes the account row
+ * (the encrypted credentials) and its account-scoped entities and events in one
+ * transaction. The approval queue (`corsair_permissions`) is left alone — it has
+ * its own `(tenant_id, plugin)` lifecycle and expiry. Idempotent: a missing
+ * connection resolves to `{ disconnected: false }` rather than an error, so
+ * callers can revoke blindly.
+ */
+export async function disconnectConnection(
+	internal: CorsairInternalConfig,
+	input: DisconnectInput,
+): Promise<DisconnectResult> {
+	const plugin = input?.plugin?.trim();
+	if (!plugin) {
+		throw badRequest('plugin is required', { missingFields: ['plugin'] });
+	}
+	findPlugin(internal, plugin); // 404 for an unknown plugin
+	const tenantId = input.tenantId?.trim() || 'default';
+	if (!internal.database) return { ok: true, disconnected: false };
+
+	const db = internal.database.db;
+	const integration = await db
+		.selectFrom('corsair_integrations')
+		.select(['id'])
+		.where('name', '=', plugin)
+		.executeTakeFirst();
+	if (!integration) return { ok: true, disconnected: false };
+
+	const account = await db
+		.selectFrom('corsair_accounts')
+		.select(['id'])
+		.where('tenant_id', '=', tenantId)
+		.where('integration_id', '=', integration.id)
+		.executeTakeFirst();
+	if (!account) return { ok: true, disconnected: false };
+
+	await db.transaction().execute(async (trx) => {
+		await trx
+			.deleteFrom('corsair_events')
+			.where('account_id', '=', account.id)
+			.execute();
+		await trx
+			.deleteFrom('corsair_entities')
+			.where('account_id', '=', account.id)
+			.execute();
+		await trx
+			.deleteFrom('corsair_accounts')
+			.where('id', '=', account.id)
+			.execute();
+	});
+
+	return { ok: true, disconnected: true };
 }
 
 // ── permissions ────────────────────────────────────────────────────────────
