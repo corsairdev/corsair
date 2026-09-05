@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
@@ -14,7 +14,9 @@ export const AlertingRuleCreateInputSchema = z.object({
 	id: z.string(),
 	body: z.record(z.string(), z.unknown()),
 });
-export type AlertingRuleCreateInput = z.infer<typeof AlertingRuleCreateInputSchema>;
+export type AlertingRuleCreateInput = z.infer<
+	typeof AlertingRuleCreateInputSchema
+>;
 
 export const AlertingRuleCreateResponseSchema = z
 	.object({
@@ -35,7 +37,9 @@ export const AlertingRulesListInputSchema = z.object({
 	sort_field: z.string().optional(),
 	sort_order: z.string().optional(),
 });
-export type AlertingRulesListInput = z.infer<typeof AlertingRulesListInputSchema>;
+export type AlertingRulesListInput = z.infer<
+	typeof AlertingRulesListInputSchema
+>;
 
 export const AlertingRulesListResponseSchema = z
 	.object({
@@ -52,7 +56,9 @@ export type AlertingRulesListResponse = z.infer<
 export const AlertingRuleDeleteInputSchema = z.object({
 	id: z.string(),
 });
-export type AlertingRuleDeleteInput = z.infer<typeof AlertingRuleDeleteInputSchema>;
+export type AlertingRuleDeleteInput = z.infer<
+	typeof AlertingRuleDeleteInputSchema
+>;
 
 export const AlertingRuleDeleteResponseSchema = z.record(
 	z.string(),
@@ -93,7 +99,12 @@ export const createRule: KibanaEndpoints['alertingRuleCreate'] = async (
 		method: 'POST',
 		body: input.body,
 	});
-	await logEventFromContext(ctx, 'kibana.alerting.createRule', { id: input.id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.alerting.createRule',
+		{ id: input.id },
+		'completed',
+	);
 	return response;
 };
 
@@ -112,7 +123,12 @@ export const listRules: KibanaEndpoints['alertingRulesList'] = async (
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['alertingRulesList']
 	>('api/alerting/rules/_find', baseUrl, ctx.key, { method: 'GET', query });
-	await logEventFromContext(ctx, 'kibana.alerting.listRules', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.alerting.listRules',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -126,7 +142,12 @@ export const deleteRule: KibanaEndpoints['alertingRuleDelete'] = async (
 	>(`api/alerting/rule/${encodeURIComponent(input.id)}`, baseUrl, ctx.key, {
 		method: 'DELETE',
 	});
-	await logEventFromContext(ctx, 'kibana.alerting.deleteRule', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.alerting.deleteRule',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -137,6 +158,11 @@ export const listRuleTypes: KibanaEndpoints['alertingRuleTypesList'] = async (
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['alertingRuleTypesList']
 	>('api/alerting/rule_types', baseUrl, ctx.key, { method: 'GET' });
-	await logEventFromContext(ctx, 'kibana.alerting.listRuleTypes', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.alerting.listRuleTypes',
+		{},
+		'completed',
+	);
 	return response;
 };

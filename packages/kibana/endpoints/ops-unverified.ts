@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type { KibanaEndpoints } from '..';
 import { KibanaAPIError, makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
@@ -26,7 +26,9 @@ export const ReportingJobsListInputSchema = z.object({
 	page: z.number().optional(),
 	per_page: z.number().optional(),
 });
-export type ReportingJobsListInput = z.infer<typeof ReportingJobsListInputSchema>;
+export type ReportingJobsListInput = z.infer<
+	typeof ReportingJobsListInputSchema
+>;
 
 export const ReportingJobsListResponseSchema = z
 	.object({
@@ -80,7 +82,12 @@ export const listJobs: KibanaEndpoints['reportingJobsList'] = async (
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['reportingJobsList']
 	>('api/reporting/jobs', baseUrl, ctx.key, { method: 'GET', query });
-	await logEventFromContext(ctx, 'kibana.reporting.listJobs', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.reporting.listJobs',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -111,7 +118,12 @@ export const nodeMetrics: KibanaEndpoints['nodeMetricsGet'] = async (
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['nodeMetricsGet']
 	>(path, esBase, ctx.key, { method: 'GET' });
-	await logEventFromContext(ctx, 'kibana.metrics.nodeMetrics', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.metrics.nodeMetrics',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -126,6 +138,11 @@ export const listIndices: KibanaEndpoints['indexIndicesList'] = async (
 		method: 'GET',
 		query: input.index !== undefined ? { index: input.index } : undefined,
 	});
-	await logEventFromContext(ctx, 'kibana.index.listIndices', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.index.listIndices',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

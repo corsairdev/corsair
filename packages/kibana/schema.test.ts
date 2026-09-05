@@ -5,10 +5,10 @@ import {
 	AlertsFindInputSchema,
 	CasesCreateInputSchema,
 	CasesListInputSchema,
-	ConnectorTypesListInputSchema,
 	ConnectorsCreateInputSchema,
 	ConnectorsDeleteInputSchema,
 	ConnectorsGetInputSchema,
+	ConnectorTypesListInputSchema,
 	DashboardsCreateInputSchema,
 	DashboardsDeleteInputSchema,
 	DashboardsGetInputSchema,
@@ -195,9 +195,7 @@ describe('Kibana Schema & Validation', () => {
 				id: 'dash-1',
 				attributes: { title: 'Updated' },
 			};
-			expect(SavedObjectsUpdateInputSchema.safeParse(input).success).toBe(
-				true,
-			);
+			expect(SavedObjectsUpdateInputSchema.safeParse(input).success).toBe(true);
 
 			const output = {
 				id: 'dash-1',
@@ -235,9 +233,9 @@ describe('Kibana Schema & Validation', () => {
 			expect(DashboardsSearchInputSchema.safeParse({ page: 1 }).success).toBe(
 				true,
 			);
-			expect(DashboardsCreateInputSchema.safeParse({ title: 'T' }).success).toBe(
-				true,
-			);
+			expect(
+				DashboardsCreateInputSchema.safeParse({ title: 'T' }).success,
+			).toBe(true);
 			expect(DashboardsCreateInputSchema.safeParse({}).success).toBe(false);
 			expect(DashboardsGetInputSchema.safeParse({}).success).toBe(false);
 			expect(DashboardsUpsertInputSchema.safeParse({ id: 'd1' }).success).toBe(
@@ -314,7 +312,9 @@ describe('Kibana Schema & Validation', () => {
 			expect(
 				FleetAgentPoliciesListInputSchema.safeParse({ page: 1 }).success,
 			).toBe(true);
-			expect(FleetEnrollmentKeyGetInputSchema.safeParse({}).success).toBe(false);
+			expect(FleetEnrollmentKeyGetInputSchema.safeParse({}).success).toBe(
+				false,
+			);
 			expect(
 				FleetEnrollmentKeyGetInputSchema.safeParse({ keyId: 'k' }).success,
 			).toBe(true);
@@ -337,9 +337,9 @@ describe('Kibana Schema & Validation', () => {
 			expect(DetectionRulesFindInputSchema.safeParse({ page: 1 }).success).toBe(
 				true,
 			);
-			expect(DetectionRulesFindInputSchema.safeParse({ page: 'x' }).success).toBe(
-				false,
-			);
+			expect(
+				DetectionRulesFindInputSchema.safeParse({ page: 'x' }).success,
+			).toBe(false);
 			expect(AlertsFindInputSchema.safeParse({}).success).toBe(true);
 			expect(EndpointListItemsInputSchema.safeParse({}).success).toBe(true);
 			expect(EntityStoreStatusInputSchema.safeParse({}).success).toBe(true);
@@ -381,7 +381,9 @@ describe('Kibana Schema & Validation', () => {
 			expect(DataViewsCreateInputSchema.safeParse({}).success).toBe(false);
 			expect(ReportingJobsListInputSchema.safeParse({}).success).toBe(true);
 			expect(NodeMetricsInputSchema.safeParse({}).success).toBe(true);
-			expect(NodeMetricsInputSchema.safeParse({ node_id: 5 }).success).toBe(false);
+			expect(NodeMetricsInputSchema.safeParse({ node_id: 5 }).success).toBe(
+				false,
+			);
 			expect(IndexIndicesInputSchema.safeParse({}).success).toBe(true);
 		});
 	});

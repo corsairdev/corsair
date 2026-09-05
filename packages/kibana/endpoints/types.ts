@@ -9,15 +9,29 @@ import type {
 	AlertingRuleTypesListInput,
 	AlertingRuleTypesListResponse,
 } from './alerting';
+import {
+	AlertingRuleCreateInputSchema,
+	AlertingRuleCreateResponseSchema,
+	AlertingRuleDeleteInputSchema,
+	AlertingRuleDeleteResponseSchema,
+	AlertingRulesListInputSchema,
+	AlertingRulesListResponseSchema,
+	AlertingRuleTypesListInputSchema,
+	AlertingRuleTypesListResponseSchema,
+} from './alerting';
 import type {
 	CasesCreateInput,
 	CasesCreateResponse,
 	CasesListInput,
 	CasesListResponse,
 } from './cases';
+import {
+	CasesCreateInputSchema,
+	CasesCreateResponseSchema,
+	CasesListInputSchema,
+	CasesListResponseSchema,
+} from './cases';
 import type {
-	ConnectorTypesListInput,
-	ConnectorTypesListResponse,
 	ConnectorsCreateInput,
 	ConnectorsCreateResponse,
 	ConnectorsDeleteInput,
@@ -26,6 +40,20 @@ import type {
 	ConnectorsGetResponse,
 	ConnectorsListInput,
 	ConnectorsListResponse,
+	ConnectorTypesListInput,
+	ConnectorTypesListResponse,
+} from './connectors';
+import {
+	ConnectorsCreateInputSchema,
+	ConnectorsCreateResponseSchema,
+	ConnectorsDeleteInputSchema,
+	ConnectorsDeleteResponseSchema,
+	ConnectorsGetInputSchema,
+	ConnectorsGetResponseSchema,
+	ConnectorsListInputSchema,
+	ConnectorsListResponseSchema,
+	ConnectorTypesListInputSchema,
+	ConnectorTypesListResponseSchema,
 } from './connectors';
 import type {
 	DashboardsCreateInput,
@@ -39,11 +67,29 @@ import type {
 	DashboardsUpsertInput,
 	DashboardsUpsertResponse,
 } from './dashboards';
+import {
+	DashboardsCreateInputSchema,
+	DashboardsCreateResponseSchema,
+	DashboardsDeleteInputSchema,
+	DashboardsDeleteResponseSchema,
+	DashboardsGetInputSchema,
+	DashboardsGetResponseSchema,
+	DashboardsSearchInputSchema,
+	DashboardsSearchResponseSchema,
+	DashboardsUpsertInputSchema,
+	DashboardsUpsertResponseSchema,
+} from './dashboards';
 import type {
 	DataViewsCreateInput,
 	DataViewsCreateResponse,
 	DataViewsListInput,
 	DataViewsListResponse,
+} from './data-views-ext';
+import {
+	DataViewsCreateInputSchema,
+	DataViewsCreateResponseSchema,
+	DataViewsListInputSchema,
+	DataViewsListResponseSchema,
 } from './data-views-ext';
 import type {
 	AlertsFindInput,
@@ -51,16 +97,12 @@ import type {
 	DetectionRulesFindInput,
 	DetectionRulesFindResponse,
 } from './detection-engine';
-import type {
-	EndpointListItemsInput,
-	EndpointListItemsResponse,
-	EntityStoreEnginesInput,
-	EntityStoreEnginesResponse,
-	EntityStoreEntitiesListInput,
-	EntityStoreEntitiesListResponse,
-	EntityStoreStatusInput,
-	EntityStoreStatusResponse,
-} from './security';
+import {
+	AlertsFindInputSchema,
+	AlertsFindResponseSchema,
+	DetectionRulesFindInputSchema,
+	DetectionRulesFindResponseSchema,
+} from './detection-engine';
 import type {
 	FleetAgentPoliciesListInput,
 	FleetAgentPoliciesListResponse,
@@ -101,72 +143,6 @@ import type {
 	FleetServerHostsListInput,
 	FleetServerHostsListResponse,
 } from './fleet';
-import type {
-	ListsDeleteInput,
-	ListsDeleteResponse,
-	OsquerySavedQueryDeleteInput,
-	OsquerySavedQueryDeleteResponse,
-} from './lists-osquery';
-import type {
-	IndexIndicesInput,
-	IndexIndicesResponse,
-	NodeMetricsInput,
-	NodeMetricsResponse,
-	ReportingJobsListInput,
-	ReportingJobsListResponse,
-} from './ops-unverified';
-import {
-	AlertingRuleCreateInputSchema,
-	AlertingRuleCreateResponseSchema,
-	AlertingRuleDeleteInputSchema,
-	AlertingRuleDeleteResponseSchema,
-	AlertingRuleTypesListInputSchema,
-	AlertingRuleTypesListResponseSchema,
-	AlertingRulesListInputSchema,
-	AlertingRulesListResponseSchema,
-} from './alerting';
-import {
-	CasesCreateInputSchema,
-	CasesCreateResponseSchema,
-	CasesListInputSchema,
-	CasesListResponseSchema,
-} from './cases';
-import {
-	ConnectorTypesListInputSchema,
-	ConnectorTypesListResponseSchema,
-	ConnectorsCreateInputSchema,
-	ConnectorsCreateResponseSchema,
-	ConnectorsDeleteInputSchema,
-	ConnectorsDeleteResponseSchema,
-	ConnectorsGetInputSchema,
-	ConnectorsGetResponseSchema,
-	ConnectorsListInputSchema,
-	ConnectorsListResponseSchema,
-} from './connectors';
-import {
-	DashboardsCreateInputSchema,
-	DashboardsCreateResponseSchema,
-	DashboardsDeleteInputSchema,
-	DashboardsDeleteResponseSchema,
-	DashboardsGetInputSchema,
-	DashboardsGetResponseSchema,
-	DashboardsSearchInputSchema,
-	DashboardsSearchResponseSchema,
-	DashboardsUpsertInputSchema,
-	DashboardsUpsertResponseSchema,
-} from './dashboards';
-import {
-	DataViewsCreateInputSchema,
-	DataViewsCreateResponseSchema,
-	DataViewsListInputSchema,
-	DataViewsListResponseSchema,
-} from './data-views-ext';
-import {
-	AlertsFindInputSchema,
-	AlertsFindResponseSchema,
-	DetectionRulesFindInputSchema,
-	DetectionRulesFindResponseSchema,
-} from './detection-engine';
 import {
 	FleetAgentPoliciesListInputSchema,
 	FleetAgentPoliciesListResponseSchema,
@@ -207,12 +183,26 @@ import {
 	FleetServerHostsListInputSchema,
 	FleetServerHostsListResponseSchema,
 } from './fleet';
+import type {
+	ListsDeleteInput,
+	ListsDeleteResponse,
+	OsquerySavedQueryDeleteInput,
+	OsquerySavedQueryDeleteResponse,
+} from './lists-osquery';
 import {
 	ListsDeleteInputSchema,
 	ListsDeleteResponseSchema,
 	OsquerySavedQueryDeleteInputSchema,
 	OsquerySavedQueryDeleteResponseSchema,
 } from './lists-osquery';
+import type {
+	IndexIndicesInput,
+	IndexIndicesResponse,
+	NodeMetricsInput,
+	NodeMetricsResponse,
+	ReportingJobsListInput,
+	ReportingJobsListResponse,
+} from './ops-unverified';
 import {
 	IndexIndicesInputSchema,
 	IndexIndicesResponseSchema,
@@ -221,6 +211,16 @@ import {
 	ReportingJobsListInputSchema,
 	ReportingJobsListResponseSchema,
 } from './ops-unverified';
+import type {
+	EndpointListItemsInput,
+	EndpointListItemsResponse,
+	EntityStoreEnginesInput,
+	EntityStoreEnginesResponse,
+	EntityStoreEntitiesListInput,
+	EntityStoreEntitiesListResponse,
+	EntityStoreStatusInput,
+	EntityStoreStatusResponse,
+} from './security';
 import {
 	EndpointListItemsInputSchema,
 	EndpointListItemsResponseSchema,
@@ -632,16 +632,6 @@ export const KibanaEndpointOutputSchemas = {
 	indexIndicesList: IndexIndicesResponseSchema,
 } as const;
 
-export {
-	AlertingRuleCreateInputSchema,
-	AlertingRuleCreateResponseSchema,
-	AlertingRuleDeleteInputSchema,
-	AlertingRuleDeleteResponseSchema,
-	AlertingRuleTypesListInputSchema,
-	AlertingRuleTypesListResponseSchema,
-	AlertingRulesListInputSchema,
-	AlertingRulesListResponseSchema,
-} from './alerting';
 export type {
 	AlertingRuleCreateInput,
 	AlertingRuleCreateResponse,
@@ -653,23 +643,15 @@ export type {
 	AlertingRuleTypesListResponse,
 } from './alerting';
 export {
-	AlertsFindInputSchema,
-	AlertsFindResponseSchema,
-	DetectionRulesFindInputSchema,
-	DetectionRulesFindResponseSchema,
-} from './detection-engine';
-export type {
-	AlertsFindInput,
-	AlertsFindResponse,
-	DetectionRulesFindInput,
-	DetectionRulesFindResponse,
-} from './detection-engine';
-export {
-	CasesCreateInputSchema,
-	CasesCreateResponseSchema,
-	CasesListInputSchema,
-	CasesListResponseSchema,
-} from './cases';
+	AlertingRuleCreateInputSchema,
+	AlertingRuleCreateResponseSchema,
+	AlertingRuleDeleteInputSchema,
+	AlertingRuleDeleteResponseSchema,
+	AlertingRulesListInputSchema,
+	AlertingRulesListResponseSchema,
+	AlertingRuleTypesListInputSchema,
+	AlertingRuleTypesListResponseSchema,
+} from './alerting';
 export type {
 	CasesCreateInput,
 	CasesCreateResponse,
@@ -677,20 +659,12 @@ export type {
 	CasesListResponse,
 } from './cases';
 export {
-	ConnectorTypesListInputSchema,
-	ConnectorTypesListResponseSchema,
-	ConnectorsCreateInputSchema,
-	ConnectorsCreateResponseSchema,
-	ConnectorsDeleteInputSchema,
-	ConnectorsDeleteResponseSchema,
-	ConnectorsGetInputSchema,
-	ConnectorsGetResponseSchema,
-	ConnectorsListInputSchema,
-	ConnectorsListResponseSchema,
-} from './connectors';
+	CasesCreateInputSchema,
+	CasesCreateResponseSchema,
+	CasesListInputSchema,
+	CasesListResponseSchema,
+} from './cases';
 export type {
-	ConnectorTypesListInput,
-	ConnectorTypesListResponse,
 	ConnectorsCreateInput,
 	ConnectorsCreateResponse,
 	ConnectorsDeleteInput,
@@ -699,19 +673,21 @@ export type {
 	ConnectorsGetResponse,
 	ConnectorsListInput,
 	ConnectorsListResponse,
+	ConnectorTypesListInput,
+	ConnectorTypesListResponse,
 } from './connectors';
 export {
-	DashboardsCreateInputSchema,
-	DashboardsCreateResponseSchema,
-	DashboardsDeleteInputSchema,
-	DashboardsDeleteResponseSchema,
-	DashboardsGetInputSchema,
-	DashboardsGetResponseSchema,
-	DashboardsSearchInputSchema,
-	DashboardsSearchResponseSchema,
-	DashboardsUpsertInputSchema,
-	DashboardsUpsertResponseSchema,
-} from './dashboards';
+	ConnectorsCreateInputSchema,
+	ConnectorsCreateResponseSchema,
+	ConnectorsDeleteInputSchema,
+	ConnectorsDeleteResponseSchema,
+	ConnectorsGetInputSchema,
+	ConnectorsGetResponseSchema,
+	ConnectorsListInputSchema,
+	ConnectorsListResponseSchema,
+	ConnectorTypesListInputSchema,
+	ConnectorTypesListResponseSchema,
+} from './connectors';
 export type {
 	DashboardsCreateInput,
 	DashboardsCreateResponse,
@@ -725,11 +701,17 @@ export type {
 	DashboardsUpsertResponse,
 } from './dashboards';
 export {
-	DataViewsCreateInputSchema,
-	DataViewsCreateResponseSchema,
-	DataViewsListInputSchema,
-	DataViewsListResponseSchema,
-} from './data-views-ext';
+	DashboardsCreateInputSchema,
+	DashboardsCreateResponseSchema,
+	DashboardsDeleteInputSchema,
+	DashboardsDeleteResponseSchema,
+	DashboardsGetInputSchema,
+	DashboardsGetResponseSchema,
+	DashboardsSearchInputSchema,
+	DashboardsSearchResponseSchema,
+	DashboardsUpsertInputSchema,
+	DashboardsUpsertResponseSchema,
+} from './dashboards';
 export type {
 	DataViewsCreateInput,
 	DataViewsCreateResponse,
@@ -737,65 +719,23 @@ export type {
 	DataViewsListResponse,
 } from './data-views-ext';
 export {
-	EndpointListItemsInputSchema,
-	EndpointListItemsResponseSchema,
-	EntityStoreEnginesInputSchema,
-	EntityStoreEnginesResponseSchema,
-	EntityStoreEntitiesListInputSchema,
-	EntityStoreEntitiesListResponseSchema,
-	EntityStoreStatusInputSchema,
-	EntityStoreStatusResponseSchema,
-} from './security';
+	DataViewsCreateInputSchema,
+	DataViewsCreateResponseSchema,
+	DataViewsListInputSchema,
+	DataViewsListResponseSchema,
+} from './data-views-ext';
 export type {
-	EndpointListItemsInput,
-	EndpointListItemsResponse,
-	EntityStoreEnginesInput,
-	EntityStoreEnginesResponse,
-	EntityStoreEntitiesListInput,
-	EntityStoreEntitiesListResponse,
-	EntityStoreStatusInput,
-	EntityStoreStatusResponse,
-} from './security';
+	AlertsFindInput,
+	AlertsFindResponse,
+	DetectionRulesFindInput,
+	DetectionRulesFindResponse,
+} from './detection-engine';
 export {
-	FleetAgentPoliciesListInputSchema,
-	FleetAgentPoliciesListResponseSchema,
-	FleetAgentsSetupInputSchema,
-	FleetAgentsSetupResponseSchema,
-	FleetAgentsVersionsInputSchema,
-	FleetAgentsVersionsResponseSchema,
-	FleetCheckPermissionsInputSchema,
-	FleetCheckPermissionsResponseSchema,
-	FleetEnrollmentKeyGetInputSchema,
-	FleetEnrollmentKeyGetResponseSchema,
-	FleetEnrollmentKeysListInputSchema,
-	FleetEnrollmentKeysListResponseSchema,
-	FleetEpmCategoriesInputSchema,
-	FleetEpmCategoriesResponseSchema,
-	FleetEpmDataStreamsInputSchema,
-	FleetEpmDataStreamsResponseSchema,
-	FleetEpmPackageDetailsInputSchema,
-	FleetEpmPackageDetailsResponseSchema,
-	FleetEpmPackageFileInputSchema,
-	FleetEpmPackageFileResponseSchema,
-	FleetEpmPackageStatsInputSchema,
-	FleetEpmPackageStatsResponseSchema,
-	FleetEpmPackagesInstalledInputSchema,
-	FleetEpmPackagesInstalledResponseSchema,
-	FleetEpmPackagesLimitedInputSchema,
-	FleetEpmPackagesLimitedResponseSchema,
-	FleetEpmPackagesListInputSchema,
-	FleetEpmPackagesListResponseSchema,
-	FleetOutputDeleteInputSchema,
-	FleetOutputDeleteResponseSchema,
-	FleetPackagePoliciesListInputSchema,
-	FleetPackagePoliciesListResponseSchema,
-	FleetProxyDeleteInputSchema,
-	FleetProxyDeleteResponseSchema,
-	FleetServerHostGetInputSchema,
-	FleetServerHostGetResponseSchema,
-	FleetServerHostsListInputSchema,
-	FleetServerHostsListResponseSchema,
-} from './fleet';
+	AlertsFindInputSchema,
+	AlertsFindResponseSchema,
+	DetectionRulesFindInputSchema,
+	DetectionRulesFindResponseSchema,
+} from './detection-engine';
 export type {
 	FleetAgentPoliciesListInput,
 	FleetAgentPoliciesListResponse,
@@ -837,17 +777,65 @@ export type {
 	FleetServerHostsListResponse,
 } from './fleet';
 export {
-	ListsDeleteInputSchema,
-	ListsDeleteResponseSchema,
-	OsquerySavedQueryDeleteInputSchema,
-	OsquerySavedQueryDeleteResponseSchema,
-} from './lists-osquery';
+	FleetAgentPoliciesListInputSchema,
+	FleetAgentPoliciesListResponseSchema,
+	FleetAgentsSetupInputSchema,
+	FleetAgentsSetupResponseSchema,
+	FleetAgentsVersionsInputSchema,
+	FleetAgentsVersionsResponseSchema,
+	FleetCheckPermissionsInputSchema,
+	FleetCheckPermissionsResponseSchema,
+	FleetEnrollmentKeyGetInputSchema,
+	FleetEnrollmentKeyGetResponseSchema,
+	FleetEnrollmentKeysListInputSchema,
+	FleetEnrollmentKeysListResponseSchema,
+	FleetEpmCategoriesInputSchema,
+	FleetEpmCategoriesResponseSchema,
+	FleetEpmDataStreamsInputSchema,
+	FleetEpmDataStreamsResponseSchema,
+	FleetEpmPackageDetailsInputSchema,
+	FleetEpmPackageDetailsResponseSchema,
+	FleetEpmPackageFileInputSchema,
+	FleetEpmPackageFileResponseSchema,
+	FleetEpmPackageStatsInputSchema,
+	FleetEpmPackageStatsResponseSchema,
+	FleetEpmPackagesInstalledInputSchema,
+	FleetEpmPackagesInstalledResponseSchema,
+	FleetEpmPackagesLimitedInputSchema,
+	FleetEpmPackagesLimitedResponseSchema,
+	FleetEpmPackagesListInputSchema,
+	FleetEpmPackagesListResponseSchema,
+	FleetOutputDeleteInputSchema,
+	FleetOutputDeleteResponseSchema,
+	FleetPackagePoliciesListInputSchema,
+	FleetPackagePoliciesListResponseSchema,
+	FleetProxyDeleteInputSchema,
+	FleetProxyDeleteResponseSchema,
+	FleetServerHostGetInputSchema,
+	FleetServerHostGetResponseSchema,
+	FleetServerHostsListInputSchema,
+	FleetServerHostsListResponseSchema,
+} from './fleet';
 export type {
 	ListsDeleteInput,
 	ListsDeleteResponse,
 	OsquerySavedQueryDeleteInput,
 	OsquerySavedQueryDeleteResponse,
 } from './lists-osquery';
+export {
+	ListsDeleteInputSchema,
+	ListsDeleteResponseSchema,
+	OsquerySavedQueryDeleteInputSchema,
+	OsquerySavedQueryDeleteResponseSchema,
+} from './lists-osquery';
+export type {
+	IndexIndicesInput,
+	IndexIndicesResponse,
+	NodeMetricsInput,
+	NodeMetricsResponse,
+	ReportingJobsListInput,
+	ReportingJobsListResponse,
+} from './ops-unverified';
 export {
 	IndexIndicesInputSchema,
 	IndexIndicesResponseSchema,
@@ -857,10 +845,22 @@ export {
 	ReportingJobsListResponseSchema,
 } from './ops-unverified';
 export type {
-	IndexIndicesInput,
-	IndexIndicesResponse,
-	NodeMetricsInput,
-	NodeMetricsResponse,
-	ReportingJobsListInput,
-	ReportingJobsListResponse,
-} from './ops-unverified';
+	EndpointListItemsInput,
+	EndpointListItemsResponse,
+	EntityStoreEnginesInput,
+	EntityStoreEnginesResponse,
+	EntityStoreEntitiesListInput,
+	EntityStoreEntitiesListResponse,
+	EntityStoreStatusInput,
+	EntityStoreStatusResponse,
+} from './security';
+export {
+	EndpointListItemsInputSchema,
+	EndpointListItemsResponseSchema,
+	EntityStoreEnginesInputSchema,
+	EntityStoreEnginesResponseSchema,
+	EntityStoreEntitiesListInputSchema,
+	EntityStoreEntitiesListResponseSchema,
+	EntityStoreStatusInputSchema,
+	EntityStoreStatusResponseSchema,
+} from './security';

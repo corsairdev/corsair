@@ -274,10 +274,15 @@ describe('Kibana Endpoints', () => {
 
 			const res = await Dashboards.search(ctx, { page: 1, per_page: 10 });
 
-			expect(mockedRequest).toHaveBeenCalledWith('api/dashboards', BASE, ctx.key, {
-				method: 'GET',
-				query: { page: 1, per_page: 10 },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'api/dashboards',
+				BASE,
+				ctx.key,
+				{
+					method: 'GET',
+					query: { page: 1, per_page: 10 },
+				},
+			);
 			expect(res.meta?.total).toBe(0);
 		});
 
@@ -286,10 +291,15 @@ describe('Kibana Endpoints', () => {
 
 			const res = await Dashboards.create(ctx, { title: 'Main' });
 
-			expect(mockedRequest).toHaveBeenCalledWith('api/dashboards', BASE, ctx.key, {
-				method: 'POST',
-				body: { title: 'Main' },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'api/dashboards',
+				BASE,
+				ctx.key,
+				{
+					method: 'POST',
+					body: { title: 'Main' },
+				},
+			);
 			expect(res.id).toBe('d1');
 		});
 
@@ -447,10 +457,15 @@ describe('Kibana Endpoints', () => {
 
 			const res = await Cases.list(ctx, { status: 'open', perPage: 5 });
 
-			expect(mockedRequest).toHaveBeenCalledWith('api/cases/_find', BASE, ctx.key, {
-				method: 'GET',
-				query: { status: 'open', perPage: 5 },
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'api/cases/_find',
+				BASE,
+				ctx.key,
+				{
+					method: 'GET',
+					query: { status: 'open', perPage: 5 },
+				},
+			);
 			expect(res.total).toBe(1);
 		});
 	});
@@ -717,7 +732,10 @@ describe('Kibana Endpoints', () => {
 		it('gets epm package details', async () => {
 			mockedRequest.mockResolvedValueOnce({ response: {} });
 
-			await Fleet.epmPackageDetails(ctx, { pkgName: 'system', pkgVersion: '1.0.0' });
+			await Fleet.epmPackageDetails(ctx, {
+				pkgName: 'system',
+				pkgVersion: '1.0.0',
+			});
 
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'api/fleet/epm/packages/system/1.0.0',
@@ -788,7 +806,10 @@ describe('Kibana Endpoints', () => {
 		it('finds detection rules with filters', async () => {
 			mockedRequest.mockResolvedValueOnce({ total: 3, data: [] });
 
-			const res = await DetectionEngine.findRules(ctx, { page: 1, per_page: 20 });
+			const res = await DetectionEngine.findRules(ctx, {
+				page: 1,
+				per_page: 20,
+			});
 
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'api/detection_engine/rules/_find',

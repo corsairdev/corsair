@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
@@ -39,7 +39,9 @@ export const DataViewsCreateResponseSchema = z
 			.optional(),
 	})
 	.passthrough();
-export type DataViewsCreateResponse = z.infer<typeof DataViewsCreateResponseSchema>;
+export type DataViewsCreateResponse = z.infer<
+	typeof DataViewsCreateResponseSchema
+>;
 
 type Ctx = Parameters<KibanaEndpoints['dataViewsList']>[0];
 
@@ -71,6 +73,11 @@ export const create: KibanaEndpoints['dataViewsCreate'] = async (
 			...(override !== undefined ? { override } : {}),
 		},
 	});
-	await logEventFromContext(ctx, 'kibana.dataViews.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.dataViews.create',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

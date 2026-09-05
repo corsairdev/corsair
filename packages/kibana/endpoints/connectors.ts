@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
@@ -44,17 +44,16 @@ export type ConnectorsListInput = z.infer<typeof ConnectorsListInputSchema>;
 export const ConnectorsListResponseSchema = z.array(
 	z.record(z.string(), z.unknown()),
 );
-export type ConnectorsListResponse = z.infer<typeof ConnectorsListResponseSchema>;
+export type ConnectorsListResponse = z.infer<
+	typeof ConnectorsListResponseSchema
+>;
 
 export const ConnectorsDeleteInputSchema = z.object({
 	id: z.string(),
 });
 export type ConnectorsDeleteInput = z.infer<typeof ConnectorsDeleteInputSchema>;
 
-export const ConnectorsDeleteResponseSchema = z.record(
-	z.string(),
-	z.unknown(),
-);
+export const ConnectorsDeleteResponseSchema = z.record(z.string(), z.unknown());
 export type ConnectorsDeleteResponse = z.infer<
 	typeof ConnectorsDeleteResponseSchema
 >;
@@ -93,7 +92,12 @@ export const create: KibanaEndpoints['connectorsCreate'] = async (
 		method: 'POST',
 		body,
 	});
-	await logEventFromContext(ctx, 'kibana.connectors.create', { id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.connectors.create',
+		{ id },
+		'completed',
+	);
 	return response;
 };
 
@@ -104,7 +108,12 @@ export const get: KibanaEndpoints['connectorsGet'] = async (ctx, input) => {
 	>(`api/actions/connector/${encodeURIComponent(input.id)}`, baseUrl, ctx.key, {
 		method: 'GET',
 	});
-	await logEventFromContext(ctx, 'kibana.connectors.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.connectors.get',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -127,7 +136,12 @@ export const remove: KibanaEndpoints['connectorsDelete'] = async (
 	>(`api/actions/connector/${encodeURIComponent(input.id)}`, baseUrl, ctx.key, {
 		method: 'DELETE',
 	});
-	await logEventFromContext(ctx, 'kibana.connectors.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.connectors.delete',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -141,7 +155,9 @@ export const listTypes: KibanaEndpoints['connectorTypesList'] = async (
 	>('api/actions/connector_types', baseUrl, ctx.key, {
 		method: 'GET',
 		query:
-			input.feature_id !== undefined ? { feature_id: input.feature_id } : undefined,
+			input.feature_id !== undefined
+				? { feature_id: input.feature_id }
+				: undefined,
 	});
 	await logEventFromContext(
 		ctx,

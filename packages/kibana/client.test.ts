@@ -20,10 +20,12 @@ describe('Kibana API client', () => {
 	});
 
 	it('throws MISSING_BASE_URL when baseUrl is empty', async () => {
-		await expect(makeKibanaRequest('api/status', '', 'some-key')).rejects.toThrow(
-			'Base URL is required',
-		);
-		await expect(makeKibanaRequest('api/status', '', 'some-key')).rejects.toMatchObject({
+		await expect(
+			makeKibanaRequest('api/status', '', 'some-key'),
+		).rejects.toThrow('Base URL is required');
+		await expect(
+			makeKibanaRequest('api/status', '', 'some-key'),
+		).rejects.toMatchObject({
 			code: 'MISSING_BASE_URL',
 		});
 		expect(mockRequest).not.toHaveBeenCalled();
@@ -81,10 +83,7 @@ describe('Kibana API client', () => {
 	it('strips a trailing slash from BASE', async () => {
 		await makeKibanaRequest('api/status', `${BASE}/`, 'k');
 
-		const [config] = mockRequest.mock.calls[0] as [
-			{ BASE: string },
-			unknown,
-		];
+		const [config] = mockRequest.mock.calls[0] as [{ BASE: string }, unknown];
 		expect(config.BASE).toBe(BASE);
 	});
 

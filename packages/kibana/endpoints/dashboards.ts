@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
@@ -83,10 +83,7 @@ export const DashboardsDeleteInputSchema = z.object({
 });
 export type DashboardsDeleteInput = z.infer<typeof DashboardsDeleteInputSchema>;
 
-export const DashboardsDeleteResponseSchema = z.record(
-	z.string(),
-	z.unknown(),
-);
+export const DashboardsDeleteResponseSchema = z.record(z.string(), z.unknown());
 export type DashboardsDeleteResponse = z.infer<
 	typeof DashboardsDeleteResponseSchema
 >;
@@ -108,7 +105,12 @@ export const search: KibanaEndpoints['dashboardsSearch'] = async (
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['dashboardsSearch']
 	>('api/dashboards', baseUrl, ctx.key, { method: 'GET', query });
-	await logEventFromContext(ctx, 'kibana.dashboards.search', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.dashboards.search',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -123,7 +125,12 @@ export const create: KibanaEndpoints['dashboardsCreate'] = async (
 		method: 'POST',
 		body: { ...input },
 	});
-	await logEventFromContext(ctx, 'kibana.dashboards.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.dashboards.create',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -134,7 +141,12 @@ export const get: KibanaEndpoints['dashboardsGet'] = async (ctx, input) => {
 	>(`api/dashboards/${encodeURIComponent(input.id)}`, baseUrl, ctx.key, {
 		method: 'GET',
 	});
-	await logEventFromContext(ctx, 'kibana.dashboards.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.dashboards.get',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -150,7 +162,12 @@ export const upsert: KibanaEndpoints['dashboardsUpsert'] = async (
 		method: 'PUT',
 		body,
 	});
-	await logEventFromContext(ctx, 'kibana.dashboards.upsert', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.dashboards.upsert',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -164,6 +181,11 @@ export const remove: KibanaEndpoints['dashboardsDelete'] = async (
 	>(`api/dashboards/${encodeURIComponent(input.id)}`, baseUrl, ctx.key, {
 		method: 'DELETE',
 	});
-	await logEventFromContext(ctx, 'kibana.dashboards.delete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.dashboards.delete',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

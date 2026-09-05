@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
@@ -38,13 +38,15 @@ export const deleteList: KibanaEndpoints['listsDelete'] = async (
 		query.deleteReferences = input.deleteReferences;
 	if (input.ignoreReferences !== undefined)
 		query.ignoreReferences = input.ignoreReferences;
-	const response = await makeKibanaRequest<KibanaEndpointOutputs['listsDelete']>(
-		'api/lists',
-		baseUrl,
-		ctx.key,
-		{ method: 'DELETE', query },
+	const response = await makeKibanaRequest<
+		KibanaEndpointOutputs['listsDelete']
+	>('api/lists', baseUrl, ctx.key, { method: 'DELETE', query });
+	await logEventFromContext(
+		ctx,
+		'kibana.lists.deleteList',
+		{ ...input },
+		'completed',
 	);
-	await logEventFromContext(ctx, 'kibana.lists.deleteList', { ...input }, 'completed');
 	return response;
 };
 
@@ -63,21 +65,24 @@ export type OsquerySavedQueryDeleteResponse = z.infer<
 	typeof OsquerySavedQueryDeleteResponseSchema
 >;
 
-export const deleteSavedQuery: KibanaEndpoints['osquerySavedQueryDelete'] = async (
-	ctx,
-	input,
-) => {
-	const baseUrl = await baseUrlOf(ctx);
-	const response = await makeKibanaRequest<
-		KibanaEndpointOutputs['osquerySavedQueryDelete']
-	>(`api/osquery/saved_queries/${encodeURIComponent(input.id)}`, baseUrl, ctx.key, {
-		method: 'DELETE',
-	});
-	await logEventFromContext(
-		ctx,
-		'kibana.osquery.deleteSavedQuery',
-		{ ...input },
-		'completed',
-	);
-	return response;
-};
+export const deleteSavedQuery: KibanaEndpoints['osquerySavedQueryDelete'] =
+	async (ctx, input) => {
+		const baseUrl = await baseUrlOf(ctx);
+		const response = await makeKibanaRequest<
+			KibanaEndpointOutputs['osquerySavedQueryDelete']
+		>(
+			`api/osquery/saved_queries/${encodeURIComponent(input.id)}`,
+			baseUrl,
+			ctx.key,
+			{
+				method: 'DELETE',
+			},
+		);
+		await logEventFromContext(
+			ctx,
+			'kibana.osquery.deleteSavedQuery',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};

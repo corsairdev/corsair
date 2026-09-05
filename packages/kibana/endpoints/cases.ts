@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
@@ -111,6 +111,11 @@ export const list: KibanaEndpoints['casesList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query },
 	);
-	await logEventFromContext(ctx, 'kibana.cases.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.cases.list',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
@@ -18,7 +18,9 @@ export const EndpointListItemsInputSchema = z.object({
 	sort_field: z.string().optional(),
 	sort_order: z.string().optional(),
 });
-export type EndpointListItemsInput = z.infer<typeof EndpointListItemsInputSchema>;
+export type EndpointListItemsInput = z.infer<
+	typeof EndpointListItemsInputSchema
+>;
 
 export const EndpointListItemsResponseSchema = z
 	.object({
@@ -35,7 +37,9 @@ export type EndpointListItemsResponse = z.infer<
 export const EntityStoreStatusInputSchema = z.object({
 	include_components: z.boolean().optional(),
 });
-export type EntityStoreStatusInput = z.infer<typeof EntityStoreStatusInputSchema>;
+export type EntityStoreStatusInput = z.infer<
+	typeof EntityStoreStatusInputSchema
+>;
 
 export const EntityStoreStatusResponseSchema = z
 	.object({
@@ -48,7 +52,9 @@ export type EntityStoreStatusResponse = z.infer<
 >;
 
 export const EntityStoreEnginesInputSchema = z.object({});
-export type EntityStoreEnginesInput = z.infer<typeof EntityStoreEnginesInputSchema>;
+export type EntityStoreEnginesInput = z.infer<
+	typeof EntityStoreEnginesInputSchema
+>;
 
 export const EntityStoreEnginesResponseSchema = z
 	.object({
@@ -109,7 +115,12 @@ export const listEndpointItems: KibanaEndpoints['endpointListItems'] = async (
 		method: 'GET',
 		query,
 	});
-	await logEventFromContext(ctx, 'kibana.security.listEndpointItems', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.security.listEndpointItems',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -127,7 +138,12 @@ export const entityStoreStatus: KibanaEndpoints['entityStoreStatus'] = async (
 				? { include_components: input.include_components }
 				: undefined,
 	});
-	await logEventFromContext(ctx, 'kibana.security.entityStoreStatus', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.security.entityStoreStatus',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -138,7 +154,12 @@ export const entityStoreEngines: KibanaEndpoints['entityStoreEngines'] = async (
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['entityStoreEngines']
 	>('api/security/entity_store/status', baseUrl, ctx.key, { method: 'GET' });
-	await logEventFromContext(ctx, 'kibana.security.entityStoreEngines', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.security.entityStoreEngines',
+		{},
+		'completed',
+	);
 	return response;
 };
 
@@ -178,6 +199,11 @@ export const entitiesList: KibanaEndpoints['entityStoreEntitiesList'] = async (
 		method: 'GET',
 		query,
 	});
-	await logEventFromContext(ctx, 'kibana.security.entitiesList', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.security.entitiesList',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

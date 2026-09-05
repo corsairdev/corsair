@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
@@ -18,7 +18,9 @@ export const DetectionRulesFindInputSchema = z.object({
 	sort_order: z.string().optional(),
 	fields: z.union([z.string(), z.array(z.string())]).optional(),
 });
-export type DetectionRulesFindInput = z.infer<typeof DetectionRulesFindInputSchema>;
+export type DetectionRulesFindInput = z.infer<
+	typeof DetectionRulesFindInputSchema
+>;
 
 export const DetectionRulesFindResponseSchema = z
 	.object({
@@ -76,7 +78,12 @@ export const findRules: KibanaEndpoints['detectionRulesFind'] = async (
 		method: 'GET',
 		query,
 	});
-	await logEventFromContext(ctx, 'kibana.detection.findRules', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.detection.findRules',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -91,6 +98,11 @@ export const findAlerts: KibanaEndpoints['detectionAlertsFind'] = async (
 		method: 'POST',
 		body: { ...input },
 	});
-	await logEventFromContext(ctx, 'kibana.detection.findAlerts', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.detection.findAlerts',
+		{},
+		'completed',
+	);
 	return response;
 };

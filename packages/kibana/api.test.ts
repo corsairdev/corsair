@@ -26,19 +26,29 @@ describeLive('Kibana live API (env-gated)', () => {
 	});
 
 	it('GET alerting rules returns paged payload', async () => {
-		const res = await makeKibanaRequest('api/alerting/rules/_find', BASE_URL, API_KEY, {
-			method: 'GET',
-			query: { per_page: 1 },
-		});
+		const res = await makeKibanaRequest(
+			'api/alerting/rules/_find',
+			BASE_URL,
+			API_KEY,
+			{
+				method: 'GET',
+				query: { per_page: 1 },
+			},
+		);
 		const parsed = KibanaEndpointOutputSchemas.alertingRulesList.parse(res);
 		expect(typeof parsed.total).toBe('number');
 		expect(Array.isArray(parsed.data)).toBe(true);
 	});
 
 	it('GET connectors returns an array payload', async () => {
-		const res = await makeKibanaRequest('api/actions/connectors', BASE_URL, API_KEY, {
-			method: 'GET',
-		});
+		const res = await makeKibanaRequest(
+			'api/actions/connectors',
+			BASE_URL,
+			API_KEY,
+			{
+				method: 'GET',
+			},
+		);
 		const parsed = KibanaEndpointOutputSchemas.connectorsList.parse(res);
 		expect(Array.isArray(parsed)).toBe(true);
 	});

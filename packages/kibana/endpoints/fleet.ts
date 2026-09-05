@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
@@ -110,7 +110,9 @@ export type FleetServerHostsListResponse = z.infer<
 >;
 
 export const FleetServerHostGetInputSchema = z.object({ itemId: z.string() });
-export type FleetServerHostGetInput = z.infer<typeof FleetServerHostGetInputSchema>;
+export type FleetServerHostGetInput = z.infer<
+	typeof FleetServerHostGetInputSchema
+>;
 export const FleetServerHostGetResponseSchema = z
 	.object({ item: z.record(z.string(), z.unknown()).optional() })
 	.passthrough();
@@ -119,9 +121,13 @@ export type FleetServerHostGetResponse = z.infer<
 >;
 
 export const FleetOutputDeleteInputSchema = z.object({ outputId: z.string() });
-export type FleetOutputDeleteInput = z.infer<typeof FleetOutputDeleteInputSchema>;
-export const FleetOutputDeleteResponseSchema = z
-	.record(z.string(), z.unknown());
+export type FleetOutputDeleteInput = z.infer<
+	typeof FleetOutputDeleteInputSchema
+>;
+export const FleetOutputDeleteResponseSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type FleetOutputDeleteResponse = z.infer<
 	typeof FleetOutputDeleteResponseSchema
 >;
@@ -129,17 +135,23 @@ export type FleetOutputDeleteResponse = z.infer<
 export const FleetProxyDeleteInputSchema = z.object({ itemId: z.string() });
 export type FleetProxyDeleteInput = z.infer<typeof FleetProxyDeleteInputSchema>;
 export const FleetProxyDeleteResponseSchema = z.record(z.string(), z.unknown());
-export type FleetProxyDeleteResponse = z.infer<typeof FleetProxyDeleteResponseSchema>;
+export type FleetProxyDeleteResponse = z.infer<
+	typeof FleetProxyDeleteResponseSchema
+>;
 
 export const FleetAgentsSetupInputSchema = z.object({});
 export type FleetAgentsSetupInput = z.infer<typeof FleetAgentsSetupInputSchema>;
 export const FleetAgentsSetupResponseSchema = z
 	.object({ isReady: z.boolean().optional() })
 	.passthrough();
-export type FleetAgentsSetupResponse = z.infer<typeof FleetAgentsSetupResponseSchema>;
+export type FleetAgentsSetupResponse = z.infer<
+	typeof FleetAgentsSetupResponseSchema
+>;
 
 export const FleetAgentsVersionsInputSchema = z.object({});
-export type FleetAgentsVersionsInput = z.infer<typeof FleetAgentsVersionsInputSchema>;
+export type FleetAgentsVersionsInput = z.infer<
+	typeof FleetAgentsVersionsInputSchema
+>;
 export const FleetAgentsVersionsResponseSchema = z
 	.object({ items: z.array(z.string()).optional() })
 	.passthrough();
@@ -148,7 +160,9 @@ export type FleetAgentsVersionsResponse = z.infer<
 >;
 
 export const FleetEpmPackagesListInputSchema = z.object({});
-export type FleetEpmPackagesListInput = z.infer<typeof FleetEpmPackagesListInputSchema>;
+export type FleetEpmPackagesListInput = z.infer<
+	typeof FleetEpmPackagesListInputSchema
+>;
 export const FleetEpmPackagesListResponseSchema = z
 	.object({ response: z.array(z.record(z.string(), z.unknown())).optional() })
 	.passthrough();
@@ -201,16 +215,20 @@ export const FleetEpmPackageFileInputSchema = z.object({
 	pkgVersion: z.string(),
 	filePath: z.string(),
 });
-export type FleetEpmPackageFileInput = z.infer<typeof FleetEpmPackageFileInputSchema>;
-export const FleetEpmPackageFileResponseSchema = z
-	.object({})
-	.passthrough();
+export type FleetEpmPackageFileInput = z.infer<
+	typeof FleetEpmPackageFileInputSchema
+>;
+export const FleetEpmPackageFileResponseSchema = z.object({}).passthrough();
 export type FleetEpmPackageFileResponse = z.infer<
 	typeof FleetEpmPackageFileResponseSchema
 >;
 
-export const FleetEpmPackageStatsInputSchema = z.object({ pkgName: z.string() });
-export type FleetEpmPackageStatsInput = z.infer<typeof FleetEpmPackageStatsInputSchema>;
+export const FleetEpmPackageStatsInputSchema = z.object({
+	pkgName: z.string(),
+});
+export type FleetEpmPackageStatsInput = z.infer<
+	typeof FleetEpmPackageStatsInputSchema
+>;
 export const FleetEpmPackageStatsResponseSchema = z
 	.object({ response: z.record(z.string(), z.unknown()).optional() })
 	.passthrough();
@@ -222,9 +240,13 @@ export const FleetEpmDataStreamsInputSchema = z.object({
 	type: z.string().optional(),
 	datasetQuery: z.string().optional(),
 });
-export type FleetEpmDataStreamsInput = z.infer<typeof FleetEpmDataStreamsInputSchema>;
+export type FleetEpmDataStreamsInput = z.infer<
+	typeof FleetEpmDataStreamsInputSchema
+>;
 export const FleetEpmDataStreamsResponseSchema = z
-	.object({ data_streams: z.array(z.record(z.string(), z.unknown())).optional() })
+	.object({
+		data_streams: z.array(z.record(z.string(), z.unknown())).optional(),
+	})
 	.passthrough();
 export type FleetEpmDataStreamsResponse = z.infer<
 	typeof FleetEpmDataStreamsResponseSchema
@@ -233,7 +255,9 @@ export type FleetEpmDataStreamsResponse = z.infer<
 export const FleetEpmCategoriesInputSchema = z.object({
 	prerelease: z.boolean().optional(),
 });
-export type FleetEpmCategoriesInput = z.infer<typeof FleetEpmCategoriesInputSchema>;
+export type FleetEpmCategoriesInput = z.infer<
+	typeof FleetEpmCategoriesInputSchema
+>;
 export const FleetEpmCategoriesResponseSchema = z
 	.object({ response: z.array(z.record(z.string(), z.unknown())).optional() })
 	.passthrough();
@@ -241,86 +265,113 @@ export type FleetEpmCategoriesResponse = z.infer<
 	typeof FleetEpmCategoriesResponseSchema
 >;
 
-export const checkPermissions: KibanaEndpoints['fleetCheckPermissions'] = async (
-	ctx,
-	input,
-) => {
-	const baseUrl = await baseUrlOf(ctx);
-	const response = await makeKibanaRequest<
-		KibanaEndpointOutputs['fleetCheckPermissions']
-	>('api/fleet/check-permissions', baseUrl, ctx.key, {
-		method: 'GET',
-		query: q({ fleetServerSetup: input.fleetServerSetup }),
-	});
-	await logEventFromContext(ctx, 'kibana.fleet.checkPermissions', { ...input }, 'completed');
-	return response;
-};
+export const checkPermissions: KibanaEndpoints['fleetCheckPermissions'] =
+	async (ctx, input) => {
+		const baseUrl = await baseUrlOf(ctx);
+		const response = await makeKibanaRequest<
+			KibanaEndpointOutputs['fleetCheckPermissions']
+		>('api/fleet/check-permissions', baseUrl, ctx.key, {
+			method: 'GET',
+			query: q({ fleetServerSetup: input.fleetServerSetup }),
+		});
+		await logEventFromContext(
+			ctx,
+			'kibana.fleet.checkPermissions',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
 
-export const agentPoliciesList: KibanaEndpoints['fleetAgentPoliciesList'] = async (
-	ctx,
-	input,
-) => {
-	const baseUrl = await baseUrlOf(ctx);
-	const response = await makeKibanaRequest<
-		KibanaEndpointOutputs['fleetAgentPoliciesList']
-	>('api/fleet/agent_policies', baseUrl, ctx.key, {
-		method: 'GET',
-		query: q({ ...input }),
-	});
-	await logEventFromContext(ctx, 'kibana.fleet.agentPoliciesList', { ...input }, 'completed');
-	return response;
-};
+export const agentPoliciesList: KibanaEndpoints['fleetAgentPoliciesList'] =
+	async (ctx, input) => {
+		const baseUrl = await baseUrlOf(ctx);
+		const response = await makeKibanaRequest<
+			KibanaEndpointOutputs['fleetAgentPoliciesList']
+		>('api/fleet/agent_policies', baseUrl, ctx.key, {
+			method: 'GET',
+			query: q({ ...input }),
+		});
+		await logEventFromContext(
+			ctx,
+			'kibana.fleet.agentPoliciesList',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
 
-export const packagePoliciesList: KibanaEndpoints['fleetPackagePoliciesList'] = async (
-	ctx,
-	input,
-) => {
-	const baseUrl = await baseUrlOf(ctx);
-	const response = await makeKibanaRequest<
-		KibanaEndpointOutputs['fleetPackagePoliciesList']
-	>('api/fleet/package_policies', baseUrl, ctx.key, {
-		method: 'GET',
-		query: q({ ...input }),
-	});
-	await logEventFromContext(ctx, 'kibana.fleet.packagePoliciesList', { ...input }, 'completed');
-	return response;
-};
+export const packagePoliciesList: KibanaEndpoints['fleetPackagePoliciesList'] =
+	async (ctx, input) => {
+		const baseUrl = await baseUrlOf(ctx);
+		const response = await makeKibanaRequest<
+			KibanaEndpointOutputs['fleetPackagePoliciesList']
+		>('api/fleet/package_policies', baseUrl, ctx.key, {
+			method: 'GET',
+			query: q({ ...input }),
+		});
+		await logEventFromContext(
+			ctx,
+			'kibana.fleet.packagePoliciesList',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
 
-export const enrollmentKeysList: KibanaEndpoints['fleetEnrollmentKeysList'] = async (
-	ctx,
-	input,
-) => {
-	const baseUrl = await baseUrlOf(ctx);
-	const response = await makeKibanaRequest<
-		KibanaEndpointOutputs['fleetEnrollmentKeysList']
-	>('api/fleet/enrollment_api_keys', baseUrl, ctx.key, {
-		method: 'GET',
-		query: q({ ...input }),
-	});
-	await logEventFromContext(ctx, 'kibana.fleet.enrollmentKeysList', { ...input }, 'completed');
-	return response;
-};
+export const enrollmentKeysList: KibanaEndpoints['fleetEnrollmentKeysList'] =
+	async (ctx, input) => {
+		const baseUrl = await baseUrlOf(ctx);
+		const response = await makeKibanaRequest<
+			KibanaEndpointOutputs['fleetEnrollmentKeysList']
+		>('api/fleet/enrollment_api_keys', baseUrl, ctx.key, {
+			method: 'GET',
+			query: q({ ...input }),
+		});
+		await logEventFromContext(
+			ctx,
+			'kibana.fleet.enrollmentKeysList',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
 
-export const enrollmentKeyGet: KibanaEndpoints['fleetEnrollmentKeyGet'] = async (
-	ctx,
-	input,
-) => {
-	const baseUrl = await baseUrlOf(ctx);
-	const response = await makeKibanaRequest<
-		KibanaEndpointOutputs['fleetEnrollmentKeyGet']
-	>(`api/fleet/enrollment_api_keys/${encodeURIComponent(input.keyId)}`, baseUrl, ctx.key, {
-		method: 'GET',
-	});
-	await logEventFromContext(ctx, 'kibana.fleet.enrollmentKeyGet', { ...input }, 'completed');
-	return response;
-};
+export const enrollmentKeyGet: KibanaEndpoints['fleetEnrollmentKeyGet'] =
+	async (ctx, input) => {
+		const baseUrl = await baseUrlOf(ctx);
+		const response = await makeKibanaRequest<
+			KibanaEndpointOutputs['fleetEnrollmentKeyGet']
+		>(
+			`api/fleet/enrollment_api_keys/${encodeURIComponent(input.keyId)}`,
+			baseUrl,
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
+		await logEventFromContext(
+			ctx,
+			'kibana.fleet.enrollmentKeyGet',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
 
-export const serverHostsList: KibanaEndpoints['fleetServerHostsList'] = async (ctx) => {
+export const serverHostsList: KibanaEndpoints['fleetServerHostsList'] = async (
+	ctx,
+) => {
 	const baseUrl = await baseUrlOf(ctx);
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['fleetServerHostsList']
 	>('api/fleet/fleet_server_hosts', baseUrl, ctx.key, { method: 'GET' });
-	await logEventFromContext(ctx, 'kibana.fleet.serverHostsList', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.fleet.serverHostsList',
+		{},
+		'completed',
+	);
 	return response;
 };
 
@@ -331,10 +382,20 @@ export const serverHostGet: KibanaEndpoints['fleetServerHostGet'] = async (
 	const baseUrl = await baseUrlOf(ctx);
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['fleetServerHostGet']
-	>(`api/fleet/fleet_server_hosts/${encodeURIComponent(input.itemId)}`, baseUrl, ctx.key, {
-		method: 'GET',
-	});
-	await logEventFromContext(ctx, 'kibana.fleet.serverHostGet', { ...input }, 'completed');
+	>(
+		`api/fleet/fleet_server_hosts/${encodeURIComponent(input.itemId)}`,
+		baseUrl,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
+	await logEventFromContext(
+		ctx,
+		'kibana.fleet.serverHostGet',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -345,10 +406,20 @@ export const outputDelete: KibanaEndpoints['fleetOutputDelete'] = async (
 	const baseUrl = await baseUrlOf(ctx);
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['fleetOutputDelete']
-	>(`api/fleet/outputs/${encodeURIComponent(input.outputId)}`, baseUrl, ctx.key, {
-		method: 'DELETE',
-	});
-	await logEventFromContext(ctx, 'kibana.fleet.outputDelete', { ...input }, 'completed');
+	>(
+		`api/fleet/outputs/${encodeURIComponent(input.outputId)}`,
+		baseUrl,
+		ctx.key,
+		{
+			method: 'DELETE',
+		},
+	);
+	await logEventFromContext(
+		ctx,
+		'kibana.fleet.outputDelete',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -362,7 +433,12 @@ export const proxyDelete: KibanaEndpoints['fleetProxyDelete'] = async (
 	>(`api/fleet/proxies/${encodeURIComponent(input.itemId)}`, baseUrl, ctx.key, {
 		method: 'DELETE',
 	});
-	await logEventFromContext(ctx, 'kibana.fleet.proxyDelete', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.fleet.proxyDelete',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -375,69 +451,93 @@ export const agentsSetup: KibanaEndpoints['fleetAgentsSetup'] = async (ctx) => {
 	return response;
 };
 
-export const agentsVersions: KibanaEndpoints['fleetAgentsVersions'] = async (ctx) => {
+export const agentsVersions: KibanaEndpoints['fleetAgentsVersions'] = async (
+	ctx,
+) => {
 	const baseUrl = await baseUrlOf(ctx);
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['fleetAgentsVersions']
 	>('api/fleet/agents/available_versions', baseUrl, ctx.key, { method: 'GET' });
-	await logEventFromContext(ctx, 'kibana.fleet.agentsVersions', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.fleet.agentsVersions',
+		{},
+		'completed',
+	);
 	return response;
 };
 
-export const epmPackagesList: KibanaEndpoints['fleetEpmPackagesList'] = async (ctx) => {
+export const epmPackagesList: KibanaEndpoints['fleetEpmPackagesList'] = async (
+	ctx,
+) => {
 	const baseUrl = await baseUrlOf(ctx);
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['fleetEpmPackagesList']
 	>('api/fleet/epm/packages', baseUrl, ctx.key, { method: 'GET' });
-	await logEventFromContext(ctx, 'kibana.fleet.epmPackagesList', {}, 'completed');
-	return response;
-};
-
-export const epmPackagesLimited: KibanaEndpoints['fleetEpmPackagesLimited'] = async (
-	ctx,
-) => {
-	const baseUrl = await baseUrlOf(ctx);
-	const response = await makeKibanaRequest<
-		KibanaEndpointOutputs['fleetEpmPackagesLimited']
-	>('api/fleet/epm/packages/limited', baseUrl, ctx.key, { method: 'GET' });
-	await logEventFromContext(ctx, 'kibana.fleet.epmPackagesLimited', {}, 'completed');
-	return response;
-};
-
-export const epmPackagesInstalled: KibanaEndpoints['fleetEpmPackagesInstalled'] = async (
-	ctx,
-	input,
-) => {
-	const baseUrl = await baseUrlOf(ctx);
-	const response = await makeKibanaRequest<
-		KibanaEndpointOutputs['fleetEpmPackagesInstalled']
-	>('api/fleet/epm/packages/installed', baseUrl, ctx.key, {
-		method: 'GET',
-		query: q({ ...input }),
-	});
-	await logEventFromContext(ctx, 'kibana.fleet.epmPackagesInstalled', { ...input }, 'completed');
-	return response;
-};
-
-export const epmPackageDetails: KibanaEndpoints['fleetEpmPackageDetails'] = async (
-	ctx,
-	input,
-) => {
-	const baseUrl = await baseUrlOf(ctx);
-	const response = await makeKibanaRequest<
-		KibanaEndpointOutputs['fleetEpmPackageDetails']
-	>(
-		`api/fleet/epm/packages/${encodeURIComponent(input.pkgName)}/${encodeURIComponent(input.pkgVersion)}`,
-		baseUrl,
-		ctx.key,
-		{
-			method: 'GET',
-			query: q({ full: input.full }),
-		},
+	await logEventFromContext(
+		ctx,
+		'kibana.fleet.epmPackagesList',
+		{},
+		'completed',
 	);
-	await logEventFromContext(ctx, 'kibana.fleet.epmPackageDetails', { ...input }, 'completed');
 	return response;
 };
+
+export const epmPackagesLimited: KibanaEndpoints['fleetEpmPackagesLimited'] =
+	async (ctx) => {
+		const baseUrl = await baseUrlOf(ctx);
+		const response = await makeKibanaRequest<
+			KibanaEndpointOutputs['fleetEpmPackagesLimited']
+		>('api/fleet/epm/packages/limited', baseUrl, ctx.key, { method: 'GET' });
+		await logEventFromContext(
+			ctx,
+			'kibana.fleet.epmPackagesLimited',
+			{},
+			'completed',
+		);
+		return response;
+	};
+
+export const epmPackagesInstalled: KibanaEndpoints['fleetEpmPackagesInstalled'] =
+	async (ctx, input) => {
+		const baseUrl = await baseUrlOf(ctx);
+		const response = await makeKibanaRequest<
+			KibanaEndpointOutputs['fleetEpmPackagesInstalled']
+		>('api/fleet/epm/packages/installed', baseUrl, ctx.key, {
+			method: 'GET',
+			query: q({ ...input }),
+		});
+		await logEventFromContext(
+			ctx,
+			'kibana.fleet.epmPackagesInstalled',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+export const epmPackageDetails: KibanaEndpoints['fleetEpmPackageDetails'] =
+	async (ctx, input) => {
+		const baseUrl = await baseUrlOf(ctx);
+		const response = await makeKibanaRequest<
+			KibanaEndpointOutputs['fleetEpmPackageDetails']
+		>(
+			`api/fleet/epm/packages/${encodeURIComponent(input.pkgName)}/${encodeURIComponent(input.pkgVersion)}`,
+			baseUrl,
+			ctx.key,
+			{
+				method: 'GET',
+				query: q({ full: input.full }),
+			},
+		);
+		await logEventFromContext(
+			ctx,
+			'kibana.fleet.epmPackageDetails',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
 
 export const epmPackageFile: KibanaEndpoints['fleetEpmPackageFile'] = async (
 	ctx,
@@ -452,7 +552,12 @@ export const epmPackageFile: KibanaEndpoints['fleetEpmPackageFile'] = async (
 		ctx.key,
 		{ method: 'GET' },
 	);
-	await logEventFromContext(ctx, 'kibana.fleet.epmPackageFile', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.fleet.epmPackageFile',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -463,10 +568,20 @@ export const epmPackageStats: KibanaEndpoints['fleetEpmPackageStats'] = async (
 	const baseUrl = await baseUrlOf(ctx);
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['fleetEpmPackageStats']
-	>(`api/fleet/epm/packages/${encodeURIComponent(input.pkgName)}/stats`, baseUrl, ctx.key, {
-		method: 'GET',
-	});
-	await logEventFromContext(ctx, 'kibana.fleet.epmPackageStats', { ...input }, 'completed');
+	>(
+		`api/fleet/epm/packages/${encodeURIComponent(input.pkgName)}/stats`,
+		baseUrl,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
+	await logEventFromContext(
+		ctx,
+		'kibana.fleet.epmPackageStats',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -481,7 +596,12 @@ export const epmDataStreams: KibanaEndpoints['fleetEpmDataStreams'] = async (
 		method: 'GET',
 		query: q({ ...input }),
 	});
-	await logEventFromContext(ctx, 'kibana.fleet.epmDataStreams', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.fleet.epmDataStreams',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -496,6 +616,11 @@ export const epmCategories: KibanaEndpoints['fleetEpmCategories'] = async (
 		method: 'GET',
 		query: q({ ...input }),
 	});
-	await logEventFromContext(ctx, 'kibana.fleet.epmCategories', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.fleet.epmCategories',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
