@@ -102,7 +102,7 @@ describe('BoldSign endpoint requests', () => {
 	});
 
 	it('sends extendExpiry with the documented PascalCase body', async () => {
-		mockRequest.mockResolvedValue({});
+		mockRequest.mockResolvedValue(undefined);
 
 		const res = await Documents.extendExpiry(ctx, {
 			documentId: 'doc_1',
@@ -127,7 +127,7 @@ describe('BoldSign endpoint requests', () => {
 	});
 
 	it('sends removeAuthentication with a lowercase documentId query param', async () => {
-		mockRequest.mockResolvedValue({});
+		mockRequest.mockResolvedValue(undefined);
 
 		const res = await Documents.removeAuthentication(ctx, {
 			documentId: 'doc_1',
@@ -145,6 +145,23 @@ describe('BoldSign endpoint requests', () => {
 				body: { EmailId: 'user@example.com', zOrder: 2, OnBehalfOf: undefined },
 			}),
 		);
+	});
+
+	it('rejects a non-empty provider response on the no-content endpoints', async () => {
+		mockRequest.mockResolvedValue({ unexpected: 'payload' });
+
+		await expect(
+			Documents.extendExpiry(ctx, {
+				documentId: 'doc_1',
+				newExpiryValue: '2022-12-15',
+			}),
+		).rejects.toThrow();
+		await expect(
+			Documents.removeAuthentication(ctx, {
+				documentId: 'doc_1',
+				emailId: 'user@example.com',
+			}),
+		).rejects.toThrow();
 	});
 
 	it('forwards pagination params on all three list endpoints', async () => {

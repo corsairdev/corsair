@@ -1,10 +1,21 @@
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type { BoldsignEndpoints } from '..';
 import { makeBoldsignRequest } from '../client';
 import {
 	BoldsignEndpointInputSchemas,
 	BoldsignEndpointOutputSchemas,
 } from './types';
+
+// BoldSign documents an empty payload for the two PATCH calls below
+// (204 No Content for removeAuthentication, empty 200 for extendExpiry),
+// which the transport surfaces as undefined — so the only valid provider
+// output is "no content". A non-2xx status already throws in the transport.
+const NoContentResponseSchema = z.union([
+	z.undefined(),
+	z.null(),
+	z.literal(''),
+]);
 
 function toUploadFile(base64Content: string, mimeType: string): string {
 	return base64Content.startsWith('data:')
@@ -162,7 +173,7 @@ export const Documents = {
 			BoldsignEndpointInputSchemas.extendDocumentExpiry.parse(input);
 		// Body keys use the PascalCase names from
 		// https://developers.boldsign.com/documents/extend-document-expiry
-		await makeBoldsignRequest(
+		const response = await makeBoldsignRequest<unknown>(
 			'/v1/document/extendExpiry',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
 			{
@@ -175,6 +186,7 @@ export const Documents = {
 				},
 			},
 		);
+		NoContentResponseSchema.parse(response);
 		const parsed = BoldsignEndpointOutputSchemas.extendDocumentExpiry.parse({
 			success: true,
 		});
@@ -193,7 +205,7 @@ export const Documents = {
 		// Query param is lowercase `documentId` and body keys use the
 		// PascalCase names from
 		// https://developers.boldsign.com/documents/remove-authentication-from-the-document
-		await makeBoldsignRequest(
+		const response = await makeBoldsignRequest<unknown>(
 			'/v1/document/RemoveAuthentication',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
 			{
@@ -202,6 +214,7 @@ export const Documents = {
 				body: { EmailId: emailId, zOrder, OnBehalfOf: onBehalfOf },
 			},
 		);
+		NoContentResponseSchema.parse(response);
 		const parsed =
 			BoldsignEndpointOutputSchemas.removeDocumentAuthentication.parse({
 				success: true,

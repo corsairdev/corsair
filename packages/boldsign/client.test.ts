@@ -134,6 +134,29 @@ describe('makeBoldsignRequest', () => {
 		);
 	});
 
+	it('forwards query params on mutation requests, not just GET', async () => {
+		await makeBoldsignRequest(
+			'/v1/document/extendExpiry',
+			{ key: KEY, authType: 'oauth_2' },
+			{
+				method: 'PATCH',
+				query: { documentId: 'doc_1' },
+				body: { NewExpiryValue: '2022-12-15' },
+			},
+		);
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'PATCH',
+				url: '/v1/document/extendExpiry',
+				query: { documentId: 'doc_1' },
+				body: { NewExpiryValue: '2022-12-15' },
+			}),
+			expect.anything(),
+		);
+	});
+
 	it('omits the JSON media type for FormData bodies', async () => {
 		const form = new FormData();
 		form.append('Title', 'NDA');

@@ -86,7 +86,11 @@ export async function makeBoldsignRequest<T>(
 			typeof FormData !== 'undefined' && body instanceof FormData
 				? undefined
 				: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		// Query params ride along on every method: BoldSign mutation endpoints
+		// carry their resource IDs in the query string (e.g. PATCH
+		// /v1/document/extendExpiry?documentId=...), and the transport appends
+		// options.query to the URL regardless of method.
+		query,
 	};
 
 	return request<T>(config, requestOptions, {

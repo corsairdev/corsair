@@ -155,7 +155,9 @@ describe('BoldSign endpoints', () => {
 	});
 
 	it('extends expiry and removes authentication', async () => {
-		mockedRequest.mockResolvedValueOnce({}).mockResolvedValueOnce({});
+		mockedRequest
+			.mockResolvedValueOnce(undefined)
+			.mockResolvedValueOnce(undefined);
 
 		const extendRes = await Documents.extendExpiry(ctx, {
 			documentId: 'doc_1',
