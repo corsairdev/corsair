@@ -112,7 +112,7 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const campaignCleanerEndpointMeta = {
 	'deleteCampaign.remove': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete a saved Campaign Cleaner campaign',
 	},
 	'getCampaignList.list': {
