@@ -1,10 +1,9 @@
 import { z } from 'zod';
 
-// ─────────────────────────────────────────────
-// Delete Campaign
-// ─────────────────────────────────────────────
+// ==================== Delete Campaign ====================
+
 const DeleteCampaignInputSchema = z.object({
-	campaignId: z.string(),
+	campaignId: z.string().min(1),
 });
 
 export type DeleteCampaignInput = z.infer<typeof DeleteCampaignInputSchema>;
@@ -18,29 +17,23 @@ export type DeleteCampaignResponse = z.infer<
 	typeof DeleteCampaignResponseSchema
 >;
 
-// ─────────────────────────────────────────────
-// Get Campaign PDF Analysis
-// ─────────────────────────────────────────────
+// ==================== Get Campaign PDF Analysis ====================
+
 const GetCampaignPdfAnalysisInputSchema = z.object({
-	campaignId: z.string(),
+	campaignId: z.string().min(1),
 });
 
 export type GetCampaignPdfAnalysisInput = z.infer<
 	typeof GetCampaignPdfAnalysisInputSchema
 >;
 
-const GetCampaignPdfAnalysisResponseSchema = z.unknown();
+const GetCampaignPdfAnalysisResponseSchema = z.record(z.string(), z.unknown());
 
 export type GetCampaignPdfAnalysisResponse = z.infer<
 	typeof GetCampaignPdfAnalysisResponseSchema
 >;
 
-// ─────────────────────────────────────────────
-// Get Campaign List
-// ─────────────────────────────────────────────
-const GetCampaignListInputSchema = z.object({});
-
-export type GetCampaignListInput = z.infer<typeof GetCampaignListInputSchema>;
+// ==================== Campaign ====================
 
 const CampaignSchema = z.object({
 	id: z.string(),
@@ -48,6 +41,12 @@ const CampaignSchema = z.object({
 	status: z.enum(['processing', 'completed', 'paused']),
 	date_added: z.string(),
 });
+
+// ==================== Get Campaign List ====================
+
+const GetCampaignListInputSchema = z.object({});
+
+export type GetCampaignListInput = z.infer<typeof GetCampaignListInputSchema>;
 
 const GetCampaignListResponseSchema = z.object({
 	campaign_list: z.array(CampaignSchema),
@@ -57,11 +56,10 @@ export type GetCampaignListResponse = z.infer<
 	typeof GetCampaignListResponseSchema
 >;
 
-// ─────────────────────────────────────────────
-// Get Campaign Status
-// ─────────────────────────────────────────────
+// ==================== Get Campaign Status ====================
+
 const GetCampaignStatusInputSchema = z.object({
-	campaignId: z.string(),
+	campaignId: z.string().min(1),
 });
 
 export type GetCampaignStatusInput = z.infer<
@@ -76,9 +74,8 @@ export type GetCampaignStatusResponse = z.infer<
 	typeof GetCampaignStatusResponseSchema
 >;
 
-// ─────────────────────────────────────────────
-// Get Credits
-// ─────────────────────────────────────────────
+// ==================== Get Credits ====================
+
 const GetCreditsInputSchema = z.object({});
 
 export type GetCreditsInput = z.infer<typeof GetCreditsInputSchema>;
@@ -89,9 +86,8 @@ const GetCreditsResponseSchema = z.object({
 
 export type GetCreditsResponse = z.infer<typeof GetCreditsResponseSchema>;
 
-// ─────────────────────────────────────────────
-// Endpoint input/output maps
-// ─────────────────────────────────────────────
+// ==================== Endpoint Input Types ====================
+
 export type CampaignCleanerEndpointInputs = {
 	deleteCampaign: DeleteCampaignInput;
 	getCampaignPdfAnalysis: GetCampaignPdfAnalysisInput;
@@ -99,6 +95,8 @@ export type CampaignCleanerEndpointInputs = {
 	getCampaignStatus: GetCampaignStatusInput;
 	getCredits: GetCreditsInput;
 };
+
+// ==================== Endpoint Output Types ====================
 
 export type CampaignCleanerEndpointOutputs = {
 	deleteCampaign: DeleteCampaignResponse;
@@ -108,6 +106,8 @@ export type CampaignCleanerEndpointOutputs = {
 	getCredits: GetCreditsResponse;
 };
 
+// ==================== Runtime Input Schemas ====================
+
 export const CampaignCleanerEndpointInputSchemas = {
 	deleteCampaign: DeleteCampaignInputSchema,
 	getCampaignPdfAnalysis: GetCampaignPdfAnalysisInputSchema,
@@ -115,6 +115,8 @@ export const CampaignCleanerEndpointInputSchemas = {
 	getCampaignStatus: GetCampaignStatusInputSchema,
 	getCredits: GetCreditsInputSchema,
 } as const;
+
+// ==================== Runtime Output Schemas ====================
 
 export const CampaignCleanerEndpointOutputSchemas = {
 	deleteCampaign: DeleteCampaignResponseSchema,

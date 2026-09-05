@@ -5,9 +5,11 @@ export class CampaignCleanerAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly status?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'CampaignCleanerAPIError';
+		Object.setPrototypeOf(this, CampaignCleanerAPIError.prototype);
 	}
 }
 
@@ -48,7 +50,15 @@ export async function makeCampaignCleanerRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new CampaignCleanerAPIError(error.message, error.status);
+			throw new CampaignCleanerAPIError(
+				error.message,
+				error.status,
+				error.retryAfter,
+			);
+		}
+
+		if (error instanceof CampaignCleanerAPIError) {
+			throw error;
 		}
 
 		if (error instanceof Error) {
