@@ -1,8 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
+
 import { makeCampaignCleanerRequest } from '../client';
 import type {
 	CampaignCleanerEndpointInputs,
 	CampaignCleanerEndpointOutputs,
+} from './types';
+import {
+	CampaignCleanerEndpointInputSchemas,
+	CampaignCleanerEndpointOutputSchemas,
 } from './types';
 
 export const DeleteCampaign = {
@@ -10,39 +15,50 @@ export const DeleteCampaign = {
 		ctx: any,
 		input: CampaignCleanerEndpointInputs['deleteCampaign'],
 	): Promise<CampaignCleanerEndpointOutputs['deleteCampaign']> => {
+		const validatedInput =
+			CampaignCleanerEndpointInputSchemas.deleteCampaign.parse(input);
+
 		const response = await makeCampaignCleanerRequest<
 			CampaignCleanerEndpointOutputs['deleteCampaign']
 		>('v1/delete_campaign', ctx.key, {
 			method: 'POST',
 			body: {
 				campaign: {
-					id: input.campaignId,
+					id: validatedInput.campaignId,
 				},
 			},
 		});
 
+		const validatedResponse =
+			CampaignCleanerEndpointOutputSchemas.deleteCampaign.parse(response);
+
 		await logEventFromContext(ctx, 'campaign_cleaner.delete_campaign', {
-			campaignId: input.campaignId,
+			campaignId: validatedInput.campaignId,
 		});
 
-		return response;
+		return validatedResponse;
 	},
 };
 
 export const GetCampaignList = {
 	list: async (
 		ctx: any,
-		_input: CampaignCleanerEndpointInputs['getCampaignList'],
+		input: CampaignCleanerEndpointInputs['getCampaignList'],
 	): Promise<CampaignCleanerEndpointOutputs['getCampaignList']> => {
+		CampaignCleanerEndpointInputSchemas.getCampaignList.parse(input);
+
 		const response = await makeCampaignCleanerRequest<
 			CampaignCleanerEndpointOutputs['getCampaignList']
 		>('v1/get_campaign_list', ctx.key, {
 			method: 'GET',
 		});
 
+		const validatedResponse =
+			CampaignCleanerEndpointOutputSchemas.getCampaignList.parse(response);
+
 		await logEventFromContext(ctx, 'campaign_cleaner.get_campaign_list', {});
 
-		return response;
+		return validatedResponse;
 	},
 };
 
@@ -51,22 +67,28 @@ export const GetCampaignStatus = {
 		ctx: any,
 		input: CampaignCleanerEndpointInputs['getCampaignStatus'],
 	): Promise<CampaignCleanerEndpointOutputs['getCampaignStatus']> => {
+		const validatedInput =
+			CampaignCleanerEndpointInputSchemas.getCampaignStatus.parse(input);
+
 		const response = await makeCampaignCleanerRequest<
 			CampaignCleanerEndpointOutputs['getCampaignStatus']
 		>('v1/get_campaign_status', ctx.key, {
 			method: 'POST',
 			body: {
 				campaign: {
-					id: input.campaignId,
+					id: validatedInput.campaignId,
 				},
 			},
 		});
 
+		const validatedResponse =
+			CampaignCleanerEndpointOutputSchemas.getCampaignStatus.parse(response);
+
 		await logEventFromContext(ctx, 'campaign_cleaner.get_campaign_status', {
-			campaignId: input.campaignId,
+			campaignId: validatedInput.campaignId,
 		});
 
-		return response;
+		return validatedResponse;
 	},
 };
 
@@ -75,43 +97,56 @@ export const GetCampaignPdfAnalysis = {
 		ctx: any,
 		input: CampaignCleanerEndpointInputs['getCampaignPdfAnalysis'],
 	): Promise<CampaignCleanerEndpointOutputs['getCampaignPdfAnalysis']> => {
+		const validatedInput =
+			CampaignCleanerEndpointInputSchemas.getCampaignPdfAnalysis.parse(input);
+
 		const response = await makeCampaignCleanerRequest<
 			CampaignCleanerEndpointOutputs['getCampaignPdfAnalysis']
 		>('v1/get_campaign_pdf_analysis', ctx.key, {
 			method: 'POST',
 			body: {
 				campaign: {
-					id: input.campaignId,
+					id: validatedInput.campaignId,
 				},
 			},
 		});
+
+		const validatedResponse =
+			CampaignCleanerEndpointOutputSchemas.getCampaignPdfAnalysis.parse(
+				response,
+			);
 
 		await logEventFromContext(
 			ctx,
 			'campaign_cleaner.get_campaign_pdf_analysis',
 			{
-				campaignId: input.campaignId,
+				campaignId: validatedInput.campaignId,
 			},
 		);
 
-		return response;
+		return validatedResponse;
 	},
 };
 
 export const GetCredits = {
 	credits: async (
 		ctx: any,
-		_input: CampaignCleanerEndpointInputs['getCredits'],
+		input: CampaignCleanerEndpointInputs['getCredits'],
 	): Promise<CampaignCleanerEndpointOutputs['getCredits']> => {
+		CampaignCleanerEndpointInputSchemas.getCredits.parse(input);
+
 		const response = await makeCampaignCleanerRequest<
 			CampaignCleanerEndpointOutputs['getCredits']
 		>('v1/get_credits', ctx.key, {
 			method: 'GET',
 		});
 
+		const validatedResponse =
+			CampaignCleanerEndpointOutputSchemas.getCredits.parse(response);
+
 		await logEventFromContext(ctx, 'campaign_cleaner.get_credits', {});
 
-		return response;
+		return validatedResponse;
 	},
 };
 
