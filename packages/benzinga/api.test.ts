@@ -1,6 +1,16 @@
 import 'dotenv/config';
 import { makeBenzingaRequest } from './client';
-import type { GetNewsResponse, ListIposRawResponse } from './endpoints/types';
+import type {
+	GetNewsResponse,
+	ListDividendsResponse,
+	ListEarningsResponse,
+	ListEconomicsResponse,
+	ListGuidanceResponse,
+	ListIposRawResponse,
+	ListNewsChannelsResponse,
+	ListRatingsResponse,
+	ListSplitsResponse,
+} from './endpoints/types';
 import {
 	BenzingaEndpointOutputSchemas,
 	ListIposRawResponseSchema,
@@ -27,7 +37,7 @@ describeLive('Benzinga live API', () => {
 	});
 
 	it('news.listChannels returns channel entries', async () => {
-		const response = await makeBenzingaRequest<unknown>(
+		const response = await makeBenzingaRequest<ListNewsChannelsResponse>(
 			'/api/v2.1/news/channels',
 			API_KEY,
 		);
@@ -40,7 +50,7 @@ describeLive('Benzinga live API', () => {
 	});
 
 	it('calendar.listEarnings returns earnings records', async () => {
-		const response = await makeBenzingaRequest<unknown>(
+		const response = await makeBenzingaRequest<ListEarningsResponse>(
 			'/api/v2.1/calendar/earnings',
 			API_KEY,
 			{ query: { pagesize: 2 } },
@@ -53,7 +63,7 @@ describeLive('Benzinga live API', () => {
 	});
 
 	it('calendar.listDividends returns dividend records', async () => {
-		const response = await makeBenzingaRequest<unknown>(
+		const response = await makeBenzingaRequest<ListDividendsResponse>(
 			'/api/v2.2/calendar/dividends',
 			API_KEY,
 			{ query: { pagesize: 2 } },
@@ -66,7 +76,7 @@ describeLive('Benzinga live API', () => {
 	});
 
 	it('calendar.listRatings returns rating records', async () => {
-		const response = await makeBenzingaRequest<unknown>(
+		const response = await makeBenzingaRequest<ListRatingsResponse>(
 			'/api/v2.1/calendar/ratings',
 			API_KEY,
 			{ query: { pagesize: 2 } },
@@ -79,7 +89,7 @@ describeLive('Benzinga live API', () => {
 	});
 
 	it('calendar.listGuidance returns guidance records', async () => {
-		const response = await makeBenzingaRequest<unknown>(
+		const response = await makeBenzingaRequest<ListGuidanceResponse>(
 			'/api/v2.1/calendar/guidance',
 			API_KEY,
 			{ query: { pagesize: 2 } },
@@ -110,7 +120,7 @@ describeLive('Benzinga live API', () => {
 	});
 
 	it('calendar.listSplits returns split records', async () => {
-		const response = await makeBenzingaRequest<unknown>(
+		const response = await makeBenzingaRequest<ListSplitsResponse>(
 			'/api/v2.1/calendar/splits',
 			API_KEY,
 			{ query: { pagesize: 2 } },
@@ -123,7 +133,7 @@ describeLive('Benzinga live API', () => {
 	});
 
 	it('calendar.listEconomics returns economic records', async () => {
-		const response = await makeBenzingaRequest<unknown>(
+		const response = await makeBenzingaRequest<ListEconomicsResponse>(
 			'/api/v2.1/calendar/economics',
 			API_KEY,
 			{ query: { pagesize: 2 } },
