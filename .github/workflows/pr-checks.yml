@@ -67,7 +67,7 @@ jobs:
 
       - name: Install package dependencies
         if: steps.scope.outputs.lane == 'full'
-        run: pnpm install --frozen-lockfile --filter . --filter "./packages/**" ${{ steps.scope.outputs.www_install_filter }}
+        run: pnpm install --frozen-lockfile --filter . --filter "./packages/**" --filter "./adapters/**" ${{ steps.scope.outputs.www_install_filter }}
 
       - name: Install www dependencies
         if: steps.scope.outputs.lane == 'www'
