@@ -263,6 +263,7 @@ export const BaseProviders = [
 	'webflow',
 	'webvizio',
 	'whatsapp',
+	'whoisfreaks',
 	'witai',
 	'worldnewsapi',
 	'wiza',
@@ -529,6 +530,7 @@ export const ProviderDisplayNames = {
 	webflow: 'Webflow',
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
+	whoisfreaks: 'Whoisfreaks',
 	witai: 'WitAi',
 	worldnewsapi: 'World News API',
 	wiza: 'Wiza',
@@ -802,6 +804,7 @@ export type AllProviders =
 	| 'webflow'
 	| 'webvizio'
 	| 'whatsapp'
+	| 'whoisfreaks'
 	| 'witai'
 	| 'worldnewsapi'
 	| 'wiza'
