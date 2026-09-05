@@ -30,6 +30,13 @@ export async function makeBenzingaRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		/**
+		 * JSON request body for write methods. Values are `unknown` because
+		 * the client never inspects them — each endpoint validates its input
+		 * with a zod schema before calling, and `corsair/http` only
+		 * JSON-serializes the record. All current Benzinga endpoints are
+		 * GET-only, so this stays `undefined` in practice.
+		 */
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
