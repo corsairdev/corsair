@@ -72,6 +72,7 @@ export const BaseProviders = [
 	'basin',
 	'beaconstac',
 	'beeminder',
+	'benzinga',
 	'bettercontact',
 	'betterproposals',
 	'betterstack',
@@ -338,6 +339,7 @@ export const ProviderDisplayNames = {
 	basin: 'Basin',
 	beaconstac: 'Beaconstac',
 	beeminder: 'Beeminder',
+	benzinga: 'Benzinga',
 	bettercontact: 'BetterContact',
 	betterproposals: 'Better Proposals',
 	betterstack: 'Better Stack',
@@ -611,6 +613,7 @@ export type AllProviders =
 	| 'basin'
 	| 'beaconstac'
 	| 'beeminder'
+	| 'benzinga'
 	| 'bettercontact'
 	| 'betterproposals'
 	| 'betterstack'
