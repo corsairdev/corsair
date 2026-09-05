@@ -217,3 +217,4 @@ packages/frpc-*/frpc.exe
 packages/frpc-*/LICENSE.frp
 packages/frpc-*/NOTICE
 packages/frpc-*/.frpc-version
+demo/testing/.env
