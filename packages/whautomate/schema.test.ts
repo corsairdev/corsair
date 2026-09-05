@@ -45,6 +45,8 @@ describe('Whautomate endpoint schemas', () => {
 		'updateService',
 	] as const;
 
+	// Trigger CI re-run
+
 	describe('input schemas', () => {
 		for (const endpoint of endpoints) {
 			it(`has input schema for ${endpoint}`, () => {
