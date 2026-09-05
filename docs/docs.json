@@ -880,6 +880,14 @@
                 ]
               },
               {
+                "group": "Campayn",
+                "pages": [
+                  "plugins/campayn/overview",
+                  "plugins/campayn/api",
+                  "plugins/campayn/database"
+                ]
+              },
+              {
                 "group": "Canva",
                 "pages": [
                   "plugins/canva/overview",

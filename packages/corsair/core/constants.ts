@@ -106,6 +106,7 @@ export const BaseProviders = [
 	'buildkite',
 	'cal',
 	'calendly',
+	'campayn',
 	'canva',
 	'canvas',
 	'capsulecrm',
@@ -372,6 +373,7 @@ export const ProviderDisplayNames = {
 	buildkite: 'Buildkite',
 	cal: 'Cal',
 	calendly: 'Calendly',
+	campayn: 'Campayn',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
 	capsulecrm: 'Capsule CRM',
@@ -645,6 +647,7 @@ export type AllProviders =
 	| 'buildkite'
 	| 'cal'
 	| 'calendly'
+	| 'campayn'
 	| 'canva'
 	| 'canvas'
 	| 'capsulecrm'
