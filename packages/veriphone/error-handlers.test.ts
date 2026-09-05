@@ -24,7 +24,7 @@ describe('errorHandlers', () => {
 		expect(matchedHandlerName(error)).toBe('RATE_LIMIT_ERROR');
 	});
 
-	it('exposes the Retry-After header for rate-limit errors', async () => {
+	it('retries rate-limit errors honoring the Retry-After header', async () => {
 		const error = apiErrorWithStatus(429, { retryAfter: 30_000 });
 
 		const handler = errorHandlers.RATE_LIMIT_ERROR?.handler as (
@@ -32,8 +32,10 @@ describe('errorHandlers', () => {
 			context: never,
 		) => Promise<{ maxRetries?: number; headersRetryAfterMs?: number }>;
 		const result = await handler(error, {} as never);
+		// maxRetries must stay > 0: the binder only waits
+		// headersRetryAfterMs when it actually retries.
 		expect(result).toEqual({
-			maxRetries: 0,
+			maxRetries: 5,
 			headersRetryAfterMs: 30_000,
 		});
 	});

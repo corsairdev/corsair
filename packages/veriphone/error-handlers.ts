@@ -37,8 +37,12 @@ export const errorHandlers = {
 			return msg.includes('429') || msg.includes('rate limit');
 		},
 		handler: async (error: Error) => {
+			// maxRetries must be > 0 for headersRetryAfterMs to take effect:
+			// the binder only waits headersRetryAfterMs when it actually
+			// retries (packages/corsair/core/endpoints/bind.ts). Same shape
+			// as the reference slack plugin's rate-limit handler.
 			return {
-				maxRetries: 0,
+				maxRetries: 5,
 				headersRetryAfterMs: getRetryAfter(error),
 			};
 		},

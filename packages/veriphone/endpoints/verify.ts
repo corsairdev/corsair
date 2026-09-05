@@ -1,7 +1,7 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { VeriphoneEndpoints } from '..';
 import { makeVeriphoneRequest } from '../client';
-import { VerifyResponseSchema } from './types';
+import { VerifyInputSchema, VerifyResponseSchema } from './types';
 
 /**
  * Verify a phone number and retrieve carrier and country information.
@@ -18,12 +18,18 @@ export const verify: VeriphoneEndpoints['verify'] = async (ctx, input) => {
 		throw new AuthMissingError('veriphone', 'api_key');
 	}
 
+	// Reject invalid input before any provider call (a verification costs
+	// credits, so malformed phone numbers must never reach the API).
+	const parsedInput = VerifyInputSchema.parse(input);
+
+	// `unknown` because the provider returns unvalidated JSON; it is narrowed
+	// by VerifyResponseSchema.parse below before crossing the endpoint boundary.
 	const response = await makeVeriphoneRequest<unknown>('v3/verify', ctx.key, {
 		query: {
-			phone: input.phone,
-			default_country: input.default_country,
-			mode: input.mode,
-			record: input.record,
+			phone: parsedInput.phone,
+			default_country: parsedInput.default_country,
+			mode: parsedInput.mode,
+			record: parsedInput.record,
 		},
 	});
 
@@ -32,7 +38,7 @@ export const verify: VeriphoneEndpoints['verify'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'veriphone.verify',
-		{ mode: input.mode },
+		{ mode: parsedInput.mode },
 		'completed',
 	);
 

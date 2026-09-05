@@ -55,6 +55,23 @@ describe('Veriphone endpoint operations', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('rejects invalid input without calling the provider', async () => {
+		const ctx = createContext();
+
+		await expect(Verify.verify(ctx as never, { phone: '' })).rejects.toThrow();
+		await expect(
+			Verify.verify(
+				ctx as never,
+				{
+					phone: '+14169670000',
+					mode: 'turbo',
+				} as never,
+			),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
 	it('verify sends the phone query and returns the parsed response', async () => {
 		mockRequest.mockResolvedValue(VERIFY_RESPONSE);
 		const ctx = createContext();
