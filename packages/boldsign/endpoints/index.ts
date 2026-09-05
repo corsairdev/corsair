@@ -16,7 +16,8 @@ function toUploadFile(base64Content: string, mimeType: string): string {
 function authTypeFromContext(ctx: {
 	options?: { authType?: 'api_key' | 'oauth_2' };
 }): 'api_key' | 'oauth_2' {
-	return ctx.options?.authType ?? 'api_key';
+	// Default matches the plugin's defaultAuthType (oauth_2 in index.ts).
+	return ctx.options?.authType ?? 'oauth_2';
 }
 
 export const CustomFields = {
@@ -148,11 +149,21 @@ export const Documents = {
 	}) satisfies BoldsignEndpoints['editDocumentBeta'],
 
 	extendExpiry: (async (ctx, input) => {
-		const { documentId, ...body } = input;
+		const { documentId, newExpiryValue, warnPrior, onBehalfOf } = input;
+		// Body keys use the PascalCase names from
+		// https://developers.boldsign.com/documents/extend-document-expiry
 		await makeBoldsignRequest(
 			'/v1/document/extendExpiry',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
-			{ method: 'PATCH', query: { documentId }, body },
+			{
+				method: 'PATCH',
+				query: { documentId },
+				body: {
+					NewExpiryValue: newExpiryValue,
+					WarnPrior: warnPrior,
+					OnBehalfOf: onBehalfOf,
+				},
+			},
 		);
 		const parsed = BoldsignEndpointOutputSchemas.extendDocumentExpiry.parse({
 			success: true,
@@ -167,11 +178,18 @@ export const Documents = {
 	}) satisfies BoldsignEndpoints['extendDocumentExpiry'],
 
 	removeAuthentication: (async (ctx, input) => {
-		const { documentId, ...body } = input;
+		const { documentId, emailId, zOrder, onBehalfOf } = input;
+		// Query param is lowercase `documentId` and body keys use the
+		// PascalCase names from
+		// https://developers.boldsign.com/documents/remove-authentication-from-the-document
 		await makeBoldsignRequest(
 			'/v1/document/RemoveAuthentication',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
-			{ method: 'PATCH', query: { DocumentId: documentId }, body },
+			{
+				method: 'PATCH',
+				query: { documentId },
+				body: { EmailId: emailId, zOrder, OnBehalfOf: onBehalfOf },
+			},
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.removeDocumentAuthentication.parse({

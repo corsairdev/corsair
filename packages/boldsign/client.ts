@@ -51,8 +51,9 @@ export async function makeBoldsignRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 	const key = typeof ctxOrKey === 'string' ? ctxOrKey : ctxOrKey.key;
+	// Default matches the plugin's defaultAuthType (oauth_2 in index.ts).
 	const authType =
-		typeof ctxOrKey === 'string' ? 'api_key' : (ctxOrKey.authType ?? 'api_key');
+		typeof ctxOrKey === 'string' ? 'oauth_2' : (ctxOrKey.authType ?? 'oauth_2');
 
 	const headers: Record<string, string> =
 		authType === 'oauth_2'
@@ -82,7 +83,7 @@ export async function makeBoldsignRequest<T>(
 			typeof FormData !== 'undefined' && body instanceof FormData
 				? undefined
 				: 'application/json; charset=utf-8',
-		query: method === 'GET' ? (query as Record<string, unknown>) : undefined,
+		query: method === 'GET' ? query : undefined,
 	};
 
 	return request<T>(config, requestOptions, {

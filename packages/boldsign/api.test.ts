@@ -176,6 +176,11 @@ describe('BoldSign endpoints', () => {
 			expect.objectContaining({
 				method: 'PATCH',
 				query: { documentId: 'doc_1' },
+				body: {
+					NewExpiryValue: '30',
+					WarnPrior: undefined,
+					OnBehalfOf: undefined,
+				},
 			}),
 		);
 		expect(mockedRequest).toHaveBeenNthCalledWith(
@@ -184,7 +189,12 @@ describe('BoldSign endpoints', () => {
 			{ key: 'test-key', authType: 'oauth_2' },
 			expect.objectContaining({
 				method: 'PATCH',
-				query: { DocumentId: 'doc_1' },
+				query: { documentId: 'doc_1' },
+				body: {
+					EmailId: 'user@example.com',
+					zOrder: undefined,
+					OnBehalfOf: undefined,
+				},
 			}),
 		);
 	});

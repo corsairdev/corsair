@@ -75,6 +75,8 @@ const SendDocumentInputSchema = z
 		enableSigningOrder: z.boolean().optional(),
 		expiryValue: z.number().optional(),
 		expiryDateType: z.enum(['Days', 'DateTime']).optional(),
+		// unknown values: BoldSign accepts provider-defined reminder settings
+		// keys here, so a narrower value type is not practical.
 		reminderSettings: z.record(z.string(), z.unknown()).optional(),
 		disableEmails: z.boolean().optional(),
 		disableSMS: z.boolean().optional(),
@@ -92,7 +94,11 @@ const EditDocumentBetaInputSchema = z
 		title: z.string().optional(),
 		message: z.string().optional(),
 		signers: z.array(SignerSchema).optional(),
+		// unknown values: CC entries carry provider-defined fields, so a
+		// narrower value type is not practical.
 		cc: z.array(z.record(z.string(), z.unknown())).optional(),
+		// unknown values: file entries carry provider-defined fields, so a
+		// narrower value type is not practical.
 		files: z.array(z.record(z.string(), z.unknown())).optional(),
 		enableSigningOrder: z.boolean().optional(),
 		disableEmails: z.boolean().optional(),
@@ -101,24 +107,21 @@ const EditDocumentBetaInputSchema = z
 	})
 	.loose();
 
-const ExtendDocumentExpiryInputSchema = z
-	.object({
-		documentId: z.string(),
-		newExpiryValue: z.string().optional(),
-		newExpiryDate: z.string().optional(),
-		warnPrior: z.boolean().optional(),
-		onBehalfOf: z.string().optional(),
-	})
-	.refine(
-		(input) => Boolean(input.newExpiryDate || input.newExpiryValue),
-		'newExpiryValue or newExpiryDate is required',
-	);
+const ExtendDocumentExpiryInputSchema = z.object({
+	documentId: z.string(),
+	// NewExpiryValue per
+	// https://developers.boldsign.com/documents/extend-document-expiry :
+	// yyyy-MM-dd when the doc expiry type is Days, an integer string for
+	// Hours, or an ISO datetime for Specific Date and Time.
+	newExpiryValue: z.string(),
+	warnPrior: z.boolean().optional(),
+	onBehalfOf: z.string().optional(),
+});
 
 const RemoveDocumentAuthenticationInputSchema = z.object({
 	documentId: z.string(),
 	emailId: z.string(),
 	zOrder: z.number().int().optional(),
-	phoneNumber: z.record(z.string(), z.unknown()).optional(),
 	onBehalfOf: z.string().optional(),
 });
 
