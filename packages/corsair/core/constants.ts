@@ -264,6 +264,7 @@ export const BaseProviders = [
 	'webvizio',
 	'whatsapp',
 	'witai',
+	'wix',
 	'worldnewsapi',
 	'wiza',
 	'workday',
@@ -530,6 +531,7 @@ export const ProviderDisplayNames = {
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
+	wix: 'Wix',
 	worldnewsapi: 'World News API',
 	wiza: 'Wiza',
 	workday: 'Workday',
@@ -803,6 +805,7 @@ export type AllProviders =
 	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
+	| 'wix'
 	| 'worldnewsapi'
 	| 'wiza'
 	| 'workday'
