@@ -1,0 +1,195 @@
+---
+title: API
+description: "API reference for CdrPlatform: every `cdrplatform.api.*` operation with input and output types."
+---
+
+Every `cdrplatform.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Cdr
+
+### price
+
+`cdr.price`
+
+Calculate CO2 removal pricing for a method portfolio.
+
+**Risk:** `read`
+
+```ts
+await corsair.cdrplatform.api.cdr.price({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `weight_unit` | `g \| kg \| t` | Yes | — |
+| `currency` | `usd \| eur \| gbp \| chf` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  method_type: string,
+  cdr_amount: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cost` | `object` | Yes | — |
+| `currency` | `usd \| eur \| gbp \| chf` | Yes | — |
+| `weight_unit` | `g \| kg \| t` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="cost full type">
+
+```ts
+{
+  items: {
+    method_type: string,
+    cdr_amount: number,
+    cost: number
+  }[],
+  removal: number,
+  variable_fees: number,
+  total: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### purchase
+
+`cdr.purchase`
+
+Create a CO2 removal purchase request and return its transaction UUID.
+
+**Risk:** `write`
+
+```ts
+await corsair.cdrplatform.api.cdr.purchase({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `weight_unit` | `g \| kg \| t` | Yes | — |
+| `currency` | `usd \| eur \| gbp \| chf` | Yes | — |
+| `items` | `object[]` | Yes | — |
+| `client_reference_id` | `string` | No | — |
+| `certificate_display_name` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  method_type: string,
+  cdr_amount: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transaction_uuid` | `string` | Yes | — |
+
+
+
+---
+
+## Certificate
+
+### get
+
+`certificate.get`
+
+Retrieve a removal certificate by certificate ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.cdrplatform.api.certificate.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `certificate_id` | `string` | Yes | — |
+| `display_name` | `string` | Yes | — |
+| `issued_date` | `string` | Yes | — |
+| `removal_amount_kg` | `number` | Yes | — |
+
+
+
+---
+
+## Health
+
+### check
+
+`health.check`
+
+Check CDR Platform API health status.
+
+**Risk:** `read`
+
+```ts
+await corsair.cdrplatform.api.health.check({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `db_up` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="db_up full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
