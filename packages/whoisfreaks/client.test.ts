@@ -3,7 +3,11 @@
  * method/body/query forwarding, and — critically — that provider ApiErrors
  * propagate unchanged so the plugin error-handlers can match on status
  * (429/401/404) and retryAfter.
+ *
+ * Note on unknown: caught errors surface as unknown because the tests assert
+ * identity (toBe), not shape.
  */
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import { makeWhoisfreaksRequest } from './client';
 
@@ -12,6 +16,7 @@ jest.mock('corsair/http', () => ({
 	request: jest.fn(),
 }));
 
+// unknown: the cast bridges the mocked transport boundary (typed helper -> jest.Mock).
 const mockRequest = request as unknown as jest.Mock;
 
 function apiError(status: number, message: string): ApiError {
@@ -42,8 +47,8 @@ describe('makeWhoisfreaksRequest', () => {
 		expect(result).toEqual({ status: true });
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		const [config, options] = mockRequest.mock.calls[0] as [
-			{ BASE: string },
-			{ method: string; url: string; query: Record<string, unknown> },
+			OpenAPIConfig,
+			ApiRequestOptions,
 		];
 		expect(config.BASE).toBe('https://api.whoisfreaks.com');
 		expect(options.method).toBe('GET');
@@ -63,8 +68,8 @@ describe('makeWhoisfreaksRequest', () => {
 		});
 
 		const [, options] = mockRequest.mock.calls[0] as [
-			unknown,
-			{ method: string; body: unknown },
+			OpenAPIConfig,
+			ApiRequestOptions,
 		];
 		expect(options.method).toBe('POST');
 		expect(options.body).toEqual({ domainNames: ['example.com'] });
@@ -77,8 +82,8 @@ describe('makeWhoisfreaksRequest', () => {
 		});
 
 		const [, options] = mockRequest.mock.calls[0] as [
-			unknown,
-			{ body: unknown },
+			OpenAPIConfig,
+			ApiRequestOptions,
 		];
 		expect(options.body).toBeUndefined();
 	});

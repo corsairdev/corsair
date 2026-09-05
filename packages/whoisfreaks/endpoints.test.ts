@@ -30,9 +30,13 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn(async () => undefined),
 }));
 
-// unknown casts below bridge the mocked transport boundary: the mock
-// replaces the typed HTTP helper with jest.Mock, and endpoint responses
-// pass through unvalidated by design (shape checks live in api.test.ts).
+// unknown below is deliberate and documented per use:
+// - the `as unknown as` casts bridge the mocked transport boundary (typed
+//   helper -> jest.Mock) and the minimal ctx stub (->{ key }) to the full
+//   plugin context, which the mocked logEventFromContext never inspects;
+// - the Case type stays generic (Promise<unknown>/unknown/Record) because it
+//   covers 20 endpoints with different input/output shapes; shape checks live
+//   in api.test.ts via the zod output schemas.
 const mockRequest = makeWhoisfreaksRequest as unknown as jest.Mock;
 const mockLogEvent = logEventFromContext as unknown as jest.Mock;
 
