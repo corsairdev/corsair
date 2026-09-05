@@ -55,6 +55,7 @@ export const BaseProviders = [
 	'apininjas',
 	'apipie',
 	'apisports',
+	'appdrag',
 	'asana',
 	'ascora',
 	'ashby',
@@ -192,6 +193,7 @@ export const BaseProviders = [
 	'marketstack',
 	'merriamwebsterdict',
 	'monday',
+	'myfirstplugin',
 	'neon',
 	'nextdns',
 	'notion',
@@ -321,6 +323,7 @@ export const ProviderDisplayNames = {
 	apininjas: 'API Ninjas',
 	apipie: 'APIpie AI',
 	apisports: 'API-Sports',
+	appdrag: 'Appdrag',
 	asana: 'Asana',
 	ascora: 'Ascora',
 	ashby: 'Ashby',
@@ -458,6 +461,7 @@ export const ProviderDisplayNames = {
 	marketstack: 'Marketstack',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	monday: 'Monday',
+	myfirstplugin: 'MyFirstPlugin',
 	neon: 'Neon',
 	nextdns: 'NextDNS',
 	notion: 'Notion',
@@ -594,6 +598,7 @@ export type AllProviders =
 	| 'apininjas'
 	| 'apipie'
 	| 'apisports'
+	| 'appdrag'
 	| 'asana'
 	| 'ascora'
 	| 'ashby'
@@ -731,6 +736,7 @@ export type AllProviders =
 	| 'marketstack'
 	| 'merriamwebsterdict'
 	| 'monday'
+	| 'myfirstplugin'
 	| 'neon'
 	| 'nextdns'
 	| 'notion'
