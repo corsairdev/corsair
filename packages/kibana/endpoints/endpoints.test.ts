@@ -267,15 +267,18 @@ describe('Kibana Endpoints', () => {
 
 	describe('dashboards', () => {
 		it('searches dashboards with query params', async () => {
-			mockedRequest.mockResolvedValueOnce({ dashboards: [], total: 0 });
+			mockedRequest.mockResolvedValueOnce({
+				data: [],
+				meta: { total: 0, page: 1, per_page: 10 },
+			});
 
-			const res = await Dashboards.search(ctx, { search: 'logs', limit: 10 });
+			const res = await Dashboards.search(ctx, { page: 1, per_page: 10 });
 
 			expect(mockedRequest).toHaveBeenCalledWith('api/dashboards', BASE, ctx.key, {
 				method: 'GET',
-				query: { search: 'logs', limit: 10 },
+				query: { page: 1, per_page: 10 },
 			});
-			expect(res.total).toBe(0);
+			expect(res.meta?.total).toBe(0);
 		});
 
 		it('creates a dashboard via POST', async () => {
@@ -442,11 +445,11 @@ describe('Kibana Endpoints', () => {
 		it('lists cases with filters', async () => {
 			mockedRequest.mockResolvedValueOnce({ total: 1, cases: [] });
 
-			const res = await Cases.list(ctx, { status: 'open', per_page: 5 });
+			const res = await Cases.list(ctx, { status: 'open', perPage: 5 });
 
 			expect(mockedRequest).toHaveBeenCalledWith('api/cases/_find', BASE, ctx.key, {
 				method: 'GET',
-				query: { status: 'open', per_page: 5 },
+				query: { status: 'open', perPage: 5 },
 			});
 			expect(res.total).toBe(1);
 		});
@@ -485,9 +488,9 @@ describe('Kibana Endpoints', () => {
 		});
 
 		it('lists all connectors', async () => {
-			mockedRequest.mockResolvedValueOnce({ data: [] });
+			mockedRequest.mockResolvedValueOnce([]);
 
-			await Connectors.list(ctx, {});
+			const res = await Connectors.list(ctx, {});
 
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'api/actions/connectors',
@@ -495,6 +498,7 @@ describe('Kibana Endpoints', () => {
 				ctx.key,
 				{ method: 'GET' },
 			);
+			expect(res).toEqual([]);
 		});
 
 		it('deletes a connector', async () => {

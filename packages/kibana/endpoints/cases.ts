@@ -36,7 +36,7 @@ export type CasesCreateResponse = z.infer<typeof CasesCreateResponseSchema>;
 
 export const CasesListInputSchema = z.object({
 	page: z.number().optional(),
-	per_page: z.number().optional(),
+	perPage: z.number().optional(),
 	search: z.string().optional(),
 	status: z.string().optional(),
 	severity: z.string().optional(),
@@ -95,7 +95,7 @@ export const list: KibanaEndpoints['casesList'] = async (ctx, input) => {
 	const join = (v: string | string[] | undefined) =>
 		Array.isArray(v) ? v.join(',') : v;
 	if (input.page !== undefined) query.page = input.page;
-	if (input.per_page !== undefined) query.per_page = input.per_page;
+	if (input.perPage !== undefined) query.perPage = input.perPage;
 	if (input.search !== undefined) query.search = input.search;
 	if (input.status !== undefined) query.status = input.status;
 	if (input.severity !== undefined) query.severity = input.severity;

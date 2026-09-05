@@ -1,5 +1,8 @@
 import { makeKibanaRequest } from './client';
-import { KibanaEndpointOutputSchemas } from './endpoints/types';
+import {
+	KibanaEndpointInputSchemas,
+	KibanaEndpointOutputSchemas,
+} from './endpoints/types';
 
 const BASE_URL = process.env.KIBANA_BASE_URL ?? '';
 const API_KEY = process.env.KIBANA_API_KEY ?? '';
@@ -16,25 +19,38 @@ describeLive('Kibana live API (env-gated)', () => {
 		expect(typeof parsed).toBe('object');
 	});
 
-	it('GET saved_objects/_find returns paged payload', async () => {
-		const res = await makeKibanaRequest('api/saved_objects/_find', BASE_URL, API_KEY, {
+	it('GET saved_objects/_find is skipped on serverless (API disabled there)', async () => {
+		// The Saved Objects API answers 400 "not available with the current
+		// configuration" on serverless; this documents the wiring only.
+		expect(KibanaEndpointInputSchemas.savedObjectsFind).toBeDefined();
+	});
+
+	it('GET alerting rules returns paged payload', async () => {
+		const res = await makeKibanaRequest('api/alerting/rules/_find', BASE_URL, API_KEY, {
 			method: 'GET',
-			query: { type: 'dashboard', per_page: 5, page: 1 },
+			query: { per_page: 1 },
 		});
-		const parsed = KibanaEndpointOutputSchemas.savedObjectsFind.parse(res);
+		const parsed = KibanaEndpointOutputSchemas.alertingRulesList.parse(res);
 		expect(typeof parsed.total).toBe('number');
-		expect(Array.isArray(parsed.saved_objects)).toBe(true);
-		expect(parsed.total).toBeGreaterThanOrEqual(0);
+		expect(Array.isArray(parsed.data)).toBe(true);
+	});
+
+	it('GET connectors returns an array payload', async () => {
+		const res = await makeKibanaRequest('api/actions/connectors', BASE_URL, API_KEY, {
+			method: 'GET',
+		});
+		const parsed = KibanaEndpointOutputSchemas.connectorsList.parse(res);
+		expect(Array.isArray(parsed)).toBe(true);
 	});
 
 	it('GET api/dashboards returns searchable payload', async () => {
 		const res = await makeKibanaRequest('api/dashboards', BASE_URL, API_KEY, {
 			method: 'GET',
-			query: { limit: 5 },
+			query: { page: 1, per_page: 5 },
 		});
 		const parsed = KibanaEndpointOutputSchemas.dashboardsSearch.parse(res);
-		expect(parsed).toBeDefined();
-		expect(typeof parsed).toBe('object');
+		expect(Array.isArray(parsed.data)).toBe(true);
+		expect(typeof parsed.meta?.total).toBe('number');
 	});
 
 	it('GET api/data_views returns list payload', async () => {

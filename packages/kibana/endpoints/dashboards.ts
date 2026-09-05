@@ -12,16 +12,22 @@ import type { KibanaEndpointOutputs } from './types';
 // passthrough-validated and inputs carry the documented fields.
 
 export const DashboardsSearchInputSchema = z.object({
-	search: z.string().optional(),
-	limit: z.number().optional(),
 	page: z.number().optional(),
+	per_page: z.number().optional(),
 });
 export type DashboardsSearchInput = z.infer<typeof DashboardsSearchInputSchema>;
 
 export const DashboardsSearchResponseSchema = z
 	.object({
-		dashboards: z.array(z.record(z.string(), z.unknown())).optional(),
-		total: z.number().optional(),
+		data: z.array(z.record(z.string(), z.unknown())).optional(),
+		meta: z
+			.object({
+				total: z.number().optional(),
+				page: z.number().optional(),
+				per_page: z.number().optional(),
+			})
+			.passthrough()
+			.optional(),
 	})
 	.passthrough();
 export type DashboardsSearchResponse = z.infer<
@@ -97,9 +103,8 @@ export const search: KibanaEndpoints['dashboardsSearch'] = async (
 ) => {
 	const baseUrl = await baseUrlOf(ctx);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.search !== undefined) query.search = input.search;
-	if (input.limit !== undefined) query.limit = input.limit;
 	if (input.page !== undefined) query.page = input.page;
+	if (input.per_page !== undefined) query.per_page = input.per_page;
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['dashboardsSearch']
 	>('api/dashboards', baseUrl, ctx.key, { method: 'GET', query });

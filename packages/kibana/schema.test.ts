@@ -232,7 +232,7 @@ describe('Kibana Schema & Validation', () => {
 		});
 
 		it('validates dashboards schemas', () => {
-			expect(DashboardsSearchInputSchema.safeParse({ search: 'x' }).success).toBe(
+			expect(DashboardsSearchInputSchema.safeParse({ page: 1 }).success).toBe(
 				true,
 			);
 			expect(DashboardsCreateInputSchema.safeParse({ title: 'T' }).success).toBe(

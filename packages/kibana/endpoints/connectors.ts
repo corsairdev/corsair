@@ -41,11 +41,9 @@ export type ConnectorsGetResponse = z.infer<typeof ConnectorsGetResponseSchema>;
 export const ConnectorsListInputSchema = z.object({});
 export type ConnectorsListInput = z.infer<typeof ConnectorsListInputSchema>;
 
-export const ConnectorsListResponseSchema = z
-	.object({
-		data: z.array(z.record(z.string(), z.unknown())).optional(),
-	})
-	.passthrough();
+export const ConnectorsListResponseSchema = z.array(
+	z.record(z.string(), z.unknown()),
+);
 export type ConnectorsListResponse = z.infer<typeof ConnectorsListResponseSchema>;
 
 export const ConnectorsDeleteInputSchema = z.object({
