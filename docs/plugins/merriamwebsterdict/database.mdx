@@ -1,0 +1,44 @@
+---
+title: Database
+description: "Merriam-Webster local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Merriam-Webster plugin syncs data locally. Use `corsair.merriamwebsterdict.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Entries
+
+Path: `merriamwebsterdict.db.entries.search`
+
+```ts
+const rows = await corsair.merriamwebsterdict.db.entries.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `src` | `string` | equals, contains, startsWith, endsWith, in |
+| `section` | `string` | equals, contains, startsWith, endsWith, in |
+| `offensive` | `boolean` | equals |
+| `hw` | `string` | equals, contains, startsWith, endsWith, in |
+| `fl` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `mw` | `string` | equals, contains, startsWith, endsWith, in |
+| `audioUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

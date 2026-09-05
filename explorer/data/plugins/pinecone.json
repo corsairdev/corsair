@@ -1,0 +1,2928 @@
+{
+  "id": "pinecone",
+  "displayName": "Pinecone",
+  "description": "Vector database for semantic search, embeddings storage, and retrieval-augmented AI applications.",
+  "npmPackageName": "@corsair-dev/pinecone",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 48,
+    "webhooks": 0,
+    "db": 9
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pinecone.api.assistantChat.chat",
+      "shortPath": "assistantChat.chat",
+      "description": "Chat with an Assistant using retrieved file context and citations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assistantName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: user | assistant, content: string }[]"
+          },
+          {
+            "key": "stream",
+            "optional": false,
+            "type": "false"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "json_response",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_highlights",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "context_options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ role: user | assistant, content: string }"
+          },
+          {
+            "key": "citations",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.assistantChat.completion",
+      "shortPath": "assistantChat.completion",
+      "description": "Chat through Pinecone’s OpenAI-compatible completion response.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assistantName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: user | assistant, content: string }[]"
+          },
+          {
+            "key": "stream",
+            "optional": false,
+            "type": "false"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.assistantChat.context",
+      "shortPath": "assistantChat.context",
+      "description": "Retrieve relevant Assistant snippets without generating an answer.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assistantName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": true,
+            "type": "{ role: user | assistant, content: string }[]"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "top_k",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "snippet_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "multimodal",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_binary_content",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snippets",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.assistantFiles.delete",
+      "shortPath": "assistantFiles.delete",
+      "description": "Start permanent deletion of a file from an Assistant.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assistantName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "operation_type",
+            "optional": false,
+            "type": "upload_file | upsert_file | update_file_metadata | delete_file"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "Processing | Completed | Failed"
+          },
+          {
+            "key": "created_on",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "percent_complete",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.assistantFiles.describe",
+      "shortPath": "assistantFiles.describe",
+      "description": "Describe an Assistant file and optionally request a signed URL.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assistantName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeUrl",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Processing | Available | Deleting | ProcessingFailed"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signed_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "multimodal",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.assistantFiles.list",
+      "shortPath": "assistantFiles.list",
+      "description": "List paginated files uploaded to an Assistant.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assistantName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paginationToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": false,
+            "type": "{ id: string, name: string, size?: number, metadata?: {} | null, status?: Processing | Available | Deleting | ProcessingFailed, created_on?: string, updated_on?: string, signed_url?: string | null, multimodal?: boolean }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.assistantFiles.upload",
+      "shortPath": "assistantFiles.upload",
+      "description": "Upload a base64-encoded file for asynchronous Assistant ingestion.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assistantName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "multimodal",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "operation_type",
+            "optional": false,
+            "type": "upload_file | upsert_file | update_file_metadata | delete_file"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "Processing | Completed | Failed"
+          },
+          {
+            "key": "created_on",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "percent_complete",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.assistants.create",
+      "shortPath": "assistants.create",
+      "description": "Create a Pinecone Assistant with instructions and metadata.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "Initializing | Failed | Ready | Terminating | InitializationFailed"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.assistants.delete",
+      "shortPath": "assistants.delete",
+      "description": "Permanently delete a Pinecone Assistant and its indexed files.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistantName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} |  | undefined"
+      }
+    },
+    {
+      "path": "pinecone.api.assistants.get",
+      "shortPath": "assistants.get",
+      "description": "Describe Assistant configuration, status, and data-plane host.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistantName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "Initializing | Failed | Ready | Terminating | InitializationFailed"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.assistants.list",
+      "shortPath": "assistants.list",
+      "description": "List paginated Pinecone Assistants for the current project.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paginationToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistants",
+            "optional": false,
+            "type": "{ name: string, status: Initializing | Failed | Ready | Terminating | InitializationFailed, host?: string, instructions?: string | null, metadata?: {} | null, region?: us | eu, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.assistants.update",
+      "shortPath": "assistants.update",
+      "description": "Update an Assistant’s shared instructions or metadata.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistantName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "Initializing | Failed | Ready | Terminating | InitializationFailed"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.backups.create",
+      "shortPath": "backups.create",
+      "description": "Create a restorable backup of an existing Pinecone index.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "indexName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "backup_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_index_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_index_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cloud",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "namespace_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size_bytes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "source_index_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.backups.createIndex",
+      "shortPath": "backups.createIndex",
+      "description": "Start restoring a backup into a new Pinecone index.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "backupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deletion_protection",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "restore_job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "index_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.backups.delete",
+      "shortPath": "backups.delete",
+      "description": "Permanently delete a Pinecone index backup.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "backupId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} |  | undefined"
+      }
+    },
+    {
+      "path": "pinecone.api.backups.describe",
+      "shortPath": "backups.describe",
+      "description": "Describe backup status, source, size, and creation details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "backupId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "backup_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_index_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_index_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cloud",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "namespace_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size_bytes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "source_index_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.backups.listForIndex",
+      "shortPath": "backups.listForIndex",
+      "description": "List paginated backups created from one index.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "indexName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paginationToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ backup_id: string, name?: string, source_index_name?: string, source_index_id?: string, status?: string, cloud?: string, region?: string, dimension?: number, metric?: string, record_count?: number, namespace_count?: number, size_bytes?: number, source_index_deleted_at?: string, created_at?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.backups.listForProject",
+      "shortPath": "backups.listForProject",
+      "description": "List paginated backups across the current Pinecone project.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paginationToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ backup_id: string, name?: string, source_index_name?: string, source_index_id?: string, status?: string, cloud?: string, region?: string, dimension?: number, metric?: string, record_count?: number, namespace_count?: number, size_bytes?: number, source_index_deleted_at?: string, created_at?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.bulkImports.cancel",
+      "shortPath": "bulkImports.cancel",
+      "description": "Cancel a running Pinecone bulk-import job.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "importId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} |  | undefined"
+      }
+    },
+    {
+      "path": "pinecone.api.bulkImports.describe",
+      "shortPath": "bulkImports.describe",
+      "description": "Describe progress and errors for one bulk-import job.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "importId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "percentComplete",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finishedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recordsImported",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.bulkImports.list",
+      "shortPath": "bulkImports.list",
+      "description": "List paginated bulk-import jobs for an index.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paginationToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, uri?: string, status?: string, percentComplete?: number, createdAt?: string, finishedAt?: string | null, recordsImported?: number, error?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.bulkImports.start",
+      "shortPath": "bulkImports.start",
+      "description": "Start importing vector data from object storage into an index.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "errorMode",
+            "optional": true,
+            "type": "{ onError: abort | continue }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.collections.list",
+      "shortPath": "collections.list",
+      "description": "List legacy Pinecone collections visible to the project.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collections",
+            "optional": false,
+            "type": "{ name: string, status?: string, environment?: string, size?: number, vector_count?: number, dimension?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.indexes.configure",
+      "shortPath": "indexes.configure",
+      "description": "Update index configuration, tags, or deletion protection.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "indexName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deletion_protection",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "spec",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "embed",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vector_type",
+            "optional": true,
+            "type": "dense | sparse"
+          },
+          {
+            "key": "deletion_protection",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ ready?: boolean, state?: string }"
+          },
+          {
+            "key": "spec",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.indexes.create",
+      "shortPath": "indexes.create",
+      "description": "Create a serverless Pinecone vector index.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "cosine | euclidean | dotproduct"
+          },
+          {
+            "key": "vector_type",
+            "optional": true,
+            "type": "dense | sparse"
+          },
+          {
+            "key": "spec",
+            "optional": false,
+            "type": "{ serverless: { cloud: aws | gcp | azure, region: string } }"
+          },
+          {
+            "key": "deletion_protection",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vector_type",
+            "optional": true,
+            "type": "dense | sparse"
+          },
+          {
+            "key": "deletion_protection",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ ready?: boolean, state?: string }"
+          },
+          {
+            "key": "spec",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.indexes.createForModel",
+      "shortPath": "indexes.createForModel",
+      "description": "Create an integrated-embedding index for a hosted model.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cloud",
+            "optional": false,
+            "type": "aws | gcp | azure"
+          },
+          {
+            "key": "region",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "embed",
+            "optional": false,
+            "type": "{ model: string, field_map: {}, metric?: cosine | euclidean | dotproduct, read_parameters?: {}, write_parameters?: {} }"
+          },
+          {
+            "key": "deletion_protection",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vector_type",
+            "optional": true,
+            "type": "dense | sparse"
+          },
+          {
+            "key": "deletion_protection",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ ready?: boolean, state?: string }"
+          },
+          {
+            "key": "spec",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.indexes.delete",
+      "shortPath": "indexes.delete",
+      "description": "Permanently delete a Pinecone index and its vector data.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "indexName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} |  | undefined"
+      }
+    },
+    {
+      "path": "pinecone.api.indexes.describe",
+      "shortPath": "indexes.describe",
+      "description": "Describe an index, including its data-plane host and readiness.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "indexName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vector_type",
+            "optional": true,
+            "type": "dense | sparse"
+          },
+          {
+            "key": "deletion_protection",
+            "optional": true,
+            "type": "enabled | disabled"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ ready?: boolean, state?: string }"
+          },
+          {
+            "key": "spec",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.indexes.list",
+      "shortPath": "indexes.list",
+      "description": "List all Pinecone indexes available to the project.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "indexes",
+            "optional": false,
+            "type": "{ name: string, metric?: string, host?: string, dimension?: number | null, vector_type?: dense | sparse, deletion_protection?: enabled | disabled, status?: { ready?: boolean, state?: string }, spec?: {}, tags?: {} | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.inference.embed",
+      "shortPath": "inference.embed",
+      "description": "Generate dense or sparse vectors with a hosted embedding model.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "inputs",
+            "optional": false,
+            "type": "{ text: string }[]"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vector_type",
+            "optional": true,
+            "type": "dense | sparse"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.inference.getModel",
+      "shortPath": "inference.getModel",
+      "description": "Describe capabilities and limits for one hosted inference model.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modelName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "short_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "embed | rerank"
+          },
+          {
+            "key": "vector_type",
+            "optional": true,
+            "type": "dense | sparse"
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_sequence_length",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.inference.listModels",
+      "shortPath": "inference.listModels",
+      "description": "List hosted embedding and reranking models with optional filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "embed | rerank"
+          },
+          {
+            "key": "vectorType",
+            "optional": true,
+            "type": "dense | sparse"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "models",
+            "optional": false,
+            "type": "{ model: string, short_description?: string, type?: embed | rerank, vector_type?: dense | sparse, dimension?: number, max_sequence_length?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.inference.rerank",
+      "shortPath": "inference.rerank",
+      "description": "Rerank documents against a query using a hosted reranking model.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "documents",
+            "optional": false,
+            "type": "{ text: string }[]"
+          },
+          {
+            "key": "top_n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "return_documents",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ index: number, score: number, document?: {} }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.namespaces.create",
+      "shortPath": "namespaces.create",
+      "description": "Create an empty namespace in a Pinecone index.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "namespace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{ fields: {} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "record_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.namespaces.delete",
+      "shortPath": "namespaces.delete",
+      "description": "Permanently delete a namespace and every record it contains.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "namespace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} |  | undefined"
+      }
+    },
+    {
+      "path": "pinecone.api.namespaces.describe",
+      "shortPath": "namespaces.describe",
+      "description": "Describe one namespace and its current record count.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "namespace",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "record_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.namespaces.list",
+      "shortPath": "namespaces.list",
+      "description": "List paginated namespaces in lexical order.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paginationToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "namespaces",
+            "optional": false,
+            "type": "{ name: string, record_count?: number }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.records.search",
+      "shortPath": "records.search",
+      "description": "Search integrated records by text, vector, ID, or metadata filter.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "namespace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ top_k: number, inputs?: { text: string }, vector?: number[], id?: string, filter?: {} }"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ hits: {}[] }"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.records.upsert",
+      "shortPath": "records.upsert",
+      "description": "Upsert text records as newline-delimited JSON for integrated embedding.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "namespace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "{ _id: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} |  | undefined"
+      }
+    },
+    {
+      "path": "pinecone.api.restoreJobs.describe",
+      "shortPath": "restoreJobs.describe",
+      "description": "Describe progress and status for a backup restore job.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "restoreJobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "restore_job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "backup_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_index_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_index_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "percent_complete",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.restoreJobs.list",
+      "shortPath": "restoreJobs.list",
+      "description": "List paginated backup restore jobs for the project.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paginationToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ restore_job_id: string, backup_id?: string, target_index_name?: string, target_index_id?: string, status?: string, created_at?: string, completed_at?: string | null, percent_complete?: number }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.vectors.delete",
+      "shortPath": "vectors.delete",
+      "description": "Permanently delete selected vectors or an entire namespace.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "deleteAll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} |  | undefined"
+      }
+    },
+    {
+      "path": "pinecone.api.vectors.describeIndexStats",
+      "shortPath": "vectors.describeIndexStats",
+      "description": "Return index dimension, fullness, and per-namespace record counts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "indexFullness",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalVectorCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "namespaces",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.vectors.fetch",
+      "shortPath": "vectors.fetch",
+      "description": "Fetch vectors and metadata by their record identifiers.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vectors",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.vectors.list",
+      "shortPath": "vectors.list",
+      "description": "List paginated vector identifiers with optional prefix filtering.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paginationToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vectors",
+            "optional": false,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.vectors.query",
+      "shortPath": "vectors.query",
+      "description": "Find the vectors most similar to an ID or query vector.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topK",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "vector",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sparseVector",
+            "optional": true,
+            "type": "{ indices: number[], values: number[] }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "includeValues",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeMetadata",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matches",
+            "optional": false,
+            "type": "{ id: string, score?: number, values?: number[], metadata?: {} }[]"
+          },
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pinecone.api.vectors.update",
+      "shortPath": "vectors.update",
+      "description": "Update vector values or metadata for one existing record.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "sparseValues",
+            "optional": true,
+            "type": "{ indices: number[], values: number[] }"
+          },
+          {
+            "key": "setMetadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} |  | undefined"
+      }
+    },
+    {
+      "path": "pinecone.api.vectors.upsert",
+      "shortPath": "vectors.upsert",
+      "description": "Insert or replace a batch of vectors in an index namespace.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "vectors",
+            "optional": false,
+            "type": "{ id: string, values?: number[], sparse_values?: { indices: number[], values: number[] }, metadata?: {} }[]"
+          },
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "upsertedCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "pinecone.db.assistantFiles.search",
+      "entityName": "assistantFiles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "signed_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "pinecone.db.assistants.search",
+      "entityName": "assistants",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "host",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "instructions",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "pinecone.db.backups.search",
+      "entityName": "backups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "backup_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source_index_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source_index_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source_index_deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cloud",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dimension",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "metric",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "record_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "namespace_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "size_bytes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "pinecone.db.collections.search",
+      "entityName": "collections",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "environment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "vector_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "dimension",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "pinecone.db.indexes.search",
+      "entityName": "indexes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "host",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dimension",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "metric",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "pinecone.db.models.search",
+      "entityName": "models",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "short_description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dimension",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_sequence_length",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "pinecone.db.namespaces.search",
+      "entityName": "namespaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "record_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "pinecone.db.restoreJobs.search",
+      "entityName": "restoreJobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "restore_job_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "backup_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target_index_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target_index_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "completed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "percent_complete",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "pinecone.db.vectors.search",
+      "entityName": "vectors",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

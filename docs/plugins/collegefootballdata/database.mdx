@@ -1,0 +1,133 @@
+---
+title: Database
+description: "College Football Data local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The College Football Data plugin syncs data locally. Use `corsair.collegefootballdata.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Coaches
+
+Path: `collegefootballdata.db.coaches.search`
+
+```ts
+const rows = await corsair.collegefootballdata.db.coaches.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `hireDate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Conferences
+
+Path: `collegefootballdata.db.conferences.search`
+
+```ts
+const rows = await corsair.collegefootballdata.db.conferences.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `shortName` | `string` | equals, contains, startsWith, endsWith, in |
+| `abbreviation` | `string` | equals, contains, startsWith, endsWith, in |
+| `classification` | `string` | equals, contains, startsWith, endsWith, in |
+| `memberCount` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Teams
+
+Path: `collegefootballdata.db.teams.search`
+
+```ts
+const rows = await corsair.collegefootballdata.db.teams.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `school` | `string` | equals, contains, startsWith, endsWith, in |
+| `mascot` | `string` | equals, contains, startsWith, endsWith, in |
+| `abbreviation` | `string` | equals, contains, startsWith, endsWith, in |
+| `conference` | `string` | equals, contains, startsWith, endsWith, in |
+| `division` | `string` | equals, contains, startsWith, endsWith, in |
+| `classification` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `alternateColor` | `string` | equals, contains, startsWith, endsWith, in |
+| `twitter` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Venues
+
+Path: `collegefootballdata.db.venues.search`
+
+```ts
+const rows = await corsair.collegefootballdata.db.venues.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `zip` | `string` | equals, contains, startsWith, endsWith, in |
+| `countryCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `latitude` | `number` | equals, gt, gte, lt, lte, in |
+| `longitude` | `number` | equals, gt, gte, lt, lte, in |
+| `elevation` | `string` | equals, contains, startsWith, endsWith, in |
+| `capacity` | `number` | equals, gt, gte, lt, lte, in |
+| `constructionYear` | `number` | equals, gt, gte, lt, lte, in |
+| `grass` | `boolean` | equals |
+| `dome` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

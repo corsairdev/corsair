@@ -1,0 +1,1157 @@
+---
+title: API
+description: "API reference for API.Bible: every `apibible.api.*` operation with input and output types."
+---
+
+Every `apibible.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Audio Bibles
+
+### get
+
+`audioBibles.get`
+
+Get a specific audio Bible version
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.audioBibles.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audioBibleId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  dblId?: string,
+  relatedDbl?: string | null,
+  name: string,
+  nameLocal: string,
+  abbreviation?: string | null,
+  abbreviationLocal?: string | null,
+  description?: string | null,
+  descriptionLocal?: string | null,
+  language: {
+    id: string,
+    name: string,
+    nameLocal: string,
+    script?: string | null,
+    scriptDirection?: string | null
+  },
+  countries: {
+    id: string,
+    name: string,
+    nameLocal: string
+  }[],
+  type: string,
+  updatedAt: string,
+  copyright?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`audioBibles.list`
+
+List audio Bible versions
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.audioBibles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  dblId?: string,
+  relatedDbl?: string | null,
+  name: string,
+  nameLocal: string,
+  abbreviation?: string | null,
+  abbreviationLocal?: string | null,
+  description?: string | null,
+  descriptionLocal?: string | null,
+  language: {
+    id: string,
+    name: string,
+    nameLocal: string,
+    script?: string | null,
+    scriptDirection?: string | null
+  },
+  countries: {
+    id: string,
+    name: string,
+    nameLocal: string
+  }[],
+  type: string,
+  updatedAt: string,
+  copyright?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audio Books
+
+### get
+
+`audioBooks.get`
+
+Get a specific book of an audio Bible
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.audioBooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audioBibleId` | `string` | Yes | — |
+| `bookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bibleId: string,
+  abbreviation: string,
+  name: string,
+  nameLong?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`audioBooks.list`
+
+List all books of an audio Bible
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.audioBooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audioBibleId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bibleId: string,
+  abbreviation: string,
+  name: string,
+  nameLong?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audio Chapters
+
+### get
+
+`audioChapters.get`
+
+Get an audio chapter (includes an mp3 resource URL)
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.audioChapters.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audioBibleId` | `string` | Yes | — |
+| `chapterId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bibleId: string,
+  bookId: string,
+  number: string,
+  reference: string,
+  resourceUrl: string,
+  expiresAt: string,
+  copyright?: string,
+  next?: {
+    id: string,
+    number?: string,
+    bookId?: string,
+    title?: string
+  } | null,
+  previous?: {
+    id: string,
+    number?: string,
+    bookId?: string,
+    title?: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`audioChapters.list`
+
+List all chapters of an audio book
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.audioChapters.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audioBibleId` | `string` | Yes | — |
+| `bookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bibleId: string,
+  bookId: string,
+  number: string,
+  reference: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bibles
+
+### get
+
+`bibles.get`
+
+Get details for a specific Bible version
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.bibles.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bibleId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  dblId: string,
+  relatedDbl?: string | null,
+  name: string,
+  nameLocal: string,
+  abbreviation?: string | null,
+  abbreviationLocal?: string | null,
+  description?: string | null,
+  descriptionLocal?: string | null,
+  language: {
+    id: string,
+    name: string,
+    nameLocal: string,
+    script?: string | null,
+    scriptDirection?: string | null
+  },
+  countries: {
+    id: string,
+    name: string,
+    nameLocal: string
+  }[],
+  type: string,
+  updatedAt: string,
+  copyright?: string,
+  info?: string,
+  audioBibles?: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`bibles.list`
+
+List supported Bible versions
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.bibles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  dblId: string,
+  relatedDbl?: string | null,
+  name: string,
+  nameLocal: string,
+  abbreviation?: string | null,
+  abbreviationLocal?: string | null,
+  description?: string | null,
+  descriptionLocal?: string | null,
+  language: {
+    id: string,
+    name: string,
+    nameLocal: string,
+    script?: string | null,
+    scriptDirection?: string | null
+  },
+  countries: {
+    id: string,
+    name: string,
+    nameLocal: string
+  }[],
+  type: string,
+  updatedAt: string,
+  copyright?: string,
+  info?: string,
+  audioBibles?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Books
+
+### get
+
+`books.get`
+
+Get a specific book of a Bible version
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.books.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bibleId` | `string` | Yes | — |
+| `bookId` | `string` | Yes | — |
+| `includeChapters` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bibleId: string,
+  abbreviation: string,
+  name: string,
+  nameLong?: string,
+  chapters?: {
+    id: string,
+    bibleId: string,
+    bookId: string,
+    number: string,
+    position?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`books.list`
+
+List all books of a Bible version
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.books.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bibleId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bibleId: string,
+  abbreviation: string,
+  name: string,
+  nameLong?: string,
+  chapters?: {
+    id: string,
+    bibleId: string,
+    bookId: string,
+    number: string,
+    position?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Chapters
+
+### get
+
+`chapters.get`
+
+Get a chapter with its text content
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.chapters.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `includeNotes` | `boolean` | No | — |
+| `includeTitles` | `boolean` | No | — |
+| `includeChapterNumbers` | `boolean` | No | — |
+| `includeVerseNumbers` | `boolean` | No | — |
+| `includeVerseSpans` | `boolean` | No | — |
+| `bibleId` | `string` | Yes | — |
+| `chapterId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bibleId: string,
+  bookId: string,
+  number: string,
+  reference: string,
+  content: string,
+  copyright?: string,
+  verseCount?: number,
+  next?: {
+    id: string,
+    number?: string,
+    bookId?: string,
+    title?: string
+  } | null,
+  previous?: {
+    id: string,
+    number?: string,
+    bookId?: string,
+    title?: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  fumsToken?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`chapters.list`
+
+List all chapters of a book
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.chapters.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bibleId` | `string` | Yes | — |
+| `bookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bibleId: string,
+  bookId: string,
+  number: string,
+  reference: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSections
+
+`chapters.listSections`
+
+List sections (usfm headings) within a chapter
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.chapters.listSections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bibleId` | `string` | Yes | — |
+| `chapterId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bibleId: string,
+  bookId: string,
+  title: string,
+  firstVerseId?: string,
+  lastVerseId?: string,
+  firstVerseOrgId?: string,
+  lastVerseOrgId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Passages
+
+### get
+
+`passages.get`
+
+Get one or more verses of scripture text by passage reference
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.passages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `includeNotes` | `boolean` | No | — |
+| `includeTitles` | `boolean` | No | — |
+| `includeChapterNumbers` | `boolean` | No | — |
+| `includeVerseNumbers` | `boolean` | No | — |
+| `includeVerseSpans` | `boolean` | No | — |
+| `bibleId` | `string` | Yes | — |
+| `passageId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  orgId?: string,
+  bibleId: string,
+  bookId?: string,
+  chapterIds?: string[],
+  content: string,
+  reference: string,
+  copyright?: string,
+  verseCount?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  fumsToken?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### query
+
+`search.query`
+
+Search for verses within a Bible version
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.search.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bibleId` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sort` | `relevance \| canonical \| usfm` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  query: string,
+  limit: number,
+  offset: number,
+  total: number,
+  verseCount: number,
+  verses: {
+    id: string,
+    orgId?: string,
+    bibleId: string,
+    bookId: string,
+    chapterId: string,
+    reference: string,
+    text: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  fumsToken?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sections
+
+### get
+
+`sections.get`
+
+Get a section with its text content
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.sections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `includeNotes` | `boolean` | No | — |
+| `includeTitles` | `boolean` | No | — |
+| `includeChapterNumbers` | `boolean` | No | — |
+| `includeVerseNumbers` | `boolean` | No | — |
+| `includeVerseSpans` | `boolean` | No | — |
+| `bibleId` | `string` | Yes | — |
+| `sectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bibleId: string,
+  bookId: string,
+  title: string,
+  firstVerseId?: string,
+  lastVerseId?: string,
+  firstVerseOrgId?: string,
+  lastVerseOrgId?: string,
+  chapterId?: string,
+  content: string,
+  copyright?: string,
+  verseCount?: number,
+  next?: {
+    id: string,
+    number?: string,
+    bookId?: string,
+    title?: string
+  } | null,
+  previous?: {
+    id: string,
+    number?: string,
+    bookId?: string,
+    title?: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  fumsToken?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sections.list`
+
+List sections (usfm headings) of a book
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.sections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bibleId` | `string` | Yes | — |
+| `bookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  bibleId: string,
+  bookId: string,
+  title: string,
+  firstVerseId?: string,
+  lastVerseId?: string,
+  firstVerseOrgId?: string,
+  lastVerseOrgId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Verses
+
+### get
+
+`verses.get`
+
+Get a single verse with its text content
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.verses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `includeNotes` | `boolean` | No | — |
+| `includeTitles` | `boolean` | No | — |
+| `includeChapterNumbers` | `boolean` | No | — |
+| `includeVerseNumbers` | `boolean` | No | — |
+| `includeVerseSpans` | `boolean` | No | — |
+| `bibleId` | `string` | Yes | — |
+| `verseId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  orgId?: string,
+  bibleId: string,
+  bookId: string,
+  chapterId: string,
+  reference: string,
+  content: string,
+  copyright?: string,
+  verseCount?: number,
+  next?: {
+    id: string,
+    number?: string,
+    bookId?: string,
+    title?: string
+  } | null,
+  previous?: {
+    id: string,
+    number?: string,
+    bookId?: string,
+    title?: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  fumsToken?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`verses.list`
+
+List all verses of a chapter
+
+**Risk:** `read`
+
+```ts
+await corsair.apibible.api.verses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `includeNotes` | `boolean` | No | — |
+| `includeTitles` | `boolean` | No | — |
+| `includeChapterNumbers` | `boolean` | No | — |
+| `includeVerseNumbers` | `boolean` | No | — |
+| `includeVerseSpans` | `boolean` | No | — |
+| `bibleId` | `string` | Yes | — |
+| `chapterId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  orgId?: string,
+  bibleId: string,
+  bookId: string,
+  chapterId: string,
+  reference: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

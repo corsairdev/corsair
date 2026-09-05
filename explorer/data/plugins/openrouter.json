@@ -1,0 +1,766 @@
+{
+  "id": "openrouter",
+  "displayName": "OpenRouter",
+  "description": "Unified LLM router API for accessing many AI models through one endpoint.",
+  "npmPackageName": "@corsair-dev/openrouter",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 13,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "openrouter.api.chatCompletions.create",
+      "shortPath": "chatCompletions.create",
+      "description": "Generate an AI response via OpenRouter with automatic multi-provider routing, retries, and fallbacks; supports tool calling, structured output, reasoning, and provider/route overrides",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "({ role: system, content: string } | { role: assistant, content?: string | ({ type: text, text: string } | { type: image_url, image_url: { url: string, detail?: string } } | { type: input_audio, input_audio: { data: string, format: string } })[] | null, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[] } | { role: user, content: string | ({ type: text, text: string } | { type: image_url, image_url: { url: string, detail?: string } } | { type: input_audio, input_audio: { data: string, format: string } })[] } | { role: tool, tool_call_id: string, content: string | ({ type: text, text: string } | { type: image_url, image_url: { url: string, detail?: string } } | { type: input_audio, input_audio: { data: string, format: string } })[] })[]"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "false"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topP",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxTokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxCompletionTokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "presencePenalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequencyPenalty",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "logitBias",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "responseFormat",
+            "optional": true,
+            "type": "{ type: text | json_object | json_schema, json_schema?: { name: string, strict?: boolean, schema?: {} } }"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "{ type: function, function: { name: string, description?: string, parameters?: {} } }[]"
+          },
+          {
+            "key": "toolChoice",
+            "optional": true,
+            "type": "string | { type: function, function: { name: string } }"
+          },
+          {
+            "key": "reasoning",
+            "optional": true,
+            "type": "{ effort?: none | minimal | low | medium | high | xhigh | max, summary?: auto | concise | detailed | null }"
+          },
+          {
+            "key": "transforms",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "models",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "route",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "{ order?: string[], allow_fallbacks?: boolean, ignore?: string[], require_parameters?: boolean, data_collection?: string, zdr?: boolean }"
+          },
+          {
+            "key": "plugins",
+            "optional": true,
+            "type": "{ name: string, max_tokens?: number, num_images_per_prompt?: number, image_format?: string, num_prompts?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "chat.completion"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index: number, message: { role: assistant, content?: string | null, tool_calls?: { id: string, type: function, function: { name: string, arguments: string } }[], reasoning?: string | null, reasoning_details?: {}[] }, finish_reason?: string | null }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number, prompt_tokens_details?: { cached_tokens?: number, cache_write_tokens?: number, audio_tokens?: number, video_tokens?: number }, completion_tokens_details?: { reasoning_tokens?: number, audio_tokens?: number, image_tokens?: number }, cost?: number, is_byok?: boolean }"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "models",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "native_tool_calls",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openrouter.api.credits.list",
+      "shortPath": "credits.list",
+      "description": "Get the account credit balance and usage with a management API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ total_credits: number, total_usage: number, limit_reached?: boolean, prepaid?: number, billed_prepaid?: number, soft_limit?: number, pending_balance?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openrouter.api.embeddings.create",
+      "shortPath": "embeddings.create",
+      "description": "Generate vector embeddings for one or more input strings using a supported embedding model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | string[] | number[] | number[][] | {}[]"
+          },
+          {
+            "key": "encodingFormat",
+            "optional": true,
+            "type": "float | base64"
+          },
+          {
+            "key": "dimensions",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inputType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "{ order?: string[], allow_fallbacks?: boolean, ignore?: string[], require_parameters?: boolean, data_collection?: string, zdr?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ index?: number, object: embedding, embedding: number[] | string }[]"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens: number, total_tokens: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openrouter.api.generations.get",
+      "shortPath": "generations.get",
+      "description": "Fetch request and usage metadata for a previous generation by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, model?: string, provider?: string, provider_name?: string | null, api_type?: string | null, created_at?: string, streamed?: boolean | null, finish_reason?: string | null, total_cost?: number | null, prompt_tokens?: number, completion_tokens?: number, total_tokens?: number, usage?: number | {}, tokens_prompt?: number | null, tokens_completion?: number | null, provider_responses?: any[] | null, provider_response?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openrouter.api.key.get",
+      "shortPath": "key.get",
+      "description": "Get metadata about the current API key, including usage, limits, and rate limits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ label?: string, usage: number, usage_daily?: number, usage_weekly?: number, usage_monthly?: number, byok_usage?: number, byok_usage_daily?: number, byok_usage_weekly?: number, byok_usage_monthly?: number, limit?: number | null, limit_reset?: string | null, limit_remaining?: number | null, include_byok_in_limit?: boolean, creator_user_id?: string | null, is_free_tier?: boolean, is_management_key?: boolean, is_provisioning_key?: boolean, rate_limit?: { requests: number, interval: string }, expires_at?: string | null, created_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openrouter.api.messages.create",
+      "shortPath": "messages.create",
+      "description": "Create a message via OpenRouter's Anthropic Messages API, with support for system prompts and multi-part content",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxTokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: user | assistant, content: string | ({ type: text, text: string } | { type: image, source: { type: base64, media_type: string, data: string } | { type: url, url: string } } | { type: document, source: { type: base64, media_type: string, data: string } | { type: url, url: string } | { type: text, media_type: text/plain, data: string } | { type: content, content: string | ({ type: text, text: string } | { type: image, source: { type: base64, media_type: string, data: string } | { type: url, url: string } })[] } | { type: file, file_id: string }, title?: string | null, context?: string | null, citations?: { enabled?: boolean } | null } | { type: tool_use, id: string, name: string, input: {} } | { type: tool_result, tool_use_id: string, content: string | any[], is_error?: boolean } | { type: thinking, thinking: string, signature?: string } | { type: redacted_thinking, data: string })[] }[]"
+          },
+          {
+            "key": "system",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topP",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stopSequences",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "{ name: string, description?: string, input_schema: {} }[]"
+          },
+          {
+            "key": "toolChoice",
+            "optional": true,
+            "type": "{ type: tool, name: string } | { type: auto | any | none }"
+          },
+          {
+            "key": "thinking",
+            "optional": true,
+            "type": "{ type: enabled, budget_tokens: number } | { type: disabled }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "message"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "assistant"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stop_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "({ type: text, text: string, citations?: any[] | null } | { type: thinking, thinking: string, signature?: string } | { type: redacted_thinking, data: string } | { type: tool_use, id: string, name: string, input: {} })[]"
+          },
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{ input_tokens: number, output_tokens: number, cache_read_input_tokens?: number | null, cache_creation_input_tokens?: number | null, output_tokens_details?: { thinking_tokens?: number } | null }"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openrouter.api.modelEndpoints.list",
+      "shortPath": "modelEndpoints.list",
+      "description": "List the individual endpoints serving a model, with per-provider pricing, latency, and throughput",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "author",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, created?: number, description?: string, architecture?: {}, endpoints: { name: string, model_id?: string, model_name?: string, provider_name: string, tag?: string, context_length?: number, max_completion_tokens?: number | null, max_prompt_tokens?: number | null, quantization?: string | null, pricing?: {}, supported_parameters?: string[], status?: number, uptime_last_30m?: number | null, uptime_last_5m?: number | null, uptime_last_1d?: number | null, supports_implicit_caching?: boolean, supports_voice_cloning?: boolean, latency_last_30m?: { p50?: number, p75?: number, p90?: number, p99?: number } | null, throughput_last_30m?: { p50?: number, p75?: number, p90?: number, p99?: number } | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openrouter.api.models.count",
+      "shortPath": "models.count",
+      "description": "Get the total count of models available on OpenRouter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openrouter.api.models.list",
+      "shortPath": "models.list",
+      "description": "List all models available on OpenRouter, including pricing, context length, and supported parameters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, created?: number, description?: string, context_length?: number, pricing?: {}, architecture?: { modality?: string, input_modalities?: string[], output_modalities?: string[], tokenizer?: string, instruct_type?: string | null }, top_provider?: { context_length?: number | null, max_completion_tokens?: number | null, is_moderated?: boolean }, per_request_limits?: { prompt_tokens?: string | null, completion_tokens?: string | null } | null, supported_parameters?: string[] }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openrouter.api.models.listEmbeddings",
+      "shortPath": "models.listEmbeddings",
+      "description": "List all embedding models available on OpenRouter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, created?: number, description?: string, context_length?: number, pricing?: {}, architecture?: { modality?: string, input_modalities?: string[], output_modalities?: string[], tokenizer?: string, instruct_type?: string | null }, top_provider?: { context_length?: number | null, max_completion_tokens?: number | null, is_moderated?: boolean }, per_request_limits?: { prompt_tokens?: string | null, completion_tokens?: string | null } | null, supported_parameters?: string[] }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openrouter.api.models.listUser",
+      "shortPath": "models.listUser",
+      "description": "List models filtered by the authenticated user’s provider preferences, privacy settings, and guardrails",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string, created?: number, description?: string, context_length?: number, pricing?: {}, architecture?: { modality?: string, input_modalities?: string[], output_modalities?: string[], tokenizer?: string, instruct_type?: string | null }, top_provider?: { context_length?: number | null, max_completion_tokens?: number | null, is_moderated?: boolean }, per_request_limits?: { prompt_tokens?: string | null, completion_tokens?: string | null } | null, supported_parameters?: string[] }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ next?: string | null }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openrouter.api.providers.list",
+      "shortPath": "providers.list",
+      "description": "List the providers available on OpenRouter with their privacy policies and data-center regions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, slug: string, privacy_policy_url?: string | null, terms_of_service_url?: string | null, status_page_url?: string | null, headquarters?: string | null, datacenters?: string[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "openrouter.api.zdr.list",
+      "shortPath": "zdr.list",
+      "description": "List the Zero-Data Residency (ZDR) endpoint specification for the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, model_id?: string, model_name?: string, provider_name: string, tag?: string, context_length?: number, max_completion_tokens?: number | null, max_prompt_tokens?: number | null, quantization?: string | null, pricing?: {}, supported_parameters?: string[], status?: number, uptime_last_30m?: number | null, uptime_last_5m?: number | null, uptime_last_1d?: number | null, supports_implicit_caching?: boolean, supports_voice_cloning?: boolean, latency_last_30m?: { p50?: number, p75?: number, p90?: number, p99?: number } | null, throughput_last_30m?: { p50?: number, p75?: number, p90?: number, p99?: number } | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "openrouter.db.generations.search",
+      "entityName": "generations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provider",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total_cost",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "prompt_tokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "completion_tokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "openrouter.db.models.search",
+      "entityName": "models",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "context_length",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "openrouter.db.providers.search",
+      "entityName": "providers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "headquarters",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

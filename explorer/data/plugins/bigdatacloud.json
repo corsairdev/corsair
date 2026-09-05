@@ -1,0 +1,2000 @@
+{
+  "id": "bigdatacloud",
+  "displayName": "BigDataCloud",
+  "description": "Geolocation and reverse geocoding APIs for IP lookup and address intelligence.",
+  "npmPackageName": "@corsair-dev/bigdatacloud",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 17,
+    "webhooks": 0,
+    "db": 13
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bigdatacloud.api.asn.asnExtendedReceivingFromInfo",
+      "shortPath": "asn.asnExtendedReceivingFromInfo",
+      "description": "Tool to return upstream providers (receivingFrom) for a given ASN. Use when you need a paginated list of ASes feeding traffic for the specified ASN.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asn",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "batchSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "localityLanguage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asn",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asnNumeric",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "organisation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalReceivingFrom",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "receivingFrom",
+            "optional": true,
+            "type": "{ asn?: string, asnNumeric?: number, organisation?: string, name?: string, registry?: string, registeredCountry?: string, registeredCountryName?: string, registrationDate?: string, registrationLastChange?: string, totalIpv4Addresses?: number, totalIpv4Prefixes?: number, totalIpv4BogonPrefixes?: number, totalIpv6Prefixes?: number, totalIpv6BogonPrefixes?: number, rank?: number, rankText?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.asn.asnExtendedTransitToInfo",
+      "shortPath": "asn.asnExtendedTransitToInfo",
+      "description": "Tool to return downstream customers (transitTo) for a given ASN. Use when you need a paginated list of ASes receiving traffic from a specific ASN.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asn",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "batchSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "localityLanguage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asn",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "asnNumeric",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "organisation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalTransitTo",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "transitTo",
+            "optional": true,
+            "type": "{ asn?: string, asnNumeric?: number, organisation?: string, name?: string, registry?: string, registeredCountry?: string, registeredCountryName?: string, registrationDate?: string, registrationLastChange?: string, totalIpv4Addresses?: number, totalIpv4Prefixes?: number, totalIpv4BogonPrefixes?: number, totalIpv6Prefixes?: number, totalIpv6BogonPrefixes?: number, rank?: number, rankText?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.asn.asnRankList",
+      "shortPath": "asn.asnRankList",
+      "description": "Retrieves a ranked list of Autonomous Systems (ASNs) sorted by IPv4 address announcement volumes. Use cases: - Find the largest ASNs by IP address count (DoD, Amazon, Microsoft, etc.) - Look up ASN rankings for network analysis - Paginate through the global ASN database (79,000+ entries) - Sort ASNs by various criteria (rank, name, organisation, country) Returns paginated results with total count for navigation.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "rank | asn | asnNumeric | organisation | countryCode"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "localityLanguage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "batch",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "asns",
+            "optional": false,
+            "type": "{ asn?: string, asnNumeric?: number, organisation?: string, name?: string, registry?: string, registeredCountry?: string, registeredCountryName?: string, registrationDate?: string, registrationLastChange?: string, totalIpv4Addresses?: number, totalIpv4Prefixes?: number, totalIpv4BogonPrefixes?: number, totalIpv6Prefixes?: number, totalIpv6BogonPrefixes?: number, rank?: number, rankText?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.asn.bgpActivePrefixes",
+      "shortPath": "asn.bgpActivePrefixes",
+      "description": "Tool to retrieve IPv4 or IPv6 prefixes currently announced on BGP. Use when inspecting BGP routing announcements for a given ASN.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asn",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isv4",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bogonsOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "batchSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "bgpPrefix | bgpPrefixNetworkAddress | bgpPrefixLastAddress | registryStatus | isBogon | isAnnounced | carriers"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "localityLanguage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "batch",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "prefixes",
+            "optional": false,
+            "type": "{ bgpPrefix: string, bgpPrefixNetworkAddress?: string, bgpPrefixLastAddress?: string, registryStatus?: string, isBogon?: boolean, isAnnounced?: boolean, carriers?: { asn?: string, asnNumeric?: number, organisation?: string, name?: string, registry?: string, registeredCountry?: string, registeredCountryName?: string, registrationDate?: string, registrationLastChange?: string, totalIpv4Addresses?: number, totalIpv4Prefixes?: number, totalIpv4BogonPrefixes?: number, totalIpv6Prefixes?: number, totalIpv6BogonPrefixes?: number, rank?: number, rankText?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.location.amIRoaming",
+      "shortPath": "location.amIRoaming",
+      "description": "Tool to determine if the user is roaming based on their IP address and GPS coordinates. Use after obtaining device location to verify roaming status before mobile actions.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "latitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "localityLanguage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "isRoaming",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.location.countryByIpAddress",
+      "shortPath": "location.countryByIpAddress",
+      "description": "Tool to geolocate an IP address and retrieve country details and demographics. Use when you need country-level data after obtaining the target IP address.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "localityLanguage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "localityLanguageRequested",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isReachableGlobally",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "{ isoAlpha2: string, isoAlpha3?: string, m49Code?: number, name: string, isoName?: string, isoNameFull?: string, isoAdminLanguages?: { isoAlpha3?: string, isoAlpha2?: string, isoName?: string, nativeName?: string }[], unRegion?: string, currency?: { numericCode?: number, code?: string, name?: string, minorUnits?: number }, wbRegion?: { id?: string, iso2Code?: string, value?: string }, wbIncomeLevel?: { id?: string, iso2Code?: string, value?: string }, callingCode?: string, countryFlagEmoji?: string, wikidataId?: string, geonameId?: number, isIndependent?: boolean }"
+          },
+          {
+            "key": "lastUpdated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.location.countryInfo",
+      "shortPath": "location.countryInfo",
+      "description": "Tool to fetch detailed country information by ISO code. Use when you need localized names, currencies, regions, and other metadata for a country.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "localityLanguage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "isoAlpha2",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isoAlpha3",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "m49Code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isoName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isoNameFull",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isoAdminLanguages",
+            "optional": true,
+            "type": "{ isoAlpha3?: string, isoAlpha2?: string, isoName?: string, nativeName?: string }[]"
+          },
+          {
+            "key": "unRegion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "{ numericCode?: number, code?: string, name?: string, minorUnits?: number }"
+          },
+          {
+            "key": "wbRegion",
+            "optional": true,
+            "type": "{ id?: string, iso2Code?: string, value?: string }"
+          },
+          {
+            "key": "wbIncomeLevel",
+            "optional": true,
+            "type": "{ id?: string, iso2Code?: string, value?: string }"
+          },
+          {
+            "key": "callingCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "countryFlagEmoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "wikidataId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "geonameId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isIndependent",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.location.reverseGeocodingWithTimezone",
+      "shortPath": "location.reverseGeocodingWithTimezone",
+      "description": "Tool to return reverse geocoding and time zone info for given coordinates. Use when you need both locality details and timezone data in one call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "latitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "localityLanguage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "latitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "localityLanguageRequested",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "continent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "continentCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "countryName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "principalSubdivision",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "principalSubdivisionCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locality",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plusCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "localityInfo",
+            "optional": true,
+            "type": "{ administrative?: { name?: string, description?: string, isoName?: string, order?: number, adminLevel?: number, isoCode?: string, wikidataId?: string, geonameId?: number }[], informative?: { name?: string, description?: string, isoName?: string, order?: number, isoCode?: string, wikidataId?: string, geonameId?: number }[] }"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "{ ianaTimeId: string, displayName?: string, effectiveTimeZoneFull?: string, effectiveTimeZoneShort?: string, utcOffsetSeconds?: number, utcOffset?: string, isDaylightSavingTime?: boolean, localTime?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.location.timeZoneByIpAddress",
+      "shortPath": "location.timeZoneByIpAddress",
+      "description": "Tool to retrieve time zone information for a given IP address. Use when you need DST status, UTC offsets, and local/UTC time for a specific IP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "utcReference",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ianaTimeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "effectiveTimeZoneFull",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "effectiveTimeZoneShort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utcOffsetSeconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "utcOffset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDaylightSavingTime",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "localTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.network.networkByIpAddress",
+      "shortPath": "network.networkByIpAddress",
+      "description": "Tool to retrieve registry, ASN, and BGP details for a given IP address’s network. Use when you need detailed network information (e.g., ASNs, prefixes) after confirming the target IP.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "localityLanguage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "registry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "registryStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "registeredCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "registeredCountryName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organisation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isReachableGlobally",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isBogon",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bgpPrefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bgpPrefixNetworkAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bgpPrefixLastAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalAddresses",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "carriers",
+            "optional": true,
+            "type": "{ asn?: string, asnNumeric?: number, organisation?: string, name?: string, registry?: string, registeredCountry?: string, registeredCountryName?: string, registrationDate?: string, registrationLastChange?: string, totalIpv4Addresses?: number, totalIpv4Prefixes?: number, totalIpv4BogonPrefixes?: number, totalIpv6Prefixes?: number, totalIpv6BogonPrefixes?: number, rank?: number, rankText?: string }[]"
+          },
+          {
+            "key": "viaCarriers",
+            "optional": true,
+            "type": "{ asn?: string, asnNumeric?: number, organisation?: string, name?: string, registry?: string, registeredCountry?: string, registeredCountryName?: string, registrationDate?: string, registrationLastChange?: string, totalIpv4Addresses?: number, totalIpv4Prefixes?: number, totalIpv4BogonPrefixes?: number, totalIpv6Prefixes?: number, totalIpv6BogonPrefixes?: number, rank?: number, rankText?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.network.networksByCidr",
+      "shortPath": "network.networksByCidr",
+      "description": "Tool to retrieve BGP-announced networks within a specified CIDR range. Use when you need to analyze network announcements within a particular CIDR after confirming the range format.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cidr",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "localityLanguage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cidr",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "{ cidr?: string, type?: string, carriers?: { asn?: string, asnNumeric?: number, organisation?: string, name?: string, registry?: string, registeredCountry?: string, registeredCountryName?: string, registrationDate?: string, registrationLastChange?: string, totalIpv4Addresses?: number, totalIpv4Prefixes?: number, totalIpv4BogonPrefixes?: number, totalIpv6Prefixes?: number, totalIpv6BogonPrefixes?: number, rank?: number, rankText?: string }[], viaCarriers?: { asn?: string, asnNumeric?: number, organisation?: string, name?: string, registry?: string, registeredCountry?: string, registeredCountryName?: string, registrationDate?: string, registrationLastChange?: string, totalIpv4Addresses?: number, totalIpv4Prefixes?: number, totalIpv4BogonPrefixes?: number, totalIpv6Prefixes?: number, totalIpv6BogonPrefixes?: number, rank?: number, rankText?: string }[], totalSubnets?: number, subnets?: { startAddress?: string, endAddress?: string, organisation?: string, registeredCountry?: string, registeredCountryName?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.security.hazardReport",
+      "shortPath": "security.hazardReport",
+      "description": "Tool to fetch a cybersecurity hazard report for a specified IP address. Use when assessing an IP's threat profile (VPN, proxy, blacklists, hosting risk).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "isKnownAsTorServer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isKnownAsVpn",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isKnownAsProxy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isSpamhausDrop",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isSpamhausEdrop",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isSpamhausAsnDrop",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isBlacklistedUceprotect",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isBlacklistedBlocklistDe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isKnownAsMailServer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isKnownAsPublicRouter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isBogon",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isUnreachable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hostingLikelihood",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isHostingAsn",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCellular",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "iCloudPrivateRelay",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.security.torExitNodesGeolocated",
+      "shortPath": "security.torExitNodesGeolocated",
+      "description": "Retrieve a paginated list of active TOR exit node IP addresses with geolocation and carrier (ASN) details. Use this tool to: - Get a list of known TOR exit node IPs to detect/block anonymous traffic - Analyze geographic distribution of TOR exit nodes by country - Look up carrier/ASN information for TOR nodes - Build IP blocklists or allowlists for TOR traffic Returns nodes with IP address, country info (when available), and detailed carrier/ASN data including BGP prefix counts and global ranking.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "localityLanguage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "batch",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "nodes",
+            "optional": false,
+            "type": "{ ip: string, countryName?: string, countryCode?: string, carriers?: { asn?: string, asnNumeric?: number, organisation?: string, name?: string, registry?: string, registeredCountry?: string, registeredCountryName?: string, registrationDate?: string, registrationLastChange?: string, totalIpv4Addresses?: number, totalIpv4Prefixes?: number, totalIpv4BogonPrefixes?: number, totalIpv6Prefixes?: number, totalIpv6BogonPrefixes?: number, rank?: number, rankText?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.security.userRisk",
+      "shortPath": "security.userRisk",
+      "description": "Tool to return a risk assessment for a user based on IP signals for fraud prevention. Use after initial IP checks to decide whether to bypass or require captcha challenges.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "risk",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.validation.emailAddressVerification",
+      "shortPath": "validation.emailAddressVerification",
+      "description": "Tool to verify email addresses for syntax, domain validity, and disposability. Use after obtaining the email input.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailAddress",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inputData",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isValid",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "isSyntaxValid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isMailServerDefined",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isKnownSpammerDomain",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDisposable",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.validation.phoneNumberValidationByIp",
+      "shortPath": "validation.phoneNumberValidationByIp",
+      "description": "Tool to validate phone numbers by inferring country from client IP. Use when you want to validate a number without specifying country.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "localityLanguage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "isValid",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "e164Format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internationalFormat",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nationalFormat",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lineType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "{ isoAlpha2: string, isoAlpha3?: string, m49Code?: number, name: string, isoName?: string, isoNameFull?: string, isoAdminLanguages?: { isoAlpha3?: string, isoAlpha2?: string, isoName?: string, nativeName?: string }[], unRegion?: string, currency?: { numericCode?: number, code?: string, name?: string, minorUnits?: number }, wbRegion?: { id?: string, iso2Code?: string, value?: string }, wbIncomeLevel?: { id?: string, iso2Code?: string, value?: string }, callingCode?: string, countryFlagEmoji?: string, wikidataId?: string, geonameId?: number, isIndependent?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bigdatacloud.api.validation.userAgentParser",
+      "shortPath": "validation.userAgentParser",
+      "description": "Tool to parse a User-Agent string into device, OS, browser, and bot details. Use when you have a raw User-Agent header and need structured client info.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userAgentRaw",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userAgent",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "device",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "os",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userAgent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "versionMajor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "versionMinor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "versionPatch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isSpider",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isMobile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "userAgentDisplay",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "bigdatacloud.db.asns.search",
+      "entityName": "asns",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "asn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "asnNumeric",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organisation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "registry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "registeredCountry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "registeredCountryName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "registrationDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "registrationLastChange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "totalIpv4Addresses",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "totalIpv4Prefixes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "totalIpv4BogonPrefixes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "totalIpv6Prefixes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "totalIpv6BogonPrefixes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "rank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "rankText",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigdatacloud.db.bgpPrefixes.search",
+      "entityName": "bgpPrefixes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bgpPrefix",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bgpPrefixNetworkAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bgpPrefixLastAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "registryStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isBogon",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isAnnounced",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "asn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigdatacloud.db.countries.search",
+      "entityName": "countries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isoAlpha2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isoAlpha3",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "m49Code",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isoName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isoNameFull",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unRegion",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "callingCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryFlagEmoji",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "wikidataId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "geonameId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isIndependent",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "bigdatacloud.db.emailValidations.search",
+      "entityName": "emailValidations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "emailAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isValid",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isSyntaxValid",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isMailServerDefined",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isKnownSpammerDomain",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isDisposable",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "bigdatacloud.db.hazardReports.search",
+      "entityName": "hazardReports",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isKnownAsTorServer",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isKnownAsVpn",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isKnownAsProxy",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isSpamhausDrop",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isSpamhausEdrop",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isSpamhausAsnDrop",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isBlacklistedUceprotect",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isBlacklistedBlocklistDe",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isKnownAsMailServer",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isKnownAsPublicRouter",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isBogon",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isUnreachable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hostingLikelihood",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isHostingAsn",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isCellular",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "iCloudPrivateRelay",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "bigdatacloud.db.networks.search",
+      "entityName": "networks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cidr",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "registry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "registryStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "registeredCountry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "registeredCountryName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organisation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isReachableGlobally",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isBogon",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "bgpPrefix",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bgpPrefixNetworkAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bgpPrefixLastAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "totalAddresses",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigdatacloud.db.phoneValidations.search",
+      "entityName": "phoneValidations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isValid",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "e164Format",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "internationalFormat",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nationalFormat",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lineType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigdatacloud.db.reverseGeocodes.search",
+      "entityName": "reverseGeocodes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "latitude",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "longitude",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "continent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "continentCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "principalSubdivision",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "principalSubdivisionCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locality",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postcode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "plusCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigdatacloud.db.roamingStatuses.search",
+      "entityName": "roamingStatuses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "latitude",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "longitude",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isRoaming",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "bigdatacloud.db.timezones.search",
+      "entityName": "timezones",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ianaTimeId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "effectiveTimeZoneFull",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "effectiveTimeZoneShort",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "utcOffsetSeconds",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "utcOffset",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isDaylightSavingTime",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "localTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigdatacloud.db.torExitNodes.search",
+      "entityName": "torExitNodes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "asn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organisation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigdatacloud.db.userAgents.search",
+      "entityName": "userAgents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userAgentRaw",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "device",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "os",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userAgent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "family",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "versionMajor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "versionMinor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "versionPatch",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isSpider",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isMobile",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "userAgentDisplay",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bigdatacloud.db.userRisks.search",
+      "entityName": "userRisks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "risk",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

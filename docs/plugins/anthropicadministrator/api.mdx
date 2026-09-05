@@ -1,0 +1,1075 @@
+---
+title: API
+description: "API reference for Anthropic Admin: every `anthropicadministrator.api.*` operation with input and output types."
+---
+
+Every `anthropicadministrator.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Api Keys
+
+### getApiKey
+
+`apiKeys.getApiKey`
+
+Get a single API key by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.apiKeys.getApiKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_key_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `created_by` | `object` | No | — |
+| `expires_at` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `partial_key_hint` | `string` | No | — |
+| `principal` | `object` | No | — |
+| `status` | `active \| archived \| expired \| inactive` | Yes | — |
+| `type` | `api_key` | Yes | — |
+| `workspace_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id: string,
+  type: string
+}
+```
+</Accordion>
+
+<Accordion title="principal full type">
+
+```ts
+{
+  id: string,
+  type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listApiKeys
+
+`apiKeys.listApiKeys`
+
+List organization API keys, optionally filtered by status
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.apiKeys.listApiKeys({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after_id` | `string` | No | Cursor: return the page immediately after this object ID |
+| `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
+| `limit` | `number` | No | Items per page (1-1000, default 20) |
+| `created_by_user_id` | `string` | No | — |
+| `status` | `active \| archived \| expired \| inactive` | No | — |
+| `workspace_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `first_id` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `last_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  created_at: string,
+  created_by?: {
+    id: string,
+    type: string
+  } | null,
+  expires_at?: string | null,
+  name: string,
+  partial_key_hint?: string | null,
+  principal?: {
+    id: string,
+    type: string
+  } | null,
+  status: active | archived | expired | inactive,
+  type: api_key,
+  workspace_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateApiKey
+
+`apiKeys.updateApiKey`
+
+Rename an API key or change its active status
+
+**Risk:** `write`
+
+```ts
+await corsair.anthropicadministrator.api.apiKeys.updateApiKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_key_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `active \| archived \| inactive` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `created_by` | `object` | No | — |
+| `expires_at` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `partial_key_hint` | `string` | No | — |
+| `principal` | `object` | No | — |
+| `status` | `active \| archived \| expired \| inactive` | Yes | — |
+| `type` | `api_key` | Yes | — |
+| `workspace_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  id: string,
+  type: string
+}
+```
+</Accordion>
+
+<Accordion title="principal full type">
+
+```ts
+{
+  id: string,
+  type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invites
+
+### createInvite
+
+`invites.createInvite`
+
+Invite someone to the organization with a given role
+
+**Risk:** `write`
+
+```ts
+await corsair.anthropicadministrator.api.invites.createInvite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Email address to invite |
+| `role` | `billing \| claude_code_user \| developer \| user \| admin` | Yes | — |
+| `rbac_group_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `accepted_at` | `string` | No | — |
+| `email` | `string` | Yes | — |
+| `expires_at` | `string` | Yes | — |
+| `invited_at` | `string` | Yes | — |
+| `rbac_group_ids` | `string[]` | No | — |
+| `role` | `admin \| billing \| claude_code_user \| developer \| managed \| membership_admin \| owner \| primary_owner \| user` | Yes | — |
+| `status` | `accepted \| deleted \| expired \| pending` | Yes | — |
+| `type` | `invite` | Yes | — |
+
+
+
+---
+
+### deleteInvite
+
+`invites.deleteInvite`
+
+Delete a pending organization invite
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.anthropicadministrator.api.invites.deleteInvite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invite_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `invite_deleted` | Yes | — |
+
+
+
+---
+
+### getInvite
+
+`invites.getInvite`
+
+Get a single invite by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.invites.getInvite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invite_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `accepted_at` | `string` | No | — |
+| `email` | `string` | Yes | — |
+| `expires_at` | `string` | Yes | — |
+| `invited_at` | `string` | Yes | — |
+| `rbac_group_ids` | `string[]` | No | — |
+| `role` | `admin \| billing \| claude_code_user \| developer \| managed \| membership_admin \| owner \| primary_owner \| user` | Yes | — |
+| `status` | `accepted \| deleted \| expired \| pending` | Yes | — |
+| `type` | `invite` | Yes | — |
+
+
+
+---
+
+### listInvites
+
+`invites.listInvites`
+
+List organization invites
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.invites.listInvites({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after_id` | `string` | No | Cursor: return the page immediately after this object ID |
+| `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
+| `limit` | `number` | No | Items per page (1-1000, default 20) |
+| `email` | `string` | No | — |
+| `roles` | `admin \| billing \| claude_code_user \| developer \| managed \| membership_admin \| owner \| primary_owner \| user[]` | No | — |
+| `statuses` | `accepted \| expired \| pending[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `first_id` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `last_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  accepted_at?: string | null,
+  email: string,
+  expires_at: string,
+  invited_at: string,
+  rbac_group_ids?: string[],
+  role: admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user,
+  status: accepted | deleted | expired | pending,
+  type: invite
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organization
+
+### getOrganization
+
+`organization.getOrganization`
+
+Get the organization associated with the Admin API key
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.organization.getOrganization({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `organization` | Yes | — |
+
+
+
+---
+
+## Users
+
+### getUser
+
+`users.getUser`
+
+Get a single organization member by user ID
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.users.getUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `added_at` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `role` | `admin \| billing \| claude_code_user \| developer \| managed \| membership_admin \| owner \| primary_owner \| user` | Yes | — |
+| `type` | `user` | Yes | — |
+
+
+
+---
+
+### listUsers
+
+`users.listUsers`
+
+List organization members, optionally filtered by email or role
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.users.listUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after_id` | `string` | No | Cursor: return the page immediately after this object ID |
+| `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
+| `limit` | `number` | No | Items per page (1-1000, default 20) |
+| `email` | `string` | No | Filter by user email |
+| `roles` | `admin \| billing \| claude_code_user \| developer \| managed \| membership_admin \| owner \| primary_owner \| user[]` | No | Filter to users whose role matches any supplied value |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `first_id` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `last_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  added_at: string,
+  email: string,
+  name: string,
+  role: admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user,
+  type: user
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeUser
+
+`users.removeUser`
+
+Remove a member from the organization
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.anthropicadministrator.api.users.removeUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `user_deleted` | Yes | — |
+
+
+
+---
+
+### updateUser
+
+`users.updateUser`
+
+Change an organization member's role
+
+**Risk:** `write`
+
+```ts
+await corsair.anthropicadministrator.api.users.updateUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `role` | `billing \| claude_code_user \| developer \| user \| admin` | Yes | New organization role |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `added_at` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `role` | `admin \| billing \| claude_code_user \| developer \| managed \| membership_admin \| owner \| primary_owner \| user` | Yes | — |
+| `type` | `user` | Yes | — |
+
+
+
+---
+
+## Workspace Members
+
+### createWorkspaceMember
+
+`workspaceMembers.createWorkspaceMember`
+
+Add an organization member to a workspace with a role
+
+**Risk:** `write`
+
+```ts
+await corsair.anthropicadministrator.api.workspaceMembers.createWorkspaceMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `user_id` | `string` | Yes | — |
+| `workspace_role` | `workspace_admin \| workspace_developer \| workspace_restricted_developer \| workspace_user` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `workspace_member` | Yes | — |
+| `user_id` | `string` | Yes | — |
+| `workspace_id` | `string` | Yes | — |
+| `workspace_role` | `workspace_admin \| workspace_billing \| workspace_developer \| workspace_restricted_developer \| workspace_user` | Yes | — |
+
+
+
+---
+
+### deleteWorkspaceMember
+
+`workspaceMembers.deleteWorkspaceMember`
+
+Remove a member from a workspace
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.anthropicadministrator.api.workspaceMembers.deleteWorkspaceMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `workspace_member_deleted` | Yes | — |
+| `user_id` | `string` | Yes | — |
+| `workspace_id` | `string` | Yes | — |
+
+
+
+---
+
+### getWorkspaceMember
+
+`workspaceMembers.getWorkspaceMember`
+
+Get a single workspace member
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.workspaceMembers.getWorkspaceMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `workspace_member` | Yes | — |
+| `user_id` | `string` | Yes | — |
+| `workspace_id` | `string` | Yes | — |
+| `workspace_role` | `workspace_admin \| workspace_billing \| workspace_developer \| workspace_restricted_developer \| workspace_user` | Yes | — |
+
+
+
+---
+
+### listWorkspaceMembers
+
+`workspaceMembers.listWorkspaceMembers`
+
+List members of a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.workspaceMembers.listWorkspaceMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `after_id` | `string` | No | Cursor: return the page immediately after this object ID |
+| `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
+| `limit` | `number` | No | Items per page (1-1000, default 20) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `first_id` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `last_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type: workspace_member,
+  user_id: string,
+  workspace_id: string,
+  workspace_role: workspace_admin | workspace_billing | workspace_developer | workspace_restricted_developer | workspace_user
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateWorkspaceMember
+
+`workspaceMembers.updateWorkspaceMember`
+
+Change a workspace member's role
+
+**Risk:** `write`
+
+```ts
+await corsair.anthropicadministrator.api.workspaceMembers.updateWorkspaceMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `user_id` | `string` | Yes | — |
+| `workspace_role` | `workspace_admin \| workspace_billing \| workspace_developer \| workspace_restricted_developer \| workspace_user` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `workspace_member` | Yes | — |
+| `user_id` | `string` | Yes | — |
+| `workspace_id` | `string` | Yes | — |
+| `workspace_role` | `workspace_admin \| workspace_billing \| workspace_developer \| workspace_restricted_developer \| workspace_user` | Yes | — |
+
+
+
+---
+
+## Workspaces
+
+### archiveWorkspace
+
+`workspaces.archiveWorkspace`
+
+Archive a workspace
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.anthropicadministrator.api.workspaces.archiveWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `archived_at` | `string` | No | — |
+| `compartment_id` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `data_residency` | `object` | No | — |
+| `display_color` | `string` | No | — |
+| `external_key_id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `tags` | `object` | No | — |
+| `type` | `workspace` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data_residency full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createWorkspace
+
+`workspaces.createWorkspace`
+
+Create a workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.anthropicadministrator.api.workspaces.createWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Workspace name |
+| `data_residency` | `object` | No | — |
+| `external_key_id` | `string` | No | — |
+| `tags` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data_residency full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `archived_at` | `string` | No | — |
+| `compartment_id` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `data_residency` | `object` | No | — |
+| `display_color` | `string` | No | — |
+| `external_key_id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `tags` | `object` | No | — |
+| `type` | `workspace` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data_residency full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWorkspace
+
+`workspaces.getWorkspace`
+
+Get a single workspace by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.workspaces.getWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `archived_at` | `string` | No | — |
+| `compartment_id` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `data_residency` | `object` | No | — |
+| `display_color` | `string` | No | — |
+| `external_key_id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `tags` | `object` | No | — |
+| `type` | `workspace` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data_residency full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listWorkspaces
+
+`workspaces.listWorkspaces`
+
+List workspaces, optionally including archived ones
+
+**Risk:** `read`
+
+```ts
+await corsair.anthropicadministrator.api.workspaces.listWorkspaces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after_id` | `string` | No | Cursor: return the page immediately after this object ID |
+| `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
+| `limit` | `number` | No | Items per page (1-1000, default 20) |
+| `include_archived` | `boolean` | No | Include archived workspaces in the results |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `first_id` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `last_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  archived_at?: string | null,
+  compartment_id?: string,
+  created_at: string,
+  data_residency?: {
+  } | null,
+  display_color?: string,
+  external_key_id?: string | null,
+  name: string,
+  tags?: {
+  } | null,
+  type: workspace
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateWorkspace
+
+`workspaces.updateWorkspace`
+
+Update a workspace name, tags or data residency
+
+**Risk:** `write`
+
+```ts
+await corsair.anthropicadministrator.api.workspaces.updateWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `data_residency` | `object` | No | — |
+| `external_key_id` | `string` | No | — |
+| `tags` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data_residency full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `archived_at` | `string` | No | — |
+| `compartment_id` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `data_residency` | `object` | No | — |
+| `display_color` | `string` | No | — |
+| `external_key_id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `tags` | `object` | No | — |
+| `type` | `workspace` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data_residency full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

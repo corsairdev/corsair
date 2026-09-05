@@ -1,0 +1,684 @@
+{
+  "id": "securitytrails",
+  "displayName": "SecurityTrails",
+  "description": "DNS and domain intelligence API for historical records, subdomains, and security research.",
+  "npmPackageName": "@corsair-dev/securitytrails",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "securitytrails.api.account.ping",
+      "shortPath": "account.ping",
+      "description": "Verify the configured SecurityTrails API key is accepted and the API is reachable.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "securitytrails.api.account.usage",
+      "shortPath": "account.usage",
+      "description": "Return the current and allowed monthly API usage for the account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "current_monthly_usage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "allowed_monthly_usage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "securitytrails.api.company.associatedIps",
+      "shortPath": "company.associatedIps",
+      "description": "List the CIDR blocks associated with a company domain. Paginated.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": true,
+            "type": "{ cidr?: string }[]"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "redir",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "securitytrails.api.domain.get",
+      "shortPath": "domain.get",
+      "description": "Get current DNS records (A, AAAA, MX, NS, SOA, TXT) and co-occurrence statistics for a hostname.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alexa_rank",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_dns",
+            "optional": true,
+            "type": "{ a?: { first_seen?: string | null, values?: { ip?: string, ip_count?: number }[] }, aaaa?: { first_seen?: string | null, values?: { ip?: string, ip_count?: number }[] }, mx?: { first_seen?: string | null, values?: { priority?: number, host?: string, host_count?: number }[] }, ns?: { first_seen?: string | null, values?: { nameserver?: string, nameserver_count?: number }[] }, soa?: { first_seen?: string | null, values?: { ttl?: number, email?: string, email_count?: number }[] }, txt?: { first_seen?: string | null, values?: { value?: string }[] } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "securitytrails.api.domain.ssl",
+      "shortPath": "domain.ssl",
+      "description": "List current and historical SSL/TLS certificates for a hostname, optionally including subdomains. Paginated.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_subdomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "valid | all | expired"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ max_page?: number, page?: number, total_pages?: number, query?: {} }"
+          },
+          {
+            "key": "record_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "records",
+            "optional": true,
+            "type": "{ dns_names?: string[], fingerprints?: { sha1?: string, sha256?: string }, issuer?: { common_name?: string, country?: string[], organization?: string[] }, subject?: {}, not_after?: number | null, not_before?: number | null, serial_number?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "securitytrails.api.ips.search",
+      "shortPath": "ips.search",
+      "description": "Search the IP dataset with a DSL query, returning matching addresses, PTR records and open ports. Paginated.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "records",
+            "optional": true,
+            "type": "{ ip?: string, ptr?: string | null, ports?: number[] }[]"
+          },
+          {
+            "key": "record_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total_pages?: number, query?: string, page?: number, max_page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "securitytrails.api.ips.stats",
+      "shortPath": "ips.stats",
+      "description": "Return aggregate open-port and PTR-pattern statistics for a DSL query over the IP dataset.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top_ptr_patterns",
+            "optional": true,
+            "type": "{ key?: string, count?: number }[]"
+          },
+          {
+            "key": "ports",
+            "optional": true,
+            "type": "{ key?: number, count?: number }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "securitytrails.api.projects.bulkStaticAssetRules",
+      "shortPath": "projects.bulkStaticAssetRules",
+      "description": "Add or remove static asset rules for an ASI project, changing which assets are in the project's monitoring scope. Up to 1000 rules per request.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "add_rules",
+            "optional": true,
+            "type": "{ asset: string, membership_type: include | exclude, static_type: ipv4 | hostname | wildcard }[]"
+          },
+          {
+            "key": "remove_rules",
+            "optional": true,
+            "type": "{ asset: string, membership_type: include | exclude, static_type: ipv4 | hostname | wildcard }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ added?: { asset: string, membership_type: include | exclude, static_type: ipv4 | hostname | wildcard }[], removed?: { asset: string, membership_type: include | exclude, static_type: ipv4 | hostname | wildcard }[], errors?: { rule?: { asset: string, membership_type: include | exclude, static_type: ipv4 | hostname | wildcard } | null, failed?: boolean | null, messages?: string[] | null }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ params?: {} | null, counts?: { total?: number | null, returned?: number } | null, pagination?: { next_cursor?: string | null, limit?: number, total?: number | null, sort?: string[][] | null } | null, request_id?: string | null }"
+          },
+          {
+            "key": "complete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "task_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "securitytrails.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the Attack Surface Intelligence projects the API key can access.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, title: string, scanning_enabled?: boolean | null, last_scanned_at?: string | null, inserted_at?: string | null, max_exposure_score?: number | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ params?: {} | null, counts?: { total?: number | null, returned?: number } | null, pagination?: { next_cursor?: string | null, limit?: number, total?: number | null, sort?: string[][] | null } | null, request_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "securitytrails.api.scroll.get",
+      "shortPath": "scroll.get",
+      "description": "Fetch the next page of a DSL search using a scroll cursor from a previous response.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scroll_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "securitytrails.api.sql.query",
+      "shortPath": "sql.query",
+      "description": "Run a SQL-like query against the hosts or ips tables. Returns up to 100 records plus a scroll cursor.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "{ value?: string | number, relation?: string }"
+          },
+          {
+            "key": "records",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "securitytrails.api.sql.scroll",
+      "shortPath": "sql.scroll",
+      "description": "Fetch the next 100 records for an open SQL API scroll cursor.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "{ value?: string | number, relation?: string }"
+          },
+          {
+            "key": "records",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "securitytrails.db.certificates.search",
+      "entityName": "certificates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hostname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sha1",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sha256",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "issuer_common_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "serial_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "not_before",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "not_after",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "securitytrails.db.companyIpRanges.search",
+      "entityName": "companyIpRanges",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cidr",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "securitytrails.db.domains.search",
+      "entityName": "domains",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hostname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alexa_rank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "dns_first_seen",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "securitytrails.db.ips.search",
+      "entityName": "ips",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ptr",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "securitytrails.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scanning_enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "last_scanned_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "inserted_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "max_exposure_score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

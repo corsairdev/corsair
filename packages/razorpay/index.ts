@@ -451,7 +451,7 @@ const razorpayEndpointMeta = {
 	},
 	'subscriptions.cancel': {
 		riskLevel: 'destructive',
-		description: 'Cancel a Razorpay subscription [DESTRUCTIVE]',
+		description: 'Cancel a Razorpay subscription',
 		irreversible: true,
 	},
 	'subscriptions.pause': {

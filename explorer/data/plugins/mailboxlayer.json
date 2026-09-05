@@ -1,0 +1,189 @@
+{
+  "id": "mailboxlayer",
+  "displayName": "MailboxLayer",
+  "description": "Email verification API for checking address validity, format, and deliverability scores.",
+  "npmPackageName": "@corsair-dev/mailboxlayer",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "mailboxlayer.api.email.check",
+      "shortPath": "email.check",
+      "description": "Validate whether an email address is correctly formatted, has valid MX records, and is deliverable via SMTP",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The email address to validate and verify"
+          },
+          {
+            "key": "smtp",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to run a real-time SMTP check (default true). Set to false for a faster format/MX-only check."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "did_you_mean",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format_valid",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "mx_found",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "smtp_check",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "catch_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "disposable",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "free",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "score",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "mailboxlayer.db.emailChecks.search",
+      "entityName": "emailChecks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "didYouMean",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "formatValid",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "mxFound",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "smtpCheck",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "catchAll",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "role",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "disposable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "free",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

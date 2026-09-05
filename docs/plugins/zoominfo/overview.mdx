@@ -1,0 +1,138 @@
+---
+title: Overview
+description: "B2B contact database for sales intelligence, company data, and prospecting workflows."
+---
+
+Use **ZoomInfo** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 17 typed API operations
+- 7 synced entities (`companies`, `contacts`, `intentSignals`, `locations`, `newsArticles`, `scoops`, and 1 more) for fast `.search()` / `.list()`
+- 2 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/zoominfo
+```
+```bash yarn
+yarn add corsair @corsair-dev/zoominfo
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/zoominfo
+```
+```bash bun
+bun add corsair @corsair-dev/zoominfo
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { zoominfo } from '@corsair-dev/zoominfo';
+
+export const corsair = createCorsair({
+	plugins: [
+		zoominfo(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your ZoomInfo OAuth app.
+
+```ts
+zoominfo()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'zoominfo',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`zoominfo.enrichCompany`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zoominfo.api.zoominfo.enrichCompany({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/zoominfo/api) reference._
+
+
+See the full list on the [API](/plugins/zoominfo/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.zoominfo.db.<entity>.search()` and `.list()`: `companies`, `contacts`, `intentSignals`, `locations`, `newsArticles`, `scoops`, `technologies`.
+
+See [Database](/plugins/zoominfo/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/zoominfo/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/zoominfo/api">
+    Every `zoominfo.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/zoominfo/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/zoominfo/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

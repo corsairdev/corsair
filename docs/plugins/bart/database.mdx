@@ -1,0 +1,103 @@
+---
+title: Database
+description: "BART local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The BART plugin syncs data locally. Use `corsair.bart.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Advisories
+
+Path: `bart.db.advisories.search`
+
+```ts
+const rows = await corsair.bart.db.advisories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `station` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `sms_text` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Routes
+
+Path: `bart.db.routes.search`
+
+```ts
+const rows = await corsair.bart.db.routes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `routeID` | `string` | equals, contains, startsWith, endsWith, in |
+| `number` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `abbr` | `string` | equals, contains, startsWith, endsWith, in |
+| `origin` | `string` | equals, contains, startsWith, endsWith, in |
+| `destination` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `hexcolor` | `string` | equals, contains, startsWith, endsWith, in |
+| `holidays` | `string` | equals, contains, startsWith, endsWith, in |
+| `numStns` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Stations
+
+Path: `bart.db.stations.search`
+
+```ts
+const rows = await corsair.bart.db.stations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `abbr` | `string` | equals, contains, startsWith, endsWith, in |
+| `gtfs_latitude` | `string` | equals, contains, startsWith, endsWith, in |
+| `gtfs_longitude` | `string` | equals, contains, startsWith, endsWith, in |
+| `address` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `county` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `zipcode` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

@@ -1,0 +1,524 @@
+---
+title: API
+description: "API reference for Uniswap: every `uniswapapi.api.*` operation with input and output types."
+---
+
+Every `uniswapapi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Approval
+
+### check
+
+`approval.check`
+
+Check if a wallet has the required token approval for a swap
+
+**Risk:** `read`
+
+```ts
+await corsair.uniswapapi.api.approval.check({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | Token contract address |
+| `amount` | `string` | Yes | Amount to check approval for |
+| `walletAddress` | `string` | Yes | Wallet address to check |
+| `chainId` | `number` | Yes | Chain ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `approval` | `object` | No | — |
+| `cancel` | `object` | No | — |
+| `gasFee` | `string` | No | — |
+| `cancelGasFee` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="approval full type">
+
+```ts
+{
+  to: string,
+  from?: string,
+  data: string,
+  value: string,
+  chainId: number,
+  gasLimit?: string,
+  maxFeePerGas?: string,
+  maxPriorityFeePerGas?: string,
+  gasPrice?: string
+}
+```
+</Accordion>
+
+<Accordion title="cancel full type">
+
+```ts
+{
+  to: string,
+  from?: string,
+  data: string,
+  value: string,
+  chainId: number,
+  gasLimit?: string,
+  maxFeePerGas?: string,
+  maxPriorityFeePerGas?: string,
+  gasPrice?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Delegation
+
+### check
+
+`delegation.check`
+
+Check wallet delegation status for smart contract wallets across chains
+
+**Risk:** `read`
+
+```ts
+await corsair.uniswapapi.api.delegation.check({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `walletAddresses` | `string[]` | Yes | Wallet addresses to check delegation for |
+| `chainIds` | `number[]` | Yes | Chain IDs to check delegation status for |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `delegationDetails` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="delegationDetails full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Order
+
+### getStatus
+
+`order.getStatus`
+
+Get the status and details of a gasless UniswapX order
+
+**Risk:** `read`
+
+```ts
+await corsair.uniswapapi.api.order.getStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderId` | `string` | No | Single UniswapX order ID |
+| `orderIds` | `string[]` | No | Multiple UniswapX order IDs |
+| `orderStatus` | `open \| expired \| error \| cancelled \| filled \| unverified \| insufficient-funds` | No | Filter orders by status |
+| `swapper` | `string` | No | Filter orders by swapper address |
+| `filler` | `string` | No | Filter orders by filler address |
+| `limit` | `number` | No | Maximum number of orders to return per page |
+| `cursor` | `string` | No | Pagination cursor from a previous response |
+| `sortKey` | `createdAt` | No | Field to sort results by |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `orders` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+{
+  orderId: string,
+  orderStatus: open | expired | error | cancelled | filled | unverified | insufficient-funds,
+  chainId: number,
+  type: DutchLimit | Dutch | Dutch_V2 | Dutch_V3 | Priority,
+  encodedOrder?: string,
+  signature?: string,
+  nonce?: string,
+  quoteId?: string,
+  swapper?: string,
+  txHash?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Quote
+
+### get
+
+`quote.get`
+
+Get a swap/bridge/wrap quote with route and estimated gas
+
+**Risk:** `read`
+
+```ts
+await corsair.uniswapapi.api.quote.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `EXACT_INPUT \| EXACT_OUTPUT` | Yes | Swap type |
+| `tokenIn` | `string` | Yes | Input token contract address |
+| `tokenInChainId` | `number` | Yes | Input token chain ID |
+| `tokenOut` | `string` | Yes | Output token contract address |
+| `tokenOutChainId` | `number` | Yes | Output token chain ID |
+| `amount` | `string` | Yes | Token amount (in smallest unit) |
+| `swapper` | `string` | Yes | Address of the swapper wallet |
+| `slippageTolerance` | `number` | No | Slippage tolerance as a percentage (e.g. 0.5 = 0.5%) |
+| `autoSlippage` | `DEFAULT` | No | Let the API compute slippage automatically; cannot be combined with slippageTolerance |
+| `urgency` | `normal \| fast \| urgent` | No | Trade urgency |
+| `recipient` | `string` | No | Recipient address, if different from swapper |
+| `protocols` | `string[]` | No | Protocols to route through |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `routing` | `CLASSIC \| DUTCH_LIMIT \| DUTCH_V2 \| DUTCH_V3 \| BRIDGE \| LIMIT_ORDER \| PRIORITY \| WRAP \| UNWRAP \| CHAINED` | Yes | — |
+| `quote` | `object` | Yes | — |
+| `permitData` | `object` | No | — |
+| `quoteId` | `string` | No | — |
+| `tokenIn` | `string` | No | — |
+| `tokenOut` | `string` | No | — |
+| `amountIn` | `string` | No | — |
+| `amountOut` | `string` | No | — |
+| `swapper` | `string` | No | — |
+| `gasEstimate` | `string` | No | — |
+| `gasFee` | `string` | No | — |
+| `gasFeeUSD` | `string` | No | — |
+| `route` | `object[]` | No | — |
+| `routeString` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="quote full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="permitData full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="route full type">
+
+```ts
+{
+}[][]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Swap
+
+### create
+
+`swap.create`
+
+Create swap calldata (unsigned transaction) for broadcast
+
+**Risk:** `write`
+
+```ts
+await corsair.uniswapapi.api.swap.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quote` | `object` | Yes | The quote object returned from /v1/quote |
+| `signature` | `string` | No | Signed Permit2 message; required when the quote returned permitData |
+| `permitData` | `object` | No | Permit2 message from the quote; must be sent together with its signature |
+| `refreshGasPrice` | `boolean` | No | Whether to refresh gas price |
+| `simulateTransaction` | `boolean` | No | Whether to simulate the transaction |
+
+<AccordionGroup>
+<Accordion title="quote full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="permitData full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `swap` | `object` | Yes | — |
+| `gasFee` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="swap full type">
+
+```ts
+{
+  to: string,
+  from?: string,
+  data: string,
+  value: string,
+  chainId: number,
+  gasLimit?: string,
+  maxFeePerGas?: string,
+  maxPriorityFeePerGas?: string,
+  gasPrice?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStatus
+
+`swap.getStatus`
+
+Get swap status (PENDING, SUCCESS, NOT_FOUND, FAILED, EXPIRED) by tx or userOp hash
+
+**Risk:** `read`
+
+```ts
+await corsair.uniswapapi.api.swap.getStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `txHashes` | `string[]` | No | On-chain transaction hashes to query |
+| `userOpHashes` | `string[]` | No | ERC-4337 userOperation hashes to query |
+| `chainId` | `number` | Yes | Chain ID the transactions belong to |
+| `swapper` | `string` | No | Filter results by swapper address |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `swaps` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="swaps full type">
+
+```ts
+{
+  status: PENDING | SUCCESS | NOT_FOUND | FAILED | EXPIRED,
+  swapType?: CLASSIC | DUTCH_LIMIT | DUTCH_V2 | DUTCH_V3 | BRIDGE | LIMIT_ORDER | PRIORITY | WRAP | UNWRAP | CHAINED,
+  txHash?: string,
+  userOpHash?: string,
+  swapId?: string,
+  hashType?: TX | USER_OP
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Swappable Tokens
+
+### get
+
+`swappableTokens.get`
+
+List tokens and chains a source token can be swapped or bridged to
+
+**Risk:** `read`
+
+```ts
+await corsair.uniswapapi.api.swappableTokens.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tokenIn` | `string` | Yes | Source token contract address |
+| `tokenInChainId` | `number` | Yes | Source token chain ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `tokens` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tokens full type">
+
+```ts
+{
+  address: string,
+  chainId: number,
+  name: string,
+  symbol: string,
+  decimals: number,
+  project?: {
+    logo?: {
+    } | null,
+    safetyLevel?: string,
+    isSpam?: boolean
+  },
+  isSpam?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transaction
+
+### encode7702
+
+`transaction.encode7702`
+
+Batch transactions into one for EIP-7702 smart contract wallet execution
+
+**Risk:** `write`
+
+```ts
+await corsair.uniswapapi.api.transaction.encode7702({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calls` | `object[]` | Yes | Transactions to encode; all calls must share the same chainId |
+| `smartContractDelegationAddress` | `string` | Yes | Smart contract delegation implementation address to use |
+| `walletAddress` | `string` | Yes | Wallet address the transactions are encoded for |
+
+<AccordionGroup>
+<Accordion title="calls full type">
+
+```ts
+{
+  to: string,
+  from?: string,
+  data: string,
+  value: string,
+  chainId: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `encoded` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="encoded full type">
+
+```ts
+{
+  to: string,
+  from?: string,
+  data: string,
+  value: string,
+  chainId: number,
+  gasLimit?: string,
+  maxFeePerGas?: string,
+  maxPriorityFeePerGas?: string,
+  gasPrice?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Booking and scheduling software for appointments, reservations, and calendar management."
+---
+
+Use **Bookingmood** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 132 typed API operations
+- 9 synced entities (`bookings`, `calendar_events`, `contacts`, `invoices`, `members`, `organizations`, and 3 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/bookingmood
+```
+```bash yarn
+yarn add corsair @corsair-dev/bookingmood
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/bookingmood
+```
+```bash bun
+bun add corsair @corsair-dev/bookingmood
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { bookingmood } from '@corsair-dev/bookingmood';
+
+export const corsair = createCorsair({
+	plugins: [
+		bookingmood(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+bookingmood()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'bookingmood',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`attributeOptions.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bookingmood.api.attributeOptions.list({});
+```
+
+
+**`attributeOptions.update`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bookingmood.api.attributeOptions.update({});
+```
+
+
+See the full list on the [API](/plugins/bookingmood/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.bookingmood.db.<entity>.search()` and `.list()`: `bookings`, `calendar_events`, `contacts`, `invoices`, `members`, `organizations`, `payments`, `products`, `widgets`.
+
+See [Database](/plugins/bookingmood/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/bookingmood/api">
+    Every `bookingmood.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/bookingmood/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

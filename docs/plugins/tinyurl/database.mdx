@@ -1,0 +1,42 @@
+---
+title: Database
+description: "TinyURL local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The TinyURL plugin syncs data locally. Use `corsair.tinyurl.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Links
+
+Path: `tinyurl.db.links.search`
+
+```ts
+const rows = await corsair.tinyurl.db.links.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `alias` | `string` | equals, contains, startsWith, endsWith, in |
+| `deleted` | `boolean` | equals |
+| `archived` | `boolean` | equals |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `expires_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `tiny_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

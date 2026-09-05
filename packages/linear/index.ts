@@ -334,7 +334,7 @@ const linearEndpointMeta = {
 	'comments.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a comment [DESTRUCTIVE]',
+		description: 'Delete a comment',
 	},
 	'projects.list': {
 		riskLevel: 'read',

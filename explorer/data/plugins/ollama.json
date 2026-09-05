@@ -1,0 +1,669 @@
+{
+  "id": "ollama",
+  "displayName": "Ollama",
+  "description": "Local LLM runtime API for running open-source language models on your own infrastructure.",
+  "npmPackageName": "@corsair-dev/ollama",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "ollama.api.chat.chat",
+      "shortPath": "chat.chat",
+      "description": "Tool to send a chat message with conversation history to Ollama. Use when you need to have a multi-turn conversation with an LLM model.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the model to use for chat"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: string, content: string, images?: string[], tool_calls?: any[] }[]",
+            "description": "Conversation history"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "any[]",
+            "description": "List of tools/functions available to the model"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Output format, e.g. \"json\" or a JSON schema"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}",
+            "description": "Model configuration options (temperature, top_p, etc.)"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to stream responses (default false)"
+          },
+          {
+            "key": "keep_alive",
+            "optional": true,
+            "type": "string | number",
+            "description": "Duration to keep the model loaded in memory"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ role: string, content: string, images?: string[], tool_calls?: any[] }"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "total_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "load_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prompt_eval_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prompt_eval_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "eval_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "eval_duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ollama.api.chat.generate",
+      "shortPath": "chat.generate",
+      "description": "Tool to generate text responses from Ollama models with optional raw mode. Use raw=true to bypass prompt templating when you need full control over the prompt for debugging or custom processing. Note that raw mode will not return a context.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the model to generate text with"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string",
+            "description": "The prompt to generate a response for"
+          },
+          {
+            "key": "suffix",
+            "optional": true,
+            "type": "string",
+            "description": "Text after the insertion point"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "string[]",
+            "description": "Base64-encoded images for multimodal models"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Format of the response"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}",
+            "description": "Model configuration options"
+          },
+          {
+            "key": "system",
+            "optional": true,
+            "type": "string",
+            "description": "System message to override model default"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string",
+            "description": "Prompt template to override model default"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to stream response"
+          },
+          {
+            "key": "raw",
+            "optional": true,
+            "type": "boolean",
+            "description": "Bypass prompt template when true"
+          },
+          {
+            "key": "keep_alive",
+            "optional": true,
+            "type": "string | number",
+            "description": "Duration to keep the model loaded"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "total_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "load_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prompt_eval_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prompt_eval_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "eval_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "eval_duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ollama.api.models.listModels",
+      "shortPath": "models.listModels",
+      "description": "Tool to list all available Ollama models and their details. Use when you need to fetch installed models with metadata including name, size, last modified timestamp, digest, and format information.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "models",
+            "optional": false,
+            "type": "{ name: string, model?: string, modified_at?: string, size?: number, digest?: string, details?: { parent_model?: string, format?: string, family?: string, families?: string[], parameter_size?: string, quantization_level?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ollama.api.models.showModel",
+      "shortPath": "models.showModel",
+      "description": "Tool to show comprehensive information about an Ollama model. Use when you need to retrieve model details, parameters, template, license, or system prompt.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the model to show information for"
+          },
+          {
+            "key": "system",
+            "optional": true,
+            "type": "string",
+            "description": "System prompt override"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string",
+            "description": "Template override"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}",
+            "description": "Options override"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modelfile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "{ parent_model?: string, format?: string, family?: string, families?: string[], parameter_size?: string, quantization_level?: string }"
+          },
+          {
+            "key": "model_info",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "license",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ollama.api.models.version",
+      "shortPath": "models.version",
+      "description": "Tool to get the version of Ollama running locally. Use to check which version of Ollama is currently installed.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ollama.api.openai.createOpenAiChatCompletion",
+      "shortPath": "openai.createOpenAiChatCompletion",
+      "description": "Tool to create OpenAI-compatible chat completions using Ollama models. Use when you need conversational AI responses with OpenAI API format compatibility.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the model to use"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: string, content: string }[]",
+            "description": "Messages in the conversation"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number",
+            "description": "Sampling temperature"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number",
+            "description": "Nucleus sampling probability"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number",
+            "description": "Number of completions to generate"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to stream responses"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Stop sequences"
+          },
+          {
+            "key": "max_tokens",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum tokens to generate"
+          },
+          {
+            "key": "presence_penalty",
+            "optional": true,
+            "type": "number",
+            "description": "Presence penalty"
+          },
+          {
+            "key": "frequency_penalty",
+            "optional": true,
+            "type": "number",
+            "description": "Frequency penalty"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string",
+            "description": "Unique identifier representing end-user"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index: number, message: { role: string, content: string }, finish_reason?: string | null }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ollama.api.openai.createOpenAiCompletion",
+      "shortPath": "openai.createOpenAiCompletion",
+      "description": "Tool to create OpenAI-compatible text completions using Ollama models. Use when you need text generation with OpenAI API format compatibility beyond chat-based interactions.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the model to use"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string | string[]",
+            "description": "Prompt text to complete"
+          },
+          {
+            "key": "suffix",
+            "optional": true,
+            "type": "string",
+            "description": "Suffix to insert"
+          },
+          {
+            "key": "max_tokens",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum tokens to generate"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number",
+            "description": "Sampling temperature"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number",
+            "description": "Nucleus sampling probability"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number",
+            "description": "Number of completions to generate"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to stream responses"
+          },
+          {
+            "key": "logprobs",
+            "optional": true,
+            "type": "number",
+            "description": "Include log probabilities"
+          },
+          {
+            "key": "echo",
+            "optional": true,
+            "type": "boolean",
+            "description": "Echo prompt in completion"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Stop sequences"
+          },
+          {
+            "key": "presence_penalty",
+            "optional": true,
+            "type": "number",
+            "description": "Presence penalty"
+          },
+          {
+            "key": "frequency_penalty",
+            "optional": true,
+            "type": "number",
+            "description": "Frequency penalty"
+          },
+          {
+            "key": "best_of",
+            "optional": true,
+            "type": "number",
+            "description": "Generates best_of completions server-side"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string",
+            "description": "Unique identifier representing end-user"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index: number, text: string, logprobs?: any | null, finish_reason?: string | null }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ prompt_tokens: number, completion_tokens: number, total_tokens: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ollama.api.openai.listOpenAiModels",
+      "shortPath": "openai.listOpenAiModels",
+      "description": "Tool to list available models using OpenAI-compatible API format. Use when you need to retrieve locally available Ollama models with metadata following OpenAI's model list format.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: string, created?: number, owned_by?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
