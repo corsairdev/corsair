@@ -83,6 +83,17 @@ describe('Whoisfreaks schema', () => {
 		).toThrow();
 		expect(() =>
 			WhoisfreaksEndpointInputSchemas.bulkDomainAvailabilityCheck.parse({
+				domainNames: [],
+			}),
+		).toThrow();
+		expect(() =>
+			WhoisfreaksEndpointInputSchemas.bulkDomainAvailabilityCheck.parse({
+				domain: 'example',
+				tld: [],
+			}),
+		).toThrow();
+		expect(() =>
+			WhoisfreaksEndpointInputSchemas.bulkDomainAvailabilityCheck.parse({
 				domainNames: ['example.com'],
 				tld: ['com'],
 			}),

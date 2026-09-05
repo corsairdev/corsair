@@ -184,8 +184,8 @@ const DomainAvailabilityCheckOutputSchema = z
 const BulkDomainAvailabilityCheckInputSchema = z
 	.object({
 		domain: z.string().min(1).optional(),
-		domainNames: z.array(z.string().min(1)).max(100).optional(),
-		tld: z.array(z.string().min(1)).max(100).optional(),
+		domainNames: z.array(z.string().min(1)).min(1).max(100).optional(),
+		tld: z.array(z.string().min(1)).min(1).max(100).optional(),
 	})
 	.refine(
 		(v) =>
