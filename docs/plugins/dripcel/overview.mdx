@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "SMS marketing platform for campaigns, automations, and two-way customer text messaging."
+---
+
+Use **Dripcel** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 18 typed API operations
+- 8 synced entities (`campaigns`, `contacts`, `deliveries`, `emailTemplates`, `replies`, `sales`, and 2 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/dripcel
+```
+```bash yarn
+yarn add corsair @corsair-dev/dripcel
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/dripcel
+```
+```bash bun
+bun add corsair @corsair-dev/dripcel
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { dripcel } from '@corsair-dev/dripcel';
+
+export const corsair = createCorsair({
+	plugins: [
+		dripcel(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+dripcel()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'dripcel',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`balance.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.dripcel.api.balance.get({});
+```
+
+
+**`contacts.addTags`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.dripcel.api.contacts.addTags({});
+```
+
+
+See the full list on the [API](/plugins/dripcel/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.dripcel.db.<entity>.search()` and `.list()`: `campaigns`, `contacts`, `deliveries`, `emailTemplates`, `replies`, `sales`, `sendLogs`, `tags`.
+
+See [Database](/plugins/dripcel/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/dripcel/api">
+    Every `dripcel.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/dripcel/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

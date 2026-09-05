@@ -30,12 +30,30 @@ export type PluginInfo = {
 	} | null;
 };
 
+/**
+ * Where a single plugin stands for a tenant:
+ * - `connected` — a usable credential is stored; calls go through.
+ * - `missing_credentials` — the plugin is configured but the tenant hasn't
+ *   authorized it (or the stored credential can no longer be used).
+ * - `not_connected` — the plugin isn't set up for this tenant at all.
+ */
 export type PluginConnectionState =
 	| 'connected'
 	| 'missing_credentials'
 	| 'not_connected';
 
+/** Per-plugin connection state for a tenant, keyed by plugin id, e.g.
+ * `{ linear: 'connected', slack: 'not_connected' }`. */
 export type ConnectionStatus = Record<string, PluginConnectionState>;
+
+/** A live connect-request — the client reads this on-demand to drive the dialog. */
+export type ConnectRequest = {
+	plugin: string;
+	connectUrl: string;
+	requestedAt: string;
+	/** The tenant the server resolved this request under, so the client can scope. */
+	tenantId: string;
+};
 
 export type ManagementOk = { ok: true };
 
@@ -61,6 +79,8 @@ export type CreateConnectLinkInput = {
 export type ConnectLink = {
 	connectUrl: string;
 	expiresAt?: string;
+	/** The tenant the link connects, so the client scopes the flow to it. */
+	tenantId: string;
 };
 
 export type ResolvedConnectLink = {

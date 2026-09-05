@@ -1,0 +1,309 @@
+---
+title: Database
+description: "Ascora local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Ascora plugin syncs data locally. Use `corsair.ascora.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Contacts
+
+Path: `ascora.db.contacts.search`
+
+```ts
+const rows = await corsair.ascora.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `contactId` | `string` | equals, contains, startsWith, endsWith, in |
+| `customerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `emailAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `phoneNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `mobileNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `defaultContact` | `boolean` | equals |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Customers
+
+Path: `ascora.db.customers.search`
+
+```ts
+const rows = await corsair.ascora.db.customers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `customerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `customerNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `customerName` | `string` | equals, contains, startsWith, endsWith, in |
+| `companyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `contactFirstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `contactLastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `emailAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `phoneNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `mobileNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `onHold` | `boolean` | equals |
+| `streetLine1` | `string` | equals, contains, startsWith, endsWith, in |
+| `streetSuburb` | `string` | equals, contains, startsWith, endsWith, in |
+| `streetPostcode` | `string` | equals, contains, startsWith, endsWith, in |
+| `streetState` | `string` | equals, contains, startsWith, endsWith, in |
+| `streetCountry` | `string` | equals, contains, startsWith, endsWith, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Inventory Categories
+
+Path: `ascora.db.inventoryCategories.search`
+
+```ts
+const rows = await corsair.ascora.db.inventoryCategories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `categoryId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `categoryNumber` | `number` | equals, gt, gte, lt, lte, in |
+| `parentCategoryId` | `string` | equals, contains, startsWith, endsWith, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Jobs
+
+Path: `ascora.db.jobs.search`
+
+```ts
+const rows = await corsair.ascora.db.jobs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobName` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobStatus` | `number` | equals, gt, gte, lt, lte, in |
+| `jobStatusText` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateCreated` | `string` | equals, contains, startsWith, endsWith, in |
+| `pricingMethod` | `string` | equals, contains, startsWith, endsWith, in |
+| `totalIncTax` | `number` | equals, gt, gte, lt, lte, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Kits
+
+Path: `ascora.db.kits.search`
+
+```ts
+const rows = await corsair.ascora.db.kits.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `kitId` | `string` | equals, contains, startsWith, endsWith, in |
+| `partNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `unitSellExTax` | `number` | equals, gt, gte, lt, lte, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Labour Roles
+
+Path: `ascora.db.labourRoles.search`
+
+```ts
+const rows = await corsair.ascora.db.labourRoles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `labourRoleId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `hourlyRateExTax` | `number` | equals, gt, gte, lt, lte, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Quotes
+
+Path: `ascora.db.quotes.search`
+
+```ts
+const rows = await corsair.ascora.db.quotes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `quoteId` | `string` | equals, contains, startsWith, endsWith, in |
+| `quoteNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `quoteName` | `string` | equals, contains, startsWith, endsWith, in |
+| `quoteStatus` | `number` | equals, gt, gte, lt, lte, in |
+| `quotationDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `totalIncTax` | `number` | equals, gt, gte, lt, lte, in |
+| `pricingMethod` | `string` | equals, contains, startsWith, endsWith, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Supplier Invoices
+
+Path: `ascora.db.supplierInvoices.search`
+
+```ts
+const rows = await corsair.ascora.db.supplierInvoices.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `supplierInvoiceId` | `string` | equals, contains, startsWith, endsWith, in |
+| `trackingNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `invoiceDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `dueDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `totalAmountIncTax` | `number` | equals, gt, gte, lt, lte, in |
+| `sentToAccounts` | `boolean` | equals |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Suppliers
+
+Path: `ascora.db.suppliers.search`
+
+```ts
+const rows = await corsair.ascora.db.suppliers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `supplierId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `businessNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `emailAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `mobile` | `string` | equals, contains, startsWith, endsWith, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Supplies
+
+Path: `ascora.db.supplies.search`
+
+```ts
+const rows = await corsair.ascora.db.supplies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `supplyId` | `string` | equals, contains, startsWith, endsWith, in |
+| `partNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `unitCostExTax` | `number` | equals, gt, gte, lt, lte, in |
+| `unitSellExTax` | `number` | equals, gt, gte, lt, lte, in |
+| `unitSellIncTax` | `number` | equals, gt, gte, lt, lte, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

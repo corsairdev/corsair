@@ -8,6 +8,7 @@ import type {
 	OAuthCallbackResult,
 	PermissionLookupInput,
 	PermissionRecord,
+	PluginConnectionState,
 	PluginInfo,
 	Tenant,
 } from '../../core/management/types';
@@ -22,7 +23,7 @@ import type { CorsairClientOptions, CorsairManagementClient } from '../types';
 // requirement while still letting apps share a single fetch-client across hooks.
 //
 // Usage:
-//   const { useTenants, usePlugins, useConnectionStatus, useConnect } =
+//   const { useTenants, usePlugins, useConnectionStatus } =
 //     createCorsairReactClient({ baseURL: '/api/corsair' });
 //
 //   function Dashboard() {
@@ -303,17 +304,37 @@ export function createCorsairReactClient(opts: CorsairReactClientOptions) {
 	};
 }
 
+export type { ConnectAppearance, ConnectTheme } from './connect-overlay';
+// ─────────────────────────────────────────────────────────────────────────────
+// Corsair Connect — wrap the app in <CorsairProvider>: an auth-missing failure
+// opens the connect dialog and resumes once connected, with no per-call code.
+// Server-read regions gate through <CorsairErrorBoundary> (Next `error.tsx`);
+// useConnections reads this user's connection status and drives the connect flow
+// (proactive `connect`, mutation `call`).
+// ─────────────────────────────────────────────────────────────────────────────
+export {
+	CorsairErrorBoundary,
+	type CorsairErrorBoundaryProps,
+} from './error-boundary';
+export {
+	CorsairProvider,
+	type CorsairProviderProps,
+	type UseConnectionsResult,
+	useConnections,
+} from './provider';
+
 // Re-export types that hook consumers need
 export type {
 	AsyncState,
-	ConnectLink,
 	ConnectionStatus,
+	ConnectLink,
 	CreateConnectLinkInput,
 	CreateTenantInput,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
 	PermissionLookupInput,
 	PermissionRecord,
+	PluginConnectionState,
 	PluginInfo,
 	Tenant,
 };

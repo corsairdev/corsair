@@ -1,141 +1,131 @@
 ---
 title: Overview
-description: "DigitalOcean plugin for Corsair"
+description: "Cloud infrastructure provider for droplets, Kubernetes, databases, and developer hosting."
 ---
 
-Use **DigitalOcean** through Corsair: one client, typed API calls, optional local DB sync.
+Use **DigitalOcean** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
 - 47 typed API operations
-- 3 database entities synced for fast `.search()` / `.list()` queries
+- 3 synced entities (`databases`, `droplets`, `volumes`) for fast `.search()` / `.list()`
 
 ## Setup
 
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/digitalocean
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/digitalocean
 ```
+```bash yarn
+yarn add corsair @corsair-dev/digitalocean
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/digitalocean
+```
+```bash bun
+bun add corsair @corsair-dev/digitalocean
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { digitalocean } from '@corsair-dev/digitalocean';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [digitalocean()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { digitalocean } from '@corsair-dev/digitalocean';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [digitalocean()],
+	plugins: [
+		digitalocean(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/digitalocean/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=digitalocean
-```
+<Tab title="API Key (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/digitalocean/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=digitalocean --tenant=<tenantId>
-```
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
-
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 digitalocean()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=digitalocean` (see [Get Credentials](/plugins/digitalocean/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 </Tabs>
 
+</Step>
 
-## Query synced data
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-Synced entities support `corsair.digitalocean.db.<entity>.search()` and `.list()`. See [Database](/plugins/digitalocean/database) for filters and operators.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'digitalocean',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
+
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `databases.listAllDatabases`
+**`databases.listAllDatabases`**
 
 ```ts
-await corsair.digitalocean.api.databases.listAllDatabases({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.databases.listAllDatabases({});
 ```
 
 
-**Write-style (write):** `databases.createDatabaseCluster`
+**`databases.createDatabaseCluster`**
 
 ```ts
-await corsair.digitalocean.api.databases.createDatabaseCluster({});
+const tenant = corsair.withTenant('acme');
+await tenant.digitalocean.api.databases.createDatabaseCluster({});
 ```
 
 
-See the full list on the [API](/plugins/digitalocean/api) page. Use `pnpm corsair list --plugin=digitalocean` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/digitalocean/api) page.
 
----
+## Query synced data
 
-## Hooks
+Synced entities support `tenant.digitalocean.db.<entity>.search()` and `.list()`: `databases`, `droplets`, `volumes`.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+See [Database](/plugins/digitalocean/database) for filters and operators.
 
----
+## What's next
 
-## Reference
-
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/digitalocean/api) |
-| Database | [Database](/plugins/digitalocean/database) |
-| Credentials | [Get credentials](/plugins/digitalocean/get-credentials) |
-
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/digitalocean/api">
+    Every `digitalocean.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/digitalocean/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,3525 @@
+---
+title: API
+description: "API reference for NextDNS: every `nextdns.api.*` operation with input and output types."
+---
+
+Every `nextdns.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Allowlist
+
+### add
+
+`allowlist.add`
+
+Allow a domain
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.allowlist.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`allowlist.delete`
+
+Remove a domain from the allowlist
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.allowlist.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`allowlist.get`
+
+List allowed domains
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.allowlist.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### replace
+
+`allowlist.replace`
+
+Replace the entire allowlist
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nextdns.api.allowlist.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `domains` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  id: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`allowlist.update`
+
+Toggle an allowlist entry active/inactive
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.allowlist.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `active` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Analytics
+
+### destinations
+
+`analytics.destinations`
+
+Get query-destination analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.analytics.destinations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `type` | `countries \| gafam` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    cursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### devices
+
+`analytics.devices`
+
+Get per-device analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.analytics.devices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    cursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### dnssec
+
+`analytics.dnssec`
+
+Get DNSSEC validation analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.analytics.dnssec({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    cursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### domains
+
+`analytics.domains`
+
+Get per-domain analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.analytics.domains({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    cursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### encryption
+
+`analytics.encryption`
+
+Get encrypted-vs-plain DNS analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.analytics.encryption({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    cursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ips
+
+`analytics.ips`
+
+Get per-client-IP analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.analytics.ips({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    cursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ipVersions
+
+`analytics.ipVersions`
+
+Get IPv4/IPv6 distribution analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.analytics.ipVersions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    cursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### protocols
+
+`analytics.protocols`
+
+Get DNS protocol distribution analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.analytics.protocols({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    cursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryTypes
+
+`analytics.queryTypes`
+
+Get DNS query-type analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.analytics.queryTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    cursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reasons
+
+`analytics.reasons`
+
+Get blocking-reason analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.analytics.reasons({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    cursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`analytics.status`
+
+Get query-status analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.analytics.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    cursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Auth
+
+### login
+
+`auth.login`
+
+Verify the API key is valid
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.auth.login({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean` | Yes | — |
+| `profileCount` | `number` | Yes | — |
+
+
+
+---
+
+## Denylist
+
+### add
+
+`denylist.add`
+
+Block a domain
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.denylist.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`denylist.list`
+
+List blocked domains
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.denylist.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### remove
+
+`denylist.remove`
+
+Unblock a domain
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.denylist.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### replace
+
+`denylist.replace`
+
+Replace the entire denylist
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nextdns.api.denylist.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `domains` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  id: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`denylist.update`
+
+Toggle a denylist entry active/inactive
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.denylist.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `active` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Logs
+
+### clear
+
+`logs.clear`
+
+Clear all stored query logs - cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.nextdns.api.logs.clear({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cleared` | `boolean` | Yes | — |
+
+
+
+---
+
+### download
+
+`logs.download`
+
+Download the CSV log export
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.logs.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### get
+
+`logs.get`
+
+Get raw or filtered DNS query logs
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.logs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `raw` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  pagination?: {
+    cursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Parental Control
+
+### addCategory
+
+`parentalControl.addCategory`
+
+Block or allow a content category
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.parentalControl.addCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `porn \| gambling \| piracy \| dating \| social-networks` | Yes | — |
+| `active` | `boolean` | No | — |
+| `recreation` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### addService
+
+`parentalControl.addService`
+
+Block or allow a specific service
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.parentalControl.addService({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `recreation` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### deleteCategory
+
+`parentalControl.deleteCategory`
+
+Remove a content category restriction
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.parentalControl.deleteCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `porn \| gambling \| piracy \| dating \| social-networks` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### deleteService
+
+`parentalControl.deleteService`
+
+Remove a service restriction
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.parentalControl.deleteService({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`parentalControl.get`
+
+Get parental control settings
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.parentalControl.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `services` | `object[]` | No | — |
+| `categories` | `object[]` | No | — |
+| `recreation` | `object` | No | — |
+| `safeSearch` | `boolean` | No | — |
+| `youtubeRestrictedMode` | `boolean` | No | — |
+| `blockBypass` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="services full type">
+
+```ts
+{
+  id: string,
+  active?: boolean,
+  recreation?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+  id: string,
+  active?: boolean,
+  recreation?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="recreation full type">
+
+```ts
+{
+  times?: {
+  } | null,
+  timezone?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCategories
+
+`parentalControl.getCategories`
+
+Get blocked/allowed content categories
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.parentalControl.getCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  active?: boolean,
+  recreation?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getServices
+
+`parentalControl.getServices`
+
+Get blocked/allowed services
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.parentalControl.getServices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  active?: boolean,
+  recreation?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### replaceCategories
+
+`parentalControl.replaceCategories`
+
+Replace the entire set of category restrictions
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nextdns.api.parentalControl.replaceCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `categories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id: porn | gambling | piracy | dating | social-networks,
+  active?: boolean,
+  recreation?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  active?: boolean,
+  recreation?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### replaceServices
+
+`parentalControl.replaceServices`
+
+Replace the entire set of service restrictions
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nextdns.api.parentalControl.replaceServices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `services` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="services full type">
+
+```ts
+{
+  id: string,
+  active?: boolean,
+  recreation?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  active?: boolean,
+  recreation?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`parentalControl.update`
+
+Update safe search, YouTube restricted mode, or bypass blocking
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.parentalControl.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `safeSearch` | `boolean` | No | — |
+| `youtubeRestrictedMode` | `boolean` | No | — |
+| `blockBypass` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `services` | `object[]` | No | — |
+| `categories` | `object[]` | No | — |
+| `recreation` | `object` | No | — |
+| `safeSearch` | `boolean` | No | — |
+| `youtubeRestrictedMode` | `boolean` | No | — |
+| `blockBypass` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="services full type">
+
+```ts
+{
+  id: string,
+  active?: boolean,
+  recreation?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+  id: string,
+  active?: boolean,
+  recreation?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="recreation full type">
+
+```ts
+{
+  times?: {
+  } | null,
+  timezone?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateCategory
+
+`parentalControl.updateCategory`
+
+Toggle a content category restriction
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.parentalControl.updateCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `porn \| gambling \| piracy \| dating \| social-networks` | Yes | — |
+| `active` | `boolean` | No | — |
+| `recreation` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### updateService
+
+`parentalControl.updateService`
+
+Toggle a service restriction
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.parentalControl.updateService({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `recreation` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Privacy
+
+### addBlocklist
+
+`privacy.addBlocklist`
+
+Enable an additional privacy blocklist
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.privacy.addBlocklist({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### addNative
+
+`privacy.addNative`
+
+Block a native tracking service from a specific vendor
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.privacy.addNative({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### deleteBlocklist
+
+`privacy.deleteBlocklist`
+
+Remove a privacy blocklist
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.privacy.deleteBlocklist({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### deleteNative
+
+`privacy.deleteNative`
+
+Unblock a native tracking service
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.privacy.deleteNative({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`privacy.get`
+
+Get privacy settings
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.privacy.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `blocklists` | `object[]` | No | — |
+| `natives` | `object[]` | No | — |
+| `disguisedTrackers` | `boolean` | No | — |
+| `allowAffiliate` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocklists full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  website?: string | null,
+  description?: string | null,
+  entries?: number | null,
+  updatedOn?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="natives full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replaceBlocklists
+
+`privacy.replaceBlocklists`
+
+Replace the entire set of enabled privacy blocklists
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nextdns.api.privacy.replaceBlocklists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  website?: string | null,
+  description?: string | null,
+  entries?: number | null,
+  updatedOn?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### replaceNatives
+
+`privacy.replaceNatives`
+
+Replace the entire set of blocked native trackers
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nextdns.api.privacy.replaceNatives({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`privacy.update`
+
+Update disguised-tracker and affiliate-link settings
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.privacy.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `disguisedTrackers` | `boolean` | No | — |
+| `allowAffiliate` | `boolean` | No | — |
+| `blocklists` | `object[]` | No | — |
+| `natives` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocklists full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  website?: string | null,
+  description?: string | null,
+  entries?: number | null,
+  updatedOn?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="natives full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `blocklists` | `object[]` | No | — |
+| `natives` | `object[]` | No | — |
+| `disguisedTrackers` | `boolean` | No | — |
+| `allowAffiliate` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocklists full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  website?: string | null,
+  description?: string | null,
+  entries?: number | null,
+  updatedOn?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="natives full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Profiles
+
+### create
+
+`profiles.create`
+
+Create a new profile
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.profiles.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `security` | `object` | No | — |
+| `privacy` | `object` | No | — |
+| `parentalControl` | `object` | No | — |
+| `settings` | `object` | No | — |
+| `denylist` | `object[]` | No | — |
+| `allowlist` | `object[]` | No | — |
+| `rewrites` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="security full type">
+
+```ts
+{
+  threatIntelligenceFeeds?: boolean,
+  aiThreatDetection?: boolean,
+  googleSafeBrowsing?: boolean,
+  cryptojacking?: boolean,
+  dnsRebinding?: boolean,
+  idnHomographs?: boolean,
+  typosquatting?: boolean,
+  dga?: boolean,
+  nrd?: boolean,
+  ddns?: boolean,
+  parking?: boolean,
+  csam?: boolean,
+  tlds?: {
+    id: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="privacy full type">
+
+```ts
+{
+  blocklists?: {
+    id: string,
+    name?: string | null,
+    website?: string | null,
+    description?: string | null,
+    entries?: number | null,
+    updatedOn?: string | null
+  }[],
+  natives?: {
+    id: string
+  }[],
+  disguisedTrackers?: boolean,
+  allowAffiliate?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="parentalControl full type">
+
+```ts
+{
+  services?: {
+    id: string,
+    active?: boolean,
+    recreation?: boolean
+  }[],
+  categories?: {
+    id: string,
+    active?: boolean,
+    recreation?: boolean
+  }[],
+  recreation?: {
+    times?: {
+    } | null,
+    timezone?: string | null
+  },
+  safeSearch?: boolean,
+  youtubeRestrictedMode?: boolean,
+  blockBypass?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  logs?: {
+    enabled?: boolean,
+    drop?: {
+      ip?: boolean,
+      domain?: boolean
+    },
+    retention?: number | null,
+    location?: string | null
+  },
+  blockPage?: {
+    enabled?: boolean
+  },
+  performance?: {
+    ecs?: boolean,
+    cacheBoost?: boolean,
+    cnameFlattening?: boolean
+  },
+  web3?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="denylist full type">
+
+```ts
+{
+  id: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="allowlist full type">
+
+```ts
+{
+  id: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="rewrites full type">
+
+```ts
+{
+  id?: string,
+  name: string,
+  type?: string,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fingerprint` | `string` | No | — |
+| `role` | `string` | No | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`profiles.delete`
+
+Delete a profile - cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.nextdns.api.profiles.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`profiles.get`
+
+Get full profile details including nested settings and lists
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.profiles.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `fingerprint` | `string` | No | — |
+| `security` | `object` | No | — |
+| `privacy` | `object` | No | — |
+| `parentalControl` | `object` | No | — |
+| `settings` | `object` | No | — |
+| `setup` | `object` | No | — |
+| `denylist` | `object[]` | No | — |
+| `allowlist` | `object[]` | No | — |
+| `rewrites` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="security full type">
+
+```ts
+{
+  threatIntelligenceFeeds?: boolean,
+  aiThreatDetection?: boolean,
+  googleSafeBrowsing?: boolean,
+  cryptojacking?: boolean,
+  dnsRebinding?: boolean,
+  idnHomographs?: boolean,
+  typosquatting?: boolean,
+  dga?: boolean,
+  nrd?: boolean,
+  ddns?: boolean,
+  parking?: boolean,
+  csam?: boolean,
+  tlds?: {
+    id: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="privacy full type">
+
+```ts
+{
+  blocklists?: {
+    id: string,
+    name?: string | null,
+    website?: string | null,
+    description?: string | null,
+    entries?: number | null,
+    updatedOn?: string | null
+  }[],
+  natives?: {
+    id: string
+  }[],
+  disguisedTrackers?: boolean,
+  allowAffiliate?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="parentalControl full type">
+
+```ts
+{
+  services?: {
+    id: string,
+    active?: boolean,
+    recreation?: boolean
+  }[],
+  categories?: {
+    id: string,
+    active?: boolean,
+    recreation?: boolean
+  }[],
+  recreation?: {
+    times?: {
+    } | null,
+    timezone?: string | null
+  },
+  safeSearch?: boolean,
+  youtubeRestrictedMode?: boolean,
+  blockBypass?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  logs?: {
+    enabled?: boolean,
+    drop?: {
+      ip?: boolean,
+      domain?: boolean
+    },
+    retention?: number | null,
+    location?: string | null
+  },
+  blockPage?: {
+    enabled?: boolean
+  },
+  performance?: {
+    ecs?: boolean,
+    cacheBoost?: boolean,
+    cnameFlattening?: boolean
+  },
+  web3?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="setup full type">
+
+```ts
+{
+  ipv4?: string[],
+  ipv6?: string[],
+  linkedIp?: {
+    servers?: string[],
+    ip?: string | null,
+    ddns?: string | null,
+    updateToken?: string
+  } | null,
+  dnscrypt?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="denylist full type">
+
+```ts
+{
+  id: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="allowlist full type">
+
+```ts
+{
+  id: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="rewrites full type">
+
+```ts
+{
+  id?: string,
+  name: string,
+  type?: string,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`profiles.list`
+
+List every profile the API key can see
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.profiles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  fingerprint?: string | null,
+  role?: string | null,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### rename
+
+`profiles.rename`
+
+Rename a profile
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.profiles.rename({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`profiles.update`
+
+Partially update a profile
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.profiles.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `security` | `object` | No | — |
+| `privacy` | `object` | No | — |
+| `parentalControl` | `object` | No | — |
+| `settings` | `object` | No | — |
+| `denylist` | `object[]` | No | — |
+| `allowlist` | `object[]` | No | — |
+| `rewrites` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="security full type">
+
+```ts
+{
+  threatIntelligenceFeeds?: boolean,
+  aiThreatDetection?: boolean,
+  googleSafeBrowsing?: boolean,
+  cryptojacking?: boolean,
+  dnsRebinding?: boolean,
+  idnHomographs?: boolean,
+  typosquatting?: boolean,
+  dga?: boolean,
+  nrd?: boolean,
+  ddns?: boolean,
+  parking?: boolean,
+  csam?: boolean,
+  tlds?: {
+    id: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="privacy full type">
+
+```ts
+{
+  blocklists?: {
+    id: string,
+    name?: string | null,
+    website?: string | null,
+    description?: string | null,
+    entries?: number | null,
+    updatedOn?: string | null
+  }[],
+  natives?: {
+    id: string
+  }[],
+  disguisedTrackers?: boolean,
+  allowAffiliate?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="parentalControl full type">
+
+```ts
+{
+  services?: {
+    id: string,
+    active?: boolean,
+    recreation?: boolean
+  }[],
+  categories?: {
+    id: string,
+    active?: boolean,
+    recreation?: boolean
+  }[],
+  recreation?: {
+    times?: {
+    } | null,
+    timezone?: string | null
+  },
+  safeSearch?: boolean,
+  youtubeRestrictedMode?: boolean,
+  blockBypass?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  logs?: {
+    enabled?: boolean,
+    drop?: {
+      ip?: boolean,
+      domain?: boolean
+    },
+    retention?: number | null,
+    location?: string | null
+  },
+  blockPage?: {
+    enabled?: boolean
+  },
+  performance?: {
+    ecs?: boolean,
+    cacheBoost?: boolean,
+    cnameFlattening?: boolean
+  },
+  web3?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="denylist full type">
+
+```ts
+{
+  id: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="allowlist full type">
+
+```ts
+{
+  id: string,
+  active?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="rewrites full type">
+
+```ts
+{
+  id?: string,
+  name: string,
+  type?: string,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Rewrites
+
+### add
+
+`rewrites.add`
+
+Add a DNS rewrite rule
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.rewrites.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `content` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`rewrites.delete`
+
+Delete a DNS rewrite rule
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.rewrites.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`rewrites.get`
+
+List DNS rewrite rules
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.rewrites.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name: string,
+  type?: string,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Security
+
+### addBlockedTld
+
+`security.addBlockedTld`
+
+Add a top-level domain to the security blocklist
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.security.addBlockedTld({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`security.get`
+
+Get security settings
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.security.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threatIntelligenceFeeds` | `boolean` | No | — |
+| `aiThreatDetection` | `boolean` | No | — |
+| `googleSafeBrowsing` | `boolean` | No | — |
+| `cryptojacking` | `boolean` | No | — |
+| `dnsRebinding` | `boolean` | No | — |
+| `idnHomographs` | `boolean` | No | — |
+| `typosquatting` | `boolean` | No | — |
+| `dga` | `boolean` | No | — |
+| `nrd` | `boolean` | No | — |
+| `ddns` | `boolean` | No | — |
+| `parking` | `boolean` | No | — |
+| `csam` | `boolean` | No | — |
+| `tlds` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tlds full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTlds
+
+`security.getTlds`
+
+Get blocked top-level domains
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.security.getTlds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeBlockedTld
+
+`security.removeBlockedTld`
+
+Remove a top-level domain from the security blocklist
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.security.removeBlockedTld({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### replaceTlds
+
+`security.replaceTlds`
+
+Replace the entire blocked-TLD list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nextdns.api.security.replaceTlds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `tlds` | `string[]` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`security.update`
+
+Update multiple security settings in one call
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.security.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `threatIntelligenceFeeds` | `boolean` | No | — |
+| `aiThreatDetection` | `boolean` | No | — |
+| `googleSafeBrowsing` | `boolean` | No | — |
+| `cryptojacking` | `boolean` | No | — |
+| `dnsRebinding` | `boolean` | No | — |
+| `idnHomographs` | `boolean` | No | — |
+| `typosquatting` | `boolean` | No | — |
+| `dga` | `boolean` | No | — |
+| `nrd` | `boolean` | No | — |
+| `ddns` | `boolean` | No | — |
+| `parking` | `boolean` | No | — |
+| `csam` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threatIntelligenceFeeds` | `boolean` | No | — |
+| `aiThreatDetection` | `boolean` | No | — |
+| `googleSafeBrowsing` | `boolean` | No | — |
+| `cryptojacking` | `boolean` | No | — |
+| `dnsRebinding` | `boolean` | No | — |
+| `idnHomographs` | `boolean` | No | — |
+| `typosquatting` | `boolean` | No | — |
+| `dga` | `boolean` | No | — |
+| `nrd` | `boolean` | No | — |
+| `ddns` | `boolean` | No | — |
+| `parking` | `boolean` | No | — |
+| `csam` | `boolean` | No | — |
+| `tlds` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tlds full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Settings
+
+### get
+
+`settings.get`
+
+Get all settings for a profile
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.settings.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object` | No | — |
+| `blockPage` | `object` | No | — |
+| `performance` | `object` | No | — |
+| `web3` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  enabled?: boolean,
+  drop?: {
+    ip?: boolean,
+    domain?: boolean
+  },
+  retention?: number | null,
+  location?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="blockPage full type">
+
+```ts
+{
+  enabled?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="performance full type">
+
+```ts
+{
+  ecs?: boolean,
+  cacheBoost?: boolean,
+  cnameFlattening?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBlockPage
+
+`settings.getBlockPage`
+
+Get block page settings
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.settings.getBlockPage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `boolean` | No | — |
+
+
+
+---
+
+### getLogs
+
+`settings.getLogs`
+
+Get logging settings
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.settings.getLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `boolean` | No | — |
+| `drop` | `object` | No | — |
+| `retention` | `number` | No | — |
+| `location` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="drop full type">
+
+```ts
+{
+  ip?: boolean,
+  domain?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPerformance
+
+`settings.getPerformance`
+
+Get performance settings (ECS, cache boost, CNAME flattening)
+
+**Risk:** `read`
+
+```ts
+await corsair.nextdns.api.settings.getPerformance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ecs` | `boolean` | No | — |
+| `cacheBoost` | `boolean` | No | — |
+| `cnameFlattening` | `boolean` | No | — |
+
+
+
+---
+
+### logClientIps
+
+`settings.logClientIps`
+
+Enable or disable logging of client IPs
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.settings.logClientIps({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `boolean` | No | — |
+| `drop` | `object` | No | — |
+| `retention` | `number` | No | — |
+| `location` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="drop full type">
+
+```ts
+{
+  ip?: boolean,
+  domain?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### logDomains
+
+`settings.logDomains`
+
+Enable or disable logging of queried domains
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.settings.logDomains({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `boolean` | No | — |
+| `drop` | `object` | No | — |
+| `retention` | `number` | No | — |
+| `location` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="drop full type">
+
+```ts
+{
+  ip?: boolean,
+  domain?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`settings.update`
+
+Update multiple settings categories in one call
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.settings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `logs` | `object` | No | — |
+| `blockPage` | `object` | No | — |
+| `performance` | `object` | No | — |
+| `web3` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  enabled?: boolean,
+  drop?: {
+    ip?: boolean,
+    domain?: boolean
+  },
+  retention?: number | null,
+  location?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="blockPage full type">
+
+```ts
+{
+  enabled?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="performance full type">
+
+```ts
+{
+  ecs?: boolean,
+  cacheBoost?: boolean,
+  cnameFlattening?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object` | No | — |
+| `blockPage` | `object` | No | — |
+| `performance` | `object` | No | — |
+| `web3` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  enabled?: boolean,
+  drop?: {
+    ip?: boolean,
+    domain?: boolean
+  },
+  retention?: number | null,
+  location?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="blockPage full type">
+
+```ts
+{
+  enabled?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="performance full type">
+
+```ts
+{
+  ecs?: boolean,
+  cacheBoost?: boolean,
+  cnameFlattening?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateBlockPage
+
+`settings.updateBlockPage`
+
+Enable or disable the branded block page
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.settings.updateBlockPage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `boolean` | No | — |
+
+
+
+---
+
+### updateLogs
+
+`settings.updateLogs`
+
+Update log retention, storage location, and privacy options
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.settings.updateLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `enabled` | `boolean` | No | — |
+| `retention` | `3600` | No | — |
+| `location` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `boolean` | No | — |
+| `drop` | `object` | No | — |
+| `retention` | `number` | No | — |
+| `location` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="drop full type">
+
+```ts
+{
+  ip?: boolean,
+  domain?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updatePerformance
+
+`settings.updatePerformance`
+
+Update performance optimization settings
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.settings.updatePerformance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `ecs` | `boolean` | No | — |
+| `cacheBoost` | `boolean` | No | — |
+| `cnameFlattening` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ecs` | `boolean` | No | — |
+| `cacheBoost` | `boolean` | No | — |
+| `cnameFlattening` | `boolean` | No | — |
+
+
+
+---
+
+## Setup
+
+### updateLinkedIp
+
+`setup.updateLinkedIp`
+
+Update the profile's Linked IP to the caller's current public IP
+
+**Risk:** `write`
+
+```ts
+await corsair.nextdns.api.setup.updateLinkedIp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `servers` | `string[]` | No | — |
+| `ip` | `string` | No | — |
+| `ddns` | `string` | No | — |
+| `updateToken` | `string` | No | — |
+
+
+
+---
+

@@ -1,0 +1,3399 @@
+{
+  "id": "googledrive",
+  "displayName": "Google Drive",
+  "description": "Cloud file storage for uploading, organizing, sharing, and syncing documents online.",
+  "npmPackageName": "@corsair-dev/googledrive",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 22,
+    "webhooks": 1,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "channel_id",
+        "changes_page_token"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googledrive.api.files.copy",
+      "shortPath": "files.copy",
+      "description": "Copy a file in Google Drive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "supportsAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsTeamDrives",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "explicitlyTrashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "appProperties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "spaces",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webContentLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasThumbnail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "thumbnailLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnailVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ownedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "permissionIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "hasAugmentedPermissions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folderColorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalFilename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullFileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "md5Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quotaBytesUsed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headRevisionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAppAuthorized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resourceKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha1Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha256Checksum",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.files.createFromText",
+      "shortPath": "files.createFromText",
+      "description": "Create a new Drive file from text content",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "explicitlyTrashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "appProperties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "spaces",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webContentLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasThumbnail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "thumbnailLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnailVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ownedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "permissionIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "hasAugmentedPermissions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folderColorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalFilename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullFileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "md5Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quotaBytesUsed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headRevisionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAppAuthorized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resourceKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha1Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha256Checksum",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Permanently delete a file [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "supportsAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsTeamDrives",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googledrive.api.files.download",
+      "shortPath": "files.download",
+      "description": "Download the content of a file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "acknowledgeAbuse",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "googledrive.api.files.get",
+      "shortPath": "files.get",
+      "description": "Get metadata for a specific file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "acknowledgeAbuse",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsTeamDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includePermissionsForView",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "explicitlyTrashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "appProperties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "spaces",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webContentLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasThumbnail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "thumbnailLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnailVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ownedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "permissionIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "hasAugmentedPermissions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folderColorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalFilename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullFileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "md5Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quotaBytesUsed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headRevisionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAppAuthorized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resourceKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha1Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha256Checksum",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.files.list",
+      "shortPath": "files.list",
+      "description": "List files in Google Drive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spaces",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "corpora",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeItemsFromAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includePermissionsForView",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "supportsAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsTeamDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "teamDriveId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incompleteSearch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: {}, appProperties?: {}, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.files.move",
+      "shortPath": "files.move",
+      "description": "Move a file to a different folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "addParents",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "removeParents",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "supportsAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsTeamDrives",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "explicitlyTrashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "appProperties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "spaces",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webContentLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasThumbnail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "thumbnailLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnailVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ownedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "permissionIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "hasAugmentedPermissions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folderColorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalFilename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullFileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "md5Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quotaBytesUsed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headRevisionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAppAuthorized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resourceKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha1Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha256Checksum",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.files.share",
+      "shortPath": "files.share",
+      "description": "Share a file by granting permissions to users",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "user | group | domain | anyone"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "owner | organizer | fileOrganizer | writer | commenter | reader"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowFileDiscovery",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expirationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sendNotificationEmail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "emailMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "supportsAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsTeamDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "moveToNewOwnersRoot",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "transferOwnership",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "user | group | domain | anyone"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "owner | organizer | fileOrganizer | writer | commenter | reader"
+          },
+          {
+            "key": "allowFileDiscovery",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photoLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expirationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "user | domain"
+          },
+          {
+            "key": "pendingOwner",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.files.update",
+      "shortPath": "files.update",
+      "description": "Update the content or metadata of a file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "addParents",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "removeParents",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "appProperties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "supportsAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsTeamDrives",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "explicitlyTrashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "appProperties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "spaces",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webContentLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasThumbnail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "thumbnailLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnailVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ownedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "permissionIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "hasAugmentedPermissions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folderColorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalFilename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullFileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "md5Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quotaBytesUsed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headRevisionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAppAuthorized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resourceKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha1Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha256Checksum",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a file to Google Drive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "explicitlyTrashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "appProperties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "spaces",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webContentLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasThumbnail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "thumbnailLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnailVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ownedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "permissionIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "hasAugmentedPermissions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folderColorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalFilename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullFileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "md5Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quotaBytesUsed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headRevisionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAppAuthorized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resourceKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha1Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha256Checksum",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a new folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "explicitlyTrashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "appProperties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "spaces",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webContentLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasThumbnail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "thumbnailLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnailVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ownedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "permissionIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "hasAugmentedPermissions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folderColorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalFilename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullFileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "md5Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quotaBytesUsed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headRevisionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAppAuthorized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resourceKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha1Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha256Checksum",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.folders.delete",
+      "shortPath": "folders.delete",
+      "description": "Permanently delete a folder and its contents [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "supportsAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsTeamDrives",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googledrive.api.folders.get",
+      "shortPath": "folders.get",
+      "description": "Get metadata for a specific folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "supportsAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsTeamDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includePermissionsForView",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "explicitlyTrashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "appProperties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "spaces",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webContentLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasThumbnail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "thumbnailLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnailVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "viewedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMeTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ownedByMe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "permissionIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "hasAugmentedPermissions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folderColorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originalFilename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullFileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileExtension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "md5Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quotaBytesUsed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headRevisionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAppAuthorized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resourceKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha1Checksum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha256Checksum",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List folders in Google Drive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spaces",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "corpora",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeItemsFromAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includePermissionsForView",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "supportsAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsTeamDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "teamDriveId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incompleteSearch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: {}, appProperties?: {}, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.folders.share",
+      "shortPath": "folders.share",
+      "description": "Share a folder by granting permissions to users",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "user | group | domain | anyone"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "owner | organizer | fileOrganizer | writer | commenter | reader"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowFileDiscovery",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expirationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sendNotificationEmail",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "emailMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "supportsAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsTeamDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "moveToNewOwnersRoot",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "transferOwnership",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "user | group | domain | anyone"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "owner | organizer | fileOrganizer | writer | commenter | reader"
+          },
+          {
+            "key": "allowFileDiscovery",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photoLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expirationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "user | domain"
+          },
+          {
+            "key": "pendingOwner",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.search.filesAndFolders",
+      "shortPath": "search.filesAndFolders",
+      "description": "Search for files and folders in Google Drive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spaces",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "corpora",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "driveId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeItemsFromAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includePermissionsForView",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "supportsAllDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "supportsTeamDrives",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "teamDriveId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incompleteSearch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: {}, appProperties?: {}, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.sharedDrives.create",
+      "shortPath": "sharedDrives.create",
+      "description": "Create a new shared drive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "themeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "colorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "restrictions",
+            "optional": true,
+            "type": "{ adminManagedRestrictions?: boolean, copyRequiresWriterPermission?: boolean, domainUsersOnly?: boolean, driveMembersOnly?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "themeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "colorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.sharedDrives.delete",
+      "shortPath": "sharedDrives.delete",
+      "description": "Permanently delete a shared drive [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googledrive.api.sharedDrives.get",
+      "shortPath": "sharedDrives.get",
+      "description": "Get info about a shared drive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "useDomainAdminAccess",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "themeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "colorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.sharedDrives.list",
+      "shortPath": "sharedDrives.list",
+      "description": "List shared drives",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "useDomainAdminAccess",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "drives",
+            "optional": true,
+            "type": "{ kind?: string, id?: string, name?: string, themeId?: string, colorRgb?: string, createdTime?: string, hidden?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.sharedDrives.update",
+      "shortPath": "sharedDrives.update",
+      "description": "Update a shared drive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driveId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "themeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "colorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "restrictions",
+            "optional": true,
+            "type": "{ adminManagedRestrictions?: boolean, copyRequiresWriterPermission?: boolean, domainUsersOnly?: boolean, driveMembersOnly?: boolean }"
+          },
+          {
+            "key": "useDomainAdminAccess",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "themeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "colorRgb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.storage.getQuota",
+      "shortPath": "storage.getQuota",
+      "description": "Get the user's Google Drive storage quota and usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "usageInDrive",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "usageInDriveTrash",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "googledrive.webhooks.driveChanged",
+      "shortPath": "driveChanged",
+      "description": "A file or folder in Google Drive was created, updated, or deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ data?: string, attributes?: {}, messageId?: string, publishTime?: string }"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "responseType": "{ type: fileChanged | folderChanged, fileId?: string, folderId?: string, changeType: created | updated | deleted | trashed | untrashed, file?: custom, folder?: custom, filePath?: string, change?: custom, binaryData?: string | null, allFiles: { file: custom, filePath: string, change: custom, changeType: created | updated | deleted | trashed | untrashed, binaryData?: string | null }[], allFolders: { folder: custom, filePath: string, change: custom, changeType: created | updated | deleted | trashed | untrashed }[] }",
+      "usageExample": "googledrive({\n    webhookHooks: {\n        driveChanged: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "googledrive.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mimeType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "starred",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "trashed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "explicitlyTrashed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webViewLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webContentLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "iconLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hasThumbnail",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "thumbnailLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thumbnailVersion",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "viewedByMe",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "viewedByMeTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedByMeTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedByMe",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "shared",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "ownedByMe",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "viewersCanCopyContent",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "copyRequiresWriterPermission",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "writersCanShare",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasAugmentedPermissions",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "folderColorRgb",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "originalFilename",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fullFileExtension",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fileExtension",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "md5Checksum",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quotaBytesUsed",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "headRevisionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isAppAuthorized",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "resourceKey",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sha1Checksum",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sha256Checksum",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "filePath",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googledrive.db.folders.search",
+      "entityName": "folders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mimeType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "starred",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "trashed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "explicitlyTrashed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webViewLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webContentLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "iconLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hasThumbnail",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "thumbnailLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thumbnailVersion",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "viewedByMe",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "viewedByMeTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedByMeTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedByMe",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "shared",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "ownedByMe",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "viewersCanCopyContent",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "copyRequiresWriterPermission",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "writersCanShare",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasAugmentedPermissions",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "folderColorRgb",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "filePath",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googledrive.db.sharedDrives.search",
+      "entityName": "sharedDrives",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "themeId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "colorRgb",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hidden",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import type {
 	ConnectionStatus,
 	ConnectLink,
+	ConnectRequest,
 	CreateConnectLinkInput,
 	CreateTenantInput,
 	ManagementOk,
@@ -47,6 +48,15 @@ export type CorsairManagementClient = {
 		createLink: (input: CreateConnectLinkInput) => Promise<ConnectLink>;
 		resolve: (state: string) => Promise<ResolvedConnectLink>;
 		oauthCallback: (input: OAuthCallbackInput) => Promise<OAuthCallbackResult>;
+	};
+	connectRequest: {
+		get: (query?: {
+			tenantId?: string;
+		}) => Promise<{ request: ConnectRequest | null }>;
+		clear: (input?: {
+			tenantId?: string;
+			plugin?: string;
+		}) => Promise<{ ok: true }>;
 	};
 };
 

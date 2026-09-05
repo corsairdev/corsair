@@ -334,7 +334,6 @@ const VideosGetBatchResponseSchema = z
 		partial_failure: z.boolean().optional(),
 		nextPageToken: z.string().optional(),
 		prevPageToken: z.string().optional(),
-		composio_execution_message: z.string().optional(),
 	})
 	.loose();
 
@@ -382,7 +381,6 @@ const VideosUpdateInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('Updated privacy status (public, private, unlisted)'),
-	composio_execution_message: z.string().optional(),
 });
 
 const VideosUpdateResponseSchema = z
@@ -1067,7 +1065,6 @@ const SubscriptionsSubscribeResponseSchema = z
 			})
 			.optional(),
 		already_subscribed: z.boolean().optional(),
-		composio_execution_message: z.string().optional(),
 	})
 	.loose();
 

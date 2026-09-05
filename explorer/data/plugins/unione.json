@@ -1,0 +1,1578 @@
+{
+  "id": "unione",
+  "displayName": "UniOne",
+  "description": "Transactional email service for sending bulk mail, templates, and deliverability management.",
+  "npmPackageName": "@corsair-dev/unione",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 30,
+    "webhooks": 2,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "user_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "unione.api.domain.delete",
+      "shortPath": "domain.delete",
+      "description": "Tool to delete a sender domain from the account. Use only when you are certain: the domain must be re-added and re-verified to send from it again.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.domain.manage",
+      "shortPath": "domain.manage",
+      "description": "Tool to inspect and verify sender domains: fetch DNS records, trigger a verification or DKIM check, or list domains. Deleting a domain is a separate tool.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "get_dns_records | validate_verification | validate_dkim | list"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verification-record",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "dkim",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "{ domain: string, verification-record?: { value?: string, status?: string }, dkim?: { key?: string, status?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.email.list",
+      "shortPath": "email.list",
+      "description": "Tool to start an export of email events in a time range. Creates an asynchronous event dump and returns a dump_id; poll eventDump.get for the download URLs. It does not return events directly.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "all_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ job_id?: string, status?: string, delivery_status?: string, email?: string, email_from?: string, domain?: string, campaign_id?: string }"
+          },
+          {
+            "key": "dump_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "csv | csv_gzip"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dump_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.email.schedule",
+      "shortPath": "email.schedule",
+      "description": "Tool to send a transactional email at a future time, at most 24 hours ahead. Same as email.send plus a send_at timestamp.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "{ email: string, substitutions?: {}, metadata?: {} }[]"
+          },
+          {
+            "key": "from_email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_to_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ html?: string, plaintext?: string, amp?: string }"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "template_engine",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "global_substitutions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "global_metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "track_links",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "track_read",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "send_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "failed_emails",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.email.send",
+      "shortPath": "email.send",
+      "description": "Tool to send a transactional email immediately. Requires recipients, from_email, subject, and either a body or a template_id.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "{ email: string, substitutions?: {}, metadata?: {} }[]"
+          },
+          {
+            "key": "from_email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_to_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ html?: string, plaintext?: string, amp?: string }"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "template_engine",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "global_substitutions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "global_metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "track_links",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "track_read",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "failed_emails",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.email.statistics",
+      "shortPath": "email.statistics",
+      "description": "Tool to start a per-day aggregate export of send statistics. Creates an asynchronous event dump and returns a dump_id; poll eventDump.get for the result. It does not return statistics directly.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dump_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.email.subscribe",
+      "shortPath": "email.subscribe",
+      "description": "Tool to resubscribe a recipient who previously unsubscribed. Use when you need to restore a user subscription status after they opt in again.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.email.unsubscribe",
+      "shortPath": "email.unsubscribe",
+      "description": "Tool to unsubscribe an email from future emails. Use when you need to stop all further transactional emails.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.emailValidation.batch",
+      "shortPath": "emailValidation.batch",
+      "description": "Tool to validate a list of email addresses. UniOne has no bulk method, so each address costs one validation from the account quota. Addresses that fail are returned with status \"error\" rather than failing the whole batch.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ status?: string, email?: string, result?: string, cause?: string, validity?: number, local_part?: string, domain?: string, mx_found?: boolean, mx_record?: string | number, did_you_mean?: string, processed_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.eventDump.create",
+      "shortPath": "eventDump.create",
+      "description": "Tool to create an asynchronous CSV event dump. Use when you need to export transactional email events for a specified time window.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "all_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ job_id?: string, status?: string, delivery_status?: string, email?: string, email_from?: string, domain?: string, campaign_id?: string }"
+          },
+          {
+            "key": "dump_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "aggregate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delimiter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "csv | csv_gzip"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dump_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.eventDump.createForJob",
+      "shortPath": "eventDump.createForJob",
+      "description": "Tool to export the delivery events of one send job. UniOne has no method that reads a job directly, so this creates an event dump filtered by job_id and returns a dump_id to poll with eventDump.get.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dump_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.eventDump.delete",
+      "shortPath": "eventDump.delete",
+      "description": "Tool to delete an event dump file and remove it from the queue or storage. Use when you need to clean up an existing event dump by its dump_id.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dump_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.eventDump.get",
+      "shortPath": "eventDump.get",
+      "description": "Tool to retrieve the status and download URLs of an event dump. Use when you need to check if a dump is ready and get its files.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dump_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_dump",
+            "optional": true,
+            "type": "{ dump_id: string, dump_status?: string, files?: { url: string, size?: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.eventDump.list",
+      "shortPath": "eventDump.list",
+      "description": "Tool to retrieve the full list of event dumps. Use when you need to view all existing event-dump tasks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_dumps",
+            "optional": true,
+            "type": "{ dump_id: string, dump_status?: string, files?: { url: string, size?: number }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.suppression.delete",
+      "shortPath": "suppression.delete",
+      "description": "Tool to remove an email from the suppression list. Use when you need to re-enable sending emails to an address that was previously unsubscribed or suppressed.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.suppression.get",
+      "shortPath": "suppression.get",
+      "description": "Tool to check if an email is suppressed and retrieve the reason and date. Use when verifying why an email cannot receive messages.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "all_projects",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "suppressions",
+            "optional": true,
+            "type": "{ email?: string, project_id?: string, cause?: string, source?: string, is_deletable?: boolean, created?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.suppression.list",
+      "shortPath": "suppression.list",
+      "description": "Tool to return the suppression list since a given date. Use when auditing bounced, unsubscribed, or blocked recipients.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cause",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "suppressions",
+            "optional": true,
+            "type": "{ email?: string, project_id?: string, cause?: string, source?: string, is_deletable?: boolean, created?: string }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.system.info",
+      "shortPath": "system.info",
+      "description": "Tool to retrieve account details and the current billing period: emails included and sent, validations included and used. Use before sending large campaigns.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_accounting",
+            "optional": true,
+            "type": "{ email_counter?: number, email_counter_limit?: number, email_counter_mode?: any }"
+          },
+          {
+            "key": "accounting",
+            "optional": true,
+            "type": "{ period_start?: string, period_end?: string, emails_included?: number, emails_sent?: number, validations_included?: number, validations_used?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.system.ping",
+      "shortPath": "system.ping",
+      "description": "Tool to check API connectivity and that the API key is accepted. Use as a health check before a batch of operations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.tag.delete",
+      "shortPath": "tag.delete",
+      "description": "Tool to delete a specific tag. Use when you have confirmed the tag ID you wish to remove.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.tag.list",
+      "shortPath": "tag.list",
+      "description": "Tool to retrieve all user-defined tags. Use when you need to fetch the full list of tags after authentication.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ tag_id: number, tag: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.template.delete",
+      "shortPath": "template.delete",
+      "description": "Tool to delete a template by ID. Use when you need to permanently remove a template from the account.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.template.get",
+      "shortPath": "template.get",
+      "description": "Tool to get template properties by ID. Use when you need to retrieve the full template configuration and content for a specific template.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ id?: string, name?: string, editor_type?: string, template_engine?: string, global_substitutions?: {}, global_metadata?: {}, body?: { html?: string, plaintext?: string, amp?: string }, subject?: string, from_email?: string, from_name?: string, reply_to?: string, reply_to_name?: string, track_links?: number, track_read?: number, headers?: {}, attachments?: { type: string, name: string, content: string }[], inline_attachments?: { type: string, name: string, content: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.template.list",
+      "shortPath": "template.list",
+      "description": "Tool to list email templates. Use when you need to retrieve available templates for transactional emails.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "{ id?: string, name?: string, editor_type?: string, template_engine?: string, global_substitutions?: {}, global_metadata?: {}, body?: { html?: string, plaintext?: string, amp?: string }, subject?: string, from_email?: string, from_name?: string, reply_to?: string, reply_to_name?: string, track_links?: number, track_read?: number, headers?: {}, attachments?: { type: string, name: string, content: string }[], inline_attachments?: { type: string, name: string, content: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.template.set",
+      "shortPath": "template.set",
+      "description": "Tool to set or update an email template. Use when you need to create or modify transactional email templates before sending messages.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "{ id?: string, name?: string, editor_type?: string, template_engine?: string, global_substitutions?: {}, global_metadata?: {}, body?: { html?: string, plaintext?: string, amp?: string }, subject?: string, from_email?: string, from_name?: string, reply_to?: string, reply_to_name?: string, track_links?: number, track_read?: number, headers?: {}, attachments?: { type: string, name: string, content: string }[], inline_attachments?: { type: string, name: string, content: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ id?: string, name?: string, editor_type?: string, template_engine?: string, global_substitutions?: {}, global_metadata?: {}, body?: { html?: string, plaintext?: string, amp?: string }, subject?: string, from_email?: string, from_name?: string, reply_to?: string, reply_to_name?: string, track_links?: number, track_read?: number, headers?: {}, attachments?: { type: string, name: string, content: string }[], inline_attachments?: { type: string, name: string, content: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.webhook.delete",
+      "shortPath": "webhook.delete",
+      "description": "Tool to delete a webhook event notification handler by its URL. Use when you need to stop receiving callback notifications for a specific webhook.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.webhook.get",
+      "shortPath": "webhook.get",
+      "description": "Tool to retrieve webhook configuration by its URL. Use when you need to check the current settings of an event notification handler.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "{ id?: string | number | null, url: string, status?: string | null, event_format?: string | null, delivery_info?: number | null, single_event?: number | null, max_parallel?: number | null, updated_at?: string | null, events?: { spam_block?: string[] | null, email_status?: string[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.webhook.list",
+      "shortPath": "webhook.list",
+      "description": "Tool to list every webhook configured on the account. Use when you need to see all event notification handlers and their settings.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ id?: string | number | null, url: string, status?: string | null, event_format?: string | null, delivery_info?: number | null, single_event?: number | null, max_parallel?: number | null, updated_at?: string | null, events?: { spam_block?: string[] | null, email_status?: string[] | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.webhook.set",
+      "shortPath": "webhook.set",
+      "description": "Tool to set or edit a webhook event notification handler. Use when you need to configure your webhook for event callbacks.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_info",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "single_event",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_parallel",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ spam_block?: string[] | null, email_status?: string[] | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "{ id?: string | number | null, url: string, status?: string | null, event_format?: string | null, delivery_info?: number | null, single_event?: number | null, max_parallel?: number | null, updated_at?: string | null, events?: { spam_block?: string[] | null, email_status?: string[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "unione.api.webhook.types",
+      "shortPath": "webhook.types",
+      "description": "Tool to list the event names accepted by webhook.set. Returns a static list published in the UniOne callback docs; it makes no API call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email_status",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "spam_block",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "unione.webhooks.emailStatus",
+      "shortPath": "emailStatus",
+      "description": "Transactional email status events from UniOne",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "auth",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events_by_user",
+            "optional": true,
+            "type": "{ user_id?: string | number, project_id?: string, project_name?: string, events?: { event_name: string, event_data?: { job_id?: string, email?: string, status?: string, event_time?: string } }[] }[]"
+          }
+        ]
+      },
+      "responseType": "{ auth?: string, events_by_user?: { user_id?: string | number, project_id?: string, project_name?: string, events?: { event_name: string, event_data?: { job_id?: string, email?: string, status?: string, event_time?: string } }[] }[] }",
+      "usageExample": "unione({\n    webhookHooks: {\n        emailStatus: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "unione.webhooks.spamBlock",
+      "shortPath": "spamBlock",
+      "description": "SMTP spam-block events from UniOne",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "auth",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events_by_user",
+            "optional": true,
+            "type": "{ user_id?: string | number, project_id?: string, project_name?: string, events?: { event_name: string, event_data?: { job_id?: string, email?: string, status?: string, event_time?: string } }[] }[]"
+          }
+        ]
+      },
+      "responseType": "{ auth?: string, events_by_user?: { user_id?: string | number, project_id?: string, project_name?: string, events?: { event_name: string, event_data?: { job_id?: string, email?: string, status?: string, event_time?: string } }[] }[] }",
+      "usageExample": "unione({\n    webhookHooks: {\n        spamBlock: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "unione.db.account.search",
+      "entityName": "account",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "emails_included",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "emails_sent",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "validations_included",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "validations_used",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "period_start",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period_end",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "unione.db.domains.search",
+      "entityName": "domains",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "verification_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "verification_value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dkim_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dkim_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "unione.db.eventDumps.search",
+      "entityName": "eventDumps",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dump_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dump_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "unione.db.suppressions.search",
+      "entityName": "suppressions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cause",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_deletable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "unione.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "unione.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "editor_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "template_engine",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "unione.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event_format",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "delivery_info",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "single_event",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_parallel",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

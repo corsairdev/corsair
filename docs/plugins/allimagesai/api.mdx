@@ -1,0 +1,310 @@
+---
+title: API
+description: "API reference for All Images AI: every `allimagesai.api.*` operation with input and output types."
+---
+
+Every `allimagesai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Api Keys
+
+### check
+
+`apiKeys.check`
+
+Validate the configured API key and return the email address and optional name of the account it belongs to.
+
+**Risk:** `read`
+
+```ts
+await corsair.allimagesai.api.apiKeys.check({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+## Credits
+
+### get
+
+`credits.get`
+
+Return the remaining and total credits for each quota bucket on the account.
+
+**Risk:** `read`
+
+```ts
+await corsair.allimagesai.api.credits.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="credits full type">
+
+```ts
+{
+  type?: global | f_images | f_images_print | f_images_packImage | f_images_upscaleHD | f_images_upscaleUHD | f_websites | f_queues | null,
+  credit: number,
+  creditTotal?: number | null,
+  unlimited?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Image Generations
+
+### delete
+
+`imageGenerations.delete`
+
+Permanently delete one or more image generation batches by their print ids.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.allimagesai.api.imageGenerations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `printIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `printIds` | `string[]` | Yes | — |
+
+
+
+---
+
+### list
+
+`imageGenerations.list`
+
+List image generation batches created for bulk use, filterable by name and tag. Paginated with limit and offset.
+
+**Risk:** `read`
+
+```ts
+await corsair.allimagesai.api.imageGenerations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `name` | `string` | No | — |
+| `tag` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filteredResults` | `object` | No | — |
+| `prints` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filteredResults full type">
+
+```ts
+number | {
+}
+```
+</Accordion>
+
+<Accordion title="prints full type">
+
+```ts
+{
+  id?: string,
+  name: string,
+  prompt: string,
+  status: number,
+  params: {
+    name: sujetMode | templatePrompt | angle | photographe | time | weather | format | camera | interdiction | version | chaos | stylize | fromImageUrl,
+    value: string
+  }[],
+  processMode?: relax | fast | null,
+  images?: {
+    id?: string,
+    url?: string
+  }[],
+  nbImages?: number | null,
+  tags?: string[],
+  metaData?: {
+  } | null,
+  createdAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### listDownloaded
+
+`images.listDownloaded`
+
+List images previously downloaded on this account, optionally filtered by download date. Paginated with limit and offset.
+
+**Risk:** `read`
+
+```ts
+await corsair.allimagesai.api.images.listDownloaded({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `afterCreatedAt` | `string \| Date` | No | — |
+| `beforeCreatedAt` | `string \| Date` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filteredResults` | `object` | No | — |
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filteredResults full type">
+
+```ts
+number | {
+}
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  urlFull: string,
+  urlUpscale?: string | null,
+  urlUpscaleUHD: string,
+  downloadedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register a webhook endpoint on the API key to receive print lifecycle callbacks. Defaults to print.failed and print.completed.
+
+**Risk:** `write`
+
+```ts
+await corsair.allimagesai.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `events` | `test \| print.created \| print.active \| print.failed \| print.progress \| print.completed[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Retrieve a registered webhook by its id, returning its URL. The provider does not return the subscribed event list.
+
+**Risk:** `read`
+
+```ts
+await corsair.allimagesai.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiKeyWebhookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `apiKeyId` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+

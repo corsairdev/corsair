@@ -1,0 +1,4654 @@
+---
+title: API
+description: "API reference for BaseLinker: every `baselinker.api.*` operation with input and output types."
+---
+
+Every `baselinker.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Connect
+
+### getConnectIntegrationContractors
+
+`connect.getConnectIntegrationContractors`
+
+Tool to retrieve a list of contractors connected to a selected Base Connect integration. Use when you need to discover available contractors for a specific integration before performing contractor-specific operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.connect.getConnectIntegrationContractors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connect_integration_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `contractors` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contractors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getConnectIntegrations
+
+`connect.getConnectIntegrations`
+
+Tool to retrieve a list of all Base Connect integrations on this account. Returns both integrations created on the account and integrations to which the account has connected.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.connect.getConnectIntegrations({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `integrations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="integrations full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Couriers
+
+### createPackageManual
+
+`couriers.createPackageManual`
+
+Tool to register shipping details for orders when shipments are created outside BaseLinker. Use when you need to add tracking numbers and courier information for manually created shipments. Supports marking packages as return shipments.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.couriers.createPackageManual({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `courier_code` | `string` | No | — |
+| `package_number` | `string` | No | — |
+| `pickup_date` | `number` | No | — |
+| `return_shipment` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `package_id` | `number` | No | — |
+| `package_number` | `string` | No | — |
+
+
+
+---
+
+### getCourierAccounts
+
+`couriers.getCourierAccounts`
+
+Tool to retrieve the list of accounts connected to a given courier. Use when you need to identify available courier accounts before performing shipping operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.couriers.getCourierAccounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `courier_code` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `accounts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="accounts full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCourierFields
+
+`couriers.getCourierFields`
+
+Tool to retrieve the form fields required for creating shipments with a specific courier. Use when you need to discover which fields are required or optional for shipment creation.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.couriers.getCourierFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `courier_code` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `multi_packages` | `boolean` | No | — |
+| `fields` | `object` | No | — |
+| `package_fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="package_fields full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCourierPackagesStatusHistory
+
+`couriers.getCourierPackagesStatusHistory`
+
+Tool to retrieve the history of status changes for courier packages. Use when you need to track the delivery progress of shipments through their complete status timeline. Returns chronological status updates for up to 100 packages per request.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.couriers.getCourierPackagesStatusHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `package_ids` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="package_ids full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `packages_history` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="packages_history full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCouriersList
+
+`couriers.getCouriersList`
+
+Tool to retrieve a list of available couriers from BaseLinker. Use when you need to discover which shipping carriers are configured before creating packages or querying courier-specific fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.couriers.getCouriersList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `couriers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="couriers full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderPackages
+
+`couriers.getOrderPackages`
+
+Tool to download shipments previously created for a selected order. Use when you need to retrieve tracking numbers, courier information, and delivery status for order packages.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.couriers.getOrderPackages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `packages` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="packages full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPackageDetails
+
+`couriers.getPackageDetails`
+
+Tool to get detailed information about a package. If the package contains multiple subpackages, information about all of them is included in the response. Use when you need comprehensive package dimensions, weight, COD, insurance, and shipping cost details.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.couriers.getPackageDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `package_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `package_details` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="package_details full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProtocol
+
+`couriers.getProtocol`
+
+Tool to download a parcel protocol for selected shipments. Use when you need to retrieve shipping protocol documents (PDF or HTML) for packages sent via a courier. The protocol is available only if supported by the chosen courier.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.couriers.getProtocol({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `courier_code` | `string` | Yes | — |
+| `package_ids` | `object` | No | — |
+| `package_numbers` | `object` | No | — |
+| `account_id` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="package_ids full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="package_numbers full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `extension` | `string` | No | — |
+| `protocol` | `string` | No | — |
+
+
+
+---
+
+### getRequestParcelPickupFields
+
+`couriers.getRequestParcelPickupFields`
+
+Tool to retrieve additional fields for a parcel pickup request from a specific courier. Use when preparing to request a parcel pickup and need to know which additional information the courier requires (e.g., pickup time, contact details, special instructions).
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.couriers.getRequestParcelPickupFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `courier_code` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runRequestParcelPickup
+
+`couriers.runRequestParcelPickup`
+
+Tool to request a parcel pickup for previously created shipments. Use when you need to schedule a courier pickup for packages that have been created. The method sends a pickup request to the courier API if the courier supports it. Use getRequestParcelPickupFields first to check if the courier requires additional fields.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.couriers.runRequestParcelPickup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `courier_code` | `string` | Yes | — |
+| `package_ids` | `object` | No | — |
+| `package_numbers` | `object` | No | — |
+| `account_id` | `number` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="package_ids full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="package_numbers full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `pickup_number` | `string` | No | — |
+
+
+
+---
+
+## Documents
+
+### addInvoice
+
+`documents.addInvoice`
+
+Tool to issue an order invoice in BaseLinker. Use when you need to generate an invoice for an existing order using a specific numbering series.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.documents.addInvoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `series_id` | `number` | No | — |
+| `vat_rate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `invoice_id` | `number` | No | — |
+
+
+
+---
+
+### addInvoiceCorrection
+
+`documents.addInvoiceCorrection`
+
+Tool to issue an order invoice correction. Use when correcting pricing errors, handling returns, or updating invoice data. Either original_invoice_id or return_order_id must be provided.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.documents.addInvoiceCorrection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `original_invoice_id` | `number` | Yes | — |
+| `return_order_id` | `number` | No | — |
+| `series_id` | `number` | No | — |
+| `date_sell` | `number` | No | — |
+| `correcting_reason` | `number` | No | — |
+| `correcting_items` | `boolean` | No | — |
+| `correcting_data` | `boolean` | No | — |
+| `invoice_fullname` | `string` | No | — |
+| `invoice_company` | `string` | No | — |
+| `invoice_address` | `string` | No | — |
+| `invoice_postcode` | `string` | No | — |
+| `invoice_city` | `string` | No | — |
+| `invoice_state` | `string` | No | — |
+| `invoice_country_code` | `string` | No | — |
+| `invoice_nip` | `string` | No | — |
+| `items` | `object` | No | — |
+| `fv_payment` | `string` | No | — |
+| `fv_person` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `invoice_id` | `number` | No | — |
+
+
+
+---
+
+### getInvoiceFile
+
+`documents.getInvoiceFile`
+
+Tool to retrieve an invoice file from BaseLinker in base64-encoded format. Use when you need to download an invoice document generated by BaseLinker or from an external accounting system.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.documents.getInvoiceFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | — |
+| `get_external` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `invoice` | `string` | No | — |
+| `invoice_number` | `string` | No | — |
+
+
+
+---
+
+### getInvoices
+
+`documents.getInvoices`
+
+Download invoices from BaseLinker order manager with optional filtering. Use this tool to: - Fetch all invoices from a specific date onwards - Retrieve a single invoice by ID or order ID - Filter invoices by numbering series - Paginate through invoices using id_from parameter Returns up to 100 invoices per request. Use getSeries to get available series IDs for filtering.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.documents.getInvoices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | No | — |
+| `order_id` | `number` | No | — |
+| `date_from` | `number` | No | — |
+| `id_from` | `number` | No | — |
+| `series_id` | `number` | No | — |
+| `get_external_invoices` | `boolean` | No | — |
+| `get_government_data` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `invoices` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getNewReceipts
+
+`documents.getNewReceipts`
+
+Tool to retrieve receipts waiting to be issued. Use after confirming fiscal printer availability; fetch pending receipts and mark them with setOrderReceipt.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.documents.getNewReceipts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `series_id` | `number` | No | — |
+| `id_from` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `orders` | `object` | No | — |
+| `receipt_id` | `number` | No | — |
+| `series_id` | `number` | No | — |
+| `receipt_full_nr` | `string` | No | — |
+| `order_id` | `number` | No | — |
+| `date_add` | `number` | No | — |
+| `payment_method` | `string` | No | — |
+| `nip` | `string` | No | — |
+| `products` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="products full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getReceipts
+
+`documents.getReceipts`
+
+Tool to retrieve issued receipts from BaseLinker. Use when you need to fetch historical receipt data. Max 100 receipts returned per request.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.documents.getReceipts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `series_id` | `number` | No | — |
+| `id_from` | `number` | No | — |
+| `date_from` | `number` | No | — |
+| `date_to` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `receipts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="receipts full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSeries
+
+`documents.getSeries`
+
+Tool to download invoice/receipt numbering series. Use when you need to retrieve all series configurations before issuing documents.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.documents.getSeries({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `series` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="series full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setOrderReceipt
+
+`documents.setOrderReceipt`
+
+Tool to mark orders with a receipt already issued. Use after printing receipts retrieved from getNewReceipts to confirm receipt issuance.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.documents.setOrderReceipt({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_id` | `number` | Yes | — |
+| `receipt_nr` | `string` | Yes | — |
+| `date` | `number` | Yes | — |
+| `printer_error` | `boolean` | Yes | — |
+| `printer_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+## External Storages
+
+### addCategory
+
+`externalStorages.addCategory`
+
+Tool to add a new category to BaseLinker storage (shops, warehouses, or BaseLinker inventory). Use when you need to create a new category in a connected storage's category structure. Requires a storage_id which can be obtained from GetExternalStoragesList or use 'bl_1' for BaseLinker inventory.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.externalStorages.addCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storage_id` | `string` | Yes | — |
+| `category_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `parent_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `storage_id` | `string` | No | — |
+| `category_id` | `number` | No | — |
+
+
+
+---
+
+### getExternalStorageProductsQuantity
+
+`externalStorages.getExternalStorageProductsQuantity`
+
+Retrieve stock quantities from an external storage (shop/wholesaler) connected to BaseLinker. Use this tool to check current inventory levels for products in external integrations. Returns product IDs with their quantities, including variant-level stock if applicable.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.externalStorages.getExternalStorageProductsQuantity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `storage_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `storage_id` | `string` | No | — |
+| `products` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getExternalStoragesList
+
+`externalStorages.getExternalStoragesList`
+
+Retrieve a list of external storages (shops, warehouses, wholesalers) connected to BaseLinker that can be referenced via API. Returns storage IDs (e.g., 'shop_2444', 'warehouse_1334'), names, and supported API methods for each storage. Use this to discover available integrations before calling storage-specific methods like getExternalStorageProductsList.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.externalStorages.getExternalStoragesList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `storages` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="storages full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStoragesList
+
+`externalStorages.getStoragesList`
+
+Tool to download a list of available storages accessible via API. Use when you need to discover storage endpoints and capabilities before performing storage-specific operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.externalStorages.getStoragesList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `storages` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="storages full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Inventory
+
+### addInventory
+
+`inventory.addInventory`
+
+Tool to add or update a BaseLinker catalog (inventory). Use when you need to create a new catalog or update an existing one with the same identifier.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.inventory.addInventory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `languages` | `object` | No | — |
+| `default_language` | `string` | No | — |
+| `price_groups` | `object` | No | — |
+| `default_price_group` | `number` | No | — |
+| `warehouses` | `object` | No | — |
+| `default_warehouse` | `string` | No | — |
+| `reservations` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="languages full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="price_groups full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="warehouses full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `inventory_id` | `number` | No | — |
+
+
+
+---
+
+### addInventoryCategory
+
+`inventory.addInventoryCategory`
+
+Tool to add or update a category in the BaseLinker catalog. Use when you need to create a new category or update an existing one. Adding a category with the same identifier again updates the previously saved category.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.inventory.addInventoryCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_id` | `number` | Yes | — |
+| `category_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `parent_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `category_id` | `number` | No | — |
+
+
+
+---
+
+### addInventoryManufacturer
+
+`inventory.addInventoryManufacturer`
+
+Tool to add or update a manufacturer in the BaseLinker catalog. Use when you need to create a new manufacturer or update an existing one. Adding a manufacturer with the same identifier again updates the previously saved manufacturer.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.inventory.addInventoryManufacturer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `manufacturer_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `manufacturer_name` | `string` | No | — |
+| `manufacturer_photo` | `string` | No | — |
+| `manufacturer_url` | `string` | No | — |
+| `manufacturer_street` | `string` | No | — |
+| `manufacturer_postcode` | `string` | No | — |
+| `manufacturer_city` | `string` | No | — |
+| `manufacturer_state` | `string` | No | — |
+| `manufacturer_country_code` | `string` | No | — |
+| `manufacturer_email` | `string` | No | — |
+| `manufacturer_phone` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `manufacturer_id` | `number` | No | — |
+
+
+
+---
+
+### addInventoryPayer
+
+`inventory.addInventoryPayer`
+
+Tool to add a new payer or update an existing one in BaseLinker storage. Use when you need to create a new payer with contact details or update an existing payer's information.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.inventory.addInventoryPayer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payer_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `address` | `string` | No | — |
+| `postcode` | `string` | No | — |
+| `city` | `string` | No | — |
+| `tax_no` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `payer_id` | `number` | No | — |
+
+
+
+---
+
+### addInventoryPriceGroup
+
+`inventory.addInventoryPriceGroup`
+
+Tool to create or update a price group in BaseLinker storage. Use when you need to define pricing tiers (e.g., wholesale, retail, VIP) that can be later assigned to inventory items via addInventory method.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.inventory.addInventoryPriceGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `price_group_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `price_group_type` | `string` | No | — |
+| `source_price_group_id` | `number` | No | — |
+| `price_multiplier` | `number` | No | — |
+| `price_addition` | `number` | No | — |
+| `is_bundle_price_calculated` | `boolean` | No | — |
+| `bundle_price_multiplier` | `number` | No | — |
+| `bundle_price_addition` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `price_group_id` | `number` | No | — |
+
+
+
+---
+
+### addInventoryProduct
+
+`inventory.addInventoryProduct`
+
+Add a new product to BaseLinker catalog or update an existing product. Use when creating inventory items or modifying product details like SKU, price, stock, dimensions, and text fields. Provide product_id to update existing products, omit it to create new ones.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.inventory.addInventoryProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_id` | `number` | Yes | — |
+| `product_id` | `number` | No | — |
+| `parent_id` | `number` | No | — |
+| `is_bundle` | `boolean` | No | — |
+| `sku` | `string` | No | — |
+| `ean` | `string` | No | — |
+| `ean_additional` | `object` | No | — |
+| `asin` | `string` | No | — |
+| `tags` | `object` | No | — |
+| `tax_rate` | `number` | No | — |
+| `weight` | `number` | No | — |
+| `height` | `number` | No | — |
+| `width` | `number` | No | — |
+| `length` | `number` | No | — |
+| `average_cost` | `number` | No | — |
+| `star` | `number` | No | — |
+| `manufacturer_id` | `number` | No | — |
+| `category_id` | `number` | No | — |
+| `prices` | `object` | No | — |
+| `stock` | `object` | No | — |
+| `locations` | `object` | No | — |
+| `text_fields` | `object` | No | — |
+| `images` | `object` | No | — |
+| `videos` | `object` | No | — |
+| `media_options` | `object` | No | — |
+| `links` | `object` | No | — |
+| `bundle_products` | `object` | No | — |
+| `suppliers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="ean_additional full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="prices full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="stock full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="locations full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="text_fields full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="videos full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="media_options full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="bundle_products full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="suppliers full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `product_id` | `number` | No | — |
+| `warnings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addInventorySupplier
+
+`inventory.addInventorySupplier`
+
+Tool to add a new supplier or update an existing one in BaseLinker storage. Use when you need to manage supplier information for inventory management. If supplier_id is provided, the existing supplier will be updated; otherwise, a new supplier will be created.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.inventory.addInventorySupplier({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `supplier_id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `take_product_cost_from` | `string` | No | — |
+| `take_product_code_from` | `string` | No | — |
+| `address` | `string` | No | — |
+| `postcode` | `string` | No | — |
+| `city` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `email` | `string` | No | — |
+| `email_copy_to` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `tax_no` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `supplier_id` | `number` | No | — |
+
+
+
+---
+
+### addInventoryWarehouse
+
+`inventory.addInventoryWarehouse`
+
+Tool to add a new warehouse or update an existing warehouse in BaseLinker inventories. Use when you need to create new warehouse locations for inventory management or update warehouse details. Adding a warehouse with the same identifier again will update the previously saved warehouse. The method does not allow editing warehouses created automatically for external stocks.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.inventory.addInventoryWarehouse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouse_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `stock_edition` | `boolean` | No | — |
+| `country` | `string` | No | — |
+| `address` | `string` | No | — |
+| `postcode` | `string` | No | — |
+| `city` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `warehouse_id` | `number` | No | — |
+
+
+
+---
+
+### deleteInventory
+
+`inventory.deleteInventory`
+
+Tool to delete a catalog from BaseLinker storage. Use when you need to permanently remove an inventory/catalog.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.baselinker.api.inventory.deleteInventory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### deleteInventoryCategory
+
+`inventory.deleteInventoryCategory`
+
+Tool to remove categories from BaseLinker warehouse. Along with the category, the products contained therein are removed (however, this does not apply to products in subcategories). The subcategories will be changed to the highest level categories.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.baselinker.api.inventory.deleteInventoryCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### deleteInventoryManufacturer
+
+`inventory.deleteInventoryManufacturer`
+
+Tool to remove a manufacturer from the BaseLinker catalog. Use when you need to delete a manufacturer that is no longer needed or was added by mistake.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.baselinker.api.inventory.deleteInventoryManufacturer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `manufacturer_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### deleteInventoryPayer
+
+`inventory.deleteInventoryPayer`
+
+Tool to remove a payer from BaseLinker storage. Use when you need to delete an existing payer entry by its ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.baselinker.api.inventory.deleteInventoryPayer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payer_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### deleteInventoryPriceGroup
+
+`inventory.deleteInventoryPriceGroup`
+
+Tool to remove a price group from BaseLinker storage. Use when you need to delete an existing price group by its identifier.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.baselinker.api.inventory.deleteInventoryPriceGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `price_group_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### deleteInventoryProduct
+
+`inventory.deleteInventoryProduct`
+
+Tool to remove a product from the BaseLinker catalog. Use when you need to permanently delete an inventory product by its ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.baselinker.api.inventory.deleteInventoryProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### deleteInventoryWarehouse
+
+`inventory.deleteInventoryWarehouse`
+
+Tool to remove a warehouse from BaseLinker inventories. Use when you need to delete a warehouse that is no longer needed. Note: This method does not allow removal of warehouses created automatically for external stock management (shops, wholesalers, etc.).
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.baselinker.api.inventory.deleteInventoryWarehouse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouse_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### getInventories
+
+`inventory.getInventories`
+
+Tool to retrieve a list of catalogs (inventories) available in the BaseLinker storage. Use when you need to discover available catalogs and their configurations before performing inventory-specific operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventories({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `inventories` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="inventories full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryAvailableTextFieldKeys
+
+`inventory.getInventoryAvailableTextFieldKeys`
+
+Tool to retrieve a list of product text fields that can be overwritten for a specific integration. Use when you need to discover which text fields are available for modification within a given inventory catalog.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryAvailableTextFieldKeys({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `text_field_keys` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="text_field_keys full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryCategories
+
+`inventory.getInventoryCategories`
+
+Tool to retrieve a list of categories for a BaseLinker catalog. Use when you need to fetch category hierarchies for inventory management or product organization.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `categories` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryExtraFields
+
+`inventory.getInventoryExtraFields`
+
+Tool to retrieve extra fields defined for BaseLinker catalog inventory items. Use before fetching or updating inventory products to list available custom fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryExtraFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `extra_fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="extra_fields full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryIntegrations
+
+`inventory.getInventoryIntegrations`
+
+Tool to retrieve a list of integrations where text values in the catalog can be overwritten. Use when you need to discover which sales channels support text customization and what languages are available for each integration.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryIntegrations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `integrations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="integrations full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryManufacturers
+
+`inventory.getInventoryManufacturers`
+
+Tool to retrieve a list of manufacturers from the BaseLinker catalog. Use when you need to view all manufacturers available in the system before adding or modifying manufacturer information.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryManufacturers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `manufacturers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="manufacturers full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryPayers
+
+`inventory.getInventoryPayers`
+
+Tool to retrieve a list of payers available in BaseLinker storage. Use when you need to list payers, optionally filtered by ID or name.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryPayers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter_id` | `number` | No | — |
+| `filter_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `payers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="payers full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryPriceGroups
+
+`inventory.getInventoryPriceGroups`
+
+Tool to retrieve price groups existing in BaseLinker storage. Use when you need to discover available pricing tiers before assigning them to inventory items or performing price-related operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryPriceGroups({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `price_groups` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="price_groups full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryPrintoutTemplates
+
+`inventory.getInventoryPrintoutTemplates`
+
+Tool to retrieve a list of all configured printout templates available for inventory (products). Use when you need to discover available printout templates before generating product documents.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryPrintoutTemplates({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `printouts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="printouts full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryProductLogs
+
+`inventory.getInventoryProductLogs`
+
+Tool to retrieve a list of events related to product changes in the BaseLinker catalog. Use when tracking product modification history, auditing changes, or monitoring inventory updates.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryProductLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | — |
+| `date_from` | `number` | No | — |
+| `date_to` | `number` | No | — |
+| `log_type` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `logs` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryProductsData
+
+`inventory.getInventoryProductsData`
+
+Tool to retrieve detailed data for selected products from the BaseLinker inventory. Use when you need comprehensive product information including SKU, prices, stock, dimensions, descriptions, images, variants, and bundle details.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryProductsData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_id` | `number` | Yes | — |
+| `products` | `object` | No | — |
+| `include_erp_units` | `boolean` | No | — |
+| `include_wms_units` | `boolean` | No | — |
+| `include_additional_eans` | `boolean` | No | — |
+| `include_suppliers` | `boolean` | No | — |
+| `include_relations` | `boolean` | No | — |
+| `include_marketplace_categories` | `boolean` | No | — |
+| `include_channels_media` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `products` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryProductsList
+
+`inventory.getInventoryProductsList`
+
+Tool to retrieve basic data of chosen products from BaseLinker catalogs. Use when you need to list products with optional filtering by ID, category, EAN, SKU, name, price range, or stock levels. Supports pagination for large catalogs (1000 products per page).
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryProductsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_id` | `number` | Yes | — |
+| `filter_id` | `number` | No | — |
+| `filter_category_id` | `number` | No | — |
+| `filter_ean` | `string` | No | — |
+| `filter_sku` | `string` | No | — |
+| `filter_name` | `string` | No | — |
+| `filter_price_from` | `number` | No | — |
+| `filter_price_to` | `number` | No | — |
+| `filter_stock_from` | `number` | No | — |
+| `filter_stock_to` | `number` | No | — |
+| `page` | `number` | No | — |
+| `filter_sort` | `string` | No | — |
+| `filter_locations` | `string` | No | — |
+| `include_variants` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `products` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryProductsPrices
+
+`inventory.getInventoryProductsPrices`
+
+Retrieve gross prices of products from BaseLinker inventories. Use when you need to get pricing information for products and their variants across different price groups. Supports pagination for large product catalogs.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryProductsPrices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `products` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryProductsStock
+
+`inventory.getInventoryProductsStock`
+
+Tool to retrieve stock data of products from BaseLinker catalogs. Use when you need to check current inventory levels, reservations, or variant stock across warehouses. Results are paginated at 1000 products per page.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryProductsStock({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_id` | `number` | Yes | — |
+| `filter_id` | `number` | No | — |
+| `filter_category_id` | `number` | No | — |
+| `filter_ean` | `string` | No | — |
+| `filter_sku` | `string` | No | — |
+| `filter_name` | `string` | No | — |
+| `filter_asin` | `string` | No | — |
+| `filter_stock_from` | `number` | No | — |
+| `filter_stock_to` | `number` | No | — |
+| `page` | `number` | No | — |
+| `filter_sort` | `string` | No | — |
+| `filter_locations` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `products` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventorySuppliers
+
+`inventory.getInventorySuppliers`
+
+Tool to retrieve a list of suppliers available in BaseLinker storage. Use when you need to list suppliers, optionally filtered by ID or name.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventorySuppliers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter_id` | `number` | No | — |
+| `filter_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `suppliers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="suppliers full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryTags
+
+`inventory.getInventoryTags`
+
+Tool to retrieve a list of tags for a BaseLinker catalog. Use when you need to view all tags available in the system before categorizing or filtering inventory items.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryTags({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `tags` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryWarehouses
+
+`inventory.getInventoryWarehouses`
+
+Tool to retrieve a list of warehouses available in BaseLinker inventories. Use when you need to discover available warehouse locations before performing inventory or stock operations. Returns warehouses created manually as well as those created automatically for external stocks (shops, wholesalers).
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventory.getInventoryWarehouses({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `warehouses` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="warehouses full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runProductMacroTrigger
+
+`inventory.runProductMacroTrigger`
+
+Tool to execute a personal trigger for products automatic actions. Use when you need to manually run a custom event trigger for a specific product in BaseLinker inventory.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.inventory.runProductMacroTrigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | — |
+| `trigger_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### updateInventoryProductsStock
+
+`inventory.updateInventoryProductsStock`
+
+Tool to update stocks of products and their variants in BaseLinker catalog. Use when you need to modify inventory levels for products across warehouses. Maximum 1000 products per request.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.inventory.updateInventoryProductsStock({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_id` | `number` | Yes | — |
+| `products` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `counter` | `number` | No | — |
+| `warnings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Inventory Documents
+
+### addInventoryDocument
+
+`inventoryDocuments.addInventoryDocument`
+
+Tool to create a new inventory document in BaseLinker storage. Use when you need to create goods receipts, issues, or transfers. Documents are created as drafts and require confirmation via user action or setInventoryDocumentStatusConfirmed API method.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.inventoryDocuments.addInventoryDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouse_id` | `number` | Yes | — |
+| `document_type` | `number` | No | — |
+| `target_warehouse_id` | `number` | No | — |
+| `date_add` | `number` | No | — |
+| `date_execute` | `number` | No | — |
+| `contractor` | `string` | No | — |
+| `invoice_no` | `string` | No | — |
+| `notes` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `document_id` | `number` | No | — |
+| `document_number` | `string` | No | — |
+
+
+
+---
+
+### getInventoryDocumentItems
+
+`inventoryDocuments.getInventoryDocumentItems`
+
+Tool to retrieve items from inventory documents in BaseLinker. Use when you need to fetch product details from a specific document with support for pagination (100 items per page).
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventoryDocuments.getInventoryDocumentItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `items` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryDocuments
+
+`inventoryDocuments.getInventoryDocuments`
+
+Tool to retrieve a list of inventory documents. Use when you need to fetch inventory records with optional filters for ID, type, status, date range, warehouse, or pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventoryDocuments.getInventoryDocuments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter_source_object_type` | `number` | No | — |
+| `filter_source_object_id` | `number` | No | — |
+| `filter_document_id` | `number` | No | — |
+| `filter_document_type` | `number` | No | — |
+| `filter_document_status` | `number` | No | — |
+| `filter_date_from` | `number` | No | — |
+| `filter_date_to` | `number` | No | — |
+| `filter_warehouse_id` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `documents` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryDocumentSeries
+
+`inventoryDocuments.getInventoryDocumentSeries`
+
+Tool to retrieve available inventory document series. Use when you need to assign a numbering series to a new inventory document.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.inventoryDocuments.getInventoryDocumentSeries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouse_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `document_series` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="document_series full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### addOrder
+
+`orders.addOrder`
+
+Tool to add a new order to the BaseLinker order manager. Use when you need to create a new order with customer details, products, and delivery information.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.orders.addOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_status_id` | `number` | Yes | — |
+| `custom_source_id` | `number` | No | — |
+| `date_add` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `payment_method` | `string` | No | — |
+| `payment_method_cod` | `boolean` | No | — |
+| `paid` | `boolean` | No | — |
+| `user_comments` | `string` | No | — |
+| `admin_comments` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `user_login` | `string` | No | — |
+| `delivery_method` | `string` | No | — |
+| `delivery_price` | `number` | No | — |
+| `delivery_fullname` | `string` | No | — |
+| `delivery_company` | `string` | No | — |
+| `delivery_address` | `string` | No | — |
+| `delivery_postcode` | `string` | No | — |
+| `delivery_city` | `string` | No | — |
+| `delivery_state` | `string` | No | — |
+| `delivery_country_code` | `string` | No | — |
+| `delivery_point_id` | `string` | No | — |
+| `delivery_point_name` | `string` | No | — |
+| `delivery_point_address` | `string` | No | — |
+| `delivery_point_postcode` | `string` | No | — |
+| `delivery_point_city` | `string` | No | — |
+| `invoice_fullname` | `string` | No | — |
+| `invoice_company` | `string` | No | — |
+| `invoice_nip` | `string` | No | — |
+| `invoice_address` | `string` | No | — |
+| `invoice_postcode` | `string` | No | — |
+| `invoice_city` | `string` | No | — |
+| `invoice_state` | `string` | No | — |
+| `invoice_country_code` | `string` | No | — |
+| `want_invoice` | `boolean` | No | — |
+| `extra_field_1` | `string` | No | — |
+| `extra_field_2` | `string` | No | — |
+| `custom_extra_fields` | `object` | No | — |
+| `products` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_extra_fields full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="products full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `order_id` | `number` | No | — |
+
+
+
+---
+
+### addOrderBySplit
+
+`orders.addOrderBySplit`
+
+Tool to create a new order by splitting selected products from an existing order. Use when you need to split an order into multiple shipments or separate deliveries. The new order inherits all customer details, addresses, and settings from the original order, with only the specified products and optional delivery costs moved to it.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.orders.addOrderBySplit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `items_to_split` | `object` | No | — |
+| `delivery_cost_to_split` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items_to_split full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `new_order_id` | `number` | No | — |
+
+
+
+---
+
+### addOrderDuplicate
+
+`orders.addOrderDuplicate`
+
+Tool to add a new order by duplicating an existing order in BaseLinker. The new order will have the same data as the original order but with a different ID.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.orders.addOrderDuplicate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `order_id` | `number` | No | — |
+
+
+
+---
+
+### deleteOrderProduct
+
+`orders.deleteOrderProduct`
+
+Tool to remove a specific product from an order in BaseLinker. Use when you need to delete an order item without canceling the entire order.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.baselinker.api.orders.deleteOrderProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `order_product_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### deleteOrders
+
+`orders.deleteOrders`
+
+Tool to delete multiple orders from BaseLinker order manager. Use when you need to permanently remove orders from the system.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.baselinker.api.orders.deleteOrders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_ids` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="order_ids full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `deleted_order_ids` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="deleted_order_ids full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJournalList
+
+`orders.getJournalList`
+
+Tool to download order event logs from the last 3 days. Use when you need to track order activities, changes, or events. IMPORTANT: This method must be activated by BaseLinker support on your account. If not activated, it returns an empty response. Events include order creation, status changes, payments, invoices, receipts, product modifications, and package operations. Use last_log_id to paginate through results incrementally.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.orders.getJournalList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `last_log_id` | `number` | Yes | — |
+| `logs_types` | `object` | No | — |
+| `order_id` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs_types full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `logs` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderExtraFields
+
+`orders.getOrderExtraFields`
+
+Tool to retrieve extra fields defined for orders. Use before fetching orders with include_custom_extra_fields to list available custom order fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.orders.getOrderExtraFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `extra_fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="extra_fields full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderPaymentsHistory
+
+`orders.getOrderPaymentsHistory`
+
+Tool to retrieve payment history for a selected order, including external payment identifiers from payment gateways. Use when you need to track payment events for an order. One order can have multiple payment history entries due to surcharges, order value changes, or manual payment editing.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.orders.getOrderPaymentsHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `show_full_history` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `payments` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="payments full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderPickPackHistory
+
+`orders.getOrderPickPackHistory`
+
+Tool to retrieve pick and pack history for a selected order. Use when you need to track the fulfillment timeline and events for an order (reservations, picking, packing, photography). Returns chronological list of pick/pack events with timestamps and responsible profiles.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.orders.getOrderPickPackHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `action_type` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `history` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="history full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderPrintoutTemplates
+
+`orders.getOrderPrintoutTemplates`
+
+Tool to retrieve a list of all configured printout templates available for orders. Use when you need to discover available printout templates before generating order documents.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.orders.getOrderPrintoutTemplates({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `printouts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="printouts full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrders
+
+`orders.getOrders`
+
+Download orders from BaseLinker order manager with optional filtering. Use this tool to: - Fetch all orders from a specific date onwards - Retrieve a single order by ID - Filter orders by status, email, or marketplace source - Paginate through orders using id_from parameter Returns up to 100 orders per request. For confirmed orders only, omit get_unconfirmed_orders. Tip: Use getOrderStatusList to get status IDs for filtering.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.orders.getOrders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | No | — |
+| `date_confirmed_from` | `number` | No | — |
+| `date_from` | `number` | No | — |
+| `id_from` | `number` | No | — |
+| `get_unconfirmed_orders` | `boolean` | No | — |
+| `status_id` | `number` | No | — |
+| `filter_email` | `string` | No | — |
+| `filter_order_source` | `string` | No | — |
+| `filter_order_source_id` | `number` | No | — |
+| `filter_shop_order_id` | `number` | No | — |
+| `filter_external_order_id` | `string` | No | — |
+| `include_custom_extra_fields` | `boolean` | No | — |
+| `include_commissions` | `boolean` | No | — |
+| `include_connect_data` | `boolean` | No | — |
+| `include_discounts_data` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `orders` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrdersByPhone
+
+`orders.getOrdersByPhone`
+
+Search for orders associated with a specific phone number in BaseLinker. Use when identifying callers in phone recognition systems or finding order history by phone. Returns basic order information including status, recipient names, and timestamps.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.orders.getOrdersByPhone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `orders` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderSources
+
+`orders.getOrderSources`
+
+Tool to retrieve types of order sources along with their IDs from BaseLinker. Use when you need to understand available order sources for filtering orders or mapping order_source field values from getOrders method.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.orders.getOrderSources({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `sources` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderStatusList
+
+`orders.getOrderStatusList`
+
+Tool to retrieve a list of order statuses created in the BaseLinker order manager. Use when you need to map status IDs to human-readable names.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.orders.getOrderStatusList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `statuses` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="statuses full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderTransactionData
+
+`orders.getOrderTransactionData`
+
+Tool to retrieve transaction details for a selected order. Use when you need marketplace transaction IDs, fulfillment data, or detailed tax breakdowns for an order.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.orders.getOrderTransactionData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `include_complex_taxes` | `boolean` | No | — |
+| `include_amazon_data` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `currency` | `string` | No | — |
+| `fulfillment_shipments` | `object` | No | — |
+| `fulfillment_center_id` | `string` | No | — |
+| `ship_date_from` | `number` | No | — |
+| `ship_date_to` | `number` | No | — |
+| `delivery_date_from` | `number` | No | — |
+| `delivery_date_to` | `number` | No | — |
+| `marketplace_transaction_id` | `string` | No | — |
+| `account_id` | `number` | No | — |
+| `transaction_date` | `number` | No | — |
+| `order_items` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="fulfillment_shipments full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="order_items full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPickPackCarts
+
+`orders.getPickPackCarts`
+
+Tool to retrieve a list of all PickPack carts belonging to the authenticated user. Use when you need to discover available carts and their details (ID, name, color) before performing cart-specific operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.orders.getPickPackCarts({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `carts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="carts full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runOrderMacroTrigger
+
+`orders.runOrderMacroTrigger`
+
+Tool to run personal trigger for orders automatic actions. Use when you need to execute a specific automation trigger on an order.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.orders.runOrderMacroTrigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `trigger_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### setOrderFields
+
+`orders.setOrderFields`
+
+Tool to edit selected fields of a specific order in BaseLinker. Use when you need to update order details such as address data, notes, payment method, delivery information, or invoice details. Only provide the fields you want to change; other fields can be omitted.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.orders.setOrderFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `admin_comments` | `string` | No | — |
+| `user_comments` | `string` | No | — |
+| `payment_method` | `string` | No | — |
+| `payment_method_cod` | `boolean` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `user_login` | `string` | No | — |
+| `delivery_method` | `string` | No | — |
+| `delivery_price` | `number` | No | — |
+| `delivery_fullname` | `string` | No | — |
+| `delivery_company` | `string` | No | — |
+| `delivery_address` | `string` | No | — |
+| `delivery_postcode` | `string` | No | — |
+| `delivery_city` | `string` | No | — |
+| `delivery_state` | `string` | No | — |
+| `delivery_country_code` | `string` | No | — |
+| `delivery_point_id` | `string` | No | — |
+| `delivery_point_name` | `string` | No | — |
+| `delivery_point_address` | `string` | No | — |
+| `delivery_point_postcode` | `string` | No | — |
+| `delivery_point_city` | `string` | No | — |
+| `invoice_fullname` | `string` | No | — |
+| `invoice_company` | `string` | No | — |
+| `invoice_nip` | `string` | No | — |
+| `invoice_address` | `string` | No | — |
+| `invoice_postcode` | `string` | No | — |
+| `invoice_city` | `string` | No | — |
+| `invoice_state` | `string` | No | — |
+| `invoice_country_code` | `string` | No | — |
+| `want_invoice` | `boolean` | No | — |
+| `extra_field_1` | `string` | No | — |
+| `extra_field_2` | `string` | No | — |
+| `custom_extra_fields` | `object` | No | — |
+| `pick_state` | `number` | No | — |
+| `pack_state` | `number` | No | — |
+| `star` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_extra_fields full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### setOrderPayment
+
+`orders.setOrderPayment`
+
+Tool to add a payment to an order in BaseLinker. Use when recording a payment for an order. The payment amount replaces (not adds to) the current payment value; if it matches the order total, the order is marked as paid.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.orders.setOrderPayment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `payment_done` | `number` | Yes | — |
+| `payment_date` | `number` | Yes | — |
+| `payment_comment` | `string` | Yes | — |
+| `external_payment_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### setOrderProductFields
+
+`orders.setOrderProductFields`
+
+Tool to edit data of selected items in a specific BaseLinker order. Use when you need to update product fields like prices, quantities, SKU, or other item details. Only provide the fields you want to edit; other fields can be omitted.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.orders.setOrderProductFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `order_product_id` | `number` | Yes | — |
+| `storage` | `string` | No | — |
+| `storage_id` | `string` | No | — |
+| `product_id` | `string` | No | — |
+| `variant_id` | `string` | No | — |
+| `auction_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `sku` | `string` | No | — |
+| `ean` | `string` | No | — |
+| `location` | `string` | No | — |
+| `warehouse_id` | `number` | No | — |
+| `attributes` | `string` | No | — |
+| `price_brutto` | `number` | No | — |
+| `tax_rate` | `number` | No | — |
+| `quantity` | `number` | No | — |
+| `weight` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### setOrdersMerge
+
+`orders.setOrdersMerge`
+
+Tool to merge multiple orders into one, based on the selected merge mode. Use when you need to combine orders together with either technical merge or into main order mode.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.baselinker.api.orders.setOrdersMerge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `main_order_id` | `number` | Yes | — |
+| `order_ids_to_merge` | `object` | Yes | — |
+| `merge_mode` | `string` | Yes | — |
+| `sum_delivery_costs` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="order_ids_to_merge full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `merged_order_id` | `number` | No | — |
+
+
+
+---
+
+### setOrderStatus
+
+`orders.setOrderStatus`
+
+Tool to change the status of an existing order in BaseLinker. Use when you need to update an order's status to a different value.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.orders.setOrderStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `status_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### setOrderStatuses
+
+`orders.setOrderStatuses`
+
+Tool to batch update order statuses in BaseLinker. Use when you need to set the same status for multiple orders at once.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.orders.setOrderStatuses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_ids` | `object` | Yes | — |
+| `status_id` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="order_ids full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+## Purchase Orders
+
+### addInventoryPurchaseOrder
+
+`purchaseOrders.addInventoryPurchaseOrder`
+
+Tool to create a new purchase order in BaseLinker storage. Orders are created as drafts by default. Use when you need to create a new purchase order for inventory management.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.purchaseOrders.addInventoryPurchaseOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouse_id` | `number` | Yes | — |
+| `supplier_id` | `number` | No | — |
+| `payer_id` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `name` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `invoice_no` | `string` | No | — |
+| `date_delivery_expected` | `number` | No | — |
+| `additional_costs` | `object` | No | — |
+| `packages` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="additional_costs full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="packages full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `order_id` | `number` | No | — |
+| `document_number` | `string` | No | — |
+
+
+
+---
+
+### addInventoryPurchaseOrderItems
+
+`purchaseOrders.addInventoryPurchaseOrderItems`
+
+Tool to add items to an existing purchase order in BaseLinker. Use when you need to add products to a purchase order that has already been created.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.purchaseOrders.addInventoryPurchaseOrderItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `items` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `items` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryPurchaseOrderItems
+
+`purchaseOrders.getInventoryPurchaseOrderItems`
+
+Tool to retrieve items from a specific purchase order in BaseLinker. Use when you need to fetch product details from a purchase order with support for pagination (100 items per page).
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrderItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `items` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryPurchaseOrders
+
+`purchaseOrders.getInventoryPurchaseOrders`
+
+Tool to retrieve a list of purchase orders from BaseLinker storage. Use when you need to fetch purchase orders with optional filters like date range, supplier or pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouse_id` | `number` | No | — |
+| `supplier_id` | `number` | No | — |
+| `series_id` | `number` | No | — |
+| `date_from` | `number` | No | — |
+| `date_to` | `number` | No | — |
+| `filter_document_number` | `string` | No | — |
+| `filter_product_id` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `purchase_orders` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="purchase_orders full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInventoryPurchaseOrderSeries
+
+`purchaseOrders.getInventoryPurchaseOrderSeries`
+
+Tool to retrieve a list of purchase order document series. Use when you need to select a numbering series for a new purchase order.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrderSeries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouse_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `series` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="series full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setInventoryPurchaseOrderStatus
+
+`purchaseOrders.setInventoryPurchaseOrderStatus`
+
+Tool to change the status of a purchase order in BaseLinker inventory. Use when you need to update a purchase order's status (e.g., mark as sent, received, completed, or canceled).
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.purchaseOrders.setInventoryPurchaseOrderStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | — |
+| `status` | `number` | Yes | — |
+| `completed_items` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="completed_items full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+## Returns
+
+### addOrderReturn
+
+`returns.addOrderReturn`
+
+Tool to add a new order return to BaseLinker. Use when creating a return for an order. Requires status_id (get from getOrderReturnStatusList), date_add (Unix timestamp), currency (3-letter code), and refunded status.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.returns.addOrderReturn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | No | — |
+| `status_id` | `number` | No | — |
+| `custom_source_id` | `number` | No | — |
+| `reference_number` | `string` | No | — |
+| `date_add` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `refunded` | `boolean` | No | — |
+| `admin_comments` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `user_login` | `string` | No | — |
+| `delivery_price` | `number` | No | — |
+| `delivery_fullname` | `string` | No | — |
+| `delivery_company` | `string` | No | — |
+| `delivery_address` | `string` | No | — |
+| `delivery_postcode` | `string` | No | — |
+| `delivery_city` | `string` | No | — |
+| `delivery_state` | `string` | No | — |
+| `delivery_country_code` | `string` | No | — |
+| `extra_field_1` | `string` | No | — |
+| `extra_field_2` | `string` | No | — |
+| `custom_extra_fields` | `object` | No | — |
+| `products` | `object` | No | — |
+| `refund_account_number` | `string` | No | — |
+| `refund_iban` | `string` | No | — |
+| `refund_swift` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_extra_fields full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="products full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `return_id` | `number` | No | — |
+
+
+
+---
+
+### addOrderReturnProduct
+
+`returns.addOrderReturnProduct`
+
+Tool to add a new product to an existing order return in BaseLinker. Use when a customer is returning items and you need to register the returned products.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.returns.addOrderReturnProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_id` | `number` | No | — |
+| `order_product_id` | `number` | No | — |
+| `storage` | `string` | No | — |
+| `storage_id` | `string` | No | — |
+| `product_id` | `string` | No | — |
+| `variant_id` | `string` | No | — |
+| `auction_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `sku` | `string` | No | — |
+| `ean` | `string` | No | — |
+| `location` | `string` | No | — |
+| `warehouse_id` | `number` | No | — |
+| `attributes` | `string` | No | — |
+| `price_brutto` | `number` | No | — |
+| `tax_rate` | `number` | No | — |
+| `quantity` | `number` | No | — |
+| `weight` | `number` | No | — |
+| `status_id` | `number` | No | — |
+| `return_reason_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `order_return_product_id` | `number` | No | — |
+
+
+
+---
+
+### deleteOrderReturnProduct
+
+`returns.deleteOrderReturnProduct`
+
+Tool to remove a specific product from an order return in BaseLinker. Use when you need to delete a product item from an existing return request.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.baselinker.api.returns.deleteOrderReturnProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_id` | `number` | Yes | — |
+| `order_return_product_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### getOrderReturnExtraFields
+
+`returns.getOrderReturnExtraFields`
+
+Tool to retrieve extra fields defined for order returns. Use before calling getOrderReturns with include_custom_extra_fields to list available custom fields. Field values can be set via setOrderReturnFields.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.returns.getOrderReturnExtraFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `extra_fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="extra_fields full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderReturnJournalList
+
+`returns.getOrderReturnJournalList`
+
+Tool to download return event logs from the last 3 days in BaseLinker. Use when tracking return order history, monitoring return status changes, or auditing return-related activities. Returns events like return creation, status changes, product modifications, and refund creation.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.returns.getOrderReturnJournalList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `last_log_id` | `number` | Yes | — |
+| `logs_types` | `object` | No | — |
+| `return_id` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs_types full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `logs` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderReturnPaymentsHistory
+
+`returns.getOrderReturnPaymentsHistory`
+
+Tool to retrieve payment history for a selected order return, including external payment identifiers from the payment gateway. Use when you need to track payment events, surcharges, order value changes, or manual payment edits for a return.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.returns.getOrderReturnPaymentsHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_id` | `number` | Yes | — |
+| `show_full_history` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `payments` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="payments full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderReturnProductStatuses
+
+`returns.getOrderReturnProductStatuses`
+
+Tool to retrieve a list of order return product statuses from BaseLinker. Use when you need to identify valid status IDs for return items, or to map status IDs to human-readable names.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.returns.getOrderReturnProductStatuses({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `order_return_product_statuses` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="order_return_product_statuses full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderReturnReasonsList
+
+`returns.getOrderReturnReasonsList`
+
+Tool to retrieve a list of order return reasons. Use when you need to discover available return reasons before setting return fields with setOrderReturnFields.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.returns.getOrderReturnReasonsList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `return_reasons` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="return_reasons full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderReturns
+
+`returns.getOrderReturns`
+
+Download order returns from BaseLinker return manager with optional filtering. Use this tool to: - Fetch returns from a specific date onwards using date_from parameter - Retrieve a single return by return_id - Filter returns by source order, status, or marketplace source - Paginate through returns using id_from parameter Returns up to 100 order returns per request. For complete return data including custom fields, set include_custom_extra_fields=true. Use include_connect_data=true for Base Connect integration info.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.returns.getOrderReturns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | No | — |
+| `return_id` | `number` | No | — |
+| `date_from` | `number` | No | — |
+| `id_from` | `number` | No | — |
+| `status_id` | `number` | No | — |
+| `filter_order_return_source` | `string` | No | — |
+| `filter_order_return_source_id` | `number` | No | — |
+| `include_custom_extra_fields` | `boolean` | No | — |
+| `include_connect_data` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `returns` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="returns full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrderReturnStatusList
+
+`returns.getOrderReturnStatusList`
+
+Tool to retrieve order return statuses created in the BaseLinker order manager. Use when you need to map return status IDs to human-readable names.
+
+**Risk:** `read`
+
+```ts
+await corsair.baselinker.api.returns.getOrderReturnStatusList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+| `statuses` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="statuses full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setOrderReturnFields
+
+`returns.setOrderReturnFields`
+
+Tool to edit selected fields of a specific order return. Use when updating return information such as buyer contact details, delivery address, or custom fields. Only the fields that need to be changed should be provided; other fields can be omitted.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.returns.setOrderReturnFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_id` | `number` | No | — |
+| `admin_comments` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `user_login` | `string` | No | — |
+| `delivery_price` | `number` | No | — |
+| `delivery_fullname` | `string` | No | — |
+| `delivery_company` | `string` | No | — |
+| `delivery_address` | `string` | No | — |
+| `delivery_postcode` | `string` | No | — |
+| `delivery_city` | `string` | No | — |
+| `delivery_state` | `string` | No | — |
+| `delivery_country_code` | `string` | No | — |
+| `extra_field_1` | `string` | No | — |
+| `extra_field_2` | `string` | No | — |
+| `custom_extra_fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_extra_fields full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### setOrderReturnProductFields
+
+`returns.setOrderReturnProductFields`
+
+Tool to edit data of selected items (e.g., prices, quantities, attributes) of a specific order return product. Use when you need to update fields of a returned product in an order return.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.returns.setOrderReturnProductFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_id` | `number` | Yes | — |
+| `order_return_product_id` | `number` | Yes | — |
+| `storage` | `string` | No | — |
+| `storage_id` | `string` | No | — |
+| `product_id` | `string` | No | — |
+| `variant_id` | `string` | No | — |
+| `auction_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `sku` | `string` | No | — |
+| `ean` | `string` | No | — |
+| `location` | `string` | No | — |
+| `warehouse_id` | `number` | No | — |
+| `attributes` | `string` | No | — |
+| `price_brutto` | `number` | No | — |
+| `tax_rate` | `number` | No | — |
+| `quantity` | `number` | No | — |
+| `weight` | `number` | No | — |
+| `status_id` | `number` | No | — |
+| `return_reason_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### setOrderReturnRefund
+
+`returns.setOrderReturnRefund`
+
+Tool to mark an order return as refunded in BaseLinker. Use when recording that a refund has been issued for a return. Note: This method doesn't issue an actual money refund - it only updates the refund status in BaseLinker.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.returns.setOrderReturnRefund({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_id` | `number` | Yes | — |
+| `order_refund_done` | `number` | Yes | — |
+| `refund_date` | `number` | Yes | — |
+| `refund_comment` | `string` | Yes | — |
+| `external_refund_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### setOrderReturnStatus
+
+`returns.setOrderReturnStatus`
+
+Tool to change order return status in BaseLinker. Use when you need to update the status of a single order return.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.returns.setOrderReturnStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_id` | `number` | Yes | — |
+| `status_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+
+### setOrderReturnStatuses
+
+`returns.setOrderReturnStatuses`
+
+Tool to batch set order return statuses in BaseLinker. Use when you need to update the status of multiple order returns at once.
+
+**Risk:** `write`
+
+```ts
+await corsair.baselinker.api.returns.setOrderReturnStatuses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `return_ids` | `object` | Yes | — |
+| `status_id` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="return_ids full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `SUCCESS` | Yes | — |
+
+
+
+---
+

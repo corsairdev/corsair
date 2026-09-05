@@ -1,0 +1,25 @@
+displayName: Slack
+description: Team messaging platform for channels, direct messages, files, and workplace collaboration.
+recommendedAuth: managed
+examples:
+  read:
+    path: channels.list
+    title: List channels
+  write:
+    path: messages.post
+    title: Post a message
+    args:
+      channel: C01234567
+      text: Hello from Corsair
+dbExample:
+  entity: channels
+  note: Search synced channels without hitting Slack's API.
+  data:
+    is_archived: false
+  limit: 50
+exampleWebhook:
+  path: messages.message
+  note: React when someone posts in a channel — `messages.message` is the common entry point.
+  after: |
+    const text = result.data?.text;
+    console.log('Slack message:', text);

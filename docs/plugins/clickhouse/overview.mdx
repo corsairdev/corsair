@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Columnar analytics database for fast OLAP queries on large-scale event and log data."
+---
+
+Use **ClickHouse** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 6 typed API operations
+- 4 synced entities (`column`, `database`, `queryResult`, `table`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/clickhouse
+```
+```bash yarn
+yarn add corsair @corsair-dev/clickhouse
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/clickhouse
+```
+```bash bun
+bun add corsair @corsair-dev/clickhouse
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { clickhouse } from '@corsair-dev/clickhouse';
+
+export const corsair = createCorsair({
+	plugins: [
+		clickhouse(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+clickhouse()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'clickhouse',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`play.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.clickhouse.api.play.get({});
+```
+
+
+**`query.execute`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.clickhouse.api.query.execute({});
+```
+
+
+See the full list on the [API](/plugins/clickhouse/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.clickhouse.db.<entity>.search()` and `.list()`: `column`, `database`, `queryResult`, `table`.
+
+See [Database](/plugins/clickhouse/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/clickhouse/api">
+    Every `clickhouse.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/clickhouse/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

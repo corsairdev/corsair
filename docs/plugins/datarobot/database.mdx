@@ -1,0 +1,170 @@
+---
+title: Database
+description: "DataRobot local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The DataRobot plugin syncs data locally. Use `corsair.datarobot.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Dataset
+
+Path: `datarobot.db.dataset.search`
+
+```ts
+const rows = await corsair.datarobot.db.dataset.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `datasetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `versionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `columnCount` | `number` | equals, gt, gte, lt, lte, in |
+| `rowCount` | `number` | equals, gt, gte, lt, lte, in |
+| `datasetSize` | `number` | equals, gt, gte, lt, lte, in |
+| `createdBy` | `string` | equals, contains, startsWith, endsWith, in |
+| `creationDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `processingState` | `string` | equals, contains, startsWith, endsWith, in |
+| `dataPersisted` | `boolean` | equals |
+| `isSnapshot` | `boolean` | equals |
+| `isLatestVersion` | `boolean` | equals |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Deployment
+
+Path: `datarobot.db.deployment.search`
+
+```ts
+const rows = await corsair.datarobot.db.deployment.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `label` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `importance` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Project
+
+Path: `datarobot.db.project.search`
+
+```ts
+const rows = await corsair.datarobot.db.project.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectName` | `string` | equals, contains, startsWith, endsWith, in |
+| `fileName` | `string` | equals, contains, startsWith, endsWith, in |
+| `stage` | `string` | equals, contains, startsWith, endsWith, in |
+| `target` | `string` | equals, contains, startsWith, endsWith, in |
+| `targetType` | `string` | equals, contains, startsWith, endsWith, in |
+| `metric` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `catalogId` | `string` | equals, contains, startsWith, endsWith, in |
+| `catalogVersionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `holdoutUnlocked` | `boolean` | equals |
+| `unsupervisedMode` | `boolean` | equals |
+| `useFeatureDiscovery` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Use Case
+
+Path: `datarobot.db.useCase.search`
+
+```ts
+const rows = await corsair.datarobot.db.useCase.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `tenantId` | `string` | equals, contains, startsWith, endsWith, in |
+| `role` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectsCount` | `number` | equals, gt, gte, lt, lte, in |
+| `datasetsCount` | `number` | equals, gt, gte, lt, lte, in |
+| `deploymentsCount` | `number` | equals, gt, gte, lt, lte, in |
+| `notebooksCount` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## User
+
+Path: `datarobot.db.user.search`
+
+```ts
+const rows = await corsair.datarobot.db.user.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `userhash` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

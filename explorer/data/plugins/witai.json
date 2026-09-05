@@ -1,0 +1,1501 @@
+{
+  "id": "witai",
+  "displayName": "Wit.ai",
+  "description": "Natural language understanding platform for intent detection and conversational app building.",
+  "npmPackageName": "@corsair-dev/witai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 32,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "witai.api.apps.createApp",
+      "shortPath": "apps.createApp",
+      "description": "Create a new Wit.ai app",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the app"
+          },
+          {
+            "key": "lang",
+            "optional": false,
+            "type": "string",
+            "description": "Language code, e.g. \"en\""
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean | string",
+            "description": "Whether the app is private"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "Timezone, e.g. \"America/Los_Angeles\""
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string",
+            "description": "Description of the app"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "access_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.apps.deleteApp",
+      "shortPath": "apps.deleteApp",
+      "description": "Delete a specific Wit.ai app",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Wit.ai app ID to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.apps.exportApp",
+      "shortPath": "apps.exportApp",
+      "description": "Export Wit.ai app data as a ZIP backup",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Wit.ai app ID to export"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.apps.getApp",
+      "shortPath": "apps.getApp",
+      "description": "Retrieve metadata and settings of a Wit.ai app",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Wit.ai app ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean | string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "will_train_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_trained_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_training_duration_secs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "training_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.apps.listApps",
+      "shortPath": "apps.listApps",
+      "description": "List all Wit.ai apps for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Max apps to return (default 100)"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination offset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, lang?: string, private?: boolean | string, timezone?: string, desc?: string, will_train_at?: string | null, last_trained_at?: string | null, last_training_duration_secs?: number, training_status?: string, created_at?: string, updated_at?: string }[]"
+      }
+    },
+    {
+      "path": "witai.api.apps.listTags",
+      "shortPath": "apps.listTags",
+      "description": "List all tag groups (versions) for a Wit.ai app",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Wit.ai app ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, desc?: string | null, created_at?: string, updated_at?: string }[]"
+      }
+    },
+    {
+      "path": "witai.api.apps.updateApp",
+      "shortPath": "apps.updateApp",
+      "description": "Update an existing Wit.ai app",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Wit.ai app ID to update"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New name"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language code"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean | string",
+            "description": "Whether the app is private"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "Timezone"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string",
+            "description": "Description"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.entities.addKeyword",
+      "shortPath": "entities.addKeyword",
+      "description": "Add a keyword with optional synonyms to an entity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "string",
+            "description": "Entity name"
+          },
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string",
+            "description": "Keyword to add"
+          },
+          {
+            "key": "synonyms",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional synonyms for the keyword"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "{ id?: string, name: string }[]"
+          },
+          {
+            "key": "lookups",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "{ keyword: string, synonyms?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.entities.addSynonym",
+      "shortPath": "entities.addSynonym",
+      "description": "Add a synonym to a keyword in an entity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "string",
+            "description": "Entity name"
+          },
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string",
+            "description": "Keyword to add synonym to"
+          },
+          {
+            "key": "synonym",
+            "optional": false,
+            "type": "string",
+            "description": "Synonym to add"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "{ id?: string, name: string }[]"
+          },
+          {
+            "key": "lookups",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "{ keyword: string, synonyms?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.entities.createEntity",
+      "shortPath": "entities.createEntity",
+      "description": "Create a new entity in Wit.ai",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the new entity"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional role names for the entity"
+          },
+          {
+            "key": "lookups",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional lookup strategies (e.g. keywords, free-text)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "{ id?: string, name: string }[]"
+          },
+          {
+            "key": "lookups",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "{ keyword: string, synonyms?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.entities.deleteEntity",
+      "shortPath": "entities.deleteEntity",
+      "description": "Permanently delete an entity by name",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "string",
+            "description": "Entity name to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.entities.deleteKeyword",
+      "shortPath": "entities.deleteKeyword",
+      "description": "Delete a keyword from an entity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "string",
+            "description": "Entity name"
+          },
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string",
+            "description": "Keyword to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ sent?: boolean, n?: number, deleted?: string | number, success?: boolean } | { id: string, name: string, roles?: { id?: string, name: string }[], lookups?: string[], keywords?: { keyword: string, synonyms?: string[] }[] }"
+      }
+    },
+    {
+      "path": "witai.api.entities.deleteRole",
+      "shortPath": "entities.deleteRole",
+      "description": "Delete a specific role from an entity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "string",
+            "description": "Entity name"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "string",
+            "description": "Role name to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ sent?: boolean, n?: number, deleted?: string | number, success?: boolean } | { id: string, name: string, roles?: { id?: string, name: string }[], lookups?: string[], keywords?: { keyword: string, synonyms?: string[] }[] }"
+      }
+    },
+    {
+      "path": "witai.api.entities.deleteSynonym",
+      "shortPath": "entities.deleteSynonym",
+      "description": "Delete a synonym from a keyword in an entity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "string",
+            "description": "Entity name"
+          },
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string",
+            "description": "Keyword name"
+          },
+          {
+            "key": "synonym",
+            "optional": false,
+            "type": "string",
+            "description": "Synonym to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ sent?: boolean, n?: number, deleted?: string | number, success?: boolean } | { id: string, name: string, roles?: { id?: string, name: string }[], lookups?: string[], keywords?: { keyword: string, synonyms?: string[] }[] }"
+      }
+    },
+    {
+      "path": "witai.api.entities.getEntity",
+      "shortPath": "entities.getEntity",
+      "description": "Retrieve details of a specific entity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "string",
+            "description": "Entity name or ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "{ id?: string, name: string }[]"
+          },
+          {
+            "key": "lookups",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "{ keyword: string, synonyms?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.entities.listEntities",
+      "shortPath": "entities.listEntities",
+      "description": "List all entities in the Wit.ai app",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, roles?: { id?: string, name: string }[], lookups?: string[], keywords?: { keyword: string, synonyms?: string[] }[] }[]"
+      }
+    },
+    {
+      "path": "witai.api.intents.createIntent",
+      "shortPath": "intents.createIntent",
+      "description": "Create a new intent in Wit.ai",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the new intent"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{ id?: string, name?: string, role?: string, start?: number, end?: number, body?: string, confidence?: number, entities?: any[], value?: any, type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.intents.deleteIntent",
+      "shortPath": "intents.deleteIntent",
+      "description": "Permanently delete an intent by name",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "intent",
+            "optional": false,
+            "type": "string",
+            "description": "Intent name to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.intents.getIntent",
+      "shortPath": "intents.getIntent",
+      "description": "Retrieve details of a specific intent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "intent",
+            "optional": false,
+            "type": "string",
+            "description": "Intent name or ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{ id?: string, name?: string, role?: string, start?: number, end?: number, body?: string, confidence?: number, entities?: any[], value?: any, type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.intents.listIntents",
+      "shortPath": "intents.listIntents",
+      "description": "List all intents in the Wit.ai app",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, entities?: { id?: string, name?: string, role?: string, start?: number, end?: number, body?: string, confidence?: number, entities?: any[], value?: any, type?: string }[] }[]"
+      }
+    },
+    {
+      "path": "witai.api.message.detectLanguage",
+      "shortPath": "message.detectLanguage",
+      "description": "Detect the language of a given text input",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Text whose language should be detected"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number",
+            "description": "Number of locales to return"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "detected_locales",
+            "optional": false,
+            "type": "{ locale: string, confidence?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.message.getMessage",
+      "shortPath": "message.getMessage",
+      "description": "Analyze text to extract intents, entities, and traits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Text to analyze for intents, entities, and traits"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number",
+            "description": "Max number of n-best intents/traits to return"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "App version tag to use"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "string",
+            "description": "JSON context object (location, reference_time, etc.)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "intents",
+            "optional": true,
+            "type": "{ id?: string, name: string, confidence?: number }[]"
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "traits",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.traits.addValue",
+      "shortPath": "traits.addValue",
+      "description": "Add a new value to an existing trait",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trait",
+            "optional": false,
+            "type": "string",
+            "description": "Trait name"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "Value to add"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "{ id?: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.traits.createTrait",
+      "shortPath": "traits.createTrait",
+      "description": "Create a new trait in Wit.ai",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the new trait"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "string[]",
+            "description": "Initial values for the trait"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "{ id?: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.traits.deleteTrait",
+      "shortPath": "traits.deleteTrait",
+      "description": "Delete a trait by name",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trait",
+            "optional": false,
+            "type": "string",
+            "description": "Trait name to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.traits.getTrait",
+      "shortPath": "traits.getTrait",
+      "description": "Retrieve details of a specific trait",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trait",
+            "optional": false,
+            "type": "string",
+            "description": "Trait name or ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "{ id?: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.traits.listTraits",
+      "shortPath": "traits.listTraits",
+      "description": "List all traits in the Wit.ai app",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, values?: { id?: string, value: string }[] }[]"
+      }
+    },
+    {
+      "path": "witai.api.utterances.createUtterances",
+      "shortPath": "utterances.createUtterances",
+      "description": "Add training utterances to the Wit.ai app (rate limit: 200/min)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "utterances",
+            "optional": false,
+            "type": "{ text: string, intent?: string, entities?: { entity: string, start: number, end: number, body: string, entities?: any[] }[], traits?: { trait: string, value: string }[] }[]",
+            "description": "Utterances to add (rate limit: 200 samples/min)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.utterances.deleteUtterances",
+      "shortPath": "utterances.deleteUtterances",
+      "description": "Delete validated utterances from the Wit.ai app",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "texts",
+            "optional": false,
+            "type": "string[]",
+            "description": "Utterance texts to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "n",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.utterances.listUtterances",
+      "shortPath": "utterances.listUtterances",
+      "description": "List training utterances from the Wit.ai app",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Max utterances to return"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination offset"
+          },
+          {
+            "key": "intent_id",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by intent ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, text: string, intent?: { id?: string, name: string } | null, entities?: { id?: string, name?: string, role?: string, start?: number, end?: number, body?: string, confidence?: number, entities?: any[], value?: any, type?: string }[], traits?: { id?: string, value: string, confidence?: number }[] }[]"
+      }
+    },
+    {
+      "path": "witai.api.voices.getVoice",
+      "shortPath": "voices.getVoice",
+      "description": "Retrieve details for a specific text-to-speech voice",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice",
+            "optional": false,
+            "type": "string",
+            "description": "Voice name to retrieve details for"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "styles",
+            "optional": true,
+            "type": "{ name: string, speed?: string[], pitch?: string[] }[]"
+          },
+          {
+            "key": "supported_features",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "witai.api.voices.listVoices",
+      "shortPath": "voices.listVoices",
+      "description": "List all available text-to-speech voices grouped by locale",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "witai.db.apps.search",
+      "entityName": "apps",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lang",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "desc",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "will_train_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_trained_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_training_duration_secs",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "training_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "witai.db.entities.search",
+      "entityName": "entities",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "witai.db.intents.search",
+      "entityName": "intents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "witai.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "desc",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "witai.db.traits.search",
+      "entityName": "traits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "witai.db.utterances.search",
+      "entityName": "utterances",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "witai.db.voices.search",
+      "entityName": "voices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locale",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gender",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

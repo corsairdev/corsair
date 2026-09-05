@@ -1,0 +1,1565 @@
+{
+  "id": "here",
+  "displayName": "HERE",
+  "description": "Location platform for maps, routing, geocoding, and fleet tracking services worldwide.",
+  "npmPackageName": "@corsair-dev/here",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "here.api.maps.coordinatesToTileIndices",
+      "shortPath": "maps.coordinatesToTileIndices",
+      "description": "Convert lat,lng to Web Mercator XYZ tile indices at a zoom level.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "zoom",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "x",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "y",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "z",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.maps.getMapImage",
+      "shortPath": "maps.getMapImage",
+      "description": "Retrieve a static Map Image API v3 PNG or JPEG.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "zoom",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "width",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "png | jpeg"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageBase64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.routing.computeMatrix",
+      "shortPath": "routing.computeMatrix",
+      "description": "Compute a travel-time and distance matrix between origins and destinations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origins",
+            "optional": false,
+            "type": "{ lat: number, lng: number }[]"
+          },
+          {
+            "key": "destinations",
+            "optional": false,
+            "type": "{ lat: number, lng: number }[]"
+          },
+          {
+            "key": "regionDefinition",
+            "optional": true,
+            "type": "{}",
+            "description": "Defaults to { type: \"world\" }."
+          },
+          {
+            "key": "transportMode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "departureTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "matrixAttributes",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matrixId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "matrix",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.routing.decodeRouteHandle",
+      "shortPath": "routing.decodeRouteHandle",
+      "description": "Decode a previously calculated Routing v8 route handle.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "routeHandle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "transportMode",
+            "optional": false,
+            "type": "car | truck | pedestrian | bicycle | scooter | taxi | bus"
+          },
+          {
+            "key": "return",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "routes",
+            "optional": true,
+            "type": "{ id?: string, sections?: {}[] }[]"
+          },
+          {
+            "key": "notices",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.routing.findWaypointSequence",
+      "shortPath": "routing.findWaypointSequence",
+      "description": "Optimize waypoint visit order between a fixed start and destination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string",
+            "description": "start=name;lat,lng or lat,lng."
+          },
+          {
+            "key": "destination",
+            "optional": false,
+            "type": "string",
+            "description": "Fixed end waypoint."
+          },
+          {
+            "key": "destination1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination3",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination4",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination5",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string",
+            "description": "e.g. fastest;car;traffic:disabled"
+          },
+          {
+            "key": "improveFor",
+            "optional": true,
+            "type": "time | distance"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.routing.getIsolines",
+      "shortPath": "routing.getIsolines",
+      "description": "Calculate reachable-area isolines by time, distance, or consumption.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": false,
+            "type": "string",
+            "description": "Center lat,lng."
+          },
+          {
+            "key": "transportMode",
+            "optional": false,
+            "type": "car | truck | pedestrian | bicycle"
+          },
+          {
+            "key": "rangeType",
+            "optional": false,
+            "type": "time | distance | consumption"
+          },
+          {
+            "key": "rangeValues",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated ranges, e.g. 600,1200."
+          },
+          {
+            "key": "departureTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "isolines",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.routing.getMatrixProfile",
+      "shortPath": "routing.getMatrixProfile",
+      "description": "Retrieve one matrix routing profile by id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.routing.getMatrixResult",
+      "shortPath": "routing.getMatrixResult",
+      "description": "Fetch a completed matrix calculation by matrixId.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matrixId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matrixId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "matrix",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.routing.getRoutes",
+      "shortPath": "routing.getRoutes",
+      "description": "Calculate routes between waypoints for car, truck, pedestrian, bicycle, scooter, taxi, or bus.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": false,
+            "type": "string",
+            "description": "Origin lat,lng."
+          },
+          {
+            "key": "destination",
+            "optional": false,
+            "type": "string",
+            "description": "Destination lat,lng."
+          },
+          {
+            "key": "transportMode",
+            "optional": false,
+            "type": "car | truck | pedestrian | bicycle | scooter | taxi | bus"
+          },
+          {
+            "key": "via",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "return",
+            "optional": true,
+            "type": "string",
+            "description": "Comma list, e.g. summary,polyline,actions."
+          },
+          {
+            "key": "departureTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "routingMode",
+            "optional": true,
+            "type": "fast | short"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "routes",
+            "optional": true,
+            "type": "{ id?: string, sections?: {}[] }[]"
+          },
+          {
+            "key": "notices",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.routing.listMatrixProfiles",
+      "shortPath": "routing.listMatrixProfiles",
+      "description": "List predefined matrix routing profiles.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.routing.postRoutes",
+      "shortPath": "routing.postRoutes",
+      "description": "Calculate routes via POST when avoid areas, EV options, or large bodies are required.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": false,
+            "type": "string",
+            "description": "Origin lat,lng."
+          },
+          {
+            "key": "destination",
+            "optional": false,
+            "type": "string",
+            "description": "Destination lat,lng."
+          },
+          {
+            "key": "transportMode",
+            "optional": false,
+            "type": "car | truck | pedestrian | bicycle | scooter | taxi | bus"
+          },
+          {
+            "key": "via",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "return",
+            "optional": true,
+            "type": "string",
+            "description": "Comma list, e.g. summary,polyline,actions."
+          },
+          {
+            "key": "departureTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "routingMode",
+            "optional": true,
+            "type": "fast | short"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}",
+            "description": "Avoid areas, EV, or other POST-only Routing v8 fields."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "routes",
+            "optional": true,
+            "type": "{ id?: string, sections?: {}[] }[]"
+          },
+          {
+            "key": "notices",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.search.autocomplete",
+      "shortPath": "search.autocomplete",
+      "description": "Get address-focused completions for a partial address query.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Partial address."
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "in",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ title?: string, id?: string, resultType?: string, address?: { label?: string, countryCode?: string, countryName?: string, state?: string, stateCode?: string, county?: string, city?: string, district?: string, street?: string, postalCode?: string, houseNumber?: string }, position?: { lat: number, lng: number }, access?: { lat: number, lng: number }[], distance?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.search.autosuggest",
+      "shortPath": "search.autosuggest",
+      "description": "Fetch typeahead completions for a partial search term near a location.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Partial search term."
+          },
+          {
+            "key": "at",
+            "optional": false,
+            "type": "string",
+            "description": "Proximity lat,lng."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "in",
+            "optional": true,
+            "type": "string",
+            "description": "Geographic filter, e.g. countryCode:USA."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ title?: string, id?: string, resultType?: string, address?: { label?: string, countryCode?: string, countryName?: string, state?: string, stateCode?: string, county?: string, city?: string, district?: string, street?: string, postalCode?: string, houseNumber?: string }, position?: { lat: number, lng: number }, access?: { lat: number, lng: number }[], distance?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.search.browse",
+      "shortPath": "search.browse",
+      "description": "Search nearby places with optional category, food type, or name filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "at",
+            "optional": false,
+            "type": "string",
+            "description": "Center lat,lng."
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "foodTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "in",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ title?: string, id?: string, resultType?: string, address?: { label?: string, countryCode?: string, countryName?: string, state?: string, stateCode?: string, county?: string, city?: string, district?: string, street?: string, postalCode?: string, houseNumber?: string }, position?: { lat: number, lng: number }, access?: { lat: number, lng: number }[], distance?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.search.discover",
+      "shortPath": "search.discover",
+      "description": "Discover places and addresses from free-form text near a location.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Free-form place or address query."
+          },
+          {
+            "key": "at",
+            "optional": false,
+            "type": "string",
+            "description": "Proximity lat,lng."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "in",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ title?: string, id?: string, resultType?: string, address?: { label?: string, countryCode?: string, countryName?: string, state?: string, stateCode?: string, county?: string, city?: string, district?: string, street?: string, postalCode?: string, houseNumber?: string }, position?: { lat: number, lng: number }, access?: { lat: number, lng: number }[], distance?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.search.geocode",
+      "shortPath": "search.geocode",
+      "description": "Convert a free-text or qualified address into coordinates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Free-form or qualified address."
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "in",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "qq",
+            "optional": true,
+            "type": "string",
+            "description": "Qualified query, e.g. city=Berlin;country=Germany."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ title?: string, id?: string, resultType?: string, address?: { label?: string, countryCode?: string, countryName?: string, state?: string, stateCode?: string, county?: string, city?: string, district?: string, street?: string, postalCode?: string, houseNumber?: string }, position?: { lat: number, lng: number }, access?: { lat: number, lng: number }[], distance?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.search.lookup",
+      "shortPath": "search.lookup",
+      "description": "Load full place or address details by HERE id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "HERE place or address id from a prior search."
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resultType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ label?: string, countryCode?: string, countryName?: string, state?: string, stateCode?: string, county?: string, city?: string, district?: string, street?: string, postalCode?: string, houseNumber?: string }"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ lat: number, lng: number }"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "{ lat: number, lng: number }[]"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.search.reverseGeocode",
+      "shortPath": "search.reverseGeocode",
+      "description": "Convert lat,lng coordinates into a structured address.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "at",
+            "optional": false,
+            "type": "string",
+            "description": "Coordinates lat,lng."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ title?: string, id?: string, resultType?: string, address?: { label?: string, countryCode?: string, countryName?: string, state?: string, stateCode?: string, county?: string, city?: string, district?: string, street?: string, postalCode?: string, houseNumber?: string }, position?: { lat: number, lng: number }, access?: { lat: number, lng: number }[], distance?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.traffic.getIncidentById",
+      "shortPath": "traffic.getIncidentById",
+      "description": "Get one traffic incident by id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationReferencing",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.traffic.getTrafficFlow",
+      "shortPath": "traffic.getTrafficFlow",
+      "description": "Get real-time traffic flow for a geospatial area.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "in",
+            "optional": false,
+            "type": "string",
+            "description": "Geospatial filter, e.g. bbox:west,south,east,north."
+          },
+          {
+            "key": "locationReferencing",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to shape."
+          },
+          {
+            "key": "minJamFactor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxJamFactor",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "sourceUpdated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.traffic.getTrafficIncidents",
+      "shortPath": "traffic.getTrafficIncidents",
+      "description": "Get real-time traffic incidents for a geospatial area.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "in",
+            "optional": false,
+            "type": "string",
+            "description": "Geospatial filter, e.g. bbox:west,south,east,north."
+          },
+          {
+            "key": "locationReferencing",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to shape."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "sourceUpdated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.transit.getDepartures",
+      "shortPath": "transit.getDepartures",
+      "description": "Get upcoming departures by station id or location.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated station ids."
+          },
+          {
+            "key": "in",
+            "optional": true,
+            "type": "string",
+            "description": "lat,lng;r=meters when ids is omitted."
+          },
+          {
+            "key": "maxPerBoard",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boards",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.transit.getStations",
+      "shortPath": "transit.getStations",
+      "description": "Search public transit stations around a location.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "in",
+            "optional": false,
+            "type": "string",
+            "description": "lat,lng or lat,lng;r=meters."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxPlaces",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stations",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "boards",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.weather.getAstronomyForecast",
+      "shortPath": "weather.getAstronomyForecast",
+      "description": "Get sunrise, sunset, and moon event times.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "City name, e.g. Berlin, Germany."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "lat,lng."
+          },
+          {
+            "key": "zipCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | imperial"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "places",
+            "optional": true,
+            "type": "{ id?: string, countryCode?: string, timezone?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.weather.getWeatherAlerts",
+      "shortPath": "weather.getWeatherAlerts",
+      "description": "Get severe weather alerts for a location.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "City name, e.g. Berlin, Germany."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "lat,lng."
+          },
+          {
+            "key": "zipCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | imperial"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "places",
+            "optional": true,
+            "type": "{ id?: string, countryCode?: string, timezone?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.weather.getWeatherForecastDaily",
+      "shortPath": "weather.getWeatherForecastDaily",
+      "description": "Get a 7-day weather forecast (detailed or simple).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "City name, e.g. Berlin, Germany."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "lat,lng."
+          },
+          {
+            "key": "zipCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | imperial"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": true,
+            "type": "forecast7days | forecast7daysSimple",
+            "description": "Defaults to forecast7daysSimple."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "places",
+            "optional": true,
+            "type": "{ id?: string, countryCode?: string, timezone?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.weather.getWeatherForecastHourly",
+      "shortPath": "weather.getWeatherForecastHourly",
+      "description": "Get hourly weather forecasts for a location.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "City name, e.g. Berlin, Germany."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "lat,lng."
+          },
+          {
+            "key": "zipCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | imperial"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "places",
+            "optional": true,
+            "type": "{ id?: string, countryCode?: string, timezone?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "here.api.weather.getWeatherObservation",
+      "shortPath": "weather.getWeatherObservation",
+      "description": "Get current weather observations for a location.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "City name, e.g. Berlin, Germany."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "lat,lng."
+          },
+          {
+            "key": "zipCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | imperial"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oneObservation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "places",
+            "optional": true,
+            "type": "{ id?: string, countryCode?: string, timezone?: number }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "here.db.addresses.search",
+      "entityName": "addresses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "stateCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "county",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "district",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "street",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postalCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "houseNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "here.db.places.search",
+      "entityName": "places",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resultType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "distance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "here.db.positions.search",
+      "entityName": "positions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lat",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lng",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "here.db.routes.search",
+      "entityName": "routes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "here.db.trafficResults.search",
+      "entityName": "trafficResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "here.db.weatherPlaces.search",
+      "entityName": "weatherPlaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

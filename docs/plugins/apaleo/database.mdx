@@ -1,0 +1,127 @@
+---
+title: Database
+description: "Apaleo local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Apaleo plugin syncs data locally. Use `corsair.apaleo.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Properties
+
+Path: `apaleo.db.properties.search`
+
+```ts
+const rows = await corsair.apaleo.db.properties.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `code` | `string` | equals, contains, startsWith, endsWith, in |
+| `propertyTemplateId` | `string` | equals, contains, startsWith, endsWith, in |
+| `isTemplate` | `boolean` | equals |
+| `companyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `managingDirectors` | `string` | equals, contains, startsWith, endsWith, in |
+| `commercialRegisterEntry` | `string` | equals, contains, startsWith, endsWith, in |
+| `taxId` | `string` | equals, contains, startsWith, endsWith, in |
+| `timeZone` | `string` | equals, contains, startsWith, endsWith, in |
+| `currencyCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `isArchived` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Unit Attributes
+
+Path: `apaleo.db.unitAttributes.search`
+
+```ts
+const rows = await corsair.apaleo.db.unitAttributes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Unit Groups
+
+Path: `apaleo.db.unitGroups.search`
+
+```ts
+const rows = await corsair.apaleo.db.unitGroups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `code` | `string` | equals, contains, startsWith, endsWith, in |
+| `memberCount` | `number` | equals, gt, gte, lt, lte, in |
+| `maxPersons` | `number` | equals, gt, gte, lt, lte, in |
+| `rank` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Units
+
+Path: `apaleo.db.units.search`
+
+```ts
+const rows = await corsair.apaleo.db.units.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `maxPersons` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived` | `string` | equals, contains, startsWith, endsWith, in |
+| `isArchived` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

@@ -220,7 +220,7 @@ const googleSheetsEndpointMeta = {
 	},
 	'sheets.clearSheet': {
 		riskLevel: 'destructive',
-		description: 'Clear all data from a sheet [DESTRUCTIVE]',
+		description: 'Clear all data from a sheet',
 	},
 	'sheets.createSheet': {
 		riskLevel: 'write',
@@ -234,7 +234,7 @@ const googleSheetsEndpointMeta = {
 	},
 	'sheets.deleteRowsOrColumns': {
 		riskLevel: 'destructive',
-		description: 'Delete rows or columns from a sheet [DESTRUCTIVE]',
+		description: 'Delete rows or columns from a sheet',
 	},
 	'sheets.listSheetsInSpreadsheet': {
 		riskLevel: 'read',

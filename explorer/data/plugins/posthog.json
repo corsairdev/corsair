@@ -1,0 +1,299 @@
+{
+  "id": "posthog",
+  "displayName": "PostHog",
+  "description": "Product analytics platform for event tracking, feature flags, session replay, and experiments.",
+  "npmPackageName": "@corsair-dev/posthog",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 1,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "project_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "posthog.api.events.aliasCreate",
+      "shortPath": "events.aliasCreate",
+      "description": "Create an alias linking two distinct user IDs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number | string | { status?: number | string, message?: string } | any"
+      }
+    },
+    {
+      "path": "posthog.api.events.eventCreate",
+      "shortPath": "events.eventCreate",
+      "description": "Ingest an analytics event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number | string | { status?: number | string, message?: string } | any"
+      }
+    },
+    {
+      "path": "posthog.api.events.identityCreate",
+      "shortPath": "events.identityCreate",
+      "description": "Associate properties with a user identity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number | string | { status?: number | string, message?: string } | any"
+      }
+    },
+    {
+      "path": "posthog.api.events.trackPage",
+      "shortPath": "events.trackPage",
+      "description": "Track a page view event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number | string | { status?: number | string, message?: string } | any"
+      }
+    },
+    {
+      "path": "posthog.api.events.trackScreen",
+      "shortPath": "events.trackScreen",
+      "description": "Track a screen view event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "screen_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number | string | { status?: number | string, message?: string } | any"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "posthog.webhooks.events.captured",
+      "shortPath": "events.captured",
+      "description": "A PostHog event was captured",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "person",
+            "optional": true,
+            "type": "{ distinct_id: string, properties?: {} }"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "$set",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "$set_once",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "$unset",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "responseType": "{ event: string, distinct_id: string, timestamp?: string, uuid?: string, properties?: {}, person?: { distinct_id: string, properties?: {} }, groups?: {}, $set?: {}, $set_once?: {}, $unset?: string[] }",
+      "usageExample": "posthog({\n    webhookHooks: {\n        events: {\n            captured: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "posthog.db.events.search",
+      "entityName": "events",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "distinct_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timestamp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

@@ -406,6 +406,7 @@ async function createManualConnectLink(
 	return {
 		connectUrl: url.toString(),
 		expiresAt: new Date(Date.now() + DEFAULT_CONNECT_LINK_TTL_MS).toISOString(),
+		tenantId,
 	};
 }
 
@@ -436,6 +437,7 @@ async function createHubModeConnectLink(
 	return {
 		connectUrl: session.connectUrl,
 		expiresAt: session.expiresAt,
+		tenantId,
 	};
 }
 

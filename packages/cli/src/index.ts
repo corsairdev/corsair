@@ -19,6 +19,7 @@ import {
 	findCorsairConfigPath,
 	getCorsairInstance,
 } from './utils/corsair-instance';
+import { runCli } from './utils/run-cli';
 
 function createProgram(): Command {
 	const program = new Command();
@@ -70,7 +71,10 @@ function detectIsMainModule(): boolean {
 }
 
 if (detectIsMainModule()) {
-	createProgram().parse(normalizeLegacyArgs(process.argv));
+	void runCli({
+		program: createProgram(),
+		argv: normalizeLegacyArgs(process.argv),
+	});
 }
 
 export { createProgram, findCorsairConfigPath, getCorsairInstance };

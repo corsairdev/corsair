@@ -3,7 +3,9 @@ import type { HubConfig } from '../../hub';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
 import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
+import { ReconnectRequiredError } from '../auth/errors/reconnect-required';
 import type { EndpointManualConfig } from '../config/manual-connect';
+import { recordConnectRequestBestEffort } from '../connect-request/store';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
 import {
@@ -253,6 +255,27 @@ export function bindEndpointsRecursively({
 				try {
 					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
 				} catch (err) {
+					// Hub already minted a scoped connect link and put it on the typed
+					// error — report the connection unverified and rethrow it intact.
+					if (err instanceof ReconnectRequiredError) {
+						if (plugin && hubConfig) {
+							reportPluginConnectionStatusFromBinding({
+								hub: hubConfig,
+								database,
+								kek,
+								plugins: allPlugins ?? [],
+								plugin,
+								tenantId,
+								verified: false,
+							});
+						}
+						await recordConnectRequestBestEffort(database, {
+							tenantId: err.tenantId ?? tenantId,
+							plugin: err.plugin,
+							connectUrl: err.connectUrl,
+						});
+						throw err;
+					}
 					if (err instanceof AuthMissingError) {
 						if (plugin && hubConfig) {
 							reportPluginConnectionStatusFromBinding({
@@ -265,17 +288,30 @@ export function bindEndpointsRecursively({
 								verified: false,
 							});
 						}
-						await throwAuthMissingEndpointError({
-							error: err,
-							manual: manualConfig,
-							hub: hubConfig,
-							plugin,
-							tenantId,
-							database,
-							kek,
-							plugins: allPlugins,
-							multiTenancy,
-						});
+						// throwAuthMissingEndpointError mints the scoped link and rethrows
+						// the enriched error; capture that link for the connect dialog.
+						try {
+							await throwAuthMissingEndpointError({
+								error: err,
+								manual: manualConfig,
+								hub: hubConfig,
+								plugin,
+								tenantId,
+								database,
+								kek,
+								plugins: allPlugins,
+								multiTenancy,
+							});
+						} catch (enriched) {
+							if (enriched instanceof AuthMissingError) {
+								await recordConnectRequestBestEffort(database, {
+									tenantId: enriched.tenantId ?? tenantId,
+									plugin: enriched.pluginId,
+									connectUrl: enriched.connectUrl,
+								});
+							}
+							throw enriched;
+						}
 					}
 					throw err;
 				}

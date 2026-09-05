@@ -1,0 +1,3172 @@
+{
+  "id": "basin",
+  "displayName": "Basin",
+  "description": "Form backend service for collecting submissions without writing server-side code.",
+  "npmPackageName": "@corsair-dev/basin",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 26,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "basin.api.domains.list",
+      "shortPath": "domains.list",
+      "description": "List custom domains configured in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "{ id?: number | string, name?: string, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number, page?: number, per_page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.forms.create",
+      "shortPath": "forms.create",
+      "description": "Create a new form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_ajax",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoreply_body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whitelist_source_domains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "force_recaptcha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_hcaptcha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_turnstile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "turnstile_site_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "turnstile_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_cc_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_bcc_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_greeting",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "button_background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "button_text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_receipt_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "retention_days",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hide_dashboard_button",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_submitter_from_reply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_custom_template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoreply_custom_template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_use_custom_template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auto_response_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "confirmation_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "honeypot_field",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recaptcha_failed_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duplicate_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "redirect_heading",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_blacklist",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "allowed_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "blocked_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "smtp_email_validation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contribute_to_spam_training",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "form",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_ajax",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoreply_body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whitelist_source_domains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "force_recaptcha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_hcaptcha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_turnstile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "turnstile_site_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "turnstile_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_cc_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_bcc_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_greeting",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "button_background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "button_text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_receipt_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "retention_days",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hide_dashboard_button",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_submitter_from_reply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_custom_template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoreply_custom_template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_use_custom_template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auto_response_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "confirmation_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "honeypot_field",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recaptcha_failed_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duplicate_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_heading",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_blacklist",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "allowed_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "blocked_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "smtp_email_validation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contribute_to_spam_training",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "form_webhooks",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "inbox_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spam_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "trash_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.forms.delete",
+      "shortPath": "forms.delete",
+      "description": "Permanently delete a form and its configuration",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success?: boolean, message?: string } | { id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string } | { id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: {}, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string } | { id: number | string, name?: string, created_at?: string, updated_at?: string } | { id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string } | {}"
+      }
+    },
+    {
+      "path": "basin.api.forms.get",
+      "shortPath": "forms.get",
+      "description": "Retrieve a form by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_ajax",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoreply_body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whitelist_source_domains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "force_recaptcha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_hcaptcha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_turnstile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "turnstile_site_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "turnstile_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_cc_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_bcc_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_greeting",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "button_background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "button_text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_receipt_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "retention_days",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hide_dashboard_button",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_submitter_from_reply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_custom_template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoreply_custom_template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_use_custom_template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auto_response_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "confirmation_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "honeypot_field",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recaptcha_failed_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duplicate_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_heading",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_blacklist",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "allowed_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "blocked_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "smtp_email_validation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contribute_to_spam_training",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "form_webhooks",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "inbox_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spam_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "trash_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "List all forms in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "forms",
+            "optional": false,
+            "type": "{ id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number, page?: number, per_page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.forms.update",
+      "shortPath": "forms.update",
+      "description": "Update an existing form configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_ajax",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoreply_body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whitelist_source_domains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "force_recaptcha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_hcaptcha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_turnstile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "turnstile_site_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "turnstile_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_cc_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_bcc_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_greeting",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "button_background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "button_text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_receipt_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "retention_days",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hide_dashboard_button",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_submitter_from_reply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_custom_template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoreply_custom_template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_use_custom_template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auto_response_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "confirmation_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "honeypot_field",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recaptcha_failed_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duplicate_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "redirect_heading",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_blacklist",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "allowed_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "blocked_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "smtp_email_validation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contribute_to_spam_training",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "form",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_ajax",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoreply_body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whitelist_source_domains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "force_recaptcha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_hcaptcha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_turnstile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "turnstile_site_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "turnstile_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_cc_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_bcc_emails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_from_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_greeting",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "button_background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "button_text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_receipt_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "retention_days",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hide_dashboard_button",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "exclude_submitter_from_reply",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_custom_template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "autoreply_custom_template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "autoreply_use_custom_template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auto_response_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "confirmation_mail_template_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "honeypot_field",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recaptcha_failed_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duplicate_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_heading",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "redirect_button_text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_blacklist",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "allowed_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "blocked_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "smtp_email_validation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contribute_to_spam_training",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "form_webhooks",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "inbox_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spam_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "trash_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.formViews.get",
+      "shortPath": "formViews.get",
+      "description": "Retrieve a specific form view by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "form_schema",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_css",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_head",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inherit_styles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "auto_resize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "transparent_background",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "opens_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closes_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bootstrap_cdn_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iframe_height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "iframe_width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "redirect_iframe_parent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "center_iframe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "embed_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "form",
+            "optional": true,
+            "type": "{ id?: number, name?: string | null }"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: number, name?: string | null }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.formViews.list",
+      "shortPath": "formViews.list",
+      "description": "List form views in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_views",
+            "optional": false,
+            "type": "{ id: number | string, form_id?: number, name?: string | null, status?: string, form_schema?: string | null, custom_css?: string | null, custom_head?: string | null, background_color?: string | null, text_color?: string | null, inherit_styles?: boolean, auto_resize?: boolean, transparent_background?: boolean, opens_at?: string | null, closes_at?: string | null, bootstrap_cdn_url?: string | null, uuid?: string | null, iframe_height?: number | null, iframe_width?: number | null, redirect_iframe_parent?: boolean, center_iframe?: boolean, embed_code?: string, form?: { id?: number, name?: string | null }, project?: { id?: number, name?: string | null }, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number, page?: number, per_page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ name: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Permanently delete a project",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success?: boolean, message?: string } | { id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string } | { id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: {}, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string } | { id: number | string, name?: string, created_at?: string, updated_at?: string } | { id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string } | {}"
+      }
+    },
+    {
+      "path": "basin.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Retrieve a project by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List all projects in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: number | string, name?: string, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number, page?: number, per_page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update an existing project name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ name: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.submissions.delete",
+      "shortPath": "submissions.delete",
+      "description": "Permanently delete a form submission",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success?: boolean, message?: string } | { id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string } | { id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: {}, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string } | { id: number | string, name?: string, created_at?: string, updated_at?: string } | { id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string } | {}"
+      }
+    },
+    {
+      "path": "basin.api.submissions.get",
+      "shortPath": "submissions.get",
+      "description": "Retrieve a specific form submission by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "spam_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "referrer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payload_params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "form",
+            "optional": true,
+            "type": "{ name?: string, uuid?: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.submissions.list",
+      "shortPath": "submissions.list",
+      "description": "List submissions with filtering and pagination options",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "filter_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_range",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "submissions",
+            "optional": false,
+            "type": "{ id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: {}, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number, page?: number, per_page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.submissions.markHam",
+      "shortPath": "submissions.markHam",
+      "description": "Mark a submission as legitimate (not spam)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "spam_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "referrer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payload_params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "form",
+            "optional": true,
+            "type": "{ name?: string, uuid?: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.submissions.markSpam",
+      "shortPath": "submissions.markSpam",
+      "description": "Mark a submission as spam",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "spam_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "referrer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payload_params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "form",
+            "optional": true,
+            "type": "{ name?: string, uuid?: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.submissions.refireWebhooks",
+      "shortPath": "submissions.refireWebhooks",
+      "description": "Re-trigger webhooks for a specific submission",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.submissions.refireWebhooksBulk",
+      "shortPath": "submissions.refireWebhooksBulk",
+      "description": "Re-trigger webhooks in bulk for multiple submissions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "submission_ids",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.submissions.update",
+      "shortPath": "submissions.update",
+      "description": "Update a submission state (read, spam, trash)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "submission",
+            "optional": true,
+            "type": "{ spam?: boolean, read?: boolean, trash?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "read",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "spam_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "referrer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payload_params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "form",
+            "optional": true,
+            "type": "{ name?: string, uuid?: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a new form webhook integration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trigger_when_spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "form_webhook",
+            "optional": true,
+            "type": "{ form_id: number, name: string, url: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trigger_when_spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "failure_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_failure_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Permanently delete a form webhook integration",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success?: boolean, message?: string } | { id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string } | { id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: {}, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string } | { id: number | string, name?: string, created_at?: string, updated_at?: string } | { id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string } | {}"
+      }
+    },
+    {
+      "path": "basin.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Retrieve a form webhook configuration by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trigger_when_spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "failure_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_failure_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List all form webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_webhooks",
+            "optional": false,
+            "type": "{ id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ count?: number, page?: number, per_page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "basin.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a form webhook configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trigger_when_spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "form_webhook",
+            "optional": true,
+            "type": "{ form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trigger_when_spam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "failure_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_failure_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "basin.db.domains.search",
+      "entityName": "domains",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "basin.db.forms.search",
+      "entityName": "forms",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "project_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "redirect_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "use_ajax",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "notification_emails",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "autoreply",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "inbox_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "spam_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "trash_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "basin.db.formViews.search",
+      "entityName": "formViews",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "form_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "embed_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "basin.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "basin.db.submissions.search",
+      "entityName": "submissions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "form_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "spam",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "read",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "trash",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "spam_reason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "referrer",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_agent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "basin.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "form_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "format",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "trigger_when_spam",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "failure_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

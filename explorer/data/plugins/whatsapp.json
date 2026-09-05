@@ -1,0 +1,700 @@
+{
+  "id": "whatsapp",
+  "displayName": "WhatsApp",
+  "description": "Messaging platform API for business conversations, templates, media, and customer notifications.",
+  "npmPackageName": "@corsair-dev/whatsapp",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 2,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "phone_number_id",
+        "business_account_id",
+        "webhook_verify_token"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "whatsapp.api.businessProfiles.get",
+      "shortPath": "businessProfiles.get",
+      "description": "Retrieve WhatsApp Business Profile information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phoneNumberId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ about?: string, address?: string, description?: string, email?: string, profile_picture_url?: string, websites?: string[], vertical?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whatsapp.api.media.getInfo",
+      "shortPath": "media.getInfo",
+      "description": "Get information about uploaded media",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messaging_product",
+            "optional": false,
+            "type": "whatsapp"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mime_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sha256",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whatsapp.api.media.upload",
+      "shortPath": "media.upload",
+      "description": "Upload media to WhatsApp servers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phoneNumberId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whatsapp.api.messages.markRead",
+      "shortPath": "messages.markRead",
+      "description": "Mark an incoming WhatsApp message as read",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phoneNumberId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whatsapp.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a text, media, template, or interactive WhatsApp message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: text, text: { preview_url?: boolean, body: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: image, image: { id?: string, link?: string, caption?: string, filename?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: audio, audio: { id?: string, link?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: document, document: { id?: string, link?: string, caption?: string, filename?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: video, video: { id?: string, link?: string, caption?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: template, template: { name: string, language: { code: string, policy?: deterministic }, components?: {}[] } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: interactive, interactive: { type: button | list | product | product_list | flow, body?: { text?: string } } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: location, location: { longitude: number, latitude: number, name?: string, address?: string } } | { phoneNumberId?: string, messaging_product: whatsapp, recipient_type?: individual, to: string, context?: { message_id: string }, type: contacts, contacts: { name: { formatted_name: string, first_name?: string }, phones?: { phone?: string, type?: string, wa_id?: string }[] }[] }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messaging_product",
+            "optional": false,
+            "type": "whatsapp"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ input: string, wa_id: string }[]"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ id: string, message_status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whatsapp.api.messageTemplates.create",
+      "shortPath": "messageTemplates.create",
+      "description": "Create a new message template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessAccountId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "components",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whatsapp.api.messageTemplates.delete",
+      "shortPath": "messageTemplates.delete",
+      "description": "Delete a message template by name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessAccountId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whatsapp.api.messageTemplates.getStatus",
+      "shortPath": "messageTemplates.getStatus",
+      "description": "Get the status of a message template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessAccountId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whatsapp.api.messageTemplates.list",
+      "shortPath": "messageTemplates.list",
+      "description": "List all message templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessAccountId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whatsapp.api.phoneNumbers.get",
+      "shortPath": "phoneNumbers.get",
+      "description": "Validate credentials and retrieve phone number health",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phoneNumberId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verified_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quality_rating",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code_verification_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "throughput",
+            "optional": true,
+            "type": "{ level?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whatsapp.api.phoneNumbers.list",
+      "shortPath": "phoneNumbers.list",
+      "description": "List all phone numbers for the WhatsApp Business Account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessAccountId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, display_phone_number?: string, verified_name?: string, quality_rating?: string, code_verification_status?: string, platform_type?: string, throughput?: {} }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "whatsapp.webhooks.messages.received",
+      "shortPath": "messages.received",
+      "description": "Incoming WhatsApp messages from customers",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessAccountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayPhoneNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ wa_id: string, profile?: { name?: string } }[]"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ id: string, from: string, timestamp: string, type: string, context?: { from?: string, id?: string, referred_product?: {} }, text?: { body: string }, image?: { caption?: string }, audio?: {}, document?: { caption?: string }, video?: { caption?: string }, sticker?: {}, location?: {}, contacts?: {}[], interactive?: { button_reply?: { title?: string }, list_reply?: { title?: string } }, button?: { text?: string }, order?: {}, referral?: {}, errors?: {}[] }[]"
+          }
+        ]
+      },
+      "responseType": "{ businessAccountId: string, phoneNumberId: string, displayPhoneNumber: string, contacts: { wa_id: string, profile?: { name?: string } }[], messages: { id: string, from: string, timestamp: string, type: string, context?: { from?: string, id?: string, referred_product?: {} }, text?: { body: string }, image?: { caption?: string }, audio?: {}, document?: { caption?: string }, video?: { caption?: string }, sticker?: {}, location?: {}, contacts?: {}[], interactive?: { button_reply?: { title?: string }, list_reply?: { title?: string } }, button?: { text?: string }, order?: {}, referral?: {}, errors?: {}[] }[] }",
+      "usageExample": "whatsapp({\n    webhookHooks: {\n        messages: {\n            received: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "whatsapp.webhooks.messages.statusChanged",
+      "shortPath": "messages.statusChanged",
+      "description": "WhatsApp sent, delivered, read, failed, deleted, or error updates",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "businessAccountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayPhoneNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "statuses",
+            "optional": false,
+            "type": "{ id: string, status: sent | delivered | read | failed | deleted, timestamp: string, recipient_id?: string, conversation?: {}, pricing?: {}, errors?: { code?: number, title?: string, message?: string, error_data?: { details?: string } }[] }[]"
+          },
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "responseType": "{ businessAccountId: string, phoneNumberId: string, displayPhoneNumber: string, statuses: { id: string, status: sent | delivered | read | failed | deleted, timestamp: string, recipient_id?: string, conversation?: {}, pricing?: {}, errors?: { code?: number, title?: string, message?: string, error_data?: { details?: string } }[] }[], errors: {}[] }",
+      "usageExample": "whatsapp({\n    webhookHooks: {\n        messages: {\n            statusChanged: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "whatsapp.db.businessProfiles.search",
+      "entityName": "businessProfiles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phoneNumberId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "about",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profile_picture_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "vertical",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "whatsapp.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "waId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "whatsapp.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "to",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timestamp",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phoneNumberId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "businessAccountId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "whatsapp.db.phoneNumbers.search",
+      "entityName": "phoneNumbers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "display_phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "verified_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quality_rating",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "code_verification_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "platform_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

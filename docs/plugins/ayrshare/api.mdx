@@ -1,0 +1,203 @@
+---
+title: API
+description: "API reference for Ayrshare: every `ayrshare.api.*` operation with input and output types."
+---
+
+Every `ayrshare.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Auto Schedule
+
+### list
+
+`autoSchedule.list`
+
+List active auto-post schedules, including titles, UTC times, weekday filters, and exclude dates.
+
+**Risk:** `read`
+
+```ts
+await corsair.ayrshare.api.autoSchedule.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `schedules` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="schedules full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### set
+
+`autoSchedule.set`
+
+Create or replace an auto-post schedule. Its case-sensitive title is the join key used by publish autoSchedule.title.
+
+**Risk:** `write`
+
+```ts
+await corsair.ayrshare.api.autoSchedule.set({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schedule` | `string[]` | No | UTC times; required unless setStartDate is provided |
+| `title` | `string` | No | Case-sensitive schedule name and join key for publish autoSchedule.title |
+| `setStartDate` | `string` | No | ISO-8601 UTC date-time to begin the schedule |
+| `daysOfWeek` | `number[]` | No | Weekdays as 0-6, Sunday through Saturday |
+| `excludeDates` | `string[]` | No | UTC dates excluded from future auto-scheduling |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `schedule` | `string[]` | No | — |
+| `daysOfWeek` | `number[]` | No | — |
+| `excludeDates` | `string[]` | No | — |
+
+
+
+---
+
+## Posts
+
+### delete
+
+`posts.delete`
+
+Delete an Ayrshare post by id. Published Instagram and TikTok posts cannot be deleted via API; use markManualDeleted only after deleting them on the network.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ayrshare.api.posts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Ayrshare top-level Post ID |
+| `markManualDeleted` | `boolean` | No | Mark deleted in Ayrshare without deleting on the network. Instagram and TikTok published posts cannot be deleted via API. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `id` | `string` | No | — |
+
+
+
+---
+
+### history
+
+`posts.history`
+
+Fetch Ayrshare post history, filterable by date, status, network, and record count.
+
+**Risk:** `read`
+
+```ts
+await corsair.ayrshare.api.posts.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Number of recent posts. Default 25, max 1000. |
+| `lastDays` | `number` | No | Last n days by publish date. Default 30. 0 returns the full history (up to limit). Ignored when startDate and endDate are set. |
+| `startDate` | `string` | No | ISO-8601 start date (inclusive) |
+| `endDate` | `string` | No | ISO-8601 end date (inclusive) |
+| `status` | `success \| error \| processing \| pending \| paused \| deleted \| awaiting approval` | No | Filter by post status. Deleted posts are only returned with status=deleted. |
+| `platforms` | `string[]` | No | Filter by network; OR logic. Example: facebook, instagram. |
+| `type` | `immediate \| scheduled` | No | immediate posts vs scheduled posts |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `history` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+| `refId` | `string` | No | — |
+| `lastUpdated` | `string` | No | — |
+| `nextUpdate` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="history full type">
+
+```ts
+{
+  id: string,
+  post?: string | null,
+  platforms?: string[],
+  postIds?: {
+    platform?: string | null,
+    id?: string | number | null,
+    status?: string | null,
+    postUrl?: string | null,
+    isVideo?: boolean | null
+  }[],
+  status?: string | null,
+  created?: string | null,
+  scheduleDate?: string | {
+    _seconds?: number | null,
+    _nanoseconds?: number | null,
+    utc?: string | null
+  },
+  errors?: any[],
+  mediaUrls?: string[],
+  urls?: any[],
+  type?: string | null,
+  notes?: string | null,
+  profileTitle?: string | null,
+  refId?: string | null,
+  requiresApproval?: boolean | null,
+  approved?: boolean | null,
+  approvedBy?: string | null,
+  approvedDate?: string | null,
+  rejectedBy?: string | null,
+  rejectedDate?: string | null,
+  shortenLinks?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

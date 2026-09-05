@@ -1,0 +1,118 @@
+---
+title: Database
+description: "ClickHouse local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The ClickHouse plugin syncs data locally. Use `corsair.clickhouse.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Column
+
+Path: `clickhouse.db.column.search`
+
+```ts
+const rows = await corsair.clickhouse.db.column.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `database` | `string` | equals, contains, startsWith, endsWith, in |
+| `table` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `comment` | `string` | equals, contains, startsWith, endsWith, in |
+| `default_kind` | `string` | equals, contains, startsWith, endsWith, in |
+| `default_expression` | `string` | equals, contains, startsWith, endsWith, in |
+| `defaultExpression` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Database
+
+Path: `clickhouse.db.database.search`
+
+```ts
+const rows = await corsair.clickhouse.db.database.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `engine` | `string` | equals, contains, startsWith, endsWith, in |
+| `data_path` | `string` | equals, contains, startsWith, endsWith, in |
+| `metadata_path` | `string` | equals, contains, startsWith, endsWith, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `engine_full` | `string` | equals, contains, startsWith, endsWith, in |
+| `comment` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Query Result
+
+Path: `clickhouse.db.queryResult.search`
+
+```ts
+const rows = await corsair.clickhouse.db.queryResult.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Table
+
+Path: `clickhouse.db.table.search`
+
+```ts
+const rows = await corsair.clickhouse.db.table.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `database` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `engine` | `string` | equals, contains, startsWith, endsWith, in |
+| `comment` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

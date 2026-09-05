@@ -1,0 +1,1607 @@
+{
+  "id": "botbaba",
+  "displayName": "Botbaba",
+  "description": "Chatbot builder platform for creating conversational bots across messaging channels.",
+  "npmPackageName": "@corsair-dev/botbaba",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 43,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "botbaba.api.actions.execute",
+      "shortPath": "actions.execute",
+      "description": "Execute a bot action for a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conv_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "action_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.actions.executeByUser",
+      "shortPath": "actions.executeByUser",
+      "description": "Execute a bot action for users",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "action_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bot_user_id",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "json_payload",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.actions.getWidgetSettings",
+      "shortPath": "actions.getWidgetSettings",
+      "description": "Get bot widget settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bot_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.broadcasts.delete",
+      "shortPath": "broadcasts.delete",
+      "description": "Delete a broadcast",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "broadcast_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.broadcasts.get",
+      "shortPath": "broadcasts.get",
+      "description": "Get a broadcast",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "broadcast_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.broadcasts.list",
+      "shortPath": "broadcasts.list",
+      "description": "List broadcasts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a Botbaba contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Fetch a Botbaba contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.contacts.getAnalytics",
+      "shortPath": "contacts.getAnalytics",
+      "description": "Retrieve contact analytics over a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update an existing Botbaba contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.flows.delete",
+      "shortPath": "flows.delete",
+      "description": "Delete a conversation flow",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flow_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.flows.get",
+      "shortPath": "flows.get",
+      "description": "Get a conversation flow",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flow_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.flows.list",
+      "shortPath": "flows.list",
+      "description": "List conversation flows",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.gupshup.forwardMessage",
+      "shortPath": "gupshup.forwardMessage",
+      "description": "Forward a Gupshup WhatsApp webhook to Botbaba",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Get a message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.messages.getAnalytics",
+      "shortPath": "messages.getAnalytics",
+      "description": "Get message analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.messages.sendWhatsappTemplate",
+      "shortPath": "messages.sendWhatsappTemplate",
+      "description": "Send a WhatsApp template via Botbaba",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.shopify.cartCreation",
+      "shortPath": "shopify.cartCreation",
+      "description": "Forward Shopify cart creation to Botbaba",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "X-Shopify-Topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Webhook-Id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-API-Version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Hmac-SHA256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Shop-Domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Triggered-At",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_hmac_sha256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_shop_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_triggered_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.shopify.cartUpdate",
+      "shortPath": "shopify.cartUpdate",
+      "description": "Forward Shopify cart update to Botbaba",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "X-Shopify-Topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Webhook-Id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-API-Version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Hmac-SHA256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Shop-Domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Triggered-At",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_hmac_sha256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_shop_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_triggered_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.shopify.checkoutCreation",
+      "shortPath": "shopify.checkoutCreation",
+      "description": "Forward Shopify checkout creation to Botbaba",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "X-Shopify-Topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Webhook-Id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-API-Version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Hmac-SHA256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Shop-Domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Triggered-At",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_hmac_sha256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_shop_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_triggered_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.shopify.checkoutUpdate",
+      "shortPath": "shopify.checkoutUpdate",
+      "description": "Forward Shopify checkout update to Botbaba",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_payload",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "X-Shopify-Topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Webhook-Id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-API-Version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Hmac-SHA256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Shop-Domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Triggered-At",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_hmac_sha256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_shop_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_triggered_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.shopify.orderCancellation",
+      "shortPath": "shopify.orderCancellation",
+      "description": "Forward Shopify order cancellation to Botbaba",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "X-Shopify-Topic",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Webhook-Id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-API-Version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Hmac-SHA256",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Shop-Domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Triggered-At",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.shopify.orderFulfillment",
+      "shortPath": "shopify.orderFulfillment",
+      "description": "Forward Shopify order fulfillment to Botbaba",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "X-Shopify-Topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Webhook-Id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-API-Version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Hmac-SHA256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Shop-Domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Triggered-At",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_hmac_sha256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_shop_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_triggered_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.shopify.orderPayment",
+      "shortPath": "shopify.orderPayment",
+      "description": "Forward Shopify order payment to Botbaba",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "X-Shopify-Event-Id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Webhook-Id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-API-Version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Hmac-SHA256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Shop-Domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "X-Shopify-Triggered-At",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_hmac_sha256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_shop_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "x_shopify_triggered_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.simulators.cartCreation",
+      "shortPath": "simulators.cartCreation",
+      "description": "Simulate a Shopify cart creation payload",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botbaba.api.simulators.checkoutCreation",
+      "shortPath": "simulators.checkoutCreation",
+      "description": "Simulate a Shopify checkout creation payload",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botbaba.api.simulators.checkoutUpdate",
+      "shortPath": "simulators.checkoutUpdate",
+      "description": "Simulate a Shopify checkout update payload",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botbaba.api.simulators.gupshup",
+      "shortPath": "simulators.gupshup",
+      "description": "Simulate a Gupshup WhatsApp webhook payload",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sender",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipient",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "message | delivery | read | interactive"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interactive",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botbaba.api.simulators.orderFulfillment",
+      "shortPath": "simulators.orderFulfillment",
+      "description": "Simulate a Shopify order fulfillment payload",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variant",
+            "optional": false,
+            "type": "standard | with_tracking | partial"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botbaba.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete a tag",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List all tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Rename a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a message template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get a message template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List message templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Update a message template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.utils.getFilename",
+      "shortPath": "utils.getFilename",
+      "description": "Extract a filename from a path",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botbaba.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Get a webhook",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.webhooks.listEventTypes",
+      "shortPath": "webhooks.listEventTypes",
+      "description": "List webhook event types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    },
+    {
+      "path": "botbaba.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[] | string | number | boolean | null"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "botbaba.db.broadcasts.search",
+      "entityName": "broadcasts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "broadcast_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "botbaba.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "botbaba.db.flows.search",
+      "entityName": "flows",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "flow_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "botbaba.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "botbaba.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "botbaba.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "template_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "botbaba.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webhook_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1060 @@
+{
+  "id": "twilio",
+  "displayName": "Twilio",
+  "description": "Communications API for SMS, voice calls, WhatsApp messaging, and programmable telephony.",
+  "npmPackageName": "@corsair-dev/twilio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 3,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "accountSid"]
+    }
+  ],
+  "api": [
+    {
+      "path": "twilio.api.calls.create",
+      "shortPath": "calls.create",
+      "description": "Initiate an outbound phone call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "To",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "From",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Twiml",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "StatusCallback",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "StatusCallbackMethod",
+            "optional": true,
+            "type": "GET | POST"
+          },
+          {
+            "key": "StatusCallbackEvent",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "Timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Record",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_sid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number_sid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_unit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subresource_uris",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twilio.api.calls.get",
+      "shortPath": "calls.get",
+      "description": "Retrieve a call record by SID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callSid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_sid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_formatted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number_sid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_unit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subresource_uris",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twilio.api.calls.list",
+      "shortPath": "calls.list",
+      "description": "List call records with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "To",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "From",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "StartTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EndTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calls",
+            "optional": false,
+            "type": "{ sid: string, date_created?: string | null, date_updated?: string | null, account_sid: string, to: string, to_formatted?: string, from: string, from_formatted?: string, phone_number_sid?: string | null, status: string, start_time?: string | null, end_time?: string | null, duration?: string | null, price?: string | null, price_unit?: string | null, direction: string, api_version?: string, uri: string, subresource_uris?: {} }[]"
+          },
+          {
+            "key": "first_page_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous_page_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twilio.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Retrieve a message by SID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageSid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_sent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_sid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "num_segments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "num_media",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_unit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subresource_uris",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twilio.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "To",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "From",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DateSent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ sid: string, date_created?: string | null, date_updated?: string | null, date_sent?: string | null, account_sid: string, to: string, from: string, body?: string | null, status: string, num_segments?: string | null, num_media?: string | null, direction: string, api_version?: string, price?: string | null, price_unit?: string | null, error_code?: number | null, error_message?: string | null, uri: string, subresource_uris?: {} }[]"
+          },
+          {
+            "key": "first_page_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous_page_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twilio.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send an SMS or MMS message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "To",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "From",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MediaUrl",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "StatusCallback",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MessagingServiceSid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_sent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_sid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "num_segments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "num_media",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_unit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subresource_uris",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "twilio.webhooks.call.statusUpdate",
+      "shortPath": "call.statusUpdate",
+      "description": "A call status changed (ringing, in-progress, completed, etc.)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CallSid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "AccountSid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "From",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "To",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "CallStatus",
+            "optional": false,
+            "type": "queued | ringing | in-progress | completed | busy | no-answer | canceled | failed"
+          },
+          {
+            "key": "Direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CallDuration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ApiVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SequenceNumber",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ CallSid: string, AccountSid: string, From: string, To: string, CallStatus: queued | ringing | in-progress | completed | busy | no-answer | canceled | failed, Direction?: string, Duration?: string, CallDuration?: string, ApiVersion?: string, Timestamp?: string, SequenceNumber?: string }",
+      "usageExample": "twilio({\n    webhookHooks: {\n        call: {\n            statusUpdate: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "twilio.webhooks.message.received",
+      "shortPath": "message.received",
+      "description": "An incoming SMS/MMS message was received",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "MessageSid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "SmsSid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AccountSid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "MessagingServiceSid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "From",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "To",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "NumMedia",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "NumSegments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SmsStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ApiVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FromCity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FromState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FromCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FromZip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ToCity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ToState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ToCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ToZip",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ MessageSid: string, SmsSid?: string, AccountSid: string, MessagingServiceSid?: string, From: string, To: string, Body: string, NumMedia: string, NumSegments?: string, SmsStatus?: string, ApiVersion?: string, FromCity?: string, FromState?: string, FromCountry?: string, FromZip?: string, ToCity?: string, ToState?: string, ToCountry?: string, ToZip?: string }",
+      "usageExample": "twilio({\n    webhookHooks: {\n        message: {\n            received: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "twilio.webhooks.message.statusUpdate",
+      "shortPath": "message.statusUpdate",
+      "description": "A message delivery status changed (sent, delivered, failed, etc.)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "MessageSid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "AccountSid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "From",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "To",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "MessageStatus",
+            "optional": false,
+            "type": "accepted | queued | sending | sent | delivered | undelivered | failed | receiving | received | read"
+          },
+          {
+            "key": "ErrorCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ApiVersion",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ MessageSid: string, AccountSid: string, From: string, To: string, MessageStatus: accepted | queued | sending | sent | delivered | undelivered | failed | receiving | received | read, ErrorCode?: string, ErrorMessage?: string, ApiVersion?: string }",
+      "usageExample": "twilio({\n    webhookHooks: {\n        message: {\n            statusUpdate: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "twilio.db.calls.search",
+      "entityName": "calls",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "to",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "direction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "end_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price_unit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "twilio.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "to",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "from",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "direction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_sent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price_unit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

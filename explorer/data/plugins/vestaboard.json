@@ -1,0 +1,148 @@
+{
+  "id": "vestaboard",
+  "displayName": "Vestaboard",
+  "description": "Split-flap display API for sending messages to mechanical message boards and signage.",
+  "npmPackageName": "@corsair-dev/vestaboard",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "vestaboard.api.subscriptions.list",
+      "shortPath": "subscriptions.list",
+      "description": "List Vestaboard subscriptions accessible with the current API key and secret",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptions",
+            "optional": false,
+            "type": "{ id: string, boardId: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vestaboard.api.subscriptions.postMessage",
+      "shortPath": "subscriptions.postMessage",
+      "description": "Send text or a 6x22 character grid to a Vestaboard subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "characters",
+            "optional": true,
+            "type": "number[][]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "muted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "vestaboard.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "muted",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "vestaboard.db.subscriptions.search",
+      "entityName": "subscriptions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "boardId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

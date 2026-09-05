@@ -389,7 +389,7 @@ const canvaEndpointMeta = {
 	},
 	'assets.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an asset [DESTRUCTIVE]',
+		description: 'Delete an asset',
 	},
 	'folders.create': {
 		riskLevel: 'write',
@@ -405,7 +405,7 @@ const canvaEndpointMeta = {
 	},
 	'folders.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a folder [DESTRUCTIVE]',
+		description: 'Delete a folder',
 	},
 	'folders.listItems': {
 		riskLevel: 'read',

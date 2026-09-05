@@ -1,0 +1,1376 @@
+---
+title: API
+description: "API reference for Parseur: every `parseur.api.*` operation with input and output types."
+---
+
+Every `parseur.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Bootstrap
+
+### getBootstrap
+
+`bootstrap.getBootstrap`
+
+Retrieve bootstrap configuration: choices, mappings, max_field_lengths, email_domain, extra_fields, and master_parser_set.
+
+**Risk:** `read`
+
+```ts
+await corsair.parseur.api.bootstrap.getBootstrap({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `choices` | `object` | Yes | — |
+| `mappings` | `object` | Yes | — |
+| `max_field_lengths` | `object` | Yes | — |
+| `email_domain` | `string` | Yes | — |
+| `extra_fields` | `any[]` | Yes | — |
+| `master_parser_set` | `any[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="mappings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="max_field_lengths full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Documents
+
+### copyDocument
+
+`documents.copyDocument`
+
+Copy a document to another mailbox.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.documents.copyDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `target_mailbox_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_set` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notification_set full type">
+
+```ts
+{
+  info: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createEmailDocument
+
+`documents.createEmailDocument`
+
+Upload an email or text document to Parseur for parsing. Requires subject, from, and recipient.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.documents.createEmailDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `recipient` | `string` | Yes | — |
+| `to` | `string` | No | — |
+| `cc` | `string` | No | — |
+| `bcc` | `string` | No | — |
+| `body_html` | `string` | No | — |
+| `body_plain` | `string` | No | — |
+| `message_headers` | `tuple[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `DocumentID` | `string` | No | — |
+| `DocumentIDs` | `string[]` | No | — |
+| `attachments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  name?: string,
+  DocumentID?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteDocument
+
+`documents.deleteDocument`
+
+Delete a document by ID [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.parseur.api.documents.deleteDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getDocument
+
+`documents.getDocument`
+
+Retrieve full details of a document by ID: status, processing info, parsed results, and download URLs.
+
+**Risk:** `read`
+
+```ts
+await corsair.parseur.api.documents.getDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `parser` | `number` | No | — |
+| `status` | `INCOMING \| ANALYZING \| PROGRESS \| PARSEDOK \| PARSEDKO \| QUOTAEXC \| SKIPPED \| SPLIT \| EXPORTKO \| TRANSKO \| INVALID \| string` | No | — |
+| `received` | `string` | No | — |
+| `processed` | `string` | No | — |
+| `result` | `object` | No | — |
+| `json_download_url` | `string` | No | — |
+| `csv_download_url` | `string` | No | — |
+| `xls_download_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+string | {
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDocumentLogs
+
+`documents.getDocumentLogs`
+
+Get document logs for a document. Returns a paginated list of logs with status, source, and message details.
+
+**Risk:** `read`
+
+```ts
+await corsair.parseur.api.documents.getDocumentLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `current` | `number` | No | — |
+| `total` | `number` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string | number,
+  created?: string,
+  status?: string,
+  source?: string,
+  message?: string,
+  code?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDocuments
+
+`documents.listDocuments`
+
+List documents within a mailbox. Use when you need to paginate, search, or sort documents after obtaining the mailbox ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.parseur.api.documents.listDocuments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `search` | `string` | No | — |
+| `ordering` | `name \| -name \| created \| -created \| processed \| -processed \| status \| -status` | No | — |
+| `status` | `INCOMING \| ANALYZING \| PROGRESS \| PARSEDOK \| PARSEDKO \| QUOTAEXC \| SKIPPED \| SPLIT \| EXPORTKO \| TRANSKO \| INVALID` | No | — |
+| `received_after` | `string` | No | — |
+| `received_before` | `string` | No | — |
+| `tz` | `string` | No | — |
+| `with_result` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `current` | `number` | No | — |
+| `total` | `number` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string | number,
+  name?: string,
+  parser?: number,
+  status?: INCOMING | ANALYZING | PROGRESS | PARSEDOK | PARSEDKO | QUOTAEXC | SKIPPED | SPLIT | EXPORTKO | TRANSKO | INVALID | string,
+  received?: string,
+  processed?: string | null,
+  result?: string | {
+  } | null,
+  json_download_url?: string | null,
+  csv_download_url?: string | null,
+  xls_download_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### processDocument
+
+`documents.processDocument`
+
+Reprocess a document with the current template configuration.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.documents.processDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_set` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notification_set full type">
+
+```ts
+{
+  info: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### skipDocument
+
+`documents.skipDocument`
+
+Skip a document. Marks the document with status SKIPPED.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.documents.skipDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `parser` | `number` | No | — |
+| `status` | `INCOMING \| ANALYZING \| PROGRESS \| PARSEDOK \| PARSEDKO \| QUOTAEXC \| SKIPPED \| SPLIT \| EXPORTKO \| TRANSKO \| INVALID \| string` | No | — |
+| `received` | `string` | No | — |
+| `processed` | `string` | No | — |
+| `result` | `object` | No | — |
+| `json_download_url` | `string` | No | — |
+| `csv_download_url` | `string` | No | — |
+| `xls_download_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+string | {
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadDocument
+
+`documents.uploadDocument`
+
+Upload a binary file to a Parseur mailbox as multipart/form-data.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.documents.uploadDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `file` | `string` | Yes | — |
+| `file_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `attachments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  name?: string,
+  DocumentID?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Export Configs
+
+### createExportConfig
+
+`exportConfigs.createExportConfig`
+
+Create a custom download for a mailbox. Requires type and items (field names).
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.exportConfigs.createExportConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `PARSER \| PARSER_FIELD` | No | — |
+| `items` | `string[]` | Yes | — |
+| `parser_field_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `PARSER \| PARSER_FIELD` | No | — |
+| `items` | `string[]` | No | — |
+| `parser_field_id` | `string` | No | — |
+| `parser_field_name` | `string` | No | — |
+| `csv_download` | `string` | No | — |
+| `xls_download` | `string` | No | — |
+
+
+
+---
+
+### deleteExportConfig
+
+`exportConfigs.deleteExportConfig`
+
+Delete a custom download from a mailbox [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.parseur.api.exportConfigs.deleteExportConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailbox_id` | `string \| number` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### listExportConfigs
+
+`exportConfigs.listExportConfigs`
+
+List custom downloads (export configurations) for a mailbox.
+
+**Risk:** `read`
+
+```ts
+await corsair.parseur.api.exportConfigs.listExportConfigs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `current` | `number` | No | — |
+| `total` | `number` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  type?: PARSER | PARSER_FIELD,
+  items?: string[],
+  parser_field_id?: string | null,
+  parser_field_name?: string | null,
+  csv_download?: string,
+  xls_download?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateExportConfig
+
+`exportConfigs.updateExportConfig`
+
+Update a custom download field list, name, or type for an existing configuration.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.exportConfigs.updateExportConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailbox_id` | `string \| number` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `PARSER \| PARSER_FIELD` | No | — |
+| `items` | `string[]` | No | — |
+| `parser_field_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `PARSER \| PARSER_FIELD` | No | — |
+| `items` | `string[]` | No | — |
+| `parser_field_id` | `string` | No | — |
+| `parser_field_name` | `string` | No | — |
+| `csv_download` | `string` | No | — |
+| `xls_download` | `string` | No | — |
+
+
+
+---
+
+## Mailboxes
+
+### copyMailbox
+
+`mailboxes.copyMailbox`
+
+Copy a mailbox (parser) in Parseur. Creates a duplicate of the mailbox with all its configuration.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.mailboxes.copyMailbox({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_set` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notification_set full type">
+
+```ts
+{
+  info: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createMailbox
+
+`mailboxes.createMailbox`
+
+Create a new mailbox (parser) in Parseur. Use when you need to set up a new parser for document parsing with custom configuration.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.mailboxes.createMailbox({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `ai_engine` | `DISABLED \| GCP_AI_2 \| GCP_AI_2_5 \| GCP_AI_3_TXT` | No | — |
+| `ai_instructions` | `string` | No | — |
+| `email_prefix` | `string` | No | — |
+| `attachments_only_override` | `boolean` | No | — |
+| `disable_deskew` | `boolean` | No | — |
+| `force_ocr` | `boolean` | No | — |
+| `decimal_separator` | `. \| ,` | No | — |
+| `input_date_format` | `MONTH_FIRST \| DAY_FIRST` | No | — |
+| `retention_policy` | `any` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `account_uuid` | `string` | No | — |
+| `ai_engine` | `string` | No | — |
+| `ai_instructions` | `string` | No | — |
+| `email_prefix` | `string` | No | — |
+| `document_count` | `number` | No | — |
+| `template_count` | `number` | No | — |
+| `webhook_count` | `number` | No | — |
+| `attachments_only` | `boolean` | No | — |
+| `is_master` | `boolean` | No | — |
+| `webhook_set` | `any[]` | No | — |
+| `available_webhook_set` | `any[]` | No | — |
+
+
+
+---
+
+### deleteMailbox
+
+`mailboxes.deleteMailbox`
+
+Delete a mailbox (parser) by ID [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.parseur.api.mailboxes.deleteMailbox({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getMailbox
+
+`mailboxes.getMailbox`
+
+Retrieve full mailbox (parser) configuration by ID, including fields, webhooks, and settings.
+
+**Risk:** `read`
+
+```ts
+await corsair.parseur.api.mailboxes.getMailbox({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `account_uuid` | `string` | No | — |
+| `ai_engine` | `string` | No | — |
+| `ai_instructions` | `string` | No | — |
+| `email_prefix` | `string` | No | — |
+| `document_count` | `number` | No | — |
+| `template_count` | `number` | No | — |
+| `webhook_count` | `number` | No | — |
+| `attachments_only` | `boolean` | No | — |
+| `is_master` | `boolean` | No | — |
+| `webhook_set` | `any[]` | No | — |
+| `available_webhook_set` | `any[]` | No | — |
+
+
+
+---
+
+### getMailboxSchema
+
+`mailboxes.getMailboxSchema`
+
+Retrieve the JSON schema for a mailbox's parsed fields. Use when you need the structure and types of data fields extracted by a parser.
+
+**Risk:** `read`
+
+```ts
+await corsair.parseur.api.mailboxes.getMailboxSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `properties` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMailboxes
+
+`mailboxes.listMailboxes`
+
+List mailboxes (parsers) with full configuration details. Use when you need comprehensive mailbox information including field configurations, processing options, and webhook settings.
+
+**Risk:** `read`
+
+```ts
+await corsair.parseur.api.mailboxes.listMailboxes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `search` | `string` | No | — |
+| `ordering` | `name \| -name \| document_count \| -document_count \| template_count \| -template_count \| PARSEDOK_count \| -PARSEDOK_count \| PARSEDKO_count \| -PARSEDKO_count \| QUOTAEXC_count \| -QUOTAEXC_count \| EXPORTKO_count \| -EXPORTKO_count \| TRANSKO_count \| -TRANSKO_count` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `current` | `number` | No | — |
+| `total` | `number` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string | number,
+  name?: string,
+  account_uuid?: string,
+  ai_engine?: string,
+  ai_instructions?: string | null,
+  email_prefix?: string,
+  document_count?: number,
+  template_count?: number,
+  webhook_count?: number,
+  attachments_only?: boolean,
+  is_master?: boolean,
+  webhook_set?: any[],
+  available_webhook_set?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateMailbox
+
+`mailboxes.updateMailbox`
+
+Update a mailbox (parser) configuration such as name, AI engine, processing options, or document handling rules.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.mailboxes.updateMailbox({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `ai_engine` | `DISABLED \| GCP_AI_2 \| GCP_AI_2_5 \| GCP_AI_3_TXT` | No | — |
+| `ai_instructions` | `string` | No | — |
+| `email_prefix` | `string` | No | — |
+| `attachments_only_override` | `boolean` | No | — |
+| `disable_deskew` | `boolean` | No | — |
+| `force_ocr` | `boolean` | No | — |
+| `decimal_separator` | `. \| ,` | No | — |
+| `input_date_format` | `MONTH_FIRST \| DAY_FIRST` | No | — |
+| `retention_policy` | `any` | No | — |
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `account_uuid` | `string` | No | — |
+| `ai_engine` | `string` | No | — |
+| `ai_instructions` | `string` | No | — |
+| `email_prefix` | `string` | No | — |
+| `document_count` | `number` | No | — |
+| `template_count` | `number` | No | — |
+| `webhook_count` | `number` | No | — |
+| `attachments_only` | `boolean` | No | — |
+| `is_master` | `boolean` | No | — |
+| `webhook_set` | `any[]` | No | — |
+| `available_webhook_set` | `any[]` | No | — |
+
+
+
+---
+
+## Templates
+
+### copyTemplate
+
+`templates.copyTemplate`
+
+Copy a template to another mailbox.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.templates.copyTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `target_mailbox_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notification_set` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notification_set full type">
+
+```ts
+{
+  info: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteTemplate
+
+`templates.deleteTemplate`
+
+Delete a template by ID [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.parseur.api.templates.deleteTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getTemplate
+
+`templates.getTemplate`
+
+Get a template by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.parseur.api.templates.getTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `parser` | `number` | No | — |
+| `engine` | `TXT \| OCR \| string` | No | — |
+| `action` | `string` | No | — |
+| `status` | `DRAFT \| PROD \| string` | No | — |
+
+
+
+---
+
+### listTemplates
+
+`templates.listTemplates`
+
+List all templates in a mailbox.
+
+**Risk:** `read`
+
+```ts
+await corsair.parseur.api.templates.listTemplates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `search` | `string` | No | — |
+| `ordering` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `current` | `number` | No | — |
+| `total` | `number` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string | number,
+  name?: string,
+  parser?: number,
+  engine?: TXT | OCR | string,
+  action?: string,
+  status?: DRAFT | PROD | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### createWebhook
+
+`webhooks.createWebhook`
+
+Create a webhook. Official body uses target (URL), event, and category CUSTOM.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.webhooks.createWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `document.processed \| document.processed.flattened \| document.template_needed \| document.export_failed \| table.processed` | Yes | — |
+| `target` | `string` | Yes | — |
+| `category` | `CUSTOM \| ZAPIER \| MAKE \| FLOW \| N8N` | No | — |
+| `name` | `string` | No | — |
+| `headers` | `object` | No | — |
+| `parser` | `number` | No | — |
+| `parser_field` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `event` | `document.processed \| document.processed.flattened \| document.template_needed \| document.export_failed \| table.processed \| string` | Yes | — |
+| `target` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `headers` | `object` | No | — |
+| `category` | `CUSTOM \| ZAPIER \| MAKE \| FLOW \| N8N \| string` | Yes | — |
+| `parser_field_set` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteWebhook
+
+`webhooks.deleteWebhook`
+
+Delete a webhook by ID [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.parseur.api.webhooks.deleteWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### disableWebhook
+
+`webhooks.disableWebhook`
+
+Disable a webhook for a mailbox. Removes the webhook from webhook_set.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.webhooks.disableWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailbox_id` | `string \| number` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### enableWebhook
+
+`webhooks.enableWebhook`
+
+Enable a paused webhook for a mailbox. Only webhooks in available_webhook_set can be enabled.
+
+**Risk:** `write`
+
+```ts
+await corsair.parseur.api.webhooks.enableWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailbox_id` | `string \| number` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `account_uuid` | `string` | No | — |
+| `ai_engine` | `string` | No | — |
+| `ai_instructions` | `string` | No | — |
+| `email_prefix` | `string` | No | — |
+| `document_count` | `number` | No | — |
+| `template_count` | `number` | No | — |
+| `webhook_count` | `number` | No | — |
+| `attachments_only` | `boolean` | No | — |
+| `is_master` | `boolean` | No | — |
+| `webhook_set` | `any[]` | No | — |
+| `available_webhook_set` | `any[]` | No | — |
+
+
+
+---
+
+### listWebhooks
+
+`webhooks.listWebhooks`
+
+List active (webhook_set) and paused (available_webhook_set) webhooks for a mailbox via GET /parser/{id}.
+
+**Risk:** `read`
+
+```ts
+await corsair.parseur.api.webhooks.listWebhooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_set` | `object[]` | Yes | — |
+| `available_webhook_set` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook_set full type">
+
+```ts
+{
+  id: number,
+  event: document.processed | document.processed.flattened | document.template_needed | document.export_failed | table.processed | string,
+  target: string,
+  name?: string,
+  headers?: {
+  } | null,
+  category: CUSTOM | ZAPIER | MAKE | FLOW | N8N | string,
+  parser_field_set?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="available_webhook_set full type">
+
+```ts
+{
+  id: number,
+  event: document.processed | document.processed.flattened | document.template_needed | document.export_failed | table.processed | string,
+  target: string,
+  name?: string,
+  headers?: {
+  } | null,
+  category: CUSTOM | ZAPIER | MAKE | FLOW | N8N | string,
+  parser_field_set?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

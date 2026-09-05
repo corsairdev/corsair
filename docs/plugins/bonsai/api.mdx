@@ -1,0 +1,170 @@
+---
+title: API
+description: "API reference for Bonsai: every `bonsai.api.*` operation with input and output types."
+---
+
+Every `bonsai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Clusters
+
+### get
+
+`clusters.get`
+
+Get Bonsai cluster details by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.bonsai.api.clusters.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cluster` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="cluster full type">
+
+```ts
+{
+  slug: string,
+  name: string,
+  uri: string,
+  plan: {
+    slug: string,
+    uri: string
+  },
+  release: {
+    version: string,
+    slug: string,
+    package_name: string,
+    service_type: string,
+    uri: string
+  },
+  space: {
+    path: string,
+    region: string,
+    uri: string
+  },
+  stats: {
+    docs: number,
+    shards_used: number,
+    data_bytes_used: number
+  },
+  access: {
+    host: string,
+    port: number,
+    scheme: string
+  },
+  state: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Spaces
+
+### get
+
+`spaces.get`
+
+Retrieve space details by path
+
+**Risk:** `read`
+
+```ts
+await corsair.bonsai.api.spaces.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+| `private_network` | `boolean` | Yes | — |
+| `cloud` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="cloud full type">
+
+```ts
+{
+  provider: string,
+  region: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`spaces.list`
+
+List all spaces
+
+**Risk:** `read`
+
+```ts
+await corsair.bonsai.api.spaces.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spaces` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="spaces full type">
+
+```ts
+{
+  path: string,
+  private_network: boolean,
+  cloud: {
+    provider: string,
+    region: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

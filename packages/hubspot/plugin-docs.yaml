@@ -1,0 +1,18 @@
+displayName: HubSpot
+description: CRM and marketing platform for contacts, deals, tickets, email, and sales automation.
+examples:
+  read:
+    path: contacts.getMany
+    title: Get contacts
+  write:
+    path: contacts.create
+    title: Create a contact
+dbExample:
+  entity: contacts
+  note: Search synced contacts without hitting HubSpot.
+  limit: 50
+exampleWebhook:
+  path: contactCreated
+  note: Fires when a new contact is created in HubSpot.
+  after: |
+    console.log('HubSpot contact created:', result.data);

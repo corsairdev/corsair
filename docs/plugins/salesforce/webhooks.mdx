@@ -1,0 +1,513 @@
+---
+title: Webhooks
+description: "Salesforce incoming webhooks: event paths, payloads, and response data."
+---
+
+The Salesforce plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/salesforce/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `accountCreatedOrUpdated` (`accountCreatedOrUpdated`)
+- `contactUpdated` (`contactUpdated`)
+- `genericSObjectRecordUpdated` (`genericSObjectRecordUpdated`)
+- `newContact` (`newContact`)
+- `newLead` (`newLead`)
+- `newOrUpdatedOpportunity` (`newOrUpdatedOpportunity`)
+- `taskCreatedOrCompleted` (`taskCreatedOrCompleted`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Account Created Or Updated
+
+### Account Created Or Updated
+
+`accountCreatedOrUpdated`
+
+Account created or updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ChangeEventHeader` | `object` | No | — |
+| `Id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `sobject` | `string` | No | — |
+| `type` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `LastModifiedDate` | `string` | No | — |
+| `SystemModstamp` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="ChangeEventHeader full type">
+
+```ts
+{
+  entityName?: string,
+  changeType?: string,
+  recordIds?: string[],
+  commitTimestamp?: number,
+  commitUser?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+salesforce({
+    webhookHooks: {
+        accountCreatedOrUpdated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Contact Updated
+
+### Contact Updated
+
+`contactUpdated`
+
+Contact updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ChangeEventHeader` | `object` | No | — |
+| `Id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `sobject` | `string` | No | — |
+| `type` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `LastModifiedDate` | `string` | No | — |
+| `SystemModstamp` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="ChangeEventHeader full type">
+
+```ts
+{
+  entityName?: string,
+  changeType?: string,
+  recordIds?: string[],
+  commitTimestamp?: number,
+  commitUser?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+salesforce({
+    webhookHooks: {
+        contactUpdated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Generic SObject Record Updated
+
+### Generic SObject Record Updated
+
+`genericSObjectRecordUpdated`
+
+Generic sObject record updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ChangeEventHeader` | `object` | No | — |
+| `Id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `sobject` | `string` | No | — |
+| `type` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `LastModifiedDate` | `string` | No | — |
+| `SystemModstamp` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="ChangeEventHeader full type">
+
+```ts
+{
+  entityName?: string,
+  changeType?: string,
+  recordIds?: string[],
+  commitTimestamp?: number,
+  commitUser?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+salesforce({
+    webhookHooks: {
+        genericSObjectRecordUpdated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## New Contact
+
+### New Contact
+
+`newContact`
+
+New contact created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ChangeEventHeader` | `object` | No | — |
+| `Id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `sobject` | `string` | No | — |
+| `type` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `LastModifiedDate` | `string` | No | — |
+| `SystemModstamp` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="ChangeEventHeader full type">
+
+```ts
+{
+  entityName?: string,
+  changeType?: string,
+  recordIds?: string[],
+  commitTimestamp?: number,
+  commitUser?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+salesforce({
+    webhookHooks: {
+        newContact: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## New Lead
+
+### New Lead
+
+`newLead`
+
+New lead created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ChangeEventHeader` | `object` | No | — |
+| `Id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `sobject` | `string` | No | — |
+| `type` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `LastModifiedDate` | `string` | No | — |
+| `SystemModstamp` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="ChangeEventHeader full type">
+
+```ts
+{
+  entityName?: string,
+  changeType?: string,
+  recordIds?: string[],
+  commitTimestamp?: number,
+  commitUser?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+salesforce({
+    webhookHooks: {
+        newLead: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## New Or Updated Opportunity
+
+### New Or Updated Opportunity
+
+`newOrUpdatedOpportunity`
+
+Opportunity created or updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ChangeEventHeader` | `object` | No | — |
+| `Id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `sobject` | `string` | No | — |
+| `type` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `LastModifiedDate` | `string` | No | — |
+| `SystemModstamp` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="ChangeEventHeader full type">
+
+```ts
+{
+  entityName?: string,
+  changeType?: string,
+  recordIds?: string[],
+  commitTimestamp?: number,
+  commitUser?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+salesforce({
+    webhookHooks: {
+        newOrUpdatedOpportunity: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Task Created Or Completed
+
+### Task Created Or Completed
+
+`taskCreatedOrCompleted`
+
+Task created or completed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ChangeEventHeader` | `object` | No | — |
+| `Id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `sobject` | `string` | No | — |
+| `type` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `LastModifiedDate` | `string` | No | — |
+| `SystemModstamp` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="ChangeEventHeader full type">
+
+```ts
+{
+  entityName?: string,
+  changeType?: string,
+  recordIds?: string[],
+  commitTimestamp?: number,
+  commitUser?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+salesforce({
+    webhookHooks: {
+        taskCreatedOrCompleted: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -1,0 +1,285 @@
+---
+title: Database
+description: "Better Stack local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Better Stack plugin syncs data locally. Use `corsair.betterstack.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Heartbeat Groups
+
+Path: `betterstack.db.heartbeatGroups.search`
+
+```ts
+const rows = await corsair.betterstack.db.heartbeatGroups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `paused` | `boolean` | equals |
+| `sort_index` | `number` | equals, gt, gte, lt, lte, in |
+| `team_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Heartbeats
+
+Path: `betterstack.db.heartbeats.search`
+
+```ts
+const rows = await corsair.betterstack.db.heartbeats.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `call` | `boolean` | equals |
+| `created_at` | `date` | equals, before, after, between |
+| `critical_alert` | `boolean` | equals |
+| `email` | `boolean` | equals |
+| `grace` | `number` | equals, gt, gte, lt, lte, in |
+| `heartbeat_group_id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `paused` | `boolean` | equals |
+| `paused_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `period` | `number` | equals, gt, gte, lt, lte, in |
+| `push` | `boolean` | equals |
+| `sms` | `boolean` | equals |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `team_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `date` | equals, before, after, between |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Monitor Groups
+
+Path: `betterstack.db.monitorGroups.search`
+
+```ts
+const rows = await corsair.betterstack.db.monitorGroups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `paused` | `boolean` | equals |
+| `sort_index` | `number` | equals, gt, gte, lt, lte, in |
+| `team_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Monitors
+
+Path: `betterstack.db.monitors.search`
+
+```ts
+const rows = await corsair.betterstack.db.monitors.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `call` | `boolean` | equals |
+| `check_frequency` | `number` | equals, gt, gte, lt, lte, in |
+| `checks_version` | `string` | equals, contains, startsWith, endsWith, in |
+| `confirmation_period` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `date` | equals, before, after, between |
+| `critical_alert` | `boolean` | equals |
+| `effective_check_frequency` | `number` | equals, gt, gte, lt, lte, in |
+| `email` | `boolean` | equals |
+| `follow_redirects` | `boolean` | equals |
+| `http_method` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_checked_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `monitor_group_id` | `number` | equals, gt, gte, lt, lte, in |
+| `monitor_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `paused` | `boolean` | equals |
+| `paused_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `pronounceable_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `push` | `boolean` | equals |
+| `recovery_period` | `number` | equals, gt, gte, lt, lte, in |
+| `remember_cookies` | `boolean` | equals |
+| `request_timeout` | `number` | equals, gt, gte, lt, lte, in |
+| `sms` | `boolean` | equals |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `team_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `date` | equals, before, after, between |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `verify_ssl` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## On Call Schedules
+
+Path: `betterstack.db.onCallSchedules.search`
+
+```ts
+const rows = await corsair.betterstack.db.onCallSchedules.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `default_calendar` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `team_name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Policies
+
+Path: `betterstack.db.policies.search`
+
+```ts
+const rows = await corsair.betterstack.db.policies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `incident_token` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `repeat_count` | `number` | equals, gt, gte, lt, lte, in |
+| `repeat_delay` | `number` | equals, gt, gte, lt, lte, in |
+| `team_name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Status Pages
+
+Path: `betterstack.db.statusPages.search`
+
+```ts
+const rows = await corsair.betterstack.db.statusPages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `aggregate_state` | `string` | equals, contains, startsWith, endsWith, in |
+| `announcement_embed_visible` | `boolean` | equals |
+| `automatic_reports` | `boolean` | equals |
+| `company_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+| `design` | `string` | equals, contains, startsWith, endsWith, in |
+| `hide_from_search_engines` | `boolean` | equals |
+| `history` | `number` | equals, gt, gte, lt, lte, in |
+| `include_all_incidents_in_rss_feed` | `boolean` | equals |
+| `layout` | `string` | equals, contains, startsWith, endsWith, in |
+| `min_incident_length` | `number` | equals, gt, gte, lt, lte, in |
+| `organization_id` | `number` | equals, gt, gte, lt, lte, in |
+| `password_enabled` | `boolean` | equals |
+| `published` | `boolean` | equals |
+| `require_sso` | `boolean` | equals |
+| `subdomain` | `string` | equals, contains, startsWith, endsWith, in |
+| `subscribable` | `boolean` | equals |
+| `theme` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `date` | equals, before, after, between |
+| `whitelabeled` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Urgencies
+
+Path: `betterstack.db.urgencies.search`
+
+```ts
+const rows = await corsair.betterstack.db.urgencies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `call` | `boolean` | equals |
+| `critical_alert` | `boolean` | equals |
+| `email` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `push` | `boolean` | equals |
+| `sms` | `boolean` | equals |
+| `team_name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

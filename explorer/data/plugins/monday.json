@@ -1,0 +1,1251 @@
+{
+  "id": "monday",
+  "displayName": "Monday.com",
+  "description": "Work operating system for boards, workflows, automations, and cross-team project tracking.",
+  "npmPackageName": "@corsair-dev/monday",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 30,
+    "webhooks": 4,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "accountId"]
+    }
+  ],
+  "api": [
+    {
+      "path": "monday.api.boards.archive",
+      "shortPath": "boards.archive",
+      "description": "Archive a board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "archive_board",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.boards.create",
+      "shortPath": "boards.create",
+      "description": "Create a new board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "board_kind",
+            "optional": true,
+            "type": "public | private | share"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "create_board",
+            "optional": false,
+            "type": "{ id: string, name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.boards.delete",
+      "shortPath": "boards.delete",
+      "description": "Permanently delete a board",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delete_board",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.boards.duplicate",
+      "shortPath": "boards.duplicate",
+      "description": "Duplicate a board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "duplicate_type",
+            "optional": true,
+            "type": "duplicate_board_with_structure | duplicate_board_with_pulses | duplicate_board_with_pulses_and_updates"
+          },
+          {
+            "key": "board_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "duplicate_board",
+            "optional": false,
+            "type": "{ board: { id: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.boards.get",
+      "shortPath": "boards.get",
+      "description": "Get a board by ID with groups and columns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boards",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, board_kind?: string, state?: string, workspace_id?: string | number | null, groups?: { id: string, title: string, color?: string, position?: string, archived?: boolean }[], columns?: { id: string, title: string, type?: string, settings_str?: string, description?: string | null }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.boards.list",
+      "shortPath": "boards.list",
+      "description": "List all boards",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "board_kind",
+            "optional": true,
+            "type": "public | private | share"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "active | archived | deleted | all"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created_at | used_at"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boards",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, board_kind?: string, state?: string, workspace_id?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.boards.update",
+      "shortPath": "boards.update",
+      "description": "Update a board attribute",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "board_attribute",
+            "optional": false,
+            "type": "name | description | communication"
+          },
+          {
+            "key": "new_value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "update_board",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.columns.changeValue",
+      "shortPath": "columns.changeValue",
+      "description": "Change a column value on an item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "column_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "change_column_value",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.columns.create",
+      "shortPath": "columns.create",
+      "description": "Create a new column in a board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "column_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "create_column",
+            "optional": false,
+            "type": "{ id: string, title?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.columns.list",
+      "shortPath": "columns.list",
+      "description": "List all columns in a board",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boards",
+            "optional": false,
+            "type": "{ columns: { id: string, title: string, type?: string, settings_str?: string, description?: string | null }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a new group in a board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "create_group",
+            "optional": false,
+            "type": "{ id: string, title?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Delete a group from a board",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delete_group",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List all groups in a board",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boards",
+            "optional": false,
+            "type": "{ groups: { id: string, title: string, color?: string, position?: string, archived?: boolean }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.groups.update",
+      "shortPath": "groups.update",
+      "description": "Update a group attribute",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_attribute",
+            "optional": false,
+            "type": "title | color | position | relative_position_before | relative_position_after"
+          },
+          {
+            "key": "new_value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "update_group",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.items.archive",
+      "shortPath": "items.archive",
+      "description": "Archive an item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "archive_item",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.items.create",
+      "shortPath": "items.create",
+      "description": "Create a new item in a board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "column_values",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "create_item",
+            "optional": false,
+            "type": "{ id: string, name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.items.delete",
+      "shortPath": "items.delete",
+      "description": "Permanently delete an item",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delete_item",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.items.get",
+      "shortPath": "items.get",
+      "description": "Get an item by ID with column values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name: string, state?: string, created_at?: string | null, creator_id?: string | null, board?: { id: string }, group?: { id: string, title?: string }, column_values?: { id: string, title?: string, text?: string | null, value?: string | null, type?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.items.list",
+      "shortPath": "items.list",
+      "description": "List items in a board",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boards",
+            "optional": false,
+            "type": "{ items_page: { cursor?: string | null, items: { id: string, name: string, state?: string, created_at?: string | null, creator_id?: string | null, board?: { id: string }, group?: { id: string, title?: string }, column_values?: { id: string, title?: string, text?: string | null, value?: string | null, type?: string }[] }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.items.move",
+      "shortPath": "items.move",
+      "description": "Move an item to a different group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "move_item_to_group",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.items.update",
+      "shortPath": "items.update",
+      "description": "Update a column value on an item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "column_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "change_column_value",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.updates.create",
+      "shortPath": "updates.create",
+      "description": "Create an update (comment) on an item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "create_update",
+            "optional": false,
+            "type": "{ id: string, body?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.updates.delete",
+      "shortPath": "updates.delete",
+      "description": "Delete an update (comment)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "update_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delete_update",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.updates.list",
+      "shortPath": "updates.list",
+      "description": "List updates (comments) on an item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ updates: { id: string, body?: string, text_body?: string | null, created_at?: string | null, creator?: { id: string, name?: string }, replies?: { id: string, body?: string }[] }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a user by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: string, name?: string, email?: string, photo_thumb?: string | null, title?: string | null, is_admin?: boolean, is_guest?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.users.list",
+      "shortPath": "users.list",
+      "description": "List all users in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "all | non_guests | guests | non_pending"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: string, name?: string, email?: string, photo_thumb?: string | null, title?: string | null, is_admin?: boolean, is_guest?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Subscribe to a board event via webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "change_column_value | change_specific_column_value | change_status_column_value | create_item | create_update | delete_update | item_archived | item_deleted | item_moved_to_board | item_restored | when_date_arrived"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "create_webhook",
+            "optional": false,
+            "type": "{ id: string, board_id?: string, event?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Unsubscribe a webhook by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delete_webhook",
+            "optional": false,
+            "type": "{ id: string, board_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List all webhooks for a board",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id: string, board_id?: string, event?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "monday.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "List all workspaces",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "open | closed"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "active | deleted | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaces",
+            "optional": false,
+            "type": "{ id: string, name: string, kind?: string, description?: string | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "monday.webhooks.columns.columnValueChanged",
+      "shortPath": "columns.columnValueChanged",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "monday({\n    webhookHooks: {\n        columns: {\n            columnValueChanged: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "monday.webhooks.items.itemCreated",
+      "shortPath": "items.itemCreated",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "monday({\n    webhookHooks: {\n        items: {\n            itemCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "monday.webhooks.status.statusChanged",
+      "shortPath": "status.statusChanged",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "monday({\n    webhookHooks: {\n        status: {\n            statusChanged: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "monday.webhooks.verification.challenge",
+      "shortPath": "verification.challenge",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "monday({\n    webhookHooks: {\n        verification: {\n            challenge: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "monday.db.boards.search",
+      "entityName": "boards",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "board_kind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "monday.db.items.search",
+      "entityName": "items",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "board_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "group_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "creator_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "monday.db.updates.search",
+      "entityName": "updates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text_body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "item_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "creator_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "monday.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "photo_thumb",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_admin",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_guest",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

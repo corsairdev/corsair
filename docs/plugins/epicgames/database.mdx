@@ -1,0 +1,40 @@
+---
+title: Database
+description: "Epic Games local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Epic Games plugin syncs data locally. Use `corsair.epicgames.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Islands
+
+Path: `epicgames.db.islands.search`
+
+```ts
+const rows = await corsair.epicgames.db.islands.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `code` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `creatorCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdIn` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

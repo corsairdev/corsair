@@ -1,0 +1,158 @@
+---
+title: API
+description: "API reference for remove.bg: every `removebg.api.*` operation with input and output types."
+---
+
+Every `removebg.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get account credit balance and API usage limits
+
+**Risk:** `read`
+
+```ts
+await corsair.removebg.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  attributes: {
+    credits: {
+      total: number,
+      subscription: number,
+      payg: number,
+      enterprise: number
+    },
+    api: {
+      free_calls: number,
+      sizes: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Improvement
+
+### submit
+
+`improvement.submit`
+
+Submit an image to the remove.bg Improvement program for AI training
+
+**Risk:** `write`
+
+```ts
+await corsair.removebg.api.improvement.submit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageUrl` | `string` | No | — |
+| `imageFileB64` | `string` | No | — |
+| `errorType` | `other \| kind \| result-type \| foreground-edges \| foreground-parts-missing \| background-not-fully-removed \| foreground-inside-cutout \| foreground-cut-off` | Yes | — |
+| `errorDescription` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Remove Background
+
+### remove
+
+`removeBackground.remove`
+
+Remove the background from an image, returning a base64-encoded cutout
+
+**Risk:** `write`
+
+```ts
+await corsair.removebg.api.removeBackground.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageUrl` | `string` | No | — |
+| `imageFileB64` | `string` | No | — |
+| `size` | `preview \| small \| regular \| medium \| hd \| full \| 4k \| 50MP \| auto` | No | — |
+| `type` | `auto \| person \| product \| car \| animal \| graphic \| transportation` | No | — |
+| `typeLevel` | `1 \| 2 \| none \| latest` | No | — |
+| `format` | `auto \| png \| jpg \| webp \| zip` | No | — |
+| `roi` | `string` | No | — |
+| `crop` | `boolean` | No | — |
+| `cropMargin` | `string` | No | — |
+| `scale` | `string` | No | — |
+| `position` | `string` | No | — |
+| `channels` | `rgba \| alpha` | No | — |
+| `shadowType` | `auto \| car \| 3D \| drop \| none` | No | — |
+| `shadowOpacity` | `number` | No | — |
+| `semitransparency` | `boolean` | No | — |
+| `bgColor` | `string` | No | — |
+| `bgImageUrl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result_b64: string,
+  foreground_top?: number,
+  foreground_left?: number,
+  foreground_width?: number,
+  foreground_height?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

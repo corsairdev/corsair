@@ -1,0 +1,195 @@
+---
+title: API
+description: "API reference for Autom: every `autom.api.*` operation with input and output types."
+---
+
+Every `autom.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Google
+
+### countries
+
+`google.countries`
+
+Retrieve Google-supported countries filtered by search term.
+
+**Risk:** `read`
+
+```ts
+await corsair.autom.api.google.countries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  country_code: string,
+  country_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### images
+
+`google.images`
+
+Fetch image search results from Google Search.
+
+**Risk:** `read`
+
+```ts
+await corsair.autom.api.google.images({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `gl` | `string` | No | — |
+| `hl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+| `search_parameters` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  url: string,
+  link: string,
+  title: string,
+  domain: string,
+  source: string,
+  position: number,
+  image_width: number,
+  image_height: number
+}[]
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+  q: string,
+  gl?: string,
+  hl?: string,
+  page: number,
+  engine: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### languages
+
+`google.languages`
+
+Retrieve Google-supported languages filtered by search term.
+
+**Risk:** `read`
+
+```ts
+await corsair.autom.api.google.languages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  language_code: string,
+  language_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### locations
+
+`google.locations`
+
+Retrieve Google-supported locations filtered by search term.
+
+**Risk:** `read`
+
+```ts
+await corsair.autom.api.google.locations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  gps: number[],
+  name: string,
+  reach: number,
+  google_id: number,
+  target_type: string,
+  country_code: string,
+  canonical_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
