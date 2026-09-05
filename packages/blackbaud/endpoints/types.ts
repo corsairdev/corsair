@@ -7,6 +7,8 @@ const GiftAmountSchema = z
 	})
 	.passthrough();
 
+// Gift splits and custom fields are provider-defined shapes that vary per
+// gift type and are not explicitly typed - unknown allows for safe extension.
 const GiftSplitSchema = z.record(z.string(), z.unknown());
 
 const GiftEntrySchema = z
@@ -33,6 +35,8 @@ export type AddGiftsToBatchInput = z.infer<typeof AddGiftsToBatchInputSchema>;
 const AddGiftsToBatchResponseSchema = z
 	.object({
 		status_code: z.number(),
+		// Batch write payloads vary (created records, validation errors) and are
+		// not explicitly typed - unknown allows for safe extension.
 		response_details: z.unknown().optional(),
 	})
 	.passthrough();
@@ -132,6 +136,8 @@ const OneRosterOAuth2BaseApiResponseSchema = z
 		authorization_endpoint: z.string().optional(),
 		token_endpoint: z.string().optional(),
 		jwks_uri: z.string().optional(),
+		// JWKS key members (kty, kid, x5c, ...) are provider-defined and not
+		// explicitly typed - unknown allows for safe extension.
 		keys: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();
