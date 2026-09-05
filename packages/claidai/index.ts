@@ -16,6 +16,7 @@ import {
 	backgroundGenerate,
 	backgroundRemove,
 	createStorage,
+	deleteStorage,
 	generativeResize,
 	imageAiEdit,
 	imageEditBatch,
@@ -74,6 +75,7 @@ export type ClaidAiEndpoints = {
 	imageGenerate: ClaidAiEndpoint<'imageGenerate'>;
 	generativeResize: ClaidAiEndpoint<'generativeResize'>;
 	storageDetails: ClaidAiEndpoint<'storageDetails'>;
+	deleteStorage: ClaidAiEndpoint<'deleteStorage'>;
 	imageAiEdit: ClaidAiEndpoint<'imageAiEdit'>;
 	storageList: ClaidAiEndpoint<'storageList'>;
 	polishImage: ClaidAiEndpoint<'polishImage'>;
@@ -91,6 +93,7 @@ const claidAiEndpointsNested = {
 	imageGenerate,
 	generativeResize,
 	storageDetails,
+	deleteStorage,
 	imageAiEdit,
 	storageList,
 	polishImage,
@@ -135,6 +138,10 @@ export const claidAiEndpointSchemas = {
 		input: ClaidAiEndpointInputSchemas.storageDetails,
 		output: ClaidAiEndpointOutputSchemas.storageDetails,
 	},
+	deleteStorage: {
+		input: ClaidAiEndpointInputSchemas.deleteStorage,
+		output: ClaidAiEndpointOutputSchemas.deleteStorage,
+	},
 	imageAiEdit: {
 		input: ClaidAiEndpointInputSchemas.imageAiEdit,
 		output: ClaidAiEndpointOutputSchemas.imageAiEdit,
@@ -159,7 +166,7 @@ export const claidAiEndpointSchemas = {
 	typeof claidAiEndpointsNested
 >;
 
-const claidAiEndpointMeta = {
+export const claidAiEndpointMeta = {
 	backgroundRemove: {
 		riskLevel: 'write',
 		description: 'Remove the background from an image using Claid.ai.',
@@ -195,6 +202,10 @@ const claidAiEndpointMeta = {
 	storageDetails: {
 		riskLevel: 'read',
 		description: 'Get details of a Claid.ai storage connection.',
+	},
+	deleteStorage: {
+		riskLevel: 'write',
+		description: 'Delete a Claid.ai storage connection.',
 	},
 	imageAiEdit: {
 		riskLevel: 'write',

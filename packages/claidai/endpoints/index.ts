@@ -2,6 +2,7 @@ export {
 	backgroundGenerate,
 	backgroundRemove,
 	createStorage,
+	deleteStorage,
 	generativeResize,
 	imageAiEdit,
 	imageEditBatch,

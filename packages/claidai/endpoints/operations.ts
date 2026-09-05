@@ -177,6 +177,21 @@ export const storageDetails: ClaidAiEndpoints['storageDetails'] = async (
 	return response;
 };
 
+export const deleteStorage: ClaidAiEndpoints['deleteStorage'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeClaidAiRequest<
+		ClaidAiEndpointOutputs['deleteStorage']
+	>(`storage/storages/${input.storage_id}`, ctx.key, {
+		method: 'DELETE',
+	});
+
+	await logEventFromContext(ctx, 'claidai.storage.delete', input, 'completed');
+
+	return response;
+};
+
 export const imageAiEdit: ClaidAiEndpoints['imageAiEdit'] = async (
 	ctx,
 	input,

@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class ClaidAiAPIError extends Error {
 	constructor(
@@ -11,7 +11,6 @@ export class ClaidAiAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
 const CLAIDAI_API_BASE = 'https://api.claid.ai/v1';
 
 export async function makeClaidAiRequest<T>(
@@ -25,6 +24,10 @@ export async function makeClaidAiRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
+	if (!apiKey) {
+		throw new ClaidAiAPIError('Missing Claid.ai API key');
+	}
+
 	const config: OpenAPIConfig = {
 		BASE: CLAIDAI_API_BASE,
 		VERSION: '1.0.0',
@@ -33,8 +36,6 @@ export async function makeClaidAiRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
 			Authorization: `Bearer ${apiKey}`,
 		},
 	};
@@ -53,6 +54,9 @@ export async function makeClaidAiRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new ClaidAiAPIError(error.message);
 		}
