@@ -136,7 +136,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -877,6 +880,15 @@
                   "plugins/calendly/api",
                   "plugins/calendly/database",
                   "plugins/calendly/webhooks"
+                ]
+              },
+              {
+                "group": "Callingly",
+                "pages": [
+                  "plugins/callingly/overview",
+                  "plugins/callingly/api",
+                  "plugins/callingly/database",
+                  "plugins/callingly/webhooks"
                 ]
               },
               {
