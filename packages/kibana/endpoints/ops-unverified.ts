@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { logEventFromContext } from 'corsair/core';
 import type { KibanaEndpoints } from '..';
-import { makeKibanaRequest } from '../client';
+import { KibanaAPIError, makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
 
 // HONESTY NOTE on path verification (live-tested 2026-09-05 against
@@ -89,13 +89,16 @@ export const nodeMetrics: KibanaEndpoints['nodeMetricsGet'] = async (
 	input,
 ) => {
 	// Node stats is an Elasticsearch API, not a Kibana one — it must go to
-	// the Elasticsearch host (plugin option `elasticsearchBaseUrl`), never
-	// the Kibana base URL.
-	const esBase =
-		ctx.options.elasticsearchBaseUrl ??
-		ctx.options.baseUrl ??
-		(await ctx.keys.get_base_url()) ??
-		'';
+	// the Elasticsearch host (plugin option `elasticsearchBaseUrl`).
+	// Fail closed when it is missing: falling back to the Kibana host would
+	// silently call the wrong service.
+	const esBase = ctx.options.elasticsearchBaseUrl;
+	if (!esBase) {
+		throw new KibanaAPIError(
+			'Elasticsearch base URL is required for node metrics (set elasticsearchBaseUrl)',
+			'MISSING_ES_BASE_URL',
+		);
+	}
 	const metric = input.metric
 		? Array.isArray(input.metric)
 			? input.metric.join(',')

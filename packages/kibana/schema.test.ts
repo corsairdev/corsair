@@ -270,9 +270,9 @@ describe('Kibana Schema & Validation', () => {
 				CasesCreateInputSchema.safeParse({
 					title: 'T',
 					description: 'D',
-					owner: 'sec',
+					owner: 'observability',
 					connector: { id: 'none', type: '.none' },
-					settings: {},
+					settings: { syncAlerts: false },
 					tags: ['t1'],
 				}).success,
 			).toBe(true);
@@ -283,9 +283,9 @@ describe('Kibana Schema & Validation', () => {
 				CasesCreateInputSchema.safeParse({
 					title: 'T',
 					description: 'D',
-					owner: 'sec',
+					owner: 'cases',
 					connector: {},
-					settings: {},
+					settings: { syncAlerts: true },
 					tags: [],
 				}).success,
 			).toBe(true);
@@ -349,6 +349,20 @@ describe('Kibana Schema & Validation', () => {
 			expect(
 				EntityStoreEntitiesListInputSchema.safeParse({ size: 'x' }).success,
 			).toBe(false);
+			expect(
+				EntityStoreEntitiesListInputSchema.safeParse({ page: 0 }).success,
+			).toBe(false);
+			expect(
+				EntityStoreEntitiesListInputSchema.safeParse({ per_page: 10001 })
+					.success,
+			).toBe(false);
+			expect(
+				EntityStoreEntitiesListInputSchema.safeParse({ size: 1.5 }).success,
+			).toBe(false);
+			expect(
+				EntityStoreEntitiesListInputSchema.safeParse({ per_page: 10000 })
+					.success,
+			).toBe(true);
 			expect(ListsDeleteInputSchema.safeParse({ id: 'l' }).success).toBe(true);
 			expect(ListsDeleteInputSchema.safeParse({}).success).toBe(false);
 			expect(

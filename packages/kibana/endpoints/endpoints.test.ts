@@ -1,4 +1,5 @@
 import * as client from '../client';
+import { CasesCreateInputSchema } from './cases';
 import {
 	Alerting,
 	Cases,
@@ -25,9 +26,13 @@ jest.mock('corsair/core', () => {
 	};
 });
 
-jest.mock('../client', () => ({
-	makeKibanaRequest: jest.fn(),
-}));
+jest.mock('../client', () => {
+	const actual = jest.requireActual('../client');
+	return {
+		...actual,
+		makeKibanaRequest: jest.fn(),
+	};
+});
 
 const mockedRequest = client.makeKibanaRequest as jest.MockedFunction<
 	typeof client.makeKibanaRequest
@@ -391,9 +396,9 @@ describe('Kibana Endpoints', () => {
 			const res = await Cases.create(ctx, {
 				title: 'T',
 				description: 'D',
-				owner: 'sec',
+				owner: 'securitySolution',
 				connector: { id: 'none', type: '.none' },
-				settings: {},
+				settings: { syncAlerts: true },
 				tags: ['t1'],
 			});
 
@@ -402,13 +407,36 @@ describe('Kibana Endpoints', () => {
 				body: {
 					title: 'T',
 					description: 'D',
-					owner: 'sec',
+					owner: 'securitySolution',
 					connector: { id: 'none', type: '.none' },
-					settings: {},
+					settings: { syncAlerts: true },
 					tags: ['t1'],
 				},
 			});
 			expect(res.id).toBe('c1');
+		});
+
+		it('rejects case creation with an unsupported owner', async () => {
+			expect(
+				CasesCreateInputSchema.safeParse({
+					title: 'T',
+					description: 'D',
+					owner: 'not-a-real-owner',
+					connector: {},
+					settings: { syncAlerts: true },
+					tags: [],
+				}).success,
+			).toBe(false);
+			expect(
+				CasesCreateInputSchema.safeParse({
+					title: 'T',
+					description: 'D',
+					owner: 'cases',
+					connector: {},
+					settings: {},
+					tags: [],
+				}).success,
+			).toBe(false);
 		});
 
 		it('lists cases with filters', async () => {
@@ -918,6 +946,13 @@ describe('Kibana Endpoints', () => {
 				ctx.key,
 				{ method: 'GET' },
 			);
+		});
+
+		it('refuses node metrics without an elasticsearch base URL', async () => {
+			await expect(OpsUnverified.nodeMetrics(ctx, {})).rejects.toThrow(
+				'Elasticsearch base URL is required',
+			);
+			expect(mockedRequest).not.toHaveBeenCalled();
 		});
 
 		it('lists indices', async () => {

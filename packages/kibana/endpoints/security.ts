@@ -62,9 +62,9 @@ export type EntityStoreEnginesResponse = z.infer<
 export const EntityStoreEntitiesListInputSchema = z.object({
 	filter: z.string().optional(),
 	filterQuery: z.string().optional(),
-	page: z.number().optional(),
-	per_page: z.number().optional(),
-	size: z.number().optional(),
+	page: z.number().int().min(1).optional(),
+	per_page: z.number().int().min(1).max(10000).optional(),
+	size: z.number().int().min(1).optional(),
 	searchAfter: z.string().optional(),
 	source: z.union([z.string(), z.array(z.string())]).optional(),
 	fields: z.union([z.string(), z.array(z.string())]).optional(),

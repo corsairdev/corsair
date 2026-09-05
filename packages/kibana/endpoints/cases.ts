@@ -12,9 +12,14 @@ import type { KibanaEndpointOutputs } from './types';
 export const CasesCreateInputSchema = z.object({
 	title: z.string(),
 	description: z.string(),
-	owner: z.string(),
+	owner: z.enum(['cases', 'observability', 'securitySolution']),
 	connector: z.record(z.string(), z.unknown()),
-	settings: z.record(z.string(), z.unknown()),
+	settings: z
+		.object({
+			syncAlerts: z.boolean(),
+			extractObservables: z.boolean().optional(),
+		})
+		.passthrough(),
 	tags: z.array(z.string()),
 	body: z.record(z.string(), z.unknown()).optional(),
 });
