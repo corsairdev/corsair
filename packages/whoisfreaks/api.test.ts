@@ -12,6 +12,8 @@ const WHOISFREAKS_API_KEY = process.env.WHOISFREAKS_API_KEY;
 const describeLive = WHOISFREAKS_API_KEY ? describe : describe.skip;
 
 describeLive('WhoisFreaks API type tests', () => {
+	// Note: responses are typed unknown here on purpose — the
+	// output-schema parse in each test is the shape assertion.
 	it('whois live lookup returns the documented shape', async () => {
 		const response = await makeWhoisfreaksRequest<unknown>(
 			'/v2.0/whois/live',

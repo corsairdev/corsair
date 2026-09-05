@@ -30,6 +30,9 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn(async () => undefined),
 }));
 
+// unknown casts below bridge the mocked transport boundary: the mock
+// replaces the typed HTTP helper with jest.Mock, and endpoint responses
+// pass through unvalidated by design (shape checks live in api.test.ts).
 const mockRequest = makeWhoisfreaksRequest as unknown as jest.Mock;
 const mockLogEvent = logEventFromContext as unknown as jest.Mock;
 

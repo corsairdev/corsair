@@ -29,6 +29,7 @@ const DnsRecordSchema = z
 		ipAddress: z.string().optional(),
 		queryTime: z.string().optional(),
 		status: z.boolean().optional(),
+		// unknown: per-type DNS payloads vary by record type; the provider does not fix their shape.
 		dnsTypes: z.record(z.string(), z.unknown()).optional(),
 	})
 	.loose();
@@ -243,6 +244,7 @@ const SslLookupOutputSchema = z
 	.object({
 		domainName: z.string().optional(),
 		queryTime: z.string().optional(),
+		// unknown: certificate fields vary by issuer and chain depth.
 		sslCertificates: z.array(z.record(z.string(), z.unknown())).optional(),
 		sslRaw: z.string().optional(),
 	})
@@ -259,6 +261,7 @@ const GeolocationLookupInputSchema = z.object({
 const GeolocationLookupOutputSchema = z
 	.object({
 		ip: z.string().optional(),
+		// unknown: nested provider objects vary by IP and plan; keys are not fixed.
 		location: z.record(z.string(), z.unknown()).optional(),
 		country_metadata: z.record(z.string(), z.unknown()).optional(),
 		network: z.record(z.string(), z.unknown()).optional(),
@@ -294,6 +297,7 @@ const SubdomainsLookupOutputSchema = z
 		total_pages: z.number().optional(),
 		query_time: z.string().optional(),
 		total_records: z.number().optional(),
+		// unknown: subdomain entries gain provider-side fields over time.
 		subdomains: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.loose();
@@ -309,6 +313,7 @@ const IpReputationLookupInputSchema = z.object({
 const IpReputationLookupOutputSchema = z
 	.object({
 		ip: z.string().optional(),
+		// unknown: threat-intel sub-objects vary by IP and feed coverage.
 		location: z.record(z.string(), z.unknown()).optional(),
 		network: z.record(z.string(), z.unknown()).optional(),
 		asn: z.record(z.string(), z.unknown()).optional(),
@@ -337,6 +342,7 @@ const DomainReputationLookupOutputSchema = z
 		assessed_at: z.string().optional(),
 		version: z.string().optional(),
 		processing_time_ms: z.number().optional(),
+		// unknown: scoring sub-objects evolve with the provider's models.
 		risk_category: z.record(z.string(), z.unknown()).optional(),
 		dga_score: z.record(z.string(), z.unknown()).optional(),
 	})
@@ -353,6 +359,7 @@ const AsnWhoisLookupInputSchema = z.object({
 
 const AsnWhoisLookupOutputSchema = z
 	.object({
+		// unknown: ASN detail objects are provider pass-through data with no fixed shape.
 		asn: z.record(z.string(), z.unknown()).optional(),
 	})
 	.loose();
