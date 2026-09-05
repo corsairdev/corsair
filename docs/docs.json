@@ -136,7 +136,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -942,6 +945,14 @@
                   "plugins/clickhouse/overview",
                   "plugins/clickhouse/api",
                   "plugins/clickhouse/database"
+                ]
+              },
+              {
+                "group": "ClickMeeting",
+                "pages": [
+                  "plugins/clickmeeting/overview",
+                  "plugins/clickmeeting/api",
+                  "plugins/clickmeeting/database"
                 ]
               },
               {

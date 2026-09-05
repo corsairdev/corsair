@@ -86,16 +86,16 @@ export const BaseProviders = [
 	'boloforms',
 	'boltiot',
 	'bonsai',
-	'botbaba',
 	'bookingmood',
+	'botbaba',
 	'botpress',
 	'botsonic',
 	'bouncer',
 	'box',
 	'boxhero',
 	'brandfetch',
-	'brevo',
 	'breathehr',
+	'brevo',
 	'brex',
 	'brightdata',
 	'browseai',
@@ -115,6 +115,7 @@ export const BaseProviders = [
 	'chatfai',
 	'circleci',
 	'clickhouse',
+	'clickmeeting',
 	'clientary',
 	'clockify',
 	'cloudflare',
@@ -264,10 +265,10 @@ export const BaseProviders = [
 	'webvizio',
 	'whatsapp',
 	'witai',
-	'worldnewsapi',
 	'wiza',
 	'workday',
 	'workiom',
+	'worldnewsapi',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -352,16 +353,16 @@ export const ProviderDisplayNames = {
 	boloforms: 'Boloforms',
 	boltiot: 'Bolt IoT',
 	bonsai: 'Bonsai',
-	botbaba: 'Botbaba',
 	bookingmood: 'Bookingmood',
+	botbaba: 'Botbaba',
 	botpress: 'Botpress',
 	botsonic: 'Botsonic',
 	bouncer: 'Bouncer',
 	box: 'Box',
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
-	brevo: 'Brevo',
 	breathehr: 'Breathe HR',
+	brevo: 'Brevo',
 	brex: 'Brex',
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
@@ -381,6 +382,7 @@ export const ProviderDisplayNames = {
 	chatfai: 'ChatFAI',
 	circleci: 'CircleCI',
 	clickhouse: 'Clickhouse',
+	clickmeeting: 'Clickmeeting',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
@@ -530,10 +532,10 @@ export const ProviderDisplayNames = {
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
-	worldnewsapi: 'World News API',
 	wiza: 'Wiza',
 	workday: 'Workday',
 	workiom: 'Workiom',
+	worldnewsapi: 'World News API',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -625,16 +627,16 @@ export type AllProviders =
 	| 'boloforms'
 	| 'boltiot'
 	| 'bonsai'
-	| 'botbaba'
 	| 'bookingmood'
+	| 'botbaba'
 	| 'botpress'
 	| 'botsonic'
 	| 'bouncer'
 	| 'box'
 	| 'boxhero'
 	| 'brandfetch'
-	| 'brevo'
 	| 'breathehr'
+	| 'brevo'
 	| 'brex'
 	| 'brightdata'
 	| 'browseai'
@@ -654,6 +656,7 @@ export type AllProviders =
 	| 'chatfai'
 	| 'circleci'
 	| 'clickhouse'
+	| 'clickmeeting'
 	| 'clientary'
 	| 'clockify'
 	| 'cloudflare'
@@ -803,10 +806,10 @@ export type AllProviders =
 	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
-	| 'worldnewsapi'
 	| 'wiza'
 	| 'workday'
 	| 'workiom'
+	| 'worldnewsapi'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'
