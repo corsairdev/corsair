@@ -45,6 +45,9 @@ export async function makeBoldsignRequest<T>(
 	ctxOrKey: string | BoldsignRequestContext,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown values: the shared transport carries every endpoint's JSON
+		// body, so a narrower type is not practical; each endpoint validates
+		// its own shape with zod before calling.
 		body?: Record<string, unknown> | FormData;
 		query?: Record<string, QueryValue>;
 	} = {},

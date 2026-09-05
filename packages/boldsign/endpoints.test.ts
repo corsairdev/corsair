@@ -93,6 +93,14 @@ describe('BoldSign endpoint requests', () => {
 		mockLog.mockClear();
 	});
 
+	it('rejects invalid inputs at runtime before any HTTP call', async () => {
+		// page is typed as number but must be positive, so these typecheck
+		// yet fail zod validation inside the handler.
+		await expect(Documents.list(ctx, { page: 0 })).rejects.toThrow();
+		await expect(Documents.listBehalf(ctx, { page: -1 })).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('sends extendExpiry with the documented PascalCase body', async () => {
 		mockRequest.mockResolvedValue({});
 

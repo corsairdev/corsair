@@ -1,11 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BoldsignEndpoints } from '..';
 import { makeBoldsignRequest } from '../client';
-import { BoldsignEndpointOutputSchemas } from './types';
-
-function withListQuery<T extends Record<string, unknown>>(input: T): T {
-	return input;
-}
+import {
+	BoldsignEndpointInputSchemas,
+	BoldsignEndpointOutputSchemas,
+} from './types';
 
 function toUploadFile(base64Content: string, mimeType: string): string {
 	return base64Content.startsWith('data:')
@@ -22,24 +21,27 @@ function authTypeFromContext(ctx: {
 
 export const CustomFields = {
 	create: (async (ctx, input) => {
+		const validInput =
+			BoldsignEndpointInputSchemas.createCustomField.parse(input);
 		const response = await makeBoldsignRequest(
 			'/v1/customField/create',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
-			{ method: 'POST', body: input },
+			{ method: 'POST', body: validInput },
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.createCustomField.parse(response);
 		await logEventFromContext(
 			ctx,
 			'boldsign.customFields.create',
-			{ ...input },
+			{ ...validInput },
 			'completed',
 		);
 		return parsed;
 	}) satisfies BoldsignEndpoints['createCustomField'],
 
 	edit: (async (ctx, input) => {
-		const { customFieldId, ...body } = input;
+		const { customFieldId, ...body } =
+			BoldsignEndpointInputSchemas.editCustomField.parse(input);
 		const response = await makeBoldsignRequest(
 			'/v1/customField/edit',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
@@ -54,7 +56,7 @@ export const CustomFields = {
 		await logEventFromContext(
 			ctx,
 			'boldsign.customFields.edit',
-			{ ...input },
+			{ customFieldId, ...body },
 			'completed',
 		);
 		return parsed;
@@ -63,23 +65,26 @@ export const CustomFields = {
 
 export const Brands = {
 	get: (async (ctx, input) => {
+		const validInput =
+			BoldsignEndpointInputSchemas.getBrandDetails.parse(input);
 		const response = await makeBoldsignRequest(
 			'/v1/brand/get',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
-			{ method: 'GET', query: { brandId: input.brandId } },
+			{ method: 'GET', query: { brandId: validInput.brandId } },
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.getBrandDetails.parse(response);
 		await logEventFromContext(
 			ctx,
 			'boldsign.brands.get',
-			{ ...input },
+			{ ...validInput },
 			'completed',
 		);
 		return parsed;
 	}) satisfies BoldsignEndpoints['getBrandDetails'],
 
 	list: (async (ctx, input) => {
+		const validInput = BoldsignEndpointInputSchemas.listBrands.parse(input);
 		const response = await makeBoldsignRequest(
 			'/v1/brand/list',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
@@ -89,7 +94,7 @@ export const Brands = {
 		await logEventFromContext(
 			ctx,
 			'boldsign.brands.list',
-			{ ...input },
+			{ ...validInput },
 			'completed',
 		);
 		return parsed;
@@ -98,40 +103,44 @@ export const Brands = {
 
 export const Documents = {
 	createEmbeddedRequestLink: (async (ctx, input) => {
+		const validInput =
+			BoldsignEndpointInputSchemas.createEmbeddedRequestLink.parse(input);
 		const response = await makeBoldsignRequest(
 			'/v1/document/createEmbeddedRequestUrl',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
-			{ method: 'POST', body: input },
+			{ method: 'POST', body: validInput },
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.createEmbeddedRequestLink.parse(response);
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.createEmbeddedRequestLink',
-			{ ...input },
+			{ ...validInput },
 			'completed',
 		);
 		return parsed;
 	}) satisfies BoldsignEndpoints['createEmbeddedRequestLink'],
 
 	send: (async (ctx, input) => {
+		const validInput = BoldsignEndpointInputSchemas.sendDocument.parse(input);
 		const response = await makeBoldsignRequest(
 			'/v1/document/send',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
-			{ method: 'POST', body: input },
+			{ method: 'POST', body: validInput },
 		);
 		const parsed = BoldsignEndpointOutputSchemas.sendDocument.parse(response);
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.send',
-			{ ...input },
+			{ ...validInput },
 			'completed',
 		);
 		return parsed;
 	}) satisfies BoldsignEndpoints['sendDocument'],
 
 	editBeta: (async (ctx, input) => {
-		const { documentId, ...body } = input;
+		const { documentId, ...body } =
+			BoldsignEndpointInputSchemas.editDocumentBeta.parse(input);
 		const response = await makeBoldsignRequest(
 			'/v1/document/edit',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
@@ -142,14 +151,15 @@ export const Documents = {
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.editBeta',
-			{ ...input },
+			{ documentId, ...body },
 			'completed',
 		);
 		return parsed;
 	}) satisfies BoldsignEndpoints['editDocumentBeta'],
 
 	extendExpiry: (async (ctx, input) => {
-		const { documentId, newExpiryValue, warnPrior, onBehalfOf } = input;
+		const { documentId, newExpiryValue, warnPrior, onBehalfOf } =
+			BoldsignEndpointInputSchemas.extendDocumentExpiry.parse(input);
 		// Body keys use the PascalCase names from
 		// https://developers.boldsign.com/documents/extend-document-expiry
 		await makeBoldsignRequest(
@@ -171,14 +181,15 @@ export const Documents = {
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.extendExpiry',
-			{ ...input },
+			{ documentId, newExpiryValue, warnPrior, onBehalfOf },
 			'completed',
 		);
 		return parsed;
 	}) satisfies BoldsignEndpoints['extendDocumentExpiry'],
 
 	removeAuthentication: (async (ctx, input) => {
-		const { documentId, emailId, zOrder, onBehalfOf } = input;
+		const { documentId, emailId, zOrder, onBehalfOf } =
+			BoldsignEndpointInputSchemas.removeDocumentAuthentication.parse(input);
 		// Query param is lowercase `documentId` and body keys use the
 		// PascalCase names from
 		// https://developers.boldsign.com/documents/remove-authentication-from-the-document
@@ -198,57 +209,62 @@ export const Documents = {
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.removeAuthentication',
-			{ ...input },
+			{ documentId, emailId, zOrder, onBehalfOf },
 			'completed',
 		);
 		return parsed;
 	}) satisfies BoldsignEndpoints['removeDocumentAuthentication'],
 
 	list: (async (ctx, input) => {
+		const validInput = BoldsignEndpointInputSchemas.listDocuments.parse(input);
 		const response = await makeBoldsignRequest(
 			'/v1/document/list',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
-			{ method: 'GET', query: withListQuery(input) },
+			{ method: 'GET', query: validInput },
 		);
 		const parsed = BoldsignEndpointOutputSchemas.listDocuments.parse(response);
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.list',
-			{ ...input },
+			{ ...validInput },
 			'completed',
 		);
 		return parsed;
 	}) satisfies BoldsignEndpoints['listDocuments'],
 
 	listBehalf: (async (ctx, input) => {
+		const validInput =
+			BoldsignEndpointInputSchemas.listBehalfDocuments.parse(input);
 		const response = await makeBoldsignRequest(
 			'/v1/document/behalfList',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
-			{ method: 'GET', query: withListQuery(input) },
+			{ method: 'GET', query: validInput },
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.listBehalfDocuments.parse(response);
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.listBehalf',
-			{ ...input },
+			{ ...validInput },
 			'completed',
 		);
 		return parsed;
 	}) satisfies BoldsignEndpoints['listBehalfDocuments'],
 
 	listTeam: (async (ctx, input) => {
+		const validInput =
+			BoldsignEndpointInputSchemas.listTeamDocuments.parse(input);
 		const response = await makeBoldsignRequest(
 			'/v1/document/teamlist',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
-			{ method: 'GET', query: withListQuery(input) },
+			{ method: 'GET', query: validInput },
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.listTeamDocuments.parse(response);
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.listTeam',
-			{ ...input },
+			{ ...validInput },
 			'completed',
 		);
 		return parsed;
@@ -257,6 +273,8 @@ export const Documents = {
 
 export const Plan = {
 	getApiCreditsCount: (async (ctx, input) => {
+		const validInput =
+			BoldsignEndpointInputSchemas.getApiCreditsCount.parse(input);
 		const response = await makeBoldsignRequest(
 			'/v1/plan/apiCreditsCount',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
@@ -267,7 +285,7 @@ export const Plan = {
 		await logEventFromContext(
 			ctx,
 			'boldsign.plan.getApiCreditsCount',
-			{ ...input },
+			{ ...validInput },
 			'completed',
 		);
 		return parsed;
@@ -276,9 +294,11 @@ export const Plan = {
 
 export const Helpers = {
 	uploadFile: (async (ctx, input) => {
+		const validInput =
+			BoldsignEndpointInputSchemas.uploadFileHelper.parse(input);
 		const file = {
-			base64: toUploadFile(input.base64Content, input.mimeType),
-			fileName: input.fileName,
+			base64: toUploadFile(validInput.base64Content, validInput.mimeType),
+			fileName: validInput.fileName,
 		};
 		const parsed = BoldsignEndpointOutputSchemas.uploadFileHelper.parse({
 			file,
@@ -286,7 +306,7 @@ export const Helpers = {
 		await logEventFromContext(
 			ctx,
 			'boldsign.helpers.uploadFile',
-			{ fileName: input.fileName, mimeType: input.mimeType },
+			{ fileName: validInput.fileName, mimeType: validInput.mimeType },
 			'completed',
 		);
 		return parsed;
