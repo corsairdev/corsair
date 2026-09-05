@@ -4,10 +4,35 @@ import { z } from 'zod';
  * Benzinga uses `YYYY-MM-DD` calendar dates across the news and calendar APIs
  * (https://docs.benzinga.com/api-reference/news-api/get-news-items,
  * https://docs.benzinga.com/api-reference/calendar-api/get-earnings).
+ * The refine rejects impossible dates (e.g. 2026-02-30) that pass the format
+ * check, including leap-year handling via UTC component comparison.
  */
 const CalendarDateSchema = z
 	.string()
-	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD');
+	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD')
+	.refine(
+		(value) => {
+			const [year, month, day] = value.split('-').map(Number);
+			if (
+				year === undefined ||
+				month === undefined ||
+				day === undefined ||
+				month < 1 ||
+				month > 12 ||
+				day < 1 ||
+				day > 31
+			) {
+				return false;
+			}
+			const utc = new Date(Date.UTC(year, month - 1, day));
+			return (
+				utc.getUTCFullYear() === year &&
+				utc.getUTCMonth() === month - 1 &&
+				utc.getUTCDate() === day
+			);
+		},
+		{ message: 'Expected a real calendar date (YYYY-MM-DD)' },
+	);
 
 const NewsSortSchema = z.enum([
 	'id:asc',

@@ -52,6 +52,18 @@ describe('Benzinga endpoint registry', () => {
 		expect(benzingaEndpointSchemas['calendar.listRatings'].input).toBe(
 			BenzingaEndpointInputSchemas.listRatings,
 		);
+		expect(benzingaEndpointSchemas['news.listChannels'].input).toBe(
+			BenzingaEndpointInputSchemas.listNewsChannels,
+		);
+		expect(benzingaEndpointSchemas['calendar.listGuidance'].input).toBe(
+			BenzingaEndpointInputSchemas.listGuidance,
+		);
+		expect(benzingaEndpointSchemas['calendar.listIpos'].input).toBe(
+			BenzingaEndpointInputSchemas.listIpos,
+		);
+		expect(benzingaEndpointSchemas['calendar.listSplits'].input).toBe(
+			BenzingaEndpointInputSchemas.listSplits,
+		);
 		expect(benzingaEndpointSchemas['calendar.listEconomics'].input).toBe(
 			BenzingaEndpointInputSchemas.listEconomics,
 		);

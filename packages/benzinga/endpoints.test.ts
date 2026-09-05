@@ -51,6 +51,26 @@ describe('Benzinga endpoint schemas', () => {
 		).toBeUndefined();
 	});
 
+	it('rejects impossible calendar dates while allowing leap days', () => {
+		expect(() =>
+			BenzingaEndpointInputSchemas.getNews.parse({ date: '2026-02-30' }),
+		).toThrow();
+		expect(() =>
+			BenzingaEndpointInputSchemas.listEarnings.parse({ date: '2024-13-01' }),
+		).toThrow();
+		expect(() =>
+			BenzingaEndpointInputSchemas.listEarnings.parse({ date: '2023-02-29' }),
+		).toThrow();
+		const leapDay = BenzingaEndpointInputSchemas.listEarnings.parse({
+			date: '2024-02-29',
+		});
+		expect(leapDay.date).toBe('2024-02-29');
+		const monthEnd = BenzingaEndpointInputSchemas.getNews.parse({
+			date: '2024-01-31',
+		});
+		expect(monthEnd.date).toBe('2024-01-31');
+	});
+
 	it('validates calendar pagination and shared filters', () => {
 		const parsed = BenzingaEndpointInputSchemas.listEarnings.parse({
 			page: 2,
