@@ -114,7 +114,7 @@ export const BaseProviders = [
 	'chatbotkit',
 	'chatfai',
 	'circleci',
-	'clickhouse',
+	'claidai',
 	'clientary',
 	'clockify',
 	'cloudflare',
@@ -380,7 +380,7 @@ export const ProviderDisplayNames = {
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
 	circleci: 'CircleCI',
-	clickhouse: 'Clickhouse',
+	claidai: 'ClaidAi',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
@@ -653,7 +653,7 @@ export type AllProviders =
 	| 'chatbotkit'
 	| 'chatfai'
 	| 'circleci'
-	| 'clickhouse'
+	| 'claidai'
 	| 'clientary'
 	| 'clockify'
 	| 'cloudflare'
