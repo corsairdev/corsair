@@ -1,0 +1,172 @@
+---
+title: Webhooks
+description: "Callingly incoming webhooks: event paths, payloads, and response data."
+---
+
+The Callingly plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/callingly/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `calls`
+  - `completed` (`calls.completed`)
+- `leads`
+  - `created` (`leads.created`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Calls
+
+### Completed
+
+`calls.completed`
+
+Triggered when a call completes and results are logged
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | No | — |
+| `id` | `string \| number` | No | — |
+| `call_id` | `string \| number` | No | — |
+| `lead_id` | `string \| number` | No | — |
+| `team_id` | `string \| number` | No | — |
+| `user_id` | `string \| number` | No | — |
+| `phone_number` | `string` | No | — |
+| `status` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `recording_url` | `string` | No | — |
+| `outcome` | `string` | No | — |
+| `timestamp` | `string` | No | — |
+| `account_id` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: string,
+  id?: string | number,
+  call_id?: string | number,
+  lead_id?: string | number,
+  team_id?: string | number,
+  user_id?: string | number,
+  phone_number?: string,
+  status?: string,
+  duration?: number,
+  recording_url?: string,
+  outcome?: string,
+  timestamp?: string,
+  account_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+callingly({
+    webhookHooks: {
+        calls: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Leads
+
+### Created
+
+`leads.created`
+
+Triggered when a new lead is created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | No | — |
+| `id` | `string \| number` | No | — |
+| `lead_id` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `email` | `string` | No | — |
+| `team_id` | `string \| number` | No | — |
+| `timestamp` | `string` | No | — |
+| `account_id` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event?: string,
+  id?: string | number,
+  lead_id?: string | number,
+  name?: string,
+  first_name?: string,
+  last_name?: string,
+  phone_number?: string,
+  email?: string,
+  team_id?: string | number,
+  timestamp?: string,
+  account_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+callingly({
+    webhookHooks: {
+        leads: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

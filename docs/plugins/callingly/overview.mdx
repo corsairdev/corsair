@@ -1,0 +1,154 @@
+---
+title: Overview
+description: "Lead response management platform that automates immediate phone calls and text follow-ups to new leads."
+---
+
+Use **Callingly** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 32 typed API operations
+- 8 synced entities (`calls`, `clients`, `leads`, `schedules`, `teams`, `teamUsers`, and 2 more) for fast `.search()` / `.list()`
+- 2 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/callingly
+```
+```bash yarn
+yarn add corsair @corsair-dev/callingly
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/callingly
+```
+```bash bun
+bun add corsair @corsair-dev/callingly
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { callingly } from '@corsair-dev/callingly';
+
+export const corsair = createCorsair({
+	plugins: [
+		callingly(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+callingly()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Callingly OAuth app.
+
+```ts
+callingly({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'callingly',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`agents.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.callingly.api.agents.get({});
+```
+
+
+**`agents.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.callingly.api.agents.create({});
+```
+
+
+See the full list on the [API](/plugins/callingly/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.callingly.db.<entity>.search()` and `.list()`: `calls`, `clients`, `leads`, `schedules`, `teams`, `teamUsers`, `users`, `webhooks`.
+
+See [Database](/plugins/callingly/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/callingly/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/callingly/api">
+    Every `callingly.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/callingly/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/callingly/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
