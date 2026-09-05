@@ -97,6 +97,10 @@ jobs:
         if: steps.scope.outputs.skip_heavy != 'true'
         run: pnpm run validate:plugins
 
+      - name: Check plugin READMEs and npm metadata
+        if: steps.scope.outputs.skip_heavy != 'true'
+        run: pnpm generate:readmes:all --check
+
       - name: Validate Docs
         if: steps.scope.outputs.skip_heavy != 'true'
         run: pnpm run validate:docs

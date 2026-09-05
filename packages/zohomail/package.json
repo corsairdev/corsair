@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/zohomail",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Zoho Mail plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -42,9 +42,15 @@
     "mail",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/zohomail"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/zohomail"
 }

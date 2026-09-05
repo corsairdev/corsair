@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/circleci",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CircleCI plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -37,9 +37,15 @@
     "circleci",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/circleci"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/circleci"
 }

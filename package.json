@@ -21,6 +21,8 @@
     "generate:labeler-config": "node scripts/generate-labeler-config.mjs",
     "generate:docs": "tsx --conditions=dev-source scripts/generate-plugin-docs.ts",
     "generate:docs:all": "tsx --conditions=dev-source scripts/generate-plugin-docs.ts --all",
+    "generate:readmes": "tsx --conditions=dev-source scripts/generate-plugin-readmes.ts",
+    "generate:readmes:all": "tsx --conditions=dev-source scripts/generate-plugin-readmes.ts --all",
     "build:explorer-catalog": "tsx --conditions=dev-source scripts/build-explorer-catalog.ts",
     "build:integration-pages": "tsx scripts/build-integration-pages.ts",
     "fetch:plugin-icons": "tsx scripts/fetch-plugin-icons.ts",

@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/aivoov",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "AiVOOV text-to-speech plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -40,9 +40,15 @@
     "voice",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/aivoov"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/aivoov"
 }
