@@ -6,7 +6,6 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -26,16 +25,10 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { HumanitixSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveHumanitixOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchHumanitixTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, HumanitixWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type HumanitixPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalHumanitixPlugin['hooks'];
 	webhookHooks?: InternalHumanitixPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -67,14 +60,7 @@ export type HumanitixEndpoints = {
 	getTags: HumanitixEndpoint<'getTags'>;
 };
 
-type HumanitixWebhook<
-	K extends keyof HumanitixWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<HumanitixContext, TEvent, HumanitixWebhookOutputs[K]>;
-
-export type HumanitixWebhooks = {
-	example: HumanitixWebhook<'example', ExampleEvent>;
-};
+export type HumanitixWebhooks = Record<string, never>;
 
 export type HumanitixBoundWebhooks = BindWebhooks<HumanitixWebhooks>;
 
@@ -88,11 +74,7 @@ const humanitixEndpointsNested = {
 	},
 } as const;
 
-const humanitixWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const humanitixWebhooksNested = {} as const;
 
 export const humanitixEndpointSchemas = {
 	'events.get': {
@@ -111,15 +93,10 @@ export const humanitixEndpointSchemas = {
 	typeof humanitixEndpointsNested
 >;
 
-const humanitixWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof humanitixWebhooksNested
->;
+const humanitixWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof humanitixWebhooksNested
+	>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -185,26 +162,14 @@ export function humanitix<const T extends HumanitixPluginOptions>(
 		endpointMeta: humanitixEndpointMeta,
 		endpointSchemas: humanitixEndpointSchemas,
 		webhookSchemas: humanitixWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-humanitix-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchHumanitixTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveHumanitixOAuthWebhookTenantLink,
+		// No webhooks are implemented for this integration yet, so no
+		// inbound request should ever be matched to this plugin.
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: HumanitixKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -228,4 +193,3 @@ export type {
 	HumanitixEndpointInputs,
 	HumanitixEndpointOutputs,
 } from './endpoints/types';
-export type { ExampleEvent, HumanitixWebhookOutputs } from './webhooks/types';
