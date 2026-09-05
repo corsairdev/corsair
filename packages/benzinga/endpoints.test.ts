@@ -1,7 +1,30 @@
+import { logEventFromContext } from 'corsair/core';
+import { makeBenzingaRequest } from './client';
+import { getNews } from './endpoints/news';
 import {
 	BenzingaEndpointInputSchemas,
 	BenzingaEndpointOutputSchemas,
 } from './endpoints/types';
+import type { BenzingaContext } from './index';
+
+jest.mock('./client', () => {
+	const original = jest.requireActual('./client');
+	return {
+		...original,
+		makeBenzingaRequest: jest.fn(),
+	};
+});
+
+jest.mock('corsair/core', () => {
+	const original = jest.requireActual('corsair/core');
+	return {
+		...original,
+		logEventFromContext: jest.fn(),
+	};
+});
+
+const mockRequest = jest.mocked(makeBenzingaRequest);
+const mockLogEvent = jest.mocked(logEventFromContext);
 
 describe('Benzinga endpoint schemas', () => {
 	it('accepts a fully populated news query', () => {
@@ -190,5 +213,53 @@ describe('Benzinga endpoint schemas', () => {
 		});
 		expect(ratings.ratings).toHaveLength(1);
 		expect(ratings.ratings[0]?.rating_current).toBe('Buy');
+	});
+});
+
+describe('news.get endpoint implementation', () => {
+	// Narrow assertion, justified: getNews only reads ctx.key on this path;
+	// request execution and event logging are both mocked above.
+	const ctx = { key: 'test-key' } as BenzingaContext;
+
+	const article = {
+		id: 123456,
+		author: 'Benzinga Newsdesk',
+		created: 'Wed, 17 May 2017 14:20:15 -0400',
+		updated: 'Wed, 17 May 2017 14:20:15 -0400',
+		title: 'Apple Announces New iPhone',
+		teaser: 'teaser',
+		body: 'body',
+		url: 'https://www.benzinga.com/news/123456',
+	};
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+		mockRequest.mockResolvedValue([article]);
+	});
+
+	it('maps input to query, uses ctx.key, and logs completion', async () => {
+		const result = await getNews(ctx, {
+			pageSize: 5,
+			tickers: 'AAPL',
+			displayOutput: 'headline',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [endpoint, key, options] = mockRequest.mock.calls[0] ?? [];
+		expect(endpoint).toBe('/api/v2/news');
+		expect(key).toBe('test-key');
+		expect(options?.method).toBe('GET');
+		expect(options?.query).toMatchObject({
+			pageSize: 5,
+			tickers: 'AAPL',
+			displayOutput: 'headline',
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'benzinga.news.get',
+			expect.objectContaining({ tickers: 'AAPL' }),
+			'completed',
+		);
+		expect(result).toEqual([article]);
 	});
 });
