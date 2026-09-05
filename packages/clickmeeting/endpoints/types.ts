@@ -1,13 +1,156 @@
 import { z } from 'zod';
 
-// --- Utility Schemas ---
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared Resource Schemas (strongly typed with .passthrough() for API safety)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const PhoneGatewayItemSchema = z
+	.object({
+		country: z.string().optional(),
+		country_name: z.string().optional(),
+		phone: z.string().optional(),
+	})
+	.passthrough();
+
+export const ConferenceItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		name: z.string().optional(),
+		room_type: z.string().optional(),
+		status: z.string().optional(),
+		room_url: z.string().optional(),
+		permanent_room: z.union([z.number(), z.boolean()]).optional(),
+		access_type: z.number().optional(),
+		starts_at: z.string().optional(),
+		duration: z.union([z.number(), z.string()]).optional(),
+		timezone: z.string().optional(),
+		lobby_description: z.string().optional(),
+		description: z.string().optional(),
+	})
+	.passthrough();
+
+export const ConferenceFileItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		name: z.string().optional(),
+		size: z.union([z.string(), z.number()]).optional(),
+	})
+	.passthrough();
+
+export const ConferenceSkinItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		name: z.string().optional(),
+	})
+	.passthrough();
+
+export const TokenItemSchema = z
+	.object({
+		token: z.string().optional(),
+		email: z.string().optional(),
+		status: z.string().optional(),
+	})
+	.passthrough();
+
+export const RegistrationItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		first_name: z.string().optional(),
+		last_name: z.string().optional(),
+		email: z.string().optional(),
+		status: z.string().optional(),
+		registered_at: z.string().optional(),
+	})
+	.passthrough();
+
+export const SessionItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		starts_at: z.string().optional(),
+		duration: z.union([z.number(), z.string()]).optional(),
+		attendees_count: z.number().optional(),
+	})
+	.passthrough();
+
+export const AttendeeItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		nickname: z.string().optional(),
+		email: z.string().optional(),
+		role: z.string().optional(),
+		duration: z.number().optional(),
+	})
+	.passthrough();
+
+export const PollItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		name: z.string().optional(),
+		status: z.string().optional(),
+	})
+	.passthrough();
+
+export const SurveyItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		name: z.string().optional(),
+		status: z.string().optional(),
+	})
+	.passthrough();
+
+export const QaHistoryItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		question: z.string().optional(),
+		answer: z.string().optional(),
+		author: z.string().optional(),
+	})
+	.passthrough();
+
+export const RecordingItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		name: z.string().optional(),
+		duration: z.number().optional(),
+		recording_url: z.string().optional(),
+		created_at: z.string().optional(),
+	})
+	.passthrough();
+
+export const ChatItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		conference_id: z.union([z.string(), z.number()]).optional(),
+		created_at: z.string().optional(),
+	})
+	.passthrough();
+
+export const FileLibraryItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		name: z.string().optional(),
+		size: z.union([z.string(), z.number()]).optional(),
+		created_at: z.string().optional(),
+		download_url: z.string().optional(),
+	})
+	.passthrough();
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Utility Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const PingInputSchema = z.object({});
-export const PingOutputSchema = z.record(z.string(), z.any());
+export const PingOutputSchema = z
+	.object({
+		ping: z.string().optional(),
+		status: z.string().optional(),
+	})
+	.passthrough();
 
 export const TimeZoneListInputSchema = z.object({});
 export const TimeZoneListOutputSchema = z.union([
 	z.array(z.string()),
-	z.record(z.string(), z.any()),
+	z.record(z.string(), z.string()),
 ]);
 
 export const TimeZoneListByCountryInputSchema = z.object({
@@ -15,25 +158,26 @@ export const TimeZoneListByCountryInputSchema = z.object({
 });
 export const TimeZoneListByCountryOutputSchema = z.union([
 	z.array(z.string()),
-	z.record(z.string(), z.any()),
+	z.record(z.string(), z.string()),
 ]);
 
 export const PhoneGatewaysInputSchema = z.object({});
-export const PhoneGatewaysOutputSchema = z.array(z.record(z.string(), z.any()));
+export const PhoneGatewaysOutputSchema = z.array(PhoneGatewayItemSchema);
 
-// --- Conferences Schemas ---
+// ─────────────────────────────────────────────────────────────────────────────
+// Conferences Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const GetConferencesInputSchema = z.object({
 	status: z.enum(['active', 'inactive']).default('active').optional(),
 	page: z.number().optional(),
 });
-export const GetConferencesOutputSchema = z.array(
-	z.record(z.string(), z.any()),
-);
+export const GetConferencesOutputSchema = z.array(ConferenceItemSchema);
 
 export const GetConferenceDetailsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]).describe('Conference / Room ID'),
 });
-export const GetConferenceDetailsOutputSchema = z.record(z.string(), z.any());
+export const GetConferenceDetailsOutputSchema = ConferenceItemSchema;
 
 export const CreateConferenceInputSchema = z.object({
 	name: z.string().describe('Conference room name'),
@@ -49,7 +193,7 @@ export const CreateConferenceInputSchema = z.object({
 	lobby_description: z.string().optional(),
 	description: z.string().optional(),
 });
-export const CreateConferenceOutputSchema = z.record(z.string(), z.any());
+export const CreateConferenceOutputSchema = ConferenceItemSchema;
 
 export const UpdateConferenceInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
@@ -63,24 +207,25 @@ export const UpdateConferenceInputSchema = z.object({
 	lobby_description: z.string().optional(),
 	description: z.string().optional(),
 });
-export const UpdateConferenceOutputSchema = z.record(z.string(), z.any());
+export const UpdateConferenceOutputSchema = ConferenceItemSchema;
 
 export const DeleteConferenceInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 });
-export const DeleteConferenceOutputSchema = z.record(z.string(), z.any());
+export const DeleteConferenceOutputSchema = z
+	.object({
+		status: z.string().optional(),
+		message: z.string().optional(),
+	})
+	.passthrough();
 
 export const GetConferenceFilesInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 });
-export const GetConferenceFilesOutputSchema = z.array(
-	z.record(z.string(), z.any()),
-);
+export const GetConferenceFilesOutputSchema = z.array(ConferenceFileItemSchema);
 
 export const GetConferenceSkinsInputSchema = z.object({});
-export const GetConferenceSkinsOutputSchema = z.array(
-	z.record(z.string(), z.any()),
-);
+export const GetConferenceSkinsOutputSchema = z.array(ConferenceSkinItemSchema);
 
 export const SendInvitationInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
@@ -88,7 +233,13 @@ export const SendInvitationInputSchema = z.object({
 	role: z.enum(['listener', 'presenter']).default('listener').optional(),
 	template: z.enum(['advanced', 'basic']).default('advanced').optional(),
 });
-export const SendInvitationOutputSchema = z.record(z.string(), z.any());
+export const SendInvitationOutputSchema = z
+	.object({
+		status: z.string().optional(),
+		queued: z.number().optional(),
+		failed: z.number().optional(),
+	})
+	.passthrough();
 
 export const GenerateAutologinUrlInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
@@ -96,38 +247,58 @@ export const GenerateAutologinUrlInputSchema = z.object({
 	nickname: z.string(),
 	role: z.enum(['listener', 'presenter']).default('listener').optional(),
 });
-export const GenerateAutologinUrlOutputSchema = z.record(z.string(), z.any());
+export const GenerateAutologinUrlOutputSchema = z
+	.object({
+		autologin_hash: z.string().optional(),
+		url: z.string().optional(),
+	})
+	.passthrough();
 
-// --- Tokens Schemas ---
+// ─────────────────────────────────────────────────────────────────────────────
+// Tokens Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const CreateAccessTokensInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	how_many: z.number().default(1).optional(),
 });
-export const CreateAccessTokensOutputSchema = z.record(z.string(), z.any());
+export const CreateAccessTokensOutputSchema = z
+	.object({
+		tokens: z.array(z.string()).optional(),
+		status: z.string().optional(),
+	})
+	.passthrough();
 
 export const ListAccessTokensInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 });
-export const ListAccessTokensOutputSchema = z.array(
-	z.record(z.string(), z.any()),
-);
+export const ListAccessTokensOutputSchema = z.array(TokenItemSchema);
 
 export const GetTokenByEmailInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	email: z.string().email(),
 });
-export const GetTokenByEmailOutputSchema = z.record(z.string(), z.any());
+export const GetTokenByEmailOutputSchema = TokenItemSchema;
 
-// --- Registrations Schemas ---
+// ─────────────────────────────────────────────────────────────────────────────
+// Registrations Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const RegisterParticipantInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	registration: z
-		.record(z.string(), z.any())
+		.record(z.string(), z.unknown())
 		.describe(
 			'Participant registration fields (e.g. first_name, last_name, email)',
 		),
 });
-export const RegisterParticipantOutputSchema = z.record(z.string(), z.any());
+export const RegisterParticipantOutputSchema = z
+	.object({
+		registration_hash: z.string().optional(),
+		status: z.string().optional(),
+		message: z.string().optional(),
+	})
+	.passthrough();
 
 export const GetRegistrationsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
@@ -136,9 +307,7 @@ export const GetRegistrationsInputSchema = z.object({
 		.default('all')
 		.optional(),
 });
-export const GetRegistrationsOutputSchema = z.array(
-	z.record(z.string(), z.any()),
-);
+export const GetRegistrationsOutputSchema = z.array(RegistrationItemSchema);
 
 export const ListRegistrationsByStatusInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
@@ -148,7 +317,7 @@ export const ListRegistrationsByStatusInputSchema = z.object({
 		.optional(),
 });
 export const ListRegistrationsByStatusOutputSchema = z.array(
-	z.record(z.string(), z.any()),
+	RegistrationItemSchema,
 );
 
 export const CreateContactInputSchema = z.object({
@@ -159,169 +328,216 @@ export const CreateContactInputSchema = z.object({
 	country: z.string().optional(),
 	city: z.string().optional(),
 });
-export const CreateContactOutputSchema = z.record(z.string(), z.any());
+export const CreateContactOutputSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		email: z.string().optional(),
+		first_name: z.string().optional(),
+		last_name: z.string().optional(),
+		phone: z.string().optional(),
+		status: z.string().optional(),
+	})
+	.passthrough();
 
-// --- Sessions Schemas ---
+// ─────────────────────────────────────────────────────────────────────────────
+// Sessions Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const GetConferenceSessionsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 });
-export const GetConferenceSessionsOutputSchema = z.array(
-	z.record(z.string(), z.any()),
-);
+export const GetConferenceSessionsOutputSchema = z.array(SessionItemSchema);
 
 export const GetSessionDetailsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	sessionId: z.union([z.string(), z.number()]),
 });
-export const GetSessionDetailsOutputSchema = z.record(z.string(), z.any());
+export const GetSessionDetailsOutputSchema = SessionItemSchema;
 
 export const GetSessionAttendeesInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	sessionId: z.union([z.string(), z.number()]),
 });
-export const GetSessionAttendeesOutputSchema = z.array(
-	z.record(z.string(), z.any()),
-);
+export const GetSessionAttendeesOutputSchema = z.array(AttendeeItemSchema);
 
 export const GetSessionAttendeeDetailsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	sessionId: z.union([z.string(), z.number()]),
 	attendeeId: z.union([z.string(), z.number()]),
 });
-export const GetSessionAttendeeDetailsOutputSchema = z.record(
-	z.string(),
-	z.any(),
-);
+export const GetSessionAttendeeDetailsOutputSchema = AttendeeItemSchema;
 
 export const GenerateSessionPdfReportInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	sessionId: z.union([z.string(), z.number()]),
 	lang: z.string().optional(),
 });
-export const GenerateSessionPdfReportOutputSchema = z.record(
-	z.string(),
-	z.any(),
-);
+export const GenerateSessionPdfReportOutputSchema = z
+	.object({
+		status: z.string().optional(),
+		report_url: z.string().optional(),
+		message: z.string().optional(),
+	})
+	.passthrough();
 
 export const GetSessionRegistrationsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	sessionId: z.union([z.string(), z.number()]),
 });
 export const GetSessionRegistrationsOutputSchema = z.array(
-	z.record(z.string(), z.any()),
+	RegistrationItemSchema,
 );
 
 export const GetSessionPollsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	sessionId: z.union([z.string(), z.number()]),
 });
-export const GetSessionPollsOutputSchema = z.array(
-	z.record(z.string(), z.any()),
-);
+export const GetSessionPollsOutputSchema = z.array(PollItemSchema);
 
 export const GetSessionPollDetailsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	sessionId: z.union([z.string(), z.number()]),
 	pollId: z.union([z.string(), z.number()]),
 });
-export const GetSessionPollDetailsOutputSchema = z.record(z.string(), z.any());
+export const GetSessionPollDetailsOutputSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		name: z.string().optional(),
+		questions: z.array(z.record(z.string(), z.unknown())).optional(),
+	})
+	.passthrough();
 
 export const GetSessionSurveysInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	sessionId: z.union([z.string(), z.number()]),
 });
-export const GetSessionSurveysOutputSchema = z.array(
-	z.record(z.string(), z.any()),
-);
+export const GetSessionSurveysOutputSchema = z.array(SurveyItemSchema);
 
 export const GetSessionSurveyDetailsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	sessionId: z.union([z.string(), z.number()]),
 	surveyId: z.union([z.string(), z.number()]),
 });
-export const GetSessionSurveyDetailsOutputSchema = z.record(
-	z.string(),
-	z.any(),
-);
+export const GetSessionSurveyDetailsOutputSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		name: z.string().optional(),
+		answers: z.array(z.record(z.string(), z.unknown())).optional(),
+	})
+	.passthrough();
 
 export const GetSessionQaHistoryInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	sessionId: z.union([z.string(), z.number()]),
 });
-export const GetSessionQaHistoryOutputSchema = z.array(
-	z.record(z.string(), z.any()),
-);
+export const GetSessionQaHistoryOutputSchema = z.array(QaHistoryItemSchema);
 
-// --- Recordings Schemas ---
+// ─────────────────────────────────────────────────────────────────────────────
+// Recordings Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const GetSessionRecordingsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 });
-export const GetSessionRecordingsOutputSchema = z.array(
-	z.record(z.string(), z.any()),
-);
+export const GetSessionRecordingsOutputSchema = z.array(RecordingItemSchema);
 
 export const GetSessionRecordingDetailsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	recordingId: z.union([z.string(), z.number()]),
 });
-export const GetSessionRecordingDetailsOutputSchema = z.record(
-	z.string(),
-	z.any(),
-);
+export const GetSessionRecordingDetailsOutputSchema = RecordingItemSchema;
 
 export const DeleteRecordingInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	recordingId: z.union([z.string(), z.number()]),
 });
-export const DeleteRecordingOutputSchema = z.record(z.string(), z.any());
+export const DeleteRecordingOutputSchema = z
+	.object({
+		status: z.string().optional(),
+		message: z.string().optional(),
+	})
+	.passthrough();
 
 export const DeleteRecordingsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 });
-export const DeleteRecordingsOutputSchema = z.record(z.string(), z.any());
+export const DeleteRecordingsOutputSchema = z
+	.object({
+		status: z.string().optional(),
+		deleted_count: z.number().optional(),
+	})
+	.passthrough();
 
-// --- Chats Schemas ---
+// ─────────────────────────────────────────────────────────────────────────────
+// Chats Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const GetChatsInputSchema = z.object({
 	page: z.number().optional(),
 });
-export const GetChatsOutputSchema = z.array(z.record(z.string(), z.any()));
+export const GetChatsOutputSchema = z.array(ChatItemSchema);
 
 export const GetChatDetailsInputSchema = z.object({
 	chatId: z.union([z.string(), z.number()]),
 });
-export const GetChatDetailsOutputSchema = z.record(z.string(), z.any());
+export const GetChatDetailsOutputSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		messages: z.array(z.record(z.string(), z.unknown())).optional(),
+	})
+	.passthrough();
 
-// --- Files Schemas ---
+// ─────────────────────────────────────────────────────────────────────────────
+// Files Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const GetFileLibraryInputSchema = z.object({
 	page: z.number().optional(),
 });
-export const GetFileLibraryOutputSchema = z.array(
-	z.record(z.string(), z.any()),
-);
+export const GetFileLibraryOutputSchema = z.array(FileLibraryItemSchema);
 
 export const GetFileDetailsInputSchema = z.object({
 	fileId: z.union([z.string(), z.number()]),
 });
-export const GetFileDetailsOutputSchema = z.record(z.string(), z.any());
+export const GetFileDetailsOutputSchema = FileLibraryItemSchema;
 
 export const UploadFileInputSchema = z.object({
 	name: z.string().describe('File name'),
 	content: z.string().describe('Base64 content or file string'),
 	conference_id: z.union([z.string(), z.number()]).optional(),
 });
-export const UploadFileOutputSchema = z.record(z.string(), z.any());
+export const UploadFileOutputSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		name: z.string().optional(),
+		status: z.string().optional(),
+	})
+	.passthrough();
 
 export const DeleteFileInputSchema = z.object({
 	fileId: z.union([z.string(), z.number()]),
 });
-export const DeleteFileOutputSchema = z.record(z.string(), z.any());
+export const DeleteFileOutputSchema = z
+	.object({
+		status: z.string().optional(),
+		message: z.string().optional(),
+	})
+	.passthrough();
 
 export const DownloadFileInputSchema = z.object({
 	fileId: z.union([z.string(), z.number()]),
 });
-export const DownloadFileOutputSchema = z.record(z.string(), z.any());
+export const DownloadFileOutputSchema = z
+	.object({
+		content: z.string().optional(),
+		download_url: z.string().optional(),
+	})
+	.passthrough();
 
-// --- Combined Inputs & Outputs Maps ---
+// ─────────────────────────────────────────────────────────────────────────────
+// Combined Inputs & Outputs Maps
+// ─────────────────────────────────────────────────────────────────────────────
+
 export type ClickmeetingEndpointInputs = {
 	// utility
 	getPing: z.infer<typeof PingInputSchema>;
