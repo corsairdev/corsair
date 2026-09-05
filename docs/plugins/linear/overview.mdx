@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Linear plugin for Corsair"
+description: "Issue tracking tool for software teams managing projects, cycles, and product roadmaps."
 ---
 
 Use **Linear** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -48,8 +48,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -124,19 +124,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`comments.list`**
+**List issues**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.linear.api.comments.list({});
+await tenant.linear.api.issues.list({});
 ```
 
 
-**`comments.create`**
+**Create an issue**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.linear.api.comments.create({});
+await tenant.linear.api.issues.create({ title: 'Fix bug in login flow', teamId: 'team_123' });
 ```
 
 
@@ -144,15 +144,37 @@ See the full list on the [API](/plugins/linear/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.linear.db.<entity>.search()` and `.list()`: `comments`, `issues`, `projects`, `teams`, `users`.
+Search synced issues without hitting Linear.
 
-See [Database](/plugins/linear/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.linear.db.issues.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `comments`, `issues`, `projects`, `teams`, `users`. See [Database](/plugins/linear/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **9** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a new issue is created in Linear.
 
-See [Webhooks](/plugins/linear/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            create: {
+                after: async (ctx, result) => {
+                    console.log('Linear issue created:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/linear/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

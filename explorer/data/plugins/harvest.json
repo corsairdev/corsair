@@ -1,0 +1,7108 @@
+{
+  "id": "harvest",
+  "displayName": "Harvest",
+  "description": "Time tracking and invoicing software for agencies, freelancers, and project billing.",
+  "npmPackageName": "@corsair-dev/harvest",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 57,
+    "webhooks": 0,
+    "db": 10
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "account_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "harvest.api.clients.create",
+      "shortPath": "clients.create",
+      "description": "Create a client",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statement_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.clients.delete",
+      "shortPath": "clients.delete",
+      "description": "Delete a client",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.clients.get",
+      "shortPath": "clients.get",
+      "description": "Get a client by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statement_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.clients.list",
+      "shortPath": "clients.list",
+      "description": "List clients",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clients",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, is_active?: boolean | null, address?: string | null, statement_key?: string | null, currency?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.clients.update",
+      "shortPath": "clients.update",
+      "description": "Update a client",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statement_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.company.get",
+      "shortPath": "company.get",
+      "description": "Get company settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "full_domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "week_start_day",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "wants_timestamp_timers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plan_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clock",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency_code_display",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency_symbol_display",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "decimal_symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thousands_separator",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color_scheme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "weekly_capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expense_feature",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "invoice_feature",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "estimate_feature",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "approval_feature",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_feature",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "saml_sign_in_required",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "day_entry_notes_required",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.company.update",
+      "shortPath": "company.update",
+      "description": "Update the writable company settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "wants_timestamp_timers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "weekly_capacity",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "full_domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "week_start_day",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "wants_timestamp_timers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plan_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clock",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency_code_display",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency_symbol_display",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "decimal_symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thousands_separator",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color_scheme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "weekly_capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expense_feature",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "invoice_feature",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "estimate_feature",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "approval_feature",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_feature",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "saml_sign_in_required",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "day_entry_notes_required",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a client contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_office",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_recipient_status",
+            "optional": true,
+            "type": "none | recipient | cc | bcc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_office",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_recipient_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a client contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List client contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id: number, client?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null, title?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, phone_office?: string | null, phone_mobile?: string | null, fax?: string | null, invoice_recipient_status?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a client contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_office",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_recipient_status",
+            "optional": true,
+            "type": "none | recipient | cc | bcc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_office",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_recipient_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.estimates.create",
+      "shortPath": "estimates.create",
+      "description": "Create a draft estimate",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchase_order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: number, kind: string, description?: string, quantity?: number, unit_price: number, taxed?: boolean, taxed2?: boolean, project_id?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[]"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "client_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchase_order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accepted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "declined_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.estimates.createItemCategory",
+      "shortPath": "estimates.createItemCategory",
+      "description": "Create an estimate item category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.estimates.createMessage",
+      "shortPath": "estimates.createMessage",
+      "description": "Create an estimate message; event_type \"send\" emails the client",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimate_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "send | accept | decline | re-open"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "send_me_a_copy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ name?: string, email: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sent_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sent_by_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sent_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sent_from_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "send_me_a_copy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null }[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.estimates.delete",
+      "shortPath": "estimates.delete",
+      "description": "Delete an estimate",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimate_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.estimates.deleteMessage",
+      "shortPath": "estimates.deleteMessage",
+      "description": "Delete an estimate message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimate_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.estimates.get",
+      "shortPath": "estimates.get",
+      "description": "Get an estimate by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimate_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[]"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "client_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchase_order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accepted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "declined_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.estimates.listMessages",
+      "shortPath": "estimates.listMessages",
+      "description": "List the messages recorded against an estimate",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimate_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimate_messages",
+            "optional": false,
+            "type": "{ id?: number | null, sent_by?: string | null, sent_by_email?: string | null, sent_from?: string | null, sent_from_email?: string | null, send_me_a_copy?: boolean | null, subject?: string | null, body?: string | null, event_type?: string | null, recipients?: { name?: string | null, email?: string | null }[] | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.estimates.update",
+      "shortPath": "estimates.update",
+      "description": "Update an estimate",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimate_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchase_order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: number, kind: string, description?: string, quantity?: number, unit_price: number, taxed?: boolean, taxed2?: boolean, project_id?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[]"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "client_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchase_order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accepted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "declined_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.estimates.updateItemCategory",
+      "shortPath": "estimates.updateItemCategory",
+      "description": "Rename an estimate item category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimate_item_category_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.expenses.create",
+      "shortPath": "expenses.create",
+      "description": "Record an expense against a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "expense_category_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "spent_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "spent_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "receipt",
+            "optional": true,
+            "type": "{ url?: string | null, file_name?: string | null, file_size?: number | null, content_type?: string | null }"
+          },
+          {
+            "key": "approval_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_explicitly_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_billed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reimbursement",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "expense_category",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "user_assignment",
+            "optional": true,
+            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "invoice",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.expenses.listCategories",
+      "shortPath": "expenses.listCategories",
+      "description": "List expense categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expense_categories",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, unit_name?: string | null, unit_price?: number | null, is_active?: boolean | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.expenses.update",
+      "shortPath": "expenses.update",
+      "description": "Update an expense",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expense_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expense_category_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spent_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delete_receipt",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "spent_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "receipt",
+            "optional": true,
+            "type": "{ url?: string | null, file_name?: string | null, file_size?: number | null, content_type?: string | null }"
+          },
+          {
+            "key": "approval_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_explicitly_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_billed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reimbursement",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "expense_category",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "user_assignment",
+            "optional": true,
+            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "invoice",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.create",
+      "shortPath": "invoices.create",
+      "description": "Create a draft invoice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "retainer_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "estimate_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchase_order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_term",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_options",
+            "optional": true,
+            "type": "ach | credit_card | paypal[]"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: number, kind: string, description?: string, quantity?: number, unit_price: number, taxed?: boolean, taxed2?: boolean, project_id?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[]"
+          },
+          {
+            "key": "estimate",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "retainer",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "client_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchase_order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "period_start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "period_end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_term",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_options",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recurring_invoice_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.createItemCategory",
+      "shortPath": "invoices.createItemCategory",
+      "description": "Create an invoice item category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_as_service",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_as_expense",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.createMessage",
+      "shortPath": "invoices.createMessage",
+      "description": "Create an invoice message; event_type \"send\" emails the client",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "send | close | re-open | draft"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_link_to_client_invoice",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "attach_pdf",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "send_me_a_copy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "thank_you",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ name?: string, email: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sent_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sent_by_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sent_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sent_from_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_link_to_client_invoice",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "send_me_a_copy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "thank_you",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reminder",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "send_reminder_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attach_pdf",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null }[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.createPayment",
+      "shortPath": "invoices.createPayment",
+      "description": "Record a payment against an invoice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "paid_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "send_thank_you",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paid_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recorded_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recorded_by_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transaction_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_gateway",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.delete",
+      "shortPath": "invoices.delete",
+      "description": "Delete an invoice",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.deleteItemCategory",
+      "shortPath": "invoices.deleteItemCategory",
+      "description": "Delete an unused invoice item category",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_item_category_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.deleteMessage",
+      "shortPath": "invoices.deleteMessage",
+      "description": "Delete an invoice message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.deletePayment",
+      "shortPath": "invoices.deletePayment",
+      "description": "Delete a recorded payment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "payment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.get",
+      "shortPath": "invoices.get",
+      "description": "Get an invoice by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[]"
+          },
+          {
+            "key": "estimate",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "retainer",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "client_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchase_order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "period_start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "period_end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_term",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_options",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recurring_invoice_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "List invoices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "draft | open | paid | closed"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoices",
+            "optional": false,
+            "type": "{ id: number, client?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null, line_items?: { id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[] | null, estimate?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null, retainer?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null, creator?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null, client_key?: string | null, number?: string | null, purchase_order?: string | null, amount?: number | null, due_amount?: number | null, tax?: number | null, tax_amount?: number | null, tax2?: number | null, tax2_amount?: number | null, discount?: number | null, discount_amount?: number | null, subject?: string | null, notes?: string | null, currency?: string | null, state?: string | null, period_start?: string | null, period_end?: string | null, issue_date?: string | null, due_date?: string | null, payment_term?: string | null, payment_options?: string[] | null, sent_at?: string | null, paid_at?: string | null, paid_date?: string | null, closed_at?: string | null, recurring_invoice_id?: number | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.listItemCategories",
+      "shortPath": "invoices.listItemCategories",
+      "description": "List invoice item categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_item_categories",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, use_as_service?: boolean | null, use_as_expense?: boolean | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.listMessages",
+      "shortPath": "invoices.listMessages",
+      "description": "List the messages recorded against an invoice",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_messages",
+            "optional": false,
+            "type": "{ id?: number | null, sent_by?: string | null, sent_by_email?: string | null, sent_from?: string | null, sent_from_email?: string | null, include_link_to_client_invoice?: boolean | null, send_me_a_copy?: boolean | null, thank_you?: boolean | null, reminder?: boolean | null, send_reminder_on?: string | null, attach_pdf?: boolean | null, subject?: string | null, body?: string | null, event_type?: string | null, recipients?: { name?: string | null, email?: string | null }[] | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.listPayments",
+      "shortPath": "invoices.listPayments",
+      "description": "List payments recorded against an invoice",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_payments",
+            "optional": false,
+            "type": "{ id?: number | null, amount?: number | null, paid_at?: string | null, paid_date?: string | null, recorded_by?: string | null, recorded_by_email?: string | null, notes?: string | null, transaction_id?: string | null, payment_gateway?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.invoices.update",
+      "shortPath": "invoices.update",
+      "description": "Update an invoice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "retainer_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "estimate_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchase_order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_term",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_options",
+            "optional": true,
+            "type": "ach | credit_card | paypal[]"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: number, kind: string, description?: string, quantity?: number, unit_price: number, taxed?: boolean, taxed2?: boolean, project_id?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: number | null, kind?: string | null, description?: string | null, quantity?: number | null, unit_price?: number | null, amount?: number | null, taxed?: boolean | null, taxed2?: boolean | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null }[]"
+          },
+          {
+            "key": "estimate",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "retainer",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "client_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchase_order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "period_start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "period_end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_term",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_options",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recurring_invoice_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_billable",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "bill_by",
+            "optional": false,
+            "type": "Project | Tasks | People | none"
+          },
+          {
+            "key": "budget_by",
+            "optional": false,
+            "type": "project | project_cost | task | task_fees | person | none"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_fixed_fee",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budget_is_monthly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notify_when_over_budget",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "over_budget_notification_percentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_budget_to_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cost_budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_budget_include_expenses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starts_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ends_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_fixed_fee",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bill_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budget_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "budget_is_monthly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_budget_include_expenses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notify_when_over_budget",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "over_budget_notification_percentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "over_budget_notification_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "show_budget_to_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starts_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ends_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project and its time entries and expenses",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a project by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_fixed_fee",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bill_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budget_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "budget_is_monthly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_budget_include_expenses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notify_when_over_budget",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "over_budget_notification_percentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "over_budget_notification_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "show_budget_to_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starts_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ends_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: number, client?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null, name?: string | null, code?: string | null, is_active?: boolean | null, is_billable?: boolean | null, is_fixed_fee?: boolean | null, bill_by?: string | null, hourly_rate?: number | null, budget_by?: string | null, budget_is_monthly?: boolean | null, budget?: number | null, cost_budget?: number | null, cost_budget_include_expenses?: boolean | null, notify_when_over_budget?: boolean | null, over_budget_notification_percentage?: number | null, over_budget_notification_date?: string | null, show_budget_to_all?: boolean | null, fee?: number | null, notes?: string | null, starts_on?: string | null, ends_on?: string | null, created_at?: string | null, updated_at?: string | null, currency?: string | null }[]"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_fixed_fee",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bill_by",
+            "optional": true,
+            "type": "Project | Tasks | People | none"
+          },
+          {
+            "key": "budget_by",
+            "optional": true,
+            "type": "project | project_cost | task | task_fees | person | none"
+          },
+          {
+            "key": "hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budget_is_monthly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notify_when_over_budget",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "over_budget_notification_percentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_budget_to_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cost_budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_budget_include_expenses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starts_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ends_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_fixed_fee",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bill_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budget_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "budget_is_monthly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_budget_include_expenses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notify_when_over_budget",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "over_budget_notification_percentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "over_budget_notification_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "show_budget_to_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "starts_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ends_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "billable_by_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billable_by_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billable_by_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, billable_by_default?: boolean | null, default_hourly_rate?: number | null, is_default?: boolean | null, is_active?: boolean | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billable_by_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billable_by_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.timeEntries.create",
+      "shortPath": "timeEntries.create",
+      "description": "Log time against a project and task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "spent_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "started_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ended_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_reference",
+            "optional": true,
+            "type": "{ id?: string, group_id?: string, account_id?: string, permalink?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "spent_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hours_without_timer",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rounded_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_explicitly_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approval_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_billed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timer_started_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "started_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ended_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_running",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "budgeted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billable_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "task",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "user_assignment",
+            "optional": true,
+            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "task_assignment",
+            "optional": true,
+            "type": "{ id?: number | null, billable?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, created_at?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "invoice",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "external_reference",
+            "optional": true,
+            "type": "{ id?: string | null, group_id?: string | null, account_id?: string | null, permalink?: string | null, service?: string | null, service_icon_url?: string | null }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.timeEntries.delete",
+      "shortPath": "timeEntries.delete",
+      "description": "Delete a time entry",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.timeEntries.get",
+      "shortPath": "timeEntries.get",
+      "description": "Get a time entry by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "spent_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hours_without_timer",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rounded_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_explicitly_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approval_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_billed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timer_started_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "started_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ended_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_running",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "budgeted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billable_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "task",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "user_assignment",
+            "optional": true,
+            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "task_assignment",
+            "optional": true,
+            "type": "{ id?: number | null, billable?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, created_at?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "invoice",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "external_reference",
+            "optional": true,
+            "type": "{ id?: string | null, group_id?: string | null, account_id?: string | null, permalink?: string | null, service?: string | null, service_icon_url?: string | null }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.timeEntries.list",
+      "shortPath": "timeEntries.list",
+      "description": "List time entries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "external_reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_billed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_running",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "approval_status",
+            "optional": true,
+            "type": "unsubmitted | submitted | approved"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entries",
+            "optional": false,
+            "type": "{ id: number, spent_date?: string | null, hours?: number | null, hours_without_timer?: number | null, rounded_hours?: number | null, notes?: string | null, is_locked?: boolean | null, is_explicitly_locked?: boolean | null, locked_reason?: string | null, approval_status?: string | null, is_closed?: boolean | null, is_billed?: boolean | null, timer_started_at?: string | null, started_time?: string | null, ended_time?: string | null, is_running?: boolean | null, billable?: boolean | null, budgeted?: boolean | null, billable_rate?: number | null, cost_rate?: number | null, user?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null, client?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null, project?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null, task?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null, user_assignment?: { id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null } | null, task_assignment?: { id?: number | null, billable?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, created_at?: string | null, updated_at?: string | null } | null, invoice?: { id?: number | null, name?: string | null, code?: string | null, currency?: string | null } | null, external_reference?: { id?: string | null, group_id?: string | null, account_id?: string | null, permalink?: string | null, service?: string | null, service_icon_url?: string | null } | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.timeEntries.update",
+      "shortPath": "timeEntries.update",
+      "description": "Update a time entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spent_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "started_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ended_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_reference",
+            "optional": true,
+            "type": "{ id?: string, group_id?: string, account_id?: string, permalink?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "spent_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hours_without_timer",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rounded_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_explicitly_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locked_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approval_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_billed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timer_started_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "started_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ended_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_running",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "budgeted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billable_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "task",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "user_assignment",
+            "optional": true,
+            "type": "{ id?: number | null, is_project_manager?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, use_default_rates?: boolean | null, created_at?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "task_assignment",
+            "optional": true,
+            "type": "{ id?: number | null, billable?: boolean | null, is_active?: boolean | null, budget?: number | null, hourly_rate?: number | null, created_at?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "invoice",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, code?: string | null, currency?: string | null }"
+          },
+          {
+            "key": "external_reference",
+            "optional": true,
+            "type": "{ id?: string | null, group_id?: string | null, account_id?: string | null, permalink?: string | null, service?: string | null, service_icon_url?: string | null }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a team member and email them an invitation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_contractor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "weekly_capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_access_to_all_future_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "saml_exempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "access_roles",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "telephone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_access_to_all_future_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_contractor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "saml_exempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "weekly_capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "access_roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calendar_integration_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "calendar_integration_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "can_create_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "permissions_claims",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a team member",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a team member by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "telephone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_access_to_all_future_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_contractor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "saml_exempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "weekly_capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "access_roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calendar_integration_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "calendar_integration_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "can_create_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "permissions_claims",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.users.list",
+      "shortPath": "users.list",
+      "description": "List team members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: number, first_name?: string | null, last_name?: string | null, email?: string | null, telephone?: string | null, timezone?: string | null, has_access_to_all_future_projects?: boolean | null, is_contractor?: boolean | null, is_active?: boolean | null, saml_exempt?: boolean | null, weekly_capacity?: number | null, default_hourly_rate?: number | null, cost_rate?: number | null, roles?: string[] | null, access_roles?: string[] | null, avatar_url?: string | null, created_at?: string | null, updated_at?: string | null, employee_id?: string | null, calendar_integration_enabled?: boolean | null, calendar_integration_source?: string | null, can_create_projects?: boolean | null, permissions_claims?: string[] | null }[]"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previous_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, next?: string | null, previous?: string | null, last?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "harvest.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a team member",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_contractor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "weekly_capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_access_to_all_future_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "saml_exempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "access_roles",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "telephone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_access_to_all_future_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_contractor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "saml_exempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "weekly_capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "access_roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calendar_integration_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "calendar_integration_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "can_create_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "permissions_claims",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "harvest.db.clients.search",
+      "entityName": "clients",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "statement_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "harvest.db.company.search",
+      "entityName": "company",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "full_domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "base_uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "week_start_day",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "wants_timestamp_timers",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "time_format",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_format",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "plan_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "clock",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency_code_display",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency_symbol_display",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "decimal_symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thousands_separator",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color_scheme",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "weekly_capacity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "expense_feature",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "invoice_feature",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "estimate_feature",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "approval_feature",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "team_feature",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "saml_sign_in_required",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "day_entry_notes_required",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "harvest.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_office",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_mobile",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fax",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "invoice_recipient_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "harvest.db.estimates.search",
+      "entityName": "estimates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "client_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "purchase_order",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tax_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tax2",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tax2_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "discount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "discount_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "issue_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sent_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accepted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "declined_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "harvest.db.expenseCategories.search",
+      "entityName": "expenseCategories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unit_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unit_price",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "harvest.db.invoiceItemCategories.search",
+      "entityName": "invoiceItemCategories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "use_as_service",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "use_as_expense",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "harvest.db.invoices.search",
+      "entityName": "invoices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "client_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "purchase_order",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "due_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tax_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tax2",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tax2_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "discount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "discount_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period_start",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "period_end",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "issue_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "due_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "payment_term",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sent_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "paid_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "paid_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "closed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recurring_invoice_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "harvest.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_billable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_fixed_fee",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "bill_by",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hourly_rate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "budget_by",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "budget_is_monthly",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "budget",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "cost_budget",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "cost_budget_include_expenses",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "notify_when_over_budget",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "over_budget_notification_percentage",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "over_budget_notification_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "show_budget_to_all",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "fee",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "starts_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ends_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "harvest.db.tasks.search",
+      "entityName": "tasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "billable_by_default",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "default_hourly_rate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_default",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "harvest.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "telephone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "has_access_to_all_future_projects",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_contractor",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "saml_exempt",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "weekly_capacity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "default_hourly_rate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "cost_rate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "avatar_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "employee_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "calendar_integration_enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "calendar_integration_source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "can_create_projects",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

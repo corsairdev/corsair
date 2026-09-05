@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for Toggl: every `toggl.api.*` operation with input and output types."
+description: "API reference for Toggl Track: every `toggl.api.*` operation with input and output types."
 ---
 
 Every `toggl.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -98,7 +98,7 @@ await corsair.toggl.api.clients.create({});
 
 `clients.delete`
 
-Delete a client [DESTRUCTIVE]
+Delete a client
 
 **Risk:** `destructive`
 
@@ -919,7 +919,7 @@ await corsair.toggl.api.organizations.createInvitation({});
 
 `organizations.deleteGroup`
 
-Delete an organization group [DESTRUCTIVE]
+Delete an organization group
 
 **Risk:** `destructive`
 
@@ -1352,7 +1352,7 @@ await corsair.toggl.api.projects.create({});
 
 `projects.delete`
 
-Delete a project and its time entries [DESTRUCTIVE]
+Delete a project and its time entries
 
 **Risk:** `destructive`
 
@@ -1384,7 +1384,7 @@ await corsair.toggl.api.projects.delete({});
 
 `projects.deleteGroup`
 
-Delete a project group [DESTRUCTIVE]
+Delete a project group
 
 **Risk:** `destructive`
 
@@ -1911,7 +1911,7 @@ await corsair.toggl.api.tags.create({});
 
 `tags.delete`
 
-Delete a tag [DESTRUCTIVE]
+Delete a tag
 
 **Risk:** `destructive`
 
@@ -2068,7 +2068,7 @@ await corsair.toggl.api.tasks.create({});
 
 `tasks.delete`
 
-Delete a task [DESTRUCTIVE]
+Delete a task
 
 **Risk:** `destructive`
 
@@ -2349,7 +2349,7 @@ await corsair.toggl.api.timeEntries.create({});
 
 `timeEntries.delete`
 
-Delete a time entry [DESTRUCTIVE]
+Delete a time entry
 
 **Risk:** `destructive`
 
@@ -2619,7 +2619,7 @@ await corsair.toggl.api.timeEntries.update({});
 
 `webhooks.deleteSubscription`
 
-Delete a webhook subscription [DESTRUCTIVE]
+Delete a webhook subscription
 
 **Risk:** `destructive`
 

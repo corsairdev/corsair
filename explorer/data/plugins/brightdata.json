@@ -1,0 +1,484 @@
+{
+  "id": "brightdata",
+  "displayName": "Bright Data",
+  "description": "Web data platform for proxies, scraping, and collecting public internet datasets.",
+  "npmPackageName": "@corsair-dev/brightdata",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 9
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "brightdata.api.crawlApi",
+      "shortPath": "crawlApi",
+      "description": "Tool to trigger an asynchronous site crawl for a dataset and list of URLs. Returns snapshot_id required by getSnapshotStatus and getSnapshotResults.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset_id",
+            "optional": false,
+            "type": "string",
+            "description": "Official query: ?dataset_id="
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "include_errors",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_output_fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snapshot_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brightdata.api.filterDataset",
+      "shortPath": "filterDataset",
+      "description": "Tool to apply custom filter criteria to a marketplace dataset (BETA). Use after selecting a dataset to generate a filtered snapshot.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "records_limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snapshot_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brightdata.api.getAvailableCities",
+      "shortPath": "getAvailableCities",
+      "description": "Tool to get available static network cities for a given country. Use when you need to configure static proxy endpoints after selecting a country.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "Official query: ?country="
+          },
+          {
+            "key": "pool_ip_type",
+            "optional": true,
+            "type": "dc | static_res"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "brightdata.api.getAvailableCountries",
+      "shortPath": "getAvailableCountries",
+      "description": "Tool to list available countries and their ISO 3166-1 alpha-2 codes. Use when you need to configure zones with valid country codes before provisioning proxies.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_types",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brightdata.api.getSnapshotResults",
+      "shortPath": "getSnapshotResults",
+      "description": "Tool to retrieve the scraped data from a completed crawl job by snapshot ID. Only call after confirming the job is complete via getSnapshotStatus.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snapshot_id",
+            "optional": false,
+            "type": "string",
+            "description": "Official path {snapshot_id} on GET /datasets/v3/snapshot/{snapshot_id}"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | ndjson | jsonl | csv"
+          },
+          {
+            "key": "compress",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "batch_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "part",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | string"
+      }
+    },
+    {
+      "path": "brightdata.api.getSnapshotStatus",
+      "shortPath": "getSnapshotStatus",
+      "description": "Tool to check the processing status of a crawl job using snapshot ID. Call before attempting to download results to ensure data collection is complete.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snapshot_id",
+            "optional": false,
+            "type": "string",
+            "description": "Official path {snapshot_id} on GET /datasets/v3/progress/{snapshot_id}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snapshot_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "starting | running | ready | failed | canceled"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brightdata.api.listDatasets",
+      "shortPath": "listDatasets",
+      "description": "Tool to list all available pre-made scrapers (datasets) from Bright Data marketplace. Use when you need to browse available data sources for structured scraping.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, size?: number }[]"
+      }
+    },
+    {
+      "path": "brightdata.api.listWebUnlockerZones",
+      "shortPath": "listWebUnlockerZones",
+      "description": "Tool to list your configured Web Unlocker zones and proxy endpoints. Use to view available zones for web scraping and bot protection bypass.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name: string, type?: string }[]"
+      }
+    },
+    {
+      "path": "brightdata.api.serpSearch",
+      "shortPath": "serpSearch",
+      "description": "Tool to perform SERP searches across search engines using Bright Data SERP API. Use when you need search results, trending topics, or competitive analysis data.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q_keywords",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "search_engine",
+            "optional": true,
+            "type": "google | bing | yahoo | yandex | duckduckgo"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | raw"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_format",
+            "optional": true,
+            "type": "markdown | screenshot"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | { general?: {}, input?: {}, organic?: {}[] }"
+      }
+    },
+    {
+      "path": "brightdata.api.webUnlocker",
+      "shortPath": "webUnlocker",
+      "description": "Tool to bypass bot detection, captcha, and other anti-scraping measures to extract content from websites. Use when sites block automated access or require JavaScript rendering.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "zone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | raw"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_format",
+            "optional": true,
+            "type": "markdown | screenshot"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | { status_code?: number, headers?: {}, body?: any }"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "brightdata.db.cities.search",
+      "entityName": "cities",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brightdata.db.countries.search",
+      "entityName": "countries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brightdata.db.datasets.search",
+      "entityName": "datasets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brightdata.db.serpResults.search",
+      "entityName": "serpResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brightdata.db.snapshotProgress.search",
+      "entityName": "snapshotProgress",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "snapshot_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dataset_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brightdata.db.snapshotRefs.search",
+      "entityName": "snapshotRefs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "snapshot_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brightdata.db.snapshotResults.search",
+      "entityName": "snapshotResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brightdata.db.unlockerResults.search",
+      "entityName": "unlockerResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brightdata.db.zones.search",
+      "entityName": "zones",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

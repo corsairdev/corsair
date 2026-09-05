@@ -1,0 +1,657 @@
+{
+  "id": "abyssale",
+  "displayName": "Abyssale",
+  "description": "Dynamic image and video generation API for automated marketing and social creatives.",
+  "npmPackageName": "@corsair-dev/abyssale",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 4,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "abyssale.api.auth.test",
+      "shortPath": "auth.test",
+      "description": "Test Abyssale API key authentication validity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "abyssale.api.designs.list",
+      "shortPath": "designs.list",
+      "description": "Get a list of designs in Abyssale",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "static | animated | printer | printer_multipage"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, template_id?: string, name: string, type: string, project_id?: string, project_name?: string, category_id?: string, category_name?: string, version?: string, created_at?: number, updated_at?: number, preview_url?: string }[]"
+      }
+    },
+    {
+      "path": "abyssale.api.fonts.list",
+      "shortPath": "fonts.list",
+      "description": "Get a list of available fonts in Abyssale",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "google | custom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, type: google | custom, available_weights: (number | string)[] }[]"
+      }
+    },
+    {
+      "path": "abyssale.api.generation.batch",
+      "shortPath": "generation.batch",
+      "description": "Start an asynchronous multi-format generation from an Abyssale design",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "designId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "template_format_names",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_file_type",
+            "optional": true,
+            "type": "png | jpeg | webp | avif | gif | pdf | html5 | mp4 | auto"
+          },
+          {
+            "key": "file_compression_level",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "html5",
+            "optional": true,
+            "type": "{ page_title?: string, click_tag?: string, ad_network?: string, include_backup_image?: boolean, repeat?: boolean }"
+          },
+          {
+            "key": "gif",
+            "optional": true,
+            "type": "{ max_fps?: number, repeat?: boolean }"
+          },
+          {
+            "key": "video",
+            "optional": true,
+            "type": "{ fps?: number }"
+          },
+          {
+            "key": "print",
+            "optional": true,
+            "type": "{ color_profile?: string, display_crop_marks?: boolean }"
+          },
+          {
+            "key": "original_visual_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generation_request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "abyssale.api.generation.image",
+      "shortPath": "generation.image",
+      "description": "Synchronously generate a single image from an Abyssale design",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "designId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "template_format_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_file_type",
+            "optional": true,
+            "type": "png | jpeg | webp | avif | pdf | auto"
+          },
+          {
+            "key": "file_compression_level",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "original_visual_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sharing_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ type?: string, url?: string, cdn_url?: string, fallback_image_url?: string, filename?: string }"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "{ id?: string, width?: number, height?: number, unit?: string }"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ id?: string, name?: string, created_at?: number, updated_at?: number }"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: string, name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "abyssale.api.generation.status",
+      "shortPath": "generation.status",
+      "description": "Poll the status of an asynchronous generation request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generationRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_finalized",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "banners",
+            "optional": false,
+            "type": "{ id: string, version?: number, sharing_id?: string, file?: { type?: string, url?: string, cdn_url?: string, fallback_image_url?: string, filename?: string }, format?: { id?: string, width?: number, height?: number, unit?: string }, template?: { id?: string, name?: string, created_at?: number, updated_at?: number }, project?: { id?: string, name?: string } }[]"
+          },
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "{ template_format_name: string, reason: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "abyssale.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new project in Abyssale",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at_ts",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "abyssale.webhooks.banners.batchCompleted",
+      "shortPath": "banners.batchCompleted",
+      "description": "An asynchronous batch generation request completed (NEW_BANNER_BATCH event)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "NEW_BANNER_BATCH"
+          },
+          {
+            "key": "generation_request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "banners",
+            "optional": false,
+            "type": "{ id: string, version?: number, sharing_id?: string, file?: { type?: string, url?: string, cdn_url?: string, fallback_image_url?: string, filename?: string }, format?: { id?: string, width?: number, height?: number, unit?: string }, template?: { id?: string, name?: string, created_at?: number, updated_at?: number }, project?: { id?: string, name?: string } }[]"
+          },
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "{ template_format_name: string, reason: string }[]"
+          }
+        ]
+      },
+      "responseType": "{ event_type: NEW_BANNER_BATCH, generation_request_id: string, banners: { id: string, version?: number, sharing_id?: string, file?: { type?: string, url?: string, cdn_url?: string, fallback_image_url?: string, filename?: string }, format?: { id?: string, width?: number, height?: number, unit?: string }, template?: { id?: string, name?: string, created_at?: number, updated_at?: number }, project?: { id?: string, name?: string } }[], errors: { template_format_name: string, reason: string }[] }",
+      "usageExample": "abyssale({\n    webhookHooks: {\n        banners: {\n            batchCompleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "abyssale.webhooks.banners.created",
+      "shortPath": "banners.created",
+      "description": "A visual was generated or saved in Abyssale (NEW_BANNER event)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "NEW_BANNER"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sharing_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ type?: string, url?: string, cdn_url?: string, fallback_image_url?: string, filename?: string }"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "{ id?: string, width?: number, height?: number, unit?: string }"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "{ id?: string, name?: string, created_at?: number, updated_at?: number }"
+          }
+        ]
+      },
+      "responseType": "{ event_type: NEW_BANNER, id: string, version?: number, sharing_id?: string, file?: { type?: string, url?: string, cdn_url?: string, fallback_image_url?: string, filename?: string }, format?: { id?: string, width?: number, height?: number, unit?: string }, template?: { id?: string, name?: string, created_at?: number, updated_at?: number } }",
+      "usageExample": "abyssale({\n    webhookHooks: {\n        banners: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "abyssale.webhooks.designs.statusChanged",
+      "shortPath": "designs.statusChanged",
+      "description": "A design's workflow status was updated (TEMPLATE_STATUS event)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "TEMPLATE_STATUS"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status_updated_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "responseType": "{ event_type: TEMPLATE_STATUS, id: string, name?: string, status: string, created_at?: number, updated_at?: number, status_updated_at?: number }",
+      "usageExample": "abyssale({\n    webhookHooks: {\n        designs: {\n            statusChanged: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "abyssale.webhooks.exports.completed",
+      "shortPath": "exports.completed",
+      "description": "A workspace export archive finished processing (NEW_EXPORT event)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "NEW_EXPORT"
+          },
+          {
+            "key": "export_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archive_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requested_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "generated_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "responseType": "{ event_type: NEW_EXPORT, export_id: string, archive_url: string, requested_at?: number, generated_at?: number }",
+      "usageExample": "abyssale({\n    webhookHooks: {\n        exports: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "abyssale.db.banners.search",
+      "entityName": "banners",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "version",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sharing_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "abyssale.db.designs.search",
+      "entityName": "designs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "template_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "preview_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "abyssale.db.fonts.search",
+      "entityName": "fonts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "abyssale.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at_ts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "category_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,402 @@
+{
+  "id": "boltiot",
+  "displayName": "Bolt IoT",
+  "description": "IoT platform for connecting devices, sensors, and hardware to cloud dashboards.",
+  "npmPackageName": "@corsair-dev/boltiot",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "boltiot.api.device.analogRead",
+      "shortPath": "device.analogRead",
+      "description": "Read the analog value (0-1023) from a specified pin on a Bolt device",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string",
+            "description": "The ID/Name of the Bolt IoT device"
+          },
+          {
+            "key": "pin",
+            "optional": false,
+            "type": "string",
+            "description": "Analog pin to read from (e.g. A0)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "number",
+            "description": "Analog value reading (0-1023)"
+          },
+          {
+            "key": "rawValue",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boltiot.api.device.checkStatus",
+      "shortPath": "device.checkStatus",
+      "description": "Check whether a specified Bolt device is online",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string",
+            "description": "The ID/Name of the Bolt IoT device (e.g. BOLT1234567)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "Device status from isOnline: \"online\" or \"offline\""
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string",
+            "description": "Official isOnline timestamp when that status last changed"
+          },
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boltiot.api.device.digitalRead",
+      "shortPath": "device.digitalRead",
+      "description": "Read the status of a digital pin on a specified Bolt device",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string",
+            "description": "The ID/Name of the Bolt IoT device"
+          },
+          {
+            "key": "pin",
+            "optional": false,
+            "type": "string",
+            "description": "Digital pin to read from (e.g. \"0\", \"1\", \"2\", \"3\", \"4\")"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "Digital pin state (\"1\" for HIGH, \"0\" for LOW)"
+          },
+          {
+            "key": "pin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boltiot.api.device.digitalWrite",
+      "shortPath": "device.digitalWrite",
+      "description": "Set a digital pin HIGH or LOW on a specified Bolt device",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string",
+            "description": "The ID/Name of the Bolt IoT device"
+          },
+          {
+            "key": "pin",
+            "optional": false,
+            "type": "string",
+            "description": "Digital pin to write to (e.g. \"0\", \"1\", \"2\", \"3\", \"4\")"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "0 | 1 | HIGH | LOW",
+            "description": "State to set pin to"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "Response value from device"
+          },
+          {
+            "key": "pin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boltiot.api.serial.read",
+      "shortPath": "serial.read",
+      "description": "Read incoming serial data from a Bolt device UART",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string",
+            "description": "The ID/Name of the Bolt IoT device"
+          },
+          {
+            "key": "till",
+            "optional": true,
+            "type": "string",
+            "description": "ASCII character code to read until (e.g. \"10\" for newline)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "Serial data read from device"
+          },
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boltiot.api.serial.write",
+      "shortPath": "serial.write",
+      "description": "Send ASCII serial data to a Bolt device over UART",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string",
+            "description": "The ID/Name of the Bolt IoT device"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string",
+            "description": "ASCII data string to send over UART"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "Response status from serial write"
+          },
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boltiot.api.serial.writeRead",
+      "shortPath": "serial.writeRead",
+      "description": "Send serial data and read reply immediately on a Bolt device",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string",
+            "description": "The ID/Name of the Bolt IoT device"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string",
+            "description": "ASCII data string to send over UART"
+          },
+          {
+            "key": "till",
+            "optional": true,
+            "type": "string",
+            "description": "ASCII character code to read reply until"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "Reply received from serial write & read command"
+          },
+          {
+            "key": "deviceName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "boltiot.db.commands.search",
+      "entityName": "commands",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "boltiot.db.devices.search",
+      "entityName": "devices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deviceName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

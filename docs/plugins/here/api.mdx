@@ -1,0 +1,1514 @@
+---
+title: API
+description: "API reference for HERE: every `here.api.*` operation with input and output types."
+---
+
+Every `here.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Maps
+
+### coordinatesToTileIndices
+
+`maps.coordinatesToTileIndices`
+
+Convert lat,lng to Web Mercator XYZ tile indices at a zoom level.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.maps.coordinatesToTileIndices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+| `zoom` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `x` | `number` | Yes | — |
+| `y` | `number` | Yes | — |
+| `z` | `number` | Yes | — |
+
+
+
+---
+
+### getMapImage
+
+`maps.getMapImage`
+
+Retrieve a static Map Image API v3 PNG or JPEG.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.maps.getMapImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lng` | `number` | Yes | — |
+| `zoom` | `number` | Yes | — |
+| `width` | `number` | Yes | — |
+| `height` | `number` | Yes | — |
+| `format` | `png \| jpeg` | No | — |
+| `style` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `imageBase64` | `string` | Yes | — |
+
+
+
+---
+
+## Routing
+
+### computeMatrix
+
+`routing.computeMatrix`
+
+Compute a travel-time and distance matrix between origins and destinations.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.routing.computeMatrix({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origins` | `object[]` | Yes | — |
+| `destinations` | `object[]` | Yes | — |
+| `regionDefinition` | `object` | No | Defaults to { type: "world" }. |
+| `transportMode` | `string` | No | — |
+| `departureTime` | `string` | No | — |
+| `async` | `boolean` | No | — |
+| `matrixAttributes` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="origins full type">
+
+```ts
+{
+  lat: number,
+  lng: number
+}[]
+```
+</Accordion>
+
+<Accordion title="destinations full type">
+
+```ts
+{
+  lat: number,
+  lng: number
+}[]
+```
+</Accordion>
+
+<Accordion title="regionDefinition full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `matrixId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `matrix` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="matrix full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### decodeRouteHandle
+
+`routing.decodeRouteHandle`
+
+Decode a previously calculated Routing v8 route handle.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.routing.decodeRouteHandle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `routeHandle` | `string` | Yes | — |
+| `transportMode` | `car \| truck \| pedestrian \| bicycle \| scooter \| taxi \| bus` | Yes | — |
+| `return` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `routes` | `object[]` | No | — |
+| `notices` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="routes full type">
+
+```ts
+{
+  id?: string,
+  sections?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="notices full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findWaypointSequence
+
+`routing.findWaypointSequence`
+
+Optimize waypoint visit order between a fixed start and destination.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.routing.findWaypointSequence({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | start=name;lat,lng or lat,lng. |
+| `destination` | `string` | Yes | Fixed end waypoint. |
+| `destination1` | `string` | No | — |
+| `destination2` | `string` | No | — |
+| `destination3` | `string` | No | — |
+| `destination4` | `string` | No | — |
+| `destination5` | `string` | No | — |
+| `mode` | `string` | No | e.g. fastest;car;traffic:disabled |
+| `improveFor` | `time \| distance` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getIsolines
+
+`routing.getIsolines`
+
+Calculate reachable-area isolines by time, distance, or consumption.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.routing.getIsolines({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | Yes | Center lat,lng. |
+| `transportMode` | `car \| truck \| pedestrian \| bicycle` | Yes | — |
+| `rangeType` | `time \| distance \| consumption` | Yes | — |
+| `rangeValues` | `string` | Yes | Comma-separated ranges, e.g. 600,1200. |
+| `departureTime` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isolines` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="isolines full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMatrixProfile
+
+`routing.getMatrixProfile`
+
+Retrieve one matrix routing profile by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.routing.getMatrixProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `type` | `string` | No | — |
+
+
+
+---
+
+### getMatrixResult
+
+`routing.getMatrixResult`
+
+Fetch a completed matrix calculation by matrixId.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.routing.getMatrixResult({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `matrixId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `matrixId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `matrix` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="matrix full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRoutes
+
+`routing.getRoutes`
+
+Calculate routes between waypoints for car, truck, pedestrian, bicycle, scooter, taxi, or bus.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.routing.getRoutes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | Yes | Origin lat,lng. |
+| `destination` | `string` | Yes | Destination lat,lng. |
+| `transportMode` | `car \| truck \| pedestrian \| bicycle \| scooter \| taxi \| bus` | Yes | — |
+| `via` | `string \| string[]` | No | — |
+| `return` | `string` | No | Comma list, e.g. summary,polyline,actions. |
+| `departureTime` | `string` | No | — |
+| `routingMode` | `fast \| short` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `routes` | `object[]` | No | — |
+| `notices` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="routes full type">
+
+```ts
+{
+  id?: string,
+  sections?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="notices full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMatrixProfiles
+
+`routing.listMatrixProfiles`
+
+List predefined matrix routing profiles.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.routing.listMatrixProfiles({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profiles` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postRoutes
+
+`routing.postRoutes`
+
+Calculate routes via POST when avoid areas, EV options, or large bodies are required.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.routing.postRoutes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | Yes | Origin lat,lng. |
+| `destination` | `string` | Yes | Destination lat,lng. |
+| `transportMode` | `car \| truck \| pedestrian \| bicycle \| scooter \| taxi \| bus` | Yes | — |
+| `via` | `string \| string[]` | No | — |
+| `return` | `string` | No | Comma list, e.g. summary,polyline,actions. |
+| `departureTime` | `string` | No | — |
+| `routingMode` | `fast \| short` | No | — |
+| `lang` | `string` | No | — |
+| `body` | `object` | No | Avoid areas, EV, or other POST-only Routing v8 fields. |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `routes` | `object[]` | No | — |
+| `notices` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="routes full type">
+
+```ts
+{
+  id?: string,
+  sections?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="notices full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### autocomplete
+
+`search.autocomplete`
+
+Get address-focused completions for a partial address query.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.search.autocomplete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Partial address. |
+| `at` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `lang` | `string` | No | — |
+| `in` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  title?: string,
+  id?: string,
+  resultType?: string,
+  address?: {
+    label?: string,
+    countryCode?: string,
+    countryName?: string,
+    state?: string,
+    stateCode?: string,
+    county?: string,
+    city?: string,
+    district?: string,
+    street?: string,
+    postalCode?: string,
+    houseNumber?: string
+  },
+  position?: {
+    lat: number,
+    lng: number
+  },
+  access?: {
+    lat: number,
+    lng: number
+  }[],
+  distance?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### autosuggest
+
+`search.autosuggest`
+
+Fetch typeahead completions for a partial search term near a location.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.search.autosuggest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Partial search term. |
+| `at` | `string` | Yes | Proximity lat,lng. |
+| `limit` | `number` | No | — |
+| `lang` | `string` | No | — |
+| `in` | `string` | No | Geographic filter, e.g. countryCode:USA. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  title?: string,
+  id?: string,
+  resultType?: string,
+  address?: {
+    label?: string,
+    countryCode?: string,
+    countryName?: string,
+    state?: string,
+    stateCode?: string,
+    county?: string,
+    city?: string,
+    district?: string,
+    street?: string,
+    postalCode?: string,
+    houseNumber?: string
+  },
+  position?: {
+    lat: number,
+    lng: number
+  },
+  access?: {
+    lat: number,
+    lng: number
+  }[],
+  distance?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### browse
+
+`search.browse`
+
+Search nearby places with optional category, food type, or name filters.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.search.browse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `at` | `string` | Yes | Center lat,lng. |
+| `categories` | `string` | No | — |
+| `name` | `string` | No | — |
+| `foodTypes` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `lang` | `string` | No | — |
+| `in` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  title?: string,
+  id?: string,
+  resultType?: string,
+  address?: {
+    label?: string,
+    countryCode?: string,
+    countryName?: string,
+    state?: string,
+    stateCode?: string,
+    county?: string,
+    city?: string,
+    district?: string,
+    street?: string,
+    postalCode?: string,
+    houseNumber?: string
+  },
+  position?: {
+    lat: number,
+    lng: number
+  },
+  access?: {
+    lat: number,
+    lng: number
+  }[],
+  distance?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### discover
+
+`search.discover`
+
+Discover places and addresses from free-form text near a location.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.search.discover({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Free-form place or address query. |
+| `at` | `string` | Yes | Proximity lat,lng. |
+| `limit` | `number` | No | — |
+| `lang` | `string` | No | — |
+| `in` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  title?: string,
+  id?: string,
+  resultType?: string,
+  address?: {
+    label?: string,
+    countryCode?: string,
+    countryName?: string,
+    state?: string,
+    stateCode?: string,
+    county?: string,
+    city?: string,
+    district?: string,
+    street?: string,
+    postalCode?: string,
+    houseNumber?: string
+  },
+  position?: {
+    lat: number,
+    lng: number
+  },
+  access?: {
+    lat: number,
+    lng: number
+  }[],
+  distance?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### geocode
+
+`search.geocode`
+
+Convert a free-text or qualified address into coordinates.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.search.geocode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Free-form or qualified address. |
+| `at` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `lang` | `string` | No | — |
+| `in` | `string` | No | — |
+| `qq` | `string` | No | Qualified query, e.g. city=Berlin;country=Germany. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  title?: string,
+  id?: string,
+  resultType?: string,
+  address?: {
+    label?: string,
+    countryCode?: string,
+    countryName?: string,
+    state?: string,
+    stateCode?: string,
+    county?: string,
+    city?: string,
+    district?: string,
+    street?: string,
+    postalCode?: string,
+    houseNumber?: string
+  },
+  position?: {
+    lat: number,
+    lng: number
+  },
+  access?: {
+    lat: number,
+    lng: number
+  }[],
+  distance?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### lookup
+
+`search.lookup`
+
+Load full place or address details by HERE id.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.search.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | HERE place or address id from a prior search. |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `id` | `string` | No | — |
+| `resultType` | `string` | No | — |
+| `address` | `object` | No | — |
+| `position` | `object` | No | — |
+| `access` | `object[]` | No | — |
+| `distance` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  label?: string,
+  countryCode?: string,
+  countryName?: string,
+  state?: string,
+  stateCode?: string,
+  county?: string,
+  city?: string,
+  district?: string,
+  street?: string,
+  postalCode?: string,
+  houseNumber?: string
+}
+```
+</Accordion>
+
+<Accordion title="position full type">
+
+```ts
+{
+  lat: number,
+  lng: number
+}
+```
+</Accordion>
+
+<Accordion title="access full type">
+
+```ts
+{
+  lat: number,
+  lng: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverseGeocode
+
+`search.reverseGeocode`
+
+Convert lat,lng coordinates into a structured address.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.search.reverseGeocode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `at` | `string` | Yes | Coordinates lat,lng. |
+| `limit` | `number` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  title?: string,
+  id?: string,
+  resultType?: string,
+  address?: {
+    label?: string,
+    countryCode?: string,
+    countryName?: string,
+    state?: string,
+    stateCode?: string,
+    county?: string,
+    city?: string,
+    district?: string,
+    street?: string,
+    postalCode?: string,
+    houseNumber?: string
+  },
+  position?: {
+    lat: number,
+    lng: number
+  },
+  access?: {
+    lat: number,
+    lng: number
+  }[],
+  distance?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Traffic
+
+### getIncidentById
+
+`traffic.getIncidentById`
+
+Get one traffic incident by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.traffic.getIncidentById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `locationReferencing` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTrafficFlow
+
+`traffic.getTrafficFlow`
+
+Get real-time traffic flow for a geospatial area.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.traffic.getTrafficFlow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `in` | `string` | Yes | Geospatial filter, e.g. bbox:west,south,east,north. |
+| `locationReferencing` | `string` | No | Defaults to shape. |
+| `minJamFactor` | `number` | No | — |
+| `maxJamFactor` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `sourceUpdated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTrafficIncidents
+
+`traffic.getTrafficIncidents`
+
+Get real-time traffic incidents for a geospatial area.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.traffic.getTrafficIncidents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `in` | `string` | Yes | Geospatial filter, e.g. bbox:west,south,east,north. |
+| `locationReferencing` | `string` | No | Defaults to shape. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `sourceUpdated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transit
+
+### getDepartures
+
+`transit.getDepartures`
+
+Get upcoming departures by station id or location.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.transit.getDepartures({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string` | No | Comma-separated station ids. |
+| `in` | `string` | No | lat,lng;r=meters when ids is omitted. |
+| `maxPerBoard` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boards` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="boards full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStations
+
+`transit.getStations`
+
+Search public transit stations around a location.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.transit.getStations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `in` | `string` | Yes | lat,lng or lat,lng;r=meters. |
+| `name` | `string` | No | — |
+| `maxPlaces` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stations` | `object[]` | No | — |
+| `boards` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="stations full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="boards full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Weather
+
+### getAstronomyForecast
+
+`weather.getAstronomyForecast`
+
+Get sunrise, sunset, and moon event times.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.weather.getAstronomyForecast({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | City name, e.g. Berlin, Germany. |
+| `location` | `string` | No | lat,lng. |
+| `zipCode` | `string` | No | — |
+| `units` | `metric \| imperial` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `places` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="places full type">
+
+```ts
+{
+  id?: string,
+  countryCode?: string,
+  timezone?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWeatherAlerts
+
+`weather.getWeatherAlerts`
+
+Get severe weather alerts for a location.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.weather.getWeatherAlerts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | City name, e.g. Berlin, Germany. |
+| `location` | `string` | No | lat,lng. |
+| `zipCode` | `string` | No | — |
+| `units` | `metric \| imperial` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `places` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="places full type">
+
+```ts
+{
+  id?: string,
+  countryCode?: string,
+  timezone?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWeatherForecastDaily
+
+`weather.getWeatherForecastDaily`
+
+Get a 7-day weather forecast (detailed or simple).
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.weather.getWeatherForecastDaily({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | City name, e.g. Berlin, Germany. |
+| `location` | `string` | No | lat,lng. |
+| `zipCode` | `string` | No | — |
+| `units` | `metric \| imperial` | No | — |
+| `lang` | `string` | No | — |
+| `product` | `forecast7days \| forecast7daysSimple` | No | Defaults to forecast7daysSimple. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `places` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="places full type">
+
+```ts
+{
+  id?: string,
+  countryCode?: string,
+  timezone?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWeatherForecastHourly
+
+`weather.getWeatherForecastHourly`
+
+Get hourly weather forecasts for a location.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.weather.getWeatherForecastHourly({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | City name, e.g. Berlin, Germany. |
+| `location` | `string` | No | lat,lng. |
+| `zipCode` | `string` | No | — |
+| `units` | `metric \| imperial` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `places` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="places full type">
+
+```ts
+{
+  id?: string,
+  countryCode?: string,
+  timezone?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWeatherObservation
+
+`weather.getWeatherObservation`
+
+Get current weather observations for a location.
+
+**Risk:** `read`
+
+```ts
+await corsair.here.api.weather.getWeatherObservation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | City name, e.g. Berlin, Germany. |
+| `location` | `string` | No | lat,lng. |
+| `zipCode` | `string` | No | — |
+| `units` | `metric \| imperial` | No | — |
+| `lang` | `string` | No | — |
+| `oneObservation` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `places` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="places full type">
+
+```ts
+{
+  id?: string,
+  countryCode?: string,
+  timezone?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

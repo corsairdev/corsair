@@ -185,7 +185,7 @@ const notionEndpointMeta = {
 	},
 	'pages.archivePage': {
 		riskLevel: 'destructive',
-		description: 'Archive (trash) a page [DESTRUCTIVE]',
+		description: 'Archive (trash) a page',
 	},
 	'pages.createPage': {
 		riskLevel: 'write',

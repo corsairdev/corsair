@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Discord plugin for Corsair"
+description: "Community chat platform for servers, channels, voice, bots, and real-time group messaging."
 ---
 
 Use **Discord** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -46,8 +46,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -92,19 +92,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`channels.list`**
+**List channels**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.discord.api.channels.list({});
+await tenant.discord.api.channels.list({ guild_id: '123456789' });
 ```
 
 
-**`messages.delete`**
+**Send a message**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.discord.api.messages.delete({});
+await tenant.discord.api.messages.send({ channel_id: '123456789', content: 'Hello from Corsair!' });
 ```
 
 
@@ -112,15 +112,37 @@ See the full list on the [API](/plugins/discord/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.discord.db.<entity>.search()` and `.list()`: `channels`, `guilds`, `members`, `messages`.
+Search synced channels without hitting Discord.
 
-See [Database](/plugins/discord/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.discord.db.channels.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `channels`, `guilds`, `members`, `messages`. See [Database](/plugins/discord/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **4** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a user invokes a slash command or context-menu action.
 
-See [Webhooks](/plugins/discord/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+discord({
+    webhookHooks: {
+        interactions: {
+            applicationCommand: {
+                after: async (ctx, result) => {
+                    console.log('Discord application command:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/discord/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

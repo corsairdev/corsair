@@ -1,0 +1,2668 @@
+{
+  "id": "twitterapiio",
+  "displayName": "TwitterAPI.io",
+  "description": "Third-party X/Twitter data API for tweets, users, search, and social media analytics.",
+  "npmPackageName": "@corsair-dev/twitterapiio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 47,
+    "webhooks": 2,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "user_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "twitterapiio.api.api.webhooks.addRule",
+      "shortPath": "api.webhooks.addRule",
+      "description": "Create a new tweet filter rule for the webhook stream (inactive by default — call updateRule to activate)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string",
+            "description": "Custom label to identify this rule"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "Filter expression (e.g. \"from:elonmusk OR from:kaitoeasyapi\"). Rules are inactive until updated with isActive: true."
+          },
+          {
+            "key": "intervalSeconds",
+            "optional": false,
+            "type": "number",
+            "description": "How often to check for new tweets matching this rule (seconds, 100–86400)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rule_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.api.webhooks.deleteRule",
+      "shortPath": "api.webhooks.deleteRule",
+      "description": "Permanently delete a tweet filter rule",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ruleId",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the rule to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.api.webhooks.getRules",
+      "shortPath": "api.webhooks.getRules",
+      "description": "List all existing tweet filter rules",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ rule_id: string, tag: string, value: string, interval_seconds: number }[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.api.webhooks.updateRule",
+      "shortPath": "api.webhooks.updateRule",
+      "description": "Update a tweet filter rule, including activating or deactivating it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ruleId",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the rule to update"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string",
+            "description": "Custom label"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "Filter expression"
+          },
+          {
+            "key": "intervalSeconds",
+            "optional": false,
+            "type": "number",
+            "description": "Check interval in seconds (100–86400)"
+          },
+          {
+            "key": "isActive",
+            "optional": false,
+            "type": "boolean",
+            "description": "true to activate the rule, false to deactivate"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rule_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.communities.create",
+      "shortPath": "communities.create",
+      "description": "Create a new Twitter community",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "loginCookie",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter login cookie from user_login_v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.communities.delete",
+      "shortPath": "communities.delete",
+      "description": "Delete a Twitter community",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "communityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "loginCookie",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter login cookie from user_login_v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.communities.getById",
+      "shortPath": "communities.getById",
+      "description": "Get community info by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "communityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, name: string, description?: string | null, memberCount?: number, role?: string, createdAt?: string, isNsfw?: boolean, adminResults?: any[], moderatorResults?: any[], rules?: any[], primaryTopic?: any }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.communities.getMembers",
+      "shortPath": "communities.getMembers",
+      "description": "Get members of a community",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "communityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.communities.getModerators",
+      "shortPath": "communities.getModerators",
+      "description": "Get moderators of a community",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "communityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.communities.getTweets",
+      "shortPath": "communities.getTweets",
+      "description": "Get tweets posted in a community",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "communityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tweets",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.communities.join",
+      "shortPath": "communities.join",
+      "description": "Join a Twitter community",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "communityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "loginCookie",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter login cookie from user_login_v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.communities.leave",
+      "shortPath": "communities.leave",
+      "description": "Leave a Twitter community",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "communityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "loginCookie",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter login cookie from user_login_v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.communities.searchTweets",
+      "shortPath": "communities.searchTweets",
+      "description": "Search tweets across all communities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tweets",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.lists.getFollowers",
+      "shortPath": "lists.getFollowers",
+      "description": "Get followers of a Twitter list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.lists.getMembers",
+      "shortPath": "lists.getMembers",
+      "description": "Get members of a Twitter list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.lists.getTweets",
+      "shortPath": "lists.getTweets",
+      "description": "Get tweets from a Twitter list timeline",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tweets",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.replies.get",
+      "shortPath": "replies.get",
+      "description": "Get replies to a tweet, paginated by time range — stored independently in the replies table so engagement changes are tracked per reply",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sinceTime",
+            "optional": true,
+            "type": "string",
+            "description": "Unix timestamp in seconds"
+          },
+          {
+            "key": "untilTime",
+            "optional": true,
+            "type": "string",
+            "description": "Unix timestamp in seconds"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string, url?: string, inReplyToUsername?: string | null, isLimitedReply?: boolean }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.replies.getV2",
+      "shortPath": "replies.getV2",
+      "description": "Get replies to a tweet (v2) with sort order control (Relevance, Latest, Likes) — stored independently in the replies table so engagement changes are tracked per reply",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "queryType",
+            "optional": true,
+            "type": "Relevance | Latest | Likes",
+            "description": "Sort order for replies. Default is Relevance."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string, url?: string, inReplyToUsername?: string | null, isLimitedReply?: boolean }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.stream.addUser",
+      "shortPath": "stream.addUser",
+      "description": "Add a Twitter user to the real-time tweet monitor stream",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userName",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter/X handle to add to the real-time monitor stream"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "success | error"
+          },
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.stream.listUsers",
+      "shortPath": "stream.listUsers",
+      "description": "List all Twitter users currently in the monitor stream",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": true,
+            "type": "string[]",
+            "description": "Monitored Twitter usernames"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.stream.removeUser",
+      "shortPath": "stream.removeUser",
+      "description": "Remove a Twitter user from the real-time tweet monitor stream",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userName",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter/X handle to remove from the monitor stream"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "success | error"
+          },
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.trends.get",
+      "shortPath": "trends.get",
+      "description": "Get trending topics by location (woeid)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "woeid",
+            "optional": true,
+            "type": "number",
+            "description": "Where On Earth ID. 1 = worldwide"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trends",
+            "optional": true,
+            "type": "{ name: string, tweetVolume?: number | null, url?: string, woeid?: number, trendingAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.advancedSearch",
+      "shortPath": "tweets.advancedSearch",
+      "description": "Search tweets using structured operators (keywords, users, dates, engagement thresholds, media filters, etc.)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string[]",
+            "description": "Words that must all appear in tweets (AND logic)"
+          },
+          {
+            "key": "exactPhrase",
+            "optional": true,
+            "type": "string",
+            "description": "Exact phrase that must appear in tweets"
+          },
+          {
+            "key": "anyOf",
+            "optional": true,
+            "type": "string[]",
+            "description": "At least one of these words must appear (OR logic, minimum 2 items)"
+          },
+          {
+            "key": "excludeKeywords",
+            "optional": true,
+            "type": "string[]",
+            "description": "Words that must not appear in tweets"
+          },
+          {
+            "key": "hashtags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Hashtags to search for (with or without leading #)"
+          },
+          {
+            "key": "fromUsers",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only tweets from these usernames"
+          },
+          {
+            "key": "toUsers",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only replies to these usernames"
+          },
+          {
+            "key": "mentioningUsers",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only tweets mentioning these usernames"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "am | ar | bg | bn | bo | ca | cs | cy | da | de | dv | el | en | es | et | eu | fa | fi | fr | ga | gl | gu | he | hi | hr | hy | id | is | it | ja | ka | km | kn | ko | lo | lt | lv | ml | mr | my | ne | nl | no | or | pa | pl | ps | pt | ro | ru | si | sk | sl | sq | sr | sv | sw | ta | te | th | tl | tr | ug | uk | ur | vi | zh",
+            "description": "ISO 639-1 language code (e.g. \"en\", \"fr\", \"ja\")"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "Only tweets posted on or after this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string",
+            "description": "Only tweets posted before this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "sinceTime",
+            "optional": true,
+            "type": "number",
+            "description": "Only tweets posted on or after this Unix timestamp (seconds)"
+          },
+          {
+            "key": "untilTime",
+            "optional": true,
+            "type": "number",
+            "description": "Only tweets posted before this Unix timestamp (seconds)"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "only | exclude",
+            "description": "\"only\" to return only replies; \"exclude\" to omit replies"
+          },
+          {
+            "key": "retweets",
+            "optional": true,
+            "type": "only | exclude",
+            "description": "\"only\" to return only retweets; \"exclude\" to omit retweets"
+          },
+          {
+            "key": "onlyLinks",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only tweets containing links"
+          },
+          {
+            "key": "onlyMedia",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only tweets with media"
+          },
+          {
+            "key": "onlyImages",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only tweets with images"
+          },
+          {
+            "key": "onlyVideos",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only tweets with native video"
+          },
+          {
+            "key": "minReplies",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum number of replies"
+          },
+          {
+            "key": "minLikes",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum number of likes"
+          },
+          {
+            "key": "minRetweets",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum number of retweets"
+          },
+          {
+            "key": "queryType",
+            "optional": true,
+            "type": "Latest | Top",
+            "description": "Result ordering — \"Latest\" (default) or \"Top\""
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tweets",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.create",
+      "shortPath": "tweets.create",
+      "description": "Post a new tweet or reply",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweet",
+            "optional": false,
+            "type": "string",
+            "description": "Tweet text content"
+          },
+          {
+            "key": "loginCookie",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter login cookie from user_login_v2"
+          },
+          {
+            "key": "replyToTweetId",
+            "optional": true,
+            "type": "string",
+            "description": "Tweet ID to reply to"
+          },
+          {
+            "key": "mediaIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Media IDs to attach"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.delete",
+      "shortPath": "tweets.delete",
+      "description": "Delete a tweet",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "loginCookie",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter login cookie from user_login_v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.getByIds",
+      "shortPath": "tweets.getByIds",
+      "description": "Fetch tweets by their IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetIds",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated list of tweet IDs"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tweets",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.getQuotations",
+      "shortPath": "tweets.getQuotations",
+      "description": "Get quote tweets for a tweet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tweets",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.getRetweeters",
+      "shortPath": "tweets.getRetweeters",
+      "description": "Get users who retweeted a tweet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.getThreadContext",
+      "shortPath": "tweets.getThreadContext",
+      "description": "Get the full thread context for a tweet",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tweets",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.getUserLastTweets",
+      "shortPath": "tweets.getUserLastTweets",
+      "description": "Retrieve a user's most recent tweets by username",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tweets",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.getUserMentions",
+      "shortPath": "tweets.getUserMentions",
+      "description": "Get tweets that mention a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tweets",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.getUserTimeline",
+      "shortPath": "tweets.getUserTimeline",
+      "description": "Retrieve a user's tweet timeline by user ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tweets",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.like",
+      "shortPath": "tweets.like",
+      "description": "Like a tweet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "loginCookie",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter login cookie from user_login_v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.retweet",
+      "shortPath": "tweets.retweet",
+      "description": "Retweet a tweet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "loginCookie",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter login cookie from user_login_v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.search",
+      "shortPath": "tweets.search",
+      "description": "Search tweets with a raw query string",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "queryType",
+            "optional": true,
+            "type": "Top | Latest | Photos | Videos",
+            "description": "Search type. Defaults to Top"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tweets",
+            "optional": true,
+            "type": "{ id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.tweets.unlike",
+      "shortPath": "tweets.unlike",
+      "description": "Remove a like from a tweet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tweetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "loginCookie",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter login cookie from user_login_v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.users.batchGetByIds",
+      "shortPath": "users.batchGetByIds",
+      "description": "Batch fetch user profiles by user IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userIds",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated list of user IDs"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.users.checkFollowRelationship",
+      "shortPath": "users.checkFollowRelationship",
+      "description": "Check if two users follow each other",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourceUserName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetUserName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isFollowing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isFollowedBy",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.users.follow",
+      "shortPath": "users.follow",
+      "description": "Follow a user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "followId",
+            "optional": false,
+            "type": "string",
+            "description": "User ID to follow"
+          },
+          {
+            "key": "loginCookie",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter login cookie from user_login_v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.users.getByUsername",
+      "shortPath": "users.getByUsername",
+      "description": "Get user profile by username",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.users.getFollowers",
+      "shortPath": "users.getFollowers",
+      "description": "Get a user's followers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.users.getFollowings",
+      "shortPath": "users.getFollowings",
+      "description": "Get users that a user is following",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.users.getMe",
+      "shortPath": "users.getMe",
+      "description": "Get the authenticated account info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "loginCookie",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter login cookie from user_login_v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.users.getVerifiedFollowers",
+      "shortPath": "users.getVerifiedFollowers",
+      "description": "Get a user's verified (blue-check) followers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.users.login",
+      "shortPath": "users.login",
+      "description": "Authenticate a Twitter account via credentials and obtain a login cookie for v2 endpoints",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userName",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter username"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Account email address"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string",
+            "description": "Account password"
+          },
+          {
+            "key": "totpSecret",
+            "optional": true,
+            "type": "string",
+            "description": "TOTP secret for 2FA (from the account profile page)"
+          },
+          {
+            "key": "proxy",
+            "optional": false,
+            "type": "string",
+            "description": "High-quality residential proxy URL (e.g. http://user:pass@host:port)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "login_cookie",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "msg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.users.search",
+      "shortPath": "users.search",
+      "description": "Search users by keyword",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitterapiio.api.users.unfollow",
+      "shortPath": "users.unfollow",
+      "description": "Unfollow a user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "followId",
+            "optional": false,
+            "type": "string",
+            "description": "User ID to unfollow"
+          },
+          {
+            "key": "loginCookie",
+            "optional": false,
+            "type": "string",
+            "description": "Twitter login cookie from user_login_v2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "twitterapiio.webhooks.tweets.created",
+      "shortPath": "tweets.created",
+      "description": "A monitored user posted a new tweet",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "tweet.created"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ tweet: { id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }, user?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null } }"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ type: tweet.created, data: { tweet: { id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }, user?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null } }, timestamp?: string, userId?: string }",
+      "usageExample": "twitterapiio({\n    webhookHooks: {\n        tweets: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "twitterapiio.webhooks.tweets.filterMatch",
+      "shortPath": "tweets.filterMatch",
+      "description": "A tweet matched a configured filter rule",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "tweet.filter_match"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ tweet: { id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }, user?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, matchedRules?: { id?: string, tag?: string, value?: string }[] }"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ type: tweet.filter_match, data: { tweet: { id: string, text: string, author?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, createdAt?: string, likeCount?: number, retweetCount?: number, replyCount?: number, quoteCount?: number, viewCount?: number | null, bookmarkCount?: number, lang?: string, source?: string, isRetweet?: boolean, isQuote?: boolean, isPinned?: boolean, inReplyToStatusId?: string | null, inReplyToUserId?: string | null, quotedTweetId?: string | null, media?: { type?: string, url?: string, mediaUrlHttps?: string, expandedUrl?: string, width?: number, height?: number, altText?: string | null, durationMs?: number | null }[], entities?: { urls?: { url?: string, expandedUrl?: string, displayUrl?: string }[], hashtags?: { text?: string }[], userMentions?: { id?: string, name?: string, screenName?: string }[] }, conversationId?: string }, user?: { id: string, userName: string, name: string, followerCount?: number, followingCount?: number, profilePicture?: string | null, coverPicture?: string | null, description?: string | null, location?: string | null, isBlueVerified?: boolean, isGovernmentVerified?: boolean, favouritesCount?: number, statusesCount?: number, mediaCount?: number, createdAt?: string, isProtected?: boolean, isSuspended?: boolean, isUnavailable?: boolean, pinnedTweetIds?: string[], website?: string | null }, matchedRules?: { id?: string, tag?: string, value?: string }[] }, timestamp?: string }",
+      "usageExample": "twitterapiio({\n    webhookHooks: {\n        tweets: {\n            filterMatch: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "twitterapiio.db.communities.search",
+      "entityName": "communities",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "memberCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isNsfw",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "twitterapiio.db.lists.search",
+      "entityName": "lists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "memberCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "followerCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isPrivate",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "twitterapiio.db.replies.search",
+      "entityName": "replies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "likeCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "retweetCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "replyCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "quoteCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "viewCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "bookmarkCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lang",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isRetweet",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isQuote",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isPinned",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "inReplyToStatusId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "inReplyToUserId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quotedTweetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "conversationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "inReplyToUsername",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isLimitedReply",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "twitterapiio.db.trends.search",
+      "entityName": "trends",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tweetVolume",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "woeid",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "trendingAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "twitterapiio.db.tweets.search",
+      "entityName": "tweets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "likeCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "retweetCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "replyCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "quoteCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "viewCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "bookmarkCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lang",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isRetweet",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isQuote",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isPinned",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "inReplyToStatusId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "inReplyToUserId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quotedTweetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "conversationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "twitterapiio.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "followerCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "followingCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "profilePicture",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "coverPicture",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isBlueVerified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isGovernmentVerified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "favouritesCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "statusesCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "mediaCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isProtected",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isSuspended",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isUnavailable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2967 @@
+{
+  "id": "nextdns",
+  "displayName": "NextDNS",
+  "description": "DNS security service for blocking ads, trackers, and malware at the network level.",
+  "npmPackageName": "@corsair-dev/nextdns",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 71,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "nextdns.api.allowlist.add",
+      "shortPath": "allowlist.add",
+      "description": "Allow a domain",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.allowlist.delete",
+      "shortPath": "allowlist.delete",
+      "description": "Remove a domain from the allowlist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.allowlist.get",
+      "shortPath": "allowlist.get",
+      "description": "List allowed domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, active?: boolean }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.allowlist.replace",
+      "shortPath": "allowlist.replace",
+      "description": "Replace the entire allowlist",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "{ id: string, active?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, active?: boolean }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.allowlist.update",
+      "shortPath": "allowlist.update",
+      "description": "Toggle an allowlist entry active/inactive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.analytics.destinations",
+      "shortPath": "analytics.destinations",
+      "description": "Get query-destination analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "countries | gafam"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { cursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.analytics.devices",
+      "shortPath": "analytics.devices",
+      "description": "Get per-device analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { cursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.analytics.dnssec",
+      "shortPath": "analytics.dnssec",
+      "description": "Get DNSSEC validation analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { cursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.analytics.domains",
+      "shortPath": "analytics.domains",
+      "description": "Get per-domain analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { cursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.analytics.encryption",
+      "shortPath": "analytics.encryption",
+      "description": "Get encrypted-vs-plain DNS analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { cursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.analytics.ips",
+      "shortPath": "analytics.ips",
+      "description": "Get per-client-IP analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { cursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.analytics.ipVersions",
+      "shortPath": "analytics.ipVersions",
+      "description": "Get IPv4/IPv6 distribution analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { cursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.analytics.protocols",
+      "shortPath": "analytics.protocols",
+      "description": "Get DNS protocol distribution analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { cursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.analytics.queryTypes",
+      "shortPath": "analytics.queryTypes",
+      "description": "Get DNS query-type analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { cursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.analytics.reasons",
+      "shortPath": "analytics.reasons",
+      "description": "Get blocking-reason analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { cursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.analytics.status",
+      "shortPath": "analytics.status",
+      "description": "Get query-status analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { cursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.auth.login",
+      "shortPath": "auth.login",
+      "description": "Verify the API key is valid",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "profileCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.denylist.add",
+      "shortPath": "denylist.add",
+      "description": "Block a domain",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.denylist.list",
+      "shortPath": "denylist.list",
+      "description": "List blocked domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, active?: boolean }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.denylist.remove",
+      "shortPath": "denylist.remove",
+      "description": "Unblock a domain",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.denylist.replace",
+      "shortPath": "denylist.replace",
+      "description": "Replace the entire denylist",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "{ id: string, active?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, active?: boolean }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.denylist.update",
+      "shortPath": "denylist.update",
+      "description": "Toggle a denylist entry active/inactive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.logs.clear",
+      "shortPath": "logs.clear",
+      "description": "Clear all stored query logs - cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cleared",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.logs.download",
+      "shortPath": "logs.download",
+      "description": "Download the CSV log export",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "nextdns.api.logs.get",
+      "shortPath": "logs.get",
+      "description": "Get raw or filtered DNS query logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "raw",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { cursor?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.parentalControl.addCategory",
+      "shortPath": "parentalControl.addCategory",
+      "description": "Block or allow a content category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "porn | gambling | piracy | dating | social-networks"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recreation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.parentalControl.addService",
+      "shortPath": "parentalControl.addService",
+      "description": "Block or allow a specific service",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recreation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.parentalControl.deleteCategory",
+      "shortPath": "parentalControl.deleteCategory",
+      "description": "Remove a content category restriction",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "porn | gambling | piracy | dating | social-networks"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.parentalControl.deleteService",
+      "shortPath": "parentalControl.deleteService",
+      "description": "Remove a service restriction",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.parentalControl.get",
+      "shortPath": "parentalControl.get",
+      "description": "Get parental control settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "services",
+            "optional": true,
+            "type": "{ id: string, active?: boolean, recreation?: boolean }[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{ id: string, active?: boolean, recreation?: boolean }[]"
+          },
+          {
+            "key": "recreation",
+            "optional": true,
+            "type": "{ times?: {} | null, timezone?: string | null }"
+          },
+          {
+            "key": "safeSearch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "youtubeRestrictedMode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "blockBypass",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.parentalControl.getCategories",
+      "shortPath": "parentalControl.getCategories",
+      "description": "Get blocked/allowed content categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, active?: boolean, recreation?: boolean }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.parentalControl.getServices",
+      "shortPath": "parentalControl.getServices",
+      "description": "Get blocked/allowed services",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, active?: boolean, recreation?: boolean }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.parentalControl.replaceCategories",
+      "shortPath": "parentalControl.replaceCategories",
+      "description": "Replace the entire set of category restrictions",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "{ id: porn | gambling | piracy | dating | social-networks, active?: boolean, recreation?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, active?: boolean, recreation?: boolean }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.parentalControl.replaceServices",
+      "shortPath": "parentalControl.replaceServices",
+      "description": "Replace the entire set of service restrictions",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "services",
+            "optional": false,
+            "type": "{ id: string, active?: boolean, recreation?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, active?: boolean, recreation?: boolean }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.parentalControl.update",
+      "shortPath": "parentalControl.update",
+      "description": "Update safe search, YouTube restricted mode, or bypass blocking",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "safeSearch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "youtubeRestrictedMode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "blockBypass",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "services",
+            "optional": true,
+            "type": "{ id: string, active?: boolean, recreation?: boolean }[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{ id: string, active?: boolean, recreation?: boolean }[]"
+          },
+          {
+            "key": "recreation",
+            "optional": true,
+            "type": "{ times?: {} | null, timezone?: string | null }"
+          },
+          {
+            "key": "safeSearch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "youtubeRestrictedMode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "blockBypass",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.parentalControl.updateCategory",
+      "shortPath": "parentalControl.updateCategory",
+      "description": "Toggle a content category restriction",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "porn | gambling | piracy | dating | social-networks"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recreation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.parentalControl.updateService",
+      "shortPath": "parentalControl.updateService",
+      "description": "Toggle a service restriction",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recreation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.privacy.addBlocklist",
+      "shortPath": "privacy.addBlocklist",
+      "description": "Enable an additional privacy blocklist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.privacy.addNative",
+      "shortPath": "privacy.addNative",
+      "description": "Block a native tracking service from a specific vendor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.privacy.deleteBlocklist",
+      "shortPath": "privacy.deleteBlocklist",
+      "description": "Remove a privacy blocklist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.privacy.deleteNative",
+      "shortPath": "privacy.deleteNative",
+      "description": "Unblock a native tracking service",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.privacy.get",
+      "shortPath": "privacy.get",
+      "description": "Get privacy settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "blocklists",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, website?: string | null, description?: string | null, entries?: number | null, updatedOn?: string | null }[]"
+          },
+          {
+            "key": "natives",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "disguisedTrackers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowAffiliate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.privacy.replaceBlocklists",
+      "shortPath": "privacy.replaceBlocklists",
+      "description": "Replace the entire set of enabled privacy blocklists",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, website?: string | null, description?: string | null, entries?: number | null, updatedOn?: string | null }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.privacy.replaceNatives",
+      "shortPath": "privacy.replaceNatives",
+      "description": "Replace the entire set of blocked native trackers",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.privacy.update",
+      "shortPath": "privacy.update",
+      "description": "Update disguised-tracker and affiliate-link settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "disguisedTrackers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowAffiliate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "blocklists",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, website?: string | null, description?: string | null, entries?: number | null, updatedOn?: string | null }[]"
+          },
+          {
+            "key": "natives",
+            "optional": true,
+            "type": "{ id: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "blocklists",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, website?: string | null, description?: string | null, entries?: number | null, updatedOn?: string | null }[]"
+          },
+          {
+            "key": "natives",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "disguisedTrackers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowAffiliate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.profiles.create",
+      "shortPath": "profiles.create",
+      "description": "Create a new profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "security",
+            "optional": true,
+            "type": "{ threatIntelligenceFeeds?: boolean, aiThreatDetection?: boolean, googleSafeBrowsing?: boolean, cryptojacking?: boolean, dnsRebinding?: boolean, idnHomographs?: boolean, typosquatting?: boolean, dga?: boolean, nrd?: boolean, ddns?: boolean, parking?: boolean, csam?: boolean, tlds?: { id: string }[] }"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "{ blocklists?: { id: string, name?: string | null, website?: string | null, description?: string | null, entries?: number | null, updatedOn?: string | null }[], natives?: { id: string }[], disguisedTrackers?: boolean, allowAffiliate?: boolean }"
+          },
+          {
+            "key": "parentalControl",
+            "optional": true,
+            "type": "{ services?: { id: string, active?: boolean, recreation?: boolean }[], categories?: { id: string, active?: boolean, recreation?: boolean }[], recreation?: { times?: {} | null, timezone?: string | null }, safeSearch?: boolean, youtubeRestrictedMode?: boolean, blockBypass?: boolean }"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ logs?: { enabled?: boolean, drop?: { ip?: boolean, domain?: boolean }, retention?: number | null, location?: string | null }, blockPage?: { enabled?: boolean }, performance?: { ecs?: boolean, cacheBoost?: boolean, cnameFlattening?: boolean }, web3?: boolean }"
+          },
+          {
+            "key": "denylist",
+            "optional": true,
+            "type": "{ id: string, active?: boolean }[]"
+          },
+          {
+            "key": "allowlist",
+            "optional": true,
+            "type": "{ id: string, active?: boolean }[]"
+          },
+          {
+            "key": "rewrites",
+            "optional": true,
+            "type": "{ id?: string, name: string, type?: string, content: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fingerprint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.profiles.delete",
+      "shortPath": "profiles.delete",
+      "description": "Delete a profile - cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.profiles.get",
+      "shortPath": "profiles.get",
+      "description": "Get full profile details including nested settings and lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fingerprint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "security",
+            "optional": true,
+            "type": "{ threatIntelligenceFeeds?: boolean, aiThreatDetection?: boolean, googleSafeBrowsing?: boolean, cryptojacking?: boolean, dnsRebinding?: boolean, idnHomographs?: boolean, typosquatting?: boolean, dga?: boolean, nrd?: boolean, ddns?: boolean, parking?: boolean, csam?: boolean, tlds?: { id: string }[] }"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "{ blocklists?: { id: string, name?: string | null, website?: string | null, description?: string | null, entries?: number | null, updatedOn?: string | null }[], natives?: { id: string }[], disguisedTrackers?: boolean, allowAffiliate?: boolean }"
+          },
+          {
+            "key": "parentalControl",
+            "optional": true,
+            "type": "{ services?: { id: string, active?: boolean, recreation?: boolean }[], categories?: { id: string, active?: boolean, recreation?: boolean }[], recreation?: { times?: {} | null, timezone?: string | null }, safeSearch?: boolean, youtubeRestrictedMode?: boolean, blockBypass?: boolean }"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ logs?: { enabled?: boolean, drop?: { ip?: boolean, domain?: boolean }, retention?: number | null, location?: string | null }, blockPage?: { enabled?: boolean }, performance?: { ecs?: boolean, cacheBoost?: boolean, cnameFlattening?: boolean }, web3?: boolean }"
+          },
+          {
+            "key": "setup",
+            "optional": true,
+            "type": "{ ipv4?: string[], ipv6?: string[], linkedIp?: { servers?: string[], ip?: string | null, ddns?: string | null, updateToken?: string } | null, dnscrypt?: string | null }"
+          },
+          {
+            "key": "denylist",
+            "optional": true,
+            "type": "{ id: string, active?: boolean }[]"
+          },
+          {
+            "key": "allowlist",
+            "optional": true,
+            "type": "{ id: string, active?: boolean }[]"
+          },
+          {
+            "key": "rewrites",
+            "optional": true,
+            "type": "{ id?: string, name: string, type?: string, content: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.profiles.list",
+      "shortPath": "profiles.list",
+      "description": "List every profile the API key can see",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, fingerprint?: string | null, role?: string | null, name: string }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.profiles.rename",
+      "shortPath": "profiles.rename",
+      "description": "Rename a profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.profiles.update",
+      "shortPath": "profiles.update",
+      "description": "Partially update a profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "security",
+            "optional": true,
+            "type": "{ threatIntelligenceFeeds?: boolean, aiThreatDetection?: boolean, googleSafeBrowsing?: boolean, cryptojacking?: boolean, dnsRebinding?: boolean, idnHomographs?: boolean, typosquatting?: boolean, dga?: boolean, nrd?: boolean, ddns?: boolean, parking?: boolean, csam?: boolean, tlds?: { id: string }[] }"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "{ blocklists?: { id: string, name?: string | null, website?: string | null, description?: string | null, entries?: number | null, updatedOn?: string | null }[], natives?: { id: string }[], disguisedTrackers?: boolean, allowAffiliate?: boolean }"
+          },
+          {
+            "key": "parentalControl",
+            "optional": true,
+            "type": "{ services?: { id: string, active?: boolean, recreation?: boolean }[], categories?: { id: string, active?: boolean, recreation?: boolean }[], recreation?: { times?: {} | null, timezone?: string | null }, safeSearch?: boolean, youtubeRestrictedMode?: boolean, blockBypass?: boolean }"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ logs?: { enabled?: boolean, drop?: { ip?: boolean, domain?: boolean }, retention?: number | null, location?: string | null }, blockPage?: { enabled?: boolean }, performance?: { ecs?: boolean, cacheBoost?: boolean, cnameFlattening?: boolean }, web3?: boolean }"
+          },
+          {
+            "key": "denylist",
+            "optional": true,
+            "type": "{ id: string, active?: boolean }[]"
+          },
+          {
+            "key": "allowlist",
+            "optional": true,
+            "type": "{ id: string, active?: boolean }[]"
+          },
+          {
+            "key": "rewrites",
+            "optional": true,
+            "type": "{ id?: string, name: string, type?: string, content: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.rewrites.add",
+      "shortPath": "rewrites.add",
+      "description": "Add a DNS rewrite rule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.rewrites.delete",
+      "shortPath": "rewrites.delete",
+      "description": "Delete a DNS rewrite rule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.rewrites.get",
+      "shortPath": "rewrites.get",
+      "description": "List DNS rewrite rules",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, name: string, type?: string, content: string }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.security.addBlockedTld",
+      "shortPath": "security.addBlockedTld",
+      "description": "Add a top-level domain to the security blocklist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.security.get",
+      "shortPath": "security.get",
+      "description": "Get security settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threatIntelligenceFeeds",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "aiThreatDetection",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "googleSafeBrowsing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cryptojacking",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dnsRebinding",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idnHomographs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "typosquatting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dga",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nrd",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ddns",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parking",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "csam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tlds",
+            "optional": true,
+            "type": "{ id: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.security.getTlds",
+      "shortPath": "security.getTlds",
+      "description": "Get blocked top-level domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.security.removeBlockedTld",
+      "shortPath": "security.removeBlockedTld",
+      "description": "Remove a top-level domain from the security blocklist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.security.replaceTlds",
+      "shortPath": "security.replaceTlds",
+      "description": "Replace the entire blocked-TLD list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tlds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string }[]"
+      }
+    },
+    {
+      "path": "nextdns.api.security.update",
+      "shortPath": "security.update",
+      "description": "Update multiple security settings in one call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "threatIntelligenceFeeds",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "aiThreatDetection",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "googleSafeBrowsing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cryptojacking",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dnsRebinding",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idnHomographs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "typosquatting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dga",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nrd",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ddns",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parking",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "csam",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threatIntelligenceFeeds",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "aiThreatDetection",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "googleSafeBrowsing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cryptojacking",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dnsRebinding",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idnHomographs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "typosquatting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dga",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nrd",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ddns",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parking",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "csam",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tlds",
+            "optional": true,
+            "type": "{ id: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.settings.get",
+      "shortPath": "settings.get",
+      "description": "Get all settings for a profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ enabled?: boolean, drop?: { ip?: boolean, domain?: boolean }, retention?: number | null, location?: string | null }"
+          },
+          {
+            "key": "blockPage",
+            "optional": true,
+            "type": "{ enabled?: boolean }"
+          },
+          {
+            "key": "performance",
+            "optional": true,
+            "type": "{ ecs?: boolean, cacheBoost?: boolean, cnameFlattening?: boolean }"
+          },
+          {
+            "key": "web3",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.settings.getBlockPage",
+      "shortPath": "settings.getBlockPage",
+      "description": "Get block page settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.settings.getLogs",
+      "shortPath": "settings.getLogs",
+      "description": "Get logging settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "drop",
+            "optional": true,
+            "type": "{ ip?: boolean, domain?: boolean }"
+          },
+          {
+            "key": "retention",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.settings.getPerformance",
+      "shortPath": "settings.getPerformance",
+      "description": "Get performance settings (ECS, cache boost, CNAME flattening)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ecs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cacheBoost",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cnameFlattening",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.settings.logClientIps",
+      "shortPath": "settings.logClientIps",
+      "description": "Enable or disable logging of client IPs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "drop",
+            "optional": true,
+            "type": "{ ip?: boolean, domain?: boolean }"
+          },
+          {
+            "key": "retention",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.settings.logDomains",
+      "shortPath": "settings.logDomains",
+      "description": "Enable or disable logging of queried domains",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "drop",
+            "optional": true,
+            "type": "{ ip?: boolean, domain?: boolean }"
+          },
+          {
+            "key": "retention",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.settings.update",
+      "shortPath": "settings.update",
+      "description": "Update multiple settings categories in one call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ enabled?: boolean, drop?: { ip?: boolean, domain?: boolean }, retention?: number | null, location?: string | null }"
+          },
+          {
+            "key": "blockPage",
+            "optional": true,
+            "type": "{ enabled?: boolean }"
+          },
+          {
+            "key": "performance",
+            "optional": true,
+            "type": "{ ecs?: boolean, cacheBoost?: boolean, cnameFlattening?: boolean }"
+          },
+          {
+            "key": "web3",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ enabled?: boolean, drop?: { ip?: boolean, domain?: boolean }, retention?: number | null, location?: string | null }"
+          },
+          {
+            "key": "blockPage",
+            "optional": true,
+            "type": "{ enabled?: boolean }"
+          },
+          {
+            "key": "performance",
+            "optional": true,
+            "type": "{ ecs?: boolean, cacheBoost?: boolean, cnameFlattening?: boolean }"
+          },
+          {
+            "key": "web3",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.settings.updateBlockPage",
+      "shortPath": "settings.updateBlockPage",
+      "description": "Enable or disable the branded block page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.settings.updateLogs",
+      "shortPath": "settings.updateLogs",
+      "description": "Update log retention, storage location, and privacy options",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "retention",
+            "optional": true,
+            "type": "3600"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "drop",
+            "optional": true,
+            "type": "{ ip?: boolean, domain?: boolean }"
+          },
+          {
+            "key": "retention",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.settings.updatePerformance",
+      "shortPath": "settings.updatePerformance",
+      "description": "Update performance optimization settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ecs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cacheBoost",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cnameFlattening",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ecs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cacheBoost",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cnameFlattening",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "nextdns.api.setup.updateLinkedIp",
+      "shortPath": "setup.updateLinkedIp",
+      "description": "Update the profile's Linked IP to the caller's current public IP",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "servers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ddns",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updateToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "nextdns.db.profiles.search",
+      "entityName": "profiles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fingerprint",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

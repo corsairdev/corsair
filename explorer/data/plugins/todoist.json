@@ -1,0 +1,2368 @@
+{
+  "id": "todoist",
+  "displayName": "Todoist",
+  "description": "Task management app for projects, due dates, priorities, and personal or team to-do lists.",
+  "npmPackageName": "@corsair-dev/todoist",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 36,
+    "webhooks": 13,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "user_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "todoist.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Create a Todoist comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "posted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Delete a Todoist comment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "todoist.api.comments.get",
+      "shortPath": "comments.get",
+      "description": "Get a Todoist comment by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "posted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.comments.getMany",
+      "shortPath": "comments.getMany",
+      "description": "List Todoist comments for a task or project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, task_id?: string, project_id?: string, content: string, posted_at?: string }[]"
+      }
+    },
+    {
+      "path": "todoist.api.comments.update",
+      "shortPath": "comments.update",
+      "description": "Update a Todoist comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "posted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.labels.create",
+      "shortPath": "labels.create",
+      "description": "Create a Todoist label",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "favorite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "favorite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.labels.delete",
+      "shortPath": "labels.delete",
+      "description": "Delete a Todoist label",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "todoist.api.labels.get",
+      "shortPath": "labels.get",
+      "description": "Get a Todoist label by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "favorite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.labels.getMany",
+      "shortPath": "labels.getMany",
+      "description": "List Todoist labels",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, color?: string, order?: number, favorite?: boolean }[]"
+      }
+    },
+    {
+      "path": "todoist.api.labels.update",
+      "shortPath": "labels.update",
+      "description": "Update a Todoist label",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "favorite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "favorite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.projects.archive",
+      "shortPath": "projects.archive",
+      "description": "Archive a Todoist project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "todoist.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a Todoist project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "favorite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "favorite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "comment_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_favorite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "view_style",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a Todoist project",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "todoist.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a Todoist project by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "favorite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "comment_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_favorite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "view_style",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.projects.getCollaborators",
+      "shortPath": "projects.getCollaborators",
+      "description": "List collaborators for a Todoist project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string, email?: string }[]"
+      }
+    },
+    {
+      "path": "todoist.api.projects.getMany",
+      "shortPath": "projects.getMany",
+      "description": "List Todoist projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, color?: string, parent_id?: string, order?: number, favorite?: boolean, comment_count?: number, is_shared?: boolean, is_archived?: boolean, is_favorite?: boolean, view_style?: string }[] | { projects?: { id: string, name: string, color?: string, parent_id?: string, order?: number, favorite?: boolean, comment_count?: number, is_shared?: boolean, is_archived?: boolean, is_favorite?: boolean, view_style?: string }[] }"
+      }
+    },
+    {
+      "path": "todoist.api.projects.unarchive",
+      "shortPath": "projects.unarchive",
+      "description": "Unarchive a Todoist project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "todoist.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a Todoist project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "favorite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "favorite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "comment_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_favorite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "view_style",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.reminders.create",
+      "shortPath": "reminders.create",
+      "description": "Create a Todoist reminder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "due_datetime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_string",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "relative_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notification_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notify_uid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notify_uid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.reminders.delete",
+      "shortPath": "reminders.delete",
+      "description": "Delete a Todoist reminder",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "todoist.api.reminders.getMany",
+      "shortPath": "reminders.getMany",
+      "description": "List Todoist reminders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, task_id?: string, notify_uid?: string, due?: {} }[]"
+      }
+    },
+    {
+      "path": "todoist.api.reminders.update",
+      "shortPath": "reminders.update",
+      "description": "Update a Todoist reminder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_datetime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_string",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "relative_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notification_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notify_uid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notify_uid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.sections.create",
+      "shortPath": "sections.create",
+      "description": "Create a Todoist section",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.sections.delete",
+      "shortPath": "sections.delete",
+      "description": "Delete a Todoist section",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "todoist.api.sections.get",
+      "shortPath": "sections.get",
+      "description": "Get a Todoist section by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.sections.getMany",
+      "shortPath": "sections.getMany",
+      "description": "List Todoist sections for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, project_id: string, name: string, order?: number }[]"
+      }
+    },
+    {
+      "path": "todoist.api.sections.update",
+      "shortPath": "sections.update",
+      "description": "Update a Todoist section",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.tasks.close",
+      "shortPath": "tasks.close",
+      "description": "Close a Todoist task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | {}"
+      }
+    },
+    {
+      "path": "todoist.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a Todoist task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_datetime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_string",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigner_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a Todoist task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | {}"
+      }
+    },
+    {
+      "path": "todoist.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a Todoist task by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigner_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.tasks.getMany",
+      "shortPath": "tasks.getMany",
+      "description": "List Todoist tasks with filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, project_id?: string | null, section_id?: string | null, content: string, description?: string, is_completed?: boolean, labels?: string[], parent_id?: string | null, order?: number, priority?: number, due?: {} | null, url?: string, comment_count?: number, created_at?: string, creator_id?: string, assignee_id?: string, assigner_id?: string }[] | { tasks?: { id: string, project_id?: string | null, section_id?: string | null, content: string, description?: string, is_completed?: boolean, labels?: string[], parent_id?: string | null, order?: number, priority?: number, due?: {} | null, url?: string, comment_count?: number, created_at?: string, creator_id?: string, assignee_id?: string, assigner_id?: string }[] }"
+      }
+    },
+    {
+      "path": "todoist.api.tasks.move",
+      "shortPath": "tasks.move",
+      "description": "Move a Todoist task between project or section",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigner_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.tasks.quickAdd",
+      "shortPath": "tasks.quickAdd",
+      "description": "Quick add a Todoist task using natural language",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reminder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigner_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "todoist.api.tasks.reopen",
+      "shortPath": "tasks.reopen",
+      "description": "Reopen a completed Todoist task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | {}"
+      }
+    },
+    {
+      "path": "todoist.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a Todoist task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_datetime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_string",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigner_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "todoist.webhooks.items.added",
+      "shortPath": "items.added",
+      "description": "A new task was added",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        items: {\n            added: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "todoist.webhooks.items.completed",
+      "shortPath": "items.completed",
+      "description": "A task was completed",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        items: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "todoist.webhooks.items.deleted",
+      "shortPath": "items.deleted",
+      "description": "A task was deleted",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        items: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "todoist.webhooks.items.uncompleted",
+      "shortPath": "items.uncompleted",
+      "description": "A completed task was uncompleted",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        items: {\n            uncompleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "todoist.webhooks.items.updated",
+      "shortPath": "items.updated",
+      "description": "A task was updated",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        items: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "todoist.webhooks.notes.added",
+      "shortPath": "notes.added",
+      "description": "A new note/comment was added",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        notes: {\n            added: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "todoist.webhooks.notes.deleted",
+      "shortPath": "notes.deleted",
+      "description": "A note/comment was deleted",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        notes: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "todoist.webhooks.notes.updated",
+      "shortPath": "notes.updated",
+      "description": "A note/comment was updated",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        notes: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "todoist.webhooks.projects.added",
+      "shortPath": "projects.added",
+      "description": "A new project was created",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        projects: {\n            added: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "todoist.webhooks.projects.archived",
+      "shortPath": "projects.archived",
+      "description": "A project was archived",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        projects: {\n            archived: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "todoist.webhooks.projects.deleted",
+      "shortPath": "projects.deleted",
+      "description": "A project was deleted",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        projects: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "todoist.webhooks.projects.unarchived",
+      "shortPath": "projects.unarchived",
+      "description": "A project was unarchived",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        projects: {\n            unarchived: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "todoist.webhooks.projects.updated",
+      "shortPath": "projects.updated",
+      "description": "A project was updated",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "todoist({\n    webhookHooks: {\n        projects: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "todoist.db.comments.search",
+      "entityName": "comments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "task_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "posted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "todoist.db.labels.search",
+      "entityName": "labels",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "order",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "favorite",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "todoist.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "order",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "favorite",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "comment_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_shared",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_favorite",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "view_style",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "todoist.db.reminders.search",
+      "entityName": "reminders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "task_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notify_uid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "todoist.db.sections.search",
+      "entityName": "sections",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "order",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "todoist.db.tasks.search",
+      "entityName": "tasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "section_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_completed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "parent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "order",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "comment_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creator_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assignee_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assigner_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

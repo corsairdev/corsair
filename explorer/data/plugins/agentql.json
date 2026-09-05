@@ -1,0 +1,387 @@
+{
+  "id": "agentql",
+  "displayName": "AgentQL",
+  "description": "Web scraping API that turns pages into structured data using natural language queries.",
+  "npmPackageName": "@corsair-dev/agentql",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "agentql.api.browserSessions.createRemoteBrowserSession",
+      "shortPath": "browserSessions.createRemoteBrowserSession",
+      "description": "Tool to create a remote browser session. Use when you need to run browser automation on remote infrastructure.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "browser_ua_preset",
+            "optional": true,
+            "type": "windows | macos | linux"
+          },
+          {
+            "key": "browser_profile",
+            "optional": true,
+            "type": "light | stealth | tf-browser"
+          },
+          {
+            "key": "inactivity_timeout_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "{ type?: tetra, country_code?: string } | { type?: custom, url: string, username?: string | null, password?: string | null }"
+          },
+          {
+            "key": "shutdown_mode",
+            "optional": true,
+            "type": "on_disconnect | on_inactivity_timeout"
+          },
+          {
+            "key": "sub_user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branding",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "browser_startup_url",
+            "optional": true,
+            "type": "string | about:blank"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cdp_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agentql.api.data.query",
+      "shortPath": "data.query",
+      "description": "Tool to query structured data as JSON from a web page using an AgentQL query or natural language prompt. Use after defining your query or prompt and a URL or HTML.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{ wait_for?: number, is_scroll_to_bottom_enabled?: boolean, mode?: fast | standard, is_screenshot_enabled?: boolean, browser_profile?: light | stealth | tf-browser, proxy?: { type?: tetra, country_code?: string } | { type?: custom, url: string, username?: string | null, password?: string | null } | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ request_id?: string, generated_query?: string | null, screenshot?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agentql.api.data.queryDocument",
+      "shortPath": "data.queryDocument",
+      "description": "Tool to extract structured data from PDF or image documents using an AgentQL query or natural language prompt. Accepts a file upload plus query or prompt.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{ mode?: fast | standard }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ request_id?: string, generated_query?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agentql.api.usage.get",
+      "shortPath": "usage.get",
+      "description": "Retrieves API usage statistics and subscription limits for the AgentQL account. Returns current billing cycle dates, lifetime usage limits, API key usage counts, and total account usage. Useful for monitoring quota consumption and planning usage. No parameters required - uses the authenticated API key from connection settings.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ current_subscription?: { lifetime_usage_limit?: number | null, current_cycle_free_usage_limit?: number | null, current_cycle_start?: string, current_cycle_end?: string } | null, api_key_usage: { current_cycle?: number | null, lifetime?: number }, total_account_usage: { current_cycle?: number | null, lifetime?: number } }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ request_id?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "agentql.db.accountUsage.search",
+      "entityName": "accountUsage",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "agentql.db.browserSessions.search",
+      "entityName": "browserSessions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sessionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cdpUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "baseUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "browserUaPreset",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "browserProfile",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "inactivityTimeoutSeconds",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "shutdownMode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subUserId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "branding",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "browserStartupUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "agentql.db.documentQueryResults.search",
+      "entityName": "documentQueryResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fileName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "prompt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "generatedQuery",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "requestId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "agentql.db.queryResults.search",
+      "entityName": "queryResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "prompt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "generatedQuery",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "requestId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

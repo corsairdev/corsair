@@ -1,0 +1,718 @@
+{
+  "id": "bouncer",
+  "displayName": "Bouncer",
+  "description": "Email verification API for validating addresses, reducing bounces, and improving deliverability.",
+  "npmPackageName": "@corsair-dev/bouncer",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bouncer.api.account.getCredits",
+      "shortPath": "account.getCredits",
+      "description": "Retrieve current credit balance for the Bouncer account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bouncer.api.email.createBatchRequest",
+      "shortPath": "email.createBatchRequest",
+      "description": "Initiate an asynchronous batch email verification request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "({ email: string } | string)[]"
+          },
+          {
+            "key": "callback",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duplicates",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bouncer.api.email.deleteBatchRequest",
+      "shortPath": "email.deleteBatchRequest",
+      "description": "Permanently delete a batch email verification request and its data",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bouncer.api.email.finishBatch",
+      "shortPath": "email.finishBatch",
+      "description": "Mark a batch verification process as finished early",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bouncer.api.email.getBatchResults",
+      "shortPath": "email.getBatchResults",
+      "description": "Retrieve the results of a batch email verification process",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "download",
+            "optional": true,
+            "type": "all | deliverable | risky | undeliverable | unknown"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ email: string, status: deliverable | risky | undeliverable | unknown, reason: accepted_email | low_deliverability | low_quality | invalid_email | invalid_domain | rejected_email | dns_error | unavailable_smtp | unsupported | timeout | unknown, domain?: { name: string, acceptAll: yes | no | unknown, disposable: yes | no | unknown, free: yes | no | unknown }, account?: { role: yes | no | unknown, disabled: yes | no | unknown, fullMailbox: yes | no | unknown }, dns?: { type: string, record?: string }, provider?: string, score?: number, toxic?: string, toxicity?: number, retryAfter?: string, didYouMean?: string }[]"
+      }
+    },
+    {
+      "path": "bouncer.api.email.getBatchStatus",
+      "shortPath": "email.getBatchStatus",
+      "description": "Check the processing status of a batch, optionally with per-status stats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "withStats",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "started",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duplicates",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "processed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "{ deliverable: number, risky: number, undeliverable: number, unknown: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bouncer.api.email.verifyDomain",
+      "shortPath": "email.verifyDomain",
+      "description": "Verify domain MX records and catch-all setup",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "{ name: string, acceptAll: yes | no | unknown, disposable: yes | no | unknown, free: yes | no | unknown }"
+          },
+          {
+            "key": "dns",
+            "optional": true,
+            "type": "{ type: string, record?: string }"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toxic",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bouncer.api.email.verifyEmail",
+      "shortPath": "email.verifyEmail",
+      "description": "Verify a single email address in real-time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "deliverable | risky | undeliverable | unknown"
+          },
+          {
+            "key": "reason",
+            "optional": false,
+            "type": "accepted_email | low_deliverability | low_quality | invalid_email | invalid_domain | rejected_email | dns_error | unavailable_smtp | unsupported | timeout | unknown"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "{ name: string, acceptAll: yes | no | unknown, disposable: yes | no | unknown, free: yes | no | unknown }"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ role: yes | no | unknown, disabled: yes | no | unknown, fullMailbox: yes | no | unknown }"
+          },
+          {
+            "key": "dns",
+            "optional": true,
+            "type": "{ type: string, record?: string }"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "toxic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toxicity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "retryAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "didYouMean",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bouncer.api.toxicity.checkToxicityListJobStatus",
+      "shortPath": "toxicity.checkToxicityListJobStatus",
+      "description": "Check the status and results of a toxicity list job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bouncer.api.toxicity.createToxicityListJob",
+      "shortPath": "toxicity.createToxicityListJob",
+      "description": "Create a toxicity analysis job for a list of email addresses",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bouncer.api.toxicity.deleteToxicityListJob",
+      "shortPath": "toxicity.deleteToxicityListJob",
+      "description": "Delete a specific toxicity list job by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "bouncer.api.toxicity.getToxicityListResults",
+      "shortPath": "toxicity.getToxicityListResults",
+      "description": "Download the per-address toxicity scores of a completed job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ email: string, toxicity: number }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "bouncer.db.batchVerifications.search",
+      "entityName": "batchVerifications",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "batchId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quantity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "duplicates",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "processed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "credits",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "statsDeliverable",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "statsRisky",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "statsUndeliverable",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "statsUnknown",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "startedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "completedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "bouncer.db.domainVerifications.search",
+      "entityName": "domainVerifications",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dnsType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dnsRecord",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provider",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "toxic",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "bouncer.db.emailVerifications.search",
+      "entityName": "emailVerifications",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domainName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dnsType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dnsRecord",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "provider",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "toxic",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "toxicity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "didYouMean",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "retryAfter",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "batchId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "bouncer.db.toxicityJobs.search",
+      "entityName": "toxicityJobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "bouncer.db.toxicityResults.search",
+      "entityName": "toxicityResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "toxicity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}
