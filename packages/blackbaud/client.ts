@@ -26,6 +26,8 @@ export async function makeBlackbaudRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Request payloads are provider-defined per SKY API operation and are
+		// not explicitly typed - unknown allows for safe extension.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 		subscriptionKey?: string;
