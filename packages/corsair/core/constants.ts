@@ -80,6 +80,7 @@ export const BaseProviders = [
 	'bigml',
 	'bitbucket',
 	'bitwarden',
+	'blackbaud',
 	'blazemeter',
 	'blocknative',
 	'bluesky',
@@ -346,6 +347,7 @@ export const ProviderDisplayNames = {
 	bigml: 'BigML',
 	bitbucket: 'Bitbucket',
 	bitwarden: 'Bitwarden',
+	blackbaud: 'Blackbaud',
 	blazemeter: 'BlazeMeter',
 	blocknative: 'Blocknative',
 	bluesky: 'Bluesky',
@@ -619,6 +621,7 @@ export type AllProviders =
 	| 'bigml'
 	| 'bitbucket'
 	| 'bitwarden'
+	| 'blackbaud'
 	| 'blazemeter'
 	| 'blocknative'
 	| 'bluesky'
