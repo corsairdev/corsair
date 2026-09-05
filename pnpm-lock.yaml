@@ -168,9 +168,6 @@ importers:
       '@corsair-dev/bitwarden':
         specifier: workspace:*
         version: link:../../packages/bitwarden
-      '@corsair-dev/blackbaud':
-        specifier: workspace:*
-        version: link:../../packages/blackbaud
       '@corsair-dev/cursor':
         specifier: workspace:*
         version: link:../../packages/cursor
