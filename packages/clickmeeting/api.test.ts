@@ -208,7 +208,7 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 				},
 			);
 			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/101/room-files',
+				'/file-library/conferences/101',
 				'test_api_key',
 				{
 					method: 'GET',
@@ -240,12 +240,13 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 				mockContext,
 				{
 					roomId: 101,
+					lang: 'en',
 					attendees: ['user@example.com'],
 					role: 'listener',
 				},
 			);
 			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/101/invitation/email/send',
+				'/conferences/101/invitation/email/en',
 				'test_api_key',
 				{
 					method: 'POST',
@@ -266,7 +267,7 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 				},
 			);
 			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/101/autologin-hash',
+				'/conferences/101/room/autologin_hash',
 				'test_api_key',
 				{
 					method: 'POST',
@@ -321,7 +322,7 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 		});
 
 		it('getTokenByEmail', async () => {
-			const mockToken = { token: 'token_1', email: 'user@example.com' };
+			const mockToken = ['token_abc123'];
 			mockMakeRequest.mockResolvedValueOnce(mockToken);
 			const result = await plugin.endpoints!.tokens.getTokenByEmail(
 				mockContext,
@@ -331,11 +332,11 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 				},
 			);
 			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/101/tokens',
+				'/conferences/101/token',
 				'test_api_key',
 				{
-					method: 'GET',
-					query: { email: 'user@example.com' },
+					method: 'POST',
+					body: { email: 'user@example.com' },
 				},
 			);
 			expect(result).toEqual(mockToken);
@@ -539,11 +540,10 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 				},
 			);
 			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/101/sessions/201/reports/pdf',
+				'/conferences/101/sessions/201/generate-pdf/en',
 				'test_api_key',
 				{
-					method: 'POST',
-					query: { lang: 'en' },
+					method: 'GET',
 				},
 			);
 			expect(result).toEqual({

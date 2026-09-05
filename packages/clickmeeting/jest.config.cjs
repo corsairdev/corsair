@@ -23,6 +23,7 @@ module.exports = {
 			'ts-jest',
 			{
 				useESM: true,
+				diagnostics: false,
 				tsconfig: {
 					esModuleInterop: true,
 					allowSyntheticDefaultImports: true,

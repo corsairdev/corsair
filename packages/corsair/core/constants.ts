@@ -382,7 +382,7 @@ export const ProviderDisplayNames = {
 	chatfai: 'ChatFAI',
 	circleci: 'CircleCI',
 	clickhouse: 'Clickhouse',
-	clickmeeting: 'Clickmeeting',
+	clickmeeting: 'ClickMeeting',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',

@@ -44,17 +44,17 @@ export const getTokenByEmail: ClickmeetingEndpoints['getTokenByEmail'] = async (
 	input,
 ) => {
 	const res = await makeClickmeetingRequest<any>(
-		`/conferences/${encodeURIComponent(String(input.roomId))}/tokens`,
+		`/conferences/${encodeURIComponent(String(input.roomId))}/token`,
 		ctx.key,
 		{
-			method: 'GET',
-			query: { email: input.email },
+			method: 'POST',
+			body: { email: input.email },
 		},
 	);
 	await logEventFromContext(
 		ctx,
 		'clickmeeting.tokens.getTokenByEmail',
-		{ roomId: input.roomId, email: input.email },
+		{ roomId: input.roomId },
 		'completed',
 	);
 	return res;

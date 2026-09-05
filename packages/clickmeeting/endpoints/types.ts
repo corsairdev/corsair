@@ -179,30 +179,55 @@ export const GetConferenceDetailsInputSchema = z.object({
 });
 export const GetConferenceDetailsOutputSchema = ConferenceItemSchema;
 
-export const CreateConferenceInputSchema = z.object({
-	name: z.string().describe('Conference room name'),
-	room_type: z.enum(['meeting', 'webinar']).default('webinar').optional(),
-	permanent_room: z.number().optional(),
-	access_type: z.number().optional().describe('1: open, 2: password, 3: token'),
-	starts_at: z
-		.string()
-		.optional()
-		.describe('Scheduled start date/time (YYYY-MM-DD HH:MM:SS)'),
-	duration: z.number().optional().describe('Duration in minutes'),
-	timezone: z.string().optional(),
-	lobby_description: z.string().optional(),
-	description: z.string().optional(),
-});
+export const CreateConferenceInputSchema = z
+	.object({
+		name: z.string().describe('Conference room name'),
+		room_type: z.enum(['meeting', 'webinar']).default('webinar').optional(),
+		permanent_room: z.boolean().optional(),
+		access_type: z
+			.number()
+			.optional()
+			.describe('1: open, 2: password, 3: token'),
+		password: z
+			.string()
+			.optional()
+			.describe('Required when access_type is 2 (password-protected)'),
+		starts_at: z
+			.string()
+			.optional()
+			.describe('Scheduled start date/time (YYYY-MM-DD HH:MM:SS)'),
+		duration: z
+			.string()
+			.optional()
+			.describe('Duration in H:MM format, e.g. 1:20'),
+		timezone: z.string().optional(),
+		lobby_description: z.string().optional(),
+		description: z.string().optional(),
+	})
+	.refine(
+		(data) => {
+			if (data.access_type === 2) return !!data.password;
+			return true;
+		},
+		{
+			message: 'password is required when access_type is 2',
+			path: ['password'],
+		},
+	);
 export const CreateConferenceOutputSchema = ConferenceItemSchema;
 
 export const UpdateConferenceInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	name: z.string().optional(),
 	room_type: z.enum(['meeting', 'webinar']).optional(),
-	permanent_room: z.number().optional(),
+	permanent_room: z.boolean().optional(),
 	access_type: z.number().optional(),
+	password: z.string().optional().describe('Required when access_type is 2'),
 	starts_at: z.string().optional(),
-	duration: z.number().optional(),
+	duration: z
+		.string()
+		.optional()
+		.describe('Duration in H:MM format, e.g. 1:20'),
 	timezone: z.string().optional(),
 	lobby_description: z.string().optional(),
 	description: z.string().optional(),
@@ -229,6 +254,9 @@ export const GetConferenceSkinsOutputSchema = z.array(ConferenceSkinItemSchema);
 
 export const SendInvitationInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
+	lang: z
+		.string()
+		.describe('Language code for the invitation email (e.g. en, pl)'),
 	attendees: z.array(z.string()).describe('List of attendee email addresses'),
 	role: z.enum(['listener', 'presenter']).default('listener').optional(),
 	template: z.enum(['advanced', 'basic']).default('advanced').optional(),
@@ -245,7 +273,18 @@ export const GenerateAutologinUrlInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	email: z.string().email(),
 	nickname: z.string(),
-	role: z.enum(['listener', 'presenter']).default('listener').optional(),
+	role: z
+		.enum(['listener', 'presenter', 'moderator', 'guest_speaker', 'host'])
+		.default('listener')
+		.optional(),
+	password: z
+		.string()
+		.optional()
+		.describe('Required when room is password-protected'),
+	token: z
+		.string()
+		.optional()
+		.describe('Required when room is token-protected'),
 });
 export const GenerateAutologinUrlOutputSchema = z
 	.object({
@@ -278,7 +317,9 @@ export const GetTokenByEmailInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	email: z.string().email(),
 });
-export const GetTokenByEmailOutputSchema = TokenItemSchema;
+export const GetTokenByEmailOutputSchema = z
+	.array(z.string())
+	.describe('Array of token strings for the given email');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Registrations Schemas

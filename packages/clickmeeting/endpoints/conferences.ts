@@ -99,7 +99,7 @@ export const deleteConference: ClickmeetingEndpoints['deleteConference'] =
 export const getConferenceFiles: ClickmeetingEndpoints['getConferenceFiles'] =
 	async (ctx, input) => {
 		const res = await makeClickmeetingRequest<any>(
-			`/conferences/${encodeURIComponent(String(input.roomId))}/room-files`,
+			`/file-library/conferences/${encodeURIComponent(String(input.roomId))}`,
 			ctx.key,
 			{
 				method: 'GET',
@@ -136,9 +136,9 @@ export const sendInvitation: ClickmeetingEndpoints['sendInvitation'] = async (
 	ctx,
 	input,
 ) => {
-	const { roomId, ...body } = input;
+	const { roomId, lang, ...body } = input;
 	const res = await makeClickmeetingRequest<any>(
-		`/conferences/${encodeURIComponent(String(roomId))}/invitation/email/send`,
+		`/conferences/${encodeURIComponent(String(roomId))}/invitation/email/${encodeURIComponent(lang)}`,
 		ctx.key,
 		{
 			method: 'POST',
@@ -158,7 +158,7 @@ export const generateAutologinUrl: ClickmeetingEndpoints['generateAutologinUrl']
 	async (ctx, input) => {
 		const { roomId, ...body } = input;
 		const res = await makeClickmeetingRequest<any>(
-			`/conferences/${encodeURIComponent(String(roomId))}/autologin-hash`,
+			`/conferences/${encodeURIComponent(String(roomId))}/room/autologin_hash`,
 			ctx.key,
 			{
 				method: 'POST',
@@ -168,7 +168,7 @@ export const generateAutologinUrl: ClickmeetingEndpoints['generateAutologinUrl']
 		await logEventFromContext(
 			ctx,
 			'clickmeeting.conferences.generateAutologinUrl',
-			{ roomId, email: input.email },
+			{ roomId },
 			'completed',
 		);
 		return res;

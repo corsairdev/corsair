@@ -23,7 +23,7 @@ npm install corsair @corsair-dev/clickmeeting
 yarn add corsair @corsair-dev/clickmeeting
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/clickmeeting
+pnpm add corsair @corsair-dev/clickmeeting
 ```
 ```bash bun
 bun add corsair @corsair-dev/clickmeeting
@@ -93,7 +93,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.clickmeeting.api.chats.getChatDetails({});
+await tenant.clickmeeting.api.chats.getChatDetails({ chatId: 1 });
 ```
 
 
@@ -101,7 +101,7 @@ await tenant.clickmeeting.api.chats.getChatDetails({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.clickmeeting.api.conferences.createConference({});
+await tenant.clickmeeting.api.conferences.createConference({ name: 'My Webinar' });
 ```
 
 

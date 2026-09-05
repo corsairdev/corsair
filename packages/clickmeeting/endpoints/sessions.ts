@@ -80,13 +80,12 @@ export const getSessionAttendeeDetails: ClickmeetingEndpoints['getSessionAttende
 
 export const generateSessionPdfReport: ClickmeetingEndpoints['generateSessionPdfReport'] =
 	async (ctx, input) => {
-		const query = input.lang ? { lang: input.lang } : undefined;
+		const lang = encodeURIComponent(String(input.lang ?? 'en'));
 		const res = await makeClickmeetingRequest<any>(
-			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/reports/pdf`,
+			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/generate-pdf/${lang}`,
 			ctx.key,
 			{
-				method: 'POST',
-				query,
+				method: 'GET',
 			},
 		);
 		await logEventFromContext(

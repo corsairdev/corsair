@@ -70,7 +70,7 @@ export const createContact: ClickmeetingEndpoints['createContact'] = async (
 	await logEventFromContext(
 		ctx,
 		'clickmeeting.registrations.createContact',
-		{ email: input.email },
+		{},
 		'completed',
 	);
 	return res;
