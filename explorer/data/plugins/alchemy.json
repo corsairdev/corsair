@@ -1,7 +1,7 @@
 {
   "id": "alchemy",
   "displayName": "Alchemy",
-  "description": "Alchemy plugin for Corsair",
+  "description": "Blockchain development platform for Ethereum and Web3 apps, nodes, and APIs.",
   "npmPackageName": "@corsair-dev/alchemy",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

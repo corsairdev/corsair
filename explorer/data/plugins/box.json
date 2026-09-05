@@ -1,7 +1,7 @@
 {
   "id": "box",
   "displayName": "Box",
-  "description": "Box plugin for Corsair",
+  "description": "Cloud content management for secure file storage, sharing, and enterprise collaboration.",
   "npmPackageName": "@corsair-dev/box",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -178,7 +178,7 @@
     {
       "path": "box.api.files.delete",
       "shortPath": "files.delete",
-      "description": "Delete a Box file [DESTRUCTIVE]",
+      "description": "Delete a Box file",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -809,7 +809,7 @@
     {
       "path": "box.api.folders.delete",
       "shortPath": "folders.delete",
-      "description": "Delete a Box folder [DESTRUCTIVE]",
+      "description": "Delete a Box folder",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

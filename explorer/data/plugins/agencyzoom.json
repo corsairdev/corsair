@@ -1,7 +1,7 @@
 {
   "id": "agencyzoom",
   "displayName": "AgencyZoom",
-  "description": "AgencyZoom plugin for Corsair",
+  "description": "Insurance agency management software for policies, clients, and producer workflows.",
   "npmPackageName": "@corsair-dev/agencyzoom",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

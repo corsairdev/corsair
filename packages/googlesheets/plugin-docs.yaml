@@ -1,8 +1,5 @@
-# Overrides for scripts/generate-plugin-docs.ts
-# Plugin-specific examples; the generator owns Hub-shaped wiring and shared copy.
-
 displayName: Google Sheets
-description: "Google Sheets plugin for Corsair — spreadsheets, rows, and range updates."
+description: Web-based spreadsheets for managing, visualizing, and analyzing data collaboratively online.
 
 examples:
   read:

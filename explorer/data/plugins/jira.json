@@ -1,7 +1,7 @@
 {
   "id": "jira",
   "displayName": "Jira",
-  "description": "Jira plugin for Corsair",
+  "description": "Issue and project tracking tool for agile sprints, bugs, epics, and team workflows.",
   "npmPackageName": "@corsair-dev/jira",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -77,7 +77,7 @@
     {
       "path": "jira.api.comments.delete",
       "shortPath": "comments.delete",
-      "description": "Delete a comment from a Jira issue [DESTRUCTIVE]",
+      "description": "Delete a comment from a Jira issue",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -618,7 +618,7 @@
     {
       "path": "jira.api.issues.delete",
       "shortPath": "issues.delete",
-      "description": "Delete a Jira issue [DESTRUCTIVE]",
+      "description": "Delete a Jira issue",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

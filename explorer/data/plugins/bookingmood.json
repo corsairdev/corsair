@@ -1,7 +1,7 @@
 {
   "id": "bookingmood",
   "displayName": "Bookingmood",
-  "description": "Bookingmood plugin for Corsair",
+  "description": "Booking and scheduling software for appointments, reservations, and calendar management.",
   "npmPackageName": "@corsair-dev/bookingmood",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "webvizio",
   "displayName": "Webvizio",
-  "description": "Webvizio plugin for Corsair",
+  "description": "Website feedback tool for visual bug reports, annotations, and client review workflows.",
   "npmPackageName": "@corsair-dev/webvizio",
   "authTypes": ["api_key"],
   "counts": {

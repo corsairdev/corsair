@@ -1,7 +1,7 @@
 {
   "id": "aivoov",
-  "displayName": "AiVOOV text-to-speech",
-  "description": "AiVOOV text-to-speech plugin for Corsair",
+  "displayName": "AiVOOV",
+  "description": "Text-to-speech platform for generating natural voiceovers from written scripts.",
   "npmPackageName": "@corsair-dev/aivoov",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

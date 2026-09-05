@@ -1,7 +1,7 @@
 {
   "id": "googlesheets",
-  "displayName": "Google sheets",
-  "description": "Google sheets plugin for Corsair",
+  "displayName": "Google Sheets",
+  "description": "Web-based spreadsheets for managing, visualizing, and analyzing data collaboratively online.",
   "npmPackageName": "@corsair-dev/googlesheets",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -186,7 +186,7 @@
     {
       "path": "googlesheets.api.sheets.clearSheet",
       "shortPath": "sheets.clearSheet",
-      "description": "Clear all data from a sheet [DESTRUCTIVE]",
+      "description": "Clear all data from a sheet",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -268,7 +268,7 @@
     {
       "path": "googlesheets.api.sheets.deleteRowsOrColumns",
       "shortPath": "sheets.deleteRowsOrColumns",
-      "description": "Delete rows or columns from a sheet [DESTRUCTIVE]",
+      "description": "Delete rows or columns from a sheet",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

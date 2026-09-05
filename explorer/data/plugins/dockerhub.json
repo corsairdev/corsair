@@ -1,7 +1,7 @@
 {
   "id": "dockerhub",
   "displayName": "Docker Hub",
-  "description": "Docker Hub plugin for Corsair",
+  "description": "Container registry for storing, sharing, and distributing Docker images and repositories.",
   "npmPackageName": "@corsair-dev/dockerhub",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
