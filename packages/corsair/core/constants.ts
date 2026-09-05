@@ -86,8 +86,8 @@ export const BaseProviders = [
 	'boloforms',
 	'boltiot',
 	'bonsai',
-	'botbaba',
 	'bookingmood',
+	'botbaba',
 	'botpress',
 	'botsonic',
 	'bouncer',
@@ -118,6 +118,7 @@ export const BaseProviders = [
 	'clientary',
 	'clockify',
 	'cloudflare',
+	'cloudflareapikey',
 	'cloudinary',
 	'collegefootballdata',
 	'confluence',
@@ -264,10 +265,10 @@ export const BaseProviders = [
 	'webvizio',
 	'whatsapp',
 	'witai',
-	'worldnewsapi',
 	'wiza',
 	'workday',
 	'workiom',
+	'worldnewsapi',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -352,8 +353,8 @@ export const ProviderDisplayNames = {
 	boloforms: 'Boloforms',
 	boltiot: 'Bolt IoT',
 	bonsai: 'Bonsai',
-	botbaba: 'Botbaba',
 	bookingmood: 'Bookingmood',
+	botbaba: 'Botbaba',
 	botpress: 'Botpress',
 	botsonic: 'Botsonic',
 	bouncer: 'Bouncer',
@@ -384,6 +385,7 @@ export const ProviderDisplayNames = {
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
+	cloudflareapikey: 'CloudflareApiKey',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
@@ -530,10 +532,10 @@ export const ProviderDisplayNames = {
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
-	worldnewsapi: 'World News API',
 	wiza: 'Wiza',
 	workday: 'Workday',
 	workiom: 'Workiom',
+	worldnewsapi: 'World News API',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -625,8 +627,8 @@ export type AllProviders =
 	| 'boloforms'
 	| 'boltiot'
 	| 'bonsai'
-	| 'botbaba'
 	| 'bookingmood'
+	| 'botbaba'
 	| 'botpress'
 	| 'botsonic'
 	| 'bouncer'
@@ -657,6 +659,7 @@ export type AllProviders =
 	| 'clientary'
 	| 'clockify'
 	| 'cloudflare'
+	| 'cloudflareapikey'
 	| 'cloudinary'
 	| 'collegefootballdata'
 	| 'confluence'
@@ -803,10 +806,10 @@ export type AllProviders =
 	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
-	| 'worldnewsapi'
 	| 'wiza'
 	| 'workday'
 	| 'workiom'
+	| 'worldnewsapi'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'

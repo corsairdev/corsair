@@ -970,6 +970,12 @@
                 ]
               },
               {
+                "group": "Cloudflare API Key",
+                "pages": [
+                  "plugins/cloudflareapikey/overview"
+                ]
+              },
+              {
                 "group": "Cloudinary",
                 "pages": [
                   "plugins/cloudinary/overview",

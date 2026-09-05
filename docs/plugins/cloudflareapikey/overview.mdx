@@ -1,0 +1,105 @@
+---
+title: Cloudflare API Key
+description: "Use Cloudflare API tokens with Corsair"
+---
+
+Use **Cloudflare API tokens** through Corsair for typed access to zones, DNS records, Workers, routes, and rulesets.
+
+**What you get:**
+
+- 24 typed API operations
+- Bearer-token authentication with Cloudflare API tokens
+- Account and zone-scoped requests
+- Webhook tenant matching by Cloudflare account ID
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/cloudflareapikey
+```
+```bash yarn
+yarn add corsair @corsair-dev/cloudflareapikey
+```
+```bash pnpm
+pnpm add corsair @corsair-dev/cloudflareapikey
+```
+```bash bun
+bun add corsair @corsair-dev/cloudflareapikey
+```
+</CodeGroup>
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { cloudflareapikey } from '@corsair-dev/cloudflareapikey';
+
+export const corsair = createCorsair({
+	plugins: [
+		cloudflareapikey({
+			key: process.env.CLOUDFLARE_API_TOKEN,
+		}),
+	],
+	// Add your database, KEK, and Hub settings here.
+});
+```
+
+Cloudflare API tokens use the `Authorization: Bearer <token>` header. Create a scoped token in the [Cloudflare API Tokens dashboard](https://dash.cloudflare.com/profile/api-tokens).
+</Step>
+
+<Step title="Call the API">
+Cloudflare uses account IDs for Workers operations and zone IDs for DNS, routes, and rulesets.
+
+```ts
+const tenant = corsair.withTenant('account-123');
+
+const zones = await tenant.cloudflareapikey.api.zones.list({});
+const records = await tenant.cloudflareapikey.api.dns.list({
+	zone_id: 'zone-123',
+});
+const scripts = await tenant.cloudflareapikey.api.workers.scripts.list({
+	account_id: 'account-123',
+});
+```
+</Step>
+
+</Steps>
+
+## Available operations
+
+The plugin exposes 24 operations across five groups:
+
+- Zones: list, get, create, edit, delete
+- DNS records: list, get, create, edit, delete
+- Worker scripts: list, get, upload, delete
+- Worker routes: list, get, create, edit, delete
+- Rulesets: list, get, create, update, delete
+
+See the [Cloudflare API documentation](https://developers.cloudflare.com/api/) for provider-level request details and permissions.
+
+## Authentication
+
+Use a Cloudflare API token with only the permissions required by your application. This plugin does not use the legacy Global API Key flow, which requires both `X-Auth-Key` and `X-Auth-Email` headers.
+
+For tenant connections and encrypted credential storage, see [Connect / OAuth](/management/connect) and [API keys](/concepts/api-key).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Cloudflare API" href="https://developers.cloudflare.com/api/">
+    Review Cloudflare paths, permissions, and response formats.
+  </Card>
+  <Card title="Plugin development" href="/guides/create-your-own-plugin">
+    Learn how Corsair plugins are structured and registered.
+  </Card>
+  <Card title="Connect tenants" href="/management/connect">
+    Create tenant connection links and manage credentials.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose Cloudflare operations as MCP tools.
+  </Card>
+</CardGroup>
