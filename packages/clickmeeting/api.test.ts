@@ -367,7 +367,9 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 				'test_api_key',
 				{
 					method: 'POST',
-					body: expect.stringContaining('registration%5Bemail%5D=test%40example.com'),
+					body: expect.stringContaining(
+						'registration%5Bemail%5D=test%40example.com',
+					),
 					mediaType: 'application/x-www-form-urlencoded',
 				},
 			);

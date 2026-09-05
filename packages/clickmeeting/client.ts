@@ -27,7 +27,8 @@ export async function makeClickmeetingRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query, mediaType } = options;
 
-	const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
+	const isFormData =
+		typeof FormData !== 'undefined' && body instanceof FormData;
 	const resolvedMediaType =
 		mediaType !== undefined
 			? mediaType
