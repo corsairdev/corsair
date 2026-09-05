@@ -6,7 +6,11 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return (
+				msg.includes('rate_limited') ||
+				msg.includes('ratelimited') ||
+				msg.includes('429')
+			);
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
@@ -22,10 +26,31 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
+	},
+	PERMISSION_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 403) return true;
+			const msg = error.message.toLowerCase();
+			return (
+				msg.includes('forbidden') ||
+				msg.includes('permission_denied') ||
+				msg.includes('insufficient_permissions') ||
+				msg.includes('access_denied')
+			);
+		},
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
+	},
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 404) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('not_found') || msg.includes('404');
+		},
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
-		match: () => true,
-		handler: async () => ({ maxRetries: 0 }),
+		match: (_error: Error) => true,
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

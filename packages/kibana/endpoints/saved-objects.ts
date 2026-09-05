@@ -86,6 +86,35 @@ export const create: KibanaEndpoints['savedObjectsCreate'] = async (
 	return response;
 };
 
+export const update: KibanaEndpoints['savedObjectsUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const baseUrl = ctx.options.baseUrl ?? (await ctx.keys.get_base_url()) ?? '';
+	const response = await makeKibanaRequest<
+		KibanaEndpointOutputs['savedObjectsUpdate']
+	>(
+		`api/saved_objects/${encodeURIComponent(input.type)}/${encodeURIComponent(input.id)}`,
+		baseUrl,
+		ctx.key,
+		{
+			method: 'PUT',
+			body: {
+				attributes: input.attributes,
+				...(input.references && { references: input.references }),
+			},
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'kibana.savedObjects.update',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
 export const remove: KibanaEndpoints['savedObjectsDelete'] = async (
 	ctx,
 	input,

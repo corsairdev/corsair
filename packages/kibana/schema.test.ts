@@ -1,6 +1,38 @@
 import {
+	AlertingRuleCreateInputSchema,
+	AlertingRuleDeleteInputSchema,
+	AlertingRulesListInputSchema,
+	AlertsFindInputSchema,
+	CasesCreateInputSchema,
+	CasesListInputSchema,
+	ConnectorTypesListInputSchema,
+	ConnectorsCreateInputSchema,
+	ConnectorsDeleteInputSchema,
+	ConnectorsGetInputSchema,
+	DashboardsCreateInputSchema,
+	DashboardsDeleteInputSchema,
+	DashboardsGetInputSchema,
+	DashboardsSearchInputSchema,
+	DashboardsUpsertInputSchema,
+	DataViewsCreateInputSchema,
 	DataViewsGetInputSchema,
 	DataViewsGetResponseSchema,
+	DataViewsListInputSchema,
+	DetectionRulesFindInputSchema,
+	EndpointListItemsInputSchema,
+	EntityStoreEntitiesListInputSchema,
+	EntityStoreStatusInputSchema,
+	FleetAgentPoliciesListInputSchema,
+	FleetCheckPermissionsInputSchema,
+	FleetEnrollmentKeyGetInputSchema,
+	FleetEpmPackageDetailsInputSchema,
+	FleetOutputDeleteInputSchema,
+	FleetServerHostGetInputSchema,
+	IndexIndicesInputSchema,
+	ListsDeleteInputSchema,
+	NodeMetricsInputSchema,
+	OsquerySavedQueryDeleteInputSchema,
+	ReportingJobsListInputSchema,
 	SavedObjectsCreateInputSchema,
 	SavedObjectsCreateResponseSchema,
 	SavedObjectsDeleteInputSchema,
@@ -9,6 +41,8 @@ import {
 	SavedObjectsFindResponseSchema,
 	SavedObjectsGetInputSchema,
 	SavedObjectsGetResponseSchema,
+	SavedObjectsUpdateInputSchema,
+	SavedObjectsUpdateResponseSchema,
 	StatusGetInputSchema,
 	StatusGetResponseSchema,
 } from './endpoints/types';
@@ -153,6 +187,172 @@ describe('Kibana Schema & Validation', () => {
 				status: { overall: { state: 'green', title: 'Green' } },
 			};
 			expect(StatusGetResponseSchema.safeParse(output).success).toBe(true);
+		});
+
+		it('validates savedObjectsUpdate input and output schemas', () => {
+			const input = {
+				type: 'dashboard',
+				id: 'dash-1',
+				attributes: { title: 'Updated' },
+			};
+			expect(SavedObjectsUpdateInputSchema.safeParse(input).success).toBe(
+				true,
+			);
+
+			const output = {
+				id: 'dash-1',
+				type: 'dashboard',
+				attributes: { title: 'Updated' },
+			};
+			expect(SavedObjectsUpdateResponseSchema.safeParse(output).success).toBe(
+				true,
+			);
+		});
+
+		it('rejects invalid inputs', () => {
+			expect(
+				SavedObjectsGetInputSchema.safeParse({ type: 'dashboard' }).success,
+			).toBe(false);
+			expect(
+				SavedObjectsCreateInputSchema.safeParse({ type: 'dashboard' }).success,
+			).toBe(false);
+			expect(
+				SavedObjectsUpdateInputSchema.safeParse({
+					type: 'dashboard',
+					id: 'dash-1',
+				}).success,
+			).toBe(false);
+			expect(DataViewsGetInputSchema.safeParse({}).success).toBe(false);
+			expect(
+				SavedObjectsFindResponseSchema.safeParse({
+					total: 1,
+					saved_objects: [{ id: '1' }],
+				}).success,
+			).toBe(false);
+		});
+
+		it('validates dashboards schemas', () => {
+			expect(DashboardsSearchInputSchema.safeParse({ search: 'x' }).success).toBe(
+				true,
+			);
+			expect(DashboardsCreateInputSchema.safeParse({ title: 'T' }).success).toBe(
+				true,
+			);
+			expect(DashboardsCreateInputSchema.safeParse({}).success).toBe(false);
+			expect(DashboardsGetInputSchema.safeParse({}).success).toBe(false);
+			expect(DashboardsUpsertInputSchema.safeParse({ id: 'd1' }).success).toBe(
+				true,
+			);
+			expect(DashboardsDeleteInputSchema.safeParse({ id: 'd1' }).success).toBe(
+				true,
+			);
+			expect(DashboardsUpsertInputSchema.safeParse({}).success).toBe(false);
+		});
+
+		it('validates alerting schemas', () => {
+			expect(
+				AlertingRuleCreateInputSchema.safeParse({ id: 'r', body: {} }).success,
+			).toBe(true);
+			expect(AlertingRuleCreateInputSchema.safeParse({ id: 'r' }).success).toBe(
+				false,
+			);
+			expect(AlertingRulesListInputSchema.safeParse({ page: 1 }).success).toBe(
+				true,
+			);
+			expect(AlertingRuleDeleteInputSchema.safeParse({}).success).toBe(false);
+			expect(AlertingRuleDeleteInputSchema.safeParse({ id: 'r' }).success).toBe(
+				true,
+			);
+		});
+
+		it('validates cases + connectors schemas', () => {
+			expect(
+				CasesCreateInputSchema.safeParse({ title: 'T', description: 'D' })
+					.success,
+			).toBe(true);
+			expect(CasesCreateInputSchema.safeParse({ title: 'T' }).success).toBe(
+				false,
+			);
+			expect(CasesListInputSchema.safeParse({ status: 'open' }).success).toBe(
+				true,
+			);
+			expect(
+				ConnectorsCreateInputSchema.safeParse({
+					id: 'k',
+					connector_type_id: '.webhook',
+					name: 'N',
+				}).success,
+			).toBe(true);
+			expect(ConnectorsCreateInputSchema.safeParse({ id: 'k' }).success).toBe(
+				false,
+			);
+			expect(ConnectorsGetInputSchema.safeParse({}).success).toBe(false);
+			expect(ConnectorsDeleteInputSchema.safeParse({ id: 'k' }).success).toBe(
+				true,
+			);
+			expect(ConnectorTypesListInputSchema.safeParse({}).success).toBe(true);
+		});
+
+		it('validates fleet schemas', () => {
+			expect(FleetCheckPermissionsInputSchema.safeParse({}).success).toBe(true);
+			expect(
+				FleetAgentPoliciesListInputSchema.safeParse({ page: 1 }).success,
+			).toBe(true);
+			expect(FleetEnrollmentKeyGetInputSchema.safeParse({}).success).toBe(false);
+			expect(
+				FleetEnrollmentKeyGetInputSchema.safeParse({ keyId: 'k' }).success,
+			).toBe(true);
+			expect(FleetServerHostGetInputSchema.safeParse({}).success).toBe(false);
+			expect(
+				FleetOutputDeleteInputSchema.safeParse({ outputId: 'o' }).success,
+			).toBe(true);
+			expect(
+				FleetEpmPackageDetailsInputSchema.safeParse({ pkgName: 'x' }).success,
+			).toBe(false);
+			expect(
+				FleetEpmPackageDetailsInputSchema.safeParse({
+					pkgName: 'x',
+					pkgVersion: '1',
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates detection + security + lists schemas', () => {
+			expect(DetectionRulesFindInputSchema.safeParse({ page: 1 }).success).toBe(
+				true,
+			);
+			expect(DetectionRulesFindInputSchema.safeParse({ page: 'x' }).success).toBe(
+				false,
+			);
+			expect(AlertsFindInputSchema.safeParse({}).success).toBe(true);
+			expect(EndpointListItemsInputSchema.safeParse({}).success).toBe(true);
+			expect(EntityStoreStatusInputSchema.safeParse({}).success).toBe(true);
+			expect(
+				EntityStoreEntitiesListInputSchema.safeParse({ size: 5 }).success,
+			).toBe(true);
+			expect(
+				EntityStoreEntitiesListInputSchema.safeParse({ size: 'x' }).success,
+			).toBe(false);
+			expect(ListsDeleteInputSchema.safeParse({ id: 'l' }).success).toBe(true);
+			expect(ListsDeleteInputSchema.safeParse({}).success).toBe(false);
+			expect(
+				OsquerySavedQueryDeleteInputSchema.safeParse({ id: 'q' }).success,
+			).toBe(true);
+			expect(OsquerySavedQueryDeleteInputSchema.safeParse({}).success).toBe(
+				false,
+			);
+		});
+
+		it('validates data views list/create + reporting/metrics/index schemas', () => {
+			expect(DataViewsListInputSchema.safeParse({}).success).toBe(true);
+			expect(
+				DataViewsCreateInputSchema.safeParse({ title: 'logs-*' }).success,
+			).toBe(true);
+			expect(DataViewsCreateInputSchema.safeParse({}).success).toBe(false);
+			expect(ReportingJobsListInputSchema.safeParse({}).success).toBe(true);
+			expect(NodeMetricsInputSchema.safeParse({}).success).toBe(true);
+			expect(NodeMetricsInputSchema.safeParse({ node_id: 5 }).success).toBe(false);
+			expect(IndexIndicesInputSchema.safeParse({}).success).toBe(true);
 		});
 	});
 });

@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const KibanaSavedObject = z.object({
 	id: z.string(),
 	type: z.string(),
-	attributes: z.record(z.string(), z.any()),
+	attributes: z.record(z.string(), z.unknown()),
 	version: z.string().optional(),
 	updated_at: z.string().optional(),
 	created_at: z.string().optional(),
@@ -23,8 +23,8 @@ export const KibanaDataView = z.object({
 	title: z.string(),
 	name: z.string().optional(),
 	timeFieldName: z.string().optional(),
-	sourceFilters: z.array(z.record(z.string(), z.any())).optional(),
-	fields: z.record(z.string(), z.any()).optional(),
+	sourceFilters: z.array(z.record(z.string(), z.unknown())).optional(),
+	fields: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type KibanaSavedObject = z.infer<typeof KibanaSavedObject>;

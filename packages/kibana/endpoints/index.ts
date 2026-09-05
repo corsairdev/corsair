@@ -1,3 +1,13 @@
+export * as Alerting from './alerting';
+export * as Cases from './cases';
+export * as Connectors from './connectors';
+export * as Dashboards from './dashboards';
 export * as DataViews from './data-views';
+export * as DataViewsExt from './data-views-ext';
+export * as DetectionEngine from './detection-engine';
+export * as Fleet from './fleet';
+export * as ListsOsquery from './lists-osquery';
+export * as OpsUnverified from './ops-unverified';
 export * as SavedObjects from './saved-objects';
+export * as Security from './security';
 export * as Status from './status';
