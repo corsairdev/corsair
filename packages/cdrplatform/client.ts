@@ -1,13 +1,23 @@
+import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class CdrPlatformAPIError extends Error {
+	readonly status?: number;
+	readonly retryAfter?: number;
+
 	constructor(
 		message: string,
-		public readonly code?: string,
+		options: {
+			code?: string;
+			status?: number;
+			retryAfter?: number;
+		} = {},
 	) {
 		super(message);
 		this.name = 'CdrPlatformAPIError';
+		this.status = options.status;
+		this.retryAfter = options.retryAfter;
 	}
 }
 
@@ -25,10 +35,7 @@ export async function makeCdrPlatformRequest<T>(
 	const { method = 'GET', body, query } = options;
 
 	if (!apiKey) {
-		throw new CdrPlatformAPIError(
-			'CDR Platform API key is required.',
-			'MISSING_API_KEY',
-		);
+		throw new AuthMissingError('cdrplatform', 'api_key');
 	}
 
 	const config: OpenAPIConfig = {
@@ -57,6 +64,10 @@ export async function makeCdrPlatformRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError || error instanceof CdrPlatformAPIError) {
+			throw error;
+		}
+
 		if (error instanceof Error) {
 			throw new CdrPlatformAPIError(error.message);
 		}
