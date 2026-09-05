@@ -68,6 +68,7 @@ export const BaseProviders = [
 	'basin',
 	'backendless',
 	'beeminder',
+	'benzinga',
 	'bettercontact',
 	'betterstack',
 	'bigdatacloud',
@@ -278,6 +279,7 @@ export const ProviderDisplayNames = {
 	basin: 'Basin',
 	backendless: 'Backendless',
 	beeminder: 'Beeminder',
+	benzinga: 'Benzinga',
 	bettercontact: 'BetterContact',
 	betterstack: 'Better Stack',
 	bigdatacloud: 'BigDataCloud',
@@ -495,6 +497,7 @@ export type AllProviders =
 	| 'basin'
 	| 'backendless'
 	| 'beeminder'
+	| 'benzinga'
 	| 'bettercontact'
 	| 'betterstack'
 	| 'bigdatacloud'

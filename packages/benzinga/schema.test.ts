@@ -1,3 +1,5 @@
+import { BenzingaEndpointInputSchemas } from './endpoints/types';
+import { benzingaEndpointSchemas } from './index';
 import { BenzingaSchema } from './schema';
 
 describe('Benzinga schema', () => {
@@ -16,5 +18,43 @@ describe('Benzinga schema', () => {
 	});
 });
 
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
+describe('Benzinga endpoint registry', () => {
+	it('registers all ten endpoints with input and output schemas', () => {
+		const keys = Object.keys(benzingaEndpointSchemas);
+		expect(keys).toHaveLength(10);
+		expect(keys).toContain('news.get');
+		expect(keys).toContain('news.listChannels');
+		expect(keys).toContain('calendar.listEarnings');
+		expect(keys).toContain('calendar.listDividends');
+		expect(keys).toContain('calendar.listRatings');
+		expect(keys).toContain('calendar.listGuidance');
+		expect(keys).toContain('calendar.listIpos');
+		expect(keys).toContain('calendar.listSplits');
+		expect(keys).toContain('calendar.listEconomics');
+		expect(keys).toContain('webhook.testDelivery');
+		for (const key of keys) {
+			const entry =
+				benzingaEndpointSchemas[key as keyof typeof benzingaEndpointSchemas];
+			expect(entry.input).toBeDefined();
+			expect(entry.output).toBeDefined();
+		}
+	});
+
+	it('exposes matching input schemas for every registered endpoint', () => {
+		expect(benzingaEndpointSchemas['news.get'].input).toBe(
+			BenzingaEndpointInputSchemas.getNews,
+		);
+		expect(benzingaEndpointSchemas['calendar.listEarnings'].input).toBe(
+			BenzingaEndpointInputSchemas.listEarnings,
+		);
+		expect(benzingaEndpointSchemas['calendar.listDividends'].input).toBe(
+			BenzingaEndpointInputSchemas.listDividends,
+		);
+		expect(benzingaEndpointSchemas['calendar.listRatings'].input).toBe(
+			BenzingaEndpointInputSchemas.listRatings,
+		);
+		expect(benzingaEndpointSchemas['webhook.testDelivery'].input).toBe(
+			BenzingaEndpointInputSchemas.testWebhookDelivery,
+		);
+	});
+});

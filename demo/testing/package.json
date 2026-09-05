@@ -26,7 +26,6 @@
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.0",
     "@corsair-dev/agentql": "workspace:*",
-    "@corsair-dev/benzinga": "workspace:*",
     "@corsair-dev/bitwarden": "workspace:*",
     "@corsair-dev/cursor": "workspace:*",
     "@corsair-dev/firecrawl": "workspace:*",

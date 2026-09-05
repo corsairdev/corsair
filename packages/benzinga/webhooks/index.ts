@@ -1,7 +1,7 @@
-import { example } from './example';
+import { data } from './data';
 
-export const ExampleWebhooks = {
-	example: example,
+export const BenzingaWebhooks = {
+	data,
 };
 
 export * from './oauth-tenant-link';

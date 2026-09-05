@@ -1,9 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BenzingaWebhooks } from '..';
-import { createBenzingaMatch, verifyBenzingaWebhookSignature } from './types';
+import {
+	matchBenzingaDataWebhook,
+	verifyBenzingaWebhookSignature,
+} from './types';
 
-export const example: BenzingaWebhooks['example'] = {
-	match: createBenzingaMatch('example'),
+export const data: BenzingaWebhooks['data'] = {
+	match: matchBenzingaDataWebhook,
 
 	handler: async (ctx, request) => {
 		const verification = verifyBenzingaWebhookSignature(request, ctx.key);
@@ -16,14 +19,11 @@ export const example: BenzingaWebhooks['example'] = {
 		}
 
 		const event = request.payload;
-		if (event.type !== 'example') {
-			return { success: true, data: undefined };
-		}
 
 		await logEventFromContext(
 			ctx,
-			'benzinga.webhook.example',
-			{ ...event },
+			'benzinga.webhook.data',
+			{ id: event.id, kind: event.kind },
 			'completed',
 		);
 
