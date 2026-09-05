@@ -1,16 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
-export class WhoisfreaksAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'WhoisfreaksAPIError';
-	}
-}
-
 const WHOISFREAKS_API_BASE = 'https://api.whoisfreaks.com';
 
 export async function makeWhoisfreaksRequest<T>(
@@ -48,13 +38,7 @@ export async function makeWhoisfreaksRequest<T>(
 		},
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new WhoisfreaksAPIError(error.message);
-		}
-
-		throw new WhoisfreaksAPIError('Unknown error');
-	}
+	// ApiError is intentionally rethrown unchanged so the plugin's
+	// error-handlers can match on status (429/401/404) and retryAfter.
+	return await request<T>(config, requestOptions);
 }

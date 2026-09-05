@@ -3,28 +3,32 @@ import type { WhoisfreaksEndpoints } from '..';
 import { makeWhoisfreaksRequest } from '../client';
 import type { WhoisfreaksEndpointOutputs } from './types';
 
-export const whoisLiveLookupV2: WhoisfreaksEndpoints['whoisLiveLookupV2'] =
+export const typosquattingLookup: WhoisfreaksEndpoints['typosquattingLookup'] =
 	async (ctx, input) => {
 		const response = await makeWhoisfreaksRequest<
-			WhoisfreaksEndpointOutputs['whoisLiveLookupV2']
-		>('/v2.0/whois/live', ctx.key, {
+			WhoisfreaksEndpointOutputs['typosquattingLookup']
+		>('/v3.0/domain/typos', ctx.key, {
 			method: 'GET',
 			query: {
-				whois: 'live',
-				domainName: input.domainName,
-				format: input.format,
+				keyword: input.keyword,
+				pattern: input.pattern,
+				pageToken: input.pageToken,
 			},
 		});
 
 		await logEventFromContext(
 			ctx,
-			'whoisfreaks.whois.live_lookup_v2',
+			'whoisfreaks.typosquatting.lookup',
 			{
-				domainName: input.domainName,
-				format: input.format,
+				keyword: input.keyword,
+				pattern: input.pattern,
 			},
 			'completed',
 		);
 
 		return response;
 	};
+
+export const Typosquatting = {
+	lookup: typosquattingLookup,
+};
