@@ -45,7 +45,7 @@ describe('Whautomate endpoint schemas', () => {
 		'updateService',
 	] as const;
 
-	// Trigger CI re-run
+	// CI re-run for demo video detection
 
 	describe('input schemas', () => {
 		for (const endpoint of endpoints) {

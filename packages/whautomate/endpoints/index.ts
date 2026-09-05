@@ -11,7 +11,7 @@ import {
 	deleteServiceCategory,
 	getServiceCategories,
 	ServiceCategories,
-} from './serviceCategories';
+} from './service-categories';
 import {
 	getServiceById,
 	getServices,
