@@ -27,6 +27,9 @@ const mockRequest = makeBlackbaudRequest as jest.Mock;
 const mockLogEvent = logEventFromContext as jest.Mock;
 
 function testCtx(subscriptionKey = 'test-sub-key'): BlackbaudContext {
+	// Test-only minimal context: handlers read only key/options while
+	// logEventFromContext is mocked above, so no other context members are
+	// touched - the assertion is safe.
 	return {
 		key: 'test-access-token',
 		options: { subscriptionKey },
@@ -181,6 +184,8 @@ describe('Blackbaud endpoints', () => {
 	});
 
 	it('oneRoster rejects unsupported operations', async () => {
+		// Intentionally invalid input that bypasses static types, to verify the
+		// runtime guard rejects unsupported operations - safe in tests only.
 		await expect(
 			oneRosterOAuth2BaseApi(testCtx(), {
 				operation: 'token',
