@@ -27,7 +27,7 @@ export type GetCampaignPdfAnalysisInput = z.infer<
 	typeof GetCampaignPdfAnalysisInputSchema
 >;
 
-const GetCampaignPdfAnalysisResponseSchema = z.record(z.string(), z.unknown());
+const GetCampaignPdfAnalysisResponseSchema = z.instanceof(ArrayBuffer);
 
 export type GetCampaignPdfAnalysisResponse = z.infer<
 	typeof GetCampaignPdfAnalysisResponseSchema
@@ -67,7 +67,7 @@ export type GetCampaignStatusInput = z.infer<
 >;
 
 const GetCampaignStatusResponseSchema = z.object({
-	campaign_status: CampaignSchema.optional(),
+	campaign_status: CampaignSchema,
 });
 
 export type GetCampaignStatusResponse = z.infer<

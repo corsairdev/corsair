@@ -1,10 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 
 import { makeCampaignCleanerRequest } from '../client';
+
 import type {
 	CampaignCleanerEndpointInputs,
 	CampaignCleanerEndpointOutputs,
 } from './types';
+
 import {
 	CampaignCleanerEndpointInputSchemas,
 	CampaignCleanerEndpointOutputSchemas,
@@ -104,6 +106,7 @@ export const GetCampaignPdfAnalysis = {
 			CampaignCleanerEndpointOutputs['getCampaignPdfAnalysis']
 		>('v1/get_campaign_pdf_analysis', ctx.key, {
 			method: 'POST',
+			responseType: 'arrayBuffer',
 			body: {
 				campaign: {
 					id: validatedInput.campaignId,

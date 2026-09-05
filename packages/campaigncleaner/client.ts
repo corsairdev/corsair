@@ -15,16 +15,29 @@ export class CampaignCleanerAPIError extends Error {
 
 const CAMPAIGNCLEANER_API_BASE = 'https://api.campaigncleaner.com';
 
+type CampaignCleanerRequestOptions = {
+	method?: 'GET' | 'POST' | 'DELETE';
+	body?: Record<string, unknown>;
+	query?: Record<string, string | number | boolean | undefined>;
+	responseType?: 'json' | 'arrayBuffer';
+};
+
 export async function makeCampaignCleanerRequest<T>(
 	endpoint: string,
 	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'DELETE';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	options: CampaignCleanerRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, responseType = 'json' } = options;
+
+	if (responseType === 'arrayBuffer') {
+		return makeCampaignCleanerBinaryRequest<T>(
+			endpoint,
+			apiKey,
+			method,
+			body,
+			query,
+		);
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: CAMPAIGNCLEANER_API_BASE,
@@ -49,22 +62,107 @@ export async function makeCampaignCleanerRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof ApiError) {
+		throw normalizeCampaignCleanerError(error);
+	}
+}
+
+async function makeCampaignCleanerBinaryRequest<T>(
+	endpoint: string,
+	apiKey: string,
+	method: 'GET' | 'POST' | 'DELETE',
+	body?: Record<string, unknown>,
+	query?: Record<string, string | number | boolean | undefined>,
+): Promise<T> {
+	const url = new URL(`${CAMPAIGNCLEANER_API_BASE}/${endpoint}`);
+
+	if (query) {
+		for (const [key, value] of Object.entries(query)) {
+			if (value !== undefined) {
+				url.searchParams.set(key, String(value));
+			}
+		}
+	}
+
+	try {
+		const response = await fetch(url, {
+			method,
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CC-API-Key': apiKey,
+			},
+			body: method === 'POST' ? JSON.stringify(body) : undefined,
+			credentials: 'omit',
+			redirect: 'error',
+		});
+
+		if (!response.ok) {
+			const retryAfterHeader = response.headers.get('Retry-After');
+
+			const retryAfter = retryAfterHeader
+				? Number(retryAfterHeader)
+				: undefined;
+
+			let message = `Campaign Cleaner API request failed with status ${response.status}`;
+
+			const contentType = response.headers.get('Content-Type') ?? '';
+
+			if (contentType.toLowerCase().includes('application/json')) {
+				try {
+					const errorBody = (await response.json()) as {
+						message?: string;
+						error?: string;
+						detail?: string;
+					};
+
+					message =
+						errorBody.message ?? errorBody.error ?? errorBody.detail ?? message;
+				} catch {
+					// Keep the status-based error message.
+				}
+			}
+
 			throw new CampaignCleanerAPIError(
-				error.message,
-				error.status,
-				error.retryAfter,
+				message,
+				response.status,
+				Number.isNaN(retryAfter) ? undefined : retryAfter,
 			);
 		}
 
-		if (error instanceof CampaignCleanerAPIError) {
-			throw error;
+		const contentType = response.headers.get('Content-Type') ?? '';
+
+		if (!contentType.toLowerCase().startsWith('application/pdf')) {
+			throw new CampaignCleanerAPIError(
+				`Expected application/pdf response but received ${
+					contentType || 'unknown content type'
+				}`,
+				response.status,
+			);
 		}
 
-		if (error instanceof Error) {
-			throw new CampaignCleanerAPIError(error.message);
-		}
-
-		throw new CampaignCleanerAPIError('Unknown error');
+		return (await response.arrayBuffer()) as T;
+	} catch (error) {
+		throw normalizeCampaignCleanerError(error);
 	}
+}
+
+function normalizeCampaignCleanerError(
+	error: unknown,
+): CampaignCleanerAPIError {
+	if (error instanceof CampaignCleanerAPIError) {
+		return error;
+	}
+
+	if (error instanceof ApiError) {
+		return new CampaignCleanerAPIError(
+			error.message,
+			error.status,
+			error.retryAfter,
+		);
+	}
+
+	if (error instanceof Error) {
+		return new CampaignCleanerAPIError(error.message);
+	}
+
+	return new CampaignCleanerAPIError('Unknown error');
 }

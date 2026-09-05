@@ -1,4 +1,5 @@
 import { makeCampaignCleanerRequest } from './client';
+
 import {
 	DeleteCampaign,
 	GetCampaignList,
@@ -6,6 +7,7 @@ import {
 	GetCampaignStatus,
 	GetCredits,
 } from './endpoints';
+
 import { CampaignCleanerSchema } from './schema';
 
 jest.mock('./client', () => ({
@@ -37,7 +39,6 @@ describe('CampaignCleaner schema', () => {
 	it('declares an entities map', () => {
 		expect(typeof CampaignCleanerSchema.entities).toBe('object');
 		expect(CampaignCleanerSchema.entities).not.toBeNull();
-
 		expect(Array.isArray(Object.keys(CampaignCleanerSchema.entities))).toBe(
 			true,
 		);
@@ -147,10 +148,8 @@ describe('CampaignCleaner endpoints', () => {
 		});
 	});
 
-	it('getCampaignPdfAnalysis sends the correct request and returns the response', async () => {
-		const pdfResponse = {
-			analysis: 'Campaign analysis',
-		};
+	it('getCampaignPdfAnalysis sends the correct request and returns the PDF response', async () => {
+		const pdfResponse = new ArrayBuffer(8);
 
 		mockRequest.mockResolvedValueOnce(pdfResponse);
 
@@ -163,6 +162,7 @@ describe('CampaignCleaner endpoints', () => {
 			'test-api-key',
 			{
 				method: 'POST',
+				responseType: 'arrayBuffer',
 				body: {
 					campaign: {
 						id: 'campaign-123',
@@ -171,7 +171,7 @@ describe('CampaignCleaner endpoints', () => {
 			},
 		);
 
-		expect(result).toEqual(pdfResponse);
+		expect(result).toBe(pdfResponse);
 	});
 
 	it('getCredits sends the correct request and validates the response', async () => {
@@ -268,11 +268,33 @@ describe('CampaignCleaner response validation', () => {
 		).rejects.toThrow();
 	});
 
+	it('rejects an empty getCampaignStatus response', async () => {
+		mockRequest.mockResolvedValueOnce({});
+
+		await expect(
+			GetCampaignStatus.status(ctx, {
+				campaignId: 'campaign-123',
+			}),
+		).rejects.toThrow();
+	});
+
 	it('rejects an invalid getCredits response', async () => {
 		mockRequest.mockResolvedValueOnce({
 			credits: 'invalid',
 		});
 
 		await expect(GetCredits.credits(ctx, {})).rejects.toThrow();
+	});
+
+	it('rejects an invalid getCampaignPdfAnalysis response', async () => {
+		mockRequest.mockResolvedValueOnce({
+			analysis: 'invalid-pdf-response',
+		});
+
+		await expect(
+			GetCampaignPdfAnalysis.pdfAnalysis(ctx, {
+				campaignId: 'campaign-123',
+			}),
+		).rejects.toThrow();
 	});
 });
