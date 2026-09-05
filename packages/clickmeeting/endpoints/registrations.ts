@@ -4,12 +4,21 @@ import type { ClickmeetingEndpoints } from '../index';
 
 export const registerParticipant: ClickmeetingEndpoints['registerParticipant'] =
 	async (ctx, input) => {
+		const params = new URLSearchParams();
+		if (input.registration && typeof input.registration === 'object') {
+			for (const [key, value] of Object.entries(input.registration)) {
+				if (value !== undefined && value !== null) {
+					params.append(`registration[${key}]`, String(value));
+				}
+			}
+		}
 		const res = await makeClickmeetingRequest<any>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/registration`,
 			ctx.key,
 			{
 				method: 'POST',
-				body: { registration: input.registration },
+				body: params.toString(),
+				mediaType: 'application/x-www-form-urlencoded',
 			},
 		);
 		await logEventFromContext(

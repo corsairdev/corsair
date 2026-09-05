@@ -20,11 +20,20 @@ export async function makeClickmeetingRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		body?: any;
+		mediaType?: string;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, mediaType } = options;
+
+	const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
+	const resolvedMediaType =
+		mediaType !== undefined
+			? mediaType
+			: isFormData
+				? undefined
+				: 'application/json; charset=utf-8';
 
 	const config: OpenAPIConfig = {
 		BASE: CLICKMEETING_API_BASE,
@@ -33,7 +42,6 @@ export async function makeClickmeetingRequest<T>(
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
 		HEADERS: {
-			'Content-Type': 'application/json',
 			'X-Api-Key': apiKey,
 		},
 	};
@@ -45,7 +53,7 @@ export async function makeClickmeetingRequest<T>(
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body
 				: undefined,
-		mediaType: 'application/json; charset=utf-8',
+		mediaType: resolvedMediaType,
 		query,
 	};
 

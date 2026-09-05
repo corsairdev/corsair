@@ -48,6 +48,8 @@ export const TokenItemSchema = z
 	.object({
 		token: z.string().optional(),
 		email: z.string().optional(),
+		sent_to_email: z.string().nullable().optional(),
+		first_use_date: z.string().nullable().optional(),
 		status: z.string().optional(),
 	})
 	.passthrough();
@@ -177,7 +179,11 @@ export const GetConferencesOutputSchema = z.array(ConferenceItemSchema);
 export const GetConferenceDetailsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]).describe('Conference / Room ID'),
 });
-export const GetConferenceDetailsOutputSchema = ConferenceItemSchema;
+export const GetConferenceDetailsOutputSchema = z
+	.object({
+		conference: ConferenceItemSchema.optional(),
+	})
+	.passthrough();
 
 export const CreateConferenceInputSchema = z
 	.object({
@@ -214,7 +220,11 @@ export const CreateConferenceInputSchema = z
 			path: ['password'],
 		},
 	);
-export const CreateConferenceOutputSchema = ConferenceItemSchema;
+export const CreateConferenceOutputSchema = z
+	.object({
+		room: ConferenceItemSchema.optional(),
+	})
+	.passthrough();
 
 export const UpdateConferenceInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
@@ -301,25 +311,25 @@ export const CreateAccessTokensInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	how_many: z.number().default(1).optional(),
 });
-export const CreateAccessTokensOutputSchema = z
+
+export const AccessTokensEnvelopeSchema = z
 	.object({
-		tokens: z.array(z.string()).optional(),
-		status: z.string().optional(),
+		access_tokens: z.array(TokenItemSchema).optional(),
 	})
 	.passthrough();
+
+export const CreateAccessTokensOutputSchema = AccessTokensEnvelopeSchema;
 
 export const ListAccessTokensInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 });
-export const ListAccessTokensOutputSchema = z.array(TokenItemSchema);
+export const ListAccessTokensOutputSchema = AccessTokensEnvelopeSchema;
 
 export const GetTokenByEmailInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	email: z.string().email(),
 });
-export const GetTokenByEmailOutputSchema = z
-	.array(z.string())
-	.describe('Array of token strings for the given email');
+export const GetTokenByEmailOutputSchema = AccessTokensEnvelopeSchema;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Registrations Schemas

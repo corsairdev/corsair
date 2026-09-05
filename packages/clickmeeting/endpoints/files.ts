@@ -44,9 +44,15 @@ export const uploadFile: ClickmeetingEndpoints['uploadFile'] = async (
 	ctx,
 	input,
 ) => {
+	const formData = new FormData();
+	const blob = new Blob([input.content]);
+	formData.append('uploaded', blob, input.name);
+	if (input.conference_id !== undefined) {
+		formData.append('conference_id', String(input.conference_id));
+	}
 	const res = await makeClickmeetingRequest<any>('/file-library', ctx.key, {
 		method: 'POST',
-		body: input,
+		body: formData,
 	});
 	await logEventFromContext(
 		ctx,

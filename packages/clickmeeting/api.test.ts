@@ -120,7 +120,7 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 		});
 
 		it('getConferenceDetails', async () => {
-			const mockDetails = { id: 101, name: 'AI Webinar' };
+			const mockDetails = { conference: { id: 101, name: 'AI Webinar' } };
 			mockMakeRequest.mockResolvedValueOnce(mockDetails);
 			const result = await plugin.endpoints!.conferences.getConferenceDetails(
 				mockContext,
@@ -139,7 +139,7 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 		});
 
 		it('createConference', async () => {
-			const mockCreated = { id: 202, name: 'Hackathon Workshop' };
+			const mockCreated = { room: { id: 202, name: 'Hackathon Workshop' } };
 			mockMakeRequest.mockResolvedValueOnce(mockCreated);
 			const result = await plugin.endpoints!.conferences.createConference(
 				mockContext,
@@ -283,7 +283,9 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 	// ─────────────────────────────────────────────────────────────────────────
 	describe('tokens endpoints', () => {
 		it('createAccessTokens', async () => {
-			mockMakeRequest.mockResolvedValueOnce({ tokens: ['token_1'] });
+			mockMakeRequest.mockResolvedValueOnce({
+				access_tokens: [{ token: 'token_1' }],
+			});
 			const result = await plugin.endpoints!.tokens.createAccessTokens(
 				mockContext,
 				{
@@ -299,11 +301,13 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 					body: { how_many: 1 },
 				},
 			);
-			expect(result).toEqual({ tokens: ['token_1'] });
+			expect(result).toEqual({ access_tokens: [{ token: 'token_1' }] });
 		});
 
 		it('listAccessTokens', async () => {
-			const mockTokens = [{ token: 'token_1', status: 'active' }];
+			const mockTokens = {
+				access_tokens: [{ token: 'token_1', status: 'active' }],
+			};
 			mockMakeRequest.mockResolvedValueOnce(mockTokens);
 			const result = await plugin.endpoints!.tokens.listAccessTokens(
 				mockContext,
@@ -322,7 +326,9 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 		});
 
 		it('getTokenByEmail', async () => {
-			const mockToken = ['token_abc123'];
+			const mockToken = {
+				access_tokens: [{ token: 'token_abc123', email: 'user@example.com' }],
+			};
 			mockMakeRequest.mockResolvedValueOnce(mockToken);
 			const result = await plugin.endpoints!.tokens.getTokenByEmail(
 				mockContext,
@@ -361,9 +367,8 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 				'test_api_key',
 				{
 					method: 'POST',
-					body: {
-						registration: { email: 'test@example.com', first_name: 'Test' },
-					},
+					body: expect.stringContaining('registration%5Bemail%5D=test%40example.com'),
+					mediaType: 'application/x-www-form-urlencoded',
 				},
 			);
 			expect(result).toEqual({ registration_hash: 'reg_xyz' });
@@ -853,7 +858,7 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 				'test_api_key',
 				{
 					method: 'POST',
-					body: { name: 'doc.pdf', content: 'base64string' },
+					body: expect.any(FormData),
 				},
 			);
 			expect(result).toEqual(mockUpload);
