@@ -88,7 +88,14 @@ export const nodeMetrics: KibanaEndpoints['nodeMetricsGet'] = async (
 	ctx,
 	input,
 ) => {
-	const baseUrl = await baseUrlOf(ctx);
+	// Node stats is an Elasticsearch API, not a Kibana one — it must go to
+	// the Elasticsearch host (plugin option `elasticsearchBaseUrl`), never
+	// the Kibana base URL.
+	const esBase =
+		ctx.options.elasticsearchBaseUrl ??
+		ctx.options.baseUrl ??
+		(await ctx.keys.get_base_url()) ??
+		'';
 	const metric = input.metric
 		? Array.isArray(input.metric)
 			? input.metric.join(',')
@@ -100,7 +107,7 @@ export const nodeMetrics: KibanaEndpoints['nodeMetricsGet'] = async (
 		(metric ? `/${encodeURIComponent(metric)}` : '');
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['nodeMetricsGet']
-	>(path, baseUrl, ctx.key, { method: 'GET' });
+	>(path, esBase, ctx.key, { method: 'GET' });
 	await logEventFromContext(ctx, 'kibana.metrics.nodeMetrics', { ...input }, 'completed');
 	return response;
 };

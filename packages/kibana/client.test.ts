@@ -42,6 +42,17 @@ describe('Kibana API client', () => {
 		expect(config.HEADERS['kbn-xsrf']).toBe('true');
 	});
 
+	it('does not set TOKEN so the shared layer keeps our auth scheme', async () => {
+		await makeKibanaRequest('api/status', BASE, 'raw-key-value');
+
+		const [config] = mockRequest.mock.calls[0] as [
+			{ TOKEN?: unknown; HEADERS: Record<string, string> },
+			unknown,
+		];
+		expect(config.TOKEN).toBeUndefined();
+		expect(config.HEADERS.Authorization).toBe('ApiKey raw-key-value');
+	});
+
 	it('passes through Basic credentials unchanged', async () => {
 		await makeKibanaRequest('api/status', BASE, 'Basic dXNlcjpwYXNz');
 

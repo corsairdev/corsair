@@ -267,12 +267,28 @@ describe('Kibana Schema & Validation', () => {
 
 		it('validates cases + connectors schemas', () => {
 			expect(
-				CasesCreateInputSchema.safeParse({ title: 'T', description: 'D' })
-					.success,
+				CasesCreateInputSchema.safeParse({
+					title: 'T',
+					description: 'D',
+					owner: 'sec',
+					connector: { id: 'none', type: '.none' },
+					settings: {},
+					tags: ['t1'],
+				}).success,
 			).toBe(true);
 			expect(CasesCreateInputSchema.safeParse({ title: 'T' }).success).toBe(
 				false,
 			);
+			expect(
+				CasesCreateInputSchema.safeParse({
+					title: 'T',
+					description: 'D',
+					owner: 'sec',
+					connector: {},
+					settings: {},
+					tags: [],
+				}).success,
+			).toBe(true);
 			expect(CasesListInputSchema.safeParse({ status: 'open' }).success).toBe(
 				true,
 			);

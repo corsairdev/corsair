@@ -12,6 +12,10 @@ import type { KibanaEndpointOutputs } from './types';
 export const CasesCreateInputSchema = z.object({
 	title: z.string(),
 	description: z.string(),
+	owner: z.string(),
+	connector: z.record(z.string(), z.unknown()),
+	settings: z.record(z.string(), z.unknown()),
+	tags: z.array(z.string()),
 	body: z.record(z.string(), z.unknown()).optional(),
 });
 export type CasesCreateInput = z.infer<typeof CasesCreateInputSchema>;
@@ -56,14 +60,27 @@ async function baseUrlOf(ctx: Ctx): Promise<string> {
 
 export const create: KibanaEndpoints['casesCreate'] = async (ctx, input) => {
 	const baseUrl = await baseUrlOf(ctx);
-	const { title, description, body } = input;
+	const { title, description, owner, connector, settings, tags, body } = input;
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['casesCreate']
 	>('api/cases', baseUrl, ctx.key, {
 		method: 'POST',
-		body: { title, description, ...(body ?? {}) },
+		body: {
+			...(body ?? {}),
+			title,
+			description,
+			owner,
+			connector,
+			settings,
+			tags,
+		},
 	});
-	await logEventFromContext(ctx, 'kibana.cases.create', { title }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'kibana.cases.create',
+		{ title, owner },
+		'completed',
+	);
 	return response;
 };
 

@@ -49,7 +49,10 @@ export async function makeKibanaRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		// NOTE: do NOT set TOKEN here. The shared HTTP layer unconditionally
+		// rewrites Authorization to `Bearer ${TOKEN}` (see
+		// packages/corsair/async-core/request.ts getHeaders), which would
+		// clobber the ApiKey/Basic scheme set in HEADERS below.
 		HEADERS: headers,
 	};
 

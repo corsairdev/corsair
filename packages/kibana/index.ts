@@ -42,6 +42,7 @@ export type KibanaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
 	baseUrl?: string;
+	elasticsearchBaseUrl?: string;
 	hooks?: InternalKibanaPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof kibanaEndpointsNested>;

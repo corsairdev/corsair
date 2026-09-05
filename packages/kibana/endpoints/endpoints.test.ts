@@ -388,11 +388,25 @@ describe('Kibana Endpoints', () => {
 		it('creates a case via POST', async () => {
 			mockedRequest.mockResolvedValueOnce({ id: 'c1', title: 'T' });
 
-			const res = await Cases.create(ctx, { title: 'T', description: 'D' });
+			const res = await Cases.create(ctx, {
+				title: 'T',
+				description: 'D',
+				owner: 'sec',
+				connector: { id: 'none', type: '.none' },
+				settings: {},
+				tags: ['t1'],
+			});
 
 			expect(mockedRequest).toHaveBeenCalledWith('api/cases', BASE, ctx.key, {
 				method: 'POST',
-				body: { title: 'T', description: 'D' },
+				body: {
+					title: 'T',
+					description: 'D',
+					owner: 'sec',
+					connector: { id: 'none', type: '.none' },
+					settings: {},
+					tags: ['t1'],
+				},
 			});
 			expect(res.id).toBe('c1');
 		});
@@ -809,16 +823,37 @@ describe('Kibana Endpoints', () => {
 			);
 		});
 
-		it('lists entity store entities', async () => {
+		it('lists entity store entities in page mode with filterQuery', async () => {
 			mockedRequest.mockResolvedValueOnce({ total: 0, records: [] });
 
-			await Security.entitiesList(ctx, { page: 1 });
+			await Security.entitiesList(ctx, { page: 1, filterQuery: 'user:*' });
 
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'api/security/entity_store/entities',
 				BASE,
 				ctx.key,
-				{ method: 'GET', query: { page: 1 } },
+				{ method: 'GET', query: { filterQuery: 'user:*', page: 1 } },
+			);
+		});
+
+		it('lists entity store entities in search-after mode without page params', async () => {
+			mockedRequest.mockResolvedValueOnce({ total: 0, records: [] });
+
+			await Security.entitiesList(ctx, {
+				searchAfter: '[123]',
+				size: 10,
+				filter: 'user.name: root',
+				page: 2,
+			});
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'api/security/entity_store/entities',
+				BASE,
+				ctx.key,
+				{
+					method: 'GET',
+					query: { filter: 'user.name: root', size: 10, searchAfter: '[123]' },
+				},
 			);
 		});
 	});
@@ -863,14 +898,26 @@ describe('Kibana Endpoints', () => {
 			);
 		});
 
-		it('gets node metrics', async () => {
+		it('gets node metrics against the elasticsearch base URL', async () => {
 			mockedRequest.mockResolvedValueOnce({ nodes: {} });
 
-			await OpsUnverified.nodeMetrics(ctx, {});
+			await OpsUnverified.nodeMetrics(
+				{
+					...ctx,
+					options: {
+						...ctx.options,
+						elasticsearchBaseUrl: 'https://es.example.com:9200',
+					},
+				},
+				{},
+			);
 
-			expect(mockedRequest).toHaveBeenCalledWith('_nodes/stats', BASE, ctx.key, {
-				method: 'GET',
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'_nodes/stats',
+				'https://es.example.com:9200',
+				ctx.key,
+				{ method: 'GET' },
+			);
 		});
 
 		it('lists indices', async () => {

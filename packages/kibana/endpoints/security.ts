@@ -61,9 +61,13 @@ export type EntityStoreEnginesResponse = z.infer<
 
 export const EntityStoreEntitiesListInputSchema = z.object({
 	filter: z.string().optional(),
+	filterQuery: z.string().optional(),
 	page: z.number().optional(),
 	per_page: z.number().optional(),
 	size: z.number().optional(),
+	searchAfter: z.string().optional(),
+	source: z.union([z.string(), z.array(z.string())]).optional(),
+	fields: z.union([z.string(), z.array(z.string())]).optional(),
 	sort_field: z.string().optional(),
 	sort_order: z.string().optional(),
 	entity_types: z.union([z.string(), z.array(z.string())]).optional(),
@@ -143,17 +147,31 @@ export const entitiesList: KibanaEndpoints['entityStoreEntitiesList'] = async (
 	input,
 ) => {
 	const baseUrl = await baseUrlOf(ctx);
+	// The API has two pagination modes (per spec param descriptions):
+	// - page mode: page, per_page, filterQuery, sort_field, sort_order
+	// - search-after mode: filter (KQL), size, searchAfter
+	// Mixing them returns unfiltered results or is rejected, so only send
+	// the params of the selected mode.
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.filter !== undefined) query.filter = input.filter;
-	if (input.page !== undefined) query.page = input.page;
-	if (input.per_page !== undefined) query.per_page = input.per_page;
-	if (input.size !== undefined) query.size = input.size;
-	if (input.sort_field !== undefined) query.sort_field = input.sort_field;
-	if (input.sort_order !== undefined) query.sort_order = input.sort_order;
-	if (input.entity_types !== undefined)
-		query.entity_types = Array.isArray(input.entity_types)
-			? input.entity_types.join(',')
-			: input.entity_types;
+	const joinList = (v: string | string[] | undefined) =>
+		Array.isArray(v) ? v.join(',') : v;
+	const entityTypes = joinList(input.entity_types);
+	if (entityTypes !== undefined) query.entity_types = entityTypes;
+	if (input.searchAfter !== undefined) {
+		if (input.filter !== undefined) query.filter = input.filter;
+		if (input.size !== undefined) query.size = input.size;
+		query.searchAfter = input.searchAfter;
+		const source = joinList(input.source);
+		if (source !== undefined) query.source = source;
+		const fields = joinList(input.fields);
+		if (fields !== undefined) query.fields = fields;
+	} else {
+		if (input.filterQuery !== undefined) query.filterQuery = input.filterQuery;
+		if (input.page !== undefined) query.page = input.page;
+		if (input.per_page !== undefined) query.per_page = input.per_page;
+		if (input.sort_field !== undefined) query.sort_field = input.sort_field;
+		if (input.sort_order !== undefined) query.sort_order = input.sort_order;
+	}
 	const response = await makeKibanaRequest<
 		KibanaEndpointOutputs['entityStoreEntitiesList']
 	>('api/security/entity_store/entities', baseUrl, ctx.key, {
