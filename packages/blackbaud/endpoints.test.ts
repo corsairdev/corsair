@@ -126,30 +126,26 @@ describe('Blackbaud endpoints', () => {
 		);
 	});
 
-	it('addGiftsToBatch preserves upstream status and logs failure', async () => {
-		mockRequest.mockRejectedValue(
-			new ApiError(
-				{ method: 'POST', url: 'gift/v1/giftbatches/b1/gifts' },
-				{
-					url: 'gift/v1/giftbatches/b1/gifts',
-					ok: false,
-					status: 400,
-					statusText: 'Bad Request',
-					body: { message: 'invalid gift' },
-				},
-				'Bad Request',
-			),
+	it('addGiftsToBatch rethrows upstream errors for binder retries and logs failure', async () => {
+		const apiError = new ApiError(
+			{ method: 'POST', url: 'gift/v1/giftbatches/b1/gifts' },
+			{
+				url: 'gift/v1/giftbatches/b1/gifts',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { message: 'rate limited' },
+			},
+			'Too Many Requests',
 		);
+		mockRequest.mockRejectedValue(apiError);
 
-		const result = await addGiftsToBatch(testCtx(), {
-			batch_id: 'b1',
-			gifts: [{ constituent_id: 'c1' }],
-		});
-
-		expect(result.status_code).toBe(400);
-		expect(result.response_details).toMatchObject({
-			error: expect.any(String),
-		});
+		await expect(
+			addGiftsToBatch(testCtx(), {
+				batch_id: 'b1',
+				gifts: [{ constituent_id: 'c1' }],
+			}),
+		).rejects.toBe(apiError);
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			expect.anything(),
 			'blackbaud.gifts.add_to_batch',
