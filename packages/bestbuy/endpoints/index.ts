@@ -8,27 +8,32 @@ import {
 	pageQuery,
 	salePriceFilter,
 } from './shared';
-import type { BestBuyEndpointOutputs } from './types';
+import {
+	BestBuyEndpointInputSchemas,
+	BestBuyEndpointOutputSchemas,
+} from './types';
 
 export const getProducts: BestBuyEndpoints['getProducts'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = BestBuyEndpointInputSchemas.getProducts.parse(input);
 	const filters: string[] = [];
-	if (input.sku) filters.push(attrEquals('sku', input.sku));
-	if (input.upc) filters.push(attrEquals('upc', input.upc));
-	if (input.name) filters.push(attrEquals('name', input.name));
-	if (input.salePrice) filters.push(salePriceFilter(input.salePrice));
-	if (input.categoryPathId) {
-		filters.push(attrEquals('categoryPath.id', input.categoryPathId));
+	if (parsed.sku) filters.push(attrEquals('sku', parsed.sku));
+	if (parsed.upc) filters.push(attrEquals('upc', parsed.upc));
+	if (parsed.name) filters.push(attrEquals('name', parsed.name));
+	if (parsed.salePrice) filters.push(salePriceFilter(parsed.salePrice));
+	if (parsed.categoryPathId) {
+		filters.push(attrEquals('categoryPath.id', parsed.categoryPathId));
 	}
 
-	const result = await bestbuyCall<BestBuyEndpointOutputs['getProducts']>(
+	const result = await bestbuyCall(
 		ctx,
 		collectionPath('products', filters),
-		pageQuery(input),
+		BestBuyEndpointOutputSchemas.getProducts,
+		pageQuery(parsed),
 	);
-	await logEventFromContext(ctx, 'bestbuy.products.list', input, 'completed');
+	await logEventFromContext(ctx, 'bestbuy.products.list', parsed, 'completed');
 	return result;
 };
 
@@ -36,15 +41,17 @@ export const getProductDetails: BestBuyEndpoints['getProductDetails'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await bestbuyCall<BestBuyEndpointOutputs['getProductDetails']>(
+	const parsed = BestBuyEndpointInputSchemas.getProductDetails.parse(input);
+	const result = await bestbuyCall(
 		ctx,
-		`products/${encodeURIComponent(input.sku)}.json`,
-		{ show: input.show },
+		`products/${encodeURIComponent(parsed.sku)}.json`,
+		BestBuyEndpointOutputSchemas.getProductDetails,
+		{ show: parsed.show },
 	);
 	await logEventFromContext(
 		ctx,
 		'bestbuy.products.get',
-		{ sku: input.sku },
+		{ sku: parsed.sku },
 		'completed',
 	);
 	return result;
@@ -54,65 +61,76 @@ export const getCategories: BestBuyEndpoints['getCategories'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = BestBuyEndpointInputSchemas.getCategories.parse(input);
 	const filters: string[] = [];
-	if (input.id) filters.push(attrIn('id', input.id));
-	if (input.name) filters.push(attrIn('name', input.name));
+	if (parsed.id) filters.push(attrIn('id', parsed.id));
+	if (parsed.name) filters.push(attrIn('name', parsed.name));
 
-	const result = await bestbuyCall<BestBuyEndpointOutputs['getCategories']>(
+	const result = await bestbuyCall(
 		ctx,
 		collectionPath('categories', filters),
-		pageQuery(input),
+		BestBuyEndpointOutputSchemas.getCategories,
+		pageQuery(parsed),
 	);
-	await logEventFromContext(ctx, 'bestbuy.categories.list', input, 'completed');
+	await logEventFromContext(
+		ctx,
+		'bestbuy.categories.list',
+		parsed,
+		'completed',
+	);
 	return result;
 };
 
 export const getCategoryDetails: BestBuyEndpoints['getCategoryDetails'] =
 	async (ctx, input) => {
-		const result = await bestbuyCall<
-			BestBuyEndpointOutputs['getCategoryDetails']
-		>(ctx, `categories/${encodeURIComponent(input.id)}.json`, {
-			show: input.show,
-		});
+		const parsed = BestBuyEndpointInputSchemas.getCategoryDetails.parse(input);
+		const result = await bestbuyCall(
+			ctx,
+			`categories/${encodeURIComponent(parsed.id)}.json`,
+			BestBuyEndpointOutputSchemas.getCategoryDetails,
+			{ show: parsed.show },
+		);
 		await logEventFromContext(
 			ctx,
 			'bestbuy.categories.get',
-			{ id: input.id },
+			{ id: parsed.id },
 			'completed',
 		);
 		return result;
 	};
 
 export const getStores: BestBuyEndpoints['getStores'] = async (ctx, input) => {
+	const parsed = BestBuyEndpointInputSchemas.getStores.parse(input);
 	const filters: string[] = [];
-	if (input.geo) {
-		const distance = input.geo.distance ?? 10;
-		if (input.geo.postalCode) {
-			filters.push(`area(${input.geo.postalCode},${distance})`);
-		} else if (input.geo.lat !== undefined && input.geo.lng !== undefined) {
-			filters.push(`area(${input.geo.lat},${input.geo.lng},${distance})`);
+	if (parsed.geo) {
+		const distance = parsed.geo.distance ?? 10;
+		if (parsed.geo.postalCode) {
+			filters.push(`area(${parsed.geo.postalCode},${distance})`);
+		} else if (parsed.geo.lat !== undefined && parsed.geo.lng !== undefined) {
+			filters.push(`area(${parsed.geo.lat},${parsed.geo.lng},${distance})`);
 		}
 	}
-	if (input.city) filters.push(attrEquals('city', input.city));
-	const region = input.region ?? input.state;
+	if (parsed.city) filters.push(attrEquals('city', parsed.city));
+	const region = parsed.region ?? parsed.state;
 	if (region) filters.push(attrEquals('region', region));
-	if (input.storeId !== undefined) {
-		filters.push(attrEquals('storeId', input.storeId));
+	if (parsed.storeId !== undefined) {
+		filters.push(attrEquals('storeId', parsed.storeId));
 	}
-	if (input.postalCode) {
-		filters.push(attrEquals('postalCode', input.postalCode));
+	if (parsed.postalCode) {
+		filters.push(attrEquals('postalCode', parsed.postalCode));
 	}
-	if (input.storeType) filters.push(attrEquals('storeType', input.storeType));
-	if (input.services) {
-		filters.push(attrIn('services.service', input.services));
+	if (parsed.storeType) filters.push(attrEquals('storeType', parsed.storeType));
+	if (parsed.services) {
+		filters.push(attrIn('services.service', parsed.services));
 	}
 
-	const result = await bestbuyCall<BestBuyEndpointOutputs['getStores']>(
+	const result = await bestbuyCall(
 		ctx,
 		collectionPath('stores', filters),
-		pageQuery(input),
+		BestBuyEndpointOutputSchemas.getStores,
+		pageQuery(parsed),
 	);
-	await logEventFromContext(ctx, 'bestbuy.stores.list', input, 'completed');
+	await logEventFromContext(ctx, 'bestbuy.stores.list', parsed, 'completed');
 	return result;
 };
 
@@ -120,15 +138,17 @@ export const getStoreDetails: BestBuyEndpoints['getStoreDetails'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await bestbuyCall<BestBuyEndpointOutputs['getStoreDetails']>(
+	const parsed = BestBuyEndpointInputSchemas.getStoreDetails.parse(input);
+	const result = await bestbuyCall(
 		ctx,
-		`stores/${encodeURIComponent(input.storeId)}.json`,
-		{ show: input.show },
+		`stores/${encodeURIComponent(parsed.storeId)}.json`,
+		BestBuyEndpointOutputSchemas.getStoreDetails,
+		{ show: parsed.show },
 	);
 	await logEventFromContext(
 		ctx,
 		'bestbuy.stores.get',
-		{ storeId: input.storeId },
+		{ storeId: parsed.storeId },
 		'completed',
 	);
 	return result;
@@ -138,18 +158,22 @@ export const getReviews: BestBuyEndpoints['getReviews'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = BestBuyEndpointInputSchemas.getReviews.parse(input);
 	const filters: string[] = [];
-	if (input.sku) filters.push(attrEquals('sku', input.sku));
-	if (input.reviewer) filters.push(attrEquals('reviewer.name', input.reviewer));
-	if (input.minScore !== undefined) filters.push(`rating>=${input.minScore}`);
-	if (input.maxScore !== undefined) filters.push(`rating<=${input.maxScore}`);
+	if (parsed.sku) filters.push(attrEquals('sku', parsed.sku));
+	if (parsed.reviewer) {
+		filters.push(attrEquals('reviewer.name', parsed.reviewer));
+	}
+	if (parsed.minScore !== undefined) filters.push(`rating>=${parsed.minScore}`);
+	if (parsed.maxScore !== undefined) filters.push(`rating<=${parsed.maxScore}`);
 
-	const result = await bestbuyCall<BestBuyEndpointOutputs['getReviews']>(
+	const result = await bestbuyCall(
 		ctx,
 		collectionPath('reviews', filters),
-		pageQuery(input),
+		BestBuyEndpointOutputSchemas.getReviews,
+		pageQuery(parsed),
 	);
-	await logEventFromContext(ctx, 'bestbuy.reviews.list', input, 'completed');
+	await logEventFromContext(ctx, 'bestbuy.reviews.list', parsed, 'completed');
 	return result;
 };
 
@@ -157,15 +181,17 @@ export const getReviewDetails: BestBuyEndpoints['getReviewDetails'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await bestbuyCall<BestBuyEndpointOutputs['getReviewDetails']>(
+	const parsed = BestBuyEndpointInputSchemas.getReviewDetails.parse(input);
+	const result = await bestbuyCall(
 		ctx,
-		`reviews/${encodeURIComponent(input.id)}.json`,
-		{ show: input.show },
+		`reviews/${encodeURIComponent(parsed.id)}.json`,
+		BestBuyEndpointOutputSchemas.getReviewDetails,
+		{ show: parsed.show },
 	);
 	await logEventFromContext(
 		ctx,
 		'bestbuy.reviews.get',
-		{ id: input.id },
+		{ id: parsed.id },
 		'completed',
 	);
 	return result;

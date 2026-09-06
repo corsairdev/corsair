@@ -22,22 +22,43 @@ export const BESTBUY_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+/** Remix error JSON: `{"errorCode":"403","errorMessage":"..."}`. */
+export type BestBuyErrorBody = {
+	errorCode?: string;
+	errorMessage?: string;
+};
+
+function asErrorBody(body: ApiError['body']): BestBuyErrorBody | undefined {
+	if (!body || typeof body !== 'object') return undefined;
+	const record = body as Record<string, string | number | boolean | null>;
+	return {
+		errorCode:
+			typeof record.errorCode === 'string' ? record.errorCode : undefined,
+		errorMessage:
+			typeof record.errorMessage === 'string' ? record.errorMessage : undefined,
+	};
+}
+
 export class BestBuyAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
-	public readonly body?: unknown;
+	public readonly body?: BestBuyErrorBody;
 	public readonly retryAfter?: number;
 
 	constructor(
 		message: string,
-		options?: { cause?: Error; retryAfter?: number; body?: unknown },
+		options?: {
+			cause?: Error;
+			retryAfter?: number;
+			body?: BestBuyErrorBody;
+		},
 	) {
 		super(message, options);
 		this.name = 'BestBuyAPIError';
 		if (options?.cause instanceof ApiError) {
 			this.status = options.cause.status;
 			this.statusText = options.cause.statusText;
-			this.body = options.body ?? options.cause.body;
+			this.body = options.body ?? asErrorBody(options.cause.body);
 			this.retryAfter = options.cause.retryAfter ?? options.retryAfter;
 		} else {
 			this.retryAfter = options?.retryAfter;
@@ -61,11 +82,12 @@ export type BestBuyRequestOptions = {
 	query?: Record<string, string | number | boolean | undefined>;
 };
 
-export async function makeBestBuyRequest<T>(
+/** GET Remix JSON. Callers must parse the body with the endpoint Zod schema. */
+export async function makeBestBuyRequest(
 	endpoint: string,
 	apiKey: string,
 	options: BestBuyRequestOptions = {},
-): Promise<T> {
+): Promise<Record<string, string | number | boolean | object | null>> {
 	if (!apiKey.trim()) {
 		throw new BestBuyAPIError('API key is required for Best Buy API requests');
 	}
@@ -92,14 +114,14 @@ export async function makeBestBuyRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions, {
+		return await request(config, requestOptions, {
 			rateLimitConfig: BESTBUY_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new BestBuyAPIError(error.message, {
 				cause: error,
-				body: error.body,
+				body: asErrorBody(error.body),
 				retryAfter: error.retryAfter,
 			});
 		}

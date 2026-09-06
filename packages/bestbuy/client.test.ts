@@ -6,28 +6,26 @@ import {
 } from './client';
 
 let captured: { url: string } | undefined;
-const realFetch = global.fetch;
+
 afterEach(() => {
-	global.fetch = realFetch;
+	jest.restoreAllMocks();
 });
 
-function mockFetch(payload: unknown, status = 200) {
+function mockFetch(payload: object, status = 200) {
 	captured = undefined;
-	global.fetch = (async (url: unknown) => {
-		captured = { url: String(url) };
-		return {
-			ok: status < 400,
-			status,
-			statusText: status < 400 ? 'OK' : 'Error',
-			url: String(url),
-			headers: new Headers({
-				'Content-Type': 'application/json',
-				'Retry-After': status === 429 ? '2' : '',
+	jest.spyOn(global, 'fetch').mockImplementation((input) => {
+		captured = { url: String(input) };
+		return Promise.resolve(
+			new Response(JSON.stringify(payload), {
+				status,
+				statusText: status < 400 ? 'OK' : 'Error',
+				headers: {
+					'Content-Type': 'application/json',
+					'Retry-After': status === 429 ? '2' : '',
+				},
 			}),
-			json: async () => payload,
-			text: async () => JSON.stringify(payload),
-		};
-	}) as unknown as typeof global.fetch;
+		);
+	});
 }
 
 describe('makeBestBuyRequest', () => {
@@ -46,14 +44,15 @@ describe('makeBestBuyRequest', () => {
 	});
 
 	it('preserves 429 status and Retry-After on wrap', async () => {
-		mockFetch({ error: 'slow down' }, 429);
+		mockFetch({ errorCode: '429', errorMessage: 'slow down' }, 429);
 		try {
 			await makeBestBuyRequest('products', 'demo-key');
 			throw new Error('expected failure');
 		} catch (error) {
 			expect(error).toBeInstanceOf(BestBuyAPIError);
-			expect((error as BestBuyAPIError).status).toBe(429);
-			expect((error as BestBuyAPIError).cause).toBeInstanceOf(ApiError);
+			if (!(error instanceof BestBuyAPIError)) return;
+			expect(error.status).toBe(429);
+			expect(error.cause).toBeInstanceOf(ApiError);
 		}
 	});
 });

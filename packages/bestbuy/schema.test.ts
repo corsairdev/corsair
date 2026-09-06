@@ -3,6 +3,7 @@
  * https://bestbuyapis.github.io/api-documentation/
  */
 
+import type { z } from 'zod';
 import { BestBuySchema } from './schema';
 import {
 	BestBuyCategoryEntity,
@@ -102,7 +103,7 @@ describe('Best Buy schema', () => {
 	});
 
 	describe('every documented key is declared', () => {
-		const cases: [string, { shape: Record<string, unknown> }, string[]][] = [
+		const cases: [string, { shape: Record<string, z.ZodType> }, string[]][] = [
 			['product', BestBuyProductEntity, PRODUCT_KEYS],
 			['category', BestBuyCategoryEntity, CATEGORY_KEYS],
 			['store', BestBuyStoreEntity, STORE_KEYS],

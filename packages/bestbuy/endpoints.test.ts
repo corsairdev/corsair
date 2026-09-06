@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { BESTBUY_API_BASE } from './client';
 import * as Endpoints from './endpoints';
+import type { BestBuyContext } from './index';
 import { bestBuyEndpointMeta, bestBuyEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -8,41 +9,34 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn(async () => undefined),
 }));
 
-const mockLogEvent = logEventFromContext as jest.MockedFunction<
-	typeof logEventFromContext
->;
+const mockLogEvent = jest.mocked(logEventFromContext);
 
-type Ctx = Parameters<typeof Endpoints.getProducts>[0];
-
-function makeCtx() {
-	return { key: 'test-key' } as unknown as Ctx;
+function makeCtx(): BestBuyContext {
+	return { key: 'test-key' } as BestBuyContext;
 }
 
 let captured: { url: string; method: string } | undefined;
 
-const realFetch = global.fetch;
 afterEach(() => {
-	global.fetch = realFetch;
+	jest.restoreAllMocks();
 	mockLogEvent.mockClear();
 });
 
-function mockFetch(payload: unknown, status = 200) {
+function mockFetch(payload: object, status = 200) {
 	captured = undefined;
-	global.fetch = (async (url: unknown, init?: RequestInit) => {
+	jest.spyOn(global, 'fetch').mockImplementation((input, init) => {
 		captured = {
-			url: String(url),
+			url: String(input),
 			method: init?.method ?? 'GET',
 		};
-		return {
-			ok: status < 400,
-			status,
-			statusText: status < 400 ? 'OK' : 'Error',
-			url: String(url),
-			headers: new Headers({ 'Content-Type': 'application/json' }),
-			json: async () => payload,
-			text: async () => JSON.stringify(payload),
-		};
-	}) as unknown as typeof global.fetch;
+		return Promise.resolve(
+			new Response(JSON.stringify(payload), {
+				status,
+				statusText: status < 400 ? 'OK' : 'Error',
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	});
 }
 
 function parsed(): { path: string; query: URLSearchParams } {
@@ -151,6 +145,19 @@ describe('Best Buy endpoints', () => {
 		const out = await Endpoints.getReviewDetails(makeCtx(), { id: '123' });
 		expect(parsed().path).toBe('/v1/reviews/123.json');
 		expect(out.id).toBe('123');
+	});
+
+	it('rejects invalid input before calling Remix', async () => {
+		mockFetch({ products: [] });
+		await expect(
+			Endpoints.getProducts(makeCtx(), { pageSize: 0 }),
+		).rejects.toThrow();
+		expect(captured).toBeUndefined();
+	});
+
+	it('rejects a response that fails the output schema', async () => {
+		mockFetch({ products: 'not-an-array' });
+		await expect(Endpoints.getProducts(makeCtx(), {})).rejects.toThrow();
 	});
 
 	it('covers every registered operation', () => {

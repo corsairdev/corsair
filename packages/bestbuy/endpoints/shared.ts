@@ -1,15 +1,19 @@
+import type { z } from 'zod';
 import { makeBestBuyRequest } from '../client';
 
 export type BestBuyCallContext = {
 	key: string;
 };
 
+/** Send a Remix GET, then parse the JSON with the registered output schema. */
 export async function bestbuyCall<T>(
 	ctx: BestBuyCallContext,
 	endpoint: string,
+	outputSchema: z.ZodType<T>,
 	query?: Record<string, string | number | boolean | undefined>,
 ): Promise<T> {
-	return await makeBestBuyRequest<T>(endpoint, ctx.key, { query });
+	const raw = await makeBestBuyRequest(endpoint, ctx.key, { query });
+	return outputSchema.parse(raw);
 }
 
 export function quoteValue(value: string): string {
