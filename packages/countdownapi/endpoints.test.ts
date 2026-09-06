@@ -28,11 +28,7 @@ jest.mock('./client', () => ({
 }));
 
 const mockRequest = makeCountdownApiRequest as jest.MockedFunction<
-	(
-		endpoint: string,
-		apiKey: string,
-		query: Record<string, string | number | boolean | undefined>,
-	) => Promise<unknown>
+	typeof makeCountdownApiRequest
 >;
 
 const mockLogEvent = logEventFromContext as jest.MockedFunction<
@@ -480,7 +476,9 @@ describe('CountdownApi endpoints', () => {
 	});
 
 	it('autocomplete throws Zod validation error on malformed response', async () => {
-		mockRequest.mockResolvedValue({ request_metadata: { id: '1' } });
+		mockRequest.mockResolvedValue({
+			request_metadata: { id: '1' },
+		});
 
 		await expect(
 			autocomplete(ctx, {
