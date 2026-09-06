@@ -28,9 +28,7 @@ describe('Appointo endpoints routing & event logging', () => {
 		typeof logEventFromContext
 	>;
 
-	const ctx = {
-		key: 'test_appointo_key',
-	} as unknown as AppointoContext;
+	const ctx = { key: 'test_appointo_key' } as AppointoContext;
 
 	beforeEach(() => {
 		jest.clearAllMocks();
@@ -506,10 +504,7 @@ describe('Appointo endpoints routing & event logging', () => {
 				},
 				'completed',
 			);
-			const logged = mockLogEventFromContext.mock.calls[0]?.[2] as Record<
-				string,
-				unknown
-			>;
+			const logged = mockLogEventFromContext.mock.calls[0]?.[2];
 			expect(logged).not.toHaveProperty('email');
 			expect(logged).not.toHaveProperty('name');
 			expect(logged).not.toHaveProperty('phone');

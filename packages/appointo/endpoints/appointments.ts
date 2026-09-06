@@ -58,11 +58,13 @@ export const getAvailability: AppointoEndpoints['appointmentsGetAvailability'] =
 
 export const upsertConfig: AppointoEndpoints['appointmentsUpsertConfig'] =
 	async (ctx, input) => {
-		const body: Record<string, unknown> = {};
-		if (input.config !== undefined) body.config = input.config;
-		if (input.availabilities !== undefined)
-			body.availabilities = input.availabilities;
-		if (input.override !== undefined) body.override = input.override;
+		const body = {
+			...(input.config !== undefined ? { config: input.config } : {}),
+			...(input.availabilities !== undefined
+				? { availabilities: input.availabilities }
+				: {}),
+			...(input.override !== undefined ? { override: input.override } : {}),
+		};
 
 		const response = await makeAppointoRequest<
 			AppointoEndpointOutputs['appointmentsUpsertConfig']

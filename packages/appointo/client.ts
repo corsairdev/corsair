@@ -10,7 +10,6 @@ export class AppointoAPIError extends Error {
 		message: string,
 		public readonly code?: string,
 		public readonly status?: number,
-		public readonly body?: unknown,
 	) {
 		super(message);
 		this.name = 'AppointoAPIError';
@@ -33,7 +32,7 @@ export async function makeAppointoRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: unknown;
+		body?: object;
 		query?: Record<
 			string,
 			string | number | boolean | string[] | number[] | undefined

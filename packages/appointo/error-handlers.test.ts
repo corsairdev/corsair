@@ -1,7 +1,11 @@
 import { ApiError } from 'corsair/http';
 import { errorHandlers } from './error-handlers';
 
-function apiError(status: number, body: unknown, retryAfter?: number) {
+function apiError(
+	status: number,
+	body: { message?: string; error_code?: string },
+	retryAfter?: number,
+) {
 	return new ApiError(
 		{ method: 'GET', url: 'products' },
 		{
@@ -11,9 +15,7 @@ function apiError(status: number, body: unknown, retryAfter?: number) {
 			statusText: String(status),
 			body,
 		},
-		typeof body === 'object' && body && 'message' in body
-			? String((body as { message: unknown }).message)
-			: String(status),
+		body.message ?? String(status),
 		retryAfter === undefined ? undefined : { retryAfter },
 	);
 }
