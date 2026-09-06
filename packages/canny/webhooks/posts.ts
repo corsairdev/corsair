@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CannyWebhooks } from '../index';
-import { createCannyMatch, verifyCannyWebhookSignature } from './types';
+import {
+	CannyPostCreatedEventSchema,
+	CannyPostStatusChangedEventSchema,
+	createCannyMatch,
+	verifyCannyWebhookSignature,
+} from './types';
 
 export const created: CannyWebhooks['postCreated'] = {
 	match: createCannyMatch('post.created'),
@@ -15,11 +20,19 @@ export const created: CannyWebhooks['postCreated'] = {
 			};
 		}
 
-		const event = request.payload;
-		if (event.type !== 'post.created') {
-			return { success: true, data: undefined };
+		const parsed = CannyPostCreatedEventSchema.safeParse(request.payload);
+		if (!parsed.success) {
+			if ((request.payload as { type?: string })?.type !== 'post.created') {
+				return { success: true, data: undefined };
+			}
+			return {
+				success: false,
+				statusCode: 400,
+				error: 'Invalid payload format',
+			};
 		}
 
+		const event = parsed.data;
 		const post = event.object;
 		if (ctx.db.posts && post.id) {
 			try {
@@ -66,11 +79,21 @@ export const statusChanged: CannyWebhooks['postStatusChanged'] = {
 			};
 		}
 
-		const event = request.payload;
-		if (event.type !== 'post.status_changed') {
-			return { success: true, data: undefined };
+		const parsed = CannyPostStatusChangedEventSchema.safeParse(request.payload);
+		if (!parsed.success) {
+			if (
+				(request.payload as { type?: string })?.type !== 'post.status_changed'
+			) {
+				return { success: true, data: undefined };
+			}
+			return {
+				success: false,
+				statusCode: 400,
+				error: 'Invalid payload format',
+			};
 		}
 
+		const event = parsed.data;
 		const post = event.object;
 		if (ctx.db.posts && post.id) {
 			try {

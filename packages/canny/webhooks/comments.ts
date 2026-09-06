@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CannyWebhooks } from '../index';
-import { createCannyMatch, verifyCannyWebhookSignature } from './types';
+import {
+	CannyCommentCreatedEventSchema,
+	createCannyMatch,
+	verifyCannyWebhookSignature,
+} from './types';
 
 export const created: CannyWebhooks['commentCreated'] = {
 	match: createCannyMatch('comment.created'),
@@ -15,11 +19,19 @@ export const created: CannyWebhooks['commentCreated'] = {
 			};
 		}
 
-		const event = request.payload;
-		if (event.type !== 'comment.created') {
-			return { success: true, data: undefined };
+		const parsed = CannyCommentCreatedEventSchema.safeParse(request.payload);
+		if (!parsed.success) {
+			if ((request.payload as { type?: string })?.type !== 'comment.created') {
+				return { success: true, data: undefined };
+			}
+			return {
+				success: false,
+				statusCode: 400,
+				error: 'Invalid payload format',
+			};
 		}
 
+		const event = parsed.data;
 		const comment = event.object;
 		if (ctx.db.comments && comment.id) {
 			try {

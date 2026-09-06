@@ -226,7 +226,7 @@ describe('Canny endpoints routing & event logging', () => {
 			const input = {
 				changerID: 'user_123',
 				postID: 'post_123',
-				status: 'planned',
+				status: 'planned' as const,
 			};
 			const result = await Posts.changeStatus(ctx, input);
 			expect(result).toEqual(updatedPost);

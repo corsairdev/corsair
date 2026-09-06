@@ -1,17 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCannyRequest } from '../client';
 import type { CannyEndpoints } from '../index';
-import type { CannyEndpointOutputs } from './types';
+import { CannyEndpointInputSchemas, CannyEndpointOutputSchemas } from './types';
 
 export const list: CannyEndpoints['postsList'] = async (ctx, input) => {
-	const response = await makeCannyRequest<CannyEndpointOutputs['postsList']>(
-		'posts/list',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input ? { ...input } : {},
-		},
-	);
+	const parsedInput = CannyEndpointInputSchemas.postsList.parse(input);
+	const raw = await makeCannyRequest<unknown>('posts/list', ctx.key, {
+		method: 'POST',
+		body: parsedInput ? { ...parsedInput } : {},
+	});
+	const response = CannyEndpointOutputSchemas.postsList.parse(raw);
 
 	if (ctx.db.posts && response.posts) {
 		for (const post of response.posts) {
@@ -36,17 +34,22 @@ export const list: CannyEndpoints['postsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'canny.posts.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'canny.posts.list',
+		{ ...parsedInput },
+		'completed',
+	);
 	return response;
 };
 
 export const retrieve: CannyEndpoints['postsRetrieve'] = async (ctx, input) => {
-	const response = await makeCannyRequest<
-		CannyEndpointOutputs['postsRetrieve']
-	>('posts/retrieve', ctx.key, {
+	const parsedInput = CannyEndpointInputSchemas.postsRetrieve.parse(input);
+	const raw = await makeCannyRequest<unknown>('posts/retrieve', ctx.key, {
 		method: 'POST',
-		body: { ...input },
+		body: { ...parsedInput },
 	});
+	const response = CannyEndpointOutputSchemas.postsRetrieve.parse(raw);
 
 	if (ctx.db.posts && response.id) {
 		try {
@@ -72,26 +75,24 @@ export const retrieve: CannyEndpoints['postsRetrieve'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canny.posts.retrieve',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;
 };
 
 export const create: CannyEndpoints['postsCreate'] = async (ctx, input) => {
-	const response = await makeCannyRequest<CannyEndpointOutputs['postsCreate']>(
-		'posts/create',
-		ctx.key,
-		{
-			method: 'POST',
-			body: { ...input },
-		},
-	);
+	const parsedInput = CannyEndpointInputSchemas.postsCreate.parse(input);
+	const raw = await makeCannyRequest<unknown>('posts/create', ctx.key, {
+		method: 'POST',
+		body: { ...parsedInput },
+	});
+	const response = CannyEndpointOutputSchemas.postsCreate.parse(raw);
 
 	await logEventFromContext(
 		ctx,
 		'canny.posts.create',
-		{ ...input, id: response.id },
+		{ ...parsedInput, id: response.id },
 		'completed',
 	);
 	return response;
@@ -101,12 +102,12 @@ export const changeStatus: CannyEndpoints['postsChangeStatus'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeCannyRequest<
-		CannyEndpointOutputs['postsChangeStatus']
-	>('posts/changeStatus', ctx.key, {
+	const parsedInput = CannyEndpointInputSchemas.postsChangeStatus.parse(input);
+	const raw = await makeCannyRequest<unknown>('posts/changeStatus', ctx.key, {
 		method: 'POST',
-		body: { ...input },
+		body: { ...parsedInput },
 	});
+	const response = CannyEndpointOutputSchemas.postsChangeStatus.parse(raw);
 
 	if (ctx.db.posts && response.id) {
 		try {
@@ -132,25 +133,23 @@ export const changeStatus: CannyEndpoints['postsChangeStatus'] = async (
 	await logEventFromContext(
 		ctx,
 		'canny.posts.changeStatus',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;
 };
 
 export const deletePost: CannyEndpoints['postsDelete'] = async (ctx, input) => {
-	const response = await makeCannyRequest<CannyEndpointOutputs['postsDelete']>(
-		'posts/delete',
-		ctx.key,
-		{
-			method: 'POST',
-			body: { postID: input.postID },
-		},
-	);
+	const parsedInput = CannyEndpointInputSchemas.postsDelete.parse(input);
+	const raw = await makeCannyRequest<unknown>('posts/delete', ctx.key, {
+		method: 'POST',
+		body: { postID: parsedInput.postID },
+	});
+	const response = CannyEndpointOutputSchemas.postsDelete.parse(raw);
 
 	if (ctx.db.posts) {
 		try {
-			await ctx.db.posts.deleteByEntityId(input.postID);
+			await ctx.db.posts.deleteByEntityId(parsedInput.postID);
 		} catch (error) {
 			console.warn('Failed to delete post from database:', error);
 		}
@@ -159,7 +158,7 @@ export const deletePost: CannyEndpoints['postsDelete'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canny.posts.delete',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;

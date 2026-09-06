@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CannyWebhooks } from '../index';
-import { createCannyMatch, verifyCannyWebhookSignature } from './types';
+import {
+	CannyVoteCreatedEventSchema,
+	createCannyMatch,
+	verifyCannyWebhookSignature,
+} from './types';
 
 export const created: CannyWebhooks['voteCreated'] = {
 	match: createCannyMatch('vote.created'),
@@ -15,11 +19,19 @@ export const created: CannyWebhooks['voteCreated'] = {
 			};
 		}
 
-		const event = request.payload;
-		if (event.type !== 'vote.created') {
-			return { success: true, data: undefined };
+		const parsed = CannyVoteCreatedEventSchema.safeParse(request.payload);
+		if (!parsed.success) {
+			if ((request.payload as { type?: string })?.type !== 'vote.created') {
+				return { success: true, data: undefined };
+			}
+			return {
+				success: false,
+				statusCode: 400,
+				error: 'Invalid payload format',
+			};
 		}
 
+		const event = parsed.data;
 		const vote = event.object;
 		if (ctx.db.votes && vote.id) {
 			try {

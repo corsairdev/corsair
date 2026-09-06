@@ -1,17 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCannyRequest } from '../client';
 import type { CannyEndpoints } from '../index';
-import type { CannyEndpointOutputs } from './types';
+import { CannyEndpointInputSchemas, CannyEndpointOutputSchemas } from './types';
 
 export const list: CannyEndpoints['boardsList'] = async (ctx, input) => {
-	const response = await makeCannyRequest<CannyEndpointOutputs['boardsList']>(
-		'boards/list',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input ? { ...input } : {},
-		},
-	);
+	const parsedInput = CannyEndpointInputSchemas.boardsList.parse(input);
+	const raw = await makeCannyRequest<unknown>('boards/list', ctx.key, {
+		method: 'POST',
+		body: parsedInput ? { ...parsedInput } : {},
+	});
+	const response = CannyEndpointOutputSchemas.boardsList.parse(raw);
 
 	if (ctx.db.boards && response.boards) {
 		for (const board of response.boards) {
@@ -35,7 +33,7 @@ export const list: CannyEndpoints['boardsList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canny.boards.list',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;
@@ -45,12 +43,12 @@ export const retrieve: CannyEndpoints['boardsRetrieve'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeCannyRequest<
-		CannyEndpointOutputs['boardsRetrieve']
-	>('boards/retrieve', ctx.key, {
+	const parsedInput = CannyEndpointInputSchemas.boardsRetrieve.parse(input);
+	const raw = await makeCannyRequest<unknown>('boards/retrieve', ctx.key, {
 		method: 'POST',
-		body: { id: input.id },
+		body: { id: parsedInput.id },
 	});
+	const response = CannyEndpointOutputSchemas.boardsRetrieve.parse(raw);
 
 	if (ctx.db.boards && response.id) {
 		try {
@@ -72,7 +70,7 @@ export const retrieve: CannyEndpoints['boardsRetrieve'] = async (
 	await logEventFromContext(
 		ctx,
 		'canny.boards.retrieve',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;

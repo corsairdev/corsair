@@ -1,17 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCannyRequest } from '../client';
 import type { CannyEndpoints } from '../index';
-import type { CannyEndpointOutputs } from './types';
+import { CannyEndpointInputSchemas, CannyEndpointOutputSchemas } from './types';
 
 export const list: CannyEndpoints['commentsList'] = async (ctx, input) => {
-	const response = await makeCannyRequest<CannyEndpointOutputs['commentsList']>(
-		'comments/list',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input ? { ...input } : {},
-		},
-	);
+	const parsedInput = CannyEndpointInputSchemas.commentsList.parse(input);
+	const raw = await makeCannyRequest<unknown>('comments/list', ctx.key, {
+		method: 'POST',
+		body: parsedInput ? { ...parsedInput } : {},
+	});
+	const response = CannyEndpointOutputSchemas.commentsList.parse(raw);
 
 	if (ctx.db.comments && response.comments) {
 		for (const comment of response.comments) {
@@ -36,24 +34,24 @@ export const list: CannyEndpoints['commentsList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canny.comments.list',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;
 };
 
 export const create: CannyEndpoints['commentsCreate'] = async (ctx, input) => {
-	const response = await makeCannyRequest<
-		CannyEndpointOutputs['commentsCreate']
-	>('comments/create', ctx.key, {
+	const parsedInput = CannyEndpointInputSchemas.commentsCreate.parse(input);
+	const raw = await makeCannyRequest<unknown>('comments/create', ctx.key, {
 		method: 'POST',
-		body: { ...input },
+		body: { ...parsedInput },
 	});
+	const response = CannyEndpointOutputSchemas.commentsCreate.parse(raw);
 
 	await logEventFromContext(
 		ctx,
 		'canny.comments.create',
-		{ ...input, id: response.id },
+		{ ...parsedInput, id: response.id },
 		'completed',
 	);
 	return response;
@@ -63,16 +61,16 @@ export const deleteComment: CannyEndpoints['commentsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeCannyRequest<
-		CannyEndpointOutputs['commentsDelete']
-	>('comments/delete', ctx.key, {
+	const parsedInput = CannyEndpointInputSchemas.commentsDelete.parse(input);
+	const raw = await makeCannyRequest<unknown>('comments/delete', ctx.key, {
 		method: 'POST',
-		body: { commentID: input.commentID },
+		body: { commentID: parsedInput.commentID },
 	});
+	const response = CannyEndpointOutputSchemas.commentsDelete.parse(raw);
 
 	if (ctx.db.comments) {
 		try {
-			await ctx.db.comments.deleteByEntityId(input.commentID);
+			await ctx.db.comments.deleteByEntityId(parsedInput.commentID);
 		} catch (error) {
 			console.warn('Failed to delete comment from database:', error);
 		}
@@ -81,7 +79,7 @@ export const deleteComment: CannyEndpoints['commentsDelete'] = async (
 	await logEventFromContext(
 		ctx,
 		'canny.comments.delete',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;

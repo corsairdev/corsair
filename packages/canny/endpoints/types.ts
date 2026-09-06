@@ -15,7 +15,7 @@ export const CannyUserSchema = z
 		isAdmin: z.boolean(),
 		avatarURL: z.string().nullable().optional(),
 	})
-	.catchall(z.unknown());
+	.passthrough();
 
 export type CannyUser = z.infer<typeof CannyUserSchema>;
 
@@ -30,7 +30,7 @@ export const CannyBoardSchema = z
 		token: z.string().optional(),
 		url: z.string(),
 	})
-	.catchall(z.unknown());
+	.passthrough();
 
 export type CannyBoardModel = z.infer<typeof CannyBoardSchema>;
 
@@ -42,7 +42,7 @@ export const CannyCategorySchema = z
 		postCount: z.number().optional(),
 		parentID: z.string().nullable().optional(),
 	})
-	.catchall(z.unknown());
+	.passthrough();
 
 export type CannyCategory = z.infer<typeof CannyCategorySchema>;
 
@@ -53,7 +53,7 @@ export const CannyTagSchema = z
 		url: z.string().optional(),
 		postCount: z.number().optional(),
 	})
-	.catchall(z.unknown());
+	.passthrough();
 
 export type CannyTag = z.infer<typeof CannyTagSchema>;
 
@@ -74,9 +74,14 @@ export const CannyPostSchema = z
 		title: z.string(),
 		url: z.string(),
 		owner: CannyUserSchema.nullable().optional(),
-		customFields: z.record(z.string(), z.unknown()).optional(),
+		customFields: z
+			.record(
+				z.string(),
+				z.union([z.string(), z.number(), z.boolean(), z.null()]),
+			)
+			.optional(),
 	})
-	.catchall(z.unknown());
+	.passthrough();
 
 export type CannyPostModel = z.infer<typeof CannyPostSchema>;
 
@@ -94,7 +99,7 @@ export const CannyCommentSchema = z
 		post: CannyPostSchema.optional(),
 		value: z.string(),
 	})
-	.catchall(z.unknown());
+	.passthrough();
 
 export type CannyCommentModel = z.infer<typeof CannyCommentSchema>;
 
@@ -104,10 +109,10 @@ export const CannyVoteSchema = z
 		board: CannyBoardSchema.optional(),
 		by: CannyUserSchema.nullable().optional(),
 		created: z.string(),
-		post: CannyPostSchema,
-		voter: CannyUserSchema,
+		post: CannyPostSchema.optional(),
+		voter: CannyUserSchema.optional(),
 	})
-	.catchall(z.unknown());
+	.passthrough();
 
 export type CannyVoteModel = z.infer<typeof CannyVoteSchema>;
 
@@ -158,10 +163,11 @@ export const PostsListInputSchema = z
 	.object({
 		authorID: z.string().optional(),
 		boardID: z.string().optional(),
+		categoryID: z.string().optional(),
 		companyID: z.string().optional(),
-		limit: z.number().optional(),
+		limit: z.number().int().positive().optional(),
 		search: z.string().optional(),
-		skip: z.number().optional(),
+		skip: z.number().int().nonnegative().optional(),
 		sort: z
 			.enum([
 				'newest',
@@ -172,8 +178,17 @@ export const PostsListInputSchema = z
 				'trending',
 			])
 			.optional(),
-		status: z.string().optional(),
-		tagIDs: z.array(z.string()).optional(),
+		status: z
+			.enum([
+				'open',
+				'under review',
+				'planned',
+				'in progress',
+				'complete',
+				'closed',
+			])
+			.optional(),
+		tagID: z.string().optional(),
 	})
 	.optional()
 	.default({});
@@ -187,10 +202,14 @@ export const PostsListResponseSchema = z.object({
 
 export type PostsListResponse = z.infer<typeof PostsListResponseSchema>;
 
-export const PostsRetrieveInputSchema = z.object({
-	id: z.string().optional(),
-	url: z.string().optional(),
-});
+export const PostsRetrieveInputSchema = z
+	.object({
+		id: z.string().optional(),
+		url: z.string().optional(),
+	})
+	.refine((data) => data.id !== undefined || data.url !== undefined, {
+		message: 'Either id or url must be provided',
+	});
 
 export type PostsRetrieveInput = z.infer<typeof PostsRetrieveInputSchema>;
 
@@ -202,14 +221,17 @@ export const PostsCreateInputSchema = z.object({
 	authorID: z.string(),
 	boardID: z.string(),
 	title: z.string(),
-	byID: z.string().optional(),
-	categoryID: z.string().optional(),
-	customFields: z.record(z.string(), z.unknown()).optional(),
 	details: z.string().optional(),
+	categoryID: z.string().optional(),
+	customFields: z
+		.record(
+			z.string(),
+			z.union([z.string(), z.number(), z.boolean(), z.null()]),
+		)
+		.optional(),
 	eta: z.string().optional(),
-	etaPublic: z.boolean().optional(),
 	imageURLs: z.array(z.string()).optional(),
-	ownerID: z.string().optional(),
+	publishedAt: z.string().optional(),
 });
 
 export type PostsCreateInput = z.infer<typeof PostsCreateInputSchema>;
@@ -222,11 +244,17 @@ export type PostsCreateResponse = z.infer<typeof PostsCreateResponseSchema>;
 
 export const PostsChangeStatusInputSchema = z.object({
 	changerID: z.string(),
-	postID: z.string(),
-	status: z.string(),
-	commentImageURLs: z.array(z.string()).optional(),
 	commentValue: z.string().optional(),
+	postID: z.string(),
 	shouldNotifyVoters: z.boolean().optional(),
+	status: z.enum([
+		'open',
+		'under review',
+		'planned',
+		'in progress',
+		'complete',
+		'closed',
+	]),
 });
 
 export type PostsChangeStatusInput = z.infer<
@@ -260,9 +288,10 @@ export const CommentsListInputSchema = z
 	.object({
 		authorID: z.string().optional(),
 		boardID: z.string().optional(),
-		limit: z.number().optional(),
+		companyID: z.string().optional(),
+		limit: z.number().int().positive().optional(),
 		postID: z.string().optional(),
-		skip: z.number().optional(),
+		skip: z.number().int().nonnegative().optional(),
 	})
 	.optional()
 	.default({});
@@ -317,10 +346,10 @@ export type CommentsDeleteResponse = z.infer<
 export const VotesListInputSchema = z
 	.object({
 		boardID: z.string().optional(),
-		byID: z.string().optional(),
-		limit: z.number().optional(),
+		companyID: z.string().optional(),
+		limit: z.number().int().positive().optional(),
 		postID: z.string().optional(),
-		skip: z.number().optional(),
+		skip: z.number().int().nonnegative().optional(),
 		userID: z.string().optional(),
 	})
 	.optional()
@@ -338,9 +367,6 @@ export type VotesListResponse = z.infer<typeof VotesListResponseSchema>;
 export const VotesCreateInputSchema = z.object({
 	postID: z.string(),
 	voterID: z.string(),
-	byID: z.string().optional(),
-	createdAt: z.string().optional(),
-	votePriority: z.number().optional(),
 });
 
 export type VotesCreateInput = z.infer<typeof VotesCreateInputSchema>;
@@ -353,8 +379,9 @@ export const VotesCreateResponseSchema = z.union([
 export type VotesCreateResponse = z.infer<typeof VotesCreateResponseSchema>;
 
 export const VotesDeleteInputSchema = z.object({
-	postID: z.string(),
-	voterID: z.string(),
+	id: z.string().optional(),
+	postID: z.string().optional(),
+	voterID: z.string().optional(),
 });
 
 export type VotesDeleteInput = z.infer<typeof VotesDeleteInputSchema>;

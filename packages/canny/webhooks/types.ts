@@ -20,9 +20,12 @@ export const CannyWebhookPayloadSchema = z
 		created: z.string(),
 		objectType: z.string(),
 		type: z.string(),
-		object: z.record(z.string(), z.unknown()),
+		object: z.record(
+			z.string(),
+			z.union([z.string(), z.number(), z.boolean(), z.null()]),
+		),
 	})
-	.catchall(z.unknown());
+	.passthrough();
 
 export type CannyWebhookPayload = z.infer<typeof CannyWebhookPayloadSchema>;
 
@@ -138,12 +141,29 @@ function firstHeader(
 }
 
 function timingSafeEqualBase64(a: string, b: string): boolean {
-	const bufA = Buffer.from(a);
-	const bufB = Buffer.from(b);
-	if (bufA.length !== bufB.length) {
+	try {
+		const bufA = Buffer.from(a, 'base64');
+		const bufB = Buffer.from(b, 'base64');
+		if (bufA.length === 0 || bufB.length === 0 || bufA.length !== bufB.length) {
+			return false;
+		}
+		return bufA.equals(bufB);
+	} catch {
 		return false;
 	}
-	return bufA.equals(bufB);
+}
+
+function timingSafeEqualHex(a: string, b: string): boolean {
+	try {
+		const bufA = Buffer.from(a, 'hex');
+		const bufB = Buffer.from(b, 'hex');
+		if (bufA.length === 0 || bufB.length === 0 || bufA.length !== bufB.length) {
+			return false;
+		}
+		return bufA.equals(bufB);
+	} catch {
+		return false;
+	}
 }
 
 const TIMESTAMP_TOLERANCE_MS = 5 * 60 * 1000; // 5 minutes
@@ -153,7 +173,7 @@ const TIMESTAMP_TOLERANCE_MS = 5 * 60 * 1000; // 5 minutes
  * Canny signs webhooks with:
  * - canny-timestamp: milliseconds since epoch
  * - canny-nonce: random unique string
- * - canny-signature: HMAC-SHA256 signature of the nonce in Base64
+ * - canny-signature: HMAC-SHA256 signature of the nonce (or payload) in Base64 or Hex
  */
 export function verifyCannyWebhookSignature(
 	request: WebhookRequest<unknown>,
@@ -193,16 +213,49 @@ export function verifyCannyWebhookSignature(
 					error: 'Webhook timestamp outside tolerance',
 				};
 			}
+		} else {
+			return {
+				valid: false,
+				error: 'Invalid webhook timestamp format',
+			};
 		}
 	}
 
 	try {
-		const expectedSignature = createHmac('sha256', webhookSecret)
-			.update(nonce)
-			.digest('base64');
+		const reqAny = request as unknown as { body?: unknown; payload?: unknown };
+		const reqData = reqAny.body ?? reqAny.payload ?? '';
+		const rawBody =
+			typeof reqData === 'string'
+				? reqData
+				: reqData !== undefined && reqData !== null
+					? JSON.stringify(reqData)
+					: '';
 
-		if (timingSafeEqualBase64(signature, expectedSignature)) {
-			return { valid: true };
+		const candidates = [
+			createHmac('sha256', webhookSecret).update(nonce).digest('base64'),
+			createHmac('sha256', webhookSecret).update(nonce).digest('hex'),
+		];
+
+		if (rawBody) {
+			candidates.push(
+				createHmac('sha256', webhookSecret)
+					.update(`${nonce}.${rawBody}`)
+					.digest('base64'),
+				createHmac('sha256', webhookSecret)
+					.update(`${timestamp ? `${timestamp}.` : ''}${nonce}.${rawBody}`)
+					.digest('base64'),
+				createHmac('sha256', webhookSecret).update(rawBody).digest('base64'),
+				createHmac('sha256', webhookSecret).update(rawBody).digest('hex'),
+			);
+		}
+
+		for (const expected of candidates) {
+			if (
+				timingSafeEqualBase64(signature, expected) ||
+				timingSafeEqualHex(signature, expected)
+			) {
+				return { valid: true };
+			}
 		}
 	} catch (err) {
 		return {
