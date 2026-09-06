@@ -277,6 +277,8 @@ const CreateReelContainerInputSchema = z
 			.optional()
 			.describe('Optional list of Instagram users to tag in the Reel.'),
 
+		// z.unknown(): Meta's trial_params bag is undocumented and version-specific;
+		// a fixed object schema would reject valid Graph payloads we do not control.
 		trial_params: z
 			.unknown()
 			.optional()
@@ -776,6 +778,8 @@ const AttachmentSchema = z
 				'The type of attachment being sent with the message. Supported values include image, video, audio, file, and template.',
 			),
 
+		// z.unknown(): Messenger attachment payloads vary by type (url, sticker,
+		// template elements). Enumerating each variant would lag Meta's surface.
 		payload: z
 			.record(z.string(), z.unknown())
 			.describe(
@@ -1613,6 +1617,8 @@ const MessageAttachmentDataSchema = z
 			.optional()
 			.describe('The filename or display name of the attachment.'),
 
+		// z.unknown(): Graph returns extra image keys (preview, animated, render)
+		// depending on media type; only id/url-like fields are stable.
 		image_data: z
 			.record(z.string(), z.unknown())
 			.optional()
@@ -1620,6 +1626,7 @@ const MessageAttachmentDataSchema = z
 				'Image-specific attachment metadata, including URLs and dimensions.',
 			),
 
+		// z.unknown(): same as image_data — video metadata keys differ by source.
 		video_data: z
 			.record(z.string(), z.unknown())
 			.optional()
@@ -2046,6 +2053,8 @@ const InsightMetricSchema = z
 		values: z
 			.array(
 				z.object({
+					// z.unknown(): breakdown insights return nested maps (age/gender,
+					// city) whose keys Meta does not document as a closed set.
 					value: z.union([
 						z.number(),
 						z.string(),
