@@ -29,7 +29,7 @@ const ChatMessageSchema = z.object({
 });
 const ChatInputSchema = z.object({
 	model: z.string(),
-	messages: z.array(ChatMessageSchema).min(1),
+	messages: z.array(CHatMessageSchema).min(1),
 	temperature: z.number().min(0).optional(),
 	stream: z.boolean().optional(),
 });
@@ -51,7 +51,7 @@ const ChatResponseSchema = z.object({
 	model: z.string(),
 	usage: ChatUsageSchema.optional(),
 });
-export type CompletionInput = z.infer<typeof CompletionInputSchema>;
+export type CompletionInput = x.infer<typeof CompletionInputSchema>;
 export type ChatInput = z.infer<typeof ChatInputSchema>;
 export type WriterEndpointInputs = {
 	listModels: Record<string, never>;
