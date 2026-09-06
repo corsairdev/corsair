@@ -1,2 +1,14 @@
 displayName: Carbone
 description: Automated document and report generation API that converts templates (DOCX, XLSX, PPTX, ODT) and JSON data into PDFs and other formats.
+examples:
+  read:
+    path: status.get
+    args: {}
+  write:
+    path: render.render
+    title: Render document
+    args:
+      templateId: tmpl_12345
+      data:
+        firstname: John
+        lastname: Doe

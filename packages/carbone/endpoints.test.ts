@@ -46,7 +46,12 @@ function createMockContext(key = 'test-carbone-key'): CarboneContext {
 	return {
 		key,
 		options: { authType: 'api_key' },
-		db: {},
+		db: {
+			templates: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined as never),
+				deleteByEntityId: jest.fn().mockResolvedValue(undefined as never),
+			},
+		},
 	} as unknown as CarboneContext;
 }
 
@@ -72,7 +77,7 @@ describe('Carbone endpoints execution', () => {
 	});
 
 	describe('templates', () => {
-		it('uploadTemplate posts template content and returns id', async () => {
+		it('uploadTemplate posts template content and syncs to local templates table', async () => {
 			mockRequest.mockResolvedValueOnce({
 				success: true,
 				data: {
@@ -80,10 +85,12 @@ describe('Carbone endpoints execution', () => {
 					versionId: 'version_xyz456',
 					type: 'docx',
 					size: 2048,
+					createdAt: 1700000000,
 				},
 			});
 
-			const res = await TemplatesEndpoints.uploadTemplate(createMockContext(), {
+			const ctx = createMockContext();
+			const res = await TemplatesEndpoints.uploadTemplate(ctx, {
 				template: 'UEsDBBQAAAAIA...',
 			});
 
@@ -99,27 +106,49 @@ describe('Carbone endpoints execution', () => {
 					body: { template: 'UEsDBBQAAAAIA...' },
 				}),
 			);
+			expect(ctx.db.templates.upsertByEntityId).toHaveBeenCalledWith(
+				'template_abc123',
+				expect.objectContaining({
+					id: 'template_abc123',
+					versionId: 'version_xyz456',
+					type: 'docx',
+				}),
+			);
 		});
 
-		it('getTemplate returns download url for template', async () => {
-			const res = await TemplatesEndpoints.getTemplate(createMockContext(), {
+		it('getTemplate performs authenticated request and returns template content', async () => {
+			mockRequest.mockResolvedValueOnce(
+				'PK\x03\x04mockTemplateFileStreamContent',
+			);
+
+			const ctx = createMockContext();
+			const res = await TemplatesEndpoints.getTemplate(ctx, {
 				templateId: 'tmpl_12345',
 			});
 
 			expect(res.templateId).toBe('tmpl_12345');
-			expect(res.downloadUrl).toBe(
-				'https://api.carbone.io/template/tmpl_12345',
-			);
+			expect(res.content).toBe('PK\x03\x04mockTemplateFileStreamContent');
 			expect(res.success).toBe(true);
+			expect(mockRequest).toHaveBeenCalledWith(
+				expect.objectContaining({
+					BASE: 'https://api.carbone.io',
+					TOKEN: 'test-carbone-key',
+				}),
+				expect.objectContaining({
+					method: 'GET',
+					url: '/template/tmpl_12345',
+				}),
+			);
 		});
 
-		it('deleteTemplate deletes stored template', async () => {
+		it('deleteTemplate deletes stored template and removes from local database', async () => {
 			mockRequest.mockResolvedValueOnce({
 				success: true,
 				message: 'Template deleted',
 			});
 
-			const res = await TemplatesEndpoints.deleteTemplate(createMockContext(), {
+			const ctx = createMockContext();
+			const res = await TemplatesEndpoints.deleteTemplate(ctx, {
 				templateId: 'tmpl_12345',
 			});
 
@@ -131,6 +160,9 @@ describe('Carbone endpoints execution', () => {
 					method: 'DELETE',
 					url: '/template/tmpl_12345',
 				}),
+			);
+			expect(ctx.db.templates.deleteByEntityId).toHaveBeenCalledWith(
+				'tmpl_12345',
 			);
 		});
 	});

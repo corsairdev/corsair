@@ -1,5 +1,31 @@
 import { z } from 'zod';
 
+// ─── JSON Types ──────────────────────────────────────────────────────────────
+
+export const JsonPrimitiveSchema = z.union([
+	z.string(),
+	z.number(),
+	z.boolean(),
+	z.null(),
+]);
+export type JsonPrimitive = z.infer<typeof JsonPrimitiveSchema>;
+
+export type JsonValue =
+	| JsonPrimitive
+	| { [key: string]: JsonValue }
+	| JsonValue[];
+
+export const JsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
+	z.union([
+		JsonPrimitiveSchema,
+		z.array(JsonValueSchema),
+		z.record(z.string(), JsonValueSchema),
+	]),
+);
+
+export const JsonObjectSchema = z.record(z.string(), JsonValueSchema);
+export type JsonObject = z.infer<typeof JsonObjectSchema>;
+
 // ─── Status ──────────────────────────────────────────────────────────────────
 
 export const GetStatusInputSchema = z.object({});
@@ -40,8 +66,8 @@ export type GetTemplateInput = z.infer<typeof GetTemplateInputSchema>;
 
 export const GetTemplateOutputSchema = z.object({
 	templateId: z.string(),
-	downloadUrl: z.string(),
-	success: z.boolean().optional(),
+	content: z.string(),
+	success: z.boolean(),
 });
 export type GetTemplateOutput = z.infer<typeof GetTemplateOutputSchema>;
 
@@ -60,7 +86,7 @@ export type DeleteTemplateOutput = z.infer<typeof DeleteTemplateOutputSchema>;
 
 export const RenderTemplateInputSchema = z.object({
 	templateId: z.string().min(1, 'Template ID is required'),
-	data: z.record(z.string(), z.unknown()),
+	data: JsonObjectSchema,
 	convertTo: z.string().optional(),
 	formatName: z.string().optional(),
 	lang: z.string().optional(),
@@ -70,8 +96,8 @@ export const RenderTemplateInputSchema = z.object({
 		.record(z.string(), z.record(z.string(), z.string()))
 		.optional(),
 	enum: z.record(z.string(), z.record(z.string(), z.string())).optional(),
-	variable: z.record(z.string(), z.unknown()).optional(),
-	complement: z.record(z.string(), z.unknown()).optional(),
+	variable: JsonObjectSchema.optional(),
+	complement: JsonObjectSchema.optional(),
 	hardRefresh: z.boolean().optional(),
 });
 export type RenderTemplateInput = z.infer<typeof RenderTemplateInputSchema>;
@@ -86,7 +112,7 @@ export type RenderTemplateOutput = z.infer<typeof RenderTemplateOutputSchema>;
 
 export const RenderInlineInputSchema = z.object({
 	template: z.string().min(1, 'Template payload (base64 string) is required'),
-	data: z.record(z.string(), z.unknown()),
+	data: JsonObjectSchema,
 	convertTo: z.string().optional(),
 	formatName: z.string().optional(),
 	lang: z.string().optional(),
@@ -96,8 +122,8 @@ export const RenderInlineInputSchema = z.object({
 		.record(z.string(), z.record(z.string(), z.string()))
 		.optional(),
 	enum: z.record(z.string(), z.record(z.string(), z.string())).optional(),
-	variable: z.record(z.string(), z.unknown()).optional(),
-	complement: z.record(z.string(), z.unknown()).optional(),
+	variable: JsonObjectSchema.optional(),
+	complement: JsonObjectSchema.optional(),
 	hardRefresh: z.boolean().optional(),
 });
 export type RenderInlineInput = z.infer<typeof RenderInlineInputSchema>;

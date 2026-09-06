@@ -75,6 +75,14 @@ describe('Carbone endpoint schemas', () => {
 		});
 		expect(deleteInput.templateId).toBe('tmpl_123');
 
+		const getOutput = CarboneEndpointOutputSchemas.getTemplate.parse({
+			templateId: 'tmpl_123',
+			content: 'base64EncodedOrFileStreamContent',
+			success: true,
+		});
+		expect(getOutput.templateId).toBe('tmpl_123');
+		expect(getOutput.content).toBe('base64EncodedOrFileStreamContent');
+
 		const deleteOutput = CarboneEndpointOutputSchemas.deleteTemplate.parse({
 			success: true,
 			message: 'Template deleted',

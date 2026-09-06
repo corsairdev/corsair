@@ -89,19 +89,22 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`render.get`**
+**`status.get`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.carbone.api.render.get({});
+await tenant.carbone.api.status.get({});
 ```
 
 
-**`render.render`**
+**Render document**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.carbone.api.render.render({});
+await tenant.carbone.api.render.render({
+	templateId: 'tmpl_12345',
+	data: { firstname: 'John', lastname: 'Doe' },
+});
 ```
 
 

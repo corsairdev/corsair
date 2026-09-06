@@ -20,7 +20,9 @@ Get download URL for a rendered document
 **Risk:** `read`
 
 ```ts
-await corsair.carbone.api.render.get({});
+await corsair.carbone.api.render.get({
+  renderId: 'rnd_123',
+});
 ```
 
 **Input**
@@ -51,7 +53,10 @@ Render a document from a stored template and dataset
 **Risk:** `write`
 
 ```ts
-await corsair.carbone.api.render.render({});
+await corsair.carbone.api.render.render({
+  templateId: 'tmpl_123',
+  data: { customer: 'Acme Corp' },
+});
 ```
 
 **Input**
@@ -146,7 +151,10 @@ Render a document with an inline template and dataset
 **Risk:** `write`
 
 ```ts
-await corsair.carbone.api.render.renderInline({});
+await corsair.carbone.api.render.renderInline({
+  template: 'UEsDBBQAAAAIA...',
+  data: { customer: 'Acme Corp' },
+});
 ```
 
 **Input**
@@ -273,7 +281,9 @@ Delete a template from Carbone storage
 **Risk:** `write`
 
 ```ts
-await corsair.carbone.api.templates.delete({});
+await corsair.carbone.api.templates.delete({
+  templateId: 'tmpl_123',
+});
 ```
 
 **Input**
@@ -304,7 +314,9 @@ Get download URL for a stored template
 **Risk:** `read`
 
 ```ts
-await corsair.carbone.api.templates.get({});
+await corsair.carbone.api.templates.get({
+  templateId: 'tmpl_123',
+});
 ```
 
 **Input**
@@ -320,8 +332,8 @@ await corsair.carbone.api.templates.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `downloadUrl` | `string` | Yes | — |
-| `success` | `boolean` | No | — |
+| `content` | `string` | Yes | — |
+| `success` | `boolean` | Yes | — |
 
 
 
@@ -336,7 +348,9 @@ Upload a document template (base64) to Carbone
 **Risk:** `write`
 
 ```ts
-await corsair.carbone.api.templates.upload({});
+await corsair.carbone.api.templates.upload({
+  template: 'UEsDBBQAAAAIA...',
+});
 ```
 
 **Input**
