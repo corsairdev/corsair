@@ -359,6 +359,7 @@ export const ProviderDisplayNames = {
 	dreamstudio: 'DreamStudio',
 	dropbox: 'Dropbox',
 	dropboxsign: 'Dropbox Sign',
+	dynapictures: 'Dynapictures',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
