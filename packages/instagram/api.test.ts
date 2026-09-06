@@ -208,7 +208,9 @@ describe('Instagram endpoints not on main', () => {
 			},
 			expect.any(Function),
 		);
-		expect((result as { token: string }).token).toBe('test-page-token');
+		expect(result).toEqual(
+			expect.objectContaining({ token: 'test-page-token' }),
+		);
 	});
 
 	it('markSeen posts sender_action', async () => {
