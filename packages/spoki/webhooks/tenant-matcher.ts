@@ -74,6 +74,16 @@ export function matchSpokiPluginWebhook(request: RawWebhookRequest): boolean {
 	);
 }
 
+// Raw-body adapters hand over either a string or binary (Buffer/Uint8Array);
+// pre-parsed objects cannot be signature-verified byte-exactly.
+function readRawBody(body: unknown): string | undefined {
+	if (typeof body === 'string') return body;
+	if (Buffer.isBuffer(body) || body instanceof Uint8Array) {
+		return Buffer.from(body).toString('utf8');
+	}
+	return undefined;
+}
+
 export function matchSpokiTenantWebhook(
 	request: RawWebhookRequest,
 	webhookSecret?: string,
@@ -86,7 +96,7 @@ export function matchSpokiTenantWebhook(
 
 	if (webhookSecret) {
 		const signature = getHeader(headers, 'x-spoki-signature');
-		const rawBody = typeof request.body === 'string' ? request.body : undefined;
+		const rawBody = readRawBody(request.body);
 
 		if (!signature || !rawBody) return null;
 		if (!verifySpokiWebhookSignature(rawBody, signature, webhookSecret)) {

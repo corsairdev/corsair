@@ -167,4 +167,40 @@ describe('matchSpokiTenantWebhook', () => {
 			),
 		).toBeNull();
 	});
+
+	it('accepts a valid V2 signature over a Buffer body', () => {
+		expect(
+			matchSpokiTenantWebhook(
+				{
+					headers: {
+						'x-spoki-account': '13128334',
+						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
+					},
+					body: Buffer.from(RAW_BODY, 'utf8'),
+				},
+				SECRET,
+			),
+		).toEqual({
+			linkType: 'spoki_account',
+			externalId: '13128334',
+		});
+	});
+
+	it('rejects a tampered Buffer body', () => {
+		expect(
+			matchSpokiTenantWebhook(
+				{
+					headers: {
+						'x-spoki-account': '13128334',
+						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
+					},
+					body: Buffer.from(
+						JSON.stringify({ version: 1, event: 'spoofed' }),
+						'utf8',
+					),
+				},
+				SECRET,
+			),
+		).toBeNull();
+	});
 });
