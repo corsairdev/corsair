@@ -5,6 +5,17 @@ function getStatus(error: Error): number | undefined {
 	return (error as Partial<SpokiApiError>).status;
 }
 
+/*
+ * Spoki requests carry no idempotency key, so replaying messaging.* or
+ * automation.* POSTs can send duplicate WhatsApp messages or run an
+ * automation twice. The handler context exposes the endpoint path as
+ * `operation`, so retries are restricted to the read-only accounts.*
+ * endpoints.
+ */
+function isReplayable(context: ErrorContext): boolean {
+	return context.operation.startsWith('accounts.');
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error, _context: ErrorContext) => {
@@ -21,6 +32,7 @@ export const errorHandlers = {
 			console.warn(
 				`[SPOKI:${context.operation}] Rate limited: ${error.message}`,
 			);
+			if (!isReplayable(context)) return { maxRetries: 0 };
 			return { maxRetries: 3, retryStrategy: 'linear_3s' as const };
 		},
 	},
@@ -74,6 +86,7 @@ export const errorHandlers = {
 			console.warn(
 				`[SPOKI:${context.operation}] Server error: ${error.message}`,
 			);
+			if (!isReplayable(context)) return { maxRetries: 0 };
 			return { maxRetries: 3, retryStrategy: 'exponential_backoff' as const };
 		},
 	},
@@ -93,6 +106,7 @@ export const errorHandlers = {
 			console.warn(
 				`[SPOKI:${context.operation}] Network error: ${error.message}`,
 			);
+			if (!isReplayable(context)) return { maxRetries: 0 };
 			return { maxRetries: 3 };
 		},
 	},
