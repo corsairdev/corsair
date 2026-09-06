@@ -35,24 +35,23 @@ describe('Spoki schema', () => {
 		expect(parsed.id).toBe(13128334);
 	});
 
-	it('parses an account with channels', () => {
+	it('parses an account with documented channels', () => {
 		const parsed = SpokiSchema.entities.accounts.parse({
 			...validAccount,
 			channels: [
 				{
-					id: 1,
-					name: 'Main',
-					phone: '3933312345678',
-					phone_status: 'Connected',
-					quality_score: 1,
-					has_official_verification: false,
-					daily_limit: 100000,
-					account_type: 2,
-					is_active: true,
+					name: 'Main WhatsApp',
+					identifier: '3933312345678',
+					platform: 'WhatsApp',
+					status: 'Active',
+					phone_status: '🟢 Connected',
+					quality_score: '🟢 Green',
+					is_primary: true,
 				},
 			],
 		});
 		expect(parsed.channels).toHaveLength(1);
+		expect(parsed.channels?.[0]?.identifier).toBe('3933312345678');
 	});
 
 	it('rejects an account missing required fields', () => {
@@ -70,19 +69,17 @@ describe('Spoki schema', () => {
 		).toThrow();
 	});
 
-	it('parses a channel payload', () => {
+	it('parses a documented channel payload', () => {
 		const parsed = SpokiSchema.entities.channels.parse({
-			id: 1,
-			name: 'Main',
-			phone: '3933312345678',
-			phone_status: 'Connected',
-			quality_score: 1,
-			has_official_verification: false,
-			daily_limit: 100000,
-			account_type: 2,
-			is_active: true,
+			name: 'SMS Sender',
+			identifier: 'MyShop',
+			platform: 'SMS',
+			status: 'Active',
+			phone_status: '❔ Undefined',
+			quality_score: '❔ Undefined',
+			is_primary: true,
 		});
-		expect(parsed.name).toBe('Main');
+		expect(parsed.platform).toBe('SMS');
 	});
 });
 

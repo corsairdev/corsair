@@ -1,16 +1,16 @@
 import { z } from 'zod';
 
+// Channel entries as returned inside the documented "Retrieve account"
+// response: { name, identifier, platform, status, phone_status,
+// quality_score ("🟢 Green"), is_primary }.
 export const SpokiChannelSchema = z.object({
-	id: z.number(),
 	name: z.string(),
-	phone: z.string(),
+	identifier: z.string(),
+	platform: z.string(),
+	status: z.string(),
 	phone_status: z.string(),
-	quality_score: z.number(),
-	quality_reasons: z.unknown().optional(),
-	has_official_verification: z.boolean(),
-	daily_limit: z.number(),
-	account_type: z.number(),
-	is_active: z.boolean(),
+	quality_score: z.string(),
+	is_primary: z.boolean(),
 });
 
 export const SpokiAccountSchema = z.object({

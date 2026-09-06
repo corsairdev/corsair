@@ -1,7 +1,7 @@
 import { SpokiClient } from '../client';
 import type { SpokiContext } from '../index';
 import type { SendMessageInput, SendMessageResponse } from './types';
-import { EndpointInputSchemas } from './types';
+import { EndpointInputSchemas, EndpointOutputSchemas } from './types';
 
 export const sendMessage = async (
 	ctx: SpokiContext & { key: string },
@@ -26,5 +26,9 @@ export const sendMessage = async (
 		body.metadata = parsed.metadata;
 	}
 
-	return client.post<SendMessageResponse>('/messages/send/', body);
+	const result = await client.post<unknown>('/messages/send/', body);
+
+	// Spoki may answer 200 with an empty body (as documented for the
+	// automation webhook); treat it as an empty object.
+	return EndpointOutputSchemas.sendMessage.parse(result ?? {});
 };

@@ -15,7 +15,7 @@ export interface SpokiAccount {
 	daily_limit: number;
 	phone_status: string;
 	quality_score: number;
-	quality_reasons: unknown;
+	quality_reasons?: unknown;
 	is_active: boolean;
 	country_code: string;
 	estimated_available_conversations: number;
@@ -33,16 +33,13 @@ export interface SpokiAccount {
 }
 
 export interface SpokiChannel {
-	id: number;
 	name: string;
-	phone: string;
+	identifier: string;
+	platform: string;
+	status: string;
 	phone_status: string;
-	quality_score: number;
-	quality_reasons?: unknown;
-	has_official_verification: boolean;
-	daily_limit: number;
-	account_type: number;
-	is_active: boolean;
+	quality_score: string;
+	is_primary: boolean;
 }
 
 export interface StartAutomationInput {

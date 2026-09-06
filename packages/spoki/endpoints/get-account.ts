@@ -1,7 +1,7 @@
 import { SpokiClient } from '../client';
 import type { SpokiContext } from '../index';
 import type { GetAccountResponse } from './types';
-import { EndpointInputSchemas } from './types';
+import { EndpointInputSchemas, EndpointOutputSchemas } from './types';
 
 export const getAccount = async (
 	ctx: SpokiContext & { key: string },
@@ -11,5 +11,7 @@ export const getAccount = async (
 
 	const client = new SpokiClient({ apiKey: ctx.key });
 
-	return client.get<GetAccountResponse>(`/accounts/${parsed.accountId}/`);
+	const result = await client.get<unknown>(`/accounts/${parsed.accountId}/`);
+
+	return EndpointOutputSchemas.getAccount.parse(result);
 };

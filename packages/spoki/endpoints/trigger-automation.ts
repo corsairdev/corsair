@@ -4,7 +4,7 @@ import type {
 	TriggerAutomationInput,
 	TriggerAutomationResponse,
 } from './types';
-import { EndpointInputSchemas } from './types';
+import { EndpointInputSchemas, EndpointOutputSchemas } from './types';
 
 export const triggerAutomation = async (
 	ctx: SpokiContext & { key: string },
@@ -18,5 +18,9 @@ export const triggerAutomation = async (
 
 	const url = `https://api.spoki.com/wh/ap/${encodeURIComponent(uuid)}/`;
 
-	return client.post<TriggerAutomationResponse>(url, payload);
+	const result = await client.post<unknown>(url, payload);
+
+	// The documented Start Automation response is a 200 with an empty body;
+	// treat it as an empty object.
+	return EndpointOutputSchemas.triggerAutomation.parse(result ?? {});
 };

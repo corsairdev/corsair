@@ -163,6 +163,77 @@ describe('Spoki plugin', () => {
 		expect(result).toEqual({ ok: true });
 	});
 
+	it('getAccount validates the documented response including channels', async () => {
+		mockFetchWith(200, {
+			...accountResponse,
+			channels: [
+				{
+					name: 'Main WhatsApp',
+					identifier: '3933312345678',
+					platform: 'WhatsApp',
+					status: 'Active',
+					phone_status: '🟢 Connected',
+					quality_score: '🟢 Green',
+					is_primary: true,
+				},
+			],
+		});
+
+		const result = await getAccount(ctx, { accountId: 13128334 });
+
+		expect(result.channels?.[0]?.platform).toBe('WhatsApp');
+	});
+
+	it('rejects malformed account responses', async () => {
+		mockFetchWith(200, { id: 1 });
+		await expect(getAccount(ctx, { accountId: 1 })).rejects.toThrow();
+
+		mockFetchWith(200, { id: 1 });
+		await expect(
+			getAccountByPhone(ctx, { phone: '+3933312345678' }),
+		).rejects.toThrow();
+	});
+
+	it('rejects malformed listAccounts responses', async () => {
+		mockFetchWith(200, { accounts: [] });
+
+		await expect(listAccounts(ctx, {})).rejects.toThrow();
+	});
+
+	it('rejects a non-object sendMessage response', async () => {
+		mockFetchWith(200, 'nope');
+
+		await expect(
+			sendMessage(ctx, { phone: '+3933312345678', text: 'Hi' }),
+		).rejects.toThrow();
+	});
+
+	it('rejects a non-object triggerAutomation response', async () => {
+		mockFetchWith(200, ['unexpected']);
+
+		await expect(
+			triggerAutomation(ctx, {
+				uuid: 'auto-uuid',
+				secret: 'whsec-secret',
+				phone: '+3933312345678',
+			}),
+		).rejects.toThrow();
+	});
+
+	it('maps the documented empty 200 body from Start Automation to an empty object', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(new Response('', { status: 200 }));
+
+		const result = await triggerAutomation(ctx, {
+			uuid: 'auto-uuid',
+			secret: 'whsec-secret',
+			phone: '+3933312345678',
+		});
+
+		expect(result).toEqual({});
+	});
+
 	it('rejects invalid input before making an HTTP call', async () => {
 		const mockFetch = mockFetchWith(200, {});
 
