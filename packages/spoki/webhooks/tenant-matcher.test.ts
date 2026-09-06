@@ -62,50 +62,99 @@ describe('verifySpokiWebhookSignature', () => {
 });
 
 describe('matchSpokiPluginWebhook', () => {
-	it('recognizes deliveries carrying the V2 signature header', () => {
+	it('returns false when no webhook secret is configured', () => {
 		expect(
-			matchSpokiPluginWebhook({
-				headers: { 'x-spoki-signature': 't=1,v2=abc' },
-				body: RAW_BODY,
-			}),
+			matchSpokiPluginWebhook(
+				{
+					headers: {
+						'x-spoki-account': '13128334',
+						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
+					},
+					body: RAW_BODY,
+				},
+				undefined,
+			),
+		).toBe(false);
+	});
+
+	it('matches a delivery with a valid V2 signature when a secret is set', () => {
+		expect(
+			matchSpokiPluginWebhook(
+				{
+					headers: {
+						'x-spoki-account': '13128334',
+						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
+					},
+					body: RAW_BODY,
+				},
+				SECRET,
+			),
 		).toBe(true);
 	});
 
-	it('recognizes deliveries carrying the legacy V1 hash header', () => {
+	it('returns false for an invalid signature when a secret is set', () => {
 		expect(
-			matchSpokiPluginWebhook({
-				headers: { 'X-SPOKI-HASH': 'a1b2c3' },
-				body: RAW_BODY,
-			}),
-		).toBe(true);
+			matchSpokiPluginWebhook(
+				{
+					headers: {
+						'x-spoki-account': '13128334',
+						'x-spoki-signature': 't=123,v2=deadbeef',
+					},
+					body: RAW_BODY,
+				},
+				SECRET,
+			),
+		).toBe(false);
+	});
+
+	it('does not match the deprecated V1 hash header alone', () => {
+		expect(
+			matchSpokiPluginWebhook(
+				{
+					headers: { 'X-SPOKI-HASH': 'a1b2c3' },
+					body: RAW_BODY,
+				},
+				SECRET,
+			),
+		).toBe(false);
 	});
 
 	it('ignores foreign webhooks', () => {
 		expect(
-			matchSpokiPluginWebhook({
-				headers: { 'x-github-event': 'push' },
-				body: '{}',
-			}),
+			matchSpokiPluginWebhook(
+				{
+					headers: { 'x-github-event': 'push' },
+					body: '{}',
+				},
+				SECRET,
+			),
 		).toBe(false);
-		expect(matchSpokiPluginWebhook({ headers: {}, body: '{}' })).toBe(false);
+		expect(matchSpokiPluginWebhook({ headers: {}, body: '{}' }, SECRET)).toBe(
+			false,
+		);
 	});
 });
 
 describe('matchSpokiTenantWebhook', () => {
-	it('routes on the documented X-SPOKI-ACCOUNT header', () => {
+	it('returns null when no webhook secret is configured', () => {
 		expect(
-			matchSpokiTenantWebhook({
-				headers: { 'x-spoki-account': '13128334' },
-				body: RAW_BODY,
-			}),
-		).toEqual({
-			linkType: 'spoki_account',
-			externalId: '13128334',
-		});
+			matchSpokiTenantWebhook(
+				{
+					headers: {
+						'x-spoki-account': '13128334',
+						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
+					},
+					body: RAW_BODY,
+				},
+				undefined,
+			),
+		).toBeNull();
 	});
 
 	it('returns null when the account header is missing', () => {
-		expect(matchSpokiTenantWebhook({ headers: {}, body: RAW_BODY })).toBeNull();
+		expect(
+			matchSpokiTenantWebhook({ headers: {}, body: RAW_BODY }, SECRET),
+		).toBeNull();
 	});
 
 	it('accepts a correctly signed delivery when a webhook secret is set', () => {

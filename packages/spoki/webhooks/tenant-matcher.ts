@@ -4,9 +4,12 @@ import crypto from 'crypto';
 /*
  * Spoki webhook contract (Spoki API Postman collection, "Signature
  * Verification"): every delivery carries `X-SPOKI-ACCOUNT` (account id) plus
- * either the V2 `X-Spoki-Signature: t=<ts>,v2=<hex>` header (HMAC-SHA256 of
- * `<ts>.<raw body>` keyed by the webhook secret) or the deprecated V1
- * `X-SPOKI-HASH` header (PBKDF2-HMAC-SHA256).
+ * the V2 `X-Spoki-Signature: t=<ts>,v2=<hex>` header (HMAC-SHA256 of
+ * `<ts>.<raw body>` keyed by the webhook secret). The deprecated V1
+ * `X-SPOKI-HASH` header cannot be verified and never matches on its own.
+ *
+ * Matching is fail-closed: without a configured webhook secret no delivery
+ * can be verified, so both matchers report nothing.
  */
 
 const SIGNATURE_TOLERANCE_SECONDS = 300;
@@ -65,15 +68,6 @@ export function verifySpokiWebhookSignature(
 	return Math.abs(Date.now() / 1000 - requestTime) <= toleranceSeconds;
 }
 
-export function matchSpokiPluginWebhook(request: RawWebhookRequest): boolean {
-	const headers = request.headers ?? {};
-
-	return (
-		getHeader(headers, 'x-spoki-signature') !== undefined ||
-		getHeader(headers, 'x-spoki-hash') !== undefined
-	);
-}
-
 // Raw-body adapters hand over either a string or binary (Buffer/Uint8Array);
 // pre-parsed objects cannot be signature-verified byte-exactly.
 function readRawBody(body: unknown): string | undefined {
@@ -84,25 +78,40 @@ function readRawBody(body: unknown): string | undefined {
 	return undefined;
 }
 
+function hasValidSignature(
+	request: RawWebhookRequest,
+	webhookSecret: string,
+): boolean {
+	const headers = request.headers ?? {};
+
+	const signature = getHeader(headers, 'x-spoki-signature');
+	const rawBody = readRawBody(request.body);
+
+	if (!signature || !rawBody) return false;
+
+	return verifySpokiWebhookSignature(rawBody, signature, webhookSecret);
+}
+
+export function matchSpokiPluginWebhook(
+	request: RawWebhookRequest,
+	webhookSecret: string | undefined,
+): boolean {
+	if (!webhookSecret) return false;
+
+	return hasValidSignature(request, webhookSecret);
+}
+
 export function matchSpokiTenantWebhook(
 	request: RawWebhookRequest,
 	webhookSecret?: string,
 ): WebhookTenantMatch | null {
-	const headers = request.headers ?? {};
+	if (!webhookSecret) return null;
 
-	const tenantId = getHeader(headers, 'x-spoki-account');
+	const tenantId = getHeader(request.headers ?? {}, 'x-spoki-account');
 
 	if (!tenantId) return null;
 
-	if (webhookSecret) {
-		const signature = getHeader(headers, 'x-spoki-signature');
-		const rawBody = readRawBody(request.body);
-
-		if (!signature || !rawBody) return null;
-		if (!verifySpokiWebhookSignature(rawBody, signature, webhookSecret)) {
-			return null;
-		}
-	}
+	if (!hasValidSignature(request, webhookSecret)) return null;
 
 	return {
 		linkType: 'spoki_account',

@@ -201,7 +201,8 @@ export function spoki<const T extends SpokiPluginOptions>(
 
 		endpointSchemas: spokiEndpointSchemas,
 
-		pluginWebhookMatcher: matchSpokiPluginWebhook,
+		pluginWebhookMatcher: (request) =>
+			matchSpokiPluginWebhook(request, options.webhookSecret),
 
 		pluginTenantWebhookMatcher: (request) =>
 			matchSpokiTenantWebhook(request, options.webhookSecret),
