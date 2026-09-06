@@ -16,7 +16,9 @@ export const BESTBUY_MAX_RPS = 5;
 export const BESTBUY_MAX_CALLS_PER_DAY = 50_000;
 const MIN_INTERVAL_MS = 1000 / BESTBUY_MAX_RPS;
 
-// corsair/http retries skip this file's limiter. 429 retry is plugin errorHandlers.
+export const BESTBUY_HTTP_RETRIES = 3;
+
+// corsair/http retries skip this file's limiter; we retry 429 here after throttle.
 export const BESTBUY_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: false,
 	maxRetries: 0,
@@ -175,23 +177,36 @@ export async function makeBestBuyRequest(
 		}),
 	};
 
-	await throttleOutbound(apiKey.trim());
-
-	try {
-		return await request(config, requestOptions, {
-			rateLimitConfig: BESTBUY_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new BestBuyAPIError(error.message, {
-				cause: error,
-				body: asErrorBody(error.body),
-				retryAfter: error.retryAfter,
+	const key = apiKey.trim();
+	let lastError: BestBuyAPIError | undefined;
+	for (let attempt = 0; attempt <= BESTBUY_HTTP_RETRIES; attempt++) {
+		await throttleOutbound(key);
+		try {
+			return await request(config, requestOptions, {
+				rateLimitConfig: BESTBUY_RATE_LIMIT_CONFIG,
 			});
+		} catch (error) {
+			lastError =
+				error instanceof ApiError
+					? new BestBuyAPIError(error.message, {
+							cause: error,
+							body: asErrorBody(error.body),
+							retryAfter: error.retryAfter,
+						})
+					: error instanceof Error
+						? new BestBuyAPIError(error.message, { cause: error })
+						: new BestBuyAPIError('Unknown error');
+			if (lastError.status !== 429 || attempt === BESTBUY_HTTP_RETRIES) {
+				throw lastError;
+			}
+			const wait =
+				lastError.retryAfter ??
+				BESTBUY_RATE_LIMIT_CONFIG.initialRetryDelay *
+					BESTBUY_RATE_LIMIT_CONFIG.backoffMultiplier ** attempt;
+			if (wait > 0) {
+				await new Promise((resolve) => setTimeout(resolve, wait));
+			}
 		}
-		if (error instanceof Error) {
-			throw new BestBuyAPIError(error.message, { cause: error });
-		}
-		throw new BestBuyAPIError('Unknown error');
 	}
+	throw lastError ?? new BestBuyAPIError('Unknown error');
 }

@@ -1,6 +1,7 @@
 import { ApiError } from 'corsair/http';
 import {
 	BESTBUY_API_BASE,
+	BESTBUY_HTTP_RETRIES,
 	BestBuyAPIError,
 	makeBestBuyRequest,
 	resetBestBuyLimiterForTests,
@@ -48,8 +49,22 @@ describe('makeBestBuyRequest', () => {
 		);
 	});
 
-	it('preserves 429 status and Retry-After on wrap', async () => {
-		mockFetch({ errorCode: '429', errorMessage: 'slow down' }, 429);
+	it('throttles each 429 retry before fetch', async () => {
+		const times: number[] = [];
+		jest.spyOn(global, 'fetch').mockImplementation(() => {
+			times.push(Date.now());
+			return Promise.resolve(
+				new Response(JSON.stringify({ errorCode: '429' }), {
+					status: 429,
+					statusText: 'Error',
+					headers: {
+						'Content-Type': 'application/json',
+						'Retry-After': '0',
+					},
+				}),
+			);
+		});
+
 		try {
 			await makeBestBuyRequest('products', 'demo-key');
 			throw new Error('expected failure');
@@ -58,6 +73,11 @@ describe('makeBestBuyRequest', () => {
 			if (!(error instanceof BestBuyAPIError)) return;
 			expect(error.status).toBe(429);
 			expect(error.cause).toBeInstanceOf(ApiError);
+		}
+
+		expect(times).toHaveLength(BESTBUY_HTTP_RETRIES + 1);
+		for (let i = 1; i < times.length; i++) {
+			expect((times[i] ?? 0) - (times[i - 1] ?? 0)).toBeGreaterThanOrEqual(180);
 		}
 	});
 

@@ -11,7 +11,7 @@ const PageSize = z.number().int().min(1).max(100).optional();
 
 /** Remix SKU is a long; accept the integer or string form and send a string. */
 export const BestBuySku = z
-	.union([z.string().min(1), z.number().int()])
+	.union([z.string().regex(/^\d+$/), z.number().int().nonnegative()])
 	.transform((value) => String(value));
 
 const CollectionMeta = {
@@ -93,7 +93,7 @@ export const GetCategoryDetailsInputSchema = z.object({
 export const GetStoresInputSchema = z.object({
 	geo: z
 		.object({
-			postalCode: z.string().min(1).optional(),
+			postalCode: z.string().trim().min(1).optional(),
 			lat: z.number().optional(),
 			lng: z.number().optional(),
 			distance: z.number().positive().optional(),

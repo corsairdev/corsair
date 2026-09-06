@@ -89,6 +89,28 @@ describe('Best Buy endpoints', () => {
 		expect(captured).toBeUndefined();
 	});
 
+	it('rejects a whitespace-only postal code', async () => {
+		mockFetch({ stores: [] });
+		await expect(
+			Endpoints.getStores(makeCtx(), { geo: { postalCode: '   ' } }),
+		).rejects.toThrow();
+		expect(captured).toBeUndefined();
+	});
+
+	it('rejects negative and non-decimal SKUs', async () => {
+		mockFetch({ sku: 1 });
+		await expect(
+			Endpoints.getProductDetails(makeCtx(), { sku: -1 }),
+		).rejects.toThrow();
+		await expect(
+			Endpoints.getProductDetails(makeCtx(), { sku: '-1' }),
+		).rejects.toThrow();
+		await expect(
+			Endpoints.getProductDetails(makeCtx(), { sku: 'abc' }),
+		).rejects.toThrow();
+		expect(captured).toBeUndefined();
+	});
+
 	it('products.get uses /products/{sku}.json', async () => {
 		mockFetch({ sku: 8880044, name: 'Batman' });
 		const out = await Endpoints.getProductDetails(makeCtx(), {
