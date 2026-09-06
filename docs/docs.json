@@ -905,6 +905,14 @@
                 ]
               },
               {
+                "group": "Carbone",
+                "pages": [
+                  "plugins/carbone/overview",
+                  "plugins/carbone/api",
+                  "plugins/carbone/database"
+                ]
+              },
+              {
                 "group": "Certifier",
                 "pages": [
                   "plugins/certifier/overview",

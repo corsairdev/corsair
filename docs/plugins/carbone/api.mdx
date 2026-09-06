@@ -1,0 +1,376 @@
+---
+title: API
+description: "API reference for Carbone: every `carbone.api.*` operation with input and output types."
+---
+
+Every `carbone.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Render
+
+### get
+
+`render.get`
+
+Get download URL for a rendered document
+
+**Risk:** `read`
+
+```ts
+await corsair.carbone.api.render.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `renderId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `renderId` | `string` | Yes | — |
+| `downloadUrl` | `string` | Yes | — |
+
+
+
+---
+
+### render
+
+`render.render`
+
+Render a document from a stored template and dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.carbone.api.render.render({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `convertTo` | `string` | No | — |
+| `formatName` | `string` | No | — |
+| `lang` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `translations` | `object` | No | — |
+| `enum` | `object` | No | — |
+| `variable` | `object` | No | — |
+| `complement` | `object` | No | — |
+| `hardRefresh` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="translations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="enum full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="variable full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="complement full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  renderId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### renderInline
+
+`render.renderInline`
+
+Render a document with an inline template and dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.carbone.api.render.renderInline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `convertTo` | `string` | No | — |
+| `formatName` | `string` | No | — |
+| `lang` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `translations` | `object` | No | — |
+| `enum` | `object` | No | — |
+| `variable` | `object` | No | — |
+| `complement` | `object` | No | — |
+| `hardRefresh` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="translations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="enum full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="variable full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="complement full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  renderId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Status
+
+### get
+
+`status.get`
+
+Check Carbone API operational health status
+
+**Risk:** `read`
+
+```ts
+await corsair.carbone.api.status.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `code` | `number` | No | — |
+| `message` | `string` | Yes | — |
+| `version` | `string` | No | — |
+
+
+
+---
+
+## Templates
+
+### delete
+
+`templates.delete`
+
+Delete a template from Carbone storage
+
+**Risk:** `write`
+
+```ts
+await corsair.carbone.api.templates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Get download URL for a stored template
+
+**Risk:** `read`
+
+```ts
+await corsair.carbone.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | — |
+| `downloadUrl` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### upload
+
+`templates.upload`
+
+Upload a document template (base64) to Carbone
+
+**Risk:** `write`
+
+```ts
+await corsair.carbone.api.templates.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  templateId?: string,
+  versionId?: string,
+  type?: string,
+  size?: number,
+  createdAt?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
