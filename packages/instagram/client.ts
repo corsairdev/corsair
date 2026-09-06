@@ -114,9 +114,9 @@ export async function makeInstagramRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body: method === 'POST' ? body : undefined,
+		body: method === 'POST' || method === 'DELETE' ? body : undefined,
 		mediaType: 'application/json',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {

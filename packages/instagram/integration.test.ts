@@ -22,12 +22,13 @@ const IG_MESSAGE_ID = process.env.IG_MESSAGE_ID ?? '';
 const IG_RECIPIENT_ID = process.env.IG_RECIPIENT_ID ?? '';
 const IG_CONVERSATION_ID = process.env.IG_CONVERSATION_ID ?? '';
 
-describe('Instagram Integration Test', () => {
-	async function createInstagramClient() {
-		const appId = process.env.FACEBOOK_APP_ID;
-		const appSecret = process.env.FACEBOOK_APP_SECRET;
-		const accessToken = process.env.IG_ACCESS_TOKEN;
+const appId = process.env.FACEBOOK_APP_ID;
+const appSecret = process.env.FACEBOOK_APP_SECRET;
+const accessToken = process.env.IG_ACCESS_TOKEN;
+const hasEnv = !!(appId && appSecret && accessToken);
 
+(hasEnv ? describe : describe.skip)('Instagram Integration Test', () => {
+	async function createInstagramClient() {
 		if (!appId || !appSecret || !accessToken) {
 			throw new Error('Missing environment variables');
 		}
@@ -470,4 +471,185 @@ describe('Instagram Integration Test', () => {
 			testDb.cleanup();
 		}
 	}, 1200000);
+});
+
+// ────────────────────────────────────────────────────────────────────────────
+// Credential-free tests — run in CI without Meta environment variables
+// ────────────────────────────────────────────────────────────────────────────
+
+describe('Instagram Schema Validation (credential-free)', () => {
+	const { InstagramEndpointInputSchemas } = require('./endpoints/types');
+
+	// ── Pagination cursor support ──────────────────────────────────────────
+	describe('pagination cursors', () => {
+		const schemasWithPagination = [
+			'GetInstagramMediaList',
+			'GetInstagramConversations',
+			'GetConversationMessages',
+			'GetComments',
+			'GetIgUserLiveMedia',
+			'GetIgUserStories',
+			'GetIgUserTags',
+			'GetIgCommentReplies',
+			'GetIgMediaChildren',
+		] as const;
+
+		for (const name of schemasWithPagination) {
+			it(`${name} schema accepts after/before cursors`, () => {
+				const schema = InstagramEndpointInputSchemas[name];
+				expect(schema).toBeDefined();
+
+				// Build a minimal valid input with cursors
+				const shape = schema.shape;
+				expect(shape.after).toBeDefined();
+				expect(shape.before).toBeDefined();
+
+				// Verify cursors are optional — schema should parse without them
+				const requiredFields: Record<string, unknown> = {};
+				for (const [key, field] of Object.entries(shape)) {
+					if (key !== 'after' && key !== 'before') {
+						const f = field as { isOptional: () => boolean };
+						if (!f.isOptional()) {
+							requiredFields[key] =
+								key === 'platform' ? 'instagram' : 'test-id';
+						}
+					}
+				}
+				const result = schema.safeParse(requiredFields);
+				expect(result.success).toBe(true);
+
+				// Verify cursors are accepted
+				const withCursors = schema.safeParse({
+					...requiredFields,
+					after: 'cursor-abc',
+					before: 'cursor-xyz',
+				});
+				expect(withCursors.success).toBe(true);
+			});
+		}
+	});
+
+	// ── Messenger greeting field ───────────────────────────────────────────
+	describe('UpdateMessengerProfile schema', () => {
+		it('accepts greeting with typed structure', () => {
+			const schema = InstagramEndpointInputSchemas.UpdateMessengerProfile;
+			expect(schema.shape.greeting).toBeDefined();
+			const result = schema.safeParse({
+				page_id: '12345',
+				greeting: [
+					{
+						locale: 'default',
+						text: 'Hello, welcome to our store!',
+					},
+				],
+			});
+			expect(result.success).toBe(true);
+		});
+
+		it('accepts persistent_menu with typed structure', () => {
+			const schema = InstagramEndpointInputSchemas.UpdateMessengerProfile;
+			const result = schema.safeParse({
+				page_id: '12345',
+				persistent_menu: [
+					{
+						locale: 'default',
+						composer_input_disabled: false,
+						call_to_actions: [
+							{ type: 'web_url', title: 'Visit', url: 'https://example.com' },
+							{ type: 'postback', title: 'Help', payload: 'HELP' },
+						],
+					},
+				],
+			});
+			expect(result.success).toBe(true);
+		});
+
+		it('accepts ice_breakers with typed structure', () => {
+			const schema = InstagramEndpointInputSchemas.UpdateMessengerProfile;
+			const result = schema.safeParse({
+				page_id: '12345',
+				ice_breakers: [
+					{ question: 'What can you do?', payload: 'GET_STARTED' },
+				],
+			});
+			expect(result.success).toBe(true);
+		});
+
+		it('rejects persistent_menu with untyped objects', () => {
+			const schema = InstagramEndpointInputSchemas.UpdateMessengerProfile;
+			// Missing required 'locale' field
+			const result = schema.safeParse({
+				page_id: '12345',
+				persistent_menu: [{ random_field: true }],
+			});
+			expect(result.success).toBe(false);
+		});
+
+		it('rejects ice_breakers with missing required fields', () => {
+			const schema = InstagramEndpointInputSchemas.UpdateMessengerProfile;
+			const result = schema.safeParse({
+				page_id: '12345',
+				ice_breakers: [{ question: 'Hello?' }], // missing payload
+			});
+			expect(result.success).toBe(false);
+		});
+	});
+
+	describe('handler module exports', () => {
+		it('exports only the new handlers that are not on main', () => {
+			const conversations = require('./endpoints/conversations');
+			const messages = require('./endpoints/messages');
+			const messenger = require('./endpoints/messenger-profile');
+			const profile = require('./endpoints/profile');
+			const media = require('./endpoints/media');
+			const comments = require('./endpoints/comments');
+
+			expect(typeof conversations.getConversation).toBe('function');
+			expect(conversations.listAll).toBeUndefined();
+			expect(typeof messages.markSeen).toBe('function');
+			expect(typeof messages.sendImage).toBe('function');
+			expect(messages.sendTextMessage).toBeUndefined();
+			expect(typeof messenger.getProfile).toBe('function');
+			expect(typeof profile.contentPublishingLimit).toBe('function');
+			expect(typeof profile.liveMedia).toBe('function');
+			expect(typeof profile.stories).toBe('function');
+			expect(typeof profile.tags).toBe('function');
+			expect(typeof profile.replyMentions).toBe('function');
+			expect(profile.userMedia).toBeUndefined();
+			expect(typeof media.children).toBe('function');
+			expect(media.createMediaContainer).toBeUndefined();
+			expect(typeof comments.getReplies).toBe('function');
+			expect(comments.postReplies).toBeUndefined();
+		});
+	});
+
+	// ── Input schema validation ───────────────────────────────────────────
+	describe('input schemas reject invalid payloads', () => {
+		it('GetInstagramUser requires ig_id', () => {
+			const result = InstagramEndpointInputSchemas.GetInstagramUser.safeParse(
+				{},
+			);
+			expect(result.success).toBe(false);
+		});
+
+		it('SendMessage requires page_id and recipient', () => {
+			const result = InstagramEndpointInputSchemas.SendMessage.safeParse({});
+			expect(result.success).toBe(false);
+		});
+
+		it('GetMediaInsights requires media_id and type', () => {
+			const result = InstagramEndpointInputSchemas.GetMediaInsights.safeParse(
+				{},
+			);
+			expect(result.success).toBe(false);
+		});
+
+		it('CreateImageContainer requires ig_id and image_url', () => {
+			const result =
+				InstagramEndpointInputSchemas.CreateImageContainer.safeParse({
+					ig_id: '12345',
+				});
+			expect(result.success).toBe(false);
+		});
+	});
 });
