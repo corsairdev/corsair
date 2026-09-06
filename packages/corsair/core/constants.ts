@@ -27,6 +27,7 @@ export const BaseProviders = [
 	'agentmail',
 	'agentql',
 	'agenty',
+	'agiled',
 	'agilitycms',
 	'ahrefs',
 	'aimlapi',
@@ -56,6 +57,7 @@ export const BaseProviders = [
 	'apisports',
 	'asana',
 	'ascora',
+	'ashby',
 	'asindataapi',
 	'asticaai',
 	'asyncinterview',
@@ -92,6 +94,7 @@ export const BaseProviders = [
 	'box',
 	'boxhero',
 	'brandfetch',
+	'brevo',
 	'breathehr',
 	'brex',
 	'brightdata',
@@ -291,6 +294,7 @@ export const ProviderDisplayNames = {
 	agentmail: 'AgentMail',
 	agentql: 'AgentQL',
 	agenty: 'Agenty',
+	agiled: 'Agiled',
 	agilitycms: 'Agility CMS',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
@@ -320,6 +324,7 @@ export const ProviderDisplayNames = {
 	apisports: 'API-Sports',
 	asana: 'Asana',
 	ascora: 'Ascora',
+	ashby: 'Ashby',
 	asindataapi: 'ASIN Data API',
 	asticaai: 'Astica AI',
 	asyncinterview: 'Async Interview',
@@ -356,6 +361,7 @@ export const ProviderDisplayNames = {
 	box: 'Box',
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
+	brevo: 'Brevo',
 	breathehr: 'Breathe HR',
 	brex: 'Brex',
 	brightdata: 'Bright Data',
@@ -562,6 +568,7 @@ export type AllProviders =
 	| 'agentmail'
 	| 'agentql'
 	| 'agenty'
+	| 'agiled'
 	| 'agilitycms'
 	| 'ahrefs'
 	| 'aimlapi'
@@ -591,6 +598,7 @@ export type AllProviders =
 	| 'apisports'
 	| 'asana'
 	| 'ascora'
+	| 'ashby'
 	| 'asindataapi'
 	| 'asticaai'
 	| 'asyncinterview'
@@ -627,6 +635,7 @@ export type AllProviders =
 	| 'box'
 	| 'boxhero'
 	| 'brandfetch'
+	| 'brevo'
 	| 'breathehr'
 	| 'brex'
 	| 'brightdata'
