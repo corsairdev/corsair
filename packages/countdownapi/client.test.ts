@@ -10,7 +10,7 @@ const mockHttpRequest = request as jest.MockedFunction<typeof request>;
 describe('makeCountdownApiRequest', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
-		mockHttpRequest.mockResolvedValue({ ok: true } as never);
+		mockHttpRequest.mockResolvedValue({ ok: true });
 	});
 
 	it('sends a GET to /request on the Countdown API host with api_key', async () => {

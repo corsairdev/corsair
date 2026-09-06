@@ -5,6 +5,11 @@ import { makeCountdownApiRequest } from './client';
 import { get as autocomplete } from './endpoints/autocomplete';
 import { get as product } from './endpoints/product';
 import { get as search } from './endpoints/search';
+import type {
+	AutocompleteResponse,
+	ProductResponse,
+	SearchResponse,
+} from './endpoints/types';
 import {
 	CountdownApiEndpointInputSchemas,
 	CountdownApiEndpointOutputSchemas,
@@ -23,7 +28,11 @@ jest.mock('./client', () => ({
 }));
 
 const mockRequest = makeCountdownApiRequest as jest.MockedFunction<
-	typeof makeCountdownApiRequest
+	(
+		endpoint: string,
+		apiKey: string,
+		query: Record<string, string | number | boolean | undefined>,
+	) => Promise<unknown>
 >;
 
 const mockLogEvent = logEventFromContext as jest.MockedFunction<
@@ -95,7 +104,7 @@ const docSearchResponse = {
 		has_next_page: true,
 		next_page: 2,
 	},
-};
+} satisfies SearchResponse;
 
 const docProductResponse = {
 	request_info: { success: true, credits_used: 1, credits_remaining: 999 },
@@ -120,7 +129,7 @@ const docProductResponse = {
 			{ link: 'https://i.ebayimg.com/images/g/DEF456/s-l1600.jpg' },
 		],
 	},
-};
+} satisfies ProductResponse;
 
 const docMasterProductResponse = {
 	request_info: { success: true, credits_used: 1, credits_remaining: 999 },
@@ -156,7 +165,7 @@ const docMasterProductResponse = {
 			},
 		},
 	],
-};
+} satisfies ProductResponse;
 
 const docRedirectedProductResponse = {
 	request_info: { success: true, credits_used: 1, credits_remaining: 999 },
@@ -175,7 +184,7 @@ const docRedirectedProductResponse = {
 	redirected: true,
 	redirected_link: 'https://www.ebay.com/itm/15029998724',
 	redirected_epid: '15029998724',
-};
+} satisfies ProductResponse;
 
 const docAutocompleteResponse = {
 	request_info: { success: true, credits_used: 1, credits_remaining: 999 },
@@ -202,16 +211,16 @@ const docAutocompleteResponse = {
 			type: 'KEYWORD',
 		},
 	],
-};
+} satisfies AutocompleteResponse;
 
 describe('CountdownApi endpoints', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
-		mockRequest.mockResolvedValue(docSearchResponse as any);
+		mockRequest.mockResolvedValue(docSearchResponse);
 	});
 
 	it('search sends the correct request and returns validated response', async () => {
-		mockRequest.mockResolvedValue(docSearchResponse as any);
+		mockRequest.mockResolvedValue(docSearchResponse);
 
 		const result = await search(ctx, {
 			query: 'memory cards',
@@ -238,7 +247,7 @@ describe('CountdownApi endpoints', () => {
 	});
 
 	it('search maps the query input to the documented search_term wire parameter', async () => {
-		mockRequest.mockResolvedValue(docSearchResponse as any);
+		mockRequest.mockResolvedValue(docSearchResponse);
 
 		await search(ctx, {
 			query: 'memory cards',
@@ -251,7 +260,7 @@ describe('CountdownApi endpoints', () => {
 	});
 
 	it('search forwards the page parameter when provided', async () => {
-		mockRequest.mockResolvedValue(docSearchResponse as any);
+		mockRequest.mockResolvedValue(docSearchResponse);
 
 		await search(ctx, {
 			query: 'memory cards',
@@ -272,7 +281,7 @@ describe('CountdownApi endpoints', () => {
 	});
 
 	it('search sends url-only lookups without a search_term', async () => {
-		mockRequest.mockResolvedValue(docSearchResponse as any);
+		mockRequest.mockResolvedValue(docSearchResponse);
 
 		await search(ctx, {
 			url: 'https://www.ebay.com/sch/i.html?_nkw=memory+cards',
@@ -293,7 +302,7 @@ describe('CountdownApi endpoints', () => {
 	});
 
 	it('search forwards documented filter parameters', async () => {
-		mockRequest.mockResolvedValue(docSearchResponse as any);
+		mockRequest.mockResolvedValue(docSearchResponse);
 
 		await search(ctx, {
 			query: 'memory cards',
@@ -340,7 +349,7 @@ describe('CountdownApi endpoints', () => {
 	});
 
 	it('product sends the correct request and returns validated response', async () => {
-		mockRequest.mockResolvedValue(docProductResponse as any);
+		mockRequest.mockResolvedValue(docProductResponse);
 
 		const result = await product(ctx, {
 			epid: '15029998723',
@@ -367,7 +376,7 @@ describe('CountdownApi endpoints', () => {
 	});
 
 	it('product parses a master page response without a top-level product', async () => {
-		mockRequest.mockResolvedValue(docMasterProductResponse as any);
+		mockRequest.mockResolvedValue(docMasterProductResponse);
 
 		const result = await product(ctx, {
 			gtin: '0619659162982',
@@ -378,7 +387,7 @@ describe('CountdownApi endpoints', () => {
 	});
 
 	it('product parses a redirected response', async () => {
-		mockRequest.mockResolvedValue(docRedirectedProductResponse as any);
+		mockRequest.mockResolvedValue(docRedirectedProductResponse);
 
 		const result = await product(ctx, {
 			epid: '15029998725',
@@ -389,7 +398,7 @@ describe('CountdownApi endpoints', () => {
 	});
 
 	it('product forwards include_parts_compatibility when epid and domain are valid', async () => {
-		mockRequest.mockResolvedValue(docProductResponse as any);
+		mockRequest.mockResolvedValue(docProductResponse);
 
 		await product(ctx, {
 			epid: '15029998723',
@@ -420,7 +429,7 @@ describe('CountdownApi endpoints', () => {
 	});
 
 	it('autocomplete uses search_term and returns validated response', async () => {
-		mockRequest.mockResolvedValue(docAutocompleteResponse as any);
+		mockRequest.mockResolvedValue(docAutocompleteResponse);
 
 		const result = await autocomplete(ctx, {
 			query: 'memory',
@@ -447,7 +456,7 @@ describe('CountdownApi endpoints', () => {
 	});
 
 	it('search throws Zod validation error on malformed response', async () => {
-		mockRequest.mockResolvedValue({ invalid_data: true } as any);
+		mockRequest.mockResolvedValue({ invalid_data: true });
 
 		await expect(
 			search(ctx, {
@@ -460,7 +469,7 @@ describe('CountdownApi endpoints', () => {
 	it('product throws Zod validation error on a metadata-only response', async () => {
 		mockRequest.mockResolvedValue({
 			request_metadata: { id: 'req-4' },
-		} as any);
+		});
 
 		await expect(
 			product(ctx, {
@@ -471,7 +480,7 @@ describe('CountdownApi endpoints', () => {
 	});
 
 	it('autocomplete throws Zod validation error on malformed response', async () => {
-		mockRequest.mockResolvedValue({ request_metadata: { id: '1' } } as any);
+		mockRequest.mockResolvedValue({ request_metadata: { id: '1' } });
 
 		await expect(
 			autocomplete(ctx, {
