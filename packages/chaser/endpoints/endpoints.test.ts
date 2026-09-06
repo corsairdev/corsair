@@ -20,6 +20,7 @@ const createContext = (input: unknown = {}) =>
 		key: 'chaser-test-api-key',
 		$getAccountId: jest.fn().mockReturnValue('test-account'),
 		secret: 'chaser-test-api-secret',
+		options: { secret: 'chaser-test-api-secret' },
 		db: {},
 		input,
 	}) as any;
