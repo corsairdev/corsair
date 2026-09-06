@@ -14,31 +14,26 @@ import {
 	PersonCreateInputSchema,
 	PersonIdInputSchema,
 } from './endpoints/types';
+import type { ChMeetingsContext } from './index';
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn(),
 }));
 
 jest.mock('corsair/http', () => {
-	const actual = jest.requireActual(
-		'corsair/http',
-	) as typeof import('corsair/http');
+	const actual =
+		jest.requireActual<typeof import('corsair/http')>('corsair/http');
 	return {
 		...actual,
 		request: jest.fn(),
 	};
 });
 
-/** Jest mock of corsair/http `request`; args/return stay untyped. */
-const requestMock = request as unknown as jest.Mock<
-	(config: unknown, options: unknown) => Promise<unknown>
->;
-/** Jest mock of `logEventFromContext`. */
-const mockLog = logEventFromContext as unknown as jest.Mock<
-	() => Promise<void>
->;
+const requestMock = jest.mocked(request);
+const mockLog = jest.mocked(logEventFromContext);
 
-const ctx = { key: 'chm-test-key' };
+/** Endpoint handlers only read `ctx.key` in these tests. */
+const ctx = { key: 'chm-test-key' } as ChMeetingsContext;
 
 beforeEach(() => {
 	requestMock.mockReset();
@@ -46,18 +41,14 @@ beforeEach(() => {
 });
 
 function lastCall() {
-	const [config, options] = requestMock.mock.calls.at(-1)!;
-	return {
-		config: config as { BASE: string; HEADERS: Record<string, string> },
-		options: options as {
-			method: string;
-			url: string;
-			/** Compacted query object passed to the transport. */
-			query?: unknown;
-			/** Compacted JSON body passed to the transport. */
-			body?: unknown;
-		},
-	};
+	const call = requestMock.mock.calls.at(-1);
+	if (!call) throw new Error('expected request to be called');
+	const [config, options] = call;
+	const headers = config.HEADERS;
+	if (!headers || typeof headers === 'function') {
+		throw new Error('expected static request headers');
+	}
+	return { config: { ...config, HEADERS: headers }, options };
 }
 
 describe('client', () => {
@@ -100,7 +91,7 @@ describe('people', () => {
 			data: [{ id: 1, first_name: 'Ada' }],
 			paging: { page: 1, page_size: 100, total_count: 1 },
 		});
-		const result = await People.list(ctx as never, {});
+		const result = await People.list(ctx, {});
 		expect(result.data[0]?.first_name).toBe('Ada');
 		expect(lastCall().options).toMatchObject({
 			method: 'GET',
@@ -119,7 +110,7 @@ describe('people', () => {
 		requestMock.mockResolvedValue({
 			data: { id: 9, first_name: 'Ada', last_name: 'Lovelace' },
 		});
-		const result = await People.get(ctx as never, { id: '9' });
+		const result = await People.get(ctx, { id: '9' });
 		expect(result.id).toBe(9);
 		expect(lastCall().options.url).toBe('people/9');
 	});
@@ -128,7 +119,7 @@ describe('people', () => {
 		requestMock.mockResolvedValueOnce({
 			data: { id: 3, first_name: 'Ada', last_name: 'Lovelace' },
 		});
-		await People.create(ctx as never, {
+		await People.create(ctx, {
 			first_name: 'Ada',
 			last_name: 'Lovelace',
 		});
@@ -141,7 +132,7 @@ describe('people', () => {
 		requestMock.mockReset();
 		requestMock.mockResolvedValueOnce(undefined);
 		await expect(
-			People.update(ctx as never, {
+			People.update(ctx, {
 				id: 3,
 				first_name: 'Ada',
 				last_name: 'Byron',
@@ -150,14 +141,14 @@ describe('people', () => {
 
 		requestMock.mockReset();
 		requestMock.mockResolvedValueOnce(undefined);
-		await expect(People.remove(ctx as never, { id: 3 })).resolves.toEqual({
+		await expect(People.remove(ctx, { id: 3 })).resolves.toEqual({
 			success: true,
 		});
 	});
 
 	it('throws when get has no data', async () => {
 		requestMock.mockResolvedValue({ status_code: 404, errors: ['gone'] });
-		await expect(People.get(ctx as never, { id: 404 })).rejects.toMatchObject({
+		await expect(People.get(ctx, { id: 404 })).rejects.toMatchObject({
 			name: 'ChMeetingsAPIError',
 			status: 404,
 		});
@@ -168,7 +159,7 @@ describe('people', () => {
 			status_code: 429,
 			errors: ['Too Many Requests'],
 		});
-		await expect(People.list(ctx as never, {})).rejects.toMatchObject({
+		await expect(People.list(ctx, {})).rejects.toMatchObject({
 			name: 'ChMeetingsAPIError',
 			status: 429,
 		});
@@ -176,7 +167,7 @@ describe('people', () => {
 			status_code: 500,
 			errors: ['Internal Server Error'],
 		});
-		await expect(People.list(ctx as never, {})).rejects.toMatchObject({
+		await expect(People.list(ctx, {})).rejects.toMatchObject({
 			name: 'ChMeetingsAPIError',
 			status: 500,
 		});
@@ -184,7 +175,7 @@ describe('people', () => {
 
 	it('does not log people search filter values', async () => {
 		requestMock.mockResolvedValue({ data: [] });
-		await People.list(ctx as never, {
+		await People.list(ctx, {
 			email: 'ada@example.com',
 			mobile: '555',
 			name: 'Ada',
@@ -212,7 +203,7 @@ describe('settings and orgs', () => {
 			.mockResolvedValueOnce({ data: [{ value: '1' }] })
 			.mockResolvedValueOnce({ data: [{ value: 'Head' }] })
 			.mockResolvedValueOnce({ data: { sections: [] } });
-		const result = await Settings.get(ctx as never, {});
+		const result = await Settings.get(ctx, {});
 		expect(result.genders[0]?.value).toBe('Male');
 		requestMock.mockReset();
 		requestMock
@@ -221,7 +212,7 @@ describe('settings and orgs', () => {
 			.mockResolvedValueOnce({ data: [] })
 			.mockResolvedValueOnce({ data: [] })
 			.mockResolvedValueOnce({ data: { sections: [] } });
-		const live = await Settings.get(ctx as never, {});
+		const live = await Settings.get(ctx, {});
 		expect(live.genders[0]?.value).toBe('Female');
 		expect(requestMock).toHaveBeenCalledTimes(5);
 	});
@@ -230,12 +221,12 @@ describe('settings and orgs', () => {
 		requestMock.mockResolvedValue({
 			data: [{ id: 'org-1', name: 'Main', type: 'church' }],
 		});
-		const listed = await Organizations.list(ctx as never, {});
+		const listed = await Organizations.list(ctx, {});
 		expect(listed.data[0]?.id).toBe('org-1');
 		requestMock.mockResolvedValue({
 			data: { id: 'org-1', name: 'Main', type: 'church' },
 		});
-		const one = await Organizations.get(ctx as never, {
+		const one = await Organizations.get(ctx, {
 			organization_id: 'org-1',
 		});
 		expect(one.name).toBe('Main');
@@ -245,7 +236,7 @@ describe('settings and orgs', () => {
 describe('events groups families', () => {
 	it('lists events in a date range', async () => {
 		requestMock.mockResolvedValue({ data: [{ id: 1, title: 'Sunday' }] });
-		const result = await Events.list(ctx as never, {
+		const result = await Events.list(ctx, {
 			from: '2026-01-01',
 			to: '2026-01-31',
 		});
@@ -258,10 +249,10 @@ describe('events groups families', () => {
 
 	it('lists groups and creates one', async () => {
 		requestMock.mockResolvedValue({ data: [{ id: 2, name: 'Youth' }] });
-		const listed = await Groups.list(ctx as never, {});
+		const listed = await Groups.list(ctx, {});
 		expect(listed[0]?.name).toBe('Youth');
 		requestMock.mockResolvedValue({ data: { id: 3, name: 'Choir' } });
-		const created = await Groups.create(ctx as never, { name: 'Choir' });
+		const created = await Groups.create(ctx, { name: 'Choir' });
 		expect(created.name).toBe('Choir');
 	});
 
@@ -269,10 +260,10 @@ describe('events groups families', () => {
 		requestMock.mockResolvedValue({
 			data: [{ family_id: 1, members: [] }],
 		});
-		const families = await Families.list(ctx as never, {});
+		const families = await Families.list(ctx, {});
 		expect(families.data[0]?.family_id).toBe(1);
 		requestMock.mockResolvedValue({ data: [{ id: 8, note: 'hi' }] });
-		const notes = await Families.listNotes(ctx as never, { person_id: 9 });
+		const notes = await Families.listNotes(ctx, { person_id: 9 });
 		expect(notes.data[0]?.note).toBe('hi');
 		expect(lastCall().options.url).toBe('people/9/notes');
 	});
@@ -283,7 +274,7 @@ describe('remaining official endpoints', () => {
 		requestMock.mockResolvedValue({
 			data: [{ id: 'org-1', name: 'Main', type: 'church' }],
 		});
-		const result = await People.listOrganizations(ctx as never, {
+		const result = await People.listOrganizations(ctx, {
 			person_id: 9,
 		});
 		expect(result.data[0]?.id).toBe('org-1');
@@ -292,7 +283,7 @@ describe('remaining official endpoints', () => {
 
 	it('lists people in an organization', async () => {
 		requestMock.mockResolvedValue({ data: [{ id: 1, first_name: 'Ada' }] });
-		const result = await Organizations.listPeople(ctx as never, {
+		const result = await Organizations.listPeople(ctx, {
 			organization_id: 'org-1',
 		});
 		expect(result.data[0]?.id).toBe(1);
@@ -302,7 +293,7 @@ describe('remaining official endpoints', () => {
 	it('adds a person to an organization', async () => {
 		requestMock.mockResolvedValue(undefined);
 		await expect(
-			Organizations.addPerson(ctx as never, {
+			Organizations.addPerson(ctx, {
 				organization_id: 'org-1',
 				person_id: 9,
 			}),
@@ -317,7 +308,7 @@ describe('remaining official endpoints', () => {
 	it('removes a person from an organization', async () => {
 		requestMock.mockResolvedValue(undefined);
 		await expect(
-			Organizations.removePerson(ctx as never, {
+			Organizations.removePerson(ctx, {
 				organization_id: 'org-1',
 				person_id: 9,
 			}),
@@ -330,7 +321,7 @@ describe('remaining official endpoints', () => {
 
 	it('gets an event by id', async () => {
 		requestMock.mockResolvedValue({ data: { id: 4, title: 'Sunday' } });
-		const result = await Events.get(ctx as never, { event_id: 4 });
+		const result = await Events.get(ctx, { event_id: 4 });
 		expect(result.title).toBe('Sunday');
 		expect(lastCall().options.url).toBe('events/4');
 	});
@@ -339,7 +330,7 @@ describe('remaining official endpoints', () => {
 		requestMock.mockResolvedValue({
 			data: [{ occurrence_id: 'occ-1', event_id: 4 }],
 		});
-		const result = await Events.listOccurrences(ctx as never, {
+		const result = await Events.listOccurrences(ctx, {
 			event_id: 4,
 			from: '2026-01-01',
 			to: '2026-01-31',
@@ -352,7 +343,7 @@ describe('remaining official endpoints', () => {
 		requestMock.mockResolvedValue({
 			data: [{ status: 'attended', person: { person_id: 9 } }],
 		});
-		const result = await Events.listAttendance(ctx as never, {
+		const result = await Events.listAttendance(ctx, {
 			occurrence_id: 'occ-1',
 		});
 		expect(result.data[0]?.status).toBe('attended');
@@ -361,14 +352,14 @@ describe('remaining official endpoints', () => {
 
 	it('gets a group by id', async () => {
 		requestMock.mockResolvedValue({ data: { id: 2, name: 'Youth' } });
-		const result = await Groups.get(ctx as never, { group_id: 2 });
+		const result = await Groups.get(ctx, { group_id: 2 });
 		expect(result.name).toBe('Youth');
 		expect(lastCall().options.url).toBe('groups/2');
 	});
 
 	it('updates a group', async () => {
 		requestMock.mockResolvedValue({ data: { id: 2, name: 'Youth 2' } });
-		const result = await Groups.update(ctx as never, {
+		const result = await Groups.update(ctx, {
 			group_id: 2,
 			name: 'Youth 2',
 		});
@@ -384,9 +375,7 @@ describe('remaining official endpoints', () => {
 			status_code: 400,
 			errors: ['cannot delete'],
 		});
-		await expect(
-			Groups.remove(ctx as never, { group_id: 2 }),
-		).rejects.toMatchObject({
+		await expect(Groups.remove(ctx, { group_id: 2 })).rejects.toMatchObject({
 			name: 'ChMeetingsAPIError',
 			status: 400,
 		});
@@ -394,11 +383,9 @@ describe('remaining official endpoints', () => {
 
 	it('deletes a group', async () => {
 		requestMock.mockResolvedValue(undefined);
-		await expect(Groups.remove(ctx as never, { group_id: 2 })).resolves.toEqual(
-			{
-				success: true,
-			},
-		);
+		await expect(Groups.remove(ctx, { group_id: 2 })).resolves.toEqual({
+			success: true,
+		});
 		expect(lastCall().options).toMatchObject({
 			method: 'DELETE',
 			url: 'groups/2',
@@ -408,7 +395,7 @@ describe('remaining official endpoints', () => {
 	it('adds a group member', async () => {
 		requestMock.mockResolvedValue(undefined);
 		await expect(
-			Groups.addMember(ctx as never, { group_id: 2, person_id: 9 }),
+			Groups.addMember(ctx, { group_id: 2, person_id: 9 }),
 		).resolves.toEqual({ success: true });
 		expect(lastCall().options).toMatchObject({
 			method: 'POST',
@@ -420,7 +407,7 @@ describe('remaining official endpoints', () => {
 	it('removes a group member', async () => {
 		requestMock.mockResolvedValue(undefined);
 		await expect(
-			Groups.removeMember(ctx as never, { group_id: 2, person_id: 9 }),
+			Groups.removeMember(ctx, { group_id: 2, person_id: 9 }),
 		).resolves.toEqual({ success: true });
 		expect(lastCall().options).toMatchObject({
 			method: 'DELETE',
@@ -430,7 +417,7 @@ describe('remaining official endpoints', () => {
 
 	it('gets a family by id', async () => {
 		requestMock.mockResolvedValue({ data: { family_id: 1, members: [] } });
-		const result = await Families.get(ctx as never, { id: 1 });
+		const result = await Families.get(ctx, { id: 1 });
 		expect(result.family_id).toBe(1);
 		expect(lastCall().options.url).toBe('families/1');
 	});
@@ -439,7 +426,7 @@ describe('remaining official endpoints', () => {
 		requestMock.mockResolvedValue({
 			data: { family_id: 7, members: [{ person_id: 9, family_role: 'Head' }] },
 		});
-		const result = await Families.create(ctx as never, {
+		const result = await Families.create(ctx, {
 			members: [{ person_id: 9, family_role: 'Head' }],
 		});
 		expect(result.family_id).toBe(7);
@@ -451,7 +438,7 @@ describe('remaining official endpoints', () => {
 
 	it('deletes a family', async () => {
 		requestMock.mockResolvedValue(undefined);
-		await expect(Families.remove(ctx as never, { id: 7 })).resolves.toEqual({
+		await expect(Families.remove(ctx, { id: 7 })).resolves.toEqual({
 			success: true,
 		});
 		expect(lastCall().options).toMatchObject({
