@@ -1,0 +1,206 @@
+---
+title: Database
+description: "Parseur local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Parseur plugin syncs data locally. Use `corsair.parseur.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Documents
+
+Path: `parseur.db.documents.search`
+
+```ts
+const rows = await corsair.parseur.db.documents.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `parser` | `number` | equals, gt, gte, lt, lte, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `received` | `string` | equals, contains, startsWith, endsWith, in |
+| `processed` | `string` | equals, contains, startsWith, endsWith, in |
+| `result` | `string` | equals, contains, startsWith, endsWith, in |
+| `json_download_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `csv_download_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `xls_download_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `original_document_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Export Configs
+
+Path: `parseur.db.exportConfigs.search`
+
+```ts
+const rows = await corsair.parseur.db.exportConfigs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `parser_field_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `parser_field_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `csv_download` | `string` | equals, contains, startsWith, endsWith, in |
+| `xls_download` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Logs
+
+Path: `parseur.db.logs.search`
+
+```ts
+const rows = await corsair.parseur.db.logs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `code` | `string` | equals, contains, startsWith, endsWith, in |
+| `document` | `number` | equals, gt, gte, lt, lte, in |
+| `document_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `parser` | `number` | equals, gt, gte, lt, lte, in |
+| `parser_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `template` | `number` | equals, gt, gte, lt, lte, in |
+| `template_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `source` | `string` | equals, contains, startsWith, endsWith, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Parsers
+
+Path: `parseur.db.parsers.search`
+
+```ts
+const rows = await corsair.parseur.db.parsers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `ai_engine` | `string` | equals, contains, startsWith, endsWith, in |
+| `ai_instructions` | `string` | equals, contains, startsWith, endsWith, in |
+| `email_prefix` | `string` | equals, contains, startsWith, endsWith, in |
+| `document_count` | `number` | equals, gt, gte, lt, lte, in |
+| `template_count` | `number` | equals, gt, gte, lt, lte, in |
+| `webhook_count` | `number` | equals, gt, gte, lt, lte, in |
+| `attachments_only` | `boolean` | equals |
+| `is_master` | `boolean` | equals |
+| `last_activity` | `string` | equals, contains, startsWith, endsWith, in |
+| `decimal_separator` | `string` | equals, contains, startsWith, endsWith, in |
+| `default_timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `csv_download` | `string` | equals, contains, startsWith, endsWith, in |
+| `json_download` | `string` | equals, contains, startsWith, endsWith, in |
+| `xls_download` | `string` | equals, contains, startsWith, endsWith, in |
+| `secret` | `string` | equals, contains, startsWith, endsWith, in |
+| `ai_split_instructions` | `string` | equals, contains, startsWith, endsWith, in |
+| `workflow_enabled` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Templates
+
+Path: `parseur.db.templates.search`
+
+```ts
+const rows = await corsair.parseur.db.templates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `parser` | `number` | equals, gt, gte, lt, lte, in |
+| `engine` | `string` | equals, contains, startsWith, endsWith, in |
+| `action` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `document_count` | `number` | equals, gt, gte, lt, lte, in |
+| `last_activity` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhooks
+
+Path: `parseur.db.webhooks.search`
+
+```ts
+const rows = await corsair.parseur.db.webhooks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `event` | `string` | equals, contains, startsWith, endsWith, in |
+| `target` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

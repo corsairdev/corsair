@@ -8,11 +8,11 @@ import {
 	getIntegrationCapabilitiesForPage,
 	getIntegrationSummaryForPage,
 } from '@/server/integration-cache';
-
 import { IntegrationTagList } from '../integration-tag-badge';
 import { Pulse } from '../oss-skeletons';
 import { ClaimExpiredCallout } from './claim-expired-callout';
 import { ContributorWorkflowSteps } from './contributor-workflow-steps';
+import { IntegrationBackLink } from './integration-back-link';
 import { IntegrationCapabilities } from './integration-capabilities';
 import { IntegrationClaimCallout } from './integration-claim-callout';
 import { IntegrationDetailSidebar } from './integration-detail-sidebar';
@@ -48,6 +48,8 @@ export async function IntegrationHeaderSection({
 		<div className="grid gap-10 pt-8 lg:grid-cols-[minmax(0,8fr)_minmax(0,3fr)]">
 			<div className="min-w-0">
 				<div className="mb-8 space-y-3">
+					<IntegrationBackLink />
+
 					<div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
 						<h1 className="text-[28px] font-medium tracking-[-0.02em] text-[#1c1c1c]">
 							{integration.name}
@@ -159,6 +161,7 @@ export function IntegrationHeaderSkeleton() {
 		>
 			<div className="min-w-0">
 				<div className="mb-8 space-y-3">
+					<IntegrationBackLink />
 					<div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
 						<Pulse className="h-8 w-48" />
 						<Pulse className="h-4 w-24" />

@@ -1,7 +1,7 @@
 {
   "name": "corsair",
-  "version": "0.1.122",
-  "description": "",
+  "version": "0.1.127",
+  "description": "Open-source integration layer for AI agents and apps. Managed OAuth, webhooks, and one API for 200+ integrations, with credentials that stay in your own database.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -81,7 +81,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:api": "jest --testPathPattern=api\\.test\\.ts",
-    "build": "tsup",
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsup",
     "build:watch": "tsup --watch",
     "postinstall": "node scripts/postinstall-frpc.mjs",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
@@ -129,9 +129,26 @@
     "tsx": "^4.20.6",
     "typescript": "^5.3.3"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "integrations",
+    "oauth",
+    "api",
+    "connectors",
+    "ai-agents",
+    "mcp",
+    "webhooks",
+    "multi-tenant",
+    "self-hosted",
+    "corsair"
+  ],
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
+  "homepage": "https://corsair.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/corsair"
+  },
   "packageManager": "pnpm@10.20.0",
   "files": [
     "dist",

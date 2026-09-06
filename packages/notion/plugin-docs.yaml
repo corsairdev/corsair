@@ -1,5 +1,6 @@
 displayName: Notion
-description: "Notion plugin for Corsair — search and create pages."
+description: All-in-one workspace for notes, databases, wikis, tasks, and team documentation.
+recommendedAuth: managed
 examples:
   read:
     path: pages.searchPage
@@ -8,19 +9,18 @@ examples:
     path: pages.createPage
     title: Create a new page
     args:
-      parent: { type: 'database_id', database_id: '1234567890' }
-
+      parent:
+        type: database_id
+        database_id: d9824bdc-8445-4327-be8b-5b47500af6ce
 dbExample:
   entity: pages
-  note: "Search synced pages without hitting Notion's API."
+  note: Search synced pages without hitting Notion's API.
   data:
-    archived: true
-  limit: 100
-  offset: 0
-
+    archived: false
+  limit: 50
 exampleWebhook:
   path: databasePages.pageCreated
-  note: "Fires when a page is created in the Notion database."
+  note: Fires when a page is created in a Notion database.
   after: |
-    const pageId = result.data?.data.page_id;
+    const pageId = result.data?.entity?.id;
     console.log('New Notion page created with ID:', pageId);

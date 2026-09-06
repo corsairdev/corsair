@@ -1,0 +1,462 @@
+{
+  "id": "amcards",
+  "displayName": "AMcards",
+  "description": "Automated greeting card platform for sending personalized physical mail campaigns.",
+  "npmPackageName": "@corsair-dev/amcards",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "amcards.api.cards.list",
+      "shortPath": "cards.list",
+      "description": "List cards for the authenticated account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to skip (sent as Tastypie/DRF `offset`)"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string }[] | { count?: number, next?: string | null, previous?: string | null, results?: { id: number | string }[], meta?: { limit?: number, next?: string | null, offset?: number, previous?: string | null, total_count?: number }, objects?: { id: number | string }[] }"
+      }
+    },
+    {
+      "path": "amcards.api.categories.get",
+      "shortPath": "categories.get",
+      "description": "Get a card template category by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "hierarchy",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amcards.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "List card template categories ordered by priority",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent__id",
+            "optional": true,
+            "type": "number",
+            "description": "Filter sub-categories by parent id"
+          },
+          {
+            "key": "title__icontains",
+            "optional": true,
+            "type": "string",
+            "description": "Case-insensitive title search"
+          },
+          {
+            "key": "parent__title__icontains",
+            "optional": true,
+            "type": "string",
+            "description": "Case-insensitive parent title search"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, title?: string | null, priority?: number | null, parent?: any, hierarchy?: any }[] | { count?: number, next?: string | null, previous?: string | null, results?: { id: number | string, title?: string | null, priority?: number | null, parent?: any, hierarchy?: any }[], meta?: { limit?: number, next?: string | null, offset?: number, previous?: string | null, total_count?: number }, objects?: { id: number | string, title?: string | null, priority?: number | null, parent?: any, hierarchy?: any }[] }"
+      }
+    },
+    {
+      "path": "amcards.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts, optionally filtered by name or email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Rows to skip (sent as Tastypie/DRF `offset`)"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by email"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by first name"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by last name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, first_name?: string | null, last_name?: string | null, email?: string | null, created_at?: string | null, updated_at?: string | null }[] | { count?: number, next?: string | null, previous?: string | null, results?: { id: number | string, first_name?: string | null, last_name?: string | null, email?: string | null, created_at?: string | null, updated_at?: string | null }[], meta?: { limit?: number, next?: string | null, offset?: number, previous?: string | null, total_count?: number }, objects?: { id: number | string, first_name?: string | null, last_name?: string | null, email?: string | null, created_at?: string | null, updated_at?: string | null }[] }"
+      }
+    },
+    {
+      "path": "amcards.api.gifts.get",
+      "shortPath": "gifts.get",
+      "description": "Get a gift by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "shipping_cost",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "available",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "availability",
+            "optional": true,
+            "type": "string | boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amcards.api.gifts.list",
+      "shortPath": "gifts.list",
+      "description": "List available gifts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, name?: string | null, description?: string | null, price?: string | number | null, shipping_cost?: string | number | null, available?: boolean, availability?: string | boolean }[] | { count?: number, next?: string | null, previous?: string | null, results?: { id: number | string, name?: string | null, description?: string | null, price?: string | number | null, shipping_cost?: string | number | null, available?: boolean, availability?: string | boolean }[], meta?: { limit?: number, next?: string | null, offset?: number, previous?: string | null, total_count?: number }, objects?: { id: number | string, name?: string | null, description?: string | null, price?: string | number | null, shipping_cost?: string | number | null, available?: boolean, availability?: string | boolean }[] }"
+      }
+    },
+    {
+      "path": "amcards.api.schema.getApi",
+      "shortPath": "schema.getApi",
+      "description": "Retrieve the AMcards API v1 schema (resource map)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "amcards.api.schema.getCategory",
+      "shortPath": "schema.getCategory",
+      "description": "Retrieve the readonly Category resource schema",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "amcards.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get a public card template by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "panels",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amcards.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List public card templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category__id",
+            "optional": true,
+            "type": "number",
+            "description": "Filter templates by category id"
+          },
+          {
+            "key": "name__icontains",
+            "optional": true,
+            "type": "string",
+            "description": "Case-insensitive template name search"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, name?: string | null, category?: any, configuration?: any, panels?: any, metadata?: any }[] | { count?: number, next?: string | null, previous?: string | null, results?: { id: number | string, name?: string | null, category?: any, configuration?: any, panels?: any, metadata?: any }[], meta?: { limit?: number, next?: string | null, offset?: number, previous?: string | null, total_count?: number }, objects?: { id: number | string, name?: string | null, category?: any, configuration?: any, panels?: any, metadata?: any }[] }"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "amcards.db.cards.search",
+      "entityName": "cards",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "amcards.db.categories.search",
+      "entityName": "categories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "amcards.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "amcards.db.gifts.search",
+      "entityName": "gifts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "available",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "amcards.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

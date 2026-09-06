@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Notion plugin for Corsair — search and create pages."
+description: "All-in-one workspace for notes, databases, wikis, tasks, and team documentation."
 ---
 
 Use **Notion** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -48,8 +48,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -137,7 +137,7 @@ await tenant.notion.api.pages.searchPage({});
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.notion.api.pages.createPage({
-	parent: { type: 'database_id', database_id: '1234567890' },
+	parent: { type: 'database_id', database_id: 'd9824bdc-8445-4327-be8b-5b47500af6ce' },
 });
 ```
 
@@ -151,8 +151,8 @@ Search synced pages without hitting Notion's API.
 ```ts
 const tenant = corsair.withTenant('acme');
 const rows = await tenant.notion.db.pages.search({
-	data: { archived: true },
-	limit: 100,
+	data: { archived: false },
+	limit: 50,
 });
 ```
 
@@ -160,7 +160,7 @@ Synced entities: `blocks`, `databases`, `pages`, `users`. See [Database](/plugin
 
 ## Webhooks
 
-Fires when a page is created in the Notion database.
+Fires when a page is created in a Notion database.
 
 ```ts
 notion({
@@ -168,7 +168,7 @@ notion({
         databasePages: {
             pageCreated: {
                 after: async (ctx, result) => {
-                    const pageId = result.data?.data.page_id;
+                    const pageId = result.data?.entity?.id;
                     console.log('New Notion page created with ID:', pageId);
                 }
             },

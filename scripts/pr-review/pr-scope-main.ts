@@ -1,7 +1,13 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
-import type { PrScope } from './pr-scope.ts';
-import { classifyPrScope, filtersForScope } from './pr-scope.ts';
+import type { PrScope, PushChangeSet } from './pr-scope.ts';
+import {
+	changeSetForPush,
+	classifyPrScope,
+	classifyPushChangeSet,
+	filtersForScope,
+	pushRangeFromGithubEvent,
+} from './pr-scope.ts';
 
 function gh(args: string[]): string {
 	return execFileSync('gh', args, {
@@ -10,10 +16,13 @@ function gh(args: string[]): string {
 	});
 }
 
-function pullRequestNumber(): string {
-	const event: unknown = JSON.parse(
+function githubEvent(): unknown {
+	return JSON.parse(
 		fs.readFileSync(process.env.GITHUB_EVENT_PATH ?? '', 'utf8'),
 	);
+}
+
+function pullRequestNumber(event: unknown): string {
 	if (
 		typeof event !== 'object' ||
 		event === null ||
@@ -41,21 +50,76 @@ function changedFilesForPullRequest(repo: string, pr: string): string[] {
 		.filter(Boolean);
 }
 
+function gitDiffNameOnly(before: string, after: string): string[] {
+	const diff = (): string[] =>
+		execFileSync('git', ['diff', '--name-only', before, after], {
+			encoding: 'utf8',
+			maxBuffer: 64 * 1024 * 1024,
+		})
+			.trim()
+			.split('\n')
+			.filter(Boolean);
+	try {
+		return diff();
+	} catch {
+		execFileSync('git', ['fetch', '--depth=1', 'origin', before], {
+			encoding: 'utf8',
+			maxBuffer: 64 * 1024 * 1024,
+		});
+		return diff();
+	}
+}
+
 function writeOutput(name: string, value: string): void {
 	const output = process.env.GITHUB_OUTPUT;
 	if (!output) throw new Error('GITHUB_OUTPUT is not set');
 	fs.appendFileSync(output, `${name}=${value}\n`);
 }
 
-let scope: PrScope = { lane: 'full', includeWww: false };
-if (process.env.GITHUB_EVENT_NAME === 'pull_request') {
-	const repo = process.env.GITHUB_REPOSITORY;
-	if (!repo) throw new Error('GITHUB_REPOSITORY is not set');
-	scope = classifyPrScope(
-		changedFilesForPullRequest(repo, pullRequestNumber()),
+function unknownPush(reason: string): PushChangeSet {
+	console.warn(`CI lane fallback: full with www (${reason})`);
+	return { kind: 'unknown', reason };
+}
+
+function scopeForCurrentEvent(): PrScope {
+	const eventName = process.env.GITHUB_EVENT_NAME;
+	const event = githubEvent();
+	if (eventName === 'pull_request') {
+		const repo = process.env.GITHUB_REPOSITORY;
+		if (!repo) throw new Error('GITHUB_REPOSITORY is not set');
+		return classifyPrScope(
+			changedFilesForPullRequest(repo, pullRequestNumber(event)),
+		);
+	}
+	if (eventName === 'push') {
+		const range = pushRangeFromGithubEvent(event);
+		if (range === null) {
+			return classifyPushChangeSet(
+				unknownPush('push event has no before/after'),
+			);
+		}
+		try {
+			const changeSet = changeSetForPush({
+				before: range.before,
+				after: range.after,
+				diff: gitDiffNameOnly,
+			});
+			if (changeSet.kind === 'unknown') {
+				console.warn(`CI lane fallback: full with www (${changeSet.reason})`);
+			}
+			return classifyPushChangeSet(changeSet);
+		} catch {
+			return classifyPushChangeSet(
+				unknownPush(`git diff failed for ${range.before}..${range.after}`),
+			);
+		}
+	}
+	return classifyPushChangeSet(
+		unknownPush(`unsupported event ${eventName ?? ''}`),
 	);
 }
 
+const scope = scopeForCurrentEvent();
 const filters = filtersForScope(scope);
 writeOutput('lane', filters.lane);
 writeOutput('turbo_filter', filters.turboFilter);
@@ -66,5 +130,7 @@ writeOutput('www_test_filter', filters.wwwTestFilter);
 console.log(
 	scope.lane === 'plugin'
 		? `CI lane: plugin (${scope.plugin}, filter ${filters.turboFilter})`
-		: `CI lane: ${scope.lane}`,
+		: scope.lane === 'full'
+			? `CI lane: full (www=${scope.includeWww})`
+			: `CI lane: ${scope.lane}`,
 );
