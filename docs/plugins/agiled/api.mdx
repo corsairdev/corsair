@@ -1,0 +1,54 @@
+---
+title: API
+description: "API reference for Agiled: every `agiled.api.*` operation with input and output types."
+---
+
+Every `agiled.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contacts
+
+### list
+
+`contacts.list`
+
+List contacts from an Agiled workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.agiled.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number for pagination. |
+| `limit` | `number` | No | Maximum number of contacts to return per page. |
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | List of contact objects. |
+| `current_page` | `number` | No | The current page number. |
+| `last_page` | `number` | No | The last available page number. |
+
+<AccordionGroup>
+<Accordion title="data items full type">
+
+```ts
+{
+  id: number | string,
+  first_name: string,
+  last_name?: string,
+  email?: string,
+  phone?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
