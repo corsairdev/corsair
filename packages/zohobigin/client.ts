@@ -1,9 +1,10 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class ZohoBiginAPIError extends Error {
 	constructor(
 		message: string,
+		public readonly status?: number,
 		public readonly code?: string,
 	) {
 		super(message);
@@ -14,17 +15,32 @@ export class ZohoBiginAPIError extends Error {
 // Zoho Bigin API v1 base URL
 const ZOHOBIGIN_API_BASE = 'https://www.zohoapis.com/bigin/v1';
 
+export type ZohoBiginRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	body?: unknown;
+	query?: Record<string, string | number | boolean | undefined>;
+	headers?: Record<string, string>;
+	mediaType?: string;
+};
+
 export async function makeZohoBiginRequest<T>(
 	endpoint: string,
 	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: unknown;
-		query?: Record<string, string | number | boolean | undefined>;
-		headers?: Record<string, string>;
-	} = {},
+	options: ZohoBiginRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, headers } = options;
+	const { method = 'GET', body, query, headers, mediaType } = options;
+
+	const isFormData =
+		typeof FormData !== 'undefined' && body instanceof FormData;
+
+	const defaultHeaders: Record<string, string> = {
+		Authorization: `Zoho-oauthtoken ${apiKey}`,
+		...headers,
+	};
+
+	if (!isFormData && !defaultHeaders['Content-Type']) {
+		defaultHeaders['Content-Type'] = 'application/json';
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: ZOHOBIGIN_API_BASE,
@@ -32,11 +48,7 @@ export async function makeZohoBiginRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			Authorization: `Zoho-oauthtoken ${apiKey}`,
-			...headers,
-		},
+		HEADERS: defaultHeaders,
 	};
 
 	const requestOptions: ApiRequestOptions = {
@@ -46,15 +58,26 @@ export async function makeZohoBiginRequest<T>(
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body
 				: undefined,
-		mediaType: 'application/json; charset=utf-8',
+		mediaType: isFormData
+			? undefined
+			: (mediaType ?? 'application/json; charset=utf-8'),
 		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		// Preserve ApiError so errorHandlers (rate limit 429, auth 401) receive status and retry metadata
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
-			throw new ZohoBiginAPIError(error.message);
+			const status =
+				'status' in error &&
+				typeof (error as { status: unknown }).status === 'number'
+					? (error as { status: number }).status
+					: undefined;
+			throw new ZohoBiginAPIError(error.message, status);
 		}
 		throw new ZohoBiginAPIError('Unknown error');
 	}

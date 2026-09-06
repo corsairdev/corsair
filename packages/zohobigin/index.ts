@@ -618,7 +618,10 @@ export function zohobigin<const T extends ZohoBiginPluginOptions>(
 		id: 'zohobigin',
 		authConfig: zohoBiginAuthConfig,
 		schema: ZohoBiginSchema,
-		errorHandlers,
+		errorHandlers: {
+			...errorHandlers,
+			...options.errorHandlers,
+		},
 		options,
 		endpoints: zohoBiginEndpointsNested,
 		webhooks: zohoBiginWebhooksNested,

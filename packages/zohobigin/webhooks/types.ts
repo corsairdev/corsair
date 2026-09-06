@@ -6,28 +6,29 @@ import type {
 import { z } from 'zod';
 
 export const ZohoBiginWebhookPayloadSchema = z.object({
-	type: z.string(),
-	created_at: z.string(),
-	data: z.record(z.string(), z.unknown()),
+	operation: z.string().optional(),
+	module: z.string().optional(),
+	token: z.string().optional(),
+	ids: z.array(z.string()).optional(),
+	data: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type ZohoBiginWebhookPayload = z.infer<
 	typeof ZohoBiginWebhookPayloadSchema
 >;
 
-export const ExampleEventSchema = ZohoBiginWebhookPayloadSchema.extend({
-	type: z.literal('example'),
-	data: z
-		.object({
-			id: z.string(),
-		})
-		.loose(),
-});
+export const ZohoBiginNotificationEventSchema =
+	ZohoBiginWebhookPayloadSchema.extend({
+		operation: z.string(),
+		module: z.string(),
+	});
 
-export type ExampleEvent = z.infer<typeof ExampleEventSchema>;
+export type ZohoBiginNotificationEvent = z.infer<
+	typeof ZohoBiginNotificationEventSchema
+>;
 
 export type ZohoBiginWebhookOutputs = {
-	example: ExampleEvent;
+	notification: ZohoBiginNotificationEvent;
 };
 
 function parseBody(body: unknown): Record<string, unknown> | null {
@@ -48,10 +49,13 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
-export function createZohoBiginMatch(eventType: string): CorsairWebhookMatcher {
+export function createZohoBiginMatch(operation: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body);
-		return parsedBody !== null && parsedBody.type === eventType;
+		return (
+			parsedBody !== null &&
+			(parsedBody.operation === operation || parsedBody.type === operation)
+		);
 	};
 }
 
@@ -59,6 +63,15 @@ export function verifyZohoBiginWebhookSignature(
 	request: WebhookRequest<ZohoBiginWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
-	return { valid: true };
+	if (!secret) {
+		return { valid: true };
+	}
+	const tokenHeader =
+		request.headers?.['x-bigin-token'] ?? request.headers?.['authorization'];
+	const payloadToken = request.payload?.token;
+
+	if (tokenHeader === secret || payloadToken === secret) {
+		return { valid: true };
+	}
+	return { valid: false, error: 'Invalid webhook authentication token' };
 }
