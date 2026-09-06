@@ -101,6 +101,40 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
+ * Waits out a 429 backoff interval, rejecting early with the normalized abort
+ * error when the caller cancels during the delay.
+ */
+async function sleepBeforeRetry(
+	delayMs: number,
+	requestOptions: ApiRequestOptions,
+	url: string,
+	signal: AbortSignal | undefined,
+): Promise<void> {
+	if (!signal) {
+		await sleep(delayMs);
+		return;
+	}
+
+	if (signal.aborted) {
+		throw createNetworkApiError(requestOptions, url, signal.reason);
+	}
+
+	await new Promise<void>((resolve, reject) => {
+		const timer = setTimeout(() => {
+			signal.removeEventListener('abort', handleAbort);
+			resolve();
+		}, delayMs);
+
+		const handleAbort = () => {
+			clearTimeout(timer);
+			reject(createNetworkApiError(requestOptions, url, signal.reason));
+		};
+
+		signal.addEventListener('abort', handleAbort, { once: true });
+	});
+}
+
+/**
  * Converts Retry-After response headers to milliseconds.
  */
 function parseRetryAfterMs(response: Response): number | undefined {
@@ -391,7 +425,7 @@ export async function executeBorneoTool<T>(
 			const delay =
 				retryAfterMs ?? INITIAL_RETRY_DELAY_MS * BACKOFF_MULTIPLIER ** attempt;
 
-			await sleep(delay);
+			await sleepBeforeRetry(delay, requestOptions, url, options.signal);
 			continue;
 		}
 

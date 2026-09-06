@@ -334,6 +334,44 @@ describe('Borneo Composio transport', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
 
+	it('rejects promptly when the caller cancels during a 429 backoff delay', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ error: 'rate limited' }), {
+				status: 429,
+				headers: {
+					'Content-Type': 'application/json',
+					'Retry-After': '60',
+				},
+			}),
+		);
+
+		const controller = new AbortController();
+
+		const pending = executeBorneoTool(
+			'BORNEO_LIST_SCANS_WITH_FILTERS',
+			{},
+			{
+				composioApiKey: 'project-key',
+				connectedAccountId: 'ca_123',
+				riskLevel: 'read',
+				signal: controller.signal,
+			},
+		);
+
+		setTimeout(() => controller.abort(), 50);
+
+		const startedAt = Date.now();
+
+		await expect(pending).rejects.toMatchObject({
+			name: 'ApiError',
+			status: 0,
+			message: expect.stringContaining('This operation was aborted'),
+		});
+
+		expect(Date.now() - startedAt).toBeLessThan(1000);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
 	it('does not retry write operations after HTTP 429', async () => {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify({ error: 'rate limited' }), {
