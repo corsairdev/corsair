@@ -1,5 +1,5 @@
-export type {
-	SpokiTenantWebhookMatch,
-	SpokiWebhookRequest,
+export {
+	matchSpokiPluginWebhook,
+	matchSpokiTenantWebhook,
+	verifySpokiWebhookSignature,
 } from './tenant-matcher';
-export { matchSpokiTenantWebhook } from './tenant-matcher';

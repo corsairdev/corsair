@@ -37,11 +37,12 @@ import { EndpointInputSchemas, EndpointOutputSchemas } from './endpoints/types';
 
 import { errorHandlers } from './error-handlers';
 import { SpokiSchema } from './schema';
-import { matchSpokiTenantWebhook } from './webhooks';
+import { matchSpokiPluginWebhook, matchSpokiTenantWebhook } from './webhooks';
 
 export type SpokiPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	webhookSecret?: string;
 	hooks?: InternalSpokiPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof spokiEndpointsNested>;
@@ -200,9 +201,10 @@ export function spoki<const T extends SpokiPluginOptions>(
 
 		endpointSchemas: spokiEndpointSchemas,
 
-		pluginWebhookMatcher: () => false,
+		pluginWebhookMatcher: matchSpokiPluginWebhook,
 
-		pluginTenantWebhookMatcher: matchSpokiTenantWebhook,
+		pluginTenantWebhookMatcher: (request) =>
+			matchSpokiTenantWebhook(request, options.webhookSecret),
 
 		errorHandlers: {
 			...errorHandlers,

@@ -1,44 +1,170 @@
 import { describe, expect, it } from '@jest/globals';
+import crypto from 'crypto';
+import {
+	matchSpokiPluginWebhook,
+	matchSpokiTenantWebhook,
+	verifySpokiWebhookSignature,
+} from './tenant-matcher';
 
-import { matchSpokiTenantWebhook } from './tenant-matcher';
+const SECRET = 'whsec_test_secret';
+
+function sign(rawBody: string, timestamp: number, secret = SECRET): string {
+	const signature = crypto
+		.createHmac('sha256', secret)
+		.update(`${timestamp}.${rawBody}`)
+		.digest('hex');
+	return `t=${timestamp},v2=${signature}`;
+}
+
+const RAW_BODY = JSON.stringify({
+	version: 1,
+	event: 'message.inbound',
+	data: { text: 'Thanks' },
+});
+
+describe('verifySpokiWebhookSignature', () => {
+	it('accepts a valid V2 signature', () => {
+		const header = sign(RAW_BODY, Math.floor(Date.now() / 1000));
+		expect(verifySpokiWebhookSignature(RAW_BODY, header, SECRET)).toBe(true);
+	});
+
+	it('rejects a signature computed with a different secret', () => {
+		const header = sign(RAW_BODY, Math.floor(Date.now() / 1000), 'whsec_other');
+		expect(verifySpokiWebhookSignature(RAW_BODY, header, SECRET)).toBe(false);
+	});
+
+	it('rejects a signature over a tampered body', () => {
+		const header = sign(RAW_BODY, Math.floor(Date.now() / 1000));
+		expect(
+			verifySpokiWebhookSignature(
+				JSON.stringify({ version: 1, event: 'spoofed' }),
+				header,
+				SECRET,
+			),
+		).toBe(false);
+	});
+
+	it('rejects signatures outside the tolerance window', () => {
+		const stale = Math.floor(Date.now() / 1000) - 3600;
+		expect(
+			verifySpokiWebhookSignature(RAW_BODY, sign(RAW_BODY, stale), SECRET),
+		).toBe(false);
+	});
+
+	it('rejects malformed signature headers', () => {
+		expect(verifySpokiWebhookSignature(RAW_BODY, 'v2=deadbeef', SECRET)).toBe(
+			false,
+		);
+		expect(verifySpokiWebhookSignature(RAW_BODY, 'garbage', SECRET)).toBe(
+			false,
+		);
+	});
+});
+
+describe('matchSpokiPluginWebhook', () => {
+	it('recognizes deliveries carrying the V2 signature header', () => {
+		expect(
+			matchSpokiPluginWebhook({
+				headers: { 'x-spoki-signature': 't=1,v2=abc' },
+				body: RAW_BODY,
+			}),
+		).toBe(true);
+	});
+
+	it('recognizes deliveries carrying the legacy V1 hash header', () => {
+		expect(
+			matchSpokiPluginWebhook({
+				headers: { 'X-SPOKI-HASH': 'a1b2c3' },
+				body: RAW_BODY,
+			}),
+		).toBe(true);
+	});
+
+	it('ignores foreign webhooks', () => {
+		expect(
+			matchSpokiPluginWebhook({
+				headers: { 'x-github-event': 'push' },
+				body: '{}',
+			}),
+		).toBe(false);
+		expect(matchSpokiPluginWebhook({ headers: {}, body: '{}' })).toBe(false);
+	});
+});
 
 describe('matchSpokiTenantWebhook', () => {
-	it('returns null when no tenant header is present', () => {
+	it('routes on the documented X-SPOKI-ACCOUNT header', () => {
 		expect(
 			matchSpokiTenantWebhook({
-				headers: {},
-				body: {},
+				headers: { 'x-spoki-account': '13128334' },
+				body: RAW_BODY,
 			}),
+		).toEqual({
+			linkType: 'spoki_account',
+			externalId: '13128334',
+		});
+	});
+
+	it('returns null when the account header is missing', () => {
+		expect(matchSpokiTenantWebhook({ headers: {}, body: RAW_BODY })).toBeNull();
+	});
+
+	it('accepts a correctly signed delivery when a webhook secret is set', () => {
+		expect(
+			matchSpokiTenantWebhook(
+				{
+					headers: {
+						'x-spoki-account': '13128334',
+						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
+					},
+					body: RAW_BODY,
+				},
+				SECRET,
+			),
+		).toEqual({
+			linkType: 'spoki_account',
+			externalId: '13128334',
+		});
+	});
+
+	it('rejects a spoofed delivery with an invalid signature', () => {
+		expect(
+			matchSpokiTenantWebhook(
+				{
+					headers: {
+						'x-spoki-account': '13128334',
+						'x-spoki-signature': 't=123,v2=deadbeef',
+					},
+					body: RAW_BODY,
+				},
+				SECRET,
+			),
 		).toBeNull();
 	});
 
-	it('matches the Spoki tenant ID header', () => {
+	it('rejects unsigned deliveries when a webhook secret is set', () => {
 		expect(
-			matchSpokiTenantWebhook({
-				headers: {
-					'x-spoki-tenant-id': 'tenant-123',
+			matchSpokiTenantWebhook(
+				{
+					headers: { 'x-spoki-account': '13128334' },
+					body: RAW_BODY,
 				},
-				body: {},
-			}),
-		).toEqual({
-			tenantId: 'tenant-123',
-			linkType: 'spoki_account',
-			externalId: 'tenant-123',
-		});
+				SECRET,
+			),
+		).toBeNull();
 	});
 
-	it('supports X-Spoki-Tenant-Id casing', () => {
+	it('rejects deliveries with a parsed body that cannot be signature-verified', () => {
 		expect(
-			matchSpokiTenantWebhook({
-				headers: {
-					'X-Spoki-Tenant-Id': 'tenant-456',
+			matchSpokiTenantWebhook(
+				{
+					headers: {
+						'x-spoki-account': '13128334',
+						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
+					},
+					body: JSON.parse(RAW_BODY),
 				},
-				body: {},
-			}),
-		).toEqual({
-			tenantId: 'tenant-456',
-			linkType: 'spoki_account',
-			externalId: 'tenant-456',
-		});
+				SECRET,
+			),
+		).toBeNull();
 	});
 });
