@@ -15,6 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Contacts, DataPrivacy, Performance, Webhooks } from './endpoints';
 import type {
 	WisepopsEndpointInputs,
@@ -233,17 +234,16 @@ export function wisepops<const T extends WisepopsPluginOptions>(
 				return options.webhookSecret;
 			}
 
-			if (source === 'webhook' && options.key) {
-				return options.key;
-			}
-
 			if (source === 'webhook') {
-				const webhookSigKey = await (ctx.keys as any).get_webhook_signature?.();
+				const webhookSigKey = await ctx.keys?.get_webhook_signature?.();
 				if (webhookSigKey) {
 					return webhookSigKey;
 				}
-				const apiKey = await ctx.keys.get_api_key?.();
-				return apiKey ?? '';
+				const apiKey = await ctx.keys?.get_api_key?.();
+				if (!apiKey) {
+					throw new AuthMissingError('wisepops', 'api_key');
+				}
+				return apiKey;
 			}
 
 			if (source === 'endpoint' && options.key) {
