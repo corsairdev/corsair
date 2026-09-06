@@ -1,61 +1,61 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class ZohoBiginAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'ZohoBiginAPIError';
-	}
+    constructor(
+        message: string,
+        public readonly code?: string,
+    ) {
+        super(message);
+        this.name = 'ZohoBiginAPIError';
+    }
 }
 
-// TODO: Update with your API base URL
-const ZOHOBIGIN_API_BASE = 'https://api.example.com';
+// Zoho Bigin API v1 base URL
+const ZOHOBIGIN_API_BASE = 'https://www.zohoapis.com/bigin/v1';
 
 export async function makeZohoBiginRequest<T>(
-	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+    endpoint: string,
+    apiKey: string,
+    options: {
+        method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+        body?: unknown;
+        query?: Record<string, string | number | boolean | undefined>;
+        headers?: Record<string, string>;
+    } = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+    const { method = 'GET', body, query, headers } = options;
 
-	const config: OpenAPIConfig = {
-		BASE: ZOHOBIGIN_API_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
-		},
-	};
+    const config: OpenAPIConfig = {
+        BASE: ZOHOBIGIN_API_BASE,
+        VERSION: '1.0.0',
+        WITH_CREDENTIALS: false,
+        CREDENTIALS: 'omit',
+        TOKEN: apiKey,
+        HEADERS: {
+            'Content-Type': 'application/json',
+            Authorization: `Zoho-oauthtoken ${apiKey}`,
+            ...headers,
+        },
+    };
 
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
-	};
+    const requestOptions: ApiRequestOptions = {
+        method,
+        url: endpoint,
+        body:
+            method === 'POST' || method === 'PUT' || method === 'PATCH'
+                ? body
+                : undefined,
+        mediaType: 'application/json; charset=utf-8',
+        query,
+    };
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new ZohoBiginAPIError(error.message);
-		}
-		throw new ZohoBiginAPIError('Unknown error');
-	}
+    try {
+        return await request<T>(config, requestOptions);
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new ZohoBiginAPIError(error.message);
+        }
+        throw new ZohoBiginAPIError('Unknown error');
+    }
 }
