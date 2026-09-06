@@ -5,7 +5,10 @@ import { makeCountdownApiRequest } from './client';
 import { get as autocomplete } from './endpoints/autocomplete';
 import { get as product } from './endpoints/product';
 import { get as search } from './endpoints/search';
-import { CountdownApiEndpointOutputSchemas } from './endpoints/types';
+import {
+	CountdownApiEndpointInputSchemas,
+	CountdownApiEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { countdownapi } from './index';
 
@@ -222,7 +225,6 @@ describe('CountdownApi endpoints', () => {
 				type: 'search',
 				search_term: 'memory cards',
 				ebay_domain: 'ebay.com',
-				page: undefined,
 			},
 		);
 
@@ -269,6 +271,74 @@ describe('CountdownApi endpoints', () => {
 		);
 	});
 
+	it('search sends url-only lookups without a search_term', async () => {
+		mockRequest.mockResolvedValue(docSearchResponse as any);
+
+		await search(ctx, {
+			url: 'https://www.ebay.com/sch/i.html?_nkw=memory+cards',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/request',
+			'test-countdownapi-key',
+			{
+				type: 'search',
+				ebay_domain: 'ebay.com',
+				url: 'https://www.ebay.com/sch/i.html?_nkw=memory+cards',
+			},
+		);
+		const requestQuery = mockRequest.mock.calls[0]?.[2];
+		expect(requestQuery).not.toHaveProperty('search_term');
+		expect(requestQuery).not.toHaveProperty('query');
+	});
+
+	it('search forwards documented filter parameters', async () => {
+		mockRequest.mockResolvedValue(docSearchResponse as any);
+
+		await search(ctx, {
+			query: 'memory cards',
+			ebay_domain: 'ebay.com',
+			category_id: '96991',
+			listing_type: 'buy_it_now',
+			sort_by: 'price_high_to_low',
+			condition: 'new',
+			max_page: 2,
+			num: 120,
+			authorized_sellers: true,
+			returns_accepted: true,
+			free_returns: true,
+			authenticity_verified: false,
+			deals_and_savings: true,
+			sale_items: true,
+			facets: 'brand=sandisk,format=microsd',
+			allow_rewritten_results: false,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/request',
+			'test-countdownapi-key',
+			{
+				type: 'search',
+				search_term: 'memory cards',
+				ebay_domain: 'ebay.com',
+				category_id: '96991',
+				listing_type: 'buy_it_now',
+				sort_by: 'price_high_to_low',
+				condition: 'new',
+				max_page: 2,
+				num: 120,
+				authorized_sellers: true,
+				returns_accepted: true,
+				free_returns: true,
+				authenticity_verified: false,
+				deals_and_savings: true,
+				sale_items: true,
+				facets: 'brand=sandisk,format=microsd',
+				allow_rewritten_results: false,
+			},
+		);
+	});
+
 	it('product sends the correct request and returns validated response', async () => {
 		mockRequest.mockResolvedValue(docProductResponse as any);
 
@@ -282,13 +352,8 @@ describe('CountdownApi endpoints', () => {
 			'test-countdownapi-key',
 			{
 				type: 'product',
-				url: undefined,
 				epid: '15029998723',
-				gtin: undefined,
 				ebay_domain: 'ebay.com',
-				include_html: undefined,
-				skip_gtin_cache: undefined,
-				include_parts_compatibility: undefined,
 			},
 		);
 
@@ -321,6 +386,37 @@ describe('CountdownApi endpoints', () => {
 		});
 
 		expect(result).toEqual(docRedirectedProductResponse);
+	});
+
+	it('product forwards include_parts_compatibility when epid and domain are valid', async () => {
+		mockRequest.mockResolvedValue(docProductResponse as any);
+
+		await product(ctx, {
+			epid: '15029998723',
+			ebay_domain: 'ebay.com',
+			include_parts_compatibility: true,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/request',
+			'test-countdownapi-key',
+			{
+				type: 'product',
+				epid: '15029998723',
+				ebay_domain: 'ebay.com',
+				include_parts_compatibility: true,
+			},
+		);
+	});
+
+	it('product rejects include_parts_compatibility without epid', async () => {
+		await expect(
+			product(ctx, {
+				url: 'https://www.ebay.com/itm/15029998723',
+				include_parts_compatibility: true,
+			}),
+		).rejects.toThrow(ZodError);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('autocomplete uses search_term and returns validated response', async () => {
@@ -513,6 +609,15 @@ describe('CountdownApi output schemas', () => {
 		expect(result.success).toBe(false);
 	});
 
+	it('product schema rejects a master page whose top_picks have no product', () => {
+		const result = CountdownApiEndpointOutputSchemas.product.safeParse({
+			request_metadata: { id: 'req-loose-master' },
+			is_master: true,
+			top_picks: [{}],
+		});
+		expect(result.success).toBe(false);
+	});
+
 	it('product schema rejects response missing request_metadata', () => {
 		const response = {
 			request_parameters: { type: 'product' },
@@ -598,6 +703,57 @@ describe('CountdownApi output schemas', () => {
 			CountdownApiEndpointOutputSchemas.autocomplete.safeParse(noMetadata3)
 				.success,
 		).toBe(false);
+	});
+});
+
+describe('CountdownApi input schemas', () => {
+	it('search accepts a url without a query', () => {
+		const result = CountdownApiEndpointInputSchemas.search.safeParse({
+			url: 'https://www.ebay.com/sch/i.html?_nkw=memory+cards',
+		});
+		expect(result.success).toBe(true);
+	});
+
+	it('search rejects a request with neither query nor url', () => {
+		const result = CountdownApiEndpointInputSchemas.search.safeParse({
+			ebay_domain: 'ebay.com',
+		});
+		expect(result.success).toBe(false);
+	});
+
+	it('product rejects include_parts_compatibility without epid', () => {
+		const result = CountdownApiEndpointInputSchemas.product.safeParse({
+			url: 'https://www.ebay.com/itm/15029998723',
+			include_parts_compatibility: true,
+		});
+		expect(result.success).toBe(false);
+	});
+
+	it('product rejects include_parts_compatibility with a url', () => {
+		const result = CountdownApiEndpointInputSchemas.product.safeParse({
+			epid: '15029998723',
+			url: 'https://www.ebay.com/itm/15029998723',
+			include_parts_compatibility: true,
+		});
+		expect(result.success).toBe(false);
+	});
+
+	it('product rejects include_parts_compatibility outside ebay.com and ebay.co.uk', () => {
+		const result = CountdownApiEndpointInputSchemas.product.safeParse({
+			epid: '15029998723',
+			ebay_domain: 'ebay.de',
+			include_parts_compatibility: true,
+		});
+		expect(result.success).toBe(false);
+	});
+
+	it('product accepts include_parts_compatibility with epid on ebay.co.uk', () => {
+		const result = CountdownApiEndpointInputSchemas.product.safeParse({
+			epid: '15029998723',
+			ebay_domain: 'ebay.co.uk',
+			include_parts_compatibility: true,
+		});
+		expect(result.success).toBe(true);
 	});
 });
 

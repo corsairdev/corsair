@@ -1,14 +1,64 @@
 import { z } from 'zod';
 
-// ---------------------------------------------------------------------------
-// Input schemas
-// ---------------------------------------------------------------------------
+const SearchListingTypeSchema = z.enum([
+	'all',
+	'buy_it_now',
+	'auction',
+	'accepts_offers',
+]);
 
-const SearchInputSchema = z.object({
-	query: z.string().min(1),
-	ebay_domain: z.string().min(1).default('ebay.com'),
-	page: z.number().int().positive().optional(),
-});
+const SearchSortBySchema = z.enum([
+	'best_match',
+	'price_high_to_low',
+	'price_low_to_high',
+	'price_high_to_low_plus_postage',
+	'price_low_to_high_plus_postage',
+	'newly_listed',
+	'ending_soonest',
+]);
+
+const SearchConditionSchema = z.enum([
+	'all',
+	'new',
+	'used',
+	'open_box',
+	'manufacturer_refurbished',
+	'seller_refurbished',
+	'parts_or_not_working',
+	'not_specified',
+]);
+
+const SearchInputSchema = z
+	.object({
+		query: z.string().min(1).optional(),
+		ebay_domain: z.string().min(1).default('ebay.com'),
+		page: z.number().int().positive().optional(),
+		category_id: z.string().min(1).optional(),
+		listing_type: SearchListingTypeSchema.optional(),
+		sort_by: SearchSortBySchema.optional(),
+		condition: SearchConditionSchema.optional(),
+		max_page: z.number().int().positive().optional(),
+		num: z.union([z.literal(60), z.literal(120), z.literal(240)]).optional(),
+		url: z.string().url().optional(),
+		authorized_sellers: z.boolean().optional(),
+		returns_accepted: z.boolean().optional(),
+		free_returns: z.boolean().optional(),
+		authenticity_verified: z.boolean().optional(),
+		deals_and_savings: z.boolean().optional(),
+		sale_items: z.boolean().optional(),
+		facets: z.string().min(1).optional(),
+		allow_rewritten_results: z.boolean().optional(),
+	})
+	.superRefine((value, ctx) => {
+		if (!value.query && !value.url) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'Provide at least one of query or url',
+			});
+		}
+	});
+
+const partsCompatibilityDomains = new Set(['ebay.com', 'ebay.co.uk']);
 
 const ProductInputSchema = z
 	.object({
@@ -20,24 +70,48 @@ const ProductInputSchema = z
 		skip_gtin_cache: z.boolean().optional(),
 		include_parts_compatibility: z.boolean().optional(),
 	})
-	.refine(
-		(value) => Boolean(value.url) || Boolean(value.epid) || Boolean(value.gtin),
-		{
-			message: 'Provide at least one of url, epid, or gtin',
-		},
-	);
+	.superRefine((value, ctx) => {
+		if (!value.url && !value.epid && !value.gtin) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'Provide at least one of url, epid, or gtin',
+			});
+		}
+
+		if (!value.include_parts_compatibility) {
+			return;
+		}
+
+		if (!value.epid) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['epid'],
+				message: 'include_parts_compatibility requires epid',
+			});
+		}
+
+		if (value.url) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['url'],
+				message: 'include_parts_compatibility cannot be used with url',
+			});
+		}
+
+		if (!partsCompatibilityDomains.has(value.ebay_domain)) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['ebay_domain'],
+				message:
+					'include_parts_compatibility is only available on ebay.com and ebay.co.uk',
+			});
+		}
+	});
 
 const AutocompleteInputSchema = z.object({
 	query: z.string().min(1),
 	ebay_domain: z.string().min(1).default('ebay.com'),
 });
-
-// ---------------------------------------------------------------------------
-// Output schemas – modelled from the official CountdownAPI documentation
-// (docs.trajectdata.com/countdownapi/ebay-product-data-api/results/*).
-// All object schemas use .passthrough() so that additional fields returned by
-// the API are preserved rather than silently stripped.
-// ---------------------------------------------------------------------------
 
 const RequestMetadataSchema = z
 	.object({
@@ -147,8 +221,6 @@ const SearchInformationSchema = z
 const PaginationSchema = z
 	.object({
 		current_page: z.number().optional(),
-		// Documented as a number but rendered as a string in the docs' own
-		// example response ("total_results": "9893").
 		total_results: z.union([z.number(), z.string()]).optional(),
 		has_next_page: z.boolean().optional(),
 		next_page: z.number().optional(),
@@ -167,18 +239,24 @@ const SearchResponseSchema = z
 	})
 	.passthrough();
 
+const ProductAttributeSchema = z
+	.object({
+		name: z.string(),
+		value: z.string().optional(),
+	})
+	.passthrough();
+
 const ProductDetailsSchema = z
 	.object({
 		title: z.string(),
 		link: z.string().optional(),
+		epid: z.string().optional(),
+		gtin: z.string().optional(),
 		images: z.array(z.object({ link: z.string() }).passthrough()).optional(),
+		attributes: z.array(ProductAttributeSchema).optional(),
 	})
 	.passthrough();
 
-// A product request resolves to exactly one of three documented shapes
-// (docs.trajectdata.com/countdownapi/ebay-product-data-api/results/product):
-// an individual listing page, a master product page, or a redirect to a
-// similar listing. Metadata alone matches no branch and is rejected.
 const ProductResponseBaseSchema = z
 	.object({
 		request_metadata: RequestMetadataSchema,
@@ -188,16 +266,64 @@ const ProductResponseBaseSchema = z
 	.passthrough();
 
 const ProductListingResponseSchema = ProductResponseBaseSchema.extend({
-	// Individual listing pages answer with a single top-level product object;
-	// on master pages the products are nested inside top_picks instead.
 	is_master: z.literal(false).optional(),
 	product: ProductDetailsSchema,
 }).passthrough();
 
+const MasterTopPickSchema = z
+	.object({
+		product: ProductDetailsSchema,
+		all_listings: z
+			.object({
+				link: z.string().optional(),
+				count: z.number().optional(),
+			})
+			.passthrough()
+			.optional(),
+		seller: z
+			.object({
+				name: z.string().optional(),
+				link: z.string().optional(),
+				feedback_score: z.number().optional(),
+				positive_feedback_percent: z.union([z.number(), z.string()]).optional(),
+			})
+			.passthrough()
+			.optional(),
+		shipping: z
+			.object({
+				raw: z.string().optional(),
+				price: z.number().optional(),
+				currency: z.string().optional(),
+				location: z.string().optional(),
+				delivery_estimate: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+		condition: z
+			.object({
+				raw: z.string().optional(),
+				name: z.string().optional(),
+				is_new: z.boolean().optional(),
+				is_used: z.boolean().optional(),
+			})
+			.passthrough()
+			.optional(),
+		is_auction: z.boolean().optional(),
+		offer: z
+			.object({
+				price: z.number().optional(),
+				raw: z.string().optional(),
+				currency: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
+
 const MasterProductResponseSchema = ProductResponseBaseSchema.extend({
 	is_master: z.literal(true),
 	sold_out: z.boolean().optional(),
-	top_picks: z.array(z.record(z.string(), z.unknown())),
+	top_picks: z.array(MasterTopPickSchema),
 }).passthrough();
 
 const RedirectedProductResponseSchema = ProductResponseBaseSchema.extend({
@@ -216,8 +342,6 @@ const AutocompleteResultSchema = z
 	.object({
 		suggestion: z.string(),
 		type: z.string().optional(),
-		// Documented as a string but rendered as a number in the docs' own
-		// example response ("category_id": 9394).
 		category_id: z.union([z.string(), z.number()]).optional(),
 		category_name: z.string().optional(),
 	})
@@ -232,13 +356,9 @@ const AutocompleteResponseSchema = z
 	})
 	.passthrough();
 
-// ---------------------------------------------------------------------------
-// Exported types
-// ---------------------------------------------------------------------------
-
-export type SearchInput = z.infer<typeof SearchInputSchema>;
-export type ProductInput = z.infer<typeof ProductInputSchema>;
-export type AutocompleteInput = z.infer<typeof AutocompleteInputSchema>;
+export type SearchInput = z.input<typeof SearchInputSchema>;
+export type ProductInput = z.input<typeof ProductInputSchema>;
+export type AutocompleteInput = z.input<typeof AutocompleteInputSchema>;
 
 export type SearchResponse = z.infer<typeof SearchResponseSchema>;
 export type ProductResponse = z.infer<typeof ProductResponseSchema>;

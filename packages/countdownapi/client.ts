@@ -4,6 +4,17 @@ import { request } from 'corsair/http';
 
 const COUNTDOWNAPI_API_BASE = 'https://api.countdownapi.com';
 
+export function compactQuery(
+	query: Record<string, string | number | boolean | undefined>,
+): Record<string, string | number | boolean> {
+	return Object.fromEntries(
+		Object.entries(query).filter(
+			(entry): entry is [string, string | number | boolean] =>
+				entry[1] !== undefined,
+		),
+	);
+}
+
 export async function makeCountdownApiRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -23,15 +34,10 @@ export async function makeCountdownApiRequest<T>(
 		method: 'GET',
 		url: endpoint,
 		query: {
-			...query,
+			...compactQuery(query),
 			api_key: apiKey,
 		},
 	};
 
-	// No try/catch deliberately: `request()` throws a `corsair/http`
-	// `ApiError` (with `.status`/`.retryAfter`) on failure, and
-	// `error-handlers.ts`'s matchers depend on that concrete type. Wrapping
-	// it in a generic error class here would strip the status code before
-	// any handler ever saw it.
 	return await request<T>(config, requestOptions);
 }
