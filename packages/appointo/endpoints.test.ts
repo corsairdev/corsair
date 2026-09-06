@@ -262,7 +262,6 @@ describe('Appointo endpoints routing & event logging', () => {
 				expect.objectContaining({
 					method: 'PUT',
 					body: expect.objectContaining({
-						appointment_id: 304,
 						config: expect.objectContaining({
 							timezone: 'America/New_York',
 							duration: '30',
@@ -500,9 +499,20 @@ describe('Appointo endpoints routing & event logging', () => {
 			expect(mockLogEventFromContext).toHaveBeenCalledWith(
 				ctx,
 				'appointo.bookings.create',
-				expect.any(Object),
+				{
+					appointment_id: 299,
+					timestring: '2023-07-20T10:00:00Z',
+					quantity: 2,
+				},
 				'completed',
 			);
+			const logged = mockLogEventFromContext.mock.calls[0]?.[2] as Record<
+				string,
+				unknown
+			>;
+			expect(logged).not.toHaveProperty('email');
+			expect(logged).not.toHaveProperty('name');
+			expect(logged).not.toHaveProperty('phone');
 		});
 
 		it('bookings.create works with only required fields', async () => {
@@ -661,12 +671,7 @@ describe('Appointo endpoints routing & event logging', () => {
 
 	describe('Subscriptions', () => {
 		it('subscriptions.list issues GET /appointment_subscriptions', async () => {
-			const mockSubscriptions = [
-				{
-					id: 123,
-					// subscription fields would go here
-				},
-			];
+			const mockSubscriptions = [{ id: 123 }];
 			mockMakeAppointoRequest.mockResolvedValueOnce(mockSubscriptions);
 			const result = await Subscriptions.list(ctx, { search_term: 'test' });
 			expect(result).toEqual(mockSubscriptions);

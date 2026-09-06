@@ -19,14 +19,13 @@ export class AppointoAPIError extends Error {
 
 const APPOINTO_API_BASE = 'https://app.appointo.me/api';
 
+// ponytail: transport retries off; error-handlers.ts owns 429 retries
 const APPOINTO_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 3,
+	enabled: false,
+	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
-	headerNames: {
-		retryAfter: 'Retry-After',
-	},
+	headerNames: {},
 };
 
 export async function makeAppointoRequest<T>(
@@ -48,7 +47,6 @@ export async function makeAppointoRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			'APPOINTO-TOKEN': apiKey,
@@ -67,22 +65,12 @@ export async function makeAppointoRequest<T>(
 	};
 
 	try {
-		const response = await request<T>(config, requestOptions, {
+		return await request<T>(config, requestOptions, {
 			rateLimitConfig: APPOINTO_RATE_LIMIT_CONFIG,
 		});
-		return response;
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const msg =
-				typeof error.body === 'object' && error.body && 'message' in error.body
-					? String((error.body as Record<string, unknown>).message)
-					: error.message;
-			throw new AppointoAPIError(
-				msg || error.message,
-				(error.body as Record<string, unknown>)?.code as string | undefined,
-				error.status,
-				error.body,
-			);
+			throw error;
 		}
 		if (error instanceof Error) {
 			throw new AppointoAPIError(error.message);

@@ -58,9 +58,7 @@ export const getAvailability: AppointoEndpoints['appointmentsGetAvailability'] =
 
 export const upsertConfig: AppointoEndpoints['appointmentsUpsertConfig'] =
 	async (ctx, input) => {
-		const body: Record<string, unknown> = {
-			appointment_id: input.appointment_id,
-		};
+		const body: Record<string, unknown> = {};
 		if (input.config !== undefined) body.config = input.config;
 		if (input.availabilities !== undefined)
 			body.availabilities = input.availabilities;

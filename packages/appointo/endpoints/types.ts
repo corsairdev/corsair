@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+const DateStringSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+
 const ProductsListInputSchema = z.object({
 	limit: z.number().int().min(1).max(100).optional(),
 	search_term: z.string().optional(),
@@ -16,8 +18,8 @@ const AppointmentsListInputSchema = z.object({
 
 const AppointmentsGetAvailabilityInputSchema = z.object({
 	appointment_id: z.number().int(),
-	start_date: z.string(),
-	end_date: z.string().optional(),
+	start_date: DateStringSchema,
+	end_date: DateStringSchema.optional(),
 	impersonated_tms: z.array(z.number().int()).optional(),
 });
 
@@ -72,6 +74,7 @@ const AvailabilitySlotSchema = z
 		end_time: z.string(),
 		surge: z.boolean().optional(),
 		price: z.string().optional(),
+		max_capacity: z.number().int().optional(),
 	})
 	.loose();
 
@@ -91,7 +94,7 @@ const AvailabilitySchema = z
 const OverrideSchema = z
 	.object({
 		id: z.number().int().optional(),
-		day: z.string(),
+		day: DateStringSchema,
 		slots: z.array(AvailabilitySlotSchema).optional(),
 		shop_id: z.number().int().optional(),
 		appointment_id: z.number().int().optional(),
@@ -137,8 +140,8 @@ const BookingsCancelInputSchema = z.object({
 
 const BookingsUpdateInputSchema = z.object({
 	booking_id: z.number().int(),
-	start_buffer_time: z.number().int().positive().optional(),
-	end_buffer_time: z.number().int().positive().optional(),
+	start_buffer_time: z.number().int().min(0).optional(),
+	end_buffer_time: z.number().int().min(0).optional(),
 });
 
 const SubscriptionsListInputSchema = z.object({
@@ -263,7 +266,28 @@ const CustomerSchema = z
 		cancel_uuid: z.string().nullable().optional(),
 		order_name: z.string().optional(),
 		order_uuid: z.string().nullable().optional(),
-		shipping_address: z.record(z.string(), z.unknown()).optional(),
+		shipping_address: z
+			.object({
+				id: z.number().int().optional(),
+				customer_id: z.number().int().optional(),
+				first_name: z.string().nullable().optional(),
+				last_name: z.string().nullable().optional(),
+				company: z.string().nullable().optional(),
+				address1: z.string().nullable().optional(),
+				address2: z.string().nullable().optional(),
+				city: z.string().nullable().optional(),
+				province: z.string().nullable().optional(),
+				country: z.string().nullable().optional(),
+				zip: z.string().nullable().optional(),
+				phone: z.string().nullable().optional(),
+				name: z.string().nullable().optional(),
+				province_code: z.string().nullable().optional(),
+				country_code: z.string().nullable().optional(),
+				country_name: z.string().nullable().optional(),
+				default: z.boolean().optional(),
+			})
+			.loose()
+			.optional(),
 		override: z.boolean().optional(),
 		signpanda_cust_uuid: z.string().nullable().optional(),
 		parent_customer_id: z.number().int().nullable().optional(),
@@ -275,8 +299,11 @@ const CustomerSchema = z
 		customer_type: z.string().nullable().optional(),
 		customer_timezone: z.string().nullable().optional(),
 		archived: z.boolean().optional(),
-		subscription_contract_id: z.string().nullable().optional(),
-		selling_plan_id: z.string().nullable().optional(),
+		subscription_contract_id: z
+			.union([z.string(), z.number()])
+			.nullable()
+			.optional(),
+		selling_plan_id: z.union([z.string(), z.number()]).nullable().optional(),
 		checkin: z.boolean().optional(),
 		checkin_qr_code: z.string().nullable().optional(),
 		image_data: z.string().nullable().optional(),
@@ -319,18 +346,18 @@ const BookingSchema = z
 		currency: z.string().optional(),
 		meeting_detail: z.string().optional(),
 		note: z.string().optional(),
-		google_meta: z.record(z.string(), z.unknown()).optional(),
+		google_meta: z.object({}).loose().optional(),
 		google_event_id: z.string().optional(),
 		location_value: z.string().nullable().optional(),
 		location_type: z.string().nullable().optional(),
-		location_meta: z.record(z.string(), z.unknown()).nullable().optional(),
+		location_meta: z.object({}).loose().nullable().optional(),
 		quantity: z.number().int().optional(),
-		team_member_id: z.string().nullable().optional(),
+		team_member_id: z.number().int().nullable().optional(),
 		scenario: z.string().optional(),
 		day_duration: z.number().int().optional(),
 		end_date: z.string().optional(),
 		start_date: z.string().optional(),
-		group_id: z.string().nullable().optional(),
+		group_id: z.number().int().nullable().optional(),
 		start_buffer_time: z.number().int().optional(),
 		end_buffer_time: z.number().int().optional(),
 		category: z.string().nullable().optional(),

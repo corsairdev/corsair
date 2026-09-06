@@ -200,7 +200,7 @@ const appointoEndpointMeta = {
 
 export const appointoAuthConfig = {
 	api_key: {
-		account: ['account_id'] as const,
+		account: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

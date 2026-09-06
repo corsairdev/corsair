@@ -194,10 +194,28 @@ describe('Appointo schemas', () => {
 			).not.toThrow();
 		});
 
-		it('bookingsUpdate requires positive buffer times', () => {
+		it('bookingsUpdate accepts zero buffers so they can be cleared', () => {
+			const input = {
+				booking_id: 969,
+				start_buffer_time: 0,
+				end_buffer_time: 0,
+			};
+			expect(() =>
+				AppointoEndpointInputSchemas.bookingsUpdate.parse(input),
+			).not.toThrow();
+		});
+
+		it('bookingsUpdate rejects negative buffer times', () => {
 			const input = { booking_id: 969, start_buffer_time: -1 };
 			expect(() =>
 				AppointoEndpointInputSchemas.bookingsUpdate.parse(input),
+			).toThrow();
+		});
+
+		it('appointmentsGetAvailability rejects a start_date that is not YYYY-MM-DD', () => {
+			const input = { appointment_id: 304, start_date: '01-01-2024' };
+			expect(() =>
+				AppointoEndpointInputSchemas.appointmentsGetAvailability.parse(input),
 			).toThrow();
 		});
 
@@ -419,6 +437,42 @@ describe('Appointo schemas', () => {
 			};
 			expect(() =>
 				AppointoEndpointOutputSchemas.bookingsUpdate.parse(response),
+			).not.toThrow();
+		});
+
+		it('bookingsList accepts the official customer shipping_address shape', () => {
+			const response = [
+				{
+					id: 969,
+					customers: [
+						{
+							id: 1095,
+							email: 'abc@xyz.com',
+							shipping_address: {
+								id: 9180953739548,
+								customer_id: 6943848005916,
+								first_name: 'ABC',
+								last_name: 'TTT',
+								company: null,
+								address1: 'ABC',
+								address2: null,
+								city: 'Bangalore',
+								province: 'Karnataka',
+								country: 'India',
+								zip: '111111',
+								phone: null,
+								name: 'ABC TTT',
+								province_code: 'KA',
+								country_code: 'IN',
+								country_name: 'India',
+								default: true,
+							},
+						},
+					],
+				},
+			];
+			expect(() =>
+				AppointoEndpointOutputSchemas.bookingsList.parse(response),
 			).not.toThrow();
 		});
 

@@ -50,7 +50,11 @@ export const create: AppointoEndpoints['bookingsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'appointo.bookings.create',
-		{ ...input },
+		{
+			appointment_id: input.appointment_id,
+			timestring: input.timestring,
+			quantity: input.quantity,
+		},
 		'completed',
 	);
 	return response;

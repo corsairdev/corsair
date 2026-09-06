@@ -26,6 +26,9 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('unauthorized') ||
+				msg.includes('no_api_token_present') ||
+				msg.includes('invalid_api_token') ||
+				msg.includes('api token is invalid') ||
 				msg.includes('invalid_token') ||
 				msg.includes('invalid_auth') ||
 				msg.includes('token_expired')
