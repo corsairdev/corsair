@@ -271,9 +271,6 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
     devDependencies:
-      '@corsair-dev/chmeetings':
-        specifier: workspace:*
-        version: link:../../packages/chmeetings
       '@corsair-dev/cli':
         specifier: workspace:*
         version: link:../../packages/cli
