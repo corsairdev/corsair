@@ -252,10 +252,13 @@ export function wisepops<const T extends WisepopsPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('wisepops', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('wisepops', 'api_key');
 		},
 	} satisfies InternalWisepopsPlugin;
 }

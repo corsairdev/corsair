@@ -57,19 +57,7 @@ export const WebhookDeleteInputSchema = z.object({
 });
 export type WebhookDeleteInput = z.infer<typeof WebhookDeleteInputSchema>;
 
-export const WebhookDeleteResponseSchema = z.union([
-	z
-		.object({
-			success: z.boolean().optional(),
-			message: z.string().optional(),
-			id: z.number().optional(),
-		})
-		.passthrough(),
-	z.record(z.string(), z.unknown()),
-	z.undefined(),
-	z.null(),
-	z.void(),
-]);
+export const WebhookDeleteResponseSchema = z.unknown();
 export type WebhookDeleteResponse = z.infer<typeof WebhookDeleteResponseSchema>;
 
 // Data Privacy
