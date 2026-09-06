@@ -20,7 +20,12 @@ export const example: ZohoBiginWebhooks['example'] = {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'zohobigin.webhook.example', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'zohobigin.webhook.example',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, data: event };
 	},

@@ -1,4 +1,8 @@
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import { z } from 'zod';
 
 export const ZohoBiginWebhookPayloadSchema = z.object({
@@ -30,7 +34,9 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
-			return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+			return parsed !== null &&
+				typeof parsed === 'object' &&
+				!Array.isArray(parsed)
 				? (parsed as Record<string, unknown>)
 				: null;
 		} catch {
