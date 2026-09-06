@@ -17,7 +17,6 @@ const CompletionInputSchema = z.object({
 	stop: z.array(z.string()).optional(),
 	best_of: z.number().int().positive().optional(),
 	random_seed: z.number().int().optional(),
-	stream: z.boolean().optional(),
 });
 const CompletionResponseSchema = z.object({
 	choices: z.array(CompletionChoiceSchema),
@@ -29,9 +28,8 @@ const ChatMessageSchema = z.object({
 });
 const ChatInputSchema = z.object({
 	model: z.string(),
-	messages: z.array(CHatMessageSchema).min(1),
+	messages: z.array(ChatMessageSchema).min(1),
 	temperature: z.number().min(0).optional(),
-	stream: z.boolean().optional(),
 });
 const ChatChoiceSchema = z.object({
 	index: z.number().int(),
@@ -51,7 +49,7 @@ const ChatResponseSchema = z.object({
 	model: z.string(),
 	usage: ChatUsageSchema.optional(),
 });
-export type CompletionInput = x.infer<typeof CompletionInputSchema>;
+export type CompletionInput = z.infer<typeof CompletionInputSchema>;
 export type ChatInput = z.infer<typeof ChatInputSchema>;
 export type WriterEndpointInputs = {
 	listModels: Record<string, never>;

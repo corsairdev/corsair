@@ -30,7 +30,7 @@ export const createCompletion = async (
 	await logEventFromContext(
 		ctx,
 		'writer.completions.create',
-		{ ...input },
+		{ model: input.model },
 		'completed',
 	);
 	return response;
@@ -50,7 +50,7 @@ export const createChat = async (
 	await logEventFromContext(
 		ctx,
 		'writer.chat.create',
-		{ ...input },
+		{ model: input.model },
 		'completed',
 	);
 	return response;
