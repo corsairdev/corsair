@@ -6,12 +6,11 @@ describe('CdrPlatform schema', () => {
 		expect(CdrPlatformSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof CdrPlatformSchema.entities).toBe('object');
-		expect(CdrPlatformSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(CdrPlatformSchema.entities))).toBe(true);
-		for (const entity of Object.values(CdrPlatformSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares official API entities', () => {
+		expect(Object.keys(CdrPlatformSchema.entities).sort()).toEqual([
+			'certificates',
+			'priceQuotes',
+			'removalRequests',
+		]);
 	});
 });

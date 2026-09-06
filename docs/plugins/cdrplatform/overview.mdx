@@ -1,13 +1,19 @@
 ---
 title: Overview
-description: "CdrPlatform plugin for Corsair"
+description: "API for purchasing carbon dioxide removal services from Climacrux."
 ---
 
-Use **CdrPlatform** through Corsair: one client, typed API calls.
+Use **CDR Platform** through Corsair: one client, typed API calls, local DB sync.
+
+Official HTTP API at `https://api.cdrplatform.com`. Every request uses
+`Authorization: Api-Key <key>` — not Bearer. Costs are in the currency's
+smallest unit (cents for USD). Keys prefixed `test_` are not charged.
+Docs: https://docs.cdrplatform.com/docs/getting-started
 
 **What you get:**
 
 - 4 typed API operations
+- 3 synced entities (`certificates`, `priceQuotes`, `removalRequests`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -88,7 +94,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`cdr.price`**
+**Get CDR price**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -96,7 +102,7 @@ await tenant.cdrplatform.api.cdr.price({});
 ```
 
 
-**`cdr.purchase`**
+**Purchase CDR**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -106,11 +112,20 @@ await tenant.cdrplatform.api.cdr.purchase({});
 
 See the full list on the [API](/plugins/cdrplatform/api) page.
 
+## Query synced data
+
+Synced entities support `tenant.cdrplatform.db.<entity>.search()` and `.list()`: `certificates`, `priceQuotes`, `removalRequests`.
+
+See [Database](/plugins/cdrplatform/database) for filters and operators.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/cdrplatform/api">
     Every `cdrplatform.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/cdrplatform/database">
+    Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

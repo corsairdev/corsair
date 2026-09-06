@@ -38,12 +38,13 @@ export async function makeCdrPlatformRequest<T>(
 		throw new AuthMissingError('cdrplatform', 'api_key');
 	}
 
+	// Official auth is `Authorization: Api-Key <key>`. Do not set TOKEN —
+	// corsair/http overwrites Authorization with Bearer when TOKEN is set.
 	const config: OpenAPIConfig = {
 		BASE: CDRPLATFORM_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: `Api-Key ${apiKey}`,

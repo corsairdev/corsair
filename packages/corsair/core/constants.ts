@@ -377,7 +377,7 @@ export const ProviderDisplayNames = {
 	canvas: 'Canvas LMS',
 	capsulecrm: 'Capsule CRM',
 	castingwords: 'CastingWords',
-	cdrplatform: 'CdrPlatform',
+	cdrplatform: 'CDR Platform',
 	certifier: 'Certifier',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',

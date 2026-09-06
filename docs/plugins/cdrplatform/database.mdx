@@ -1,12 +1,84 @@
 ---
 title: Database
-description: "CdrPlatform local sync: searchable entities, `.search()` filters, and operators."
+description: "CDR Platform local sync: searchable entities, `.search()` filters, and operators."
 ---
 
-The CdrPlatform plugin syncs data locally. Use `corsair.cdrplatform.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+The CDR Platform plugin syncs data locally. Use `corsair.cdrplatform.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
 
+## Certificates
+
+Path: `cdrplatform.db.certificates.search`
+
+```ts
+const rows = await corsair.cdrplatform.db.certificates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `certificate_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `display_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `issued_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `removal_amount_kg` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Price Quotes
+
+Path: `cdrplatform.db.priceQuotes.search`
+
+```ts
+const rows = await corsair.cdrplatform.db.priceQuotes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Removal Requests
+
+Path: `cdrplatform.db.removalRequests.search`
+
+```ts
+const rows = await corsair.cdrplatform.db.removalRequests.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `transaction_uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `client_reference_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `certificate_display_name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
 

@@ -1,5 +1,6 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
+import { CdrPlatformAPIError } from './client';
 import { Cdr, Certificate, Health } from './endpoints';
 import { CdrPlatformEndpointOutputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
@@ -85,10 +86,12 @@ describe('cdrplatform plugin', () => {
 
 describe('cdrplatform endpoint request mapping', () => {
 	beforeEach(() => {
+		mockRequest.mockReset();
+		mockLog.mockReset();
 		mockRequest.mockResolvedValue(validPriceResponse);
 	});
 
-	it('maps cdr.price to POST /v1/cdr/price/', async () => {
+	it('maps cdr.price to POST /v1/cdr/price/ with Api-Key (not Bearer TOKEN)', async () => {
 		await Cdr.price(mockCtx, {
 			weight_unit: 'kg',
 			currency: 'usd',
@@ -105,8 +108,14 @@ describe('cdrplatform endpoint request mapping', () => {
 			expect.objectContaining({
 				method: 'POST',
 				url: 'v1/cdr/price/',
+				body: {
+					weight_unit: 'kg',
+					currency: 'usd',
+					items: [{ method_type: 'bio-oil', cdr_amount: 50 }],
+				},
 			}),
 		);
+		expect(mockRequest.mock.calls[0][0].TOKEN).toBeUndefined();
 		expect(mockLog).toHaveBeenCalled();
 	});
 
@@ -133,23 +142,44 @@ describe('cdrplatform endpoint request mapping', () => {
 
 	it('maps certificate.get to GET /v1/certificate/{id}/', async () => {
 		mockRequest.mockResolvedValue({
-			certificate_id: '2026-001-A1B2C3D4',
+			certificate_id: 'abc-def-ghi',
 			display_name: 'Jane Doe',
 			issued_date: '2026-09-01',
 			removal_amount_kg: 100,
 		});
 
 		await Certificate.get(mockCtx, {
-			id: '2026-001-A1B2C3D4',
+			id: 'abc-def-ghi',
 		});
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.anything(),
 			expect.objectContaining({
 				method: 'GET',
-				url: 'v1/certificate/2026-001-A1B2C3D4/',
+				url: 'v1/certificate/abc-def-ghi/',
 			}),
 		);
+	});
+
+	it('rejects duplicate method_type in items', async () => {
+		await expect(
+			Cdr.price(mockCtx, {
+				weight_unit: 'kg',
+				currency: 'usd',
+				items: [
+					{ method_type: 'bio-oil', cdr_amount: 50 },
+					{ method_type: 'bio-oil', cdr_amount: 10 },
+				],
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects unofficial certificate ids before calling the API', async () => {
+		await expect(
+			Certificate.get(mockCtx, { id: '2026-001-A1B2C3D4' }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('maps health.check to GET /health/', async () => {
@@ -188,11 +218,34 @@ describe('cdrplatform zod output validation', () => {
 });
 
 describe('cdrplatform error handling', () => {
+	const ctx = {
+		pluginId: 'cdrplatform',
+		operation: 'cdr.price',
+		input: {},
+		originalError: new Error('rate_limited 429'),
+	};
+
 	it('classifies 429 rate limit errors and preserves retryAfter', async () => {
-		const err = new Error('rate_limited 429');
+		const err = new CdrPlatformAPIError('Too Many Requests', {
+			status: 429,
+			retryAfter: 1500,
+		});
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
-		const handled = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
+		const handled = await errorHandlers.RATE_LIMIT_ERROR.handler(err, {
+			...ctx,
+			originalError: err,
+		});
 		expect(handled.maxRetries).toBe(5);
-		expect(handled.headersRetryAfterMs).toBeUndefined();
+		expect(handled.headersRetryAfterMs).toBe(1500);
+	});
+
+	it('does not retry cdr.purchase on 429', async () => {
+		const err = new Error('too many requests');
+		const handled = await errorHandlers.RATE_LIMIT_ERROR.handler(err, {
+			...ctx,
+			operation: 'cdr.purchase',
+			originalError: err,
+		});
+		expect(handled.maxRetries).toBe(0);
 	});
 });

@@ -29,8 +29,8 @@ export const errorHandlers = {
 				msg.includes('429')
 			);
 		},
-		handler: async (error: Error) => ({
-			maxRetries: 5,
+		handler: async (error: Error, context) => ({
+			maxRetries: context.operation === 'cdr.purchase' ? 0 : 5,
 			retryStrategy: 'exponential_backoff' as const,
 			headersRetryAfterMs: getRetryAfter(error),
 		}),
@@ -70,8 +70,8 @@ export const errorHandlers = {
 			if (status !== undefined && status >= 500) return true;
 			return messageOf(error).includes('server error');
 		},
-		handler: async () => ({
-			maxRetries: 2,
+		handler: async (_error, context) => ({
+			maxRetries: context.operation === 'cdr.purchase' ? 0 : 2,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

@@ -2,16 +2,21 @@ import { z } from 'zod';
 
 const CdrItemSchema = z.object({
 	method_type: z.string().min(1),
-	cdr_amount: z.number().positive(),
+	cdr_amount: z.number().int().min(1),
 });
 
 const CurrencySchema = z.enum(['usd', 'eur', 'gbp', 'chf']);
 const WeightUnitSchema = z.enum(['g', 'kg', 't']);
 
+const uniqueMethodTypes = (items: Array<{ method_type: string }>) =>
+	new Set(items.map((item) => item.method_type)).size === items.length;
+
 const PriceInputSchema = z.object({
 	weight_unit: WeightUnitSchema,
 	currency: CurrencySchema,
-	items: z.array(CdrItemSchema).min(1),
+	items: z.array(CdrItemSchema).min(1).refine(uniqueMethodTypes, {
+		message: 'method_type cannot appear more than once in items',
+	}),
 });
 
 const PricedCdrItemSchema = CdrItemSchema.extend({
@@ -30,16 +35,19 @@ const PriceResponseSchema = z.object({
 });
 
 const PurchaseInputSchema = PriceInputSchema.extend({
-	client_reference_id: z.string().optional(),
-	certificate_display_name: z.string().optional(),
+	client_reference_id: z.string().max(128).optional(),
+	certificate_display_name: z.string().max(128).optional(),
 });
 
 const PurchaseResponseSchema = z.object({
-	transaction_uuid: z.string(),
+	transaction_uuid: z.string().uuid(),
 });
 
+/** Official URL converter: `[a-zA-Z]{3}-[a-zA-Z]{3}-[a-zA-Z]{3}` */
+export const CERTIFICATE_ID_RE = /^[a-zA-Z]{3}-[a-zA-Z]{3}-[a-zA-Z]{3}$/;
+
 const CertificateGetInputSchema = z.object({
-	id: z.string().min(1),
+	id: z.string().regex(CERTIFICATE_ID_RE),
 });
 
 const CertificateGetResponseSchema = z.object({

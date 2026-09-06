@@ -905,7 +905,7 @@
                 ]
               },
               {
-                "group": "CdrPlatform",
+                "group": "CDR Platform",
                 "pages": [
                   "plugins/cdrplatform/overview",
                   "plugins/cdrplatform/api",

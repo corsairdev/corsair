@@ -13,7 +13,7 @@ export const get: CdrPlatformEndpoints['certificateGet'] = async (
 	const parsedInput =
 		CdrPlatformEndpointInputSchemas.certificateGet.parse(input);
 	const rawResponse = await makeCdrPlatformRequest(
-		`v1/certificate/${parsedInput.id}/`,
+		`v1/certificate/${encodeURIComponent(parsedInput.id)}/`,
 		ctx.key,
 		{ method: 'GET' },
 	);
