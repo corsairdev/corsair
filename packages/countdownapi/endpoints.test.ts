@@ -137,18 +137,20 @@ const docMasterProductResponse = {
 	sold_out: false,
 	top_picks: [
 		{
-			title: 'SanDisk Ultra 128GB microSDXC Memory Card',
-			epid: '15029998723',
-			link: 'https://www.ebay.com/itm/15029998723',
-			prices: [
-				{
-					symbol: '$',
-					value: 7.85,
-					currency: 'USD',
-					raw: '$7.85',
-					name: '',
-				},
-			],
+			product: {
+				title: 'SanDisk Ultra 128GB microSDXC Memory Card',
+				epid: '15029998723',
+				link: 'https://www.ebay.com/itm/15029998723',
+				prices: [
+					{
+						symbol: '$',
+						value: 7.85,
+						currency: 'USD',
+						raw: '$7.85',
+						name: '',
+					},
+				],
+			},
 		},
 	],
 };
@@ -199,7 +201,7 @@ describe('CountdownApi endpoints', () => {
 			'test-countdownapi-key',
 			{
 				type: 'search',
-				query: 'memory cards',
+				search_term: 'memory cards',
 				ebay_domain: 'ebay.com',
 				page: undefined,
 			},
@@ -212,6 +214,19 @@ describe('CountdownApi endpoints', () => {
 			{ query: 'memory cards', ebay_domain: 'ebay.com' },
 			'completed',
 		);
+	});
+
+	it('search maps the query input to the documented search_term wire parameter', async () => {
+		mockRequest.mockResolvedValue(docSearchResponse as any);
+
+		await search(ctx, {
+			query: 'memory cards',
+			ebay_domain: 'ebay.com',
+		});
+
+		const requestQuery = mockRequest.mock.calls[0]?.[2];
+		expect(requestQuery?.search_term).toBe('memory cards');
+		expect(requestQuery).not.toHaveProperty('query');
 	});
 
 	it('search forwards the page parameter when provided', async () => {
@@ -228,7 +243,7 @@ describe('CountdownApi endpoints', () => {
 			'test-countdownapi-key',
 			{
 				type: 'search',
-				query: 'memory cards',
+				search_term: 'memory cards',
 				ebay_domain: 'ebay.com',
 				page: 3,
 			},

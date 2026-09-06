@@ -10,7 +10,7 @@ export const get: CountdownApiEndpoints['search'] = async (ctx, input) => {
 		ctx.key,
 		{
 			type: 'search',
-			query: input.query,
+			search_term: input.query,
 			ebay_domain: input.ebay_domain,
 			page: input.page,
 		},
