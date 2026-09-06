@@ -1,0 +1,9 @@
+displayName: Agiled
+description: Business management platform for CRM, contacts, invoicing, and project workflows.
+recommendedAuth: api_key
+examples:
+  read:
+    path: contacts.list
+    title: List contacts
+    args:
+      limit: 25

@@ -264,6 +264,14 @@
                 ]
               },
               {
+                "group": "Agiled",
+                "pages": [
+                  "plugins/agiled/overview",
+                  "plugins/agiled/api",
+                  "plugins/agiled/database"
+                ]
+              },
+              {
                 "group": "Agility CMS",
                 "pages": [
                   "plugins/agilitycms/overview",
