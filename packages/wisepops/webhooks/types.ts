@@ -172,8 +172,7 @@ export function detectWisepopsEventType(
 			if (fields && typeof fields === 'object') {
 				if ('email' in fields) return 'email';
 				if ('phone' in fields) return 'phone';
-				if ('survey' in fields || Object.keys(fields).length > 0)
-					return 'survey';
+				if ('survey' in fields) return 'survey';
 			}
 
 			if ('collected_at' in item && 'wisepop_id' in item) {

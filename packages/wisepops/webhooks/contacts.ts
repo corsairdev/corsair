@@ -70,7 +70,9 @@ function createContactWebhook(
 			);
 
 			const first = contacts[0];
-			const corsairEntityId = first ? String(first.wisepop_id) : undefined;
+			const corsairEntityId = first
+				? first.form_session || String(first.wisepop_id)
+				: undefined;
 
 			return {
 				success: true,
