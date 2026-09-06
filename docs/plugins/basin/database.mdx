@@ -1,0 +1,177 @@
+---
+title: Database
+description: "Basin local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Basin plugin syncs data locally. Use `corsair.basin.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Domains
+
+Path: `basin.db.domains.search`
+
+```ts
+const rows = await corsair.basin.db.domains.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Forms
+
+Path: `basin.db.forms.search`
+
+```ts
+const rows = await corsair.basin.db.forms.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `number` | equals, gt, gte, lt, lte, in |
+| `project_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `redirect_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `use_ajax` | `boolean` | equals |
+| `notification_emails` | `string` | equals, contains, startsWith, endsWith, in |
+| `autoreply` | `boolean` | equals |
+| `inbox_count` | `number` | equals, gt, gte, lt, lte, in |
+| `spam_count` | `number` | equals, gt, gte, lt, lte, in |
+| `trash_count` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Form Views
+
+Path: `basin.db.formViews.search`
+
+```ts
+const rows = await corsair.basin.db.formViews.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `form_id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `embed_code` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `basin.db.projects.search`
+
+```ts
+const rows = await corsair.basin.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Submissions
+
+Path: `basin.db.submissions.search`
+
+```ts
+const rows = await corsair.basin.db.submissions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `form_id` | `number` | equals, gt, gte, lt, lte, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `spam` | `boolean` | equals |
+| `read` | `boolean` | equals |
+| `trash` | `boolean` | equals |
+| `spam_reason` | `string` | equals, contains, startsWith, endsWith, in |
+| `ip` | `string` | equals, contains, startsWith, endsWith, in |
+| `referrer` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_agent` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhooks
+
+Path: `basin.db.webhooks.search`
+
+```ts
+const rows = await corsair.basin.db.webhooks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `form_id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `format` | `string` | equals, contains, startsWith, endsWith, in |
+| `trigger_when_spam` | `boolean` | equals |
+| `enabled` | `boolean` | equals |
+| `failure_count` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

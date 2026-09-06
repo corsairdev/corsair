@@ -1,0 +1,191 @@
+---
+title: API
+description: "API reference for AsyncInterview: every `asyncinterview.api.*` operation with input and output types."
+---
+
+Every `asyncinterview.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Jobs
+
+### delete
+
+`jobs.delete`
+
+Deletes an interview job permanently.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.asyncinterview.api.jobs.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `number \| string` | Yes | Unique identifier (integer ID) of the interview job to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`jobs.list`
+
+Retrieves a list of all interview jobs.
+
+**Risk:** `read`
+
+```ts
+await corsair.asyncinterview.api.jobs.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  title?: string | null,
+  date?: string | null,
+  time?: string | null,
+  datetime?: string | null,
+  team_id?: number | null,
+  sub_title?: string | null,
+  description?: string | null,
+  is_public?: 0 | 1 | boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  slug?: string | null,
+  public_job_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listResponses
+
+`jobs.listResponses`
+
+Retrieves all interview responses with candidate details.
+
+**Risk:** `read`
+
+```ts
+await corsair.asyncinterview.api.jobs.listResponses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `number \| string` | No | Filter interviews by job ID (GET /interviews?job_id=). |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  title?: string | null,
+  url?: string | null,
+  job_id?: number | null,
+  job?: string | null,
+  date?: string | null,
+  time?: string | null,
+  datetime?: string | null,
+  questions?: {
+    id: number,
+    stage_id?: number | null,
+    title?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    order?: number | null
+  }[] | null,
+  contacts?: {
+    id?: number | null,
+    name?: string | null,
+    email?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    phone?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`jobs.update`
+
+Updates an existing interview job's details after creation.
+
+**Risk:** `write`
+
+```ts
+await corsair.asyncinterview.api.jobs.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `number \| string` | Yes | Unique identifier of the interview job to update (integer ID). |
+| `title` | `string` | No | New title for the job |
+| `is_public` | `boolean` | No | Whether the job is publicly visible (true to make public, false to make private) |
+| `sub_title` | `string` | No | Subtitle or tagline for the job |
+| `description` | `string` | No | Detailed description of the job role |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `title` | `string` | No | — |
+| `date` | `string` | No | — |
+| `time` | `string` | No | — |
+| `datetime` | `string` | No | — |
+| `team_id` | `number` | No | — |
+| `sub_title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `is_public` | `0 \| 1 \| boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `public_job_url` | `string` | No | — |
+
+
+
+---
+

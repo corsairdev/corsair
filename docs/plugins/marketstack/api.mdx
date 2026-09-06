@@ -1,0 +1,789 @@
+---
+title: API
+description: "API reference for Marketstack: every `marketstack.api.*` operation with input and output types."
+---
+
+Every `marketstack.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Currencies
+
+### list
+
+`currencies.list`
+
+List all currencies supported by the Marketstack API
+
+**Risk:** `read`
+
+```ts
+await corsair.marketstack.api.currencies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum number of results to return (default 100, max 1000) |
+| `offset` | `number` | No | Number of results to skip, for pagination (default 0) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit: number,
+  offset: number,
+  count: number,
+  total: number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  code: string,
+  symbol?: string,
+  name?: string,
+  symbol_native?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Dividends
+
+### get
+
+`dividends.get`
+
+Retrieve historical dividend amounts and payment dates for one or more tickers
+
+**Risk:** `read`
+
+```ts
+await corsair.marketstack.api.dividends.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbols` | `string[]` | Yes | Ticker symbols to fetch, e.g. ["AAPL", "MSFT"] (max 100) |
+| `dateFrom` | `string` | No | Only return dividends on or after this date (YYYY-MM-DD) |
+| `dateTo` | `string` | No | Only return dividends on or before this date (YYYY-MM-DD) |
+| `limit` | `number` | No | Maximum number of results to return (default 100, max 1000) |
+| `offset` | `number` | No | Number of results to skip, for pagination (default 0) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit: number,
+  offset: number,
+  count: number,
+  total: number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  symbol: string,
+  date: string,
+  dividend: number,
+  payment_date?: string | null,
+  record_date?: string | null,
+  declaration_date?: string | null,
+  distr_freq?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Eod
+
+### get
+
+`eod.get`
+
+Retrieve end-of-day (EOD) OHLCV data for one or more ticker symbols
+
+**Risk:** `read`
+
+```ts
+await corsair.marketstack.api.eod.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbols` | `string[]` | Yes | Ticker symbols to fetch, e.g. ["AAPL", "MSFT"] (max 100) |
+| `exchange` | `string` | No | Filter by stock exchange MIC |
+| `sort` | `ASC \| DESC` | No | Sort order by date (default DESC) |
+| `dateFrom` | `string` | No | Only return data on or after this date (YYYY-MM-DD) |
+| `dateTo` | `string` | No | Only return data on or before this date (YYYY-MM-DD) |
+| `limit` | `number` | No | Maximum number of results to return (default 100, max 1000) |
+| `offset` | `number` | No | Number of results to skip, for pagination (default 0) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit: number,
+  offset: number,
+  count: number,
+  total: number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  open?: number | null,
+  high?: number | null,
+  low?: number | null,
+  close?: number | null,
+  volume?: number | null,
+  adj_high?: number | null,
+  adj_low?: number | null,
+  adj_close?: number | null,
+  adj_open?: number | null,
+  adj_volume?: number | null,
+  split_factor?: number | null,
+  dividend?: number | null,
+  name?: string,
+  exchange_code?: string,
+  asset_type?: string,
+  price_currency?: string,
+  symbol: string,
+  exchange?: string,
+  date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Exchanges
+
+### get
+
+`exchanges.get`
+
+Retrieve exchange details by MIC, including location, status, and operational fields
+
+**Risk:** `read`
+
+```ts
+await corsair.marketstack.api.exchanges.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mic` | `string` | Yes | Market Identifier Code of the exchange, e.g. "XNAS" |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `acronym` | `string` | No | — |
+| `mic` | `string` | Yes | — |
+| `country` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `city` | `string` | No | — |
+| `website` | `string` | No | — |
+| `operating_mic` | `string` | No | — |
+| `oprt_sgmt` | `string` | No | — |
+| `legal_entity_name` | `string` | No | — |
+| `exchange_lei` | `string` | No | — |
+| `market_category_code` | `string` | No | — |
+| `exchange_status` | `string` | No | — |
+| `date_creation` | `object` | No | — |
+| `date_last_update` | `object` | No | — |
+| `date_last_validation` | `object` | No | — |
+| `date_expiry` | `object` | No | — |
+| `comments` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="date_creation full type">
+
+```ts
+string | {
+  date?: string,
+  timezone_type?: number,
+  timezone?: string
+}
+```
+</Accordion>
+
+<Accordion title="date_last_update full type">
+
+```ts
+string | {
+  date?: string,
+  timezone_type?: number,
+  timezone?: string
+}
+```
+</Accordion>
+
+<Accordion title="date_last_validation full type">
+
+```ts
+string | {
+  date?: string,
+  timezone_type?: number,
+  timezone?: string
+}
+```
+</Accordion>
+
+<Accordion title="date_expiry full type">
+
+```ts
+string | {
+  date?: string,
+  timezone_type?: number,
+  timezone?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`exchanges.list`
+
+List or search the stock exchanges supported by Marketstack
+
+**Risk:** `read`
+
+```ts
+await corsair.marketstack.api.exchanges.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Search exchanges by name, acronym, or MIC |
+| `limit` | `number` | No | Maximum number of results to return (default 100, max 1000) |
+| `offset` | `number` | No | Number of results to skip, for pagination (default 0) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit: number,
+  offset: number,
+  count: number,
+  total: number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  acronym?: string | null,
+  mic: string,
+  country?: string | null,
+  country_code?: string | null,
+  city?: string | null,
+  website?: string | null,
+  operating_mic?: string,
+  oprt_sgmt?: string,
+  legal_entity_name?: string,
+  exchange_lei?: string,
+  market_category_code?: string,
+  exchange_status?: string,
+  date_creation?: string | {
+    date?: string,
+    timezone_type?: number,
+    timezone?: string
+  } | null,
+  date_last_update?: string | {
+    date?: string,
+    timezone_type?: number,
+    timezone?: string
+  } | null,
+  date_last_validation?: string | {
+    date?: string,
+    timezone_type?: number,
+    timezone?: string
+  } | null,
+  date_expiry?: string | {
+    date?: string,
+    timezone_type?: number,
+    timezone?: string
+  } | null,
+  comments?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Splits
+
+### get
+
+`splits.get`
+
+Retrieve historical stock split data for one or more ticker symbols
+
+**Risk:** `read`
+
+```ts
+await corsair.marketstack.api.splits.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbols` | `string[]` | Yes | Ticker symbols to fetch, e.g. ["AAPL", "MSFT"] (max 100) |
+| `dateFrom` | `string` | No | Only return splits on or after this date (YYYY-MM-DD) |
+| `dateTo` | `string` | No | Only return splits on or before this date (YYYY-MM-DD) |
+| `limit` | `number` | No | Maximum number of results to return (default 100, max 1000) |
+| `offset` | `number` | No | Number of results to skip, for pagination (default 0) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit: number,
+  offset: number,
+  count: number,
+  total: number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  symbol: string,
+  date: string,
+  split_factor: number,
+  stock_split?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tickers
+
+### get
+
+`tickers.get`
+
+Retrieve detailed ticker information including exchange, sector, and industry
+
+**Risk:** `read`
+
+```ts
+await corsair.marketstack.api.tickers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | Ticker symbol, e.g. "AAPL" |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `symbol` | `string` | Yes | — |
+| `has_intraday` | `boolean` | No | — |
+| `has_eod` | `boolean` | No | — |
+| `country` | `string` | No | — |
+| `cik` | `string` | No | — |
+| `isin` | `string` | No | — |
+| `cusip` | `string` | No | — |
+| `ein_employer_id` | `string` | No | — |
+| `lei` | `string` | No | — |
+| `series_id` | `string` | No | — |
+| `item_type` | `string` | No | — |
+| `sector` | `string` | No | — |
+| `industry` | `string` | No | — |
+| `sic_code` | `string` | No | — |
+| `sic_name` | `string` | No | — |
+| `stock_exchange` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="stock_exchange full type">
+
+```ts
+{
+  name?: string,
+  acronym?: string | null,
+  mic?: string,
+  country?: string | null,
+  country_code?: string | null,
+  city?: string | null,
+  website?: string | null,
+  operating_mic?: string,
+  oprt_sgmt?: string,
+  legal_entity_name?: string,
+  exchange_lei?: string,
+  market_category_code?: string,
+  exchange_status?: string,
+  date_creation?: string | {
+    date?: string,
+    timezone_type?: number,
+    timezone?: string
+  } | null,
+  date_last_update?: string | {
+    date?: string,
+    timezone_type?: number,
+    timezone?: string
+  } | null,
+  date_last_validation?: string | {
+    date?: string,
+    timezone_type?: number,
+    timezone?: string
+  } | null,
+  date_expiry?: string | {
+    date?: string,
+    timezone_type?: number,
+    timezone?: string
+  } | null,
+  comments?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getEod
+
+`tickers.getEod`
+
+Retrieve historical end-of-day (EOD) price data for a specific ticker symbol
+
+**Risk:** `read`
+
+```ts
+await corsair.marketstack.api.tickers.getEod({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | Ticker symbol, e.g. "AAPL" |
+| `sort` | `ASC \| DESC` | No | Sort order by date (default DESC) |
+| `dateFrom` | `string` | No | Only return data on or after this date (YYYY-MM-DD) |
+| `dateTo` | `string` | No | Only return data on or before this date (YYYY-MM-DD) |
+| `limit` | `number` | No | Maximum number of results to return (default 100, max 1000) |
+| `offset` | `number` | No | Number of results to skip, for pagination (default 0) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit: number,
+  offset: number,
+  count: number,
+  total: number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  open?: number | null,
+  high?: number | null,
+  low?: number | null,
+  close?: number | null,
+  volume?: number | null,
+  adj_high?: number | null,
+  adj_low?: number | null,
+  adj_close?: number | null,
+  adj_open?: number | null,
+  adj_volume?: number | null,
+  split_factor?: number | null,
+  dividend?: number | null,
+  name?: string,
+  exchange_code?: string,
+  asset_type?: string,
+  price_currency?: string,
+  symbol: string,
+  exchange?: string,
+  date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getEodLatest
+
+`tickers.getEodLatest`
+
+Retrieve the most recent end-of-day (EOD) data available for a specific ticker symbol
+
+**Risk:** `read`
+
+```ts
+await corsair.marketstack.api.tickers.getEodLatest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | Ticker symbol, e.g. "AAPL" |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `open` | `number` | No | — |
+| `high` | `number` | No | — |
+| `low` | `number` | No | — |
+| `close` | `number` | No | — |
+| `volume` | `number` | No | — |
+| `adj_high` | `number` | No | — |
+| `adj_low` | `number` | No | — |
+| `adj_close` | `number` | No | — |
+| `adj_open` | `number` | No | — |
+| `adj_volume` | `number` | No | — |
+| `split_factor` | `number` | No | — |
+| `dividend` | `number` | No | — |
+| `name` | `string` | No | — |
+| `exchange_code` | `string` | No | — |
+| `asset_type` | `string` | No | — |
+| `price_currency` | `string` | No | — |
+| `symbol` | `string` | Yes | — |
+| `exchange` | `string` | No | — |
+| `date` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`tickers.list`
+
+List or search the stock tickers supported by Marketstack
+
+**Risk:** `read`
+
+```ts
+await corsair.marketstack.api.tickers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Search tickers by name or symbol, e.g. "Apple" |
+| `exchange` | `string` | No | Filter by stock exchange MIC |
+| `limit` | `number` | No | Maximum number of results to return (default 100, max 1000) |
+| `offset` | `number` | No | Number of results to skip, for pagination (default 0) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit: number,
+  offset: number,
+  count: number,
+  total: number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  symbol: string,
+  has_intraday?: boolean,
+  has_eod?: boolean,
+  country?: string | null,
+  cik?: string,
+  isin?: string,
+  cusip?: string,
+  ein_employer_id?: string,
+  lei?: string,
+  series_id?: string,
+  item_type?: string,
+  sector?: string,
+  industry?: string,
+  sic_code?: string,
+  sic_name?: string,
+  stock_exchange?: {
+    name?: string,
+    acronym?: string | null,
+    mic?: string,
+    country?: string | null,
+    country_code?: string | null,
+    city?: string | null,
+    website?: string | null,
+    operating_mic?: string,
+    oprt_sgmt?: string,
+    legal_entity_name?: string,
+    exchange_lei?: string,
+    market_category_code?: string,
+    exchange_status?: string,
+    date_creation?: string | {
+      date?: string,
+      timezone_type?: number,
+      timezone?: string
+    } | null,
+    date_last_update?: string | {
+      date?: string,
+      timezone_type?: number,
+      timezone?: string
+    } | null,
+    date_last_validation?: string | {
+      date?: string,
+      timezone_type?: number,
+      timezone?: string
+    } | null,
+    date_expiry?: string | {
+      date?: string,
+      timezone_type?: number,
+      timezone?: string
+    } | null,
+    comments?: string | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

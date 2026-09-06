@@ -17,7 +17,7 @@ Use the package name that matches the integration (for example `@corsair-dev/gma
 
 ## Add plugins to your Corsair instance
 
-Import `createCorsair` from `corsair` and each plugin’s factory from its package. Pass the plugin functions into `plugins`:
+Import `createCorsair` from `corsair` and each plugin's factory from its package. Pass the plugin functions into `plugins`:
 
 ```ts
 import { createCorsair } from 'corsair';
@@ -32,18 +32,18 @@ export const corsair = createCorsair({
 });
 ```
 
-Then configure credentials for each integration (CLI, env, or your app’s setup flow). For a full walkthrough—integrations, accounts, tenants, and `setupCorsair`—see [Provisioning](/concepts/provisioning).
+Then configure credentials for each integration (CLI, env, or your app's setup flow). For a full walkthrough covering integrations, accounts, tenants, and `setupCorsair`, see [Provisioning](/concepts/provisioning).
 
 ## Find a specific integration
 
-Use the sidebar under **Plugins** to open an integration’s docs: overview, credentials, API reference, webhooks, and database where applicable.
+Use the sidebar under **Plugins** to open an integration's docs: overview, credentials, API reference, webhooks, and database where applicable.
 
-## Need something that isn’t listed?
+## Need something that isn't listed?
 
 If there is no package for the API you need, you can scaffold and ship your own plugin in the Corsair repo:
 
 <CardGroup cols={1}>
-  <Card title="Build a Plugin" href="/guides/create-your-own-plugin">
+  <Card title="Build a plugin" href="/guides/create-your-own-plugin">
     Use the generator, wire auth and endpoints, and publish alongside your app.
   </Card>
 </CardGroup>

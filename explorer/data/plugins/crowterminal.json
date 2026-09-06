@@ -1,0 +1,1459 @@
+{
+  "id": "crowterminal",
+  "displayName": "Crow Terminal",
+  "description": "Financial terminal API for market data, trading tools, and investment research workflows.",
+  "npmPackageName": "@corsair-dev/crowterminal",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 6,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "crowterminal.api.agent.register",
+      "shortPath": "agent.register",
+      "description": "Self-register an agent and receive a new API key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agentDescription",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "apiKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.data.getTypes",
+      "shortPath": "data.getTypes",
+      "description": "List the analytics data types each platform accepts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dataTypes",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.data.ingest",
+      "shortPath": "data.ingest",
+      "description": "Ingest one platform analytics data point",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": false,
+            "type": "TIKTOK | INSTAGRAM | YOUTUBE"
+          },
+          {
+            "key": "dataType",
+            "optional": false,
+            "type": "retention | demographics | traffic_sources | watch_time | audience_activity | follower_growth | video_performance | sound_performance | hashtag_performance | reach_sources | content_interactions | story_metrics | reel_metrics | subscriber_growth | click_through_rate | impression_sources | end_screen_performance"
+          },
+          {
+            "key": "videoId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "confidence",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.data.ingestBulk",
+      "shortPath": "data.ingestBulk",
+      "description": "Ingest up to 50 analytics data points at once",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ clientId: string, platform: TIKTOK | INSTAGRAM | YOUTUBE, dataType: retention | demographics | traffic_sources | watch_time | audience_activity | follower_growth | video_performance | sound_performance | hashtag_performance | reach_sources | content_interactions | story_metrics | reel_metrics | subscriber_growth | click_through_rate | impression_sources | end_screen_performance, videoId?: string, data: {}, confidence?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.intelligence.getByokPlatform",
+      "shortPath": "intelligence.getByokPlatform",
+      "description": "Get raw algorithm context without LLM inference charges",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "platforms",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "intelligence",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.intelligence.getPlatform",
+      "shortPath": "intelligence.getPlatform",
+      "description": "Get TikTok, Instagram and YouTube algorithm insights",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.memory.compareMd",
+      "shortPath": "memory.compareMd",
+      "description": "Diff an agent markdown against all stored versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agentMd",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comparison",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recommendation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "differences",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "missingFields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.memory.engagementAnalysis",
+      "shortPath": "memory.engagementAnalysis",
+      "description": "Correlate every agent field with historical engagement",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agentMd",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "analysis",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "versionsAnalyzed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "overallStats",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "fieldAnalysis",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.memory.get",
+      "shortPath": "memory.get",
+      "description": "Get the stored skill for one client",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skill",
+            "optional": true,
+            "type": "{ primaryNiche?: string, subNiches?: string[], contentStyle?: string, signatureStyle?: string, hookPatterns?: string[], avgEngagement?: number, bestPostingTimes?: { day?: number, hour?: number, score?: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.memory.getBulk",
+      "shortPath": "memory.getBulk",
+      "description": "Read stored skills for up to 50 clients",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "clients",
+            "optional": false,
+            "type": "{ clientId: string, success?: boolean, skill?: { primaryNiche?: string, subNiches?: string[], contentStyle?: string, signatureStyle?: string, hookPatterns?: string[], avgEngagement?: number, bestPostingTimes?: { day?: number, hour?: number, score?: number }[] } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.memory.getChangelog",
+      "shortPath": "memory.getChangelog",
+      "description": "Read the change history of a client skill",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changelog",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.memory.getPattern",
+      "shortPath": "memory.getPattern",
+      "description": "Trend one skill field across stored versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trend",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "versionsAnalyzed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dataPoints",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.memory.validateChanges",
+      "shortPath": "memory.validateChanges",
+      "description": "Check proposed edits against historical outcomes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clientId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "proposedChanges",
+            "optional": false,
+            "type": "{ field: string, oldValue?: any, newValue?: any }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "validation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warnings",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "recommendations",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.sandbox.engagementAnalysis",
+      "shortPath": "sandbox.engagementAnalysis",
+      "description": "Run a mock engagement analysis",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentMd",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "versionsAnalyzed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "overallStats",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "fieldAnalysis",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.sandbox.getClient",
+      "shortPath": "sandbox.getClient",
+      "description": "Get mock client data for testing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skill",
+            "optional": true,
+            "type": "{ primaryNiche?: string, subNiches?: string[], contentStyle?: string, signatureStyle?: string, hookPatterns?: string[], avgEngagement?: number, bestPostingTimes?: { day?: number, hour?: number, score?: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.sandbox.getMemory",
+      "shortPath": "sandbox.getMemory",
+      "description": "Get mock skill data for testing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skill",
+            "optional": true,
+            "type": "{ primaryNiche?: string, subNiches?: string[], contentStyle?: string, signatureStyle?: string, hookPatterns?: string[], avgEngagement?: number, bestPostingTimes?: { day?: number, hour?: number, score?: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.sandbox.validate",
+      "shortPath": "sandbox.validate",
+      "description": "Run a mock validation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proposedChanges",
+            "optional": false,
+            "type": "{ field: string, oldValue?: any, newValue?: any }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "validation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warnings",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "recommendations",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.status.get",
+      "shortPath": "status.get",
+      "description": "Get CrowTerminal service health",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "services",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "endpoints",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.status.getComponents",
+      "shortPath": "status.getComponents",
+      "description": "Get per-component health and latency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "components",
+            "optional": false,
+            "type": "{ name: string, status: string, latency?: string, details?: string }[]"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.status.getHistory",
+      "shortPath": "status.getHistory",
+      "description": "Get seven days of uptime points for charting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataPoints",
+            "optional": false,
+            "type": "{ date: string, uptime?: number }[]"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.status.getIncidents",
+      "shortPath": "status.getIncidents",
+      "description": "List recent incidents and affected components",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incidents",
+            "optional": false,
+            "type": "{ timestamp?: string, status?: string, duration?: string, components?: string[] }[]"
+          },
+          {
+            "key": "subscribe",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.status.getUptime",
+      "shortPath": "status.getUptime",
+      "description": "Get 24h and 7d uptime percentages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currentStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uptime",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "recentIncidents",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.status.ping",
+      "shortPath": "status.ping",
+      "description": "Check that CrowTerminal is responding",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pong",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register a CrowTerminal webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "skill.updated | skill.version_created | data.ingested | validation.blocked | posting.completed | posting.failed[]"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a CrowTerminal webhook",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List registered CrowTerminal webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.webhooks.test",
+      "shortPath": "webhooks.test",
+      "description": "Send a test delivery to a webhook URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crowterminal.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a CrowTerminal webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "skill.updated | skill.version_created | data.ingested | validation.blocked | posting.completed | posting.failed[]"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "crowterminal.webhooks.data.ingested",
+      "shortPath": "data.ingested",
+      "description": "Agent data was ingested",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "data.ingested"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ event: data.ingested, timestamp: string, webhookId: string, agentId: string, data: {} }",
+      "usageExample": "crowterminal({\n    webhookHooks: {\n        data: {\n            ingested: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "crowterminal.webhooks.posting.completed",
+      "shortPath": "posting.completed",
+      "description": "Content posting completed successfully",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "posting.completed"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ event: posting.completed, timestamp: string, webhookId: string, agentId: string, data: {} }",
+      "usageExample": "crowterminal({\n    webhookHooks: {\n        posting: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "crowterminal.webhooks.posting.failed",
+      "shortPath": "posting.failed",
+      "description": "Content posting failed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "posting.failed"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ event: posting.failed, timestamp: string, webhookId: string, agentId: string, data: {} }",
+      "usageExample": "crowterminal({\n    webhookHooks: {\n        posting: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "crowterminal.webhooks.skill.updated",
+      "shortPath": "skill.updated",
+      "description": "A client skill was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "skill.updated"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ event: skill.updated, timestamp: string, webhookId: string, agentId: string, data: {} }",
+      "usageExample": "crowterminal({\n    webhookHooks: {\n        skill: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "crowterminal.webhooks.skill.versionCreated",
+      "shortPath": "skill.versionCreated",
+      "description": "A new skill version was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "skill.version_created"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ event: skill.version_created, timestamp: string, webhookId: string, agentId: string, data: {} }",
+      "usageExample": "crowterminal({\n    webhookHooks: {\n        skill: {\n            versionCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "crowterminal.webhooks.validation.blocked",
+      "shortPath": "validation.blocked",
+      "description": "A proposed memory change was blocked",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "validation.blocked"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ event: validation.blocked, timestamp: string, webhookId: string, agentId: string, data: {} }",
+      "usageExample": "crowterminal({\n    webhookHooks: {\n        validation: {\n            blocked: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "crowterminal.db.dataPoints.search",
+      "entityName": "dataPoints",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "crowterminal.db.incidents.search",
+      "entityName": "incidents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "crowterminal.db.skills.search",
+      "entityName": "skills",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "clientName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "version",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "primaryNiche",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contentStyle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "signatureStyle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avgEngagement",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "crowterminal.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isActive",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7251 @@
+{
+  "id": "blazemeter",
+  "displayName": "BlazeMeter",
+  "description": "Performance testing platform for load, stress, and API scalability benchmarking.",
+  "npmPackageName": "@corsair-dev/blazemeter",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 92,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_key_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "blazemeter.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "List accounts available to the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, owner?: { id?: number | null, email?: string | null, displayName?: string | null } | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assetDependencies.create",
+      "shortPath": "assetDependencies.create",
+      "description": "Create a dependency from one workspace asset to another",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "aId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "targetDepId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dependencyType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, sourceId?: string | null, targetId?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assetDependencies.forAsset",
+      "shortPath": "assetDependencies.forAsset",
+      "description": "List dependencies belonging to an asset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "aId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, sourceId?: string | null, targetId?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assetDependencies.get",
+      "shortPath": "assetDependencies.get",
+      "description": "Get one asset dependency by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, sourceId?: string | null, targetId?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assetDependencies.list",
+      "shortPath": "assetDependencies.list",
+      "description": "List workspace asset dependencies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sourceDepId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDepId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceDepType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDepType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dependencyType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, sourceId?: string | null, targetId?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assetDependencies.remove",
+      "shortPath": "assetDependencies.remove",
+      "description": "Delete an asset dependency by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assetDependencies.removeMatching",
+      "shortPath": "assetDependencies.removeMatching",
+      "description": "Delete asset dependencies matching source, target, and type filters",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sourceDepId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDepId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceDepType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetDepType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dependencyType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assetDependencies.updateForAsset",
+      "shortPath": "assetDependencies.updateForAsset",
+      "description": "Replace dependencies for an asset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "aId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "dependencies",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, sourceId?: string | null, targetId?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assets.create",
+      "shortPath": "assets.create",
+      "description": "Create an Asset Repository asset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "packageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: {} | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assets.data",
+      "shortPath": "assets.data",
+      "description": "Get stored data for an asset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "aId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ fileName?: string | null, contentType?: string | null, content?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assets.get",
+      "shortPath": "assets.get",
+      "description": "Get a workspace asset by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "withData",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "withDependencies",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: {} | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assets.list",
+      "shortPath": "assets.list",
+      "description": "List Asset Repository assets in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortDir",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "withData",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "withSystem",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "withAccShared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: {} | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: {} | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assets.remove",
+      "shortPath": "assets.remove",
+      "description": "Delete a workspace asset",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "aId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assets.update",
+      "shortPath": "assets.update",
+      "description": "Update a workspace asset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "packageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "dependencies",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: {} | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.assets.uploadData",
+      "shortPath": "assets.uploadData",
+      "description": "Upload data content to an asset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "assetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileContent",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, displayName?: string | null, type?: string | null, accountId?: number | null, workspaceId?: number | null, packageId?: string | null, metadata?: {} | null, createdAt?: string | null, updatedAt?: string | null, createdBy?: number | null, updatedBy?: number | null, dependencies?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.generator.cardIssuers",
+      "shortPath": "generator.cardIssuers",
+      "description": "List available credit-card issuer generators",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ name?: string | null, lengths?: any[] | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.generator.functions",
+      "shortPath": "generator.functions",
+      "description": "List available synthetic-data generator functions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ name?: string | null, category?: string | null, description?: string | null, signature?: string | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.generator.seedLists",
+      "shortPath": "generator.seedLists",
+      "description": "List available generator seed lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ name?: string | null, fileName?: string | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.info.health",
+      "shortPath": "info.health",
+      "description": "Get Asset Repository service health",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ status?: string | null, healthy?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.info.version",
+      "shortPath": "info.version",
+      "description": "Get Asset Repository build information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ version?: string | null, branch?: string | null, commit?: string | null, build?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.masters.stop",
+      "shortPath": "masters.stop",
+      "description": "Gracefully stop a running master execution",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "master_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.masters.summary",
+      "shortPath": "masters.summary",
+      "description": "Get request statistics for a master test run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "master_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ summary?: { avg?: number | null, bytes?: number | null, concurrency?: number | null, duration?: number | null, durationIsNotConfigured?: boolean | null, failed?: number | null, first?: number | null, hits?: number | null, id?: string | null, last?: number | null, lb?: string | null, tp90?: number | null, min?: number | null, max?: number | null, histogram?: {} | null }[] | null, jmeterLogSummary?: any[] | null, jmeterLogTypeSummary?: any[] | null, maxUsers?: number | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.multiTests.create",
+      "shortPath": "multiTests.create",
+      "description": "Create a multi-test in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "collectionType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, collectionType?: string | null, userId?: number | null, created?: number | null, updated?: number | null, creatorClientId?: string | null, shouldSendReportEmail?: boolean | null, projectId?: number | null, filesToSplit?: any[] | null, dataFiles?: any[] | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.multiTests.get",
+      "shortPath": "multiTests.get",
+      "description": "Get a multi-test by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "populateTests",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, collectionType?: string | null, userId?: number | null, created?: number | null, updated?: number | null, creatorClientId?: string | null, shouldSendReportEmail?: boolean | null, projectId?: number | null, filesToSplit?: any[] | null, dataFiles?: any[] | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.multiTests.list",
+      "shortPath": "multiTests.list",
+      "description": "List multi-tests in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, collectionType?: string | null, userId?: number | null, created?: number | null, updated?: number | null, creatorClientId?: string | null, shouldSendReportEmail?: boolean | null, projectId?: number | null, filesToSplit?: any[] | null, dataFiles?: any[] | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.packages.create",
+      "shortPath": "packages.create",
+      "description": "Create an Asset Repository package",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dependencies",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: {} | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.packages.dependencies",
+      "shortPath": "packages.dependencies",
+      "description": "List package dependencies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, sourceId?: string | null, targetId?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.packages.export",
+      "shortPath": "packages.export",
+      "description": "Export one package as a zip archive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ url?: string | null, fileName?: string | null, contentType?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.packages.exportMany",
+      "shortPath": "packages.exportMany",
+      "description": "Export multiple workspace packages as a zip archive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "packageIds",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ url?: string | null, fileName?: string | null, contentType?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.packages.get",
+      "shortPath": "packages.get",
+      "description": "Get a workspace package",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "withDependencies",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: {} | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.packages.import",
+      "shortPath": "packages.import",
+      "description": "Import a package zip into a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "overrides",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: {} | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.packages.list",
+      "shortPath": "packages.list",
+      "description": "List packages in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortDir",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: {} | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.packages.remove",
+      "shortPath": "packages.remove",
+      "description": "Delete a workspace package",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.packages.update",
+      "shortPath": "packages.update",
+      "description": "Update a workspace package",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dependencies",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, displayName?: string | null, version?: string | null, accountId?: number | null, workspaceId?: number | null, dependencies?: {} | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.packages.updateDependencies",
+      "shortPath": "packages.updateDependencies",
+      "description": "Replace package dependencies",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wsId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "dependencies",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, sourceId?: string | null, targetId?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.privateLocations.create",
+      "shortPath": "privateLocations.create",
+      "description": "Create a private execution location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slots",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "funcIds",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "engineXms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "engineXmx",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "consoleXms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "consoleXmx",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "overrideCPU",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspacesId",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "overrideMemory",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "threadsPerEngine",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, userId?: number | null, consoleXms?: number | null, consoleXmx?: number | null, engineXms?: number | null, engineXmx?: number | null, threadsPerEngine?: number | null, slots?: number | null, type?: string | null, funcIds?: string[] | null, hidden?: boolean | null, disabled?: boolean | null, created?: number | null, updated?: number | null, accountId?: number | null, shipsId?: any[] | null, workspacesId?: any[] | null, ships?: any[] | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.privateLocations.createAgent",
+      "shortPath": "privateLocations.createAgent",
+      "description": "Create an agent in a private location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, address?: string | null, publicIpAddress?: string | null, state?: string | null, lastHeartBeat?: number | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.privateLocations.list",
+      "shortPath": "privateLocations.list",
+      "description": "List private execution locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, userId?: number | null, consoleXms?: number | null, consoleXmx?: number | null, engineXms?: number | null, engineXmx?: number | null, threadsPerEngine?: number | null, slots?: number | null, type?: string | null, funcIds?: string[] | null, hidden?: boolean | null, disabled?: boolean | null, created?: number | null, updated?: number | null, accountId?: number | null, shipsId?: any[] | null, workspacesId?: any[] | null, ships?: any[] | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.privateLocations.removeWorkspace",
+      "shortPath": "privateLocations.removeWorkspace",
+      "description": "Remove a workspace from a private location",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "harborId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project in a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, userId?: number | null, description?: string | null, created?: number | null, updated?: number | null, workspaceId?: number | null, testsCount?: number | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get project details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, userId?: number | null, description?: string | null, created?: number | null, updated?: number | null, workspaceId?: number | null, testsCount?: number | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, userId?: number | null, description?: string | null, created?: number | null, updated?: number | null, workspaceId?: number | null, testsCount?: number | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.projects.remove",
+      "shortPath": "projects.remove",
+      "description": "Delete a project, optionally forcing removal of contained data",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, userId?: number | null, description?: string | null, created?: number | null, updated?: number | null, workspaceId?: number | null, testsCount?: number | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.regions.list",
+      "shortPath": "regions.list",
+      "description": "List execution regions and locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, title?: string | null, provider?: string | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.schedules.create",
+      "shortPath": "schedules.create",
+      "description": "Create a cron schedule for a test or multi-test",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cron",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "testId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "testCollectionId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, cron?: string | null, nextRun?: number | null, enabled?: boolean | null, type?: string | null, created?: number | null, updated?: number | null, testId?: number | null, testCollectionId?: number | null, createdById?: number | null, lastUpdatedById?: number | null, nextExecutions?: any[] | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.schedules.get",
+      "shortPath": "schedules.get",
+      "description": "Get a schedule by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, cron?: string | null, nextRun?: number | null, enabled?: boolean | null, type?: string | null, created?: number | null, updated?: number | null, testId?: number | null, testCollectionId?: number | null, createdById?: number | null, lastUpdatedById?: number | null, nextExecutions?: any[] | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.schedules.list",
+      "shortPath": "schedules.list",
+      "description": "List schedules with scope and pagination filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "testId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "collectionId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, cron?: string | null, nextRun?: number | null, enabled?: boolean | null, type?: string | null, created?: number | null, updated?: number | null, testId?: number | null, testCollectionId?: number | null, createdById?: number | null, lastUpdatedById?: number | null, nextExecutions?: any[] | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.schedules.remove",
+      "shortPath": "schedules.remove",
+      "description": "Delete a test schedule",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.schedules.update",
+      "shortPath": "schedules.update",
+      "description": "Enable or disable a schedule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, cron?: string | null, nextRun?: number | null, enabled?: boolean | null, type?: string | null, created?: number | null, updated?: number | null, testId?: number | null, testCollectionId?: number | null, createdById?: number | null, lastUpdatedById?: number | null, nextExecutions?: any[] | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.search.execute",
+      "shortPath": "search.execute",
+      "description": "Search BlazeMeter entities using filters, selected fields, and ordering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | number, name?: string | null, type?: string | null, projectId?: number | null, userId?: number | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.search.metadata",
+      "shortPath": "search.metadata",
+      "description": "Get searchable entities, fields, relations, and operators",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ entities?: any[] | null, fields?: {} | null, relationships?: {} | null, operators?: any[] | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.serviceMockTemplates.get",
+      "shortPath": "serviceMockTemplates.get",
+      "description": "Get a virtual-service template by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "serviceMockTemplateId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, created?: string | null, createdBy?: string | null, updated?: string | null, updatedBy?: string | null, liveSystemHost?: string | null, liveSystemPort?: number | null, noMatchingRequestPreference?: string | null, noMatchingRequestTxnId?: number | null, thinkTime?: number | null, serviceId?: number | null, serviceName?: string | null, mockServiceTransactions?: any[] | null }"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.serviceMockTemplates.list",
+      "shortPath": "serviceMockTemplates.list",
+      "description": "List virtual-service templates in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, created?: string | null, createdBy?: string | null, updated?: string | null, updatedBy?: string | null, liveSystemHost?: string | null, liveSystemPort?: number | null, noMatchingRequestPreference?: string | null, noMatchingRequestTxnId?: number | null, thinkTime?: number | null, serviceId?: number | null, serviceName?: string | null, mockServiceTransactions?: any[] | null }[]"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.serviceMockTemplates.update",
+      "shortPath": "serviceMockTemplates.update",
+      "description": "Update a virtual-service template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thinkTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "liveSystemHost",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "liveSystemPort",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "endpointPreference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "noMatchingRequestPreference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, created?: string | null, createdBy?: string | null, updated?: string | null, updatedBy?: string | null, liveSystemHost?: string | null, liveSystemPort?: number | null, noMatchingRequestPreference?: string | null, noMatchingRequestTxnId?: number | null, thinkTime?: number | null, serviceId?: number | null, serviceName?: string | null, mockServiceTransactions?: any[] | null }"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.sharedFolders.list",
+      "shortPath": "sharedFolders.list",
+      "description": "List shared folders in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | number, name?: string | null, workspaceId?: number | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a workspace tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | number, label?: string | null, name?: string | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List Mock Services tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | number, label?: string | null, name?: string | null }[]"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.testData.generate",
+      "shortPath": "testData.generate",
+      "description": "Generate test data from an inline model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "entityName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.testData.generateFromModel",
+      "shortPath": "testData.generateFromModel",
+      "description": "Generate synthetic records from a stored data model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "numRecords",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.testData.getModel",
+      "shortPath": "testData.getModel",
+      "description": "Get a data model by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataModelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, type?: string | null, kind?: string | null, repeat?: number | null, properties?: {} | null, requirements?: {} | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.testData.publish",
+      "shortPath": "testData.publish",
+      "description": "Publish generated data through a Test Data orchestration target",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ type?: string | null, data?: {} | null, attributes?: {} | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.testData.validateModel",
+      "shortPath": "testData.validateModel",
+      "description": "Validate a workspace data model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data_model_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ isValid?: boolean | null, entities?: {} | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.create",
+      "shortPath": "tests.create",
+      "description": "Create a performance or functional test",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "configuration",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: {} | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.duplicate",
+      "shortPath": "tests.duplicate",
+      "description": "Duplicate a test and its configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: {} | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.files",
+      "shortPath": "tests.files",
+      "description": "List files attached to a test",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "testId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ lastModified?: number | null, name?: string | null, size?: number | null, link?: string | null, linkExpire?: number | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.get",
+      "shortPath": "tests.get",
+      "description": "Get test details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: {} | null } | { id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: {} | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.list",
+      "shortPath": "tests.list",
+      "description": "List tests by workspace or project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasExecutions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: {} | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.remove",
+      "shortPath": "tests.remove",
+      "description": "Delete a test",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "testId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.removeFile",
+      "shortPath": "tests.removeFile",
+      "description": "Delete an uploaded test asset file",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "testId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.start",
+      "shortPath": "tests.start",
+      "description": "Start a configured test",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "testId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "isDebugRun",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delayedStart",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, userId?: number | null, created?: number | null, updated?: number | null, testId?: number | null, projectId?: number | null, sessionsId?: string[] | null, locations?: string[] | null, executions?: any[] | null, isDebugRun?: boolean | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.stop",
+      "shortPath": "tests.stop",
+      "description": "Stop every active execution for a test",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.update",
+      "shortPath": "tests.update",
+      "description": "Update a test configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, description?: string | null, isNewTest?: boolean | null, lastRunTime?: number | null, userId?: number | null, creatorClientId?: string | null, overrideExecutions?: any[] | null, executions?: any[] | null, hasThreadGroupsToOverride?: boolean | null, hasNonRegularThreadGroup?: boolean | null, shouldSendReportEmail?: boolean | null, dependencies?: any, tags?: { id?: number | null, label?: string | null }[] | null, created?: number | null, updated?: number | null, projectId?: number | null, lastUpdatedById?: number | null, configuration?: {} | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.uploadFile",
+      "shortPath": "tests.uploadFile",
+      "description": "Upload a script, data file, or configuration to a test",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "testId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fileContent",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ lastModified?: number | null, name?: string | null, size?: number | null, link?: string | null, linkExpire?: number | null } | { lastModified?: number | null, name?: string | null, size?: number | null, link?: string | null, linkExpire?: number | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.validate",
+      "shortPath": "tests.validate",
+      "description": "Start validation for a test configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "testId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ success?: boolean | null, files?: {} | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.tests.validations",
+      "shortPath": "tests.validations",
+      "description": "Get test-file validation results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "testId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | number, status?: string | null, fileName?: string | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.transactions.convert",
+      "shortPath": "transactions.convert",
+      "description": "Convert Swagger, HAR, YAML, or other transaction input to BlazeMeter DSL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "verbose",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fileContent",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ nativeId?: string | null, priority?: number | null, requestDsl?: { body?: { key?: string | null, matcherName?: string | null, matchingValue?: string | null }[] | null, cookies?: { key?: string | null, matcherName?: string | null, matchingValue?: string | null }[] | null, credentials?: { username?: string | null, password?: string | null } | null, headers?: { key?: string | null, matcherName?: string | null, matchingValue?: string | null }[] | null, host?: string | null, method?: string | null, path?: string | null, queryParams?: { key?: string | null, matcherName?: string | null, matchingValue?: string | null }[] | null, url?: { key?: string | null, matcherName?: string | null, matchingValue?: string | null } | null } | null, responseDsl?: { binary?: boolean | null, charset?: string | null, content?: string | null, contentType?: string | null, headers?: { name?: string | null, value?: string | null }[] | null, proxyUrl?: string | null, status?: number | null, statusMessage?: string | null } | null }[]"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.transactions.create",
+      "shortPath": "transactions.create",
+      "description": "Create service-virtualization transactions in a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serviceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "transactions",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, link?: string | null, serviceId?: number | null, serviceName?: string | null, tags?: string[] | null, dsl?: {} | null } | { id?: number | null, name?: string | null, description?: string | null, link?: string | null, serviceId?: number | null, serviceName?: string | null, tags?: string[] | null, dsl?: {} | null }[]"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.transactions.list",
+      "shortPath": "transactions.list",
+      "description": "List service-virtualization transactions in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiVersion",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, link?: string | null, serviceId?: number | null, serviceName?: string | null, tags?: string[] | null, dsl?: {} | null }[]"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.user.activeSessions",
+      "shortPath": "user.activeSessions",
+      "description": "List active test sessions for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, status?: string | null, testId?: number | null, projectId?: number | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.user.get",
+      "shortPath": "user.get",
+      "description": "Get the authenticated user profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, email?: string | null, access?: number | null, login?: number | null, firstName?: string | null, lastName?: string | null, timezone?: number | null, enabled?: boolean | null, roles?: string[] | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.user.invites",
+      "shortPath": "user.invites",
+      "description": "List pending user invitations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id?: string | number, email?: string | null, status?: string | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.user.projects",
+      "shortPath": "user.projects",
+      "description": "List projects available to the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, userId?: number | null, description?: string | null, created?: number | null, updated?: number | null, workspaceId?: number | null, testsCount?: number | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.user.register",
+      "shortPath": "user.register",
+      "description": "Register a BlazeMeter user account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, email?: string | null, access?: number | null, login?: number | null, firstName?: string | null, lastName?: string | null, timezone?: number | null, enabled?: boolean | null, roles?: string[] | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.user.terminateSessions",
+      "shortPath": "user.terminateSessions",
+      "description": "Immediately terminate selected active sessions",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_ids",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.workspaces.get",
+      "shortPath": "workspaces.get",
+      "description": "Get workspace details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, userId?: number | null, created?: number | null, updated?: number | null, enabled?: boolean | null, dedicatedIpsEnabled?: boolean | null, privateLocationsEnabled?: boolean | null, owner?: { id?: number | null, email?: string | null, displayName?: string | null } | null, membersCount?: number | null, allowance?: { amount?: number | null, type?: string | null } | null, accountId?: number | null, locations?: { id?: string | null, title?: string | null, name?: string | null, provider?: string | null, limits?: { threadsPerEngine?: number | null, concurrency?: number | null, engines?: number | null, duration?: number | null } | null, capabilities?: { dedicatedIps?: boolean | null } | null, sandbox?: boolean | null, purposes?: { load?: boolean | null, functional?: boolean | null, grid?: boolean | null, serviceMock?: boolean | null } | null }[] | null, activeMember?: { id?: number | null, email?: string | null, displayName?: string | null, roles?: string[] | null, enabled?: boolean | null, access?: number | null } | null, features?: {} | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "List workspaces for an account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "textFilter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, userId?: number | null, created?: number | null, updated?: number | null, enabled?: boolean | null, dedicatedIpsEnabled?: boolean | null, privateLocationsEnabled?: boolean | null, owner?: { id?: number | null, email?: string | null, displayName?: string | null } | null, membersCount?: number | null, allowance?: { amount?: number | null, type?: string | null } | null, accountId?: number | null, locations?: { id?: string | null, title?: string | null, name?: string | null, provider?: string | null, limits?: { threadsPerEngine?: number | null, concurrency?: number | null, engines?: number | null, duration?: number | null } | null, capabilities?: { dedicatedIps?: boolean | null } | null, sandbox?: boolean | null, purposes?: { load?: boolean | null, functional?: boolean | null, grid?: boolean | null, serviceMock?: boolean | null } | null }[] | null, activeMember?: { id?: number | null, email?: string | null, displayName?: string | null, roles?: string[] | null, enabled?: boolean | null, access?: number | null } | null, features?: {} | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.workspaces.removeLogs",
+      "shortPath": "workspaces.removeLogs",
+      "description": "Delete master execution logs from a workspace",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "masterIds",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.workspaces.removeManagers",
+      "shortPath": "workspaces.removeManagers",
+      "description": "Remove managers from a workspace",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "managersIds",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.workspaces.terminateMasters",
+      "shortPath": "workspaces.terminateMasters",
+      "description": "Terminate active master executions in a workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.workspaces.updateUser",
+      "shortPath": "workspaces.updateUser",
+      "description": "Update a workspace user role and enabled status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, email?: string | null, displayName?: string | null, firstName?: string | null, lastName?: string | null, login?: number | null, access?: number | null, roles?: string[] | null, enabled?: boolean | null, lastAccess?: number | null, type?: string | null }"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blazemeter.api.workspaces.users",
+      "shortPath": "workspaces.users",
+      "description": "List users in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "textFilter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "excludeRoles",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, email?: string | null, displayName?: string | null, firstName?: string | null, lastName?: string | null, login?: number | null, access?: number | null, roles?: string[] | null, enabled?: boolean | null, lastAccess?: number | null, type?: string | null }[]"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "blazemeter.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blazemeter.db.assets.search",
+      "entityName": "assets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accountId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "packageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdBy",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedBy",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blazemeter.db.packages.search",
+      "entityName": "packages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accountId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blazemeter.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "testsCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blazemeter.db.tests.search",
+      "entityName": "tests",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isNewTest",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "lastRunTime",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "creatorClientId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hasThreadGroupsToOverride",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasNonRegularThreadGroup",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "shouldSendReportEmail",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lastUpdatedById",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blazemeter.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "access",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "login",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "blazemeter.db.workspaces.search",
+      "entityName": "workspaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "dedicatedIpsEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "privateLocationsEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "membersCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "accountId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blazemeter.db.workspaceUsers.search",
+      "entityName": "workspaceUsers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "login",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "access",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "lastAccess",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}
