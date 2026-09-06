@@ -25,8 +25,9 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('429') || msg.includes('rate limit');
 		},
+		// 429 retries live in makeBestBuyRequest so this layer does not multiply them.
 		handler: async (error: Error) => ({
-			maxRetries: 5,
+			maxRetries: 0,
 			headersRetryAfterMs: retryAfterOf(error),
 		}),
 	},

@@ -35,7 +35,7 @@ describe('Best Buy error handlers', () => {
 		});
 		expect(classify(wrapped)).toBe('RATE_LIMIT_ERROR');
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(wrapped);
-		expect(result.maxRetries).toBe(5);
+		expect(result.maxRetries).toBe(0);
 		expect(result.headersRetryAfterMs).toBe(2000);
 	});
 
