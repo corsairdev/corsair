@@ -44,7 +44,8 @@ import {
 	BorneoEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { BORNEO_OPERATIONS, type BorneoOperationName } from './operations';
+import type { BorneoOperationName } from './operations';
+import { BORNEO_OPERATIONS } from './operations';
 import { BorneoSchema } from './schema';
 
 export const borneoAuthConfig = {
