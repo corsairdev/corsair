@@ -125,7 +125,7 @@ describe('Borneo Composio transport', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('rejects redirects for credential-bearing requests', async () => {
+	it('configures fetch to reject redirects for credential-bearing requests', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
 		await expect(
@@ -143,6 +143,156 @@ describe('Borneo Composio transport', () => {
 		const [, init] = fetchMock.mock.calls[0];
 
 		expect(init.redirect).toBe('error');
+	});
+
+	it('normalizes network failures into ApiError', async () => {
+		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+
+		await expect(
+			executeBorneoTool(
+				'BORNEO_LIST_SCANS_WITH_FILTERS',
+				{},
+				{
+					composioApiKey: 'project-key',
+					connectedAccountId: 'ca_123',
+					riskLevel: 'read',
+				},
+			),
+		).rejects.toMatchObject({
+			name: 'ApiError',
+			status: 0,
+			message: expect.stringContaining('fetch failed'),
+		});
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('extracts nested error messages from Composio request errors', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					error: {
+						message: 'Invalid arguments supplied',
+						code: 'INVALID_ARGUMENTS',
+					},
+				}),
+				{
+					status: 400,
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			),
+		);
+
+		await expect(
+			executeBorneoTool(
+				'BORNEO_CREATE_NEW_ASSET',
+				{},
+				{
+					composioApiKey: 'project-key',
+					connectedAccountId: 'ca_123',
+					riskLevel: 'write',
+				},
+			),
+		).rejects.toMatchObject({
+			name: 'ApiError',
+			status: 400,
+			message: 'Invalid arguments supplied',
+		});
+	});
+
+	it('throws when a read execution returns an unsuccessful envelope', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					successful: false,
+					error: 'Scan service is unavailable',
+					data: null,
+				}),
+				{
+					status: 200,
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			),
+		);
+
+		await expect(
+			executeBorneoTool(
+				'BORNEO_LIST_SCANS_WITH_FILTERS',
+				{},
+				{
+					composioApiKey: 'project-key',
+					connectedAccountId: 'ca_123',
+					riskLevel: 'read',
+				},
+			),
+		).rejects.toMatchObject({
+			name: 'ApiError',
+			status: 200,
+			message: 'Borneo tool execution failed: Scan service is unavailable',
+		});
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('throws when a write execution returns an unsuccessful envelope', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					successful: false,
+					error: 'Asset name already exists',
+					data: null,
+				}),
+				{
+					status: 200,
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			),
+		);
+
+		await expect(
+			executeBorneoTool(
+				'BORNEO_CREATE_NEW_ASSET',
+				{ name: 'CRM', type: 'application' },
+				{
+					composioApiKey: 'project-key',
+					connectedAccountId: 'ca_123',
+					riskLevel: 'write',
+				},
+			),
+		).rejects.toMatchObject({
+			name: 'ApiError',
+			status: 200,
+			message: 'Borneo tool execution failed: Asset name already exists',
+		});
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('applies base_url overrides to connected-account executions', async () => {
+		await executeBorneoTool(
+			'BORNEO_LIST_SCANS_WITH_FILTERS',
+			{},
+			{
+				composioApiKey: 'project-key',
+				connectedAccountId: 'ca_123',
+				borneoBaseUrl: 'https://tenant.example.test',
+				riskLevel: 'read',
+			},
+		);
+
+		const [, init] = fetchMock.mock.calls[0];
+		const requestBody = JSON.parse(init.body);
+
+		expect(requestBody.connected_account_id).toBe('ca_123');
+		expect(requestBody.custom_auth_params).toEqual({
+			base_url: 'https://tenant.example.test',
+		});
 	});
 
 	it('retries HTTP 429 only for read operations', async () => {

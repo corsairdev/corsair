@@ -55,10 +55,17 @@ export function normalizeComposioBaseUrl(
 
 /**
  * Builds Composio custom-auth parameters without confusing the provider
- * credential with the Composio project API key.
+ * credential with the Composio project API key. `base_url` overrides the
+ * provider base URL for both direct custom auth and connected accounts.
  */
 function buildCustomAuthParams(options: BorneoExecutionOptions) {
-	if (options.connectedAccountId) return undefined;
+	const baseUrl = options.borneoBaseUrl
+		? normalizeHttpsBaseUrl(options.borneoBaseUrl, 'borneoBaseUrl')
+		: undefined;
+
+	if (options.connectedAccountId) {
+		return baseUrl ? { base_url: baseUrl } : undefined;
+	}
 
 	if (!options.borneoCredential) {
 		throw new Error(
@@ -82,14 +89,7 @@ function buildCustomAuthParams(options: BorneoExecutionOptions) {
 				value: `${prefix}${options.borneoCredential}`,
 			},
 		],
-		...(options.borneoBaseUrl
-			? {
-					base_url: normalizeHttpsBaseUrl(
-						options.borneoBaseUrl,
-						'borneoBaseUrl',
-					),
-				}
-			: {}),
+		...(baseUrl ? { base_url: baseUrl } : {}),
 	};
 }
 
@@ -158,6 +158,30 @@ function redactRequestBody(
 }
 
 /**
+ * Extracts the provider-supplied error message from a request-level error
+ * body, covering both `{error: {message}}` and legacy `{error}` shapes.
+ */
+function extractProviderErrorMessage(body: unknown): string | undefined {
+	if (typeof body !== 'object' || body === null) return undefined;
+
+	const record = body as Record<string, unknown>;
+
+	if (typeof record.message === 'string') return record.message;
+
+	if (typeof record.error === 'string') return record.error;
+
+	if (
+		typeof record.error === 'object' &&
+		record.error !== null &&
+		typeof (record.error as { message?: unknown }).message === 'string'
+	) {
+		return (record.error as { message: string }).message;
+	}
+
+	return undefined;
+}
+
+/**
  * Creates an ApiError compatible with Corsair's existing Borneo error handlers
  * without persisting provider credentials in its request metadata.
  */
@@ -169,12 +193,8 @@ function createApiError(
 	retryAfterMs?: number,
 ): ApiError {
 	const message =
-		typeof body === 'object' &&
-		body !== null &&
-		'message' in body &&
-		typeof (body as { message?: unknown }).message === 'string'
-			? (body as { message: string }).message
-			: `Borneo request failed with HTTP ${response.status}`;
+		extractProviderErrorMessage(body) ??
+		`Borneo request failed with HTTP ${response.status}`;
 
 	return new ApiError(
 		requestOptions,
@@ -191,6 +211,67 @@ function createApiError(
 					retryAfter: retryAfterMs,
 				}
 			: undefined,
+	);
+}
+
+/**
+ * Normalizes transport-level failures (DNS, TLS, timeouts, cancellation) that
+ * never produced an HTTP response into structured ApiError instances.
+ */
+function createNetworkApiError(
+	requestOptions: ApiRequestOptions,
+	url: string,
+	error: unknown,
+): ApiError {
+	const reason = error instanceof Error ? error.message : String(error);
+
+	return new ApiError(
+		requestOptions,
+		{
+			url,
+			ok: false,
+			status: 0,
+			statusText: reason,
+			body: undefined,
+		},
+		`Borneo request failed before receiving a response: ${reason}`,
+	);
+}
+
+/**
+ * Composio reports provider-level tool failures with HTTP 200 and a
+ * `successful: false` envelope, so the execution flag must be validated even
+ * after a successful HTTP response.
+ */
+function assertExecutionSuccessful(
+	requestOptions: ApiRequestOptions,
+	url: string,
+	response: Response,
+	body: unknown,
+): void {
+	if (
+		typeof body !== 'object' ||
+		body === null ||
+		!('successful' in body) ||
+		(body as { successful?: unknown }).successful === true
+	) {
+		return;
+	}
+
+	const providerError = extractProviderErrorMessage(body);
+
+	throw new ApiError(
+		requestOptions,
+		{
+			url,
+			ok: false,
+			status: response.status,
+			statusText: response.statusText,
+			body,
+		},
+		providerError
+			? `Borneo tool execution failed: ${providerError}`
+			: 'Borneo tool execution failed',
 	);
 }
 
@@ -274,21 +355,29 @@ export async function executeBorneoTool<T>(
 	const maxRetries = riskLevel === 'read' ? MAX_READ_RETRIES : 0;
 
 	for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
-		const response = await fetch(url, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json; charset=utf-8',
-				'x-api-key': options.composioApiKey,
-			},
-			body: JSON.stringify(body),
-			redirect: 'error',
-			signal: createRequestSignal(timeoutMs, options.signal),
-		});
+		let response: Response;
+
+		try {
+			response = await fetch(url, {
+				method: 'POST',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json; charset=utf-8',
+					'x-api-key': options.composioApiKey,
+				},
+				body: JSON.stringify(body),
+				redirect: 'error',
+				signal: createRequestSignal(timeoutMs, options.signal),
+			});
+		} catch (error) {
+			throw createNetworkApiError(requestOptions, url, error);
+		}
 
 		const responseBody = await readResponseBody(response);
 
 		if (response.ok) {
+			assertExecutionSuccessful(requestOptions, url, response, responseBody);
+
 			return responseBody as T;
 		}
 

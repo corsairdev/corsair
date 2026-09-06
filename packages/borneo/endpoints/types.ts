@@ -5945,7 +5945,7 @@ export const BorneoEndpointInputSchemas = {
 		.strict(),
 } as const satisfies Record<BorneoOperationName, z.ZodTypeAny>;
 
-export const BorneoEndpointOutputSchemas = {
+const GeneratedBorneoEndpointOutputSchemas = {
 	getCloudAccountById: z
 		.object({
 			data: z
@@ -10384,6 +10384,20 @@ export const BorneoEndpointOutputSchemas = {
 		})
 		.passthrough(),
 } as const satisfies Record<BorneoOperationName, z.ZodTypeAny>;
+
+/**
+ * Tightens the generated `successful` envelope field to `z.literal(true)`
+ * centrally: tool executions that fail at the provider throw before parsing,
+ * so a parsed output may only describe a successful execution.
+ */
+export const BorneoEndpointOutputSchemas = Object.fromEntries(
+	Object.entries(GeneratedBorneoEndpointOutputSchemas).map(([name, schema]) => [
+		name,
+		(schema as z.ZodObject<z.ZodRawShape>).extend({
+			successful: z.literal(true),
+		}),
+	]),
+) as unknown as typeof GeneratedBorneoEndpointOutputSchemas;
 
 export type BorneoEndpointInputs = {
 	[K in BorneoOperationName]: z.infer<(typeof BorneoEndpointInputSchemas)[K]>;
