@@ -23,14 +23,26 @@ jest.mock('corsair/http', () => {
 const mockRequest = request as jest.Mock;
 const mockLog = jest.mocked(logEventFromContext);
 
-const mockCtx = {
+const upsertPriceQuotes = jest.fn();
+const upsertRemovalRequests = jest.fn();
+const upsertCertificates = jest.fn();
+
+function asTestDouble<T>(value: object): T {
+	return value as T;
+}
+
+const mockCtx = asTestDouble<CdrPlatformContext>({
 	key: 'test_cdr_api_key',
 	$getAccountId: () => 'test-account-id',
 	options: {},
 	logEvent: jest.fn(),
-	db: {},
+	db: {
+		priceQuotes: { upsertByEntityId: upsertPriceQuotes },
+		removalRequests: { upsertByEntityId: upsertRemovalRequests },
+		certificates: { upsertByEntityId: upsertCertificates },
+	},
 	keyBuilder: async () => 'test_cdr_api_key',
-} as unknown as CdrPlatformContext;
+});
 
 const validPriceResponse = {
 	cost: {
@@ -53,6 +65,9 @@ describe('cdrplatform plugin', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
 		mockLog.mockReset();
+		upsertPriceQuotes.mockReset();
+		upsertRemovalRequests.mockReset();
+		upsertCertificates.mockReset();
 	});
 
 	it('registers four API endpoints and API key auth', () => {
@@ -70,17 +85,18 @@ describe('cdrplatform plugin', () => {
 
 	it('throws AuthMissingError when endpoint key is missing', async () => {
 		const plugin = cdrplatform();
-		const ctx = {
+		const ctx = asTestDouble<CdrPlatformKeyBuilderContext>({
 			authType: 'api_key',
 			keys: { get_api_key: async (): Promise<string | null> => null },
-		} as unknown as CdrPlatformKeyBuilderContext;
+		});
 
-		await expect(
-			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
-				ctx,
-				'endpoint',
-			),
-		).rejects.toBeInstanceOf(AuthMissingError);
+		const buildKey = plugin.keyBuilder;
+		if (!buildKey) {
+			throw new Error('expected keyBuilder');
+		}
+		await expect(buildKey(ctx, 'endpoint')).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
 	});
 });
 
@@ -88,6 +104,9 @@ describe('cdrplatform endpoint request mapping', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
 		mockLog.mockReset();
+		upsertPriceQuotes.mockReset();
+		upsertRemovalRequests.mockReset();
+		upsertCertificates.mockReset();
 		mockRequest.mockResolvedValue(validPriceResponse);
 	});
 
@@ -116,6 +135,10 @@ describe('cdrplatform endpoint request mapping', () => {
 			}),
 		);
 		expect(mockRequest.mock.calls[0][0].TOKEN).toBeUndefined();
+		expect(upsertPriceQuotes).toHaveBeenCalledWith(
+			'usd:kg:bio-oil:50',
+			validPriceResponse,
+		);
 		expect(mockLog).toHaveBeenCalled();
 	});
 
@@ -138,6 +161,13 @@ describe('cdrplatform endpoint request mapping', () => {
 				url: 'v1/cdr/',
 			}),
 		);
+		expect(upsertRemovalRequests).toHaveBeenCalledWith(
+			'57c0f2c3-d010-4962-9471-88cdfeea4ac8',
+			expect.objectContaining({
+				transaction_uuid: '57c0f2c3-d010-4962-9471-88cdfeea4ac8',
+				client_reference_id: 'order-123',
+			}),
+		);
 	});
 
 	it('maps certificate.get to GET /v1/certificate/{id}/', async () => {
@@ -158,6 +188,10 @@ describe('cdrplatform endpoint request mapping', () => {
 				method: 'GET',
 				url: 'v1/certificate/abc-def-ghi/',
 			}),
+		);
+		expect(upsertCertificates).toHaveBeenCalledWith(
+			'abc-def-ghi',
+			expect.objectContaining({ certificate_id: 'abc-def-ghi' }),
 		);
 	});
 

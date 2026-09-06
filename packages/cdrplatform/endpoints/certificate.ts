@@ -20,6 +20,16 @@ export const get: CdrPlatformEndpoints['certificateGet'] = async (
 	const response =
 		CdrPlatformEndpointOutputSchemas.certificateGet.parse(rawResponse);
 
+	if (ctx.db?.certificates) {
+		try {
+			await ctx.db.certificates.upsertByEntityId(
+				response.certificate_id,
+				response,
+			);
+		} catch {
+			// Local cache is best-effort.
+		}
+	}
 	await logEventFromContext(
 		ctx,
 		'cdrplatform.certificate.get',

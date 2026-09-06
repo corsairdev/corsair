@@ -20,7 +20,14 @@ Calculate CO2 removal pricing for a method portfolio.
 **Risk:** `read`
 
 ```ts
-await corsair.cdrplatform.api.cdr.price({});
+await corsair.cdrplatform.api.cdr.price({
+	weight_unit: 'kg',
+	currency: 'usd',
+	items: [
+		{ method_type: 'bio-oil', cdr_amount: 50 },
+		{ method_type: 'kelp-sinking', cdr_amount: 50 },
+	],
+});
 ```
 
 **Input**
@@ -84,7 +91,16 @@ Create a CO2 removal purchase request and return its transaction UUID.
 **Risk:** `write`
 
 ```ts
-await corsair.cdrplatform.api.cdr.purchase({});
+await corsair.cdrplatform.api.cdr.purchase({
+	weight_unit: 'kg',
+	currency: 'usd',
+	items: [
+		{ method_type: 'kelp-sinking', cdr_amount: 80 },
+		{ method_type: 'bio-oil', cdr_amount: 20 },
+	],
+	client_reference_id: '3923200221752',
+	certificate_display_name: 'Jane Doe',
+});
 ```
 
 **Input**
@@ -132,7 +148,9 @@ Retrieve a removal certificate by certificate ID.
 **Risk:** `read`
 
 ```ts
-await corsair.cdrplatform.api.certificate.get({});
+await corsair.cdrplatform.api.certificate.get({
+	id: 'abc-def-ghi',
+});
 ```
 
 **Input**

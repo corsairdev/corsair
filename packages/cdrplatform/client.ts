@@ -1,6 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { PriceInput, PurchaseInput } from './endpoints/types';
 
 export class CdrPlatformAPIError extends Error {
 	readonly status?: number;
@@ -28,7 +29,7 @@ export async function makeCdrPlatformRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		body?: PriceInput | PurchaseInput;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
