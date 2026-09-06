@@ -155,6 +155,25 @@ const docMasterProductResponse = {
 	],
 };
 
+const docRedirectedProductResponse = {
+	request_info: { success: true, credits_used: 1, credits_remaining: 999 },
+	request_metadata: {
+		id: '3c0ffee4decafbad0ddba115b674c4170faba51f',
+		created_at: '2021-01-01T00:00:00.000Z',
+		processed_at: '2021-01-01T00:00:00.100Z',
+		total_time_taken: 0.1,
+		ebay_url: 'https://www.ebay.com/itm/15029998724',
+	},
+	request_parameters: {
+		type: 'product',
+		epid: '15029998725',
+		ebay_domain: 'ebay.com',
+	},
+	redirected: true,
+	redirected_link: 'https://www.ebay.com/itm/15029998724',
+	redirected_epid: '15029998724',
+};
+
 const docAutocompleteResponse = {
 	request_info: { success: true, credits_used: 1, credits_remaining: 999 },
 	request_metadata: {
@@ -293,6 +312,17 @@ describe('CountdownApi endpoints', () => {
 		expect(result).toEqual(docMasterProductResponse);
 	});
 
+	it('product parses a redirected response', async () => {
+		mockRequest.mockResolvedValue(docRedirectedProductResponse as any);
+
+		const result = await product(ctx, {
+			epid: '15029998725',
+			ebay_domain: 'ebay.com',
+		});
+
+		expect(result).toEqual(docRedirectedProductResponse);
+	});
+
 	it('autocomplete uses search_term and returns validated response', async () => {
 		mockRequest.mockResolvedValue(docAutocompleteResponse as any);
 
@@ -331,9 +361,9 @@ describe('CountdownApi endpoints', () => {
 		).rejects.toThrow(ZodError);
 	});
 
-	it('product throws Zod validation error on malformed response', async () => {
+	it('product throws Zod validation error on a metadata-only response', async () => {
 		mockRequest.mockResolvedValue({
-			request_parameters: { type: 'product' },
+			request_metadata: { id: 'req-4' },
 		} as any);
 
 		await expect(
@@ -418,7 +448,15 @@ describe('CountdownApi output schemas', () => {
 			CountdownApiEndpointOutputSchemas.product.safeParse(docProductResponse);
 		expect(result.success).toBe(true);
 		if (result.success) {
-			expect(result.data.product?.images?.[0]).toHaveProperty('link');
+			expect(result.data).toHaveProperty('is_master', false);
+			expect(result.data).toHaveProperty(
+				'product.title',
+				'SanDisk Ultra 128GB microSDXC Memory Card',
+			);
+			expect(result.data).toHaveProperty(
+				'product.images.0.link',
+				'https://i.ebayimg.com/images/g/ABC123/s-l1600.jpg',
+			);
 		}
 	});
 
@@ -428,10 +466,51 @@ describe('CountdownApi output schemas', () => {
 		);
 		expect(result.success).toBe(true);
 		if (result.success) {
-			expect(result.data.is_master).toBe(true);
-			expect(result.data.product).toBeUndefined();
-			expect(result.data.top_picks).toHaveLength(1);
+			expect(result.data).toHaveProperty('is_master', true);
+			expect(result.data).not.toHaveProperty('product');
+			expect(result.data).toHaveProperty(
+				'top_picks.0.product.epid',
+				'15029998723',
+			);
 		}
+	});
+
+	it('product schema validates a redirected response', () => {
+		const result = CountdownApiEndpointOutputSchemas.product.safeParse(
+			docRedirectedProductResponse,
+		);
+		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data).toHaveProperty('redirected', true);
+			expect(result.data).toHaveProperty('redirected_epid', '15029998724');
+			expect(result.data).toHaveProperty(
+				'redirected_link',
+				'https://www.ebay.com/itm/15029998724',
+			);
+		}
+	});
+
+	it('product schema rejects a metadata-only response with no usable result', () => {
+		const response = {
+			request_metadata: { id: 'req-11' },
+			request_info: { success: true, credits_used: 1 },
+		};
+
+		const result =
+			CountdownApiEndpointOutputSchemas.product.safeParse(response);
+		expect(result.success).toBe(false);
+	});
+
+	it('product schema rejects a master page missing top_picks', () => {
+		const response = {
+			request_metadata: { id: 'req-12' },
+			is_master: true,
+			sold_out: false,
+		};
+
+		const result =
+			CountdownApiEndpointOutputSchemas.product.safeParse(response);
+		expect(result.success).toBe(false);
 	});
 
 	it('product schema rejects response missing request_metadata', () => {

@@ -175,24 +175,42 @@ const ProductDetailsSchema = z
 	})
 	.passthrough();
 
-const ProductResponseSchema = z
+// A product request resolves to exactly one of three documented shapes
+// (docs.trajectdata.com/countdownapi/ebay-product-data-api/results/product):
+// an individual listing page, a master product page, or a redirect to a
+// similar listing. Metadata alone matches no branch and is rejected.
+const ProductResponseBaseSchema = z
 	.object({
 		request_metadata: RequestMetadataSchema,
 		request_info: RequestInfoSchema.optional(),
 		request_parameters: RequestParametersSchema.optional(),
-		// Master pages (is_master: true, e.g. GTIN lookups) return top_picks
-		// instead of a product object, and redirected responses return
-		// redirected_link/redirected_epid; product is only present on
-		// individual listing pages (is_master: false).
-		is_master: z.boolean().optional(),
-		sold_out: z.boolean().optional(),
-		top_picks: z.array(z.record(z.string(), z.unknown())).optional(),
-		redirected: z.boolean().optional(),
-		redirected_link: z.string().optional(),
-		redirected_epid: z.string().optional(),
-		product: ProductDetailsSchema.optional(),
 	})
 	.passthrough();
+
+const ProductListingResponseSchema = ProductResponseBaseSchema.extend({
+	// Individual listing pages answer with a single top-level product object;
+	// on master pages the products are nested inside top_picks instead.
+	is_master: z.literal(false).optional(),
+	product: ProductDetailsSchema,
+}).passthrough();
+
+const MasterProductResponseSchema = ProductResponseBaseSchema.extend({
+	is_master: z.literal(true),
+	sold_out: z.boolean().optional(),
+	top_picks: z.array(z.record(z.string(), z.unknown())),
+}).passthrough();
+
+const RedirectedProductResponseSchema = ProductResponseBaseSchema.extend({
+	redirected: z.boolean().optional(),
+	redirected_link: z.string(),
+	redirected_epid: z.string(),
+}).passthrough();
+
+const ProductResponseSchema = z.union([
+	ProductListingResponseSchema,
+	MasterProductResponseSchema,
+	RedirectedProductResponseSchema,
+]);
 
 const AutocompleteResultSchema = z
 	.object({
