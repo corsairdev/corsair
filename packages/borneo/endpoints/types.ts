@@ -5975,25 +5975,18 @@ export const BorneoComposioOutputEnvelope = z
 					.optional(),
 				error: z
 					.string()
-					.describe(
-						'Error if any occurred during the execution of the action',
-					)
+					.describe('Error if any occurred during the execution of the action')
 					.optional(),
 				successful: z
 					.boolean()
-					.describe(
-						'Whether or not the action execution was successful or not',
-					)
+					.describe('Whether or not the action execution was successful or not')
 					.optional(),
 			})
 			.passthrough()
 			.nullable()
 			.optional(),
 		error: z
-			.union([
-				z.string(),
-				z.object({ message: z.string() }).passthrough(),
-			])
+			.union([z.string(), z.object({ message: z.string() }).passthrough()])
 			.optional(),
 		successful: z.literal(true),
 		log_id: z.string().optional(),
