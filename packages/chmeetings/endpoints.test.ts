@@ -157,8 +157,49 @@ describe('people', () => {
 
 	it('throws when get has no data', async () => {
 		requestMock.mockResolvedValue({ status_code: 404, errors: ['gone'] });
-		await expect(People.get(ctx as never, { id: 404 })).rejects.toBeInstanceOf(
-			ChMeetingsAPIError,
+		await expect(People.get(ctx as never, { id: 404 })).rejects.toMatchObject({
+			name: 'ChMeetingsAPIError',
+			status: 404,
+		});
+	});
+
+	it('rejects list envelopes with 429 or 5xx and omitted data', async () => {
+		requestMock.mockResolvedValue({
+			status_code: 429,
+			errors: ['Too Many Requests'],
+		});
+		await expect(People.list(ctx as never, {})).rejects.toMatchObject({
+			name: 'ChMeetingsAPIError',
+			status: 429,
+		});
+		requestMock.mockResolvedValue({
+			status_code: 500,
+			errors: ['Internal Server Error'],
+		});
+		await expect(People.list(ctx as never, {})).rejects.toMatchObject({
+			name: 'ChMeetingsAPIError',
+			status: 500,
+		});
+	});
+
+	it('does not log people search filter values', async () => {
+		requestMock.mockResolvedValue({ data: [] });
+		await People.list(ctx as never, {
+			email: 'ada@example.com',
+			mobile: '555',
+			name: 'Ada',
+		});
+		expect(mockLog).toHaveBeenCalledWith(
+			ctx,
+			'chmeetings.people.list',
+			{
+				page: 1,
+				page_size: 100,
+				has_email: true,
+				has_mobile: true,
+				has_name: true,
+			},
+			'completed',
 		);
 	});
 });
@@ -335,6 +376,19 @@ describe('remaining official endpoints', () => {
 		expect(lastCall().options).toMatchObject({
 			method: 'PUT',
 			url: 'groups/2',
+		});
+	});
+
+	it('rejects empty-response envelopes that include errors', async () => {
+		requestMock.mockResolvedValue({
+			status_code: 400,
+			errors: ['cannot delete'],
+		});
+		await expect(
+			Groups.remove(ctx as never, { group_id: 2 }),
+		).rejects.toMatchObject({
+			name: 'ChMeetingsAPIError',
+			status: 400,
 		});
 	});
 

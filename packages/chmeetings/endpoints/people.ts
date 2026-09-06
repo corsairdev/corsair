@@ -36,7 +36,18 @@ export const list: ChMeetingsEndpoints['peopleList'] = async (ctx, input) => {
 		},
 	});
 	const output = unwrapList(raw, PersonSchema);
-	await logEventFromContext(ctx, 'chmeetings.people.list', query, 'completed');
+	await logEventFromContext(
+		ctx,
+		'chmeetings.people.list',
+		{
+			page: query.page ?? 1,
+			page_size: query.page_size ?? 100,
+			has_email: query.email != null,
+			has_mobile: query.mobile != null,
+			has_name: query.name != null,
+		},
+		'completed',
+	);
 	return output;
 };
 

@@ -96,6 +96,31 @@ function envelopeErrors(raw: unknown): string {
 	return `: ${parsed.data.errors.join(', ')}`;
 }
 
+function envelopeStatus(raw: unknown): number | undefined {
+	const parsed = EnvelopeSchema.safeParse(raw);
+	if (!parsed.success || parsed.data.status_code == null) return undefined;
+	const status = Number(parsed.data.status_code);
+	return Number.isFinite(status) ? status : undefined;
+}
+
+function isEnvelopeFailure(raw: unknown): boolean {
+	const parsed = EnvelopeSchema.safeParse(raw);
+	if (!parsed.success) return false;
+	if (parsed.data.errors?.length) return true;
+	const status = envelopeStatus(raw);
+	return status !== undefined && status >= 400;
+}
+
+function throwEnvelope(raw: unknown, fallback: string): never {
+	throw new ChMeetingsAPIError(
+		`${fallback}${envelopeErrors(raw)}`,
+		envelopeStatus(raw),
+		{
+			body: raw,
+		},
+	);
+}
+
 export function unwrapData<T>(
 	/** Unparsed HTTP JSON: envelope or bare resource. */
 	raw: unknown,
@@ -109,8 +134,9 @@ export function unwrapData<T>(
 		typeof raw === 'object' &&
 		('data' in raw || 'status_code' in raw || 'errors' in raw);
 	if (looksLikeEnvelope) {
+		if (isEnvelopeFailure(raw)) throwEnvelope(raw, label);
 		if (parsed.data.data == null) {
-			throw new ChMeetingsAPIError(`${label} not found${envelopeErrors(raw)}`);
+			throw new ChMeetingsAPIError(`${label} not found`, 404, { body: raw });
 		}
 		return schema.parse(parsed.data.data);
 	}
@@ -130,6 +156,7 @@ export function unwrapList<T>(
 	data: T[];
 } {
 	const parsed = EnvelopeSchema.parse(raw);
+	if (isEnvelopeFailure(raw)) throwEnvelope(raw, 'Request failed');
 	return {
 		paging: parsed.paging,
 		data: z.array(itemSchema).parse(parsed.data ?? []),
@@ -139,10 +166,7 @@ export function unwrapList<T>(
 /** `raw` is empty, 204, or a `{ status_code, errors }` envelope. */
 export function unwrapEmpty(raw: unknown): { success: true } {
 	if (raw == null || raw === '') return { success: true };
-	const parsed = EnvelopeSchema.safeParse(raw);
-	if (parsed.success && parsed.data.errors?.length) {
-		throw new ChMeetingsAPIError(parsed.data.errors.join(', '));
-	}
+	if (isEnvelopeFailure(raw)) throwEnvelope(raw, 'Request failed');
 	return { success: true };
 }
 
@@ -183,10 +207,10 @@ export async function makeChMeetingsRequest<T>(
 
 	try {
 		const response = await request<T | undefined>(config, requestOptions);
-		if (
-			responseType === 'empty' ||
-			(response === undefined && method !== 'GET')
-		) {
+		if (responseType === 'empty') {
+			return (response ?? null) as T;
+		}
+		if (response === undefined && method !== 'GET') {
 			return { success: true } as T;
 		}
 		return response as T;
