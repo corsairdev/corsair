@@ -1,0 +1,156 @@
+---
+title: Database
+description: "Beeminder local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Beeminder plugin syncs data locally. Use `corsair.beeminder.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Charges
+
+Path: `beeminder.db.charges.search`
+
+```ts
+const rows = await corsair.beeminder.db.charges.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `number` | equals, gt, gte, lt, lte, in |
+| `note` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Goals
+
+Path: `beeminder.db.goals.search`
+
+```ts
+const rows = await corsair.beeminder.db.goals.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `fineprint` | `string` | equals, contains, startsWith, endsWith, in |
+| `yaxis` | `string` | equals, contains, startsWith, endsWith, in |
+| `goaldate` | `number` | equals, gt, gte, lt, lte, in |
+| `goalval` | `number` | equals, gt, gte, lt, lte, in |
+| `rate` | `number` | equals, gt, gte, lt, lte, in |
+| `runits` | `string` | equals, contains, startsWith, endsWith, in |
+| `svg_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `graph_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `thumb_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `autodata` | `string` | equals, contains, startsWith, endsWith, in |
+| `goal_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `losedate` | `number` | equals, gt, gte, lt, lte, in |
+| `urgencykey` | `string` | equals, contains, startsWith, endsWith, in |
+| `queued` | `boolean` | equals |
+| `secret` | `boolean` | equals |
+| `datapublic` | `boolean` | equals |
+| `numpts` | `number` | equals, gt, gte, lt, lte, in |
+| `pledge` | `number` | equals, gt, gte, lt, lte, in |
+| `initday` | `number` | equals, gt, gte, lt, lte, in |
+| `initval` | `number` | equals, gt, gte, lt, lte, in |
+| `curday` | `number` | equals, gt, gte, lt, lte, in |
+| `curval` | `number` | equals, gt, gte, lt, lte, in |
+| `currate` | `number` | equals, gt, gte, lt, lte, in |
+| `lastday` | `number` | equals, gt, gte, lt, lte, in |
+| `yaw` | `number` | equals, gt, gte, lt, lte, in |
+| `dir` | `number` | equals, gt, gte, lt, lte, in |
+| `lane` | `number` | equals, gt, gte, lt, lte, in |
+| `headsum` | `string` | equals, contains, startsWith, endsWith, in |
+| `limsum` | `string` | equals, contains, startsWith, endsWith, in |
+| `kyoom` | `boolean` | equals |
+| `odom` | `boolean` | equals |
+| `aggday` | `string` | equals, contains, startsWith, endsWith, in |
+| `steppy` | `boolean` | equals |
+| `rosy` | `boolean` | equals |
+| `movingav` | `boolean` | equals |
+| `aura` | `boolean` | equals |
+| `frozen` | `boolean` | equals |
+| `won` | `boolean` | equals |
+| `lost` | `boolean` | equals |
+| `maxflux` | `number` | equals, gt, gte, lt, lte, in |
+| `rah` | `number` | equals, gt, gte, lt, lte, in |
+| `delta` | `number` | equals, gt, gte, lt, lte, in |
+| `delta_text` | `string` | equals, contains, startsWith, endsWith, in |
+| `safebuf` | `number` | equals, gt, gte, lt, lte, in |
+| `colorkey` | `string` | equals, contains, startsWith, endsWith, in |
+| `colorhex` | `string` | equals, contains, startsWith, endsWith, in |
+| `safebump` | `number` | equals, gt, gte, lt, lte, in |
+| `autoratchet` | `number` | equals, gt, gte, lt, lte, in |
+| `callback_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `graphsum` | `string` | equals, contains, startsWith, endsWith, in |
+| `lanewidth` | `number` | equals, gt, gte, lt, lte, in |
+| `deadline` | `number` | equals, gt, gte, lt, lte, in |
+| `leadtime` | `number` | equals, gt, gte, lt, lte, in |
+| `alertstart` | `number` | equals, gt, gte, lt, lte, in |
+| `plotall` | `boolean` | equals |
+| `integery` | `boolean` | equals |
+| `gunits` | `string` | equals, contains, startsWith, endsWith, in |
+| `timey` | `boolean` | equals |
+| `hhmmformat` | `boolean` | equals |
+| `todayta` | `boolean` | equals |
+| `weekends_off` | `boolean` | equals |
+| `tmin` | `string` | equals, contains, startsWith, endsWith, in |
+| `tmax` | `string` | equals, contains, startsWith, endsWith, in |
+| `archivedate` | `number` | equals, gt, gte, lt, lte, in |
+| `burner` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## User
+
+Path: `beeminder.db.user.search`
+
+```ts
+const rows = await corsair.beeminder.db.user.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `number` | equals, gt, gte, lt, lte, in |
+| `deadbeat` | `boolean` | equals |
+| `urgency_load` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

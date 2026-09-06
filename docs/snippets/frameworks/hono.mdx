@@ -1,0 +1,13 @@
+```ts index.ts
+import { Hono } from 'hono';
+import { toHonoHandler } from 'corsair';
+import { corsair } from './corsair';
+
+const app = new Hono();
+
+// Wildcard: Corsair routes several paths under the base (delivery, connect,
+// tenants). Match them all with `/*`, and keep basePath in sync with the mount.
+app.all('/api/corsair/*', toHonoHandler(corsair, { basePath: '/api/corsair' }));
+
+export default app;
+```

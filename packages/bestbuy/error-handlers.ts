@@ -1,29 +1,57 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { BestBuyAPIError } from './client';
 
+function statusOf(error: Error): number | undefined {
+	if (error instanceof ApiError) return error.status;
+	if (error instanceof BestBuyAPIError) return error.status;
+	return undefined;
+}
+
+function retryAfterOf(error: Error): number | undefined {
+	if (error instanceof ApiError) return error.retryAfter;
+	if (error instanceof BestBuyAPIError) return error.retryAfter;
+	return undefined;
+}
+
+/**
+ * Best Buy Remix HTTP errors. Rate limit is 5 calls/sec, 50,000/day.
+ * https://developer.bestbuy.com/legal
+ */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (statusOf(error) === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return msg.includes('429') || msg.includes('rate limit');
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async (error: Error) => ({
+			maxRetries: 5,
+			headersRetryAfterMs: retryAfterOf(error),
+		}),
 	},
+
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (statusOf(error) === 401 || statusOf(error) === 403) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid api key') ||
+				msg.includes('forbidden')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
+
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => {
+			if (statusOf(error) === 404) return true;
+			return error.message.toLowerCase().includes('not found');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+
 	DEFAULT: {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),

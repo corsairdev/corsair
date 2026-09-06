@@ -1,0 +1,383 @@
+{
+  "id": "allimagesai",
+  "displayName": "All Images AI",
+  "description": "AI image generation service for creating visuals from text prompts and styles.",
+  "npmPackageName": "@corsair-dev/allimagesai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "allimagesai.api.apiKeys.check",
+      "shortPath": "apiKeys.check",
+      "description": "Validate the configured API key and return the email address and optional name of the account it belongs to.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "allimagesai.api.credits.get",
+      "shortPath": "credits.get",
+      "description": "Return the remaining and total credits for each quota bucket on the account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "{ type?: global | f_images | f_images_print | f_images_packImage | f_images_upscaleHD | f_images_upscaleUHD | f_websites | f_queues | null, credit: number, creditTotal?: number | null, unlimited?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "allimagesai.api.imageGenerations.delete",
+      "shortPath": "imageGenerations.delete",
+      "description": "Permanently delete one or more image generation batches by their print ids.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "printIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "printIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "allimagesai.api.imageGenerations.list",
+      "shortPath": "imageGenerations.list",
+      "description": "List image generation batches created for bulk use, filterable by name and tag. Paginated with limit and offset.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filteredResults",
+            "optional": true,
+            "type": "number | {}"
+          },
+          {
+            "key": "prints",
+            "optional": false,
+            "type": "{ id?: string, name: string, prompt: string, status: number, params: { name: sujetMode | templatePrompt | angle | photographe | time | weather | format | camera | interdiction | version | chaos | stylize | fromImageUrl, value: string }[], processMode?: relax | fast | null, images?: { id?: string, url?: string }[], nbImages?: number | null, tags?: string[], metaData?: {} | null, createdAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "allimagesai.api.images.listDownloaded",
+      "shortPath": "images.listDownloaded",
+      "description": "List images previously downloaded on this account, optionally filtered by download date. Paginated with limit and offset.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "afterCreatedAt",
+            "optional": true,
+            "type": "string | Date"
+          },
+          {
+            "key": "beforeCreatedAt",
+            "optional": true,
+            "type": "string | Date"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filteredResults",
+            "optional": true,
+            "type": "number | {}"
+          },
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ id: string, url: string, urlFull: string, urlUpscale?: string | null, urlUpscaleUHD: string, downloadedAt: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "allimagesai.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register a webhook endpoint on the API key to receive print lifecycle callbacks. Defaults to print.failed and print.completed.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "test | print.created | print.active | print.failed | print.progress | print.completed[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "allimagesai.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Retrieve a registered webhook by its id, returning its URL. The provider does not return the subscribed event list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiKeyWebhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "apiKeyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "allimagesai.db.downloadedImages.search",
+      "entityName": "downloadedImages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url_full",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url_upscale",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url_upscale_uhd",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "downloaded_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "allimagesai.db.imageGenerations.search",
+      "entityName": "imageGenerations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "prompt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "process_mode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nb_images",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "allimagesai.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

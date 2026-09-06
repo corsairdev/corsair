@@ -48,6 +48,61 @@ export const AbyssaleFont = z
 	})
 	.loose();
 
+/**
+ * A generated visual ("banner"), returned by synchronous generation, async
+ * batch generation and the `NEW_BANNER` / `NEW_BANNER_BATCH` webhook events.
+ *
+ * Sub-objects mirror the wire format verbatim; most fields are optional
+ * because batch items omit `version` / `sharing_id`, HTML5 (`zip`) output has
+ * no `cdn_url` and `printer_multipage` visuals have no `format.id`.
+ */
+export const AbyssaleBannerFile = z
+	.object({
+		type: z.string().optional(),
+		url: z.string().optional(),
+		cdn_url: z.string().optional(),
+		fallback_image_url: z.string().optional(),
+		filename: z.string().optional(),
+	})
+	.loose();
+
+export const AbyssaleBannerFormat = z
+	.object({
+		id: z.string().optional(),
+		width: z.number().optional(),
+		height: z.number().optional(),
+		unit: z.string().optional(),
+	})
+	.loose();
+
+export const AbyssaleBannerTemplate = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		created_at: z.number().optional(),
+		updated_at: z.number().optional(),
+	})
+	.loose();
+
+export const AbyssaleBanner = z
+	.object({
+		id: z.string(),
+		version: z.number().optional(),
+		sharing_id: z.string().optional(),
+		file: AbyssaleBannerFile.optional(),
+		format: AbyssaleBannerFormat.optional(),
+		template: AbyssaleBannerTemplate.optional(),
+		project: z
+			.object({
+				id: z.string().optional(),
+				name: z.string().optional(),
+			})
+			.loose()
+			.optional(),
+	})
+	.loose();
+
 export type AbyssaleProject = z.infer<typeof AbyssaleProject>;
 export type AbyssaleDesign = z.infer<typeof AbyssaleDesign>;
 export type AbyssaleFont = z.infer<typeof AbyssaleFont>;
+export type AbyssaleBanner = z.infer<typeof AbyssaleBanner>;

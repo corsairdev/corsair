@@ -1,0 +1,1996 @@
+{
+  "id": "googledocs",
+  "displayName": "Google Docs",
+  "description": "Online document editor for creating, sharing, and collaborating on text documents.",
+  "npmPackageName": "@corsair-dev/googledocs",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 35,
+    "webhooks": 1,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "channel_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googledocs.api.documents.copyDocument",
+      "shortPath": "documents.copyDocument",
+      "description": "Copy an existing Google Doc",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "trashed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.createBlankDocument",
+      "shortPath": "documents.createBlankDocument",
+      "description": "Create a blank Google Doc [DEPRECATED: prefer documents.createDocument]",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revisionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "footers",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "footnotes",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "inlineObjects",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "positionedObjects",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "namedRanges",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "lists",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "documentStyle",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "suggestionsViewMode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.createDocument",
+      "shortPath": "documents.createDocument",
+      "description": "Create a Google Doc with an optional title and initial text",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revisionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "footers",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "footnotes",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "inlineObjects",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "positionedObjects",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "namedRanges",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "lists",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "documentStyle",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "suggestionsViewMode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.createDocumentMarkdown",
+      "shortPath": "documents.createDocumentMarkdown",
+      "description": "Create a Google Doc initialized from Markdown text",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revisionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "footers",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "footnotes",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "inlineObjects",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "positionedObjects",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "namedRanges",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "lists",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "documentStyle",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "suggestionsViewMode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.exportDocumentAsPdf",
+      "shortPath": "documents.exportDocumentAsPdf",
+      "description": "Export a Google Doc as PDF (Drive enforces a 10MB limit)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.getDocument",
+      "shortPath": "documents.getDocument",
+      "description": "Retrieve a Google Doc by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revisionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "footers",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "footnotes",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "inlineObjects",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "positionedObjects",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "namedRanges",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "lists",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "documentStyle",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "suggestionsViewMode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.getDocumentPlaintext",
+      "shortPath": "documents.getDocumentPlaintext",
+      "description": "Retrieve a Google Doc as best-effort plain text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wordCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.listSpreadsheetCharts",
+      "shortPath": "documents.listSpreadsheetCharts",
+      "description": "List charts in a Google Sheets spreadsheet for embedding",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "spreadsheetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sheets",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.searchDocuments",
+      "shortPath": "documents.searchDocuments",
+      "description": "Search Google Docs by name, content, or date filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incompleteSearch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id?: string, name?: string, mimeType?: string, parents?: string[], trashed?: boolean, createdTime?: string, modifiedTime?: string, webViewLink?: string, size?: string, owners?: any[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.updateDocumentBatch",
+      "shortPath": "documents.updateDocumentBatch",
+      "description": "Apply batchUpdate edits [DEPRECATED: prefer documents.updateExistingDocument]",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.updateDocumentMarkdown",
+      "shortPath": "documents.updateDocumentMarkdown",
+      "description": "Replace a Google Doc content with Markdown text",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.updateDocumentSectionMarkdown",
+      "shortPath": "documents.updateDocumentSectionMarkdown",
+      "description": "Replace a section of a Google Doc with Markdown text",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "endIndex",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.updateDocumentStyle",
+      "shortPath": "documents.updateDocumentStyle",
+      "description": "Update the page size, margins, and global document style",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "documentStyle",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.documents.updateExistingDocument",
+      "shortPath": "documents.updateExistingDocument",
+      "description": "Apply batchUpdate edits (insert/delete/format) to a Google Doc",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.structure.createFooter",
+      "shortPath": "structure.createFooter",
+      "description": "Create a footer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "DEFAULT | FIRST_PAGE | EVEN_PAGE"
+          },
+          {
+            "key": "sectionBreakLocation",
+            "optional": true,
+            "type": "{ index: number, segmentId?: string, tabId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.structure.createFootnote",
+      "shortPath": "structure.createFootnote",
+      "description": "Create a footnote",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ index: number, segmentId?: string, tabId?: string }"
+          },
+          {
+            "key": "endOfSegmentLocation",
+            "optional": true,
+            "type": "{ segmentId?: string, tabId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.structure.createHeader",
+      "shortPath": "structure.createHeader",
+      "description": "Create a header",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "DEFAULT | FIRST_PAGE | EVEN_PAGE"
+          },
+          {
+            "key": "sectionBreakLocation",
+            "optional": true,
+            "type": "{ index: number, segmentId?: string, tabId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.structure.createNamedRange",
+      "shortPath": "structure.createNamedRange",
+      "description": "Create a named range",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "endIndex",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.structure.createParagraphBullets",
+      "shortPath": "structure.createParagraphBullets",
+      "description": "Add bullets to a range of paragraphs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "endIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "bulletPreset",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.structure.deleteFooter",
+      "shortPath": "structure.deleteFooter",
+      "description": "Delete a footer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "footerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "DEFAULT | FIRST_PAGE | EVEN_PAGE"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.structure.deleteHeader",
+      "shortPath": "structure.deleteHeader",
+      "description": "Delete a header",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "headerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "DEFAULT | FIRST_PAGE | EVEN_PAGE"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.structure.deleteNamedRange",
+      "shortPath": "structure.deleteNamedRange",
+      "description": "Delete a named range by id or name",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "namedRangeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.structure.deleteParagraphBullets",
+      "shortPath": "structure.deleteParagraphBullets",
+      "description": "Remove bullets from a range of paragraphs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "endIndex",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.tables.deleteTableColumn",
+      "shortPath": "tables.deleteTableColumn",
+      "description": "Delete a column from a table",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableCellLocation",
+            "optional": false,
+            "type": "{ tableStartLocation: { index: number, segmentId?: string, tabId?: string }, rowIndex: number, columnIndex: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.tables.deleteTableRow",
+      "shortPath": "tables.deleteTableRow",
+      "description": "Delete a row from a table",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableCellLocation",
+            "optional": false,
+            "type": "{ tableStartLocation: { index: number, segmentId?: string, tabId?: string }, rowIndex: number, columnIndex: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.tables.insertTable",
+      "shortPath": "tables.insertTable",
+      "description": "Insert a table into a Google Doc",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "columns",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "insertionIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "appendToEnd",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.tables.insertTableColumn",
+      "shortPath": "tables.insertTableColumn",
+      "description": "Insert a column into a table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableCellLocation",
+            "optional": false,
+            "type": "{ tableStartLocation: { index: number, segmentId?: string, tabId?: string }, rowIndex: number, columnIndex: number }"
+          },
+          {
+            "key": "insertRight",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.tables.unmergeTableCells",
+      "shortPath": "tables.unmergeTableCells",
+      "description": "Unmerge previously merged table cells",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableRange",
+            "optional": false,
+            "type": "{ tableCellLocation: { tableStartLocation: { index: number, segmentId?: string, tabId?: string }, rowIndex: number, columnIndex: number }, rowSpan: number, columnSpan: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.tables.updateTableRowStyle",
+      "shortPath": "tables.updateTableRowStyle",
+      "description": "Update the style of table rows",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableStartLocation",
+            "optional": false,
+            "type": "{ index: number, segmentId?: string, tabId?: string }"
+          },
+          {
+            "key": "rowIndices",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "tableRowStyle",
+            "optional": true,
+            "type": "{ minRowHeight?: { magnitude?: number, unit?: string }, tableHeader?: boolean, preventOverflow?: boolean }"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.text.deleteContentRange",
+      "shortPath": "text.deleteContentRange",
+      "description": "Delete a content range from a Google Doc",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "endIndex",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.text.insertInlineImage",
+      "shortPath": "text.insertInlineImage",
+      "description": "Insert an inline image from a URI into a Google Doc",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "insertionIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "appendToEnd",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "{ height?: { magnitude?: number, unit?: string }, width?: { magnitude?: number, unit?: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.text.insertPageBreak",
+      "shortPath": "text.insertPageBreak",
+      "description": "Start a new page at a location in a Google Doc",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "insertionIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "appendToEnd",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.text.insertText",
+      "shortPath": "text.insertText",
+      "description": "Insert text at a location or append to the end of a Google Doc",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "insertionIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "appendToEnd",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.text.replaceAllText",
+      "shortPath": "text.replaceAllText",
+      "description": "Replace all occurrences of a string in a Google Doc",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "find",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "matchCase",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledocs.api.text.replaceImage",
+      "shortPath": "text.replaceImage",
+      "description": "Replace an existing image in a Google Doc",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageReplaceMethod",
+            "optional": true,
+            "type": "CENTER_CROP"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string, targetRevisionId?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "googledocs.webhooks.docChanged",
+      "shortPath": "docChanged",
+      "description": "A Google Doc was created, updated, deleted, or matched a content trigger",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ data?: string, attributes?: {}, messageId?: string, publishTime?: string }"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "responseType": "{ type: documentCreated | documentAdded | documentUpdated | documentDeleted | documentStructureChanged | keywordDetected | documentWordCountThreshold | documentPlaceholderFilled | documentSearchUpdate | folderCreated, documentId?: string, title?: string, changeType?: created | updated | deleted | trashed, matchedValue?: string, wordCount?: number, structure?: { headers: number, footers: number, footnotes: number, tables: number, images: number, positionedObjects: number, namedRanges: number }, document?: custom }",
+      "usageExample": "googledocs({\n    webhookHooks: {\n        docChanged: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "googledocs.db.documents.search",
+      "entityName": "documents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "documentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revisionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "wordCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "headerCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "footerCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "footnoteCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tableCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "imageCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "hasPlaceholder",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasKeyword",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasSearchMatch",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "filePath",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

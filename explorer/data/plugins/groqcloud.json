@@ -1,0 +1,588 @@
+{
+  "id": "groqcloud",
+  "displayName": "Groq",
+  "description": "Fast AI inference API for low-latency LLM chat completions and language model hosting.",
+  "npmPackageName": "@corsair-dev/groqcloud",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "groqcloud.api.audio.createTranscription",
+      "shortPath": "audio.createTranscription",
+      "description": "Transcribe an audio file into text",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": true,
+            "type": "custom",
+            "description": "The audio data to transcribe"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string",
+            "description": "File name for the uploaded audio; required with `file`"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "Publicly reachable URL of the audio to transcribe"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the model to use"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "The language of the input audio"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string",
+            "description": "An optional text to guide the model"
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "json | text | verbose_json",
+            "description": "Transcript output format. Groq accepts only json, text and verbose_json — srt and vtt are rejected with HTTP 400."
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number",
+            "description": "The sampling temperature"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The transcribed text"
+          }
+        ]
+      }
+    },
+    {
+      "path": "groqcloud.api.audio.createTranslation",
+      "shortPath": "audio.createTranslation",
+      "description": "Translate an audio recording into English text",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": true,
+            "type": "custom",
+            "description": "The audio data to translate"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string",
+            "description": "File name for the uploaded audio; required with `file`"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "Publicly reachable URL of the audio to translate"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the model to use"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string",
+            "description": "An optional text to guide the model"
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "json | text | verbose_json",
+            "description": "Transcript output format. Groq accepts only json, text and verbose_json — srt and vtt are rejected with HTTP 400."
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number",
+            "description": "The sampling temperature"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The translated text"
+          }
+        ]
+      }
+    },
+    {
+      "path": "groqcloud.api.audio.listVoices",
+      "shortPath": "audio.listVoices",
+      "description": "Retrieve available TTS voices for Groq PlayAI models",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "english",
+            "optional": false,
+            "type": "string[]",
+            "description": "List of English TTS voices"
+          },
+          {
+            "key": "arabic",
+            "optional": false,
+            "type": "string[]",
+            "description": "List of Arabic TTS voices"
+          }
+        ]
+      }
+    },
+    {
+      "path": "groqcloud.api.chat.createCompletion",
+      "shortPath": "chat.createCompletion",
+      "description": "Generate a chat completion from a list of messages",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the model to use"
+          },
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: system | user | assistant | tool, content: string | any[], name?: string, tool_call_id?: string }[]",
+            "description": "A list of messages comprising the conversation so far"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number",
+            "description": "Sampling temperature"
+          },
+          {
+            "key": "max_completion_tokens",
+            "optional": true,
+            "type": "number",
+            "description": "The maximum number of tokens to generate"
+          },
+          {
+            "key": "top_p",
+            "optional": true,
+            "type": "number",
+            "description": "Nucleus sampling parameter"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Up to 4 sequences where the API will stop generating further tokens"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "false",
+            "description": "Streaming is not supported by this plugin. The shared transport buffers text/event-stream as plain text, so a streamed call would return a raw SSE string rather than the completion object this operation promises."
+          },
+          {
+            "key": "response_format",
+            "optional": true,
+            "type": "{ type: string }",
+            "description": "Response format object"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "any[]",
+            "description": "A list of tools the model may call"
+          },
+          {
+            "key": "tool_choice",
+            "optional": true,
+            "type": "any",
+            "description": "Controls which tool is called by the model"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index: number, message: { role: system | user | assistant | tool, content: string | any[], name?: string, tool_call_id?: string }, finish_reason?: string | null }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "groqcloud.api.chat.createResponse",
+      "shortPath": "chat.createResponse",
+      "description": "Create a model response for the given input (Responses API)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the model to use"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string | any[]",
+            "description": "The input for the model response"
+          },
+          {
+            "key": "instructions",
+            "optional": true,
+            "type": "string",
+            "description": "Optional instructions to guide the response"
+          },
+          {
+            "key": "max_output_tokens",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of output tokens"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "any[]",
+            "description": "A list of tools"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "output",
+            "optional": false,
+            "type": "{ type: string, id?: string, status?: string, role?: string, content?: { type: string, text?: string }[] }[]",
+            "description": "Ordered output items; the reply is the `message` item"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "{ format: { type: string } }",
+            "description": "Requested output format, echoed back — not the reply"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "incomplete_details",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "groqcloud.api.models.listModels",
+      "shortPath": "models.listModels",
+      "description": "Retrieve currently available Groq models",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: string, created?: number, owned_by?: string, active?: boolean, name?: string, context_window?: number, context_length?: number, max_completion_tokens?: number, max_output_length?: number, hugging_face_id?: string | null, input_modalities?: string[], output_modalities?: string[], supported_features?: string[], supported_sampling_parameters?: string[], public_apps?: any | null, pricing?: {} | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "groqcloud.api.models.retrieveModel",
+      "shortPath": "models.retrieveModel",
+      "description": "Retrieve detailed metadata for a specific model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the model to use for this request"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "owned_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "context_window",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "context_length",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_completion_tokens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_output_length",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hugging_face_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input_modalities",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "output_modalities",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "supported_features",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "supported_sampling_parameters",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "public_apps",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "pricing",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "groqcloud.db.models.search",
+      "entityName": "models",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "owned_by",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "context_window",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "context_length",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_completion_tokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_output_length",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "hugging_face_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

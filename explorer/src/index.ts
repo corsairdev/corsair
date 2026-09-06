@@ -3,6 +3,7 @@ export { Catalog, loadCatalog } from './catalog';
 export type { CreateServerOptions } from './server';
 export { createServer } from './server';
 export type {
+	CatalogSearchEntry,
 	DocSchemaFieldRow,
 	DocSchemaShape,
 	DocsApiEndpoint,
@@ -12,6 +13,7 @@ export type {
 	EndpointRiskLevel,
 	PluginAuthType,
 	PluginCatalog,
+	PluginCatalogIndex,
 	PluginCounts,
 	PluginEntry,
 	PluginSummary,

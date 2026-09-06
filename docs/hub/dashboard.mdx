@@ -1,5 +1,5 @@
 ---
-title: Hub Dashboard
+title: Hub dashboard
 sidebarTitle: Dashboard
 description: Manage project keys, connection status, sign-in links, and production delivery from hub.corsair.dev.
 ---
@@ -17,7 +17,7 @@ Copy or rotate the API key and signing secret for the selected environment.
 | API key | `hub.projectApiKey` in `createCorsair` |
 | Signing secret | `hub.signingSecret` in `createCorsair` |
 
-Development keys start with `ck_dev_`; production keys start with `ck_prod_`. Rotating credentials in the dashboard revokes the old pair immediately — update your app env vars before rotating in production.
+Development keys start with `ck_dev_`; production keys start with `ck_prod_`. Rotating credentials in the dashboard revokes the old pair immediately, so update your app env vars before rotating in production.
 
 The **OAuth redirect URL** shown on this tab (`https://auth.corsair.dev/oauth/callback`) is the single callback to register with each OAuth provider.
 
@@ -27,31 +27,29 @@ Register the public HTTPS URL where Hub POSTs signed envelopes after production 
 
 This is the **Activate production** step. Until a delivery URL is registered, production connect flows return an error asking you to activate.
 
-Development does not use this tab — delivery is auto-detected locally. See [Delivery URLs](/hub/delivery-urls).
+Development does not use this tab; delivery is auto-detected locally. See [Delivery URLs](/hub/delivery-urls).
 
 ## Connections tab
 
-The connections table mirrors what your Corsair instance reports when API calls run. Rows are tenants × plugins; cells show connection status (verified, partial, not started, and so on).
+The connections table mirrors what your Corsair instance reports when API calls run. Rows are tenants × plugins; each cell shows one of three states: **Successful** (a working connection), **Failed** (a connection that was established and then stopped working), or none, rendered as a dash, when a connection was never attempted.
 
 ### Sign-in links
 
-Each tenant row has a **Sign-in link** button. Use it to copy a short-lived connect URL without writing code — useful for onboarding a customer or testing a tenant's integrations.
+Each tenant row has a **Sign-in link** button. Use it to copy a short-lived connect URL without writing code, useful for onboarding a customer or testing a tenant's integrations.
 
 You can generate a link for **unverified plugins only** or for **all plugins** on that tenant.
 
 ### Corsair-managed integrations
 
-If you use plugins with `authType: 'managed'`, Corsair can host the OAuth app for eligible integrations in production. In development, all configured managed plugins are available.
-
-If your plan limits how many integrations Corsair manages in production, the Connections tab asks you to **select which ones** you want Corsair to manage. Save your selection before going live — integrations not selected use bring-your-own OAuth (you supply client id and secret via the dashboard or your app).
+If you use plugins with `authType: 'managed'`, Corsair hosts the OAuth app for eligible integrations, so there is no OAuth app for you to register. Every eligible managed plugin is available in both development and production. For any plugin without managed support, use bring-your-own OAuth (you supply client id and secret via the dashboard or your app).
 
 ### BYO credentials from the dashboard
 
-For plugins that need your own OAuth app credentials, open the credentials modal on a plugin column and enter client id and secret. Hub delivers them to your app's handler so they are encrypted and stored in your database.
+For plugins that need your own OAuth app credentials, open the credentials modal on a plugin column and enter client id and secret. Hub stores them encrypted at rest and uses them to run the OAuth token exchange for that plugin; the resulting user tokens are still delivered to your app and stored in your database. The client secret is write-only: you can update it but the dashboard never displays it back.
 
 ## Settings tab
 
-Project lifecycle settings (delete project, consent screen branding — coming soon).
+Project lifecycle settings: delete project, plus consent screen branding (coming soon).
 
 ## What's next
 

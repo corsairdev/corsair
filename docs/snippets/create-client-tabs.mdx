@@ -1,0 +1,31 @@
+<Tabs>
+  <Tab title="React">
+
+```tsx corsair-client.ts
+"use client";
+import { createCorsairReactClient } from "corsair/client/react";
+
+export const {
+    useConnectionStatus, useCreateConnectLink, useTenants,
+    client, // escape hatch — the vanilla client
+} = createCorsairReactClient({ baseURL: "/api/corsair" });
+```
+
+Full hook list, including `useTenants`, `usePlugin`, and `useOAuthCallback`, on the [React Hooks](/adapters/react) reference.
+
+  </Tab>
+  <Tab title="Vanilla JS">
+
+```ts corsair-client.ts
+import { createCorsairClient } from "corsair";
+
+export const client = createCorsairClient({ baseURL: "/api/corsair" });
+
+// every route is typed
+await client.connectionStatus.get({ tenantId: "acme" });
+```
+
+Works from any JS runtime, such as Svelte, Vue, a worker, or a CLI. See the [Vanilla Client](/adapters/client) reference.
+
+  </Tab>
+</Tabs>

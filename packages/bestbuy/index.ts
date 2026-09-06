@@ -1,21 +1,19 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import * as Endpoints from './endpoints';
 import type {
 	BestBuyEndpointInputs,
 	BestBuyEndpointOutputs,
@@ -26,18 +24,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BestBuySchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveBestBuyOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchBestBuyTenantWebhook } from './webhooks/tenant-matcher';
-import type { BestBuyWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type BestBuyPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalBestBuyPlugin['hooks'];
-	webhookHooks?: InternalBestBuyPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof bestBuyEndpointsNested>;
 };
@@ -60,72 +51,121 @@ type BestBuyEndpoint<K extends keyof BestBuyEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type BestBuyEndpoints = {
-	exampleGet: BestBuyEndpoint<'exampleGet'>;
+	getProducts: BestBuyEndpoint<'getProducts'>;
+	getProductDetails: BestBuyEndpoint<'getProductDetails'>;
+	getCategories: BestBuyEndpoint<'getCategories'>;
+	getCategoryDetails: BestBuyEndpoint<'getCategoryDetails'>;
+	getStores: BestBuyEndpoint<'getStores'>;
+	getStoreDetails: BestBuyEndpoint<'getStoreDetails'>;
+	getReviews: BestBuyEndpoint<'getReviews'>;
+	getReviewDetails: BestBuyEndpoint<'getReviewDetails'>;
 };
-
-type BestBuyWebhook<
-	K extends keyof BestBuyWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<BestBuyContext, TEvent, BestBuyWebhookOutputs[K]>;
-
-export type BestBuyWebhooks = {
-	example: BestBuyWebhook<'example', ExampleEvent>;
-};
-
-export type BestBuyBoundWebhooks = BindWebhooks<BestBuyWebhooks>;
 
 const bestBuyEndpointsNested = {
-	example: {
-		get: Example.get,
+	products: {
+		list: Endpoints.getProducts,
+		get: Endpoints.getProductDetails,
 	},
-} as const;
-
-const bestBuyWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	categories: {
+		list: Endpoints.getCategories,
+		get: Endpoints.getCategoryDetails,
+	},
+	stores: {
+		list: Endpoints.getStores,
+		get: Endpoints.getStoreDetails,
+	},
+	reviews: {
+		list: Endpoints.getReviews,
+		get: Endpoints.getReviewDetails,
 	},
 } as const;
 
 export const bestBuyEndpointSchemas = {
-	'example.get': {
-		input: BestBuyEndpointInputSchemas.exampleGet,
-		output: BestBuyEndpointOutputSchemas.exampleGet,
+	'products.list': {
+		input: BestBuyEndpointInputSchemas.getProducts,
+		output: BestBuyEndpointOutputSchemas.getProducts,
+	},
+	'products.get': {
+		input: BestBuyEndpointInputSchemas.getProductDetails,
+		output: BestBuyEndpointOutputSchemas.getProductDetails,
+	},
+	'categories.list': {
+		input: BestBuyEndpointInputSchemas.getCategories,
+		output: BestBuyEndpointOutputSchemas.getCategories,
+	},
+	'categories.get': {
+		input: BestBuyEndpointInputSchemas.getCategoryDetails,
+		output: BestBuyEndpointOutputSchemas.getCategoryDetails,
+	},
+	'stores.list': {
+		input: BestBuyEndpointInputSchemas.getStores,
+		output: BestBuyEndpointOutputSchemas.getStores,
+	},
+	'stores.get': {
+		input: BestBuyEndpointInputSchemas.getStoreDetails,
+		output: BestBuyEndpointOutputSchemas.getStoreDetails,
+	},
+	'reviews.list': {
+		input: BestBuyEndpointInputSchemas.getReviews,
+		output: BestBuyEndpointOutputSchemas.getReviews,
+	},
+	'reviews.get': {
+		input: BestBuyEndpointInputSchemas.getReviewDetails,
+		output: BestBuyEndpointOutputSchemas.getReviewDetails,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof bestBuyEndpointsNested
 >;
 
-const bestBuyWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof bestBuyWebhooksNested>;
+const defaultAuthType = 'api_key' as const satisfies AuthTypes;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
-const bestBuyEndpointMeta = {
-	'example.get': {
+export const bestBuyEndpointMeta = {
+	'products.list': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description:
+			'Retrieve products with optional SKU, UPC, name, salePrice, and categoryPath.id filters',
+	},
+	'products.get': {
+		riskLevel: 'read',
+		description: 'Retrieve detailed information about a product by SKU',
+	},
+	'categories.list': {
+		riskLevel: 'read',
+		description: 'List or filter Best Buy product categories',
+	},
+	'categories.get': {
+		riskLevel: 'read',
+		description: 'Retrieve detailed information about a category by ID',
+	},
+	'stores.list': {
+		riskLevel: 'read',
+		description:
+			'List Best Buy stores with optional city, region, postalCode, or area() geo search',
+	},
+	'stores.get': {
+		riskLevel: 'read',
+		description: 'Retrieve detailed information about a store by store ID',
+	},
+	'reviews.list': {
+		riskLevel: 'read',
+		description:
+			'Retrieve product reviews with optional SKU, reviewer, and score filters',
+	},
+	'reviews.get': {
+		riskLevel: 'read',
+		description: 'Retrieve a single review by ID',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof bestBuyEndpointsNested>;
 
 export const bestBuyAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseBestBuyPlugin<T extends BestBuyPluginOptions> = CorsairPlugin<
 	'bestbuy',
 	typeof BestBuySchema,
 	typeof bestBuyEndpointsNested,
-	typeof bestBuyWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
@@ -135,6 +175,12 @@ export type InternalBestBuyPlugin = BaseBestBuyPlugin<BestBuyPluginOptions>;
 export type ExternalBestBuyPlugin<T extends BestBuyPluginOptions> =
 	BaseBestBuyPlugin<T>;
 
+/**
+ * Best Buy Remix API plugin.
+ *
+ * **No webhooks.** The public Developer API is pull-only (products, stores,
+ * categories, reviews) authenticated with an `apiKey` query parameter.
+ */
 export function bestbuy<const T extends BestBuyPluginOptions>(
 	incomingOptions: BestBuyPluginOptions & T = {} as BestBuyPluginOptions & T,
 ): ExternalBestBuyPlugin<T> {
@@ -148,48 +194,29 @@ export function bestbuy<const T extends BestBuyPluginOptions>(
 		schema: BestBuySchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: bestBuyEndpointsNested,
-		webhooks: bestBuyWebhooksNested,
+		webhooks: {},
 		endpointMeta: bestBuyEndpointMeta,
 		endpointSchemas: bestBuyEndpointSchemas,
-		webhookSchemas: bestBuyWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-bestbuy-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchBestBuyTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveBestBuyOAuthWebhookTenantLink,
+		webhookSchemas: {},
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: BestBuyKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('bestbuy', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('bestbuy', 'api_key');
 		},
 	} satisfies InternalBestBuyPlugin;
 }
@@ -197,10 +224,4 @@ export function bestbuy<const T extends BestBuyPluginOptions>(
 export type {
 	BestBuyEndpointInputs,
 	BestBuyEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
 } from './endpoints/types';
-export type {
-	BestBuyWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';

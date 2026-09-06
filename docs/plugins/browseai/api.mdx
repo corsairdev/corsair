@@ -1,0 +1,618 @@
+---
+title: API
+description: "API reference for Browse AI: every `browseai.api.*` operation with input and output types."
+---
+
+Every `browseai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Monitors
+
+### create
+
+`monitors.create`
+
+Create a robot monitor
+
+**Risk:** `write`
+
+```ts
+await corsair.browseai.api.monitors.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `robotId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `inputParameters` | `object` | Yes | — |
+| `notifyOnCapturedScreenshotChange` | `boolean` | Yes | — |
+| `notifyOnCapturedTextChange` | `boolean` | Yes | — |
+| `capturedScreenshotNotificationThreshold` | `number` | Yes | — |
+| `schedule` | `string` | No | — |
+| `schedules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="inputParameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="schedules full type">
+
+```ts
+{
+  type: FIXED_INTERVAL,
+  everyMinutes: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusCode` | `number` | No | — |
+| `messageCode` | `string` | No | — |
+| `monitor` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="monitor full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  status?: string | null,
+  pausedReason?: string | null,
+  inputParameters?: {
+  } | null,
+  schedules?: {
+    type?: string | null,
+    everyMinutes?: number | null
+  }[] | null,
+  schedule?: string | null,
+  notifyOnCapturedScreenshotChange?: boolean | null,
+  notifyOnCapturedTextChange?: boolean | null,
+  capturedScreenshotNotificationThreshold?: number | null,
+  createdAt?: number | null,
+  pausedAt?: number | null,
+  updatedAt?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`monitors.delete`
+
+Delete a robot monitor
+
+**Risk:** `write`
+
+```ts
+await corsair.browseai.api.monitors.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `robotId` | `string` | Yes | — |
+| `monitorId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusCode` | `number` | No | — |
+| `messageCode` | `string` | No | — |
+
+
+
+---
+
+## Robots
+
+### bulkRun
+
+`robots.bulkRun`
+
+Start a bulk run of robot tasks
+
+**Risk:** `write`
+
+```ts
+await corsair.browseai.api.robots.bulkRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `robotId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `inputParameters` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="inputParameters full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusCode` | `number` | No | — |
+| `messageCode` | `string` | No | — |
+| `result` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  bulkRun?: {
+    id?: string | null,
+    title?: string | null,
+    status?: string | null,
+    tasksCount?: number | null,
+    successfulTasks?: number | null,
+    failedTasks?: number | null,
+    robotId?: string | null,
+    createdAt?: number | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`robots.list`
+
+List robots on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.browseai.api.robots.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusCode` | `number` | No | — |
+| `messageCode` | `string` | No | — |
+| `robots` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="robots full type">
+
+```ts
+{
+  totalCount?: number | null,
+  items?: {
+    id?: string | null,
+    name?: string | null,
+    createdAt?: number | null,
+    inputParameters?: {
+      type?: string | null,
+      name?: string | null,
+      label?: string | null,
+      required?: boolean | null,
+      encrypted?: boolean | null,
+      defaultValue?: string | number | string[] | null,
+      value?: string | number | string[] | null,
+      min?: number | null,
+      max?: number | null,
+      pattern?: string | null,
+      options?: {
+        label?: string | null,
+        value?: string | null
+      }[] | null
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### run
+
+`robots.run`
+
+Start a robot task
+
+**Risk:** `write`
+
+```ts
+await corsair.browseai.api.robots.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `robotId` | `string` | Yes | — |
+| `recordVideo` | `boolean` | No | — |
+| `inputParameters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="inputParameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusCode` | `number` | No | — |
+| `messageCode` | `string` | No | — |
+| `result` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  inputParameters?: {
+  } | null,
+  robotId?: string | null,
+  status?: string | null,
+  runByUserId?: string | null,
+  robotBulkRunId?: string | null,
+  runByTaskMonitorId?: string | null,
+  runByAPI?: boolean | null,
+  createdAt?: number | null,
+  startedAt?: number | null,
+  finishedAt?: number | null,
+  userFriendlyError?: string | null,
+  triedRecordingVideo?: boolean | null,
+  videoUrl?: string | null,
+  videoRemovedAt?: number | null,
+  retriedOriginalTaskId?: string | null,
+  retriedTaskId?: string | null,
+  retriedByTaskId?: string | null,
+  capturedDataTemporaryUrl?: string | null,
+  capturedTexts?: {
+  } | null,
+  capturedScreenshots?: {
+  } | null,
+  capturedLists?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## System
+
+### getStatus
+
+`system.getStatus`
+
+Check Browse AI task-queue status
+
+**Risk:** `read`
+
+```ts
+await corsair.browseai.api.system.getStatus({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusCode` | `number` | No | — |
+| `messageCode` | `string` | No | — |
+| `tasksQueueStatus` | `string` | No | — |
+
+
+
+---
+
+## Tasks
+
+### get
+
+`tasks.get`
+
+Get a robot task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.browseai.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `robotId` | `string` | Yes | — |
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusCode` | `number` | No | — |
+| `messageCode` | `string` | No | — |
+| `result` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  id?: string | null,
+  inputParameters?: {
+  } | null,
+  robotId?: string | null,
+  status?: string | null,
+  runByUserId?: string | null,
+  robotBulkRunId?: string | null,
+  runByTaskMonitorId?: string | null,
+  runByAPI?: boolean | null,
+  createdAt?: number | null,
+  startedAt?: number | null,
+  finishedAt?: number | null,
+  userFriendlyError?: string | null,
+  triedRecordingVideo?: boolean | null,
+  videoUrl?: string | null,
+  videoRemovedAt?: number | null,
+  retriedOriginalTaskId?: string | null,
+  retriedTaskId?: string | null,
+  retriedByTaskId?: string | null,
+  capturedDataTemporaryUrl?: string | null,
+  capturedTexts?: {
+  } | null,
+  capturedScreenshots?: {
+  } | null,
+  capturedLists?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks for a robot
+
+**Risk:** `read`
+
+```ts
+await corsair.browseai.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `robotId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `status` | `failed \| successful \| in-progress` | No | — |
+| `robotBulkRunId` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `includeRetried` | `boolean` | No | — |
+| `fromDate` | `number` | No | — |
+| `toDate` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusCode` | `number` | No | — |
+| `messageCode` | `string` | No | — |
+| `result` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  robotTasks?: {
+    totalCount?: number | null,
+    pageNumber?: number | null,
+    hasMore?: boolean | null,
+    items?: {
+      id?: string | null,
+      inputParameters?: {
+      } | null,
+      robotId?: string | null,
+      status?: string | null,
+      runByUserId?: string | null,
+      robotBulkRunId?: string | null,
+      runByTaskMonitorId?: string | null,
+      runByAPI?: boolean | null,
+      createdAt?: number | null,
+      startedAt?: number | null,
+      finishedAt?: number | null,
+      userFriendlyError?: string | null,
+      triedRecordingVideo?: boolean | null,
+      videoUrl?: string | null,
+      videoRemovedAt?: number | null,
+      retriedOriginalTaskId?: string | null,
+      retriedTaskId?: string | null,
+      retriedByTaskId?: string | null,
+      capturedDataTemporaryUrl?: string | null,
+      capturedTexts?: {
+      } | null,
+      capturedScreenshots?: {
+      } | null,
+      capturedLists?: {
+      } | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a robot webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.browseai.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `robotId` | `string` | Yes | — |
+| `hookUrl` | `string` | Yes | — |
+| `eventType` | `taskCapturedDataChanged \| taskFinished \| taskFinishedSuccessfully \| taskFinishedWithError \| tableExportFinishedSuccessfully` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusCode` | `number` | No | — |
+| `messageCode` | `string` | No | — |
+| `webhook` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  webhookEvent?: string | null,
+  createdAt?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhooks for a robot
+
+**Risk:** `read`
+
+```ts
+await corsair.browseai.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `robotId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusCode` | `number` | No | — |
+| `messageCode` | `string` | No | — |
+| `webhooks` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  totalCount?: number | null,
+  items?: {
+    id?: string | null,
+    url?: string | null,
+    webhookEvent?: string | null,
+    createdAt?: number | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

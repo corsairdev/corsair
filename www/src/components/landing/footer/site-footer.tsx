@@ -19,9 +19,9 @@ export function SiteFooter() {
 	return (
 		<footer className="w-full border-t border-[#1c1c1c1a] bg-[#f4f4f4] py-12 md:py-16">
 			<div className="mx-auto max-w-[1440px] px-4 md:px-10">
-				<div className="grid grid-cols-1 gap-8 md:grid-cols-4 md:gap-12">
+				<div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-5 lg:gap-12">
 					{/* Brand Column */}
-					<div className="flex flex-col items-start gap-4">
+					<div className="col-span-2 flex flex-col items-start gap-4 md:col-span-3 lg:col-span-1">
 						<Link
 							href="/"
 							aria-label="Corsair home"
@@ -99,6 +99,31 @@ export function SiteFooter() {
 						</ul>
 					</div>
 
+					{/* Compare Column */}
+					<div className="flex flex-col gap-3">
+						<h3 className="font-[family-name:var(--landing-font-mono)] text-[11px] font-semibold uppercase tracking-wider text-[#1c1c1c66]">
+							Compare
+						</h3>
+						<ul className="flex flex-col gap-2 p-0 list-none">
+							<li>
+								<Link
+									href="/compare/nango"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									vs Nango
+								</Link>
+							</li>
+							<li>
+								<Link
+									href="/compare/composio"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									vs Composio
+								</Link>
+							</li>
+						</ul>
+					</div>
+
 					{/* Resources Column */}
 					<div className="flex flex-col gap-3">
 						<h3 className="font-[family-name:var(--landing-font-mono)] text-[11px] font-semibold uppercase tracking-wider text-[#1c1c1c66]">
@@ -111,6 +136,14 @@ export function SiteFooter() {
 									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
 								>
 									Blog
+								</Link>
+							</li>
+							<li>
+								<Link
+									href="/oss"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									Contribute
 								</Link>
 							</li>
 							<li>
