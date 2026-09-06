@@ -1,7 +1,7 @@
 {
   "id": "apisports",
   "displayName": "API-Sports",
-  "description": "API-Sports plugin for Corsair",
+  "description": "Sports data API covering fixtures, standings, statistics, and live scores worldwide.",
   "npmPackageName": "@corsair-dev/apisports",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

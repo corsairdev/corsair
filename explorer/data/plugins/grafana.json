@@ -1,7 +1,7 @@
 {
   "id": "grafana",
   "displayName": "Grafana",
-  "description": "Grafana plugin for Corsair",
+  "description": "Observability platform for dashboards, metrics visualization, and monitoring alert management.",
   "npmPackageName": "@corsair-dev/grafana",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "agilitycms",
   "displayName": "Agility CMS",
-  "description": "Agility CMS plugin for Corsair",
+  "description": "Headless content management system for building and delivering omnichannel digital experiences.",
   "npmPackageName": "@corsair-dev/agilitycms",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

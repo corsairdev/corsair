@@ -1,7 +1,7 @@
 {
   "id": "googledrive",
-  "displayName": "Google drive",
-  "description": "Google drive plugin for Corsair",
+  "displayName": "Google Drive",
+  "description": "Cloud file storage for uploading, organizing, sharing, and syncing documents online.",
   "npmPackageName": "@corsair-dev/googledrive",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

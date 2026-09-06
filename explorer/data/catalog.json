@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-09-03T15:41:23.868Z",
+  "generatedAt": "2026-09-04T03:29:04.623Z",
   "corsairVersion": "0.1.126",
   "catalogVersion": 2,
   "plugins": [
     {
       "id": "ably",
       "displayName": "Ably",
-      "description": "Ably plugin for Corsair",
+      "description": "Realtime messaging platform for pub/sub, chat, and live data streaming at scale.",
       "npmPackageName": "@corsair-dev/ably",
       "authTypes": [
         "api_key"
@@ -21,7 +21,7 @@
     {
       "id": "abstract",
       "displayName": "Abstract",
-      "description": "Abstract plugin for Corsair",
+      "description": "Validation APIs for emails, phones, VAT numbers, and other business data checks.",
       "npmPackageName": "@corsair-dev/abstract",
       "authTypes": [
         "api_key"
@@ -36,7 +36,7 @@
     {
       "id": "abuseipdb",
       "displayName": "AbuseIPDB",
-      "description": "AbuseIPDB plugin for Corsair",
+      "description": "IP address reputation database for detecting and reporting malicious network activity.",
       "npmPackageName": "@corsair-dev/abuseipdb",
       "authTypes": [
         "api_key"
@@ -51,7 +51,7 @@
     {
       "id": "abyssale",
       "displayName": "Abyssale",
-      "description": "Abyssale plugin for Corsair",
+      "description": "Dynamic image and video generation API for automated marketing and social creatives.",
       "npmPackageName": "@corsair-dev/abyssale",
       "authTypes": [
         "api_key"
@@ -65,8 +65,8 @@
     },
     {
       "id": "accrediblecertificates",
-      "displayName": "AccredibleCertificates",
-      "description": "AccredibleCertificates plugin for Corsair",
+      "displayName": "Accredible",
+      "description": "Digital certificate and badge platform for courses, events, and professional credentials.",
       "npmPackageName": "@corsair-dev/accrediblecertificates",
       "authTypes": [
         "api_key"
@@ -81,7 +81,7 @@
     {
       "id": "activecampaign",
       "displayName": "ActiveCampaign",
-      "description": "ActiveCampaign plugin for Corsair",
+      "description": "Marketing automation platform for email campaigns, CRM, and customer journey workflows.",
       "npmPackageName": "@corsair-dev/activecampaign",
       "authTypes": [
         "api_key"
@@ -96,7 +96,7 @@
     {
       "id": "activetrail",
       "displayName": "ActiveTrail",
-      "description": "ActiveTrail plugin for Corsair",
+      "description": "Email and SMS marketing platform for campaigns, automations, and subscriber management.",
       "npmPackageName": "@corsair-dev/activetrail",
       "authTypes": [
         "api_key"
@@ -110,8 +110,8 @@
     },
     {
       "id": "addresszen",
-      "displayName": "Addresszen",
-      "description": "Addresszen plugin for Corsair",
+      "displayName": "AddressZen",
+      "description": "Address validation and geocoding API for verifying and standardizing postal addresses.",
       "npmPackageName": "@corsair-dev/addresszen",
       "authTypes": [
         "api_key"
@@ -125,8 +125,8 @@
     },
     {
       "id": "aeroleads",
-      "displayName": "Aeroleads",
-      "description": "Aeroleads plugin for Corsair",
+      "displayName": "AeroLeads",
+      "description": "B2B lead generation tool for finding business emails and prospect contact data.",
       "npmPackageName": "@corsair-dev/aeroleads",
       "authTypes": [
         "api_key"
@@ -141,7 +141,7 @@
     {
       "id": "affinda",
       "displayName": "Affinda",
-      "description": "Affinda plugin for Corsair",
+      "description": "AI document parsing for resumes, invoices, and structured data extraction from files.",
       "npmPackageName": "@corsair-dev/affinda",
       "authTypes": [
         "api_key"
@@ -156,7 +156,7 @@
     {
       "id": "agencyzoom",
       "displayName": "AgencyZoom",
-      "description": "AgencyZoom plugin for Corsair",
+      "description": "Insurance agency management software for policies, clients, and producer workflows.",
       "npmPackageName": "@corsair-dev/agencyzoom",
       "authTypes": [
         "api_key"
@@ -171,7 +171,7 @@
     {
       "id": "agentmail",
       "displayName": "AgentMail",
-      "description": "AgentMail plugin for Corsair",
+      "description": "Email infrastructure for AI agents with programmatic inboxes and message handling.",
       "npmPackageName": "@corsair-dev/agentmail",
       "authTypes": [
         "api_key"
@@ -186,7 +186,7 @@
     {
       "id": "agentql",
       "displayName": "AgentQL",
-      "description": "AgentQL plugin for Corsair",
+      "description": "Web scraping API that turns pages into structured data using natural language queries.",
       "npmPackageName": "@corsair-dev/agentql",
       "authTypes": [
         "api_key"
@@ -201,7 +201,7 @@
     {
       "id": "agenty",
       "displayName": "Agenty",
-      "description": "Agenty plugin for Corsair",
+      "description": "Web scraping and data extraction platform for monitoring and harvesting online data.",
       "npmPackageName": "@corsair-dev/agenty",
       "authTypes": [
         "api_key"
@@ -216,7 +216,7 @@
     {
       "id": "agilitycms",
       "displayName": "Agility CMS",
-      "description": "Agility CMS plugin for Corsair",
+      "description": "Headless content management system for building and delivering omnichannel digital experiences.",
       "npmPackageName": "@corsair-dev/agilitycms",
       "authTypes": [
         "api_key"
@@ -231,7 +231,7 @@
     {
       "id": "ahrefs",
       "displayName": "Ahrefs",
-      "description": "Ahrefs plugin for Corsair",
+      "description": "SEO toolkit for keyword research, backlink analysis, and search ranking insights.",
       "npmPackageName": "@corsair-dev/ahrefs",
       "authTypes": [
         "api_key"
@@ -245,8 +245,8 @@
     },
     {
       "id": "aimlapi",
-      "displayName": "AimlApi",
-      "description": "AimlApi plugin for Corsair",
+      "displayName": "AIML API",
+      "description": "Unified API gateway for accessing many AI and machine learning models.",
       "npmPackageName": "@corsair-dev/aimlapi",
       "authTypes": [
         "api_key"
@@ -261,7 +261,7 @@
     {
       "id": "airtable",
       "displayName": "Airtable",
-      "description": "Airtable plugin for Corsair",
+      "description": "Spreadsheet-database hybrid for organizing records, workflows, and collaborative project data.",
       "npmPackageName": "@corsair-dev/airtable",
       "authTypes": [
         "api_key"
@@ -275,8 +275,8 @@
     },
     {
       "id": "aivoov",
-      "displayName": "AiVOOV text-to-speech",
-      "description": "AiVOOV text-to-speech plugin for Corsair",
+      "displayName": "AiVOOV",
+      "description": "Text-to-speech platform for generating natural voiceovers from written scripts.",
       "npmPackageName": "@corsair-dev/aivoov",
       "authTypes": [
         "api_key"
@@ -291,7 +291,7 @@
     {
       "id": "alchemy",
       "displayName": "Alchemy",
-      "description": "Alchemy plugin for Corsair",
+      "description": "Blockchain development platform for Ethereum and Web3 apps, nodes, and APIs.",
       "npmPackageName": "@corsair-dev/alchemy",
       "authTypes": [
         "api_key"
@@ -306,14 +306,14 @@
     {
       "id": "algolia",
       "displayName": "Algolia",
-      "description": "Algolia plugin for Corsair",
+      "description": "Search and discovery API for fast, relevant site search and product recommendations.",
       "npmPackageName": "@corsair-dev/algolia",
       "authTypes": [
         "api_key"
       ],
       "defaultAuthType": "api_key",
       "counts": {
-        "api": 133,
+        "api": 132,
         "webhooks": 0,
         "db": 3
       }
@@ -321,7 +321,7 @@
     {
       "id": "allimagesai",
       "displayName": "All Images AI",
-      "description": "All Images AI plugin for Corsair",
+      "description": "AI image generation service for creating visuals from text prompts and styles.",
       "npmPackageName": "@corsair-dev/allimagesai",
       "authTypes": [
         "api_key"
@@ -336,7 +336,7 @@
     {
       "id": "alphavantage",
       "displayName": "Alpha Vantage",
-      "description": "Alpha Vantage plugin for Corsair",
+      "description": "Financial market data API for stocks, forex, crypto, and economic indicators.",
       "npmPackageName": "@corsair-dev/alphavantage",
       "authTypes": [
         "api_key"
@@ -351,7 +351,7 @@
     {
       "id": "altoviz",
       "displayName": "Altoviz",
-      "description": "Altoviz plugin for Corsair",
+      "description": "Online invoicing and billing software for small businesses and freelancers.",
       "npmPackageName": "@corsair-dev/altoviz",
       "authTypes": [
         "api_key"
@@ -366,7 +366,7 @@
     {
       "id": "alttextai",
       "displayName": "AltText.ai",
-      "description": "AltText.ai plugin for Corsair",
+      "description": "AI service that generates accessible alt text descriptions for images automatically.",
       "npmPackageName": "@corsair-dev/alttextai",
       "authTypes": [
         "api_key"
@@ -380,8 +380,8 @@
     },
     {
       "id": "amara",
-      "displayName": "Amara (subtitling platform)",
-      "description": "Amara (subtitling platform) plugin for Corsair",
+      "displayName": "Amara",
+      "description": "Collaborative subtitling and captioning platform for video accessibility and translation.",
       "npmPackageName": "@corsair-dev/amara",
       "authTypes": [
         "api_key"
@@ -396,7 +396,7 @@
     {
       "id": "ambee",
       "displayName": "Ambee",
-      "description": "Ambee plugin for Corsair",
+      "description": "Environmental data API for air quality, pollen, weather, and wildfire information.",
       "npmPackageName": "@corsair-dev/ambee",
       "authTypes": [
         "api_key"
@@ -410,8 +410,8 @@
     },
     {
       "id": "ambientweather",
-      "displayName": "AmbientWeather",
-      "description": "AmbientWeather plugin for Corsair",
+      "displayName": "Ambient Weather",
+      "description": "Personal weather station network API for local and hyperlocal weather readings.",
       "npmPackageName": "@corsair-dev/ambientweather",
       "authTypes": [
         "api_key"
@@ -426,7 +426,7 @@
     {
       "id": "amcards",
       "displayName": "AMcards",
-      "description": "AMcards plugin for Corsair",
+      "description": "Automated greeting card platform for sending personalized physical mail campaigns.",
       "npmPackageName": "@corsair-dev/amcards",
       "authTypes": [
         "api_key"
@@ -441,7 +441,7 @@
     {
       "id": "amplitude",
       "displayName": "Amplitude",
-      "description": "Amplitude plugin for Corsair",
+      "description": "Product analytics platform for tracking user behavior, funnels, and retention metrics.",
       "npmPackageName": "@corsair-dev/amplitude",
       "authTypes": [
         "api_key"
@@ -456,7 +456,7 @@
     {
       "id": "anchorbrowser",
       "displayName": "Anchor Browser",
-      "description": "Anchor Browser plugin for Corsair",
+      "description": "Cloud browser automation API for running headless web sessions and scraping tasks.",
       "npmPackageName": "@corsair-dev/anchorbrowser",
       "authTypes": [
         "api_key"
@@ -471,7 +471,7 @@
     {
       "id": "anonyflow",
       "displayName": "Anonyflow",
-      "description": "Anonyflow plugin for Corsair",
+      "description": "Privacy-focused data tokenization service for protecting sensitive customer information.",
       "npmPackageName": "@corsair-dev/anonyflow",
       "authTypes": [
         "api_key"
@@ -485,8 +485,8 @@
     },
     {
       "id": "anthropicadministrator",
-      "displayName": "Anthropic Admin API",
-      "description": "Anthropic Admin API plugin for Corsair — organization members, invites, workspaces and API keys",
+      "displayName": "Anthropic Admin",
+      "description": "Admin API for managing Anthropic organization members, workspaces, and API keys.",
       "npmPackageName": "@corsair-dev/anthropicadministrator",
       "authTypes": [
         "api_key",
@@ -502,7 +502,7 @@
     {
       "id": "apaleo",
       "displayName": "Apaleo",
-      "description": "Apaleo plugin for Corsair",
+      "description": "Open hospitality platform for property management, reservations, and hotel operations.",
       "npmPackageName": "@corsair-dev/apaleo",
       "authTypes": [
         "oauth_2"
@@ -517,7 +517,7 @@
     {
       "id": "api2pdf",
       "displayName": "API2PDF",
-      "description": "API2PDF plugin for Corsair",
+      "description": "HTML and URL to PDF conversion API for generating documents from web content.",
       "npmPackageName": "@corsair-dev/api2pdf",
       "authTypes": [
         "api_key"
@@ -532,7 +532,7 @@
     {
       "id": "apibible",
       "displayName": "API.Bible",
-      "description": "API.Bible plugin for Corsair",
+      "description": "Bible content API for accessing scripture text, versions, and passage lookups.",
       "npmPackageName": "@corsair-dev/apibible",
       "authTypes": [
         "api_key"
@@ -547,7 +547,7 @@
     {
       "id": "apify",
       "displayName": "Apify",
-      "description": "Apify plugin for Corsair (MCP + REST API)",
+      "description": "Web scraping and automation platform for running actors and extracting structured data.",
       "npmPackageName": "@corsair-dev/apify",
       "authTypes": [
         "api_key"
@@ -562,7 +562,7 @@
     {
       "id": "apilabz",
       "displayName": "ApiLabz",
-      "description": "ApiLabz plugin for Corsair",
+      "description": "Collection of utility APIs for developers including conversion, validation, and lookup tools.",
       "npmPackageName": "@corsair-dev/apilabz",
       "authTypes": [
         "api_key"
@@ -577,7 +577,7 @@
     {
       "id": "apininjas",
       "displayName": "API Ninjas",
-      "description": "API Ninjas plugin for Corsair",
+      "description": "Developer API hub for facts, finance, nutrition, and dozens of data endpoints.",
       "npmPackageName": "@corsair-dev/apininjas",
       "authTypes": [
         "api_key"
@@ -591,8 +591,8 @@
     },
     {
       "id": "apipie",
-      "displayName": "APIpie AI",
-      "description": "APIpie AI plugin for Corsair",
+      "displayName": "APIpie",
+      "description": "AI model aggregation API for routing requests across multiple LLM providers.",
       "npmPackageName": "@corsair-dev/apipie",
       "authTypes": [
         "api_key"
@@ -607,7 +607,7 @@
     {
       "id": "apisports",
       "displayName": "API-Sports",
-      "description": "API-Sports plugin for Corsair",
+      "description": "Sports data API covering fixtures, standings, statistics, and live scores worldwide.",
       "npmPackageName": "@corsair-dev/apisports",
       "authTypes": [
         "api_key"
@@ -622,7 +622,7 @@
     {
       "id": "asana",
       "displayName": "Asana",
-      "description": "Asana plugin for Corsair",
+      "description": "Work management platform for tasks, projects, teams, and cross-functional collaboration.",
       "npmPackageName": "@corsair-dev/asana",
       "authTypes": [
         "api_key",
@@ -638,7 +638,7 @@
     {
       "id": "ascora",
       "displayName": "Ascora",
-      "description": "Ascora plugin for Corsair",
+      "description": "Field service management software for scheduling jobs, technicians, and service businesses.",
       "npmPackageName": "@corsair-dev/ascora",
       "authTypes": [
         "api_key"
@@ -652,8 +652,8 @@
     },
     {
       "id": "asindataapi",
-      "displayName": "AsinDataApi",
-      "description": "AsinDataApi plugin for Corsair",
+      "displayName": "AsinData API",
+      "description": "Amazon product data API for ASIN lookups, pricing, and marketplace intelligence.",
       "npmPackageName": "@corsair-dev/asindataapi",
       "authTypes": [
         "api_key"
@@ -667,8 +667,8 @@
     },
     {
       "id": "asticaai",
-      "displayName": "AsticaAi",
-      "description": "AsticaAi plugin for Corsair",
+      "displayName": "Astica AI",
+      "description": "Computer vision API for image analysis, object detection, and visual understanding.",
       "npmPackageName": "@corsair-dev/asticaai",
       "authTypes": [
         "api_key"
@@ -683,7 +683,7 @@
     {
       "id": "asyncinterview",
       "displayName": "AsyncInterview",
-      "description": "AsyncInterview plugin for Corsair",
+      "description": "Asynchronous video interview platform for remote candidate screening and hiring workflows.",
       "npmPackageName": "@corsair-dev/asyncinterview",
       "authTypes": [
         "api_key"
@@ -698,7 +698,7 @@
     {
       "id": "attio",
       "displayName": "Attio",
-      "description": "Attio plugin for Corsair",
+      "description": "Flexible CRM for managing relationships, deals, companies, and custom sales pipelines.",
       "npmPackageName": "@corsair-dev/attio",
       "authTypes": [
         "api_key",
@@ -714,7 +714,7 @@
     {
       "id": "autom",
       "displayName": "Autom",
-      "description": "Autom plugin for Corsair",
+      "description": "Workflow automation platform for connecting apps and automating repetitive business tasks.",
       "npmPackageName": "@corsair-dev/autom",
       "authTypes": [
         "api_key"
@@ -729,7 +729,7 @@
     {
       "id": "ayrshare",
       "displayName": "Ayrshare",
-      "description": "Ayrshare plugin for Corsair",
+      "description": "Social media API for posting, scheduling, and analytics across multiple platforms.",
       "npmPackageName": "@corsair-dev/ayrshare",
       "authTypes": [
         "api_key"
@@ -744,7 +744,7 @@
     {
       "id": "backendless",
       "displayName": "Backendless",
-      "description": "Backendless plugin for Corsair",
+      "description": "Backend-as-a-service for databases, user auth, file storage, and serverless logic.",
       "npmPackageName": "@corsair-dev/backendless",
       "authTypes": [],
       "defaultAuthType": "api_key",
@@ -757,7 +757,7 @@
     {
       "id": "bannerbear",
       "displayName": "Bannerbear",
-      "description": "Bannerbear plugin for Corsair",
+      "description": "Automated image and video generation API for social posts and marketing templates.",
       "npmPackageName": "@corsair-dev/bannerbear",
       "authTypes": [
         "api_key"
@@ -771,8 +771,8 @@
     },
     {
       "id": "bart",
-      "displayName": "Bart",
-      "description": "Bart plugin for Corsair",
+      "displayName": "BART",
+      "description": "Bay Area Rapid Transit API for schedules, arrivals, and public transit route data.",
       "npmPackageName": "@corsair-dev/bart",
       "authTypes": [
         "api_key"
@@ -786,8 +786,8 @@
     },
     {
       "id": "basecamp",
-      "displayName": "Basecamp OAuth",
-      "description": "Basecamp OAuth plugin for Corsair",
+      "displayName": "Basecamp",
+      "description": "Project management and team communication tool for to-dos, messages, and schedules.",
       "npmPackageName": "@corsair-dev/basecamp",
       "authTypes": [
         "oauth_2"
@@ -802,7 +802,7 @@
     {
       "id": "baselinker",
       "displayName": "BaseLinker",
-      "description": "BaseLinker plugin for Corsair",
+      "description": "E-commerce integration hub for orders, inventory, and multichannel marketplace management.",
       "npmPackageName": "@corsair-dev/baselinker",
       "authTypes": [
         "api_key"
@@ -817,7 +817,7 @@
     {
       "id": "basin",
       "displayName": "Basin",
-      "description": "Basin plugin for Corsair",
+      "description": "Form backend service for collecting submissions without writing server-side code.",
       "npmPackageName": "@corsair-dev/basin",
       "authTypes": [
         "api_key"
@@ -832,7 +832,7 @@
     {
       "id": "beaconstac",
       "displayName": "Beaconstac",
-      "description": "Beaconstac plugin for Corsair",
+      "description": "QR code and digital signage platform for contactless marketing and asset tracking.",
       "npmPackageName": "@corsair-dev/beaconstac",
       "authTypes": [
         "api_key"
@@ -847,7 +847,7 @@
     {
       "id": "beeminder",
       "displayName": "Beeminder",
-      "description": "Beeminder plugin for Corsair",
+      "description": "Goal-tracking app that uses commitment contracts to help you stick to habits.",
       "npmPackageName": "@corsair-dev/beeminder",
       "authTypes": [
         "api_key",
@@ -863,7 +863,7 @@
     {
       "id": "bettercontact",
       "displayName": "BetterContact",
-      "description": "BetterContact plugin for Corsair",
+      "description": "Waterfall enrichment API for finding verified B2B emails and mobile phone numbers.",
       "npmPackageName": "@corsair-dev/bettercontact",
       "authTypes": [
         "api_key"
@@ -877,8 +877,8 @@
     },
     {
       "id": "betterproposals",
-      "displayName": "BetterProposals",
-      "description": "BetterProposals plugin for Corsair",
+      "displayName": "Better Proposals",
+      "description": "Proposal software for creating, sending, and tracking client sales documents online.",
       "npmPackageName": "@corsair-dev/betterproposals",
       "authTypes": [
         "api_key"
@@ -893,7 +893,7 @@
     {
       "id": "betterstack",
       "displayName": "Better Stack",
-      "description": "Better Stack plugin for Corsair",
+      "description": "Observability platform combining uptime monitoring, logging, and incident management.",
       "npmPackageName": "@corsair-dev/betterstack",
       "authTypes": [
         "api_key"
@@ -908,7 +908,7 @@
     {
       "id": "bigdatacloud",
       "displayName": "BigDataCloud",
-      "description": "BigDataCloud plugin for Corsair",
+      "description": "Geolocation and reverse geocoding APIs for IP lookup and address intelligence.",
       "npmPackageName": "@corsair-dev/bigdatacloud",
       "authTypes": [
         "api_key"
@@ -922,8 +922,8 @@
     },
     {
       "id": "bigmailer",
-      "displayName": "Bigmailer",
-      "description": "Bigmailer plugin for Corsair",
+      "displayName": "BigMailer",
+      "description": "Email marketing platform built for Amazon SES with lists, campaigns, and automations.",
       "npmPackageName": "@corsair-dev/bigmailer",
       "authTypes": [
         "api_key"
@@ -937,8 +937,8 @@
     },
     {
       "id": "bigml",
-      "displayName": "Bigml",
-      "description": "Bigml plugin for Corsair",
+      "displayName": "BigML",
+      "description": "Machine learning platform for building, training, and deploying predictive models.",
       "npmPackageName": "@corsair-dev/bigml",
       "authTypes": [
         "api_key"
@@ -952,8 +952,8 @@
     },
     {
       "id": "bitbucket",
-      "displayName": "Bitbucket Cloud OAuth 2.0",
-      "description": "Bitbucket Cloud OAuth 2.0 plugin for Corsair",
+      "displayName": "Bitbucket",
+      "description": "Git repository hosting for source code, pull requests, and CI/CD pipelines.",
       "npmPackageName": "@corsair-dev/bitbucket",
       "authTypes": [
         "oauth_2"
@@ -968,7 +968,7 @@
     {
       "id": "bitwarden",
       "displayName": "Bitwarden",
-      "description": "Bitwarden plugin for Corsair",
+      "description": "Open-source password manager for secure credential storage and team secret sharing.",
       "npmPackageName": "@corsair-dev/bitwarden",
       "authTypes": [
         "oauth_2"
@@ -983,7 +983,7 @@
     {
       "id": "blazemeter",
       "displayName": "BlazeMeter",
-      "description": "BlazeMeter plugin for Corsair",
+      "description": "Performance testing platform for load, stress, and API scalability benchmarking.",
       "npmPackageName": "@corsair-dev/blazemeter",
       "authTypes": [
         "api_key"
@@ -998,7 +998,7 @@
     {
       "id": "blocknative",
       "displayName": "Blocknative",
-      "description": "Blocknative plugin for Corsair",
+      "description": "Mempool monitoring API for real-time Ethereum and blockchain transaction tracking.",
       "npmPackageName": "@corsair-dev/blocknative",
       "authTypes": [
         "api_key"
@@ -1013,7 +1013,7 @@
     {
       "id": "bluesky",
       "displayName": "Bluesky",
-      "description": "Bluesky plugin for Corsair",
+      "description": "Decentralized social network for posting feeds, follows, and public conversations.",
       "npmPackageName": "@corsair-dev/bluesky",
       "authTypes": [
         "api_key"
@@ -1027,8 +1027,8 @@
     },
     {
       "id": "boloforms",
-      "displayName": "Boloforms",
-      "description": "Boloforms plugin for Corsair",
+      "displayName": "BoloForms",
+      "description": "Online form builder for surveys, applications, and lead capture with workflows.",
       "npmPackageName": "@corsair-dev/boloforms",
       "authTypes": [
         "api_key"
@@ -1043,7 +1043,7 @@
     {
       "id": "boltiot",
       "displayName": "Bolt IoT",
-      "description": "Bolt IoT plugin for Corsair",
+      "description": "IoT platform for connecting devices, sensors, and hardware to cloud dashboards.",
       "npmPackageName": "@corsair-dev/boltiot",
       "authTypes": [
         "api_key"
@@ -1058,7 +1058,7 @@
     {
       "id": "bonsai",
       "displayName": "Bonsai",
-      "description": "Bonsai plugin for Corsair",
+      "description": "Freelance business management for contracts, invoices, proposals, and client billing.",
       "npmPackageName": "@corsair-dev/bonsai",
       "authTypes": [
         "api_key"
@@ -1073,7 +1073,7 @@
     {
       "id": "bookingmood",
       "displayName": "Bookingmood",
-      "description": "Bookingmood plugin for Corsair",
+      "description": "Booking and scheduling software for appointments, reservations, and calendar management.",
       "npmPackageName": "@corsair-dev/bookingmood",
       "authTypes": [
         "api_key"
@@ -1086,9 +1086,24 @@
       }
     },
     {
+      "id": "botbaba",
+      "displayName": "Botbaba",
+      "description": "Chatbot builder platform for creating conversational bots across messaging channels.",
+      "npmPackageName": "@corsair-dev/botbaba",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 43,
+        "webhooks": 0,
+        "db": 7
+      }
+    },
+    {
       "id": "botpress",
       "displayName": "Botpress",
-      "description": "Botpress plugin for Corsair",
+      "description": "Conversational AI platform for building, deploying, and managing chatbots and agents.",
       "npmPackageName": "@corsair-dev/botpress",
       "authTypes": [
         "api_key"
@@ -1103,7 +1118,7 @@
     {
       "id": "botsonic",
       "displayName": "Botsonic",
-      "description": "Botsonic plugin for Corsair",
+      "description": "No-code AI chatbot builder trained on your content for customer support automation.",
       "npmPackageName": "@corsair-dev/botsonic",
       "authTypes": [
         "api_key"
@@ -1118,7 +1133,7 @@
     {
       "id": "bouncer",
       "displayName": "Bouncer",
-      "description": "Bouncer plugin for Corsair",
+      "description": "Email verification API for validating addresses, reducing bounces, and improving deliverability.",
       "npmPackageName": "@corsair-dev/bouncer",
       "authTypes": [
         "api_key"
@@ -1133,7 +1148,7 @@
     {
       "id": "box",
       "displayName": "Box",
-      "description": "Box plugin for Corsair",
+      "description": "Cloud content management for secure file storage, sharing, and enterprise collaboration.",
       "npmPackageName": "@corsair-dev/box",
       "authTypes": [
         "oauth_2"
@@ -1148,7 +1163,7 @@
     {
       "id": "boxhero",
       "displayName": "BoxHero",
-      "description": "BoxHero plugin for Corsair",
+      "description": "Inventory management app for tracking stock, barcodes, and warehouse item movements.",
       "npmPackageName": "@corsair-dev/boxhero",
       "authTypes": [
         "api_key"
@@ -1163,7 +1178,7 @@
     {
       "id": "brandfetch",
       "displayName": "Brandfetch",
-      "description": "Brandfetch plugin for Corsair",
+      "description": "Brand asset API for logos, colors, fonts, and company visual identity data.",
       "npmPackageName": "@corsair-dev/brandfetch",
       "authTypes": [
         "api_key"
@@ -1178,7 +1193,7 @@
     {
       "id": "breathehr",
       "displayName": "Breathe HR",
-      "description": "Breathe HR plugin for Corsair",
+      "description": "HR software for employee records, leave management, and small business people ops.",
       "npmPackageName": "@corsair-dev/breathehr",
       "authTypes": [
         "api_key"
@@ -1193,7 +1208,7 @@
     {
       "id": "brex",
       "displayName": "Brex",
-      "description": "Brex plugin for Corsair",
+      "description": "Corporate card and spend management platform for startups and growing businesses.",
       "npmPackageName": "@corsair-dev/brex",
       "authTypes": [
         "api_key",
@@ -1209,7 +1224,7 @@
     {
       "id": "brightdata",
       "displayName": "Bright Data",
-      "description": "Bright Data plugin for Corsair",
+      "description": "Web data platform for proxies, scraping, and collecting public internet datasets.",
       "npmPackageName": "@corsair-dev/brightdata",
       "authTypes": [
         "api_key"
@@ -1224,7 +1239,7 @@
     {
       "id": "browseai",
       "displayName": "Browse AI",
-      "description": "Browse AI plugin for Corsair",
+      "description": "No-code web scraping robots for monitoring sites and extracting structured data.",
       "npmPackageName": "@corsair-dev/browseai",
       "authTypes": [
         "api_key"
@@ -1239,7 +1254,7 @@
     {
       "id": "browserless",
       "displayName": "Browserless",
-      "description": "Browserless plugin for Corsair",
+      "description": "Headless browser API for running Puppeteer and Playwright automation in the cloud.",
       "npmPackageName": "@corsair-dev/browserless",
       "authTypes": [
         "api_key"
@@ -1253,8 +1268,8 @@
     },
     {
       "id": "bubble",
-      "displayName": "Bubble (Data API & Workflow API)",
-      "description": "Bubble (Data API & Workflow API) plugin for Corsair",
+      "displayName": "Bubble",
+      "description": "No-code app builder with data and workflow APIs for custom web applications.",
       "npmPackageName": "@corsair-dev/bubble",
       "authTypes": [
         "api_key"
@@ -1268,8 +1283,8 @@
     },
     {
       "id": "bugsnag",
-      "displayName": "BugSnag",
-      "description": "BugSnag plugin for Corsair",
+      "displayName": "Bugsnag",
+      "description": "Error monitoring platform for tracking application crashes and stability across releases.",
       "npmPackageName": "@corsair-dev/bugsnag",
       "authTypes": [
         "api_key"
@@ -1284,7 +1299,7 @@
     {
       "id": "buildkite",
       "displayName": "Buildkite",
-      "description": "Buildkite plugin for Corsair",
+      "description": "Continuous integration platform for running scalable pipelines and software build automation.",
       "npmPackageName": "@corsair-dev/buildkite",
       "authTypes": [
         "api_key"
@@ -1298,8 +1313,8 @@
     },
     {
       "id": "cal",
-      "displayName": "Cal",
-      "description": "Cal plugin for Corsair",
+      "displayName": "Cal.com",
+      "description": "Open scheduling platform for booking meetings, availability, and calendar integrations.",
       "npmPackageName": "@corsair-dev/cal",
       "authTypes": [
         "api_key"
@@ -1314,7 +1329,7 @@
     {
       "id": "calendly",
       "displayName": "Calendly",
-      "description": "Calendly plugin for Corsair",
+      "description": "Scheduling software for sharing booking links and automating meeting coordination.",
       "npmPackageName": "@corsair-dev/calendly",
       "authTypes": [
         "api_key"
@@ -1329,7 +1344,7 @@
     {
       "id": "canva",
       "displayName": "Canva",
-      "description": "Canva plugin for Corsair",
+      "description": "Design platform for creating graphics, presentations, and visual content collaboratively.",
       "npmPackageName": "@corsair-dev/canva",
       "authTypes": [
         "oauth_2"
@@ -1343,8 +1358,8 @@
     },
     {
       "id": "canvas",
-      "displayName": "Canvas",
-      "description": "Canvas plugin for Corsair",
+      "displayName": "Canvas LMS",
+      "description": "Learning management system for courses, assignments, grades, and educational content.",
       "npmPackageName": "@corsair-dev/canvas",
       "authTypes": [
         "api_key",
@@ -1360,7 +1375,7 @@
     {
       "id": "capsulecrm",
       "displayName": "Capsule CRM",
-      "description": "Capsule CRM plugin for Corsair",
+      "description": "Simple CRM for tracking contacts, sales pipelines, and customer relationship history.",
       "npmPackageName": "@corsair-dev/capsulecrm",
       "authTypes": [
         "api_key",
@@ -1374,9 +1389,24 @@
       }
     },
     {
+      "id": "certifier",
+      "displayName": "Certifier",
+      "description": "Digital credential platform for issuing certificates, badges, and verifiable achievements.",
+      "npmPackageName": "@corsair-dev/certifier",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 9,
+        "webhooks": 0,
+        "db": 6
+      }
+    },
+    {
       "id": "chatbotkit",
-      "displayName": "Chatbotkit",
-      "description": "Chatbotkit plugin for Corsair",
+      "displayName": "ChatBotKit",
+      "description": "AI chatbot platform for building conversational agents with custom knowledge bases.",
       "npmPackageName": "@corsair-dev/chatbotkit",
       "authTypes": [
         "api_key"
@@ -1391,7 +1421,7 @@
     {
       "id": "chatfai",
       "displayName": "ChatFAI",
-      "description": "ChatFAI plugin for Corsair",
+      "description": "Character chat platform for creating AI personas and interactive fictional conversations.",
       "npmPackageName": "@corsair-dev/chatfai",
       "authTypes": [
         "api_key"
@@ -1406,7 +1436,7 @@
     {
       "id": "circleci",
       "displayName": "CircleCI",
-      "description": "CircleCI plugin for Corsair",
+      "description": "Continuous integration and delivery platform for automated testing and deployment pipelines.",
       "npmPackageName": "@corsair-dev/circleci",
       "authTypes": [
         "api_key"
@@ -1420,8 +1450,8 @@
     },
     {
       "id": "clickhouse",
-      "displayName": "Clickhouse",
-      "description": "Clickhouse plugin for Corsair",
+      "displayName": "ClickHouse",
+      "description": "Columnar analytics database for fast OLAP queries on large-scale event and log data.",
       "npmPackageName": "@corsair-dev/clickhouse",
       "authTypes": [
         "api_key"
@@ -1436,7 +1466,7 @@
     {
       "id": "clientary",
       "displayName": "Clientary",
-      "description": "Clientary plugin for Corsair",
+      "description": "Client management software for freelancers tracking projects, invoices, and time.",
       "npmPackageName": "@corsair-dev/clientary",
       "authTypes": [
         "api_key"
@@ -1451,7 +1481,7 @@
     {
       "id": "clockify",
       "displayName": "Clockify",
-      "description": "Clockify plugin for Corsair",
+      "description": "Time tracking software for logging hours, projects, teams, and billable work.",
       "npmPackageName": "@corsair-dev/clockify",
       "authTypes": [
         "api_key"
@@ -1466,7 +1496,7 @@
     {
       "id": "cloudflare",
       "displayName": "Cloudflare",
-      "description": "Cloudflare plugin for Corsair",
+      "description": "Edge cloud platform for DNS, CDN, security, Workers, and internet infrastructure services.",
       "npmPackageName": "@corsair-dev/cloudflare",
       "authTypes": [
         "api_key"
@@ -1481,7 +1511,7 @@
     {
       "id": "cloudinary",
       "displayName": "Cloudinary",
-      "description": "Cloudinary plugin for Corsair",
+      "description": "Media management API for uploading, transforming, optimizing, and delivering images and video.",
       "npmPackageName": "@corsair-dev/cloudinary",
       "authTypes": [],
       "defaultAuthType": "api_key",
@@ -1493,8 +1523,8 @@
     },
     {
       "id": "collegefootballdata",
-      "displayName": "CollegeFootballData",
-      "description": "CollegeFootballData plugin for Corsair",
+      "displayName": "College Football Data",
+      "description": "College football statistics API for games, teams, players, and historical NCAA data.",
       "npmPackageName": "@corsair-dev/collegefootballdata",
       "authTypes": [
         "api_key"
@@ -1509,7 +1539,7 @@
     {
       "id": "confluence",
       "displayName": "Confluence",
-      "description": "Confluence plugin for Corsair",
+      "description": "Team wiki and documentation platform for knowledge bases and collaborative page editing.",
       "npmPackageName": "@corsair-dev/confluence",
       "authTypes": [
         "api_key",
@@ -1525,7 +1555,7 @@
     {
       "id": "connecteam",
       "displayName": "Connecteam",
-      "description": "Connecteam plugin for Corsair",
+      "description": "Workforce management app for deskless teams, scheduling, chat, and mobile operations.",
       "npmPackageName": "@corsair-dev/connecteam",
       "authTypes": [
         "api_key"
@@ -1539,8 +1569,8 @@
     },
     {
       "id": "contentfulgraphql",
-      "displayName": "Contentful GraphQL",
-      "description": "Contentful GraphQL plugin for Corsair",
+      "displayName": "Contentful",
+      "description": "Headless CMS for structured content modeling, delivery, and omnichannel publishing via GraphQL.",
       "npmPackageName": "@corsair-dev/contentfulgraphql",
       "authTypes": [
         "api_key"
@@ -1554,8 +1584,8 @@
     },
     {
       "id": "contextsevenmcp",
-      "displayName": "ContextSevenMcp",
-      "description": "ContextSevenMcp plugin for Corsair",
+      "displayName": "Context7",
+      "description": "Documentation context MCP server for injecting up-to-date library docs into AI coding agents.",
       "npmPackageName": "@corsair-dev/contextsevenmcp",
       "authTypes": [
         "api_key"
@@ -1569,8 +1599,8 @@
     },
     {
       "id": "crowterminal",
-      "displayName": "CrowTerminal",
-      "description": "CrowTerminal plugin for Corsair",
+      "displayName": "Crow Terminal",
+      "description": "Financial terminal API for market data, trading tools, and investment research workflows.",
       "npmPackageName": "@corsair-dev/crowterminal",
       "authTypes": [
         "api_key"
@@ -1585,7 +1615,7 @@
     {
       "id": "cursor",
       "displayName": "Cursor",
-      "description": "Cursor plugin for Corsair",
+      "description": "AI-powered code editor integrations for developer workflows and programming assistance tools.",
       "npmPackageName": "@corsair-dev/cursor",
       "authTypes": [
         "api_key"
@@ -1600,7 +1630,7 @@
     {
       "id": "customgpt",
       "displayName": "CustomGPT",
-      "description": "CustomGPT plugin for Corsair",
+      "description": "Platform for building custom ChatGPT-style agents trained on your business content.",
       "npmPackageName": "@corsair-dev/customgpt",
       "authTypes": [
         "api_key"
@@ -1615,7 +1645,7 @@
     {
       "id": "databricks",
       "displayName": "Databricks",
-      "description": "Databricks plugin for Corsair",
+      "description": "Unified data and AI platform for lakehouse analytics, notebooks, and machine learning.",
       "npmPackageName": "@corsair-dev/databricks",
       "authTypes": [
         "api_key",
@@ -1631,7 +1661,7 @@
     {
       "id": "datadog",
       "displayName": "Datadog",
-      "description": "Datadog plugin for Corsair",
+      "description": "Monitoring and observability platform for metrics, logs, traces, and infrastructure alerts.",
       "npmPackageName": "@corsair-dev/datadog",
       "authTypes": [
         "api_key"
@@ -1646,7 +1676,7 @@
     {
       "id": "datarobot",
       "displayName": "DataRobot",
-      "description": "DataRobot plugin for Corsair",
+      "description": "Enterprise AI platform for automated machine learning model building and deployment.",
       "npmPackageName": "@corsair-dev/datarobot",
       "authTypes": [
         "api_key"
@@ -1660,8 +1690,8 @@
     },
     {
       "id": "deepseek",
-      "displayName": "Deepseek",
-      "description": "Deepseek plugin for Corsair",
+      "displayName": "DeepSeek",
+      "description": "AI model provider API for chat completions, reasoning, and code generation tasks.",
       "npmPackageName": "@corsair-dev/deepseek",
       "authTypes": [
         "api_key"
@@ -1675,8 +1705,8 @@
     },
     {
       "id": "devinmcp",
-      "displayName": "DevinMcp",
-      "description": "DevinMcp plugin for Corsair",
+      "displayName": "Devin MCP",
+      "description": "MCP integration for Devin AI software engineering agent capabilities and tooling.",
       "npmPackageName": "@corsair-dev/devinmcp",
       "authTypes": [
         "api_key"
@@ -1691,7 +1721,7 @@
     {
       "id": "diffbot",
       "displayName": "Diffbot",
-      "description": "Diffbot plugin for Corsair",
+      "description": "Knowledge graph and web extraction API for structured data from articles and pages.",
       "npmPackageName": "@corsair-dev/diffbot",
       "authTypes": [
         "api_key"
@@ -1706,7 +1736,7 @@
     {
       "id": "digitalocean",
       "displayName": "DigitalOcean",
-      "description": "DigitalOcean plugin for Corsair",
+      "description": "Cloud infrastructure provider for droplets, Kubernetes, databases, and developer hosting.",
       "npmPackageName": "@corsair-dev/digitalocean",
       "authTypes": [
         "api_key"
@@ -1721,7 +1751,7 @@
     {
       "id": "discord",
       "displayName": "Discord",
-      "description": "Discord plugin for Corsair",
+      "description": "Community chat platform for servers, channels, voice, bots, and real-time group messaging.",
       "npmPackageName": "@corsair-dev/discord",
       "authTypes": [
         "api_key"
@@ -1736,7 +1766,7 @@
     {
       "id": "dockerhub",
       "displayName": "Docker Hub",
-      "description": "Docker Hub plugin for Corsair",
+      "description": "Container registry for storing, sharing, and distributing Docker images and repositories.",
       "npmPackageName": "@corsair-dev/dockerhub",
       "authTypes": [
         "api_key"
@@ -1750,8 +1780,8 @@
     },
     {
       "id": "dodopayments",
-      "displayName": "DodoPayments",
-      "description": "DodoPayments plugin for Corsair",
+      "displayName": "Dodo Payments",
+      "description": "Payment processing platform for subscriptions, checkout, and global merchant transactions.",
       "npmPackageName": "@corsair-dev/dodopayments",
       "authTypes": [
         "api_key"
@@ -1766,7 +1796,7 @@
     {
       "id": "doppler",
       "displayName": "Doppler",
-      "description": "Doppler plugin for Corsair",
+      "description": "Secrets management platform for syncing environment variables across teams and deployments.",
       "npmPackageName": "@corsair-dev/doppler",
       "authTypes": [
         "api_key"
@@ -1780,8 +1810,8 @@
     },
     {
       "id": "dreamstudio",
-      "displayName": "DreamStudio (Stability AI)",
-      "description": "DreamStudio (Stability AI) plugin for Corsair",
+      "displayName": "DreamStudio",
+      "description": "Stability AI image generation service for creating artwork from text prompts.",
       "npmPackageName": "@corsair-dev/dreamstudio",
       "authTypes": [
         "api_key"
@@ -1796,7 +1826,7 @@
     {
       "id": "dripcel",
       "displayName": "Dripcel",
-      "description": "Dripcel plugin for Corsair",
+      "description": "SMS marketing platform for campaigns, automations, and two-way customer text messaging.",
       "npmPackageName": "@corsair-dev/dripcel",
       "authTypes": [
         "api_key"
@@ -1811,7 +1841,7 @@
     {
       "id": "dropbox",
       "displayName": "Dropbox",
-      "description": "Dropbox plugin for Corsair",
+      "description": "Cloud file storage and sync service for sharing documents and collaborating on files.",
       "npmPackageName": "@corsair-dev/dropbox",
       "authTypes": [
         "oauth_2"
@@ -1826,7 +1856,7 @@
     {
       "id": "dropboxsign",
       "displayName": "Dropbox Sign",
-      "description": "Dropbox Sign plugin for Corsair",
+      "description": "E-signature platform for sending, signing, and tracking legally binding document agreements.",
       "npmPackageName": "@corsair-dev/dropboxsign",
       "authTypes": [
         "api_key",
@@ -1842,7 +1872,7 @@
     {
       "id": "dynapictures",
       "displayName": "Dynapictures",
-      "description": "Dynapictures plugin for Corsair",
+      "description": "Dynamic image generation API for personalized visuals, banners, and automated creatives.",
       "npmPackageName": "@corsair-dev/dynapictures",
       "authTypes": [
         "api_key"
@@ -1857,7 +1887,7 @@
     {
       "id": "epicgames",
       "displayName": "Epic Games",
-      "description": "Epic Games plugin for Corsair (Fortnite islands + UE Remote Control)",
+      "description": "Gaming platform APIs for Epic Online Services, accounts, and game backend features.",
       "npmPackageName": "@corsair-dev/epicgames",
       "authTypes": [
         "oauth_2"
@@ -1872,7 +1902,7 @@
     {
       "id": "exa",
       "displayName": "Exa",
-      "description": "Exa plugin for Corsair",
+      "description": "AI-native search API for finding high-quality web content and research results.",
       "npmPackageName": "@corsair-dev/exa",
       "authTypes": [
         "api_key"
@@ -1887,7 +1917,7 @@
     {
       "id": "facebook",
       "displayName": "Facebook",
-      "description": "Facebook plugin for Corsair",
+      "description": "Social media platform APIs for pages, posts, ads, and Meta business integrations.",
       "npmPackageName": "@corsair-dev/facebook",
       "authTypes": [
         "oauth_2"
@@ -1902,7 +1932,7 @@
     {
       "id": "faraday",
       "displayName": "Faraday",
-      "description": "Faraday plugin for Corsair",
+      "description": "Customer prediction platform for propensity scores, personas, and marketing intelligence.",
       "npmPackageName": "@corsair-dev/faraday",
       "authTypes": [
         "api_key"
@@ -1917,7 +1947,7 @@
     {
       "id": "figma",
       "displayName": "Figma",
-      "description": "Figma plugin for Corsair",
+      "description": "Collaborative design tool for UI mockups, prototypes, components, and design system files.",
       "npmPackageName": "@corsair-dev/figma",
       "authTypes": [
         "api_key"
@@ -1931,8 +1961,8 @@
     },
     {
       "id": "filloutforms",
-      "displayName": "FilloutForms",
-      "description": "FilloutForms plugin for Corsair",
+      "displayName": "Fillout",
+      "description": "Form builder for creating advanced surveys, quizzes, and data collection workflows.",
       "npmPackageName": "@corsair-dev/filloutforms",
       "authTypes": [
         "api_key",
@@ -1948,7 +1978,7 @@
     {
       "id": "firecrawl",
       "displayName": "Firecrawl",
-      "description": "Firecrawl plugin for Corsair",
+      "description": "Web scraping API that crawls sites and returns clean markdown or structured page data.",
       "npmPackageName": "@corsair-dev/firecrawl",
       "authTypes": [
         "api_key"
@@ -1962,8 +1992,8 @@
     },
     {
       "id": "fireflies",
-      "displayName": "Fireflies",
-      "description": "Fireflies plugin for Corsair",
+      "displayName": "Fireflies.ai",
+      "description": "AI meeting assistant for recording, transcribing, and summarizing calls and conversations.",
       "npmPackageName": "@corsair-dev/fireflies",
       "authTypes": [
         "api_key"
@@ -1978,7 +2008,7 @@
     {
       "id": "formbricks",
       "displayName": "Formbricks",
-      "description": "Formbricks plugin for Corsair",
+      "description": "Open-source experience management platform for in-app surveys and user feedback collection.",
       "npmPackageName": "@corsair-dev/formbricks",
       "authTypes": [
         "api_key"
@@ -1993,7 +2023,7 @@
     {
       "id": "gemini",
       "displayName": "Gemini",
-      "description": "Gemini plugin for Corsair",
+      "description": "Google multimodal AI API for text, image, and code generation with Gemini models.",
       "npmPackageName": "@corsair-dev/gemini",
       "authTypes": [
         "api_key"
@@ -2007,8 +2037,8 @@
     },
     {
       "id": "github",
-      "displayName": "Github",
-      "description": "Github plugin for Corsair",
+      "displayName": "GitHub",
+      "description": "Code hosting platform for repositories, issues, pull requests, and developer workflows.",
       "npmPackageName": "@corsair-dev/github",
       "authTypes": [
         "api_key",
@@ -2023,8 +2053,8 @@
     },
     {
       "id": "gitlab",
-      "displayName": "Gitlab",
-      "description": "Gitlab plugin for Corsair",
+      "displayName": "GitLab",
+      "description": "DevOps platform for Git repos, CI/CD pipelines, issues, and complete software delivery.",
       "npmPackageName": "@corsair-dev/gitlab",
       "authTypes": [
         "api_key",
@@ -2040,7 +2070,7 @@
     {
       "id": "gmail",
       "displayName": "Gmail",
-      "description": "Gmail plugin for Corsair",
+      "description": "Google email service for sending, reading, organizing messages, labels, and inbox automation.",
       "npmPackageName": "@corsair-dev/gmail",
       "authTypes": [
         "oauth_2"
@@ -2055,7 +2085,7 @@
     {
       "id": "googleaddressvalidation",
       "displayName": "Google Address Validation",
-      "description": "Google Address Validation plugin for Corsair",
+      "description": "Google API for validating, standardizing, and geocoding postal addresses worldwide.",
       "npmPackageName": "@corsair-dev/googleaddressvalidation",
       "authTypes": [
         "api_key"
@@ -2070,7 +2100,7 @@
     {
       "id": "googlebigquery",
       "displayName": "Google BigQuery",
-      "description": "Google BigQuery plugin for Corsair",
+      "description": "Serverless data warehouse for running SQL analytics on massive datasets at scale.",
       "npmPackageName": "@corsair-dev/googlebigquery",
       "authTypes": [
         "oauth_2"
@@ -2084,8 +2114,8 @@
     },
     {
       "id": "googlecalendar",
-      "displayName": "Google calendar",
-      "description": "Google calendar plugin for Corsair",
+      "displayName": "Google Calendar",
+      "description": "Scheduling service for creating events, managing calendars, and checking availability.",
       "npmPackageName": "@corsair-dev/googlecalendar",
       "authTypes": [
         "oauth_2"
@@ -2100,7 +2130,7 @@
     {
       "id": "googlecloudvision",
       "displayName": "Google Cloud Vision",
-      "description": "Google Cloud Vision plugin for Corsair",
+      "description": "Image analysis API for labeling, OCR, face detection, and visual content understanding.",
       "npmPackageName": "@corsair-dev/googlecloudvision",
       "authTypes": [
         "api_key",
@@ -2116,7 +2146,7 @@
     {
       "id": "googledocs",
       "displayName": "Google Docs",
-      "description": "Google Docs plugin for Corsair",
+      "description": "Online document editor for creating, sharing, and collaborating on text documents.",
       "npmPackageName": "@corsair-dev/googledocs",
       "authTypes": [
         "oauth_2"
@@ -2130,8 +2160,8 @@
     },
     {
       "id": "googledrive",
-      "displayName": "Google drive",
-      "description": "Google drive plugin for Corsair",
+      "displayName": "Google Drive",
+      "description": "Cloud file storage for uploading, organizing, sharing, and syncing documents online.",
       "npmPackageName": "@corsair-dev/googledrive",
       "authTypes": [
         "oauth_2"
@@ -2145,8 +2175,8 @@
     },
     {
       "id": "googlemaps",
-      "displayName": "GoogleMaps",
-      "description": "GoogleMaps plugin for Corsair",
+      "displayName": "Google Maps",
+      "description": "Mapping platform for geocoding, directions, places search, and location-based services.",
       "npmPackageName": "@corsair-dev/googlemaps",
       "authTypes": [
         "api_key",
@@ -2162,7 +2192,7 @@
     {
       "id": "googlemeet",
       "displayName": "Google Meet",
-      "description": "Google Meet plugin for Corsair",
+      "description": "Video conferencing service for scheduling and managing online meetings and calls.",
       "npmPackageName": "@corsair-dev/googlemeet",
       "authTypes": [
         "oauth_2"
@@ -2176,8 +2206,8 @@
     },
     {
       "id": "googlesheets",
-      "displayName": "Google sheets",
-      "description": "Google sheets plugin for Corsair",
+      "displayName": "Google Sheets",
+      "description": "Web-based spreadsheets for managing, visualizing, and analyzing data collaboratively online.",
       "npmPackageName": "@corsair-dev/googlesheets",
       "authTypes": [
         "oauth_2"
@@ -2192,7 +2222,7 @@
     {
       "id": "grafana",
       "displayName": "Grafana",
-      "description": "Grafana plugin for Corsair",
+      "description": "Observability platform for dashboards, metrics visualization, and monitoring alert management.",
       "npmPackageName": "@corsair-dev/grafana",
       "authTypes": [
         "api_key"
@@ -2206,8 +2236,8 @@
     },
     {
       "id": "groqcloud",
-      "displayName": "GroqCloud",
-      "description": "GroqCloud plugin for Corsair",
+      "displayName": "Groq",
+      "description": "Fast AI inference API for low-latency LLM chat completions and language model hosting.",
       "npmPackageName": "@corsair-dev/groqcloud",
       "authTypes": [
         "api_key"
@@ -2222,7 +2252,7 @@
     {
       "id": "habitica",
       "displayName": "Habitica",
-      "description": "Habitica plugin for Corsair",
+      "description": "Gamified habit tracker that turns tasks and goals into a role-playing game experience.",
       "npmPackageName": "@corsair-dev/habitica",
       "authTypes": [
         "api_key"
@@ -2236,8 +2266,8 @@
     },
     {
       "id": "hackernews",
-      "displayName": "Hacker news",
-      "description": "Hacker news plugin for Corsair",
+      "displayName": "Hacker News",
+      "description": "Tech news community API for stories, comments, jobs, and startup discussion content.",
       "npmPackageName": "@corsair-dev/hackernews",
       "authTypes": [
         "api_key"
@@ -2252,7 +2282,7 @@
     {
       "id": "harvest",
       "displayName": "Harvest",
-      "description": "Harvest plugin for Corsair",
+      "description": "Time tracking and invoicing software for agencies, freelancers, and project billing.",
       "npmPackageName": "@corsair-dev/harvest",
       "authTypes": [
         "oauth_2"
@@ -2267,7 +2297,7 @@
     {
       "id": "hashnode",
       "displayName": "Hashnode",
-      "description": "Hashnode plugin for Corsair",
+      "description": "Developer blogging platform for publishing articles, newsletters, and technical content.",
       "npmPackageName": "@corsair-dev/hashnode",
       "authTypes": [
         "api_key"
@@ -2281,8 +2311,8 @@
     },
     {
       "id": "here",
-      "displayName": "HERE Technologies",
-      "description": "HERE Technologies plugin for Corsair",
+      "displayName": "HERE",
+      "description": "Location platform for maps, routing, geocoding, and fleet tracking services worldwide.",
       "npmPackageName": "@corsair-dev/here",
       "authTypes": [
         "api_key"
@@ -2297,7 +2327,7 @@
     {
       "id": "heygen",
       "displayName": "HeyGen",
-      "description": "HeyGen plugin for Corsair",
+      "description": "AI video platform for creating avatar videos, translations, and personalized video content.",
       "npmPackageName": "@corsair-dev/heygen",
       "authTypes": [
         "api_key"
@@ -2311,8 +2341,8 @@
     },
     {
       "id": "htmltoimage",
-      "displayName": "HtmlToImage",
-      "description": "HtmlToImage plugin for Corsair",
+      "displayName": "HTML to Image",
+      "description": "Screenshot API for converting HTML, URLs, and templates into PNG or JPEG images.",
       "npmPackageName": "@corsair-dev/htmltoimage",
       "authTypes": [
         "api_key"
@@ -2326,8 +2356,8 @@
     },
     {
       "id": "hubspot",
-      "displayName": "Hubspot",
-      "description": "Hubspot plugin for Corsair",
+      "displayName": "HubSpot",
+      "description": "CRM and marketing platform for contacts, deals, tickets, email, and sales automation.",
       "npmPackageName": "@corsair-dev/hubspot",
       "authTypes": [
         "api_key",
@@ -2343,7 +2373,7 @@
     {
       "id": "huggingface",
       "displayName": "Hugging Face",
-      "description": "Hugging Face plugin for Corsair",
+      "description": "AI community hub for models, datasets, inference APIs, and machine learning deployments.",
       "npmPackageName": "@corsair-dev/huggingface",
       "authTypes": [
         "api_key",
@@ -2359,7 +2389,7 @@
     {
       "id": "imgbb",
       "displayName": "ImgBB",
-      "description": "ImgBB plugin for Corsair",
+      "description": "Free image hosting service for uploading, storing, and sharing images via direct links.",
       "npmPackageName": "@corsair-dev/imgbb",
       "authTypes": [
         "api_key"
@@ -2373,8 +2403,8 @@
     },
     {
       "id": "insightoai",
-      "displayName": "Insighto.ai",
-      "description": "Insighto.ai plugin for Corsair",
+      "displayName": "Insighto AI",
+      "description": "Conversational analytics platform for AI chatbots with voice and customer insight tools.",
       "npmPackageName": "@corsair-dev/insightoai",
       "authTypes": [
         "api_key",
@@ -2390,7 +2420,7 @@
     {
       "id": "instagram",
       "displayName": "Instagram",
-      "description": "Instagram plugin for Corsair",
+      "description": "Social media platform for photos, reels, stories, and business content publishing via Meta APIs.",
       "npmPackageName": "@corsair-dev/instagram",
       "authTypes": [
         "oauth_2"
@@ -2405,7 +2435,7 @@
     {
       "id": "intercom",
       "displayName": "Intercom",
-      "description": "Intercom plugin for Corsair",
+      "description": "Customer messaging platform for support chat, product tours, and user engagement.",
       "npmPackageName": "@corsair-dev/intercom",
       "authTypes": [
         "api_key"
@@ -2420,7 +2450,7 @@
     {
       "id": "jigsawstack",
       "displayName": "JigsawStack",
-      "description": "JigsawStack plugin for Corsair",
+      "description": "AI utility API collection for OCR, translation, sentiment, and common ML microservices.",
       "npmPackageName": "@corsair-dev/jigsawstack",
       "authTypes": [
         "api_key"
@@ -2435,7 +2465,7 @@
     {
       "id": "jira",
       "displayName": "Jira",
-      "description": "Jira plugin for Corsair",
+      "description": "Issue and project tracking tool for agile sprints, bugs, epics, and team workflows.",
       "npmPackageName": "@corsair-dev/jira",
       "authTypes": [
         "api_key"
@@ -2450,7 +2480,7 @@
     {
       "id": "kaggle",
       "displayName": "Kaggle",
-      "description": "Kaggle plugin for Corsair",
+      "description": "Data science platform for datasets, notebooks, competitions, and machine learning models.",
       "npmPackageName": "@corsair-dev/kaggle",
       "authTypes": [
         "api_key"
@@ -2465,7 +2495,7 @@
     {
       "id": "linear",
       "displayName": "Linear",
-      "description": "Linear plugin for Corsair",
+      "description": "Issue tracking tool for software teams managing projects, cycles, and product roadmaps.",
       "npmPackageName": "@corsair-dev/linear",
       "authTypes": [
         "api_key",
@@ -2481,7 +2511,7 @@
     {
       "id": "linkedin",
       "displayName": "LinkedIn",
-      "description": "LinkedIn plugin for Corsair",
+      "description": "Professional network for profiles, company pages, posts, and B2B social marketing.",
       "npmPackageName": "@corsair-dev/linkedin",
       "authTypes": [
         "oauth_2"
@@ -2496,7 +2526,7 @@
     {
       "id": "loyverse",
       "displayName": "Loyverse",
-      "description": "Loyverse plugin for Corsair",
+      "description": "Point-of-sale system for retail stores, inventory, receipts, and customer loyalty programs.",
       "npmPackageName": "@corsair-dev/loyverse",
       "authTypes": [
         "oauth_2"
@@ -2510,8 +2540,8 @@
     },
     {
       "id": "mailboxlayer",
-      "displayName": "mailboxlayer email validation",
-      "description": "mailboxlayer email validation plugin for Corsair",
+      "displayName": "MailboxLayer",
+      "description": "Email verification API for checking address validity, format, and deliverability scores.",
       "npmPackageName": "@corsair-dev/mailboxlayer",
       "authTypes": [
         "api_key"
@@ -2526,7 +2556,7 @@
     {
       "id": "mailchimp",
       "displayName": "Mailchimp",
-      "description": "Mailchimp plugin for Corsair",
+      "description": "Email marketing platform for audiences, campaigns, automations, and audience analytics.",
       "npmPackageName": "@corsair-dev/mailchimp",
       "authTypes": [
         "api_key",
@@ -2542,7 +2572,7 @@
     {
       "id": "mailtrap",
       "displayName": "Mailtrap",
-      "description": "Mailtrap plugin for Corsair",
+      "description": "Email testing and delivery platform for safe staging inboxes and transactional sending.",
       "npmPackageName": "@corsair-dev/mailtrap",
       "authTypes": [
         "api_key"
@@ -2556,8 +2586,8 @@
     },
     {
       "id": "marketstack",
-      "displayName": "Marketstack stock market data",
-      "description": "Marketstack stock market data plugin for Corsair",
+      "displayName": "Marketstack",
+      "description": "Stock market data API for real-time and historical end-of-day exchange prices worldwide.",
       "npmPackageName": "@corsair-dev/marketstack",
       "authTypes": [
         "api_key"
@@ -2571,8 +2601,8 @@
     },
     {
       "id": "merriamwebsterdict",
-      "displayName": "Merriam-Webster Dictionary",
-      "description": "Merriam-Webster Dictionary plugin for Corsair",
+      "displayName": "Merriam-Webster",
+      "description": "Dictionary API for definitions, thesaurus entries, and English language reference data.",
       "npmPackageName": "@corsair-dev/merriamwebsterdict",
       "authTypes": [
         "api_key"
@@ -2586,8 +2616,8 @@
     },
     {
       "id": "monday",
-      "displayName": "Monday",
-      "description": "Monday plugin for Corsair",
+      "displayName": "Monday.com",
+      "description": "Work operating system for boards, workflows, automations, and cross-team project tracking.",
       "npmPackageName": "@corsair-dev/monday",
       "authTypes": [
         "api_key"
@@ -2602,7 +2632,7 @@
     {
       "id": "neon",
       "displayName": "Neon",
-      "description": "Neon plugin for Corsair",
+      "description": "Serverless Postgres platform for branching databases, scaling, and modern app backends.",
       "npmPackageName": "@corsair-dev/neon",
       "authTypes": [
         "api_key"
@@ -2617,7 +2647,7 @@
     {
       "id": "nextdns",
       "displayName": "NextDNS",
-      "description": "NextDNS plugin for Corsair",
+      "description": "DNS security service for blocking ads, trackers, and malware at the network level.",
       "npmPackageName": "@corsair-dev/nextdns",
       "authTypes": [
         "api_key"
@@ -2632,7 +2662,7 @@
     {
       "id": "notion",
       "displayName": "Notion",
-      "description": "Notion plugin for Corsair",
+      "description": "All-in-one workspace for notes, databases, wikis, tasks, and team documentation.",
       "npmPackageName": "@corsair-dev/notion",
       "authTypes": [
         "api_key",
@@ -2648,7 +2678,7 @@
     {
       "id": "ocrspace",
       "displayName": "OCR.space",
-      "description": "OCR.space plugin for Corsair",
+      "description": "Optical character recognition API for extracting text from images and scanned documents.",
       "npmPackageName": "@corsair-dev/ocrspace",
       "authTypes": [
         "api_key"
@@ -2662,8 +2692,8 @@
     },
     {
       "id": "ocrwebservice",
-      "displayName": "OcrWebService",
-      "description": "OcrWebService plugin for Corsair",
+      "displayName": "OCR Web Service",
+      "description": "Cloud OCR service for converting PDFs and images into searchable text content.",
       "npmPackageName": "@corsair-dev/ocrwebservice",
       "authTypes": [
         "api_key"
@@ -2678,7 +2708,7 @@
     {
       "id": "ollama",
       "displayName": "Ollama",
-      "description": "Ollama plugin for Corsair",
+      "description": "Local LLM runtime API for running open-source language models on your own infrastructure.",
       "npmPackageName": "@corsair-dev/ollama",
       "authTypes": [
         "api_key",
@@ -2693,8 +2723,8 @@
     },
     {
       "id": "onedrive",
-      "displayName": "Onedrive",
-      "description": "onedrive plugin for Corsair",
+      "displayName": "OneDrive",
+      "description": "Microsoft cloud storage for files, folders, sharing, and Office document synchronization.",
       "npmPackageName": "@corsair-dev/onedrive",
       "authTypes": [
         "oauth_2"
@@ -2708,8 +2738,8 @@
     },
     {
       "id": "onepassword",
-      "displayName": "OnePassword",
-      "description": "OnePassword plugin for Corsair",
+      "displayName": "1Password",
+      "description": "Password manager for secure vaults, item storage, and team credential management.",
       "npmPackageName": "@corsair-dev/onepassword",
       "authTypes": [
         "api_key"
@@ -2723,8 +2753,8 @@
     },
     {
       "id": "openai",
-      "displayName": "Openai",
-      "description": "Openai plugin for Corsair",
+      "displayName": "OpenAI",
+      "description": "AI platform API for GPT chat completions, embeddings, images, and assistant workflows.",
       "npmPackageName": "@corsair-dev/openai",
       "authTypes": [
         "api_key"
@@ -2739,7 +2769,7 @@
     {
       "id": "openrouter",
       "displayName": "OpenRouter",
-      "description": "OpenRouter plugin for Corsair — chat completions, generations, credits, models, and more",
+      "description": "Unified LLM router API for accessing many AI models through one endpoint.",
       "npmPackageName": "@corsair-dev/openrouter",
       "authTypes": [
         "api_key"
@@ -2753,8 +2783,8 @@
     },
     {
       "id": "openweathermap",
-      "displayName": "Openweathermap",
-      "description": "Openweathermap plugin for Corsair",
+      "displayName": "OpenWeatherMap",
+      "description": "Weather data API for forecasts, current conditions, and historical climate information.",
       "npmPackageName": "@corsair-dev/openweathermap",
       "authTypes": [
         "api_key"
@@ -2769,7 +2799,7 @@
     {
       "id": "oura",
       "displayName": "Oura",
-      "description": "Oura plugin for Corsair",
+      "description": "Wearable health platform API for sleep, readiness, activity, and wellness ring data.",
       "npmPackageName": "@corsair-dev/oura",
       "authTypes": [
         "api_key"
@@ -2784,7 +2814,7 @@
     {
       "id": "outlook",
       "displayName": "Outlook",
-      "description": "Outlook plugin for Corsair",
+      "description": "Microsoft email and calendar service for messages, events, contacts, and scheduling.",
       "npmPackageName": "@corsair-dev/outlook",
       "authTypes": [
         "oauth_2"
@@ -2798,8 +2828,8 @@
     },
     {
       "id": "pagerduty",
-      "displayName": "Pagerduty",
-      "description": "Pagerduty plugin for Corsair",
+      "displayName": "PagerDuty",
+      "description": "Incident response platform for on-call schedules, alerts, and operational reliability workflows.",
       "npmPackageName": "@corsair-dev/pagerduty",
       "authTypes": [
         "api_key"
@@ -2814,7 +2844,7 @@
     {
       "id": "parseur",
       "displayName": "Parseur",
-      "description": "Parseur plugin for Corsair",
+      "description": "Document parsing service that extracts structured data from emails and PDF attachments.",
       "npmPackageName": "@corsair-dev/parseur",
       "authTypes": [
         "api_key"
@@ -2829,7 +2859,7 @@
     {
       "id": "pdfmonkey",
       "displayName": "PDFMonkey",
-      "description": "PDFMonkey plugin for Corsair",
+      "description": "PDF generation API for creating documents from HTML templates and dynamic data.",
       "npmPackageName": "@corsair-dev/pdfmonkey",
       "authTypes": [
         "api_key"
@@ -2843,8 +2873,8 @@
     },
     {
       "id": "perplexityai",
-      "displayName": "PerplexityAi",
-      "description": "PerplexityAi plugin for Corsair",
+      "displayName": "Perplexity",
+      "description": "AI search and answer API for grounded responses with web citations and research.",
       "npmPackageName": "@corsair-dev/perplexityai",
       "authTypes": [
         "api_key"
@@ -2859,7 +2889,7 @@
     {
       "id": "pinecone",
       "displayName": "Pinecone",
-      "description": "Pinecone plugin for Corsair",
+      "description": "Vector database for semantic search, embeddings storage, and retrieval-augmented AI applications.",
       "npmPackageName": "@corsair-dev/pinecone",
       "authTypes": [
         "api_key"
@@ -2873,8 +2903,8 @@
     },
     {
       "id": "posthog",
-      "displayName": "Posthog",
-      "description": "Posthog plugin for Corsair",
+      "displayName": "PostHog",
+      "description": "Product analytics platform for event tracking, feature flags, session replay, and experiments.",
       "npmPackageName": "@corsair-dev/posthog",
       "authTypes": [
         "api_key"
@@ -2889,7 +2919,7 @@
     {
       "id": "razorpay",
       "displayName": "Razorpay",
-      "description": "Razorpay plugin for Corsair",
+      "description": "Payment gateway for accepting online payments, subscriptions, and payouts in India.",
       "npmPackageName": "@corsair-dev/razorpay",
       "authTypes": [
         "api_key"
@@ -2904,7 +2934,7 @@
     {
       "id": "reddit",
       "displayName": "Reddit",
-      "description": "Reddit plugin for Corsair",
+      "description": "Social news platform for subreddits, posts, comments, moderation, and community discussions.",
       "npmPackageName": "@corsair-dev/reddit",
       "authTypes": [
         "api_key"
@@ -2919,7 +2949,7 @@
     {
       "id": "removebg",
       "displayName": "remove.bg",
-      "description": "remove.bg plugin for Corsair",
+      "description": "Background removal API for automatically cutting out subjects from photos and images.",
       "npmPackageName": "@corsair-dev/removebg",
       "authTypes": [
         "api_key"
@@ -2934,7 +2964,7 @@
     {
       "id": "resend",
       "displayName": "Resend",
-      "description": "Resend plugin for Corsair",
+      "description": "Developer email API for sending transactional messages, broadcasts, and deliverability tools.",
       "npmPackageName": "@corsair-dev/resend",
       "authTypes": [
         "api_key"
@@ -2949,7 +2979,7 @@
     {
       "id": "retailed",
       "displayName": "Retailed",
-      "description": "Retailed plugin for Corsair",
+      "description": "Retail data API for product pricing, availability, and e-commerce market intelligence.",
       "npmPackageName": "@corsair-dev/retailed",
       "authTypes": [
         "api_key",
@@ -2965,7 +2995,7 @@
     {
       "id": "salesforce",
       "displayName": "Salesforce",
-      "description": "Salesforce plugin for Corsair",
+      "description": "Enterprise CRM for leads, accounts, opportunities, service cases, and sales automation.",
       "npmPackageName": "@corsair-dev/salesforce",
       "authTypes": [
         "api_key",
@@ -2981,7 +3011,7 @@
     {
       "id": "sapsuccessfactors",
       "displayName": "SAP SuccessFactors",
-      "description": "SAP SuccessFactors plugin for Corsair",
+      "description": "Cloud HR suite for employee records, recruiting, performance, and workforce management.",
       "npmPackageName": "@corsair-dev/sapsuccessfactors",
       "authTypes": [
         "api_key",
@@ -2997,7 +3027,7 @@
     {
       "id": "scrapegraphai",
       "displayName": "ScrapeGraphAI",
-      "description": "ScrapeGraphAI plugin for Corsair",
+      "description": "AI-powered web scraping API that extracts structured data using natural language prompts.",
       "npmPackageName": "@corsair-dev/scrapegraphai",
       "authTypes": [
         "api_key"
@@ -3011,8 +3041,8 @@
     },
     {
       "id": "securitytrails",
-      "displayName": "Securitytrails",
-      "description": "Securitytrails plugin for Corsair",
+      "displayName": "SecurityTrails",
+      "description": "DNS and domain intelligence API for historical records, subdomains, and security research.",
       "npmPackageName": "@corsair-dev/securitytrails",
       "authTypes": [
         "api_key"
@@ -3026,8 +3056,8 @@
     },
     {
       "id": "sendgrid",
-      "displayName": "SendGrid v3",
-      "description": "SendGrid v3 plugin for Corsair (100 REST endpoints)",
+      "displayName": "SendGrid",
+      "description": "Email delivery platform for transactional mail, marketing campaigns, and sender reputation tools.",
       "npmPackageName": "@corsair-dev/sendgrid",
       "authTypes": [
         "api_key"
@@ -3042,7 +3072,7 @@
     {
       "id": "sentry",
       "displayName": "Sentry",
-      "description": "Sentry plugin for Corsair",
+      "description": "Application monitoring for error tracking, performance tracing, and release health insights.",
       "npmPackageName": "@corsair-dev/sentry",
       "authTypes": [
         "api_key"
@@ -3056,8 +3086,8 @@
     },
     {
       "id": "serpapi",
-      "displayName": "Serpapi",
-      "description": "Serpapi plugin for Corsair",
+      "displayName": "SerpApi",
+      "description": "Search engine results API for Google, Bing, and other SERP scraping at scale.",
       "npmPackageName": "@corsair-dev/serpapi",
       "authTypes": [
         "api_key"
@@ -3071,8 +3101,8 @@
     },
     {
       "id": "sharepoint",
-      "displayName": "Sharepoint",
-      "description": "Sharepoint plugin for Corsair",
+      "displayName": "SharePoint",
+      "description": "Microsoft collaboration platform for document libraries, sites, lists, and intranet content.",
       "npmPackageName": "@corsair-dev/sharepoint",
       "authTypes": [
         "oauth_2"
@@ -3087,7 +3117,7 @@
     {
       "id": "slack",
       "displayName": "Slack",
-      "description": "Slack plugin for Corsair",
+      "description": "Team messaging platform for channels, direct messages, files, and workplace collaboration.",
       "npmPackageName": "@corsair-dev/slack",
       "authTypes": [
         "api_key",
@@ -3103,7 +3133,7 @@
     {
       "id": "sourcegraph",
       "displayName": "Sourcegraph",
-      "description": "Sourcegraph plugin for Corsair",
+      "description": "Code intelligence platform for searching, navigating, and understanding large codebases.",
       "npmPackageName": "@corsair-dev/sourcegraph",
       "authTypes": [
         "api_key"
@@ -3118,7 +3148,7 @@
     {
       "id": "spotify",
       "displayName": "Spotify",
-      "description": "Spotify plugin for Corsair",
+      "description": "Music streaming platform for playlists, tracks, albums, artists, and listening data APIs.",
       "npmPackageName": "@corsair-dev/spotify",
       "authTypes": [
         "api_key",
@@ -3134,7 +3164,7 @@
     {
       "id": "strava",
       "displayName": "Strava",
-      "description": "Strava plugin for Corsair",
+      "description": "Fitness tracking network for runs, rides, activities, segments, and athlete social data.",
       "npmPackageName": "@corsair-dev/strava",
       "authTypes": [
         "oauth_2"
@@ -3149,7 +3179,7 @@
     {
       "id": "streamtime",
       "displayName": "Streamtime",
-      "description": "Streamtime plugin for Corsair",
+      "description": "Job management software for creative agencies tracking projects, schedules, and profitability.",
       "npmPackageName": "@corsair-dev/streamtime",
       "authTypes": [
         "api_key"
@@ -3164,7 +3194,7 @@
     {
       "id": "stripe",
       "displayName": "Stripe",
-      "description": "Stripe plugin for Corsair",
+      "description": "Payment infrastructure for accepting charges, subscriptions, invoices, and online checkout flows.",
       "npmPackageName": "@corsair-dev/stripe",
       "authTypes": [
         "api_key",
@@ -3179,8 +3209,8 @@
     },
     {
       "id": "studiobyai21labs",
-      "displayName": "StudioByAI21Labs",
-      "description": "StudioByAI21Labs plugin for Corsair",
+      "displayName": "ElevenLabs Studio",
+      "description": "AI audio studio for voice generation, dubbing, and long-form spoken content production.",
       "npmPackageName": "@corsair-dev/studiobyai21labs",
       "authTypes": [
         "api_key"
@@ -3195,7 +3225,7 @@
     {
       "id": "supabase",
       "displayName": "Supabase",
-      "description": "Supabase plugin for Corsair",
+      "description": "Open-source Firebase alternative with Postgres, auth, storage, and realtime backend services.",
       "npmPackageName": "@corsair-dev/supabase",
       "authTypes": [
         "api_key",
@@ -3211,7 +3241,7 @@
     {
       "id": "synthflowai",
       "displayName": "Synthflow AI",
-      "description": "Synthflow AI plugin for Corsair",
+      "description": "Voice AI platform for building phone agents, call automation, and conversational IVR flows.",
       "npmPackageName": "@corsair-dev/synthflowai",
       "authTypes": [
         "api_key"
@@ -3226,7 +3256,7 @@
     {
       "id": "tally",
       "displayName": "Tally",
-      "description": "Tally plugin for Corsair",
+      "description": "Simple form builder for surveys, signup flows, and collecting responses without code.",
       "npmPackageName": "@corsair-dev/tally",
       "authTypes": [
         "api_key"
@@ -3241,7 +3271,7 @@
     {
       "id": "tavily",
       "displayName": "Tavily",
-      "description": "Tavily plugin for Corsair",
+      "description": "Search API optimized for AI agents needing fast, relevant web research results.",
       "npmPackageName": "@corsair-dev/tavily",
       "authTypes": [
         "api_key"
@@ -3255,8 +3285,8 @@
     },
     {
       "id": "tavilymcp",
-      "displayName": "TavilyMcp",
-      "description": "TavilyMcp plugin for Corsair",
+      "displayName": "Tavily MCP",
+      "description": "MCP server exposing Tavily web search tools for AI agent research workflows.",
       "npmPackageName": "@corsair-dev/tavilymcp",
       "authTypes": [
         "api_key"
@@ -3271,7 +3301,7 @@
     {
       "id": "teams",
       "displayName": "Microsoft Teams",
-      "description": "Microsoft Teams plugin for Corsair",
+      "description": "Workplace collaboration hub for chat, meetings, channels, and Microsoft 365 team communication.",
       "npmPackageName": "@corsair-dev/teams",
       "authTypes": [
         "oauth_2"
@@ -3286,7 +3316,7 @@
     {
       "id": "telegram",
       "displayName": "Telegram",
-      "description": "Telegram plugin for Corsair",
+      "description": "Messaging platform for bots, channels, groups, and programmatic chat automation.",
       "npmPackageName": "@corsair-dev/telegram",
       "authTypes": [
         "api_key",
@@ -3302,7 +3332,7 @@
     {
       "id": "textrazor",
       "displayName": "TextRazor",
-      "description": "TextRazor plugin for Corsair",
+      "description": "Natural language processing API for entity extraction, classification, and text analysis.",
       "npmPackageName": "@corsair-dev/textrazor",
       "authTypes": [
         "api_key"
@@ -3317,7 +3347,7 @@
     {
       "id": "ticktick",
       "displayName": "TickTick",
-      "description": "TickTick plugin for Corsair",
+      "description": "Task and habit manager for to-do lists, calendars, reminders, and personal productivity.",
       "npmPackageName": "@corsair-dev/ticktick",
       "authTypes": [
         "oauth_2"
@@ -3331,8 +3361,8 @@
     },
     {
       "id": "timecamp",
-      "displayName": "Timecamp",
-      "description": "Timecamp plugin for Corsair",
+      "displayName": "TimeCamp",
+      "description": "Automatic time tracking software for projects, attendance, invoicing, and team productivity.",
       "npmPackageName": "@corsair-dev/timecamp",
       "authTypes": [
         "api_key"
@@ -3347,7 +3377,7 @@
     {
       "id": "timelink",
       "displayName": "Timelink",
-      "description": "Timelink plugin for Corsair",
+      "description": "Scheduling and appointment booking platform for service businesses and calendar coordination.",
       "npmPackageName": "@corsair-dev/timelink",
       "authTypes": [
         "api_key"
@@ -3360,9 +3390,24 @@
       }
     },
     {
+      "id": "tinyurl",
+      "displayName": "TinyURL",
+      "description": "URL shortening service for creating compact links and tracking click analytics.",
+      "npmPackageName": "@corsair-dev/tinyurl",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 2,
+        "webhooks": 0,
+        "db": 1
+      }
+    },
+    {
       "id": "tisane",
       "displayName": "Tisane",
-      "description": "Tisane plugin for Corsair",
+      "description": "Text moderation API for detecting toxicity, spam, and policy violations in user content.",
       "npmPackageName": "@corsair-dev/tisane",
       "authTypes": [
         "api_key"
@@ -3377,7 +3422,7 @@
     {
       "id": "todoist",
       "displayName": "Todoist",
-      "description": "Todoist plugin for Corsair",
+      "description": "Task management app for projects, due dates, priorities, and personal or team to-do lists.",
       "npmPackageName": "@corsair-dev/todoist",
       "authTypes": [
         "api_key"
@@ -3391,8 +3436,8 @@
     },
     {
       "id": "toggl",
-      "displayName": "Toggl",
-      "description": "Toggl plugin for Corsair",
+      "displayName": "Toggl Track",
+      "description": "Time tracking tool for logging work hours, projects, reports, and team billable time.",
       "npmPackageName": "@corsair-dev/toggl",
       "authTypes": [
         "api_key"
@@ -3407,7 +3452,7 @@
     {
       "id": "trello",
       "displayName": "Trello",
-      "description": "Trello plugin for Corsair",
+      "description": "Kanban board tool for organizing tasks, cards, lists, and lightweight project management.",
       "npmPackageName": "@corsair-dev/trello",
       "authTypes": [
         "api_key"
@@ -3421,8 +3466,8 @@
     },
     {
       "id": "twentyonerisk",
-      "displayName": "TwentyOneRisk",
-      "description": "TwentyOneRisk plugin for Corsair",
+      "displayName": "TwentyOne Risk",
+      "description": "Risk intelligence platform for compliance screening, fraud detection, and vendor due diligence.",
       "npmPackageName": "@corsair-dev/twentyonerisk",
       "authTypes": [
         "api_key"
@@ -3437,7 +3482,7 @@
     {
       "id": "twilio",
       "displayName": "Twilio",
-      "description": "Twilio plugin for Corsair",
+      "description": "Communications API for SMS, voice calls, WhatsApp messaging, and programmable telephony.",
       "npmPackageName": "@corsair-dev/twilio",
       "authTypes": [
         "api_key"
@@ -3451,8 +3496,8 @@
     },
     {
       "id": "twitter",
-      "displayName": "Twitter",
-      "description": "Twitter plugin for Corsair",
+      "displayName": "X (Twitter)",
+      "description": "Social media platform for posts, timelines, users, and public conversation data via X API.",
       "npmPackageName": "@corsair-dev/twitter",
       "authTypes": [
         "oauth_2"
@@ -3467,7 +3512,7 @@
     {
       "id": "twitterapiio",
       "displayName": "TwitterAPI.io",
-      "description": "TwitterAPI.io plugin for Corsair",
+      "description": "Third-party X/Twitter data API for tweets, users, search, and social media analytics.",
       "npmPackageName": "@corsair-dev/twitterapiio",
       "authTypes": [
         "api_key"
@@ -3482,7 +3527,7 @@
     {
       "id": "twochat",
       "displayName": "TwoChat",
-      "description": "TwoChat plugin for Corsair",
+      "description": "WhatsApp Business API platform for messaging automation and customer chat workflows.",
       "npmPackageName": "@corsair-dev/twochat",
       "authTypes": [
         "api_key"
@@ -3497,7 +3542,7 @@
     {
       "id": "typeform",
       "displayName": "Typeform",
-      "description": "Typeform plugin for Corsair",
+      "description": "Conversational form builder for surveys, quizzes, lead capture, and interactive questionnaires.",
       "npmPackageName": "@corsair-dev/typeform",
       "authTypes": [
         "oauth_2"
@@ -3511,8 +3556,8 @@
     },
     {
       "id": "unione",
-      "displayName": "Unione",
-      "description": "Unione plugin for Corsair",
+      "displayName": "UniOne",
+      "description": "Transactional email service for sending bulk mail, templates, and deliverability management.",
       "npmPackageName": "@corsair-dev/unione",
       "authTypes": [
         "api_key"
@@ -3526,8 +3571,8 @@
     },
     {
       "id": "uniswapapi",
-      "displayName": "Uniswap Trading API",
-      "description": "Uniswap Trading API plugin for Corsair",
+      "displayName": "Uniswap",
+      "description": "Decentralized exchange protocol API for token swaps, pools, and on-chain liquidity data.",
       "npmPackageName": "@corsair-dev/uniswapapi",
       "authTypes": [
         "api_key"
@@ -3542,7 +3587,7 @@
     {
       "id": "vapi",
       "displayName": "Vapi",
-      "description": "Vapi plugin for Corsair",
+      "description": "Voice AI platform for building phone call agents with LLMs and speech recognition.",
       "npmPackageName": "@corsair-dev/vapi",
       "authTypes": [
         "api_key"
@@ -3557,7 +3602,7 @@
     {
       "id": "vercel",
       "displayName": "Vercel",
-      "description": "Vercel plugin for Corsair",
+      "description": "Frontend cloud platform for deploying sites, serverless functions, and edge web applications.",
       "npmPackageName": "@corsair-dev/vercel",
       "authTypes": [
         "api_key"
@@ -3572,7 +3617,7 @@
     {
       "id": "vestaboard",
       "displayName": "Vestaboard",
-      "description": "Vestaboard plugin for Corsair",
+      "description": "Split-flap display API for sending messages to mechanical message boards and signage.",
       "npmPackageName": "@corsair-dev/vestaboard",
       "authTypes": [
         "api_key"
@@ -3587,7 +3632,7 @@
     {
       "id": "wakatime",
       "displayName": "WakaTime",
-      "description": "WakaTime plugin for Corsair",
+      "description": "Developer time tracker for coding activity, project stats, and programming productivity metrics.",
       "npmPackageName": "@corsair-dev/wakatime",
       "authTypes": [
         "api_key"
@@ -3602,7 +3647,7 @@
     {
       "id": "webflow",
       "displayName": "Webflow",
-      "description": "Webflow plugin for Corsair",
+      "description": "Visual web design platform for building, hosting, and managing responsive marketing sites.",
       "npmPackageName": "@corsair-dev/webflow",
       "authTypes": [
         "api_key",
@@ -3618,7 +3663,7 @@
     {
       "id": "webvizio",
       "displayName": "Webvizio",
-      "description": "Webvizio plugin for Corsair",
+      "description": "Website feedback tool for visual bug reports, annotations, and client review workflows.",
       "npmPackageName": "@corsair-dev/webvizio",
       "authTypes": [
         "api_key"
@@ -3632,7 +3677,7 @@
     {
       "id": "whatsapp",
       "displayName": "WhatsApp",
-      "description": "WhatsApp plugin for Corsair",
+      "description": "Messaging platform API for business conversations, templates, media, and customer notifications.",
       "npmPackageName": "@corsair-dev/whatsapp",
       "authTypes": [
         "api_key"
@@ -3646,8 +3691,8 @@
     },
     {
       "id": "witai",
-      "displayName": "WitAi",
-      "description": "WitAi plugin for Corsair",
+      "displayName": "Wit.ai",
+      "description": "Natural language understanding platform for intent detection and conversational app building.",
       "npmPackageName": "@corsair-dev/witai",
       "authTypes": [
         "api_key"
@@ -3662,7 +3707,7 @@
     {
       "id": "wiza",
       "displayName": "Wiza",
-      "description": "Wiza plugin for Corsair",
+      "description": "LinkedIn prospecting tool for finding verified emails and exporting lead contact lists.",
       "npmPackageName": "@corsair-dev/wiza",
       "authTypes": [
         "api_key"
@@ -3677,7 +3722,7 @@
     {
       "id": "workday",
       "displayName": "Workday",
-      "description": "Workday plugin for Corsair",
+      "description": "Enterprise HR and finance cloud suite for workers, payroll, and organizational data.",
       "npmPackageName": "@corsair-dev/workday",
       "authTypes": [
         "oauth_2"
@@ -3692,7 +3737,7 @@
     {
       "id": "workiom",
       "displayName": "Workiom",
-      "description": "Workiom plugin for Corsair",
+      "description": "No-code work management platform combining databases, automations, and team workflows.",
       "npmPackageName": "@corsair-dev/workiom",
       "authTypes": [
         "api_key"
@@ -3706,8 +3751,8 @@
     },
     {
       "id": "worldnewsapi",
-      "displayName": "WorldNewsApi",
-      "description": "WorldNewsApi plugin for Corsair",
+      "displayName": "World News API",
+      "description": "Global news aggregation API for headlines, articles, and searchable current events data.",
       "npmPackageName": "@corsair-dev/worldnewsapi",
       "authTypes": [
         "api_key"
@@ -3721,8 +3766,8 @@
     },
     {
       "id": "xquik",
-      "displayName": "Search tweets, inspect users, manage Xquik webhooks, upload media, and run X actions from Corsair",
-      "description": "Search tweets, inspect users, manage Xquik webhooks, upload media, and run X actions from Corsair",
+      "displayName": "Xquik",
+      "description": "X/Twitter automation API for searching tweets, managing webhooks, and social account actions.",
       "npmPackageName": "@corsair-dev/xquik",
       "authTypes": [
         "api_key"
@@ -3736,8 +3781,8 @@
     },
     {
       "id": "youcom",
-      "displayName": "You.com Web Search",
-      "description": "You.com Web Search plugin for Corsair",
+      "displayName": "You.com",
+      "description": "AI search engine API for web answers, citations, and research-oriented query results.",
       "npmPackageName": "@corsair-dev/youcom",
       "authTypes": [
         "api_key"
@@ -3751,8 +3796,8 @@
     },
     {
       "id": "youtube",
-      "displayName": "Youtube",
-      "description": "Youtube plugin for Corsair",
+      "displayName": "YouTube",
+      "description": "Video platform for uploading, managing channels, playlists, analytics, and content metadata.",
       "npmPackageName": "@corsair-dev/youtube",
       "authTypes": [
         "oauth_2"
@@ -3767,7 +3812,7 @@
     {
       "id": "zendesk",
       "displayName": "Zendesk",
-      "description": "Zendesk plugin for Corsair",
+      "description": "Customer support platform for tickets, help centers, chat, and service team workflows.",
       "npmPackageName": "@corsair-dev/zendesk",
       "authTypes": [
         "api_key"
@@ -3782,7 +3827,7 @@
     {
       "id": "zohomail",
       "displayName": "Zoho Mail",
-      "description": "Zoho Mail plugin for Corsair",
+      "description": "Business email service for sending, reading, organizing messages, and mailbox management.",
       "npmPackageName": "@corsair-dev/zohomail",
       "authTypes": [
         "oauth_2"
@@ -3797,7 +3842,7 @@
     {
       "id": "zoom",
       "displayName": "Zoom",
-      "description": "Zoom plugin for Corsair",
+      "description": "Video conferencing platform for meetings, webinars, recordings, and calendar scheduling.",
       "npmPackageName": "@corsair-dev/zoom",
       "authTypes": [
         "oauth_2"
@@ -3812,7 +3857,7 @@
     {
       "id": "zoominfo",
       "displayName": "ZoomInfo",
-      "description": "ZoomInfo plugin for Corsair",
+      "description": "B2B contact database for sales intelligence, company data, and prospecting workflows.",
       "npmPackageName": "@corsair-dev/zoominfo",
       "authTypes": [
         "oauth_2"
@@ -9062,7 +9107,7 @@
       "pluginId": "airtable",
       "kind": "api",
       "shortPath": "records.delete",
-      "haystack": "records.delete airtable.api.records.delete delete a record from a table [destructive] destructive"
+      "haystack": "records.delete airtable.api.records.delete delete a record from a table destructive"
     },
     {
       "pluginId": "airtable",
@@ -9681,12 +9726,6 @@
       "kind": "api",
       "shortPath": "indices.getTaskStatus",
       "haystack": "indices.gettaskstatus algolia.api.indices.gettaskstatus tool to check the status of an asynchronous task. use when you need to verify completion of operations like adding or deleting records. read"
-    },
-    {
-      "pluginId": "algolia",
-      "kind": "api",
-      "shortPath": "indices.indexExists",
-      "haystack": "indices.indexexists algolia.api.indices.indexexists tool to check if an algolia index exists. use before performing index operations to prevent accidental index creation. results are scoped to the algolia app id configured in the composio connection. example: indexexists(index_name='products'). read"
     },
     {
       "pluginId": "algolia",
@@ -10538,7 +10577,7 @@
       "pluginId": "altoviz",
       "kind": "api",
       "shortPath": "colleagues.delete",
-      "haystack": "colleagues.delete altoviz.api.colleagues.delete delete a colleague [destructive] destructive"
+      "haystack": "colleagues.delete altoviz.api.colleagues.delete delete a colleague destructive"
     },
     {
       "pluginId": "altoviz",
@@ -10592,7 +10631,7 @@
       "pluginId": "altoviz",
       "kind": "api",
       "shortPath": "customerFamilies.delete",
-      "haystack": "customerfamilies.delete altoviz.api.customerfamilies.delete delete a customer family [destructive]. refused with a conflict if it still has members - it does not cascade. destructive"
+      "haystack": "customerfamilies.delete altoviz.api.customerfamilies.delete delete a customer family. refused with a conflict if it still has members - it does not cascade. destructive"
     },
     {
       "pluginId": "altoviz",
@@ -10616,7 +10655,7 @@
       "pluginId": "altoviz",
       "kind": "api",
       "shortPath": "customers.delete",
-      "haystack": "customers.delete altoviz.api.customers.delete delete a customer [destructive]. evicts the auto-created contact from the mirror if one is cached. destructive"
+      "haystack": "customers.delete altoviz.api.customers.delete delete a customer. evicts the auto-created contact from the mirror if one is cached. destructive"
     },
     {
       "pluginId": "altoviz",
@@ -10664,7 +10703,7 @@
       "pluginId": "altoviz",
       "kind": "api",
       "shortPath": "productFamilies.delete",
-      "haystack": "productfamilies.delete altoviz.api.productfamilies.delete delete a product family [destructive]. refused with a conflict if it still has members. destructive"
+      "haystack": "productfamilies.delete altoviz.api.productfamilies.delete delete a product family. refused with a conflict if it still has members. destructive"
     },
     {
       "pluginId": "altoviz",
@@ -10688,7 +10727,7 @@
       "pluginId": "altoviz",
       "kind": "api",
       "shortPath": "products.delete",
-      "haystack": "products.delete altoviz.api.products.delete delete a product [destructive] destructive"
+      "haystack": "products.delete altoviz.api.products.delete delete a product destructive"
     },
     {
       "pluginId": "altoviz",
@@ -10730,7 +10769,7 @@
       "pluginId": "altoviz",
       "kind": "api",
       "shortPath": "receipts.delete",
-      "haystack": "receipts.delete altoviz.api.receipts.delete delete a receipt [destructive] destructive"
+      "haystack": "receipts.delete altoviz.api.receipts.delete delete a receipt destructive"
     },
     {
       "pluginId": "altoviz",
@@ -10766,7 +10805,7 @@
       "pluginId": "altoviz",
       "kind": "api",
       "shortPath": "saleCredits.delete",
-      "haystack": "salecredits.delete altoviz.api.salecredits.delete delete a draft sale credit [destructive]. drafts only. destructive"
+      "haystack": "salecredits.delete altoviz.api.salecredits.delete delete a draft sale credit. drafts only. destructive"
     },
     {
       "pluginId": "altoviz",
@@ -10808,7 +10847,7 @@
       "pluginId": "altoviz",
       "kind": "api",
       "shortPath": "saleInvoices.delete",
-      "haystack": "saleinvoices.delete altoviz.api.saleinvoices.delete delete a draft sale invoice [destructive]. drafts only. destructive"
+      "haystack": "saleinvoices.delete altoviz.api.saleinvoices.delete delete a draft sale invoice. drafts only. destructive"
     },
     {
       "pluginId": "altoviz",
@@ -10838,7 +10877,7 @@
       "pluginId": "altoviz",
       "kind": "api",
       "shortPath": "saleQuotes.delete",
-      "haystack": "salequotes.delete altoviz.api.salequotes.delete delete a sale quote [destructive]. deleting a quote that does not exist also returns 200. destructive"
+      "haystack": "salequotes.delete altoviz.api.salequotes.delete delete a sale quote. deleting a quote that does not exist also returns 200. destructive"
     },
     {
       "pluginId": "altoviz",
@@ -10856,7 +10895,7 @@
       "pluginId": "altoviz",
       "kind": "api",
       "shortPath": "suppliers.delete",
-      "haystack": "suppliers.delete altoviz.api.suppliers.delete delete a supplier [destructive]. evicts the auto-created contact from the mirror if one is cached. destructive"
+      "haystack": "suppliers.delete altoviz.api.suppliers.delete delete a supplier. evicts the auto-created contact from the mirror if one is cached. destructive"
     },
     {
       "pluginId": "altoviz",
@@ -10898,7 +10937,7 @@
       "pluginId": "altoviz",
       "kind": "api",
       "shortPath": "webhookSubscriptions.unregister",
-      "haystack": "webhooksubscriptions.unregister altoviz.api.webhooksubscriptions.unregister unregister a webhook subscription by id or url [destructive]. exactly one of the two is required. destructive"
+      "haystack": "webhooksubscriptions.unregister altoviz.api.webhooksubscriptions.unregister unregister a webhook subscription by id or url. exactly one of the two is required. destructive"
     },
     {
       "pluginId": "alttextai",
@@ -14414,7 +14453,7 @@
       "pluginId": "asana",
       "kind": "api",
       "shortPath": "projects.delete",
-      "haystack": "projects.delete asana.api.projects.delete delete a project [destructive] destructive"
+      "haystack": "projects.delete asana.api.projects.delete delete a project destructive"
     },
     {
       "pluginId": "asana",
@@ -14480,7 +14519,7 @@
       "pluginId": "asana",
       "kind": "api",
       "shortPath": "sections.delete",
-      "haystack": "sections.delete asana.api.sections.delete delete a section [destructive] destructive"
+      "haystack": "sections.delete asana.api.sections.delete delete a section destructive"
     },
     {
       "pluginId": "asana",
@@ -14516,7 +14555,7 @@
       "pluginId": "asana",
       "kind": "api",
       "shortPath": "stories.delete",
-      "haystack": "stories.delete asana.api.stories.delete delete a story [destructive] destructive"
+      "haystack": "stories.delete asana.api.stories.delete delete a story destructive"
     },
     {
       "pluginId": "asana",
@@ -14552,7 +14591,7 @@
       "pluginId": "asana",
       "kind": "api",
       "shortPath": "tags.delete",
-      "haystack": "tags.delete asana.api.tags.delete delete a tag [destructive] destructive"
+      "haystack": "tags.delete asana.api.tags.delete delete a tag destructive"
     },
     {
       "pluginId": "asana",
@@ -14636,7 +14675,7 @@
       "pluginId": "asana",
       "kind": "api",
       "shortPath": "tasks.delete",
-      "haystack": "tasks.delete asana.api.tasks.delete delete a task [destructive] destructive"
+      "haystack": "tasks.delete asana.api.tasks.delete delete a task destructive"
     },
     {
       "pluginId": "asana",
@@ -14840,7 +14879,7 @@
       "pluginId": "asana",
       "kind": "api",
       "shortPath": "webhookManagement.delete",
-      "haystack": "webhookmanagement.delete asana.api.webhookmanagement.delete delete a webhook [destructive] destructive"
+      "haystack": "webhookmanagement.delete asana.api.webhookmanagement.delete delete a webhook destructive"
     },
     {
       "pluginId": "asana",
@@ -15044,7 +15083,7 @@
       "pluginId": "asindataapi",
       "kind": "api",
       "shortPath": "collections.delete",
-      "haystack": "collections.delete asindataapi.api.collections.delete delete a collection [destructive] destructive"
+      "haystack": "collections.delete asindataapi.api.collections.delete delete a collection destructive"
     },
     {
       "pluginId": "asindataapi",
@@ -15080,7 +15119,7 @@
       "pluginId": "asindataapi",
       "kind": "api",
       "shortPath": "destinations.delete",
-      "haystack": "destinations.delete asindataapi.api.destinations.delete delete a destination [destructive] destructive"
+      "haystack": "destinations.delete asindataapi.api.destinations.delete delete a destination destructive"
     },
     {
       "pluginId": "asindataapi",
@@ -15122,13 +15161,13 @@
       "pluginId": "asindataapi",
       "kind": "api",
       "shortPath": "requests.clear",
-      "haystack": "requests.clear asindataapi.api.requests.clear bulk-delete multiple requests from a collection by their ids [destructive] destructive"
+      "haystack": "requests.clear asindataapi.api.requests.clear bulk-delete multiple requests from a collection by their ids destructive"
     },
     {
       "pluginId": "asindataapi",
       "kind": "api",
       "shortPath": "requests.delete",
-      "haystack": "requests.delete asindataapi.api.requests.delete delete a single request from a collection [destructive] destructive"
+      "haystack": "requests.delete asindataapi.api.requests.delete delete a single request from a collection destructive"
     },
     {
       "pluginId": "asindataapi",
@@ -17954,7 +17993,7 @@
       "pluginId": "basin",
       "kind": "api",
       "shortPath": "forms.delete",
-      "haystack": "forms.delete basin.api.forms.delete permanently delete a form and its configuration [destructive] destructive"
+      "haystack": "forms.delete basin.api.forms.delete permanently delete a form and its configuration destructive"
     },
     {
       "pluginId": "basin",
@@ -17996,7 +18035,7 @@
       "pluginId": "basin",
       "kind": "api",
       "shortPath": "projects.delete",
-      "haystack": "projects.delete basin.api.projects.delete permanently delete a project [destructive] destructive"
+      "haystack": "projects.delete basin.api.projects.delete permanently delete a project destructive"
     },
     {
       "pluginId": "basin",
@@ -18020,7 +18059,7 @@
       "pluginId": "basin",
       "kind": "api",
       "shortPath": "submissions.delete",
-      "haystack": "submissions.delete basin.api.submissions.delete permanently delete a form submission [destructive] destructive"
+      "haystack": "submissions.delete basin.api.submissions.delete permanently delete a form submission destructive"
     },
     {
       "pluginId": "basin",
@@ -18074,7 +18113,7 @@
       "pluginId": "basin",
       "kind": "api",
       "shortPath": "webhooks.delete",
-      "haystack": "webhooks.delete basin.api.webhooks.delete permanently delete a form webhook integration [destructive] destructive"
+      "haystack": "webhooks.delete basin.api.webhooks.delete permanently delete a form webhook integration destructive"
     },
     {
       "pluginId": "basin",
@@ -18140,7 +18179,7 @@
       "pluginId": "beaconstac",
       "kind": "api",
       "shortPath": "qrcodes.delete",
-      "haystack": "qrcodes.delete beaconstac.api.qrcodes.delete delete a qr code by id [destructive] destructive"
+      "haystack": "qrcodes.delete beaconstac.api.qrcodes.delete delete a qr code by id destructive"
     },
     {
       "pluginId": "beaconstac",
@@ -18164,7 +18203,7 @@
       "pluginId": "beaconstac",
       "kind": "api",
       "shortPath": "qrTemplates.delete",
-      "haystack": "qrtemplates.delete beaconstac.api.qrtemplates.delete delete a qr code template by id [destructive] destructive"
+      "haystack": "qrtemplates.delete beaconstac.api.qrtemplates.delete delete a qr code template by id destructive"
     },
     {
       "pluginId": "beaconstac",
@@ -18182,7 +18221,7 @@
       "pluginId": "beaconstac",
       "kind": "api",
       "shortPath": "tags.delete",
-      "haystack": "tags.delete beaconstac.api.tags.delete delete a tag by id [destructive] destructive"
+      "haystack": "tags.delete beaconstac.api.tags.delete delete a tag by id destructive"
     },
     {
       "pluginId": "beaconstac",
@@ -21086,7 +21125,7 @@
       "pluginId": "bluesky",
       "kind": "api",
       "shortPath": "posts.deleteRecord",
-      "haystack": "posts.deleterecord bluesky.api.posts.deleterecord delete a post on bluesky [destructive] destructive"
+      "haystack": "posts.deleterecord bluesky.api.posts.deleterecord delete a post on bluesky destructive"
     },
     {
       "pluginId": "bluesky",
@@ -21953,6 +21992,264 @@
       "haystack": "widgets.update bookingmood.api.widgets.update bookingmood widgets update write"
     },
     {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "actions.execute",
+      "haystack": "actions.execute botbaba.api.actions.execute execute a bot action for a conversation write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "actions.executeByUser",
+      "haystack": "actions.executebyuser botbaba.api.actions.executebyuser execute a bot action for users write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "actions.getWidgetSettings",
+      "haystack": "actions.getwidgetsettings botbaba.api.actions.getwidgetsettings get bot widget settings read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "broadcasts.delete",
+      "haystack": "broadcasts.delete botbaba.api.broadcasts.delete delete a broadcast destructive"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "broadcasts.get",
+      "haystack": "broadcasts.get botbaba.api.broadcasts.get get a broadcast read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "broadcasts.list",
+      "haystack": "broadcasts.list botbaba.api.broadcasts.list list broadcasts read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete botbaba.api.contacts.delete delete a botbaba contact destructive"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get botbaba.api.contacts.get fetch a botbaba contact by id read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "contacts.getAnalytics",
+      "haystack": "contacts.getanalytics botbaba.api.contacts.getanalytics retrieve contact analytics over a date range read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update botbaba.api.contacts.update update an existing botbaba contact write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "flows.delete",
+      "haystack": "flows.delete botbaba.api.flows.delete delete a conversation flow destructive"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "flows.get",
+      "haystack": "flows.get botbaba.api.flows.get get a conversation flow read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "flows.list",
+      "haystack": "flows.list botbaba.api.flows.list list conversation flows read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "gupshup.forwardMessage",
+      "haystack": "gupshup.forwardmessage botbaba.api.gupshup.forwardmessage forward a gupshup whatsapp webhook to botbaba write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "messages.get",
+      "haystack": "messages.get botbaba.api.messages.get get a message read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "messages.getAnalytics",
+      "haystack": "messages.getanalytics botbaba.api.messages.getanalytics get message analytics read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "messages.list",
+      "haystack": "messages.list botbaba.api.messages.list list messages read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "messages.sendWhatsappTemplate",
+      "haystack": "messages.sendwhatsapptemplate botbaba.api.messages.sendwhatsapptemplate send a whatsapp template via botbaba write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "shopify.cartCreation",
+      "haystack": "shopify.cartcreation botbaba.api.shopify.cartcreation forward shopify cart creation to botbaba write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "shopify.cartUpdate",
+      "haystack": "shopify.cartupdate botbaba.api.shopify.cartupdate forward shopify cart update to botbaba write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "shopify.checkoutCreation",
+      "haystack": "shopify.checkoutcreation botbaba.api.shopify.checkoutcreation forward shopify checkout creation to botbaba write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "shopify.checkoutUpdate",
+      "haystack": "shopify.checkoutupdate botbaba.api.shopify.checkoutupdate forward shopify checkout update to botbaba write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "shopify.orderCancellation",
+      "haystack": "shopify.ordercancellation botbaba.api.shopify.ordercancellation forward shopify order cancellation to botbaba write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "shopify.orderFulfillment",
+      "haystack": "shopify.orderfulfillment botbaba.api.shopify.orderfulfillment forward shopify order fulfillment to botbaba write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "shopify.orderPayment",
+      "haystack": "shopify.orderpayment botbaba.api.shopify.orderpayment forward shopify order payment to botbaba write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "simulators.cartCreation",
+      "haystack": "simulators.cartcreation botbaba.api.simulators.cartcreation simulate a shopify cart creation payload read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "simulators.checkoutCreation",
+      "haystack": "simulators.checkoutcreation botbaba.api.simulators.checkoutcreation simulate a shopify checkout creation payload read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "simulators.checkoutUpdate",
+      "haystack": "simulators.checkoutupdate botbaba.api.simulators.checkoutupdate simulate a shopify checkout update payload read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "simulators.gupshup",
+      "haystack": "simulators.gupshup botbaba.api.simulators.gupshup simulate a gupshup whatsapp webhook payload read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "simulators.orderFulfillment",
+      "haystack": "simulators.orderfulfillment botbaba.api.simulators.orderfulfillment simulate a shopify order fulfillment payload read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "tags.delete",
+      "haystack": "tags.delete botbaba.api.tags.delete delete a tag destructive"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "tags.list",
+      "haystack": "tags.list botbaba.api.tags.list list all tags read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "tags.update",
+      "haystack": "tags.update botbaba.api.tags.update rename a tag write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "templates.delete",
+      "haystack": "templates.delete botbaba.api.templates.delete delete a message template destructive"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "templates.get",
+      "haystack": "templates.get botbaba.api.templates.get get a message template read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list botbaba.api.templates.list list message templates read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "templates.update",
+      "haystack": "templates.update botbaba.api.templates.update update a message template write"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "utils.getFilename",
+      "haystack": "utils.getfilename botbaba.api.utils.getfilename extract a filename from a path read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete botbaba.api.webhooks.delete delete a webhook destructive"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get botbaba.api.webhooks.get get a webhook read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list botbaba.api.webhooks.list list webhooks read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "webhooks.listEventTypes",
+      "haystack": "webhooks.listeventtypes botbaba.api.webhooks.listeventtypes list webhook event types read"
+    },
+    {
+      "pluginId": "botbaba",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update botbaba.api.webhooks.update update a webhook write"
+    },
+    {
       "pluginId": "botpress",
       "kind": "api",
       "shortPath": "account.get",
@@ -22052,7 +22349,7 @@
       "pluginId": "botpress",
       "kind": "api",
       "shortPath": "files.delete",
-      "haystack": "files.delete botpress.api.files.delete delete a file from a bot's storage [destructive] destructive"
+      "haystack": "files.delete botpress.api.files.delete delete a file from a bot's storage destructive"
     },
     {
       "pluginId": "botpress",
@@ -22142,7 +22439,7 @@
       "pluginId": "botpress",
       "kind": "api",
       "shortPath": "integrations.deleteShareableId",
-      "haystack": "integrations.deleteshareableid botpress.api.integrations.deleteshareableid delete the shareable id for a bot-integration pair [destructive] destructive"
+      "haystack": "integrations.deleteshareableid botpress.api.integrations.deleteshareableid delete the shareable id for a bot-integration pair destructive"
     },
     {
       "pluginId": "botpress",
@@ -22178,7 +22475,7 @@
       "pluginId": "botpress",
       "kind": "api",
       "shortPath": "knowledgeBases.delete",
-      "haystack": "knowledgebases.delete botpress.api.knowledgebases.delete permanently delete a knowledge base [destructive] destructive"
+      "haystack": "knowledgebases.delete botpress.api.knowledgebases.delete permanently delete a knowledge base destructive"
     },
     {
       "pluginId": "botpress",
@@ -22226,7 +22523,7 @@
       "pluginId": "botpress",
       "kind": "api",
       "shortPath": "workspaces.delete",
-      "haystack": "workspaces.delete botpress.api.workspaces.delete permanently delete a workspace [destructive] destructive"
+      "haystack": "workspaces.delete botpress.api.workspaces.delete permanently delete a workspace destructive"
     },
     {
       "pluginId": "botpress",
@@ -22364,7 +22661,7 @@
       "pluginId": "box",
       "kind": "api",
       "shortPath": "files.delete",
-      "haystack": "files.delete box.api.files.delete delete a box file [destructive] destructive"
+      "haystack": "files.delete box.api.files.delete delete a box file destructive"
     },
     {
       "pluginId": "box",
@@ -22406,7 +22703,7 @@
       "pluginId": "box",
       "kind": "api",
       "shortPath": "folders.delete",
-      "haystack": "folders.delete box.api.folders.delete delete a box folder [destructive] destructive"
+      "haystack": "folders.delete box.api.folders.delete delete a box folder destructive"
     },
     {
       "pluginId": "box",
@@ -22874,7 +23171,7 @@
       "pluginId": "breathehr",
       "kind": "api",
       "shortPath": "employeeExpenses.delete",
-      "haystack": "employeeexpenses.delete breathehr.api.employeeexpenses.delete delete an employee expense [destructive] destructive"
+      "haystack": "employeeexpenses.delete breathehr.api.employeeexpenses.delete delete an employee expense destructive"
     },
     {
       "pluginId": "breathehr",
@@ -22982,7 +23279,7 @@
       "pluginId": "breathehr",
       "kind": "api",
       "shortPath": "employeeTrainingCourses.delete",
-      "haystack": "employeetrainingcourses.delete breathehr.api.employeetrainingcourses.delete delete an employee training course [destructive] destructive"
+      "haystack": "employeetrainingcourses.delete breathehr.api.employeetrainingcourses.delete delete an employee training course destructive"
     },
     {
       "pluginId": "breathehr",
@@ -24206,7 +24503,7 @@
       "pluginId": "cal",
       "kind": "api",
       "shortPath": "bookings.cancel",
-      "haystack": "bookings.cancel cal.api.bookings.cancel cancel a booking [destructive] destructive"
+      "haystack": "bookings.cancel cal.api.bookings.cancel cancel a booking destructive"
     },
     {
       "pluginId": "cal",
@@ -24368,13 +24665,13 @@
       "pluginId": "calendly",
       "kind": "api",
       "shortPath": "invitees.deleteData",
-      "haystack": "invitees.deletedata calendly.api.invitees.deletedata delete all data for specified invitee emails [destructive] destructive"
+      "haystack": "invitees.deletedata calendly.api.invitees.deletedata delete all data for specified invitee emails destructive"
     },
     {
       "pluginId": "calendly",
       "kind": "api",
       "shortPath": "invitees.deleteNoShow",
-      "haystack": "invitees.deletenoshow calendly.api.invitees.deletenoshow delete an invitee no-show record [destructive] destructive"
+      "haystack": "invitees.deletenoshow calendly.api.invitees.deletenoshow delete an invitee no-show record destructive"
     },
     {
       "pluginId": "calendly",
@@ -24404,7 +24701,7 @@
       "pluginId": "calendly",
       "kind": "api",
       "shortPath": "organizations.deleteMembership",
-      "haystack": "organizations.deletemembership calendly.api.organizations.deletemembership delete an organization membership [destructive] destructive"
+      "haystack": "organizations.deletemembership calendly.api.organizations.deletemembership delete an organization membership destructive"
     },
     {
       "pluginId": "calendly",
@@ -24446,13 +24743,13 @@
       "pluginId": "calendly",
       "kind": "api",
       "shortPath": "organizations.removeMember",
-      "haystack": "organizations.removemember calendly.api.organizations.removemember remove a user from the organization [destructive] destructive"
+      "haystack": "organizations.removemember calendly.api.organizations.removemember remove a user from the organization destructive"
     },
     {
       "pluginId": "calendly",
       "kind": "api",
       "shortPath": "organizations.revokeInvitation",
-      "haystack": "organizations.revokeinvitation calendly.api.organizations.revokeinvitation revoke a user's organization invitation [destructive] destructive"
+      "haystack": "organizations.revokeinvitation calendly.api.organizations.revokeinvitation revoke a user's organization invitation destructive"
     },
     {
       "pluginId": "calendly",
@@ -24482,13 +24779,13 @@
       "pluginId": "calendly",
       "kind": "api",
       "shortPath": "scheduledEvents.cancel",
-      "haystack": "scheduledevents.cancel calendly.api.scheduledevents.cancel cancel a scheduled event [destructive] destructive"
+      "haystack": "scheduledevents.cancel calendly.api.scheduledevents.cancel cancel a scheduled event destructive"
     },
     {
       "pluginId": "calendly",
       "kind": "api",
       "shortPath": "scheduledEvents.deleteData",
-      "haystack": "scheduledevents.deletedata calendly.api.scheduledevents.deletedata delete all scheduled event data in a time range [destructive] destructive"
+      "haystack": "scheduledevents.deletedata calendly.api.scheduledevents.deletedata delete all scheduled event data in a time range destructive"
     },
     {
       "pluginId": "calendly",
@@ -24572,7 +24869,7 @@
       "pluginId": "calendly",
       "kind": "api",
       "shortPath": "webhookSubscriptions.delete",
-      "haystack": "webhooksubscriptions.delete calendly.api.webhooksubscriptions.delete delete a webhook subscription [destructive] destructive"
+      "haystack": "webhooksubscriptions.delete calendly.api.webhooksubscriptions.delete delete a webhook subscription destructive"
     },
     {
       "pluginId": "calendly",
@@ -24626,7 +24923,7 @@
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "assets.delete",
-      "haystack": "assets.delete canva.api.assets.delete delete an asset [destructive] destructive"
+      "haystack": "assets.delete canva.api.assets.delete delete an asset destructive"
     },
     {
       "pluginId": "canva",
@@ -24776,7 +25073,7 @@
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "folders.delete",
-      "haystack": "folders.delete canva.api.folders.delete delete a folder [destructive] destructive"
+      "haystack": "folders.delete canva.api.folders.delete delete a folder destructive"
     },
     {
       "pluginId": "canva",
@@ -26180,7 +26477,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "boards.delete",
-      "haystack": "boards.delete capsulecrm.api.boards.delete delete (archive) a board [destructive] destructive"
+      "haystack": "boards.delete capsulecrm.api.boards.delete delete (archive) a board destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26222,7 +26519,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "categories.delete",
-      "haystack": "categories.delete capsulecrm.api.categories.delete delete a category [destructive] destructive"
+      "haystack": "categories.delete capsulecrm.api.categories.delete delete a category destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26264,7 +26561,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "customFields.delete",
-      "haystack": "customfields.delete capsulecrm.api.customfields.delete delete a custom field definition [destructive] destructive"
+      "haystack": "customfields.delete capsulecrm.api.customfields.delete delete a custom field definition destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26294,7 +26591,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "entries.delete",
-      "haystack": "entries.delete capsulecrm.api.entries.delete delete an entry [destructive] destructive"
+      "haystack": "entries.delete capsulecrm.api.entries.delete delete an entry destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26342,7 +26639,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "lostReasons.delete",
-      "haystack": "lostreasons.delete capsulecrm.api.lostreasons.delete delete a lost reason [destructive] destructive"
+      "haystack": "lostreasons.delete capsulecrm.api.lostreasons.delete delete a lost reason destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26372,7 +26669,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "milestones.delete",
-      "haystack": "milestones.delete capsulecrm.api.milestones.delete delete a milestone [destructive] destructive"
+      "haystack": "milestones.delete capsulecrm.api.milestones.delete delete a milestone destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26408,7 +26705,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "opportunities.delete",
-      "haystack": "opportunities.delete capsulecrm.api.opportunities.delete delete an opportunity [destructive] destructive"
+      "haystack": "opportunities.delete capsulecrm.api.opportunities.delete delete an opportunity destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26468,7 +26765,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "parties.delete",
-      "haystack": "parties.delete capsulecrm.api.parties.delete delete a party [destructive] destructive"
+      "haystack": "parties.delete capsulecrm.api.parties.delete delete a party destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26558,7 +26855,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "projects.delete",
-      "haystack": "projects.delete capsulecrm.api.projects.delete delete a project [destructive] destructive"
+      "haystack": "projects.delete capsulecrm.api.projects.delete delete a project destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26624,7 +26921,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "stages.delete",
-      "haystack": "stages.delete capsulecrm.api.stages.delete delete a stage [destructive] destructive"
+      "haystack": "stages.delete capsulecrm.api.stages.delete delete a stage destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26648,7 +26945,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "tags.delete",
-      "haystack": "tags.delete capsulecrm.api.tags.delete delete a tag [destructive] destructive"
+      "haystack": "tags.delete capsulecrm.api.tags.delete delete a tag destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26678,7 +26975,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "tasks.delete",
-      "haystack": "tasks.delete capsulecrm.api.tasks.delete delete a task [destructive] destructive"
+      "haystack": "tasks.delete capsulecrm.api.tasks.delete delete a task destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26714,7 +27011,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "titles.delete",
-      "haystack": "titles.delete capsulecrm.api.titles.delete delete a title [destructive] destructive"
+      "haystack": "titles.delete capsulecrm.api.titles.delete delete a title destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26732,7 +27029,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "trackDefinitions.delete",
-      "haystack": "trackdefinitions.delete capsulecrm.api.trackdefinitions.delete delete a track definition [destructive] destructive"
+      "haystack": "trackdefinitions.delete capsulecrm.api.trackdefinitions.delete delete a track definition destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26762,7 +27059,7 @@
       "pluginId": "capsulecrm",
       "kind": "api",
       "shortPath": "tracks.delete",
-      "haystack": "tracks.delete capsulecrm.api.tracks.delete delete a track [destructive] destructive"
+      "haystack": "tracks.delete capsulecrm.api.tracks.delete delete a track destructive"
     },
     {
       "pluginId": "capsulecrm",
@@ -26805,6 +27102,60 @@
       "kind": "api",
       "shortPath": "users.update",
       "haystack": "users.update capsulecrm.api.users.update update user preferences write"
+    },
+    {
+      "pluginId": "certifier",
+      "kind": "api",
+      "shortPath": "attributes.list",
+      "haystack": "attributes.list certifier.api.attributes.list list attribute definitions available for credentials, with pagination. read"
+    },
+    {
+      "pluginId": "certifier",
+      "kind": "api",
+      "shortPath": "credentialInteractions.list",
+      "haystack": "credentialinteractions.list certifier.api.credentialinteractions.list list credential interaction events, optionally filtered by credential. read"
+    },
+    {
+      "pluginId": "certifier",
+      "kind": "api",
+      "shortPath": "credentials.createIssueSend",
+      "haystack": "credentials.createissuesend certifier.api.credentials.createissuesend create, issue, and send a credential in a single request. write"
+    },
+    {
+      "pluginId": "certifier",
+      "kind": "api",
+      "shortPath": "credentials.list",
+      "haystack": "credentials.list certifier.api.credentials.list list credentials with cursor pagination. read"
+    },
+    {
+      "pluginId": "certifier",
+      "kind": "api",
+      "shortPath": "credentials.search",
+      "haystack": "credentials.search certifier.api.credentials.search search credentials with and/or/not filters, sort, and pagination. read"
+    },
+    {
+      "pluginId": "certifier",
+      "kind": "api",
+      "shortPath": "credentials.send",
+      "haystack": "credentials.send certifier.api.credentials.send send an issued credential by email. write"
+    },
+    {
+      "pluginId": "certifier",
+      "kind": "api",
+      "shortPath": "designs.list",
+      "haystack": "designs.list certifier.api.designs.list list certificate and badge design templates. read"
+    },
+    {
+      "pluginId": "certifier",
+      "kind": "api",
+      "shortPath": "emailTemplates.list",
+      "haystack": "emailtemplates.list certifier.api.emailtemplates.list list email templates used for credential delivery. read"
+    },
+    {
+      "pluginId": "certifier",
+      "kind": "api",
+      "shortPath": "groups.list",
+      "haystack": "groups.list certifier.api.groups.list list credential templates (groups) with pagination. read"
     },
     {
       "pluginId": "chatbotkit",
@@ -27518,7 +27869,7 @@
       "pluginId": "clientary",
       "kind": "api",
       "shortPath": "clients.delete",
-      "haystack": "clients.delete clientary.api.clients.delete delete a client and all associated projects, invoices, estimates, and contacts [destructive] destructive"
+      "haystack": "clients.delete clientary.api.clients.delete delete a client and all associated projects, invoices, estimates, and contacts destructive"
     },
     {
       "pluginId": "clientary",
@@ -27548,7 +27899,7 @@
       "pluginId": "clientary",
       "kind": "api",
       "shortPath": "contacts.delete",
-      "haystack": "contacts.delete clientary.api.contacts.delete delete a contact [destructive] destructive"
+      "haystack": "contacts.delete clientary.api.contacts.delete delete a contact destructive"
     },
     {
       "pluginId": "clientary",
@@ -27584,7 +27935,7 @@
       "pluginId": "clientary",
       "kind": "api",
       "shortPath": "estimates.delete",
-      "haystack": "estimates.delete clientary.api.estimates.delete delete an estimate [destructive] destructive"
+      "haystack": "estimates.delete clientary.api.estimates.delete delete an estimate destructive"
     },
     {
       "pluginId": "clientary",
@@ -27632,7 +27983,7 @@
       "pluginId": "clientary",
       "kind": "api",
       "shortPath": "expenses.delete",
-      "haystack": "expenses.delete clientary.api.expenses.delete delete an expense [destructive] destructive"
+      "haystack": "expenses.delete clientary.api.expenses.delete delete an expense destructive"
     },
     {
       "pluginId": "clientary",
@@ -27674,7 +28025,7 @@
       "pluginId": "clientary",
       "kind": "api",
       "shortPath": "hours.delete",
-      "haystack": "hours.delete clientary.api.hours.delete delete an hours entry [destructive] destructive"
+      "haystack": "hours.delete clientary.api.hours.delete delete an hours entry destructive"
     },
     {
       "pluginId": "clientary",
@@ -27704,7 +28055,7 @@
       "pluginId": "clientary",
       "kind": "api",
       "shortPath": "invoices.delete",
-      "haystack": "invoices.delete clientary.api.invoices.delete delete an invoice [destructive] destructive"
+      "haystack": "invoices.delete clientary.api.invoices.delete delete an invoice destructive"
     },
     {
       "pluginId": "clientary",
@@ -27758,7 +28109,7 @@
       "pluginId": "clientary",
       "kind": "api",
       "shortPath": "leads.delete",
-      "haystack": "leads.delete clientary.api.leads.delete delete a lead [destructive] destructive"
+      "haystack": "leads.delete clientary.api.leads.delete delete a lead destructive"
     },
     {
       "pluginId": "clientary",
@@ -27788,7 +28139,7 @@
       "pluginId": "clientary",
       "kind": "api",
       "shortPath": "paymentProfiles.delete",
-      "haystack": "paymentprofiles.delete clientary.api.paymentprofiles.delete delete a payment profile [destructive] destructive"
+      "haystack": "paymentprofiles.delete clientary.api.paymentprofiles.delete delete a payment profile destructive"
     },
     {
       "pluginId": "clientary",
@@ -27806,7 +28157,7 @@
       "pluginId": "clientary",
       "kind": "api",
       "shortPath": "payments.delete",
-      "haystack": "payments.delete clientary.api.payments.delete delete (void) a payment [destructive] destructive"
+      "haystack": "payments.delete clientary.api.payments.delete delete (void) a payment destructive"
     },
     {
       "pluginId": "clientary",
@@ -27824,7 +28175,7 @@
       "pluginId": "clientary",
       "kind": "api",
       "shortPath": "projects.delete",
-      "haystack": "projects.delete clientary.api.projects.delete delete a project [destructive] destructive"
+      "haystack": "projects.delete clientary.api.projects.delete delete a project destructive"
     },
     {
       "pluginId": "clientary",
@@ -27860,7 +28211,7 @@
       "pluginId": "clientary",
       "kind": "api",
       "shortPath": "recurring.delete",
-      "haystack": "recurring.delete clientary.api.recurring.delete delete a recurring schedule [destructive] destructive"
+      "haystack": "recurring.delete clientary.api.recurring.delete delete a recurring schedule destructive"
     },
     {
       "pluginId": "clientary",
@@ -27902,7 +28253,7 @@
       "pluginId": "clientary",
       "kind": "api",
       "shortPath": "tasks.delete",
-      "haystack": "tasks.delete clientary.api.tasks.delete delete a task [destructive] destructive"
+      "haystack": "tasks.delete clientary.api.tasks.delete delete a task destructive"
     },
     {
       "pluginId": "clientary",
@@ -27968,7 +28319,7 @@
       "pluginId": "cloudflare",
       "kind": "api",
       "shortPath": "dns.delete",
-      "haystack": "dns.delete cloudflare.api.dns.delete delete a dns record [destructive] destructive"
+      "haystack": "dns.delete cloudflare.api.dns.delete delete a dns record destructive"
     },
     {
       "pluginId": "cloudflare",
@@ -27998,7 +28349,7 @@
       "pluginId": "cloudflare",
       "kind": "api",
       "shortPath": "rulesets.delete",
-      "haystack": "rulesets.delete cloudflare.api.rulesets.delete delete a ruleset [destructive] destructive"
+      "haystack": "rulesets.delete cloudflare.api.rulesets.delete delete a ruleset destructive"
     },
     {
       "pluginId": "cloudflare",
@@ -28028,7 +28379,7 @@
       "pluginId": "cloudflare",
       "kind": "api",
       "shortPath": "workers.routes.delete",
-      "haystack": "workers.routes.delete cloudflare.api.workers.routes.delete delete a workers route [destructive] destructive"
+      "haystack": "workers.routes.delete cloudflare.api.workers.routes.delete delete a workers route destructive"
     },
     {
       "pluginId": "cloudflare",
@@ -28052,7 +28403,7 @@
       "pluginId": "cloudflare",
       "kind": "api",
       "shortPath": "workers.scripts.delete",
-      "haystack": "workers.scripts.delete cloudflare.api.workers.scripts.delete delete a workers script [destructive] destructive"
+      "haystack": "workers.scripts.delete cloudflare.api.workers.scripts.delete delete a workers script destructive"
     },
     {
       "pluginId": "cloudflare",
@@ -28082,7 +28433,7 @@
       "pluginId": "cloudflare",
       "kind": "api",
       "shortPath": "zones.delete",
-      "haystack": "zones.delete cloudflare.api.zones.delete delete a cloudflare zone [destructive] destructive"
+      "haystack": "zones.delete cloudflare.api.zones.delete delete a cloudflare zone destructive"
     },
     {
       "pluginId": "cloudflare",
@@ -32060,7 +32411,7 @@
       "pluginId": "discord",
       "kind": "api",
       "shortPath": "messages.delete",
-      "haystack": "messages.delete discord.api.messages.delete permanently delete a message [destructive] destructive"
+      "haystack": "messages.delete discord.api.messages.delete permanently delete a message destructive"
     },
     {
       "pluginId": "discord",
@@ -32810,7 +33161,7 @@
       "pluginId": "dripcel",
       "kind": "api",
       "shortPath": "contacts.delete",
-      "haystack": "contacts.delete dripcel.api.contacts.delete delete a dripcel contact by cell number [destructive] destructive"
+      "haystack": "contacts.delete dripcel.api.contacts.delete delete a dripcel contact by cell number destructive"
     },
     {
       "pluginId": "dripcel",
@@ -32876,7 +33227,7 @@
       "pluginId": "dripcel",
       "kind": "api",
       "shortPath": "tags.delete",
-      "haystack": "tags.delete dripcel.api.tags.delete delete a dripcel tag by id [destructive] destructive"
+      "haystack": "tags.delete dripcel.api.tags.delete delete a dripcel tag by id destructive"
     },
     {
       "pluginId": "dripcel",
@@ -32894,7 +33245,7 @@
       "pluginId": "dropbox",
       "kind": "api",
       "shortPath": "files.delete",
-      "haystack": "files.delete dropbox.api.files.delete delete a file [destructive] destructive"
+      "haystack": "files.delete dropbox.api.files.delete delete a file destructive"
     },
     {
       "pluginId": "dropbox",
@@ -32930,7 +33281,7 @@
       "pluginId": "dropbox",
       "kind": "api",
       "shortPath": "folders.delete",
-      "haystack": "folders.delete dropbox.api.folders.delete delete a folder and all its contents [destructive] destructive"
+      "haystack": "folders.delete dropbox.api.folders.delete delete a folder and all its contents destructive"
     },
     {
       "pluginId": "dropbox",
@@ -33542,7 +33893,7 @@
       "pluginId": "exa",
       "kind": "api",
       "shortPath": "imports.delete",
-      "haystack": "imports.delete exa.api.imports.delete delete an existing import [destructive] destructive"
+      "haystack": "imports.delete exa.api.imports.delete delete an existing import destructive"
     },
     {
       "pluginId": "exa",
@@ -33584,7 +33935,7 @@
       "pluginId": "exa",
       "kind": "api",
       "shortPath": "websets.delete",
-      "haystack": "websets.delete exa.api.websets.delete delete a webset [destructive] destructive"
+      "haystack": "websets.delete exa.api.websets.delete delete a webset destructive"
     },
     {
       "pluginId": "exa",
@@ -34622,7 +34973,7 @@
       "pluginId": "figma",
       "kind": "api",
       "shortPath": "comments.delete",
-      "haystack": "comments.delete figma.api.comments.delete delete a comment from a figma file [destructive] destructive"
+      "haystack": "comments.delete figma.api.comments.delete delete a comment from a figma file destructive"
     },
     {
       "pluginId": "figma",
@@ -34718,7 +35069,7 @@
       "pluginId": "figma",
       "kind": "api",
       "shortPath": "devResources.delete",
-      "haystack": "devresources.delete figma.api.devresources.delete delete a dev resource from a figma file [destructive] destructive"
+      "haystack": "devresources.delete figma.api.devresources.delete delete a dev resource from a figma file destructive"
     },
     {
       "pluginId": "figma",
@@ -34874,7 +35225,7 @@
       "pluginId": "figma",
       "kind": "api",
       "shortPath": "webhooks.delete",
-      "haystack": "webhooks.delete figma.api.webhooks.delete delete a figma webhook [destructive] destructive"
+      "haystack": "webhooks.delete figma.api.webhooks.delete delete a figma webhook destructive"
     },
     {
       "pluginId": "figma",
@@ -34946,7 +35297,7 @@
       "pluginId": "filloutforms",
       "kind": "api",
       "shortPath": "databases.delete",
-      "haystack": "databases.delete filloutforms.api.databases.delete permanently delete a zite database [destructive] destructive"
+      "haystack": "databases.delete filloutforms.api.databases.delete permanently delete a zite database destructive"
     },
     {
       "pluginId": "filloutforms",
@@ -34970,7 +35321,7 @@
       "pluginId": "filloutforms",
       "kind": "api",
       "shortPath": "fields.delete",
-      "haystack": "fields.delete filloutforms.api.fields.delete permanently delete a zite field [destructive] destructive"
+      "haystack": "fields.delete filloutforms.api.fields.delete permanently delete a zite field destructive"
     },
     {
       "pluginId": "filloutforms",
@@ -35006,7 +35357,7 @@
       "pluginId": "filloutforms",
       "kind": "api",
       "shortPath": "records.delete",
-      "haystack": "records.delete filloutforms.api.records.delete permanently delete a zite record [destructive] destructive"
+      "haystack": "records.delete filloutforms.api.records.delete permanently delete a zite record destructive"
     },
     {
       "pluginId": "filloutforms",
@@ -35036,7 +35387,7 @@
       "pluginId": "filloutforms",
       "kind": "api",
       "shortPath": "submissions.delete",
-      "haystack": "submissions.delete filloutforms.api.submissions.delete delete a form submission by id [destructive] destructive"
+      "haystack": "submissions.delete filloutforms.api.submissions.delete delete a form submission by id destructive"
     },
     {
       "pluginId": "filloutforms",
@@ -35060,7 +35411,7 @@
       "pluginId": "filloutforms",
       "kind": "api",
       "shortPath": "tables.delete",
-      "haystack": "tables.delete filloutforms.api.tables.delete permanently delete a zite table [destructive] destructive"
+      "haystack": "tables.delete filloutforms.api.tables.delete permanently delete a zite table destructive"
     },
     {
       "pluginId": "filloutforms",
@@ -35072,7 +35423,7 @@
       "pluginId": "filloutforms",
       "kind": "api",
       "shortPath": "token.invalidate",
-      "haystack": "token.invalidate filloutforms.api.token.invalidate invalidate/revoke an oauth access token [destructive] destructive"
+      "haystack": "token.invalidate filloutforms.api.token.invalidate invalidate/revoke an oauth access token destructive"
     },
     {
       "pluginId": "filloutforms",
@@ -35090,7 +35441,7 @@
       "pluginId": "filloutforms",
       "kind": "api",
       "shortPath": "webhooks.deleteDatabase",
-      "haystack": "webhooks.deletedatabase filloutforms.api.webhooks.deletedatabase delete a zite database webhook [destructive] destructive"
+      "haystack": "webhooks.deletedatabase filloutforms.api.webhooks.deletedatabase delete a zite database webhook destructive"
     },
     {
       "pluginId": "filloutforms",
@@ -35102,7 +35453,7 @@
       "pluginId": "filloutforms",
       "kind": "api",
       "shortPath": "webhooks.removeForm",
-      "haystack": "webhooks.removeform filloutforms.api.webhooks.removeform remove a fillout form webhook [destructive] destructive"
+      "haystack": "webhooks.removeform filloutforms.api.webhooks.removeform remove a fillout form webhook destructive"
     },
     {
       "pluginId": "firecrawl",
@@ -35264,7 +35615,7 @@
       "pluginId": "fireflies",
       "kind": "api",
       "shortPath": "askFred.deleteThread",
-      "haystack": "askfred.deletethread fireflies.api.askfred.deletethread delete an askfred conversation thread [destructive] destructive"
+      "haystack": "askfred.deletethread fireflies.api.askfred.deletethread delete an askfred conversation thread destructive"
     },
     {
       "pluginId": "fireflies",
@@ -36614,7 +36965,7 @@
       "pluginId": "gitlab",
       "kind": "api",
       "shortPath": "branches.delete",
-      "haystack": "branches.delete gitlab.api.branches.delete delete a branch [destructive] destructive"
+      "haystack": "branches.delete gitlab.api.branches.delete delete a branch destructive"
     },
     {
       "pluginId": "gitlab",
@@ -36734,7 +37085,7 @@
       "pluginId": "gitlab",
       "kind": "api",
       "shortPath": "labels.delete",
-      "haystack": "labels.delete gitlab.api.labels.delete delete a label [destructive] destructive"
+      "haystack": "labels.delete gitlab.api.labels.delete delete a label destructive"
     },
     {
       "pluginId": "gitlab",
@@ -36812,7 +37163,7 @@
       "pluginId": "gitlab",
       "kind": "api",
       "shortPath": "milestones.delete",
-      "haystack": "milestones.delete gitlab.api.milestones.delete delete a milestone [destructive] destructive"
+      "haystack": "milestones.delete gitlab.api.milestones.delete delete a milestone destructive"
     },
     {
       "pluginId": "gitlab",
@@ -36848,7 +37199,7 @@
       "pluginId": "gitlab",
       "kind": "api",
       "shortPath": "pipelines.delete",
-      "haystack": "pipelines.delete gitlab.api.pipelines.delete delete a pipeline [destructive] destructive"
+      "haystack": "pipelines.delete gitlab.api.pipelines.delete delete a pipeline destructive"
     },
     {
       "pluginId": "gitlab",
@@ -36920,7 +37271,7 @@
       "pluginId": "gitlab",
       "kind": "api",
       "shortPath": "releases.delete",
-      "haystack": "releases.delete gitlab.api.releases.delete delete a release [destructive] destructive"
+      "haystack": "releases.delete gitlab.api.releases.delete delete a release destructive"
     },
     {
       "pluginId": "gitlab",
@@ -37016,7 +37367,7 @@
       "pluginId": "gmail",
       "kind": "api",
       "shortPath": "drafts.delete",
-      "haystack": "drafts.delete gmail.api.drafts.delete delete a draft [destructive] destructive"
+      "haystack": "drafts.delete gmail.api.drafts.delete delete a draft destructive"
     },
     {
       "pluginId": "gmail",
@@ -37052,7 +37403,7 @@
       "pluginId": "gmail",
       "kind": "api",
       "shortPath": "labels.delete",
-      "haystack": "labels.delete gmail.api.labels.delete delete a label [destructive] destructive"
+      "haystack": "labels.delete gmail.api.labels.delete delete a label destructive"
     },
     {
       "pluginId": "gmail",
@@ -37376,13 +37727,13 @@
       "pluginId": "googlebigquery",
       "kind": "api",
       "shortPath": "queries.cancelJob",
-      "haystack": "queries.canceljob googlebigquery.api.queries.canceljob request cancellation of a running job [destructive] destructive"
+      "haystack": "queries.canceljob googlebigquery.api.queries.canceljob request cancellation of a running job destructive"
     },
     {
       "pluginId": "googlebigquery",
       "kind": "api",
       "shortPath": "queries.deleteJobMetadata",
-      "haystack": "queries.deletejobmetadata googlebigquery.api.queries.deletejobmetadata delete a job's metadata [destructive] destructive"
+      "haystack": "queries.deletejobmetadata googlebigquery.api.queries.deletejobmetadata delete a job's metadata destructive"
     },
     {
       "pluginId": "googlebigquery",
@@ -37562,7 +37913,7 @@
       "pluginId": "googlecalendar",
       "kind": "api",
       "shortPath": "events.delete",
-      "haystack": "events.delete googlecalendar.api.events.delete delete a calendar event [destructive] destructive"
+      "haystack": "events.delete googlecalendar.api.events.delete delete a calendar event destructive"
     },
     {
       "pluginId": "googlecalendar",
@@ -38318,7 +38669,7 @@
       "pluginId": "googlemeet",
       "kind": "api",
       "shortPath": "spaces.endActiveConference",
-      "haystack": "spaces.endactiveconference googlemeet.api.spaces.endactiveconference end an active conference [destructive] destructive"
+      "haystack": "spaces.endactiveconference googlemeet.api.spaces.endactiveconference end an active conference destructive"
     },
     {
       "pluginId": "googlemeet",
@@ -38372,7 +38723,7 @@
       "pluginId": "googlesheets",
       "kind": "api",
       "shortPath": "sheets.clearSheet",
-      "haystack": "sheets.clearsheet googlesheets.api.sheets.clearsheet clear all data from a sheet [destructive] destructive"
+      "haystack": "sheets.clearsheet googlesheets.api.sheets.clearsheet clear all data from a sheet destructive"
     },
     {
       "pluginId": "googlesheets",
@@ -38384,7 +38735,7 @@
       "pluginId": "googlesheets",
       "kind": "api",
       "shortPath": "sheets.deleteRowsOrColumns",
-      "haystack": "sheets.deleterowsorcolumns googlesheets.api.sheets.deleterowsorcolumns delete rows or columns from a sheet [destructive] destructive"
+      "haystack": "sheets.deleterowsorcolumns googlesheets.api.sheets.deleterowsorcolumns delete rows or columns from a sheet destructive"
     },
     {
       "pluginId": "googlesheets",
@@ -42254,7 +42605,7 @@
       "pluginId": "intercom",
       "kind": "api",
       "shortPath": "articles.delete",
-      "haystack": "articles.delete intercom.api.articles.delete delete an article [destructive] destructive"
+      "haystack": "articles.delete intercom.api.articles.delete delete an article destructive"
     },
     {
       "pluginId": "intercom",
@@ -42290,7 +42641,7 @@
       "pluginId": "intercom",
       "kind": "api",
       "shortPath": "collections.delete",
-      "haystack": "collections.delete intercom.api.collections.delete delete a collection [destructive] destructive"
+      "haystack": "collections.delete intercom.api.collections.delete delete a collection destructive"
     },
     {
       "pluginId": "intercom",
@@ -42320,7 +42671,7 @@
       "pluginId": "intercom",
       "kind": "api",
       "shortPath": "companies.delete",
-      "haystack": "companies.delete intercom.api.companies.delete delete a company [destructive] destructive"
+      "haystack": "companies.delete intercom.api.companies.delete delete a company destructive"
     },
     {
       "pluginId": "intercom",
@@ -42386,7 +42737,7 @@
       "pluginId": "intercom",
       "kind": "api",
       "shortPath": "contacts.delete",
-      "haystack": "contacts.delete intercom.api.contacts.delete delete a contact [destructive] destructive"
+      "haystack": "contacts.delete intercom.api.contacts.delete delete a contact destructive"
     },
     {
       "pluginId": "intercom",
@@ -42710,7 +43061,7 @@
       "pluginId": "jira",
       "kind": "api",
       "shortPath": "comments.delete",
-      "haystack": "comments.delete jira.api.comments.delete delete a comment from a jira issue [destructive] destructive"
+      "haystack": "comments.delete jira.api.comments.delete delete a comment from a jira issue destructive"
     },
     {
       "pluginId": "jira",
@@ -42782,7 +43133,7 @@
       "pluginId": "jira",
       "kind": "api",
       "shortPath": "issues.delete",
-      "haystack": "issues.delete jira.api.issues.delete delete a jira issue [destructive] destructive"
+      "haystack": "issues.delete jira.api.issues.delete delete a jira issue destructive"
     },
     {
       "pluginId": "jira",
@@ -43070,7 +43421,7 @@
       "pluginId": "linear",
       "kind": "api",
       "shortPath": "comments.delete",
-      "haystack": "comments.delete linear.api.comments.delete delete a comment [destructive] destructive"
+      "haystack": "comments.delete linear.api.comments.delete delete a comment destructive"
     },
     {
       "pluginId": "linear",
@@ -44102,7 +44453,7 @@
       "pluginId": "mailtrap",
       "kind": "api",
       "shortPath": "contactFields.delete",
-      "haystack": "contactfields.delete mailtrap.api.contactfields.delete permanently delete a custom contact field, dropping its stored values off every contact [destructive] destructive"
+      "haystack": "contactfields.delete mailtrap.api.contactfields.delete permanently delete a custom contact field, dropping its stored values off every contact destructive"
     },
     {
       "pluginId": "mailtrap",
@@ -44132,7 +44483,7 @@
       "pluginId": "mailtrap",
       "kind": "api",
       "shortPath": "contactLists.delete",
-      "haystack": "contactlists.delete mailtrap.api.contactlists.delete permanently delete a contact list [destructive] destructive"
+      "haystack": "contactlists.delete mailtrap.api.contactlists.delete permanently delete a contact list destructive"
     },
     {
       "pluginId": "mailtrap",
@@ -44174,7 +44525,7 @@
       "pluginId": "mailtrap",
       "kind": "api",
       "shortPath": "contacts.delete",
-      "haystack": "contacts.delete mailtrap.api.contacts.delete permanently delete a contact [destructive] destructive"
+      "haystack": "contacts.delete mailtrap.api.contacts.delete permanently delete a contact destructive"
     },
     {
       "pluginId": "mailtrap",
@@ -44216,7 +44567,7 @@
       "pluginId": "mailtrap",
       "kind": "api",
       "shortPath": "emailTemplates.delete",
-      "haystack": "emailtemplates.delete mailtrap.api.emailtemplates.delete permanently delete an email template [destructive] destructive"
+      "haystack": "emailtemplates.delete mailtrap.api.emailtemplates.delete permanently delete an email template destructive"
     },
     {
       "pluginId": "mailtrap",
@@ -44240,7 +44591,7 @@
       "pluginId": "mailtrap",
       "kind": "api",
       "shortPath": "inboxes.clean",
-      "haystack": "inboxes.clean mailtrap.api.inboxes.clean delete every message in a sandbox inbox [destructive] destructive"
+      "haystack": "inboxes.clean mailtrap.api.inboxes.clean delete every message in a sandbox inbox destructive"
     },
     {
       "pluginId": "mailtrap",
@@ -44264,7 +44615,7 @@
       "pluginId": "mailtrap",
       "kind": "api",
       "shortPath": "inboxes.resetCredentials",
-      "haystack": "inboxes.resetcredentials mailtrap.api.inboxes.resetcredentials reset an inbox's smtp credentials, invalidating the previous ones [destructive] destructive"
+      "haystack": "inboxes.resetcredentials mailtrap.api.inboxes.resetcredentials reset an inbox's smtp credentials, invalidating the previous ones destructive"
     },
     {
       "pluginId": "mailtrap",
@@ -44288,7 +44639,7 @@
       "pluginId": "mailtrap",
       "kind": "api",
       "shortPath": "projects.delete",
-      "haystack": "projects.delete mailtrap.api.projects.delete permanently delete a project and every inbox in it [destructive] destructive"
+      "haystack": "projects.delete mailtrap.api.projects.delete permanently delete a project and every inbox in it destructive"
     },
     {
       "pluginId": "mailtrap",
@@ -44318,7 +44669,7 @@
       "pluginId": "mailtrap",
       "kind": "api",
       "shortPath": "sendingDomains.delete",
-      "haystack": "sendingdomains.delete mailtrap.api.sendingdomains.delete permanently remove a sending domain [destructive] destructive"
+      "haystack": "sendingdomains.delete mailtrap.api.sendingdomains.delete permanently remove a sending domain destructive"
     },
     {
       "pluginId": "mailtrap",
@@ -45782,7 +46133,7 @@
       "pluginId": "notion",
       "kind": "api",
       "shortPath": "pages.archivePage",
-      "haystack": "pages.archivepage notion.api.pages.archivepage archive (trash) a page [destructive] destructive"
+      "haystack": "pages.archivepage notion.api.pages.archivepage archive (trash) a page destructive"
     },
     {
       "pluginId": "notion",
@@ -46040,13 +46391,13 @@
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "items.delete",
-      "haystack": "items.delete onedrive.api.items.delete delete a drive item [destructive] destructive"
+      "haystack": "items.delete onedrive.api.items.delete delete a drive item destructive"
     },
     {
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "items.deletePermanently",
-      "haystack": "items.deletepermanently onedrive.api.items.deletepermanently permanently delete a drive item [destructive] destructive"
+      "haystack": "items.deletepermanently onedrive.api.items.deletepermanently permanently delete a drive item destructive"
     },
     {
       "pluginId": "onedrive",
@@ -46184,13 +46535,13 @@
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "permissions.deleteFromItem",
-      "haystack": "permissions.deletefromitem onedrive.api.permissions.deletefromitem delete a permission from a drive item [destructive] destructive"
+      "haystack": "permissions.deletefromitem onedrive.api.permissions.deletefromitem delete a permission from a drive item destructive"
     },
     {
       "pluginId": "onedrive",
       "kind": "api",
       "shortPath": "permissions.deleteSharePermission",
-      "haystack": "permissions.deletesharepermission onedrive.api.permissions.deletesharepermission delete a share permission [destructive] destructive"
+      "haystack": "permissions.deletesharepermission onedrive.api.permissions.deletesharepermission delete a share permission destructive"
     },
     {
       "pluginId": "onedrive",
@@ -46304,7 +46655,7 @@
       "pluginId": "onepassword",
       "kind": "api",
       "shortPath": "items.delete",
-      "haystack": "items.delete onepassword.api.items.delete delete an item from a vault [destructive] destructive"
+      "haystack": "items.delete onepassword.api.items.delete delete an item from a vault destructive"
     },
     {
       "pluginId": "onepassword",
@@ -47264,7 +47615,7 @@
       "pluginId": "openweathermap",
       "kind": "api",
       "shortPath": "stations.remove",
-      "haystack": "stations.remove openweathermap.api.stations.remove delete a registered weather station from your account [destructive] destructive"
+      "haystack": "stations.remove openweathermap.api.stations.remove delete a registered weather station from your account destructive"
     },
     {
       "pluginId": "openweathermap",
@@ -47366,7 +47717,7 @@
       "pluginId": "outlook",
       "kind": "api",
       "shortPath": "calendars.delete",
-      "haystack": "calendars.delete outlook.api.calendars.delete delete a calendar [destructive] destructive"
+      "haystack": "calendars.delete outlook.api.calendars.delete delete a calendar destructive"
     },
     {
       "pluginId": "outlook",
@@ -47390,7 +47741,7 @@
       "pluginId": "outlook",
       "kind": "api",
       "shortPath": "contacts.delete",
-      "haystack": "contacts.delete outlook.api.contacts.delete delete a contact [destructive] destructive"
+      "haystack": "contacts.delete outlook.api.contacts.delete delete a contact destructive"
     },
     {
       "pluginId": "outlook",
@@ -47426,7 +47777,7 @@
       "pluginId": "outlook",
       "kind": "api",
       "shortPath": "events.delete",
-      "haystack": "events.delete outlook.api.events.delete delete a calendar event [destructive] destructive"
+      "haystack": "events.delete outlook.api.events.delete delete a calendar event destructive"
     },
     {
       "pluginId": "outlook",
@@ -47468,7 +47819,7 @@
       "pluginId": "outlook",
       "kind": "api",
       "shortPath": "folders.delete",
-      "haystack": "folders.delete outlook.api.folders.delete delete a mail folder [destructive] destructive"
+      "haystack": "folders.delete outlook.api.folders.delete delete a mail folder destructive"
     },
     {
       "pluginId": "outlook",
@@ -47516,7 +47867,7 @@
       "pluginId": "outlook",
       "kind": "api",
       "shortPath": "messages.delete",
-      "haystack": "messages.delete outlook.api.messages.delete delete an email message [destructive] destructive"
+      "haystack": "messages.delete outlook.api.messages.delete delete an email message destructive"
     },
     {
       "pluginId": "outlook",
@@ -48398,7 +48749,7 @@
       "pluginId": "razorpay",
       "kind": "api",
       "shortPath": "subscriptions.cancel",
-      "haystack": "subscriptions.cancel razorpay.api.subscriptions.cancel cancel a razorpay subscription [destructive] destructive"
+      "haystack": "subscriptions.cancel razorpay.api.subscriptions.cancel cancel a razorpay subscription destructive"
     },
     {
       "pluginId": "razorpay",
@@ -51440,7 +51791,7 @@
       "pluginId": "sentry",
       "kind": "api",
       "shortPath": "issues.delete",
-      "haystack": "issues.delete sentry.api.issues.delete permanently delete an issue [destructive] destructive"
+      "haystack": "issues.delete sentry.api.issues.delete permanently delete an issue destructive"
     },
     {
       "pluginId": "sentry",
@@ -51494,7 +51845,7 @@
       "pluginId": "sentry",
       "kind": "api",
       "shortPath": "projects.delete",
-      "haystack": "projects.delete sentry.api.projects.delete permanently delete a project [destructive] destructive"
+      "haystack": "projects.delete sentry.api.projects.delete permanently delete a project destructive"
     },
     {
       "pluginId": "sentry",
@@ -51524,7 +51875,7 @@
       "pluginId": "sentry",
       "kind": "api",
       "shortPath": "releases.delete",
-      "haystack": "releases.delete sentry.api.releases.delete delete a release [destructive] destructive"
+      "haystack": "releases.delete sentry.api.releases.delete delete a release destructive"
     },
     {
       "pluginId": "sentry",
@@ -51554,7 +51905,7 @@
       "pluginId": "sentry",
       "kind": "api",
       "shortPath": "teams.delete",
-      "haystack": "teams.delete sentry.api.teams.delete delete a team [destructive] destructive"
+      "haystack": "teams.delete sentry.api.teams.delete delete a team destructive"
     },
     {
       "pluginId": "sentry",
@@ -51974,7 +52325,7 @@
       "pluginId": "sharepoint",
       "kind": "api",
       "shortPath": "drive.deleteVersion",
-      "haystack": "drive.deleteversion sharepoint.api.drive.deleteversion delete a specific version of a drive item [destructive] destructive"
+      "haystack": "drive.deleteversion sharepoint.api.drive.deleteversion delete a specific version of a drive item destructive"
     },
     {
       "pluginId": "sharepoint",
@@ -52058,7 +52409,7 @@
       "pluginId": "sharepoint",
       "kind": "api",
       "shortPath": "folders.delete",
-      "haystack": "folders.delete sharepoint.api.folders.delete delete a sharepoint folder and all its contents [destructive] destructive"
+      "haystack": "folders.delete sharepoint.api.folders.delete delete a sharepoint folder and all its contents destructive"
     },
     {
       "pluginId": "sharepoint",
@@ -52112,7 +52463,7 @@
       "pluginId": "sharepoint",
       "kind": "api",
       "shortPath": "items.delete",
-      "haystack": "items.delete sharepoint.api.items.delete permanently delete a sharepoint list item [destructive] destructive"
+      "haystack": "items.delete sharepoint.api.items.delete permanently delete a sharepoint list item destructive"
     },
     {
       "pluginId": "sharepoint",
@@ -52178,13 +52529,13 @@
       "pluginId": "sharepoint",
       "kind": "api",
       "shortPath": "lists.delete",
-      "haystack": "lists.delete sharepoint.api.lists.delete delete a sharepoint list by guid [destructive] destructive"
+      "haystack": "lists.delete sharepoint.api.lists.delete delete a sharepoint list by guid destructive"
     },
     {
       "pluginId": "sharepoint",
       "kind": "api",
       "shortPath": "lists.deleteByTitle",
-      "haystack": "lists.deletebytitle sharepoint.api.lists.deletebytitle delete a sharepoint list by title [destructive] destructive"
+      "haystack": "lists.deletebytitle sharepoint.api.lists.deletebytitle delete a sharepoint list by title destructive"
     },
     {
       "pluginId": "sharepoint",
@@ -52262,7 +52613,7 @@
       "pluginId": "sharepoint",
       "kind": "api",
       "shortPath": "recycleBin.deletePermanent",
-      "haystack": "recyclebin.deletepermanent sharepoint.api.recyclebin.deletepermanent permanently delete an item from the recycle bin [destructive] destructive"
+      "haystack": "recyclebin.deletepermanent sharepoint.api.recyclebin.deletepermanent permanently delete an item from the recycle bin destructive"
     },
     {
       "pluginId": "sharepoint",
@@ -52370,7 +52721,7 @@
       "pluginId": "sharepoint",
       "kind": "api",
       "shortPath": "users.remove",
-      "haystack": "users.remove sharepoint.api.users.remove remove a user from the sharepoint site [destructive] destructive"
+      "haystack": "users.remove sharepoint.api.users.remove remove a user from the sharepoint site destructive"
     },
     {
       "pluginId": "sharepoint",
@@ -52466,7 +52817,7 @@
       "pluginId": "slack",
       "kind": "api",
       "shortPath": "channels.archive",
-      "haystack": "channels.archive slack.api.channels.archive archive a slack channel [destructive] destructive"
+      "haystack": "channels.archive slack.api.channels.archive archive a slack channel destructive"
     },
     {
       "pluginId": "slack",
@@ -52586,7 +52937,7 @@
       "pluginId": "slack",
       "kind": "api",
       "shortPath": "messages.delete",
-      "haystack": "messages.delete slack.api.messages.delete delete a message [destructive] destructive"
+      "haystack": "messages.delete slack.api.messages.delete delete a message destructive"
     },
     {
       "pluginId": "slack",
@@ -53228,7 +53579,7 @@
       "pluginId": "stripe",
       "kind": "api",
       "shortPath": "customers.delete",
-      "haystack": "customers.delete stripe.api.customers.delete delete a stripe customer [destructive] destructive"
+      "haystack": "customers.delete stripe.api.customers.delete delete a stripe customer destructive"
     },
     {
       "pluginId": "stripe",
@@ -54158,7 +54509,7 @@
       "pluginId": "synthflowai",
       "kind": "api",
       "shortPath": "actions.delete",
-      "haystack": "actions.delete synthflowai.api.actions.delete delete an action in synthflow ai [destructive] destructive"
+      "haystack": "actions.delete synthflowai.api.actions.delete delete an action in synthflow ai destructive"
     },
     {
       "pluginId": "synthflowai",
@@ -54194,7 +54545,7 @@
       "pluginId": "synthflowai",
       "kind": "api",
       "shortPath": "assistants.delete",
-      "haystack": "assistants.delete synthflowai.api.assistants.delete delete a synthflow ai assistant [destructive] destructive"
+      "haystack": "assistants.delete synthflowai.api.assistants.delete delete a synthflow ai assistant destructive"
     },
     {
       "pluginId": "synthflowai",
@@ -54242,7 +54593,7 @@
       "pluginId": "synthflowai",
       "kind": "api",
       "shortPath": "contacts.delete",
-      "haystack": "contacts.delete synthflowai.api.contacts.delete delete a contact in synthflow ai [destructive] destructive"
+      "haystack": "contacts.delete synthflowai.api.contacts.delete delete a contact in synthflow ai destructive"
     },
     {
       "pluginId": "synthflowai",
@@ -54278,7 +54629,7 @@
       "pluginId": "synthflowai",
       "kind": "api",
       "shortPath": "knowledgeBases.delete",
-      "haystack": "knowledgebases.delete synthflowai.api.knowledgebases.delete delete a knowledge base in synthflow ai [destructive] destructive"
+      "haystack": "knowledgebases.delete synthflowai.api.knowledgebases.delete delete a knowledge base in synthflow ai destructive"
     },
     {
       "pluginId": "synthflowai",
@@ -54314,7 +54665,7 @@
       "pluginId": "synthflowai",
       "kind": "api",
       "shortPath": "memoryStores.delete",
-      "haystack": "memorystores.delete synthflowai.api.memorystores.delete delete a memory store in synthflow ai [destructive] destructive"
+      "haystack": "memorystores.delete synthflowai.api.memorystores.delete delete a memory store in synthflow ai destructive"
     },
     {
       "pluginId": "synthflowai",
@@ -54350,7 +54701,7 @@
       "pluginId": "synthflowai",
       "kind": "api",
       "shortPath": "phoneBooks.delete",
-      "haystack": "phonebooks.delete synthflowai.api.phonebooks.delete delete a phone book in synthflow ai [destructive] destructive"
+      "haystack": "phonebooks.delete synthflowai.api.phonebooks.delete delete a phone book in synthflow ai destructive"
     },
     {
       "pluginId": "synthflowai",
@@ -54374,7 +54725,7 @@
       "pluginId": "tally",
       "kind": "api",
       "shortPath": "forms.delete",
-      "haystack": "forms.delete tally.api.forms.delete delete a form [destructive] destructive"
+      "haystack": "forms.delete tally.api.forms.delete delete a form destructive"
     },
     {
       "pluginId": "tally",
@@ -54398,7 +54749,7 @@
       "pluginId": "tally",
       "kind": "api",
       "shortPath": "organizations.cancelInvite",
-      "haystack": "organizations.cancelinvite tally.api.organizations.cancelinvite cancel a pending organization invite [destructive] destructive"
+      "haystack": "organizations.cancelinvite tally.api.organizations.cancelinvite cancel a pending organization invite destructive"
     },
     {
       "pluginId": "tally",
@@ -54422,7 +54773,7 @@
       "pluginId": "tally",
       "kind": "api",
       "shortPath": "organizations.removeUser",
-      "haystack": "organizations.removeuser tally.api.organizations.removeuser remove a user from an organization [destructive] destructive"
+      "haystack": "organizations.removeuser tally.api.organizations.removeuser remove a user from an organization destructive"
     },
     {
       "pluginId": "tally",
@@ -54434,7 +54785,7 @@
       "pluginId": "tally",
       "kind": "api",
       "shortPath": "submissions.delete",
-      "haystack": "submissions.delete tally.api.submissions.delete delete a form submission [destructive] destructive"
+      "haystack": "submissions.delete tally.api.submissions.delete delete a form submission destructive"
     },
     {
       "pluginId": "tally",
@@ -54464,7 +54815,7 @@
       "pluginId": "tally",
       "kind": "api",
       "shortPath": "webhookManagement.delete",
-      "haystack": "webhookmanagement.delete tally.api.webhookmanagement.delete delete a webhook subscription [destructive] destructive"
+      "haystack": "webhookmanagement.delete tally.api.webhookmanagement.delete delete a webhook subscription destructive"
     },
     {
       "pluginId": "tally",
@@ -54500,7 +54851,7 @@
       "pluginId": "tally",
       "kind": "api",
       "shortPath": "workspaces.delete",
-      "haystack": "workspaces.delete tally.api.workspaces.delete delete a workspace [destructive] destructive"
+      "haystack": "workspaces.delete tally.api.workspaces.delete delete a workspace destructive"
     },
     {
       "pluginId": "tally",
@@ -54590,7 +54941,7 @@
       "pluginId": "teams",
       "kind": "api",
       "shortPath": "channels.delete",
-      "haystack": "channels.delete teams.api.channels.delete delete a channel [destructive] destructive"
+      "haystack": "channels.delete teams.api.channels.delete delete a channel destructive"
     },
     {
       "pluginId": "teams",
@@ -54662,13 +55013,13 @@
       "pluginId": "teams",
       "kind": "api",
       "shortPath": "members.remove",
-      "haystack": "members.remove teams.api.members.remove remove a member from a team [destructive] destructive"
+      "haystack": "members.remove teams.api.members.remove remove a member from a team destructive"
     },
     {
       "pluginId": "teams",
       "kind": "api",
       "shortPath": "messages.delete",
-      "haystack": "messages.delete teams.api.messages.delete delete a channel message [destructive] destructive"
+      "haystack": "messages.delete teams.api.messages.delete delete a channel message destructive"
     },
     {
       "pluginId": "teams",
@@ -54710,7 +55061,7 @@
       "pluginId": "teams",
       "kind": "api",
       "shortPath": "teams.delete",
-      "haystack": "teams.delete teams.api.teams.delete delete a team [destructive] destructive"
+      "haystack": "teams.delete teams.api.teams.delete delete a team destructive"
     },
     {
       "pluginId": "teams",
@@ -55145,6 +55496,18 @@
       "haystack": "deleteperson.delete timelink.api.deleteperson.delete delete a person record by their unique identifier. destructive"
     },
     {
+      "pluginId": "tinyurl",
+      "kind": "api",
+      "shortPath": "urls.create",
+      "haystack": "urls.create tinyurl.api.urls.create shorten a url using tinyurl write"
+    },
+    {
+      "pluginId": "tinyurl",
+      "kind": "api",
+      "shortPath": "urls.list",
+      "haystack": "urls.list tinyurl.api.urls.list list available or archived tinyurls read"
+    },
+    {
       "pluginId": "tisane",
       "kind": "api",
       "shortPath": "text.extractEntities",
@@ -55478,7 +55841,7 @@
       "pluginId": "toggl",
       "kind": "api",
       "shortPath": "clients.delete",
-      "haystack": "clients.delete toggl.api.clients.delete delete a client [destructive] destructive"
+      "haystack": "clients.delete toggl.api.clients.delete delete a client destructive"
     },
     {
       "pluginId": "toggl",
@@ -55598,7 +55961,7 @@
       "pluginId": "toggl",
       "kind": "api",
       "shortPath": "organizations.deleteGroup",
-      "haystack": "organizations.deletegroup toggl.api.organizations.deletegroup delete an organization group [destructive] destructive"
+      "haystack": "organizations.deletegroup toggl.api.organizations.deletegroup delete an organization group destructive"
     },
     {
       "pluginId": "toggl",
@@ -55658,13 +56021,13 @@
       "pluginId": "toggl",
       "kind": "api",
       "shortPath": "projects.delete",
-      "haystack": "projects.delete toggl.api.projects.delete delete a project and its time entries [destructive] destructive"
+      "haystack": "projects.delete toggl.api.projects.delete delete a project and its time entries destructive"
     },
     {
       "pluginId": "toggl",
       "kind": "api",
       "shortPath": "projects.deleteGroup",
-      "haystack": "projects.deletegroup toggl.api.projects.deletegroup delete a project group [destructive] destructive"
+      "haystack": "projects.deletegroup toggl.api.projects.deletegroup delete a project group destructive"
     },
     {
       "pluginId": "toggl",
@@ -55748,7 +56111,7 @@
       "pluginId": "toggl",
       "kind": "api",
       "shortPath": "tags.delete",
-      "haystack": "tags.delete toggl.api.tags.delete delete a tag [destructive] destructive"
+      "haystack": "tags.delete toggl.api.tags.delete delete a tag destructive"
     },
     {
       "pluginId": "toggl",
@@ -55772,7 +56135,7 @@
       "pluginId": "toggl",
       "kind": "api",
       "shortPath": "tasks.delete",
-      "haystack": "tasks.delete toggl.api.tasks.delete delete a task [destructive] destructive"
+      "haystack": "tasks.delete toggl.api.tasks.delete delete a task destructive"
     },
     {
       "pluginId": "toggl",
@@ -55808,7 +56171,7 @@
       "pluginId": "toggl",
       "kind": "api",
       "shortPath": "timeEntries.delete",
-      "haystack": "timeentries.delete toggl.api.timeentries.delete delete a time entry [destructive] destructive"
+      "haystack": "timeentries.delete toggl.api.timeentries.delete delete a time entry destructive"
     },
     {
       "pluginId": "toggl",
@@ -55844,7 +56207,7 @@
       "pluginId": "toggl",
       "kind": "api",
       "shortPath": "webhooks.deleteSubscription",
-      "haystack": "webhooks.deletesubscription toggl.api.webhooks.deletesubscription delete a webhook subscription [destructive] destructive"
+      "haystack": "webhooks.deletesubscription toggl.api.webhooks.deletesubscription delete a webhook subscription destructive"
     },
     {
       "pluginId": "toggl",
@@ -55910,7 +56273,7 @@
       "pluginId": "trello",
       "kind": "api",
       "shortPath": "boards.delete",
-      "haystack": "boards.delete trello.api.boards.delete delete a board [destructive] destructive"
+      "haystack": "boards.delete trello.api.boards.delete delete a board destructive"
     },
     {
       "pluginId": "trello",
@@ -55940,7 +56303,7 @@
       "pluginId": "trello",
       "kind": "api",
       "shortPath": "cards.delete",
-      "haystack": "cards.delete trello.api.cards.delete delete a card [destructive] destructive"
+      "haystack": "cards.delete trello.api.cards.delete delete a card destructive"
     },
     {
       "pluginId": "trello",
@@ -55976,7 +56339,7 @@
       "pluginId": "trello",
       "kind": "api",
       "shortPath": "checklists.delete",
-      "haystack": "checklists.delete trello.api.checklists.delete delete a checklist [destructive] destructive"
+      "haystack": "checklists.delete trello.api.checklists.delete delete a checklist destructive"
     },
     {
       "pluginId": "trello",
@@ -55994,7 +56357,7 @@
       "pluginId": "trello",
       "kind": "api",
       "shortPath": "labels.delete",
-      "haystack": "labels.delete trello.api.labels.delete delete a label [destructive] destructive"
+      "haystack": "labels.delete trello.api.labels.delete delete a label destructive"
     },
     {
       "pluginId": "trello",
@@ -56492,7 +56855,7 @@
       "pluginId": "typeform",
       "kind": "api",
       "shortPath": "forms.delete",
-      "haystack": "forms.delete typeform.api.forms.delete permanently delete a form [destructive] destructive"
+      "haystack": "forms.delete typeform.api.forms.delete permanently delete a form destructive"
     },
     {
       "pluginId": "typeform",
@@ -56540,7 +56903,7 @@
       "pluginId": "typeform",
       "kind": "api",
       "shortPath": "images.delete",
-      "haystack": "images.delete typeform.api.images.delete permanently delete an image [destructive] destructive"
+      "haystack": "images.delete typeform.api.images.delete permanently delete an image destructive"
     },
     {
       "pluginId": "typeform",
@@ -56576,7 +56939,7 @@
       "pluginId": "typeform",
       "kind": "api",
       "shortPath": "responses.delete",
-      "haystack": "responses.delete typeform.api.responses.delete delete specific responses from a form [destructive] destructive"
+      "haystack": "responses.delete typeform.api.responses.delete delete specific responses from a form destructive"
     },
     {
       "pluginId": "typeform",
@@ -56600,7 +56963,7 @@
       "pluginId": "typeform",
       "kind": "api",
       "shortPath": "themes.delete",
-      "haystack": "themes.delete typeform.api.themes.delete permanently delete a theme [destructive] destructive"
+      "haystack": "themes.delete typeform.api.themes.delete permanently delete a theme destructive"
     },
     {
       "pluginId": "typeform",
@@ -56642,7 +57005,7 @@
       "pluginId": "typeform",
       "kind": "api",
       "shortPath": "webhooksConfig.delete",
-      "haystack": "webhooksconfig.delete typeform.api.webhooksconfig.delete delete a webhook configuration [destructive] destructive"
+      "haystack": "webhooksconfig.delete typeform.api.webhooksconfig.delete delete a webhook configuration destructive"
     },
     {
       "pluginId": "typeform",
@@ -56672,7 +57035,7 @@
       "pluginId": "typeform",
       "kind": "api",
       "shortPath": "workspaces.delete",
-      "haystack": "workspaces.delete typeform.api.workspaces.delete permanently delete a workspace [destructive] destructive"
+      "haystack": "workspaces.delete typeform.api.workspaces.delete permanently delete a workspace destructive"
     },
     {
       "pluginId": "typeform",
@@ -56948,7 +57311,7 @@
       "pluginId": "vapi",
       "kind": "api",
       "shortPath": "assistants.delete",
-      "haystack": "assistants.delete vapi.api.assistants.delete delete a vapi assistant [destructive] destructive"
+      "haystack": "assistants.delete vapi.api.assistants.delete delete a vapi assistant destructive"
     },
     {
       "pluginId": "vapi",
@@ -56978,7 +57341,7 @@
       "pluginId": "vapi",
       "kind": "api",
       "shortPath": "calls.delete",
-      "haystack": "calls.delete vapi.api.calls.delete delete a vapi call [destructive] destructive"
+      "haystack": "calls.delete vapi.api.calls.delete delete a vapi call destructive"
     },
     {
       "pluginId": "vapi",
@@ -57002,7 +57365,7 @@
       "pluginId": "vapi",
       "kind": "api",
       "shortPath": "files.delete",
-      "haystack": "files.delete vapi.api.files.delete delete a vapi file [destructive] destructive"
+      "haystack": "files.delete vapi.api.files.delete delete a vapi file destructive"
     },
     {
       "pluginId": "vapi",
@@ -57032,7 +57395,7 @@
       "pluginId": "vapi",
       "kind": "api",
       "shortPath": "knowledgeBases.delete",
-      "haystack": "knowledgebases.delete vapi.api.knowledgebases.delete delete a vapi knowledge base [destructive] destructive"
+      "haystack": "knowledgebases.delete vapi.api.knowledgebases.delete delete a vapi knowledge base destructive"
     },
     {
       "pluginId": "vapi",
@@ -57062,7 +57425,7 @@
       "pluginId": "vapi",
       "kind": "api",
       "shortPath": "phoneNumbers.delete",
-      "haystack": "phonenumbers.delete vapi.api.phonenumbers.delete delete a vapi phone number [destructive] destructive"
+      "haystack": "phonenumbers.delete vapi.api.phonenumbers.delete delete a vapi phone number destructive"
     },
     {
       "pluginId": "vapi",
@@ -57092,7 +57455,7 @@
       "pluginId": "vapi",
       "kind": "api",
       "shortPath": "squads.delete",
-      "haystack": "squads.delete vapi.api.squads.delete delete a vapi squad [destructive] destructive"
+      "haystack": "squads.delete vapi.api.squads.delete delete a vapi squad destructive"
     },
     {
       "pluginId": "vapi",
@@ -57122,7 +57485,7 @@
       "pluginId": "vapi",
       "kind": "api",
       "shortPath": "tools.delete",
-      "haystack": "tools.delete vapi.api.tools.delete delete a vapi tool [destructive] destructive"
+      "haystack": "tools.delete vapi.api.tools.delete delete a vapi tool destructive"
     },
     {
       "pluginId": "vapi",
@@ -59204,7 +59567,7 @@
       "pluginId": "zoom",
       "kind": "api",
       "shortPath": "recordings.deleteMeeting",
-      "haystack": "recordings.deletemeeting zoom.api.recordings.deletemeeting delete cloud recordings for a meeting [destructive] destructive"
+      "haystack": "recordings.deletemeeting zoom.api.recordings.deletemeeting delete cloud recordings for a meeting destructive"
     },
     {
       "pluginId": "zoom",

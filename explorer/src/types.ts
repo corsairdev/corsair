@@ -114,6 +114,34 @@ export type PluginCatalogIndex = {
 	search: CatalogSearchEntry[];
 };
 
+export type IntegrationFaqId =
+	| 'setup'
+	| 'permissions'
+	| 'combine'
+	| 'use-cases'
+	| 'pricing'
+	| 'api-changes'
+	| 'data-privacy';
+
+export type IntegrationFaq = {
+	id: IntegrationFaqId;
+	question: string;
+	answer: string;
+};
+
+export type IntegrationPage = {
+	faqs: IntegrationFaq[];
+};
+
+/** FAQ copy for explorer integration pages — one entry per plugin id. */
+export type IntegrationPagesIndex = {
+	/** ISO timestamp for when the pages file was built. */
+	generatedAt: string;
+	/** Schema version for consumers that want to guard against breaking changes. */
+	catalogVersion: 1;
+	pages: Record<string, IntegrationPage>;
+};
+
 /**
  * Legacy monolithic catalog (v1). Prefer {@link PluginCatalogIndex} plus
  * per-plugin JSON files under `data/plugins/`.
