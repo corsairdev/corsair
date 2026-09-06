@@ -2,21 +2,24 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
-import { corsair } from '@/server/corsair';
+import { bugherd } from '@corsair-dev/bugherd';
+import { createCorsair } from 'corsair';
+import { sqlite } from '../db';
 
-async function setInstagramCredentials() {
-	const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, IG_ACCESS_TOKEN } = process.env;
-
-	if (FACEBOOK_APP_ID) {
-		await corsair.keys.instagram.set_client_id(FACEBOOK_APP_ID);
-	}
-	if (FACEBOOK_APP_SECRET) {
-		await corsair.keys.instagram.set_client_secret(FACEBOOK_APP_SECRET);
-	}
-	if (IG_ACCESS_TOKEN) {
-		await corsair.instagram.keys.set_access_token(IG_ACCESS_TOKEN);
-	}
-}
+const corsair = createCorsair({
+	multiTenancy: false,
+	database: sqlite,
+	kek: process.env.CORSAIR_KEK!,
+	permissions: {
+		timeout: '10m',
+		onTimeout: 'deny',
+	},
+	plugins: [
+		bugherd({
+			key: process.env.BUGHERD_API_KEY,
+		}),
+	],
+});
 
 async function testBugherd() {
 	console.log('Testing BugHerd plugin...');
@@ -57,11 +60,7 @@ async function testBugherd() {
 	console.log('Users:', JSON.stringify(listUsers.data, null, 2));
 }
 
-const main = async () => {
-	await testBugherd();
-};
-
-main().catch((err) => {
+testBugherd().catch((err) => {
 	console.error(err);
 	process.exit(1);
 });
