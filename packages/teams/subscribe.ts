@@ -16,6 +16,7 @@ export async function teamsSubscribe(
 	ctx: Parameters<typeof msGraphSubscribe>[0],
 	input: {
 		webhookUrl: string;
+		clientState?: string;
 		channelSubscription?: TeamsChannelSubscription;
 	},
 ) {
@@ -26,6 +27,7 @@ export async function teamsSubscribe(
 		const { teamId, channelId } = input.channelSubscription;
 		return msGraphSubscribe(ctx, {
 			webhookUrl: input.webhookUrl,
+			clientState: input.clientState,
 			resource: `teams/${teamId}/channels/${channelId}/messages`,
 			changeType: 'created',
 		});
@@ -41,6 +43,7 @@ export async function teamsSubscribe(
 
 	return msGraphSubscribe(ctx, {
 		webhookUrl: input.webhookUrl,
+		clientState: input.clientState,
 		resource: `users/${id}/chats/getAllMessages`,
 		changeType: 'created',
 	});

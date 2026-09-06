@@ -449,7 +449,9 @@ export type CorsairPluginSubscribeResult = {
  */
 export type CorsairPluginSubscribe = (
 	ctx: any,
-	input: { webhookUrl: string },
+	// clientState: Hub's shared endpoint secret for Graph plugins, so every
+	// tenant's subscription uses the one value verifyMsGraph checks inbound.
+	input: { webhookUrl: string; clientState?: string },
 ) => Promise<CorsairPluginSubscribeResult | null>;
 
 /**

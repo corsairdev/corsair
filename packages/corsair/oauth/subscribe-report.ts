@@ -18,9 +18,12 @@ export async function subscribeAndReport(
 ): Promise<void> {
 	if (!plugin.subscribe) return;
 	const hub = getHubConfig(corsair);
-	const webhookUrl = await getWebhookEndpointUrl(hub, plugin.id);
-	if (!webhookUrl) return;
-	const result = await plugin.subscribe({ keys }, { webhookUrl });
+	const endpoint = await getWebhookEndpointUrl(hub, plugin.id);
+	if (!endpoint) return;
+	const result = await plugin.subscribe(
+		{ keys },
+		{ webhookUrl: endpoint.url, clientState: endpoint.clientState },
+	);
 	if (!result) return;
 	await reportPluginConnectionStatus(corsair, {
 		plugin,
