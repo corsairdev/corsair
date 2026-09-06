@@ -1,20 +1,21 @@
 import { ChMeetingsSchema } from './schema';
+import { ChMeetingsPerson } from './schema/database';
 
 describe('ChMeetings schema', () => {
 	it('declares a semver version', () => {
-		expect(ChMeetingsSchema.version).toBeDefined();
 		expect(ChMeetingsSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof ChMeetingsSchema.entities).toBe('object');
-		expect(ChMeetingsSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(ChMeetingsSchema.entities))).toBe(true);
-		for (const entity of Object.values(ChMeetingsSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('stores official person, organization, and event entities', () => {
+		expect(ChMeetingsSchema.entities.people).toBeDefined();
+		expect(ChMeetingsSchema.entities.organizations).toBeDefined();
+		expect(ChMeetingsSchema.entities.events).toBeDefined();
+		expect(
+			ChMeetingsPerson.parse({
+				id: 1,
+				first_name: 'Ada',
+				last_name: 'Lovelace',
+			}),
+		).toMatchObject({ id: 1, first_name: 'Ada' });
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
