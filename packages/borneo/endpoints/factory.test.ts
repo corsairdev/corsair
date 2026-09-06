@@ -59,6 +59,7 @@ describe('Borneo endpoint factory', () => {
 	it('logs completed after a successful execution', async () => {
 		await createNewAsset(ctx, input);
 
+		expect(logEventMock).toHaveBeenCalledTimes(1);
 		expect(logEventMock).toHaveBeenCalledWith(
 			ctx,
 			'borneo.assets.createNewAsset',
@@ -88,6 +89,30 @@ describe('Borneo endpoint factory', () => {
 			'borneo.assets.createNewAsset',
 			expectedEvent,
 			'completed',
+		);
+	});
+
+	it('keeps the completed status when output parsing fails after a successful execution', async () => {
+		executeMock.mockResolvedValue({
+			successful: false,
+			error: 'Asset name already exists',
+			data: null,
+		});
+
+		await expect(createNewAsset(ctx, input)).rejects.toThrow();
+
+		expect(logEventMock).toHaveBeenCalledWith(
+			ctx,
+			'borneo.assets.createNewAsset',
+			expectedEvent,
+			'completed',
+		);
+
+		expect(logEventMock).not.toHaveBeenCalledWith(
+			ctx,
+			'borneo.assets.createNewAsset',
+			expectedEvent,
+			'failed',
 		);
 	});
 

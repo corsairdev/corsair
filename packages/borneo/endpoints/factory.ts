@@ -50,7 +50,7 @@ export function createBorneoEndpoint<K extends BorneoOperationName>(
 			}
 		).signal;
 
-		let status: 'completed' | 'failed' = 'completed';
+		let status: 'completed' | 'failed' = 'failed';
 
 		try {
 			const response = await executeBorneoTool<unknown>(toolSlug, input, {
@@ -67,12 +67,11 @@ export function createBorneoEndpoint<K extends BorneoOperationName>(
 				signal: callerSignal,
 			});
 
-			const parsed = BorneoEndpointOutputSchemas[name].parse(response);
+			// The execution succeeded, so schema failures must not be recorded
+			// as failed executions.
+			status = 'completed';
 
-			return parsed;
-		} catch (error) {
-			status = 'failed';
-			throw error;
+			return BorneoEndpointOutputSchemas[name].parse(response);
 		} finally {
 			await logEventFromContext(
 				ctx,
