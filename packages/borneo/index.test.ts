@@ -1,3 +1,4 @@
+import type { CorsairKeyBuilderBase } from 'corsair/core';
 import { borneo, borneoEndpointSchemas } from './index';
 import { BORNEO_OPERATIONS } from './operations';
 
@@ -17,30 +18,29 @@ describe('Borneo plugin wiring', () => {
 	it('keeps provider credentials separate from the Composio project key', async () => {
 		const plugin = borneo({
 			composioApiKey: 'composio-project-key',
+			authType: 'api_key',
 		});
+		const getApiKey = jest.fn().mockResolvedValue('borneo-provider-key');
+		const buildKey: CorsairKeyBuilderBase = plugin.keyBuilder!;
 
-		const keyBuilder = plugin.keyBuilder as unknown as (
-			ctx: {
-				authType: 'api_key';
-				keys: {
-					get_api_key(): Promise<string>;
-				};
-			},
-			source: 'endpoint',
-		) => Promise<string>;
+		await expect(
+			buildKey(
+				{
+					authType: 'api_key',
+					options: plugin.options ?? {
+						composioApiKey: 'composio-project-key',
+						authType: 'api_key',
+					},
+					keys: {
+						get_api_key: getApiKey,
+					},
+					tenantId: 'default',
+				},
+				'endpoint',
+			),
+		).resolves.toBe('borneo-provider-key');
 
-		const ctx = {
-			authType: 'api_key' as const,
-			keys: {
-				get_api_key: jest.fn().mockResolvedValue('borneo-provider-key'),
-			},
-		};
-
-		await expect(keyBuilder(ctx, 'endpoint')).resolves.toBe(
-			'borneo-provider-key',
-		);
-
-		expect(ctx.keys.get_api_key).toHaveBeenCalledTimes(1);
+		expect(getApiKey).toHaveBeenCalledTimes(1);
 	});
 
 	it('publishes inventory risk levels on endpoint meta', () => {

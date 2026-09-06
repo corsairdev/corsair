@@ -122,7 +122,7 @@ const borneoEndpointsNested = {
 
 export type BorneoBoundEndpoints = BindEndpoints<typeof borneoEndpointsNested>;
 
-export const borneoEndpointSchemas = {
+export const borneoEndpointSchemas: RequiredPluginEndpointSchemas<typeof borneoEndpointsNested> = {
 	'accounts.getCloudAccountById': {
 		input: BorneoEndpointInputSchemas.getCloudAccountById,
 		output: BorneoEndpointOutputSchemas.getCloudAccountById,
