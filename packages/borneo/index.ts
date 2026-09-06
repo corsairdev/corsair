@@ -751,7 +751,9 @@ const borneoEndpointMeta = Object.fromEntries(
 			description: operation.title,
 		},
 	]),
-) as RequiredPluginEndpointMeta<typeof borneoEndpointsNested>;
+) as RequiredPluginEndpointMeta<
+	typeof borneoEndpointsNested
+> satisfies RequiredPluginEndpointMeta<typeof borneoEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
