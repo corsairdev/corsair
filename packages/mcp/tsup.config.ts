@@ -1,13 +1,13 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-	entry: ['src/index.ts'],
+	entry: ['src/index.ts', 'src/mastra.ts'],
 	format: ['esm'],
 	target: 'esnext',
 	platform: 'node',
 	dts: false,
 	clean: true,
 	outDir: 'dist',
-	external: ['corsair', '@modelcontextprotocol/sdk'],
+	external: ['corsair', '@corsair-dev/mastra', '@modelcontextprotocol/sdk'],
 	noExternal: ['@ai-sdk/mcp'],
 });
