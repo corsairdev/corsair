@@ -1,4 +1,4 @@
-﻿import { borneo, borneoEndpointSchemas } from './index';
+import { borneo, borneoEndpointSchemas } from './index';
 import { BORNEO_OPERATIONS } from './operations';
 
 describe('Borneo plugin wiring', () => {

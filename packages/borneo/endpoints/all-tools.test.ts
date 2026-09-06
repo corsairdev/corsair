@@ -1,4 +1,4 @@
-﻿import * as client from '../client';
+import * as client from '../client';
 import { BORNEO_OPERATIONS } from '../operations';
 import { BORNEO_OPERATION_SAMPLE_INPUTS } from './generated-operation-samples';
 import * as EndpointGroups from './index';
