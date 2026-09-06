@@ -11,7 +11,8 @@ function priceQuoteId(input: {
 	weight_unit: string;
 	items: Array<{ method_type: string; cdr_amount: number }>;
 }): string {
-	return `${input.currency}:${input.weight_unit}:${input.items
+	return `${input.currency}:${input.weight_unit}:${[...input.items]
+		.sort((a, b) => a.method_type.localeCompare(b.method_type))
 		.map((item) => `${item.method_type}:${item.cdr_amount}`)
 		.join(',')}`;
 }
