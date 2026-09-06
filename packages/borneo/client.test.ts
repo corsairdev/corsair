@@ -505,16 +505,67 @@ describe('Borneo Composio transport', () => {
 		}
 	});
 
-	it('requires a header name for direct custom auth', async () => {
+	it('throws when a successful HTTP response omits the execution flag', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					data: {},
+					log_id: 'log_123',
+				}),
+				{
+					status: 200,
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			),
+		);
+
 		await expect(
 			executeBorneoTool(
 				'BORNEO_LIST_SCANS_WITH_FILTERS',
 				{},
 				{
 					composioApiKey: 'project-key',
-					borneoCredential: 'provider-secret',
+					connectedAccountId: 'ca_123',
+					riskLevel: 'read',
 				},
 			),
-		).rejects.toThrow('credentialHeaderName is required');
+		).rejects.toMatchObject({
+			name: 'ApiError',
+			status: 200,
+			message: 'Borneo tool execution failed',
+		});
+	});
+
+	it('defaults direct custom auth to an Authorization Bearer header', async () => {
+		await executeBorneoTool(
+			'BORNEO_LIST_SCANS_WITH_FILTERS',
+			{},
+			{
+				composioApiKey: 'project-key',
+				borneoCredential: 'provider-secret',
+				riskLevel: 'read',
+			},
+		);
+
+		const [, init] = fetchMock.mock.calls[0];
+		const requestBody = JSON.parse(init.body);
+
+		expect(requestBody.custom_auth_params).toEqual({
+			parameters: [
+				{
+					in: 'header',
+					name: 'Authorization',
+					value: 'Bearer provider-secret',
+				},
+			],
+		});
+	});
+
+	it('rejects Composio base URLs outside composio.dev', () => {
+		expect(() =>
+			normalizeComposioBaseUrl('https://evil.example.test/api/v3'),
+		).toThrow('composio.dev');
 	});
 });

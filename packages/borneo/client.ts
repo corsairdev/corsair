@@ -44,13 +44,20 @@ function normalizeHttpsBaseUrl(value: string, optionName: string): string {
 	return trimmed;
 }
 
-/**
- * Normalizes the Composio API base URL and rejects non-HTTPS endpoints.
- */
+function assertComposioHost(baseUrl: string): string {
+	const hostname = new URL(baseUrl).hostname;
+
+	if (hostname !== 'composio.dev' && !hostname.endsWith('.composio.dev')) {
+		throw new Error('[borneo] composioBaseUrl must use a composio.dev host');
+	}
+
+	return baseUrl;
+}
+
 export function normalizeComposioBaseUrl(
 	value = DEFAULT_COMPOSIO_API_BASE_URL,
 ): string {
-	return normalizeHttpsBaseUrl(value, 'composioBaseUrl');
+	return assertComposioHost(normalizeHttpsBaseUrl(value, 'composioBaseUrl'));
 }
 
 /**
@@ -73,19 +80,16 @@ function buildCustomAuthParams(options: BorneoExecutionOptions) {
 		);
 	}
 
-	if (!options.credentialHeaderName) {
-		throw new Error(
-			'[borneo] credentialHeaderName is required when using direct custom auth',
-		);
-	}
-
-	const prefix = options.credentialPrefix ?? '';
+	const headerName = options.credentialHeaderName ?? 'Authorization';
+	const prefix =
+		options.credentialPrefix ??
+		(headerName.toLowerCase() === 'authorization' ? 'Bearer ' : '');
 
 	return {
 		parameters: [
 			{
 				in: 'header' as const,
-				name: options.credentialHeaderName,
+				name: headerName,
 				value: `${prefix}${options.borneoCredential}`,
 			},
 		],
@@ -284,9 +288,8 @@ function assertExecutionSuccessful(
 	body: unknown,
 ): void {
 	if (
-		typeof body !== 'object' ||
-		body === null ||
-		!('successful' in body) ||
+		typeof body === 'object' &&
+		body !== null &&
 		(body as { successful?: unknown }).successful === true
 	) {
 		return;

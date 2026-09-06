@@ -23,7 +23,7 @@ export const BORNEO_OPERATIONS = [
 		name: 'postAccountsWithFilterAndSortOptions',
 		title: 'Post accounts with filter and sort options',
 		group: 'accounts',
-		riskLevel: 'write',
+		riskLevel: 'read',
 	},
 	{
 		id: 'BORNEO_RETRIEVE_ACCOUNT_DETAILS_BY_ID',
@@ -79,14 +79,14 @@ export const BORNEO_OPERATIONS = [
 		name: 'postFilteredAccessLogs',
 		title: 'Post filtered access logs',
 		group: 'audit',
-		riskLevel: 'write',
+		riskLevel: 'read',
 	},
 	{
 		id: 'BORNEO_POST_LOG_AUDIT_RECORDS_WITH_FILTER_CRITERIA',
 		name: 'postLogAuditRecordsWithFilterCriteria',
 		title: 'Post log audit records with filter criteria',
 		group: 'audit',
-		riskLevel: 'write',
+		riskLevel: 'read',
 	},
 	{
 		id: 'BORNEO_DELETE_DATA_BREACH_BY_ID',
@@ -177,7 +177,7 @@ export const BORNEO_OPERATIONS = [
 		name: 'postConnectorWithFilteringOptions',
 		title: 'Post connector with filtering options',
 		group: 'connectors',
-		riskLevel: 'write',
+		riskLevel: 'read',
 	},
 	{
 		id: 'BORNEO_RETRIEVE_CONNECTOR_BY_ID',
@@ -268,7 +268,7 @@ export const BORNEO_OPERATIONS = [
 		name: 'postCurrentDashboardUser',
 		title: 'Post current dashboard user',
 		group: 'dashboard',
-		riskLevel: 'write',
+		riskLevel: 'read',
 	},
 	{
 		id: 'BORNEO_POST_DASHBOARD_REPORT',
@@ -744,7 +744,7 @@ export const BORNEO_OPERATIONS = [
 		name: 'archiveDiscoveredRecipient',
 		title: 'Archive discovered recipient',
 		group: 'recipients',
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'BORNEO_CREATE_RECIPIENT_WITH_DETAILS',
@@ -800,7 +800,7 @@ export const BORNEO_OPERATIONS = [
 		name: 'postDiscoveredRecipientById',
 		title: 'Post discovered recipient by id',
 		group: 'recipients',
-		riskLevel: 'write',
+		riskLevel: 'read',
 	},
 	{
 		id: 'BORNEO_RETRIEVE_DISCOVERED_RECIPIENT_BY_ID',
@@ -891,21 +891,21 @@ export const BORNEO_OPERATIONS = [
 		name: 'postClassificationStats',
 		title: 'Post classification stats',
 		group: 'resources',
-		riskLevel: 'write',
+		riskLevel: 'read',
 	},
 	{
 		id: 'BORNEO_POST_RESOURCE_LINEAGE_FILTER',
 		name: 'postResourceLineageFilter',
 		title: 'Post resource lineage filter',
 		group: 'resources',
-		riskLevel: 'write',
+		riskLevel: 'read',
 	},
 	{
 		id: 'BORNEO_POST_RESOURCE_STATS_WITH_DELETED_RESOURCES',
 		name: 'postResourceStatsWithDeletedResources',
 		title: 'Post resource stats with deleted resources',
 		group: 'resources',
-		riskLevel: 'write',
+		riskLevel: 'read',
 	},
 	{
 		id: 'BORNEO_RETRIEVE_DATA_RESOURCE_STATISTICS',
@@ -1024,7 +1024,7 @@ export const BORNEO_OPERATIONS = [
 		name: 'postScanResourceStatus',
 		title: 'Post scan resource status',
 		group: 'scans',
-		riskLevel: 'write',
+		riskLevel: 'read',
 	},
 	{
 		id: 'BORNEO_RESUME_SCAN_BY_ID',

@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import * as client from '../client';
+import type { BorneoContext } from '../index';
 import { createBorneoEndpoint } from './factory';
 
 jest.mock('corsair/core', () => {
@@ -28,8 +29,7 @@ const ctx = {
 		composioApiKey: 'composio-project-key',
 		credentialHeaderName: 'X-Provider-Key',
 	},
-	db: {},
-} as any;
+} as BorneoContext;
 
 const createNewAsset = createBorneoEndpoint(
 	'createNewAsset',
@@ -92,7 +92,7 @@ describe('Borneo endpoint factory', () => {
 		);
 	});
 
-	it('keeps the completed status when output parsing fails after a successful execution', async () => {
+	it('logs failed when output parsing rejects the execution envelope', async () => {
 		executeMock.mockResolvedValue({
 			successful: false,
 			error: 'Asset name already exists',
@@ -105,14 +105,14 @@ describe('Borneo endpoint factory', () => {
 			ctx,
 			'borneo.assets.createNewAsset',
 			expectedEvent,
-			'completed',
+			'failed',
 		);
 
 		expect(logEventMock).not.toHaveBeenCalledWith(
 			ctx,
 			'borneo.assets.createNewAsset',
 			expectedEvent,
-			'failed',
+			'completed',
 		);
 	});
 
@@ -126,6 +126,21 @@ describe('Borneo endpoint factory', () => {
 			'BORNEO_CREATE_NEW_ASSET',
 			input,
 			expect.objectContaining({ timeoutMs: 5000 }),
+		);
+	});
+
+	it('forwards the caller abort signal from plugin options', async () => {
+		const signal = new AbortController().signal;
+
+		await createNewAsset(
+			{ ...ctx, options: { ...ctx.options, signal } },
+			input,
+		);
+
+		expect(executeMock).toHaveBeenCalledWith(
+			'BORNEO_CREATE_NEW_ASSET',
+			input,
+			expect.objectContaining({ signal }),
 		);
 	});
 });

@@ -1,4 +1,5 @@
 import * as client from '../client';
+import type { BorneoContext } from '../index';
 import { BORNEO_OPERATIONS } from '../operations';
 import { BORNEO_OPERATION_SAMPLE_INPUTS } from './generated-operation-samples';
 import * as EndpointGroups from './index';
@@ -22,15 +23,12 @@ const executeMock = client.executeBorneoTool as jest.MockedFunction<
 >;
 
 const ctx = {
-	// This is the BORNEO/provider credential.
 	key: 'provider-key',
 	options: {
-		// This is a DIFFERENT credential: the Composio project key.
 		composioApiKey: 'composio-project-key',
 		credentialHeaderName: 'X-Provider-Key',
 	},
-	db: {},
-} as any;
+} as BorneoContext;
 
 function exportName(group: string): string {
 	return `${group.charAt(0).toUpperCase()}${group.slice(1)}`;

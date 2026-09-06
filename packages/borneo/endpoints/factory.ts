@@ -41,14 +41,7 @@ export function createBorneoEndpoint<K extends BorneoOperationName>(
 		const composioApiKey = resolveComposioApiKey(ctx.options ?? {});
 
 		const providerCredential =
-			ctx.options?.borneoCredential?.trim() ||
-			(ctx as unknown as { key?: string }).key?.trim();
-
-		const callerSignal = (
-			ctx as unknown as {
-				signal?: AbortSignal;
-			}
-		).signal;
+			ctx.options?.borneoCredential?.trim() || ctx.key?.trim();
 
 		let status: 'completed' | 'failed' = 'failed';
 
@@ -64,14 +57,12 @@ export function createBorneoEndpoint<K extends BorneoOperationName>(
 				credentialPrefix: ctx.options?.credentialPrefix,
 				riskLevel: BORNEO_TOOL_RISK[toolSlug],
 				timeoutMs: ctx.options?.timeoutMs,
-				signal: callerSignal,
+				signal: ctx.options?.signal,
 			});
 
-			// The execution succeeded, so schema failures must not be recorded
-			// as failed executions.
+			const output = BorneoEndpointOutputSchemas[name].parse(response);
 			status = 'completed';
-
-			return BorneoEndpointOutputSchemas[name].parse(response);
+			return output;
 		} finally {
 			await logEventFromContext(
 				ctx,

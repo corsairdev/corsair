@@ -42,4 +42,24 @@ describe('Borneo plugin wiring', () => {
 
 		expect(ctx.keys.get_api_key).toHaveBeenCalledTimes(1);
 	});
+
+	it('publishes inventory risk levels on endpoint meta', () => {
+		const plugin = borneo({
+			composioApiKey: 'composio-project-key',
+		});
+		const meta = plugin.endpointMeta as Record<
+			string,
+			{ riskLevel: 'read' | 'write' | 'destructive'; description: string }
+		>;
+
+		expect(Object.keys(meta)).toHaveLength(153);
+
+		for (const operation of BORNEO_OPERATIONS) {
+			const entry = meta[`${operation.group}.${operation.name}`];
+			expect(entry).toEqual({
+				riskLevel: operation.riskLevel,
+				description: operation.title,
+			});
+		}
+	});
 });
