@@ -78,9 +78,29 @@ describe('makeBestBuyRequest', () => {
 		);
 
 		expect(times).toHaveLength(6);
-		const first = times[0] ?? 0;
-		expect(
-			times.filter((time) => time - first < 1000).length,
-		).toBeLessThanOrEqual(5);
+		for (let i = 1; i < times.length; i++) {
+			expect((times[i] ?? 0) - (times[i - 1] ?? 0)).toBeGreaterThanOrEqual(180);
+		}
+	});
+
+	it('does not share the 5/sec gate across API keys', async () => {
+		const times: number[] = [];
+		jest.spyOn(global, 'fetch').mockImplementation(() => {
+			times.push(Date.now());
+			return Promise.resolve(
+				new Response(JSON.stringify({ products: [] }), {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				}),
+			);
+		});
+
+		await Promise.all([
+			makeBestBuyRequest('products', 'key-a'),
+			makeBestBuyRequest('products', 'key-b'),
+		]);
+
+		expect(times).toHaveLength(2);
+		expect(Math.abs((times[1] ?? 0) - (times[0] ?? 0))).toBeLessThan(100);
 	});
 });

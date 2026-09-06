@@ -16,9 +16,10 @@ export const BESTBUY_MAX_RPS = 5;
 export const BESTBUY_MAX_CALLS_PER_DAY = 50_000;
 const MIN_INTERVAL_MS = 1000 / BESTBUY_MAX_RPS;
 
+// corsair/http retries skip this file's limiter. 429 retry is plugin errorHandlers.
 export const BESTBUY_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 3,
+	enabled: false,
+	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: {
@@ -26,45 +27,60 @@ export const BESTBUY_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
-// ponytail: process-local quota. Multi-instance 50k/day needs a shared counter.
-let outboundGate = Promise.resolve();
-let nextOutboundAt = 0;
-let utcDay = '';
-let callsToday = 0;
+type OutboundBucket = {
+	gate: Promise<void>;
+	nextAt: number;
+	utcDay: string;
+	callsToday: number;
+};
+
+// ponytail: per-key, process-local. Multi-instance 50k/day needs a shared counter.
+const outboundByKey = new Map<string, OutboundBucket>();
 
 export function resetBestBuyLimiterForTests(): void {
-	outboundGate = Promise.resolve();
-	nextOutboundAt = 0;
-	utcDay = '';
-	callsToday = 0;
+	outboundByKey.clear();
 }
 
-function claimDailyQuota(): void {
+function bucketFor(apiKey: string): OutboundBucket {
+	const existing = outboundByKey.get(apiKey);
+	if (existing) return existing;
+	const created: OutboundBucket = {
+		gate: Promise.resolve(),
+		nextAt: 0,
+		utcDay: '',
+		callsToday: 0,
+	};
+	outboundByKey.set(apiKey, created);
+	return created;
+}
+
+function claimDailyQuota(bucket: OutboundBucket): void {
 	const day = new Date().toISOString().slice(0, 10);
-	if (day !== utcDay) {
-		utcDay = day;
-		callsToday = 0;
+	if (day !== bucket.utcDay) {
+		bucket.utcDay = day;
+		bucket.callsToday = 0;
 	}
-	if (callsToday >= BESTBUY_MAX_CALLS_PER_DAY) {
+	if (bucket.callsToday >= BESTBUY_MAX_CALLS_PER_DAY) {
 		throw new BestBuyAPIError(
 			'Best Buy daily quota of 50,000 calls reached in this process',
 		);
 	}
-	callsToday += 1;
+	bucket.callsToday += 1;
 }
 
-function throttleOutbound(): Promise<void> {
-	const scheduled = outboundGate.then(async () => {
-		claimDailyQuota();
+function throttleOutbound(apiKey: string): Promise<void> {
+	const bucket = bucketFor(apiKey);
+	const scheduled = bucket.gate.then(async () => {
+		claimDailyQuota(bucket);
 		const now = Date.now();
-		const start = Math.max(now, nextOutboundAt);
-		nextOutboundAt = start + MIN_INTERVAL_MS;
+		const start = Math.max(now, bucket.nextAt);
+		bucket.nextAt = start + MIN_INTERVAL_MS;
 		const wait = start - now;
 		if (wait > 0) {
 			await new Promise((resolve) => setTimeout(resolve, wait));
 		}
 	});
-	outboundGate = scheduled.catch(() => undefined);
+	bucket.gate = scheduled.catch(() => undefined);
 	return scheduled;
 }
 
@@ -159,7 +175,7 @@ export async function makeBestBuyRequest(
 		}),
 	};
 
-	await throttleOutbound();
+	await throttleOutbound(apiKey.trim());
 
 	try {
 		return await request(config, requestOptions, {
