@@ -1,54 +1,39 @@
-import { logEventFromContext } from 'corsair/core';
-import type { ZohoBiginEndpoints } from '..';
 import { makeZohoBiginRequest } from '../client';
-import type { ZohoBiginEndpointOutputs } from './types';
+import type {
+	ZohoBiginEndpointInputs,
+	ZohoBiginEndpointOutputs,
+	ZohoBiginEndpoints,
+} from '../index';
 
 export const createBulkReadJob: ZohoBiginEndpoints['createBulkReadJob'] =
-	async (ctx, input) => {
-		const response = await makeZohoBiginRequest<
+	async (ctx, input: ZohoBiginEndpointInputs['createBulkReadJob']) => {
+		return await makeZohoBiginRequest<
 			ZohoBiginEndpointOutputs['createBulkReadJob']
 		>('read', ctx.key, {
 			method: 'POST',
 			body: input,
+			baseUrl: 'https://www.zohoapis.com/bigin/bulk/v2',
 		});
-
-		await logEventFromContext(
-			ctx,
-			'zohobigin.bulk.createReadJob',
-			{},
-			'completed',
-		);
-		return response;
-	};
-
-export const downloadBulkReadResult: ZohoBiginEndpoints['downloadBulkReadResult'] =
-	async (ctx, input) => {
-		const { jobId } = input;
-		const response = await makeZohoBiginRequest<
-			ZohoBiginEndpointOutputs['downloadBulkReadResult']
-		>(`read/${jobId}/result`, ctx.key, { method: 'GET' });
-
-		await logEventFromContext(
-			ctx,
-			'zohobigin.bulk.downloadReadResult',
-			{ jobId },
-			'completed',
-		);
-		return response;
 	};
 
 export const getBulkReadJobStatus: ZohoBiginEndpoints['getBulkReadJobStatus'] =
-	async (ctx, input) => {
-		const { jobId } = input;
-		const response = await makeZohoBiginRequest<
+	async (ctx, input: ZohoBiginEndpointInputs['getBulkReadJobStatus']) => {
+		const { job_id } = input;
+		return await makeZohoBiginRequest<
 			ZohoBiginEndpointOutputs['getBulkReadJobStatus']
-		>(`read/${jobId}`, ctx.key, { method: 'GET' });
+		>(`read/${job_id}`, ctx.key, {
+			method: 'GET',
+			baseUrl: 'https://www.zohoapis.com/bigin/bulk/v2',
+		});
+	};
 
-		await logEventFromContext(
-			ctx,
-			'zohobigin.bulk.getReadJobStatus',
-			{ jobId },
-			'completed',
-		);
-		return response;
+export const downloadBulkReadResult: ZohoBiginEndpoints['downloadBulkReadResult'] =
+	async (ctx, input: ZohoBiginEndpointInputs['downloadBulkReadResult']) => {
+		const { job_id } = input;
+		return await makeZohoBiginRequest<
+			ZohoBiginEndpointOutputs['downloadBulkReadResult']
+		>(`read/${job_id}/result`, ctx.key, {
+			method: 'GET',
+			baseUrl: 'https://www.zohoapis.com/bigin/bulk/v2',
+		});
 	};

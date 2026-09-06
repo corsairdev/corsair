@@ -1,99 +1,57 @@
-import { logEventFromContext } from 'corsair/core';
-import type { ZohoBiginEndpoints } from '..';
 import { makeZohoBiginRequest } from '../client';
-import type { ZohoBiginEndpointOutputs } from './types';
+import type {
+	ZohoBiginEndpointInputs,
+	ZohoBiginEndpointOutputs,
+	ZohoBiginEndpoints,
+} from '../index';
 
 export const disableNotifications: ZohoBiginEndpoints['disableNotifications'] =
-	async (ctx, input) => {
+	async (ctx, input: ZohoBiginEndpointInputs['disableNotifications']) => {
 		const { channel_ids } = input;
-		const response = await makeZohoBiginRequest<
+		return await makeZohoBiginRequest<
 			ZohoBiginEndpointOutputs['disableNotifications']
 		>('actions/watch', ctx.key, {
-			method: 'PATCH',
+			method: 'DELETE',
 			query: { channel_ids: channel_ids.join(',') },
 		});
-
-		await logEventFromContext(
-			ctx,
-			'zohobigin.notifications.disable',
-			{ channel_ids },
-			'completed',
-		);
-		return response;
 	};
 
 export const enableNotifications: ZohoBiginEndpoints['enableNotifications'] =
-	async (ctx, input) => {
-		const { watch } = input;
-		const response = await makeZohoBiginRequest<
+	async (ctx, input: ZohoBiginEndpointInputs['enableNotifications']) => {
+		return await makeZohoBiginRequest<
 			ZohoBiginEndpointOutputs['enableNotifications']
 		>('actions/watch', ctx.key, {
 			method: 'POST',
-			body: { watch },
+			body: input,
 		});
-
-		await logEventFromContext(
-			ctx,
-			'zohobigin.notifications.enable',
-			{},
-			'completed',
-		);
-		return response;
 	};
 
 export const getNotificationDetails: ZohoBiginEndpoints['getNotificationDetails'] =
-	async (ctx, input) => {
-		const { module, channel_id, page, per_page } = input;
-		const response = await makeZohoBiginRequest<
+	async (ctx, input: ZohoBiginEndpointInputs['getNotificationDetails']) => {
+		return await makeZohoBiginRequest<
 			ZohoBiginEndpointOutputs['getNotificationDetails']
 		>('actions/watch', ctx.key, {
 			method: 'GET',
-			query: { module, channel_id, page, per_page },
+			query: input,
 		});
-
-		await logEventFromContext(
-			ctx,
-			'zohobigin.notifications.getDetails',
-			{ module },
-			'completed',
-		);
-		return response;
 	};
 
 export const updateNotificationDetails: ZohoBiginEndpoints['updateNotificationDetails'] =
-	async (ctx, input) => {
-		const { watch } = input;
-		const response = await makeZohoBiginRequest<
+	async (ctx, input: ZohoBiginEndpointInputs['updateNotificationDetails']) => {
+		return await makeZohoBiginRequest<
 			ZohoBiginEndpointOutputs['updateNotificationDetails']
 		>('actions/watch', ctx.key, {
 			method: 'PUT',
-			body: { watch },
+			body: input,
 		});
-
-		await logEventFromContext(
-			ctx,
-			'zohobigin.notifications.updateDetails',
-			{},
-			'completed',
-		);
-		return response;
 	};
 
 export const updateNotificationInfo: ZohoBiginEndpoints['updateNotificationInfo'] =
-	async (ctx, input) => {
-		const { watch } = input;
-		const response = await makeZohoBiginRequest<
+	async (ctx, input: ZohoBiginEndpointInputs['updateNotificationInfo']) => {
+		return await makeZohoBiginRequest<
 			ZohoBiginEndpointOutputs['updateNotificationInfo']
 		>('actions/watch', ctx.key, {
 			method: 'PATCH',
-			body: { watch },
+			body: input,
 		});
-
-		await logEventFromContext(
-			ctx,
-			'zohobigin.notifications.updateInfo',
-			{},
-			'completed',
-		);
-		return response;
 	};

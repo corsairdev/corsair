@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { request } from 'corsair/http';
 
 export class ZohoBiginAPIError extends Error {
 	constructor(
@@ -12,7 +12,6 @@ export class ZohoBiginAPIError extends Error {
 	}
 }
 
-// Zoho Bigin API v1 base URL
 const ZOHOBIGIN_API_BASE = 'https://www.zohoapis.com/bigin/v1';
 
 export type ZohoBiginRequestOptions = {
@@ -21,6 +20,7 @@ export type ZohoBiginRequestOptions = {
 	query?: Record<string, string | number | boolean | undefined>;
 	headers?: Record<string, string>;
 	mediaType?: string;
+	baseUrl?: string;
 };
 
 export async function makeZohoBiginRequest<T>(
@@ -28,7 +28,7 @@ export async function makeZohoBiginRequest<T>(
 	apiKey: string,
 	options: ZohoBiginRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, headers, mediaType } = options;
+	const { method = 'GET', body, query, headers, mediaType, baseUrl } = options;
 
 	const isFormData =
 		typeof FormData !== 'undefined' && body instanceof FormData;
@@ -43,7 +43,7 @@ export async function makeZohoBiginRequest<T>(
 	}
 
 	const config: OpenAPIConfig = {
-		BASE: ZOHOBIGIN_API_BASE,
+		BASE: baseUrl ?? ZOHOBIGIN_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -67,17 +67,8 @@ export async function makeZohoBiginRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		// Preserve ApiError so errorHandlers (rate limit 429, auth 401) receive status and retry metadata
-		if (error instanceof ApiError) {
-			throw error;
-		}
 		if (error instanceof Error) {
-			const status =
-				'status' in error &&
-				typeof (error as { status: unknown }).status === 'number'
-					? (error as { status: number }).status
-					: undefined;
-			throw new ZohoBiginAPIError(error.message, status);
+			throw error;
 		}
 		throw new ZohoBiginAPIError('Unknown error');
 	}
