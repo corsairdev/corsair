@@ -5,7 +5,7 @@ import { z } from 'zod';
 export class ChMeetingsAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
-	/** Provider error body when the transport returned JSON. */
+	// unknown: ChMeetings error JSON is `{ errors, status_code }` or a bare message
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 	public readonly rateLimitReset?: number;
@@ -18,7 +18,7 @@ export class ChMeetingsAPIError extends Error {
 		options?: {
 			cause?: Error;
 			retryAfter?: number;
-			/** Raw provider error payload; shape varies by status. */
+			// unknown: same untyped provider error payload as `body` above
 			body?: unknown;
 		},
 	) {
@@ -45,7 +45,7 @@ export const CHMEETINGS_API_BASE = 'https://api.chmeetings.com/api/v1';
 
 export type ChMeetingsRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-	/** JSON body fields accepted by the official DTO for this route. */
+	// unknown: POST/PUT bodies are per-route DTOs; compacted before send
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	responseType?: 'json' | 'empty';
@@ -63,11 +63,11 @@ export function compactQuery(
 }
 
 export function compactBody(
-	/** Request body before dropping undefined keys. */
+	// unknown: request body keys differ per official DTO
 	body: Record<string, unknown> | undefined,
 ): Record<string, unknown> | undefined {
 	if (!body) return undefined;
-	/** Same keys as `body`, without undefined values. */
+	// unknown: same keys as `body`, without undefined values
 	const out: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(body)) {
 		if (value !== undefined) out[key] = value;
@@ -85,17 +85,18 @@ const EnvelopeSchema = z.object({
 			page_size: z.union([z.number(), z.string()]).optional(),
 		})
 		.optional(),
-	/** Resource-specific payload; callers parse with the endpoint schema. */
+	// unknown: `data` is person | org | event | group | family until endpoint schema parse
 	data: z.unknown().optional(),
 });
 
-/** `raw` is the untyped HTTP JSON body before envelope parse. */
+// unknown: transport JSON before EnvelopeSchema parse
 function envelopeErrors(raw: unknown): string {
 	const parsed = EnvelopeSchema.safeParse(raw);
 	if (!parsed.success || !parsed.data.errors?.length) return '';
 	return `: ${parsed.data.errors.join(', ')}`;
 }
 
+// unknown: transport JSON before EnvelopeSchema parse
 function envelopeStatus(raw: unknown): number | undefined {
 	const parsed = EnvelopeSchema.safeParse(raw);
 	if (!parsed.success || parsed.data.status_code == null) return undefined;
@@ -103,6 +104,7 @@ function envelopeStatus(raw: unknown): number | undefined {
 	return Number.isFinite(status) ? status : undefined;
 }
 
+// unknown: transport JSON before EnvelopeSchema parse
 function isEnvelopeFailure(raw: unknown): boolean {
 	const parsed = EnvelopeSchema.safeParse(raw);
 	if (!parsed.success) return false;
@@ -111,6 +113,7 @@ function isEnvelopeFailure(raw: unknown): boolean {
 	return status !== undefined && status >= 400;
 }
 
+// unknown: failed envelope or error object passed through to ChMeetingsAPIError.body
 function throwEnvelope(raw: unknown, fallback: string): never {
 	throw new ChMeetingsAPIError(
 		`${fallback}${envelopeErrors(raw)}`,
@@ -122,7 +125,7 @@ function throwEnvelope(raw: unknown, fallback: string): never {
 }
 
 export function unwrapData<T>(
-	/** Unparsed HTTP JSON: envelope or bare resource. */
+	// unknown: envelope `{ data }` or a bare resource; parsed by `schema`
 	raw: unknown,
 	schema: z.ZodType<T>,
 	label: string,
@@ -144,7 +147,7 @@ export function unwrapData<T>(
 }
 
 export function unwrapList<T>(
-	/** Unparsed list envelope `{ paging, data }`. */
+	// unknown: list envelope `{ paging, data }` before item-schema parse
 	raw: unknown,
 	itemSchema: z.ZodType<T>,
 ): {
@@ -163,7 +166,7 @@ export function unwrapList<T>(
 	};
 }
 
-/** `raw` is empty, 204, or a `{ status_code, errors }` envelope. */
+// unknown: empty, 204, or a `{ status_code, errors }` envelope
 export function unwrapEmpty(raw: unknown): { success: true } {
 	if (raw == null || raw === '') return { success: true };
 	if (isEnvelopeFailure(raw)) throwEnvelope(raw, 'Request failed');
