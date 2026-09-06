@@ -876,6 +876,19 @@ describe('Wisepops API & Endpoints Unit Tests', () => {
 				);
 				expect(key).toBe('dynamic-wh-key');
 			});
+
+			it('throws AuthMissingError for endpoint calls without a key', async () => {
+				const plugin = wisepops({});
+				await expect(
+					(plugin.keyBuilder as any)(
+						{
+							authType: 'api_key',
+							keys: { get_api_key: jest.fn().mockResolvedValue(undefined) },
+						} as any,
+						'endpoint',
+					),
+				).rejects.toThrow(AuthMissingError);
+			});
 		});
 	});
 });
