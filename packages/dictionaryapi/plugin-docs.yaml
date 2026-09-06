@@ -1,0 +1,8 @@
+displayName: Dictionary API
+description: Merriam-Webster Collegiate Dictionary API integration for word definitions and spelling suggestions.
+examples:
+  read:
+    path: entries.get
+    title: Look up word definition
+    args:
+      word: computer

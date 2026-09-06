@@ -1,0 +1,74 @@
+---
+title: API
+description: "API reference for Dictionary API: every `dictionaryapi.api.*` operation with input and output types."
+---
+
+Every `dictionaryapi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Entries
+
+### get
+
+`entries.get`
+
+Look up a word in Merriam-Webster Collegiate Dictionary, returning definitions, headword, part of speech, and pronunciations — or spelling suggestions if not found
+
+**Risk:** `read`
+
+```ts
+await corsair.dictionaryapi.api.entries.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `word` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(
+  {
+    meta?: {
+      id: string,
+      uuid?: string,
+      sort?: string,
+      src?: string,
+      section?: string,
+      stems?: string[],
+      offensive?: boolean
+    },
+    hwi?: {
+      hw?: string,
+      prs?: {
+        mw?: string,
+        sound?: {
+          audio?: string,
+          ref?: string
+        }
+      }[]
+    },
+    fl?: string,
+    shortdef?: string[],
+    date?: string,
+    def?: any[],
+    et?: any[]
+  } | string
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
