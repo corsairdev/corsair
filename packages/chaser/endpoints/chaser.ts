@@ -9,7 +9,7 @@ export const listCustomers = async (
 	const input = ctx.input as ChaserEndpointInputs['listCustomers'];
 	const response = await makeChaserRequest<
 		ChaserEndpointOutputs['listCustomers']
-	>('/v1/customers', ctx.key, ctx.secret ?? '', {
+	>('/v1/customers', ctx.key, ctx.options?.secret ?? '', {
 		method: 'GET',
 		query: input,
 	});
@@ -24,7 +24,10 @@ export const listInvoices = async (
 	const input = ctx.input as ChaserEndpointInputs['listInvoices'];
 	const response = await makeChaserRequest<
 		ChaserEndpointOutputs['listInvoices']
-	>('/v1/invoices', ctx.key, ctx.secret ?? '', { method: 'GET', query: input });
+	>('/v1/invoices', ctx.key, ctx.options?.secret ?? '', {
+		method: 'GET',
+		query: input,
+	});
 	await logEventFromContext(ctx, 'chaser.invoices.list', {}, 'completed');
 	return response;
 };
@@ -37,7 +40,7 @@ export const getInvoice = async (
 	const response = await makeChaserRequest<ChaserEndpointOutputs['getInvoice']>(
 		`/v1/invoices/${input.id}`,
 		ctx.key,
-		ctx.secret ?? '',
+		ctx.options?.secret ?? '',
 		{ method: 'GET' },
 	);
 	await logEventFromContext(
@@ -56,7 +59,7 @@ export const listCreditNotes = async (
 	const input = ctx.input as ChaserEndpointInputs['listCreditNotes'];
 	const response = await makeChaserRequest<
 		ChaserEndpointOutputs['listCreditNotes']
-	>('/v1/credit-notes', ctx.key, ctx.secret ?? '', {
+	>('/v1/credit-notes', ctx.key, ctx.options?.secret ?? '', {
 		method: 'GET',
 		query: input,
 	});
@@ -70,7 +73,7 @@ export const getOrganization = async (
 ): Promise<ChaserEndpointOutputs['getOrganization']> => {
 	const response = await makeChaserRequest<
 		ChaserEndpointOutputs['getOrganization']
-	>('/v1/organization', ctx.key, ctx.secret ?? '', { method: 'GET' });
+	>('/v1/organization', ctx.key, ctx.options?.secret ?? '', { method: 'GET' });
 	await logEventFromContext(ctx, 'chaser.organization.get', {}, 'completed');
 	return response;
 };
