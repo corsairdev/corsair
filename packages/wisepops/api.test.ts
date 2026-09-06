@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
 	makeWisepopsRequest,
@@ -611,6 +611,7 @@ describe('Wisepops API & Endpoints Unit Tests', () => {
 				const emailMatch = createWisepopsMatch('email');
 				const phoneMatch = createWisepopsMatch('phone');
 				const surveyMatch = createWisepopsMatch('survey');
+				const collectedMatch = createWisepopsMatch('collected');
 
 				const phoneLead = JSON.stringify([
 					{
@@ -623,6 +624,13 @@ describe('Wisepops API & Endpoints Unit Tests', () => {
 					{
 						collected_at: '2026-09-04T12:00:00.000Z',
 						wisepop_id: 300,
+						fields: { survey: 'Answer A' },
+					},
+				]);
+				const customFieldsLead = JSON.stringify([
+					{
+						collected_at: '2026-09-04T12:00:00.000Z',
+						wisepop_id: 301,
 						fields: { question_1: 'Answer A' },
 					},
 				]);
@@ -637,6 +645,8 @@ describe('Wisepops API & Endpoints Unit Tests', () => {
 
 				expect(surveyMatch({ headers, body: surveyLead })).toBe(true);
 				expect(emailMatch({ headers, body: surveyLead })).toBe(false);
+				expect(collectedMatch({ headers, body: customFieldsLead })).toBe(true);
+				expect(surveyMatch({ headers, body: customFieldsLead })).toBe(false);
 
 				// Query parameter overrides
 				expect(
@@ -729,7 +739,7 @@ describe('Wisepops API & Endpoints Unit Tests', () => {
 				});
 
 				expect(response.success).toBe(true);
-				expect(response.corsairEntityId).toBe('12345');
+				expect(response.corsairEntityId).toBe('session-abc');
 				expect(response.data).toEqual(validLead);
 				expect(mockLogEvent).toHaveBeenCalledWith(
 					ctx,
@@ -843,10 +853,11 @@ describe('Wisepops API & Endpoints Unit Tests', () => {
 				expect(key).toBe('secret-option');
 			});
 
-			it('returns options.key when webhookSecret is not set', async () => {
+			it('throws AuthMissingError when no webhook secret is available', async () => {
 				const plugin = wisepops({ key: 'key-option' });
-				const key = await (plugin.keyBuilder as any)({} as any, 'webhook');
-				expect(key).toBe('key-option');
+				await expect(
+					(plugin.keyBuilder as any)({} as any, 'webhook'),
+				).rejects.toThrow(AuthMissingError);
 			});
 
 			it('resolves key from context if not in options', async () => {
