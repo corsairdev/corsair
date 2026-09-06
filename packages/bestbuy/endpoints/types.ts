@@ -9,6 +9,11 @@ import {
 const Page = z.number().int().min(1).optional();
 const PageSize = z.number().int().min(1).max(100).optional();
 
+/** Remix SKU is a long; accept the integer or string form and send a string. */
+export const BestBuySku = z
+	.union([z.string().min(1), z.number().int()])
+	.transform((value) => String(value));
+
 const CollectionMeta = {
 	from: z.number().optional(),
 	to: z.number().optional(),
@@ -22,7 +27,7 @@ const CollectionMeta = {
 };
 
 export const GetProductsInputSchema = z.object({
-	sku: z.string().optional().describe('Filter for a specific SKU'),
+	sku: BestBuySku.optional().describe('Filter for a specific SKU'),
 	upc: z.string().optional().describe('Filter for a specific UPC'),
 	name: z
 		.string()
@@ -49,7 +54,7 @@ export const GetProductsInputSchema = z.object({
 });
 
 export const GetProductDetailsInputSchema = z.object({
-	sku: z.string().describe('The SKU of the product to retrieve'),
+	sku: BestBuySku.describe('The SKU of the product to retrieve'),
 	show: z
 		.string()
 		.optional()
@@ -88,14 +93,20 @@ export const GetCategoryDetailsInputSchema = z.object({
 export const GetStoresInputSchema = z.object({
 	geo: z
 		.object({
-			postalCode: z.string().optional(),
+			postalCode: z.string().min(1).optional(),
 			lat: z.number().optional(),
 			lng: z.number().optional(),
-			distance: z.number().optional(),
+			distance: z.number().positive().optional(),
 		})
+		.refine(
+			(geo) =>
+				Boolean(geo.postalCode) ||
+				(geo.lat !== undefined && geo.lng !== undefined),
+			{ message: 'geo requires postalCode or lat+lng' },
+		)
 		.optional()
 		.describe(
-			'Remix area(location,distance). postalCode or lat+lng; distance defaults to 10 miles',
+			'Remix area(location,distance): postalCode or lat+lng; distance defaults to 10 miles',
 		),
 	city: z.string().optional().describe('Filter stores by city name'),
 	state: z
@@ -131,7 +142,7 @@ export const GetStoreDetailsInputSchema = z.object({
 });
 
 export const GetReviewsInputSchema = z.object({
-	sku: z.string().optional().describe('Filter reviews by product SKU'),
+	sku: BestBuySku.optional().describe('Filter reviews by product SKU'),
 	reviewer: z.string().optional().describe('Filter reviews by reviewer name'),
 	minScore: z
 		.number()
@@ -190,14 +201,14 @@ export const GetReviewsOutputSchema = z
 	.loose();
 
 export type BestBuyEndpointInputs = {
-	getProducts: z.infer<typeof GetProductsInputSchema>;
-	getProductDetails: z.infer<typeof GetProductDetailsInputSchema>;
-	getCategories: z.infer<typeof GetCategoriesInputSchema>;
-	getCategoryDetails: z.infer<typeof GetCategoryDetailsInputSchema>;
-	getStores: z.infer<typeof GetStoresInputSchema>;
-	getStoreDetails: z.infer<typeof GetStoreDetailsInputSchema>;
-	getReviews: z.infer<typeof GetReviewsInputSchema>;
-	getReviewDetails: z.infer<typeof GetReviewDetailsInputSchema>;
+	getProducts: z.input<typeof GetProductsInputSchema>;
+	getProductDetails: z.input<typeof GetProductDetailsInputSchema>;
+	getCategories: z.input<typeof GetCategoriesInputSchema>;
+	getCategoryDetails: z.input<typeof GetCategoryDetailsInputSchema>;
+	getStores: z.input<typeof GetStoresInputSchema>;
+	getStoreDetails: z.input<typeof GetStoreDetailsInputSchema>;
+	getReviews: z.input<typeof GetReviewsInputSchema>;
+	getReviewDetails: z.input<typeof GetReviewDetailsInputSchema>;
 };
 
 export type BestBuyEndpointOutputs = {

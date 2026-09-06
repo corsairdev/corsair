@@ -12,6 +12,10 @@ import { ApiError, request } from 'corsair/http';
 export const BESTBUY_API_BASE = 'https://api.bestbuy.com/v1';
 
 /** 5 calls/sec and 50,000/day per Best Buy developer terms. */
+export const BESTBUY_MAX_RPS = 5;
+export const BESTBUY_MAX_CALLS_PER_DAY = 50_000;
+const MIN_INTERVAL_MS = 1000 / BESTBUY_MAX_RPS;
+
 export const BESTBUY_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 3,
@@ -21,6 +25,48 @@ export const BESTBUY_RATE_LIMIT_CONFIG: RateLimitConfig = {
 		retryAfter: 'retry-after',
 	},
 };
+
+// ponytail: process-local quota. Multi-instance 50k/day needs a shared counter.
+let outboundGate = Promise.resolve();
+let nextOutboundAt = 0;
+let utcDay = '';
+let callsToday = 0;
+
+export function resetBestBuyLimiterForTests(): void {
+	outboundGate = Promise.resolve();
+	nextOutboundAt = 0;
+	utcDay = '';
+	callsToday = 0;
+}
+
+function claimDailyQuota(): void {
+	const day = new Date().toISOString().slice(0, 10);
+	if (day !== utcDay) {
+		utcDay = day;
+		callsToday = 0;
+	}
+	if (callsToday >= BESTBUY_MAX_CALLS_PER_DAY) {
+		throw new BestBuyAPIError(
+			'Best Buy daily quota of 50,000 calls reached in this process',
+		);
+	}
+	callsToday += 1;
+}
+
+function throttleOutbound(): Promise<void> {
+	const scheduled = outboundGate.then(async () => {
+		claimDailyQuota();
+		const now = Date.now();
+		const start = Math.max(now, nextOutboundAt);
+		nextOutboundAt = start + MIN_INTERVAL_MS;
+		const wait = start - now;
+		if (wait > 0) {
+			await new Promise((resolve) => setTimeout(resolve, wait));
+		}
+	});
+	outboundGate = scheduled.catch(() => undefined);
+	return scheduled;
+}
 
 /** Remix error JSON: `{"errorCode":"403","errorMessage":"..."}`. */
 export type BestBuyErrorBody = {
@@ -112,6 +158,8 @@ export async function makeBestBuyRequest(
 			format: 'json',
 		}),
 	};
+
+	await throttleOutbound();
 
 	try {
 		return await request(config, requestOptions, {

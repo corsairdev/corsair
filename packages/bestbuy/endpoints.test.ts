@@ -72,6 +72,23 @@ describe('Best Buy endpoints', () => {
 		expect(query.get('sort')).toBe('salePrice.dsc');
 	});
 
+	it('products.get accepts an integer SKU', async () => {
+		mockFetch({ sku: 8880044, name: 'Batman' });
+		const out = await Endpoints.getProductDetails(makeCtx(), {
+			sku: 8880044,
+		});
+		expect(parsed().path).toBe('/v1/products/8880044.json');
+		expect(out.sku).toBe(8880044);
+	});
+
+	it('rejects incomplete geo instead of dropping it', async () => {
+		mockFetch({ stores: [] });
+		await expect(
+			Endpoints.getStores(makeCtx(), { geo: { lat: 44.88 } }),
+		).rejects.toThrow();
+		expect(captured).toBeUndefined();
+	});
+
 	it('products.get uses /products/{sku}.json', async () => {
 		mockFetch({ sku: 8880044, name: 'Batman' });
 		const out = await Endpoints.getProductDetails(makeCtx(), {

@@ -3,9 +3,14 @@ import {
 	BESTBUY_API_BASE,
 	BestBuyAPIError,
 	makeBestBuyRequest,
+	resetBestBuyLimiterForTests,
 } from './client';
 
 let captured: { url: string } | undefined;
+
+beforeEach(() => {
+	resetBestBuyLimiterForTests();
+});
 
 afterEach(() => {
 	jest.restoreAllMocks();
@@ -54,5 +59,28 @@ describe('makeBestBuyRequest', () => {
 			expect(error.status).toBe(429);
 			expect(error.cause).toBeInstanceOf(ApiError);
 		}
+	});
+
+	it('spaces six concurrent calls so at most five fetch in one second', async () => {
+		const times: number[] = [];
+		jest.spyOn(global, 'fetch').mockImplementation(() => {
+			times.push(Date.now());
+			return Promise.resolve(
+				new Response(JSON.stringify({ products: [] }), {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				}),
+			);
+		});
+
+		await Promise.all(
+			[0, 1, 2, 3, 4, 5].map(() => makeBestBuyRequest('products', 'demo-key')),
+		);
+
+		expect(times).toHaveLength(6);
+		const first = times[0] ?? 0;
+		expect(
+			times.filter((time) => time - first < 1000).length,
+		).toBeLessThanOrEqual(5);
 	});
 });
