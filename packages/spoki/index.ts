@@ -10,6 +10,7 @@ import type {
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 
 import { AuthMissingError } from 'corsair/core';
@@ -19,9 +20,8 @@ import {
 	getAccountByPhone,
 	listAccounts,
 	sendMessage,
+	triggerAutomation,
 } from './endpoints';
-
-import { triggerAutomation } from './endpoints/trigger-automation';
 
 import type {
 	GetAccountByPhoneResponse,
@@ -29,8 +29,11 @@ import type {
 	ListAccountsResponse,
 	SendMessageInput,
 	SendMessageResponse,
-	StartAutomationInput,
+	TriggerAutomationInput,
+	TriggerAutomationResponse,
 } from './endpoints/types';
+
+import { EndpointInputSchemas, EndpointOutputSchemas } from './endpoints/types';
 
 import { errorHandlers } from './error-handlers';
 import { SpokiSchema } from './schema';
@@ -51,6 +54,38 @@ export type SpokiContext = CorsairPluginContext<
 
 export type SpokiKeyBuilderContext = KeyBuilderContext<SpokiPluginOptions>;
 
+export type SpokiBoundEndpoints = BindEndpoints<typeof spokiEndpointsNested>;
+
+type SpokiEndpoint<K extends keyof SpokiEndpointInputs> = CorsairEndpoint<
+	SpokiContext,
+	SpokiEndpointInputs[K],
+	SpokiEndpointOutputs[K]
+>;
+
+export type SpokiEndpointInputs = {
+	listAccounts: Record<string, never>;
+	getAccount: { accountId: number };
+	getAccountByPhone: { phone: string };
+	sendMessage: SendMessageInput;
+	triggerAutomation: TriggerAutomationInput;
+};
+
+export type SpokiEndpointOutputs = {
+	listAccounts: ListAccountsResponse;
+	getAccount: GetAccountResponse;
+	getAccountByPhone: GetAccountByPhoneResponse;
+	sendMessage: SendMessageResponse;
+	triggerAutomation: TriggerAutomationResponse;
+};
+
+export type SpokiEndpoints = {
+	listAccounts: SpokiEndpoint<'listAccounts'>;
+	getAccount: SpokiEndpoint<'getAccount'>;
+	getAccountByPhone: SpokiEndpoint<'getAccountByPhone'>;
+	sendMessage: SpokiEndpoint<'sendMessage'>;
+	triggerAutomation: SpokiEndpoint<'triggerAutomation'>;
+};
+
 const spokiEndpointsNested = {
 	accounts: {
 		listAccounts,
@@ -65,28 +100,28 @@ const spokiEndpointsNested = {
 	},
 };
 
-type SpokiEndpoint<TInput, TOutput> = CorsairEndpoint<
-	SpokiContext,
-	TInput,
-	TOutput
->;
-
-export type SpokiEndpoints = {
-	listAccounts: SpokiEndpoint<unknown, ListAccountsResponse>;
-	getAccount: SpokiEndpoint<{ accountId: number }, GetAccountResponse>;
-	getAccountByPhone: SpokiEndpoint<
-		{ phone: string },
-		GetAccountByPhoneResponse
-	>;
-	sendMessage: SpokiEndpoint<SendMessageInput, SendMessageResponse>;
-	triggerAutomation: SpokiEndpoint<
-		{
-			uuid: string;
-			input: StartAutomationInput;
-		},
-		void
-	>;
-};
+export const spokiEndpointSchemas = {
+	'accounts.listAccounts': {
+		input: EndpointInputSchemas.listAccounts,
+		output: EndpointOutputSchemas.listAccounts,
+	},
+	'accounts.getAccount': {
+		input: EndpointInputSchemas.getAccount,
+		output: EndpointOutputSchemas.getAccount,
+	},
+	'accounts.getAccountByPhone': {
+		input: EndpointInputSchemas.getAccountByPhone,
+		output: EndpointOutputSchemas.getAccountByPhone,
+	},
+	'messaging.sendMessage': {
+		input: EndpointInputSchemas.sendMessage,
+		output: EndpointOutputSchemas.sendMessage,
+	},
+	'automation.triggerAutomation': {
+		input: EndpointInputSchemas.triggerAutomation,
+		output: EndpointOutputSchemas.triggerAutomation,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<typeof spokiEndpointsNested>;
 
 export const spokiEndpointMeta = {
 	'accounts.listAccounts': {
@@ -163,6 +198,8 @@ export function spoki<const T extends SpokiPluginOptions>(
 
 		endpointMeta: spokiEndpointMeta,
 
+		endpointSchemas: spokiEndpointSchemas,
+
 		pluginWebhookMatcher: () => false,
 
 		pluginTenantWebhookMatcher: matchSpokiTenantWebhook,
@@ -218,4 +255,6 @@ export type {
 	SpokiAccount,
 	SpokiChannel,
 	StartAutomationInput,
+	TriggerAutomationInput,
+	TriggerAutomationResponse,
 } from './endpoints/types';

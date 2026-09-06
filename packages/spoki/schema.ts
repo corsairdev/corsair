@@ -1,5 +1,18 @@
 import { z } from 'zod';
 
+export const SpokiChannelSchema = z.object({
+	id: z.number(),
+	name: z.string(),
+	phone: z.string(),
+	phone_status: z.string(),
+	quality_score: z.number(),
+	quality_reasons: z.unknown().optional(),
+	has_official_verification: z.boolean(),
+	daily_limit: z.number(),
+	account_type: z.number(),
+	is_active: z.boolean(),
+});
+
 export const SpokiAccountSchema = z.object({
 	id: z.number(),
 	name: z.string(),
@@ -25,19 +38,7 @@ export const SpokiAccountSchema = z.object({
 	contacted_in_24h: z.number(),
 	contacted_in_7d: z.number(),
 	primary_channel_id: z.number().nullable().optional(),
-});
-
-export const SpokiChannelSchema = z.object({
-	id: z.number(),
-	name: z.string(),
-	phone: z.string(),
-	phone_status: z.string(),
-	quality_score: z.number(),
-	quality_reasons: z.unknown().optional(),
-	has_official_verification: z.boolean(),
-	daily_limit: z.number(),
-	account_type: z.number(),
-	is_active: z.boolean(),
+	channels: z.array(SpokiChannelSchema).optional(),
 });
 
 export const SpokiSchema = {

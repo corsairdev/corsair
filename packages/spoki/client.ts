@@ -33,7 +33,9 @@ export class SpokiClient {
 		headers.set('Content-Type', 'application/json');
 		headers.set('X-Spoki-Api-Key', this.apiKey);
 
-		const response = await fetch(`${SPOKI_BASE_URL}${path}`, {
+		const url = path.startsWith('http') ? path : `${SPOKI_BASE_URL}${path}`;
+
+		const response = await fetch(url, {
 			...options,
 			headers,
 		});

@@ -1,13 +1,17 @@
-import type { SpokiClient } from '../client';
+import { SpokiClient } from '../client';
+import type { SpokiContext } from '../index';
 import type { GetAccountByPhoneResponse } from './types';
+import { EndpointInputSchemas } from './types';
 
-export async function getAccountByPhone(
-	client: SpokiClient,
-	phone: string,
-): Promise<GetAccountByPhoneResponse> {
-	const encodedPhone = encodeURIComponent(phone);
+export const getAccountByPhone = async (
+	ctx: SpokiContext & { key: string },
+	input: { phone: string },
+): Promise<GetAccountByPhoneResponse> => {
+	const parsed = EndpointInputSchemas.getAccountByPhone.parse(input);
+
+	const client = new SpokiClient({ apiKey: ctx.key });
 
 	return client.get<GetAccountByPhoneResponse>(
-		`/accounts/phone/${encodedPhone}`,
+		`/accounts/phone/${encodeURIComponent(parsed.phone)}/`,
 	);
-}
+};

@@ -1,29 +1,22 @@
-import type { StartAutomationInput } from './types';
+import { SpokiClient } from '../client';
+import type { SpokiContext } from '../index';
+import type {
+	TriggerAutomationInput,
+	TriggerAutomationResponse,
+} from './types';
+import { EndpointInputSchemas } from './types';
 
-export interface TriggerAutomationOptions {
-	uuid: string;
-	input: StartAutomationInput;
-}
+export const triggerAutomation = async (
+	ctx: SpokiContext & { key: string },
+	input: TriggerAutomationInput,
+): Promise<TriggerAutomationResponse> => {
+	const parsed = EndpointInputSchemas.triggerAutomation.parse(input);
 
-export async function triggerAutomation(
-	options: TriggerAutomationOptions,
-): Promise<void> {
-	const response = await fetch(
-		`https://api.spoki.com/wh/ap/${encodeURIComponent(options.uuid)}/`,
-		{
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(options.input),
-		},
-	);
+	const { uuid, ...payload } = parsed;
 
-	if (!response.ok) {
-		const body = await response.text();
+	const client = new SpokiClient({ apiKey: ctx.key });
 
-		throw new Error(
-			`Spoki automation failed with status ${response.status}: ${body}`,
-		);
-	}
-}
+	const url = `https://api.spoki.com/wh/ap/${encodeURIComponent(uuid)}/`;
+
+	return client.post<TriggerAutomationResponse>(url, payload);
+};
