@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type {
+import {
 	EverhourClient,
 	EverhourPlatform,
 	EverhourProject,
@@ -77,43 +77,95 @@ export type EverhourEndpointOutputs = {
 };
 
 export const EverhourEndpointInputSchemas = {
-	getUser: z.any(),
-	listTeamUsers: z.any(),
-	getCurrentTimer: z.any(),
-	startTimer: z.any(),
-	stopTimer: z.any(),
-	listUserTime: z.any(),
-	listUserTimesheets: z.any(),
-	logTime: z.any(),
-	updateTimeEntry: z.any(),
-	deleteTimeEntry: z.any(),
-	searchTasks: z.any(),
-	getTask: z.any(),
-	listTasksForProject: z.any(),
-	listProjects: z.any(),
-	getProject: z.any(),
-	listClients: z.any(),
-	getClient: z.any(),
-	listPlatforms: z.any(),
+	getUser: z.object({}),
+	listTeamUsers: z.object({
+		query: z.record(z.any()).optional(),
+	}),
+	getCurrentTimer: z.object({}),
+	startTimer: z.object({
+		task: z.string().optional(),
+		userDate: z.string().optional(),
+		comment: z.string().optional(),
+	}),
+	stopTimer: z.object({}),
+	listUserTime: z.object({
+		userId: z.string(),
+		query: z.record(z.any()).optional(),
+	}),
+	listUserTimesheets: z.object({
+		userId: z.string(),
+		query: z.record(z.any()).optional(),
+	}),
+	logTime: z.object({
+		time: z.number(),
+		date: z.string().optional(),
+		task: z.string().optional(),
+		user: z.number().optional(),
+		comment: z.string().optional(),
+	}),
+	updateTimeEntry: z.object({
+		timeId: z.string(),
+		time: z.number(),
+		date: z.string().optional(),
+		task: z.string().optional(),
+		user: z.number().optional(),
+		comment: z.string().optional(),
+	}),
+	deleteTimeEntry: z.object({
+		timeId: z.string(),
+	}),
+	searchTasks: z.object({
+		query: z.string(),
+		project: z.string().optional(),
+		limit: z.number().optional(),
+		searchInClosed: z.boolean().optional(),
+	}),
+	getTask: z.object({
+		taskId: z.string(),
+	}),
+	listTasksForProject: z.object({
+		projectId: z.string(),
+		query: z
+			.object({
+				query: z.string().optional(),
+				limit: z.number().optional(),
+				searchInClosed: z.boolean().optional(),
+				searchInUnscheduled: z.boolean().optional(),
+			})
+			.optional(),
+	}),
+	listProjects: z.object({
+		query: z.record(z.any()).optional(),
+	}),
+	getProject: z.object({
+		projectId: z.string(),
+	}),
+	listClients: z.object({
+		query: z.record(z.any()).optional(),
+	}),
+	getClient: z.object({
+		clientId: z.string(),
+	}),
+	listPlatforms: z.object({}),
 } as const;
 
 export const EverhourEndpointOutputSchemas = {
-	getUser: z.any(),
-	listTeamUsers: z.array(z.any()),
+	getUser: EverhourUser,
+	listTeamUsers: z.array(EverhourUser),
 	getCurrentTimer: z.any(),
 	startTimer: z.any(),
 	stopTimer: z.any(),
-	listUserTime: z.array(z.any()),
+	listUserTime: z.array(EverhourTimeEntry),
 	listUserTimesheets: z.array(z.any()),
-	logTime: z.any(),
-	updateTimeEntry: z.any(),
+	logTime: EverhourTimeEntry,
+	updateTimeEntry: EverhourTimeEntry,
 	deleteTimeEntry: z.null().optional(),
-	searchTasks: z.array(z.any()),
-	getTask: z.any(),
-	listTasksForProject: z.array(z.any()),
-	listProjects: z.array(z.any()),
-	getProject: z.any(),
-	listClients: z.array(z.any()),
-	getClient: z.any(),
-	listPlatforms: z.array(z.any()),
+	searchTasks: z.array(EverhourTask),
+	getTask: EverhourTask,
+	listTasksForProject: z.array(EverhourTask),
+	listProjects: z.array(EverhourProject),
+	getProject: EverhourProject,
+	listClients: z.array(EverhourClient),
+	getClient: EverhourClient,
+	listPlatforms: z.array(EverhourPlatform),
 } as const;

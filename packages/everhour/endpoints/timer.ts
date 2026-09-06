@@ -10,25 +10,25 @@ export interface TimerResponse {
 	task?: any;
 }
 
-export const getCurrentTimer = async (apiKey: string) => {
-	return makeEverhourRequest<TimerResponse>('/timers/current', apiKey);
+export const getCurrentTimer = async (ctx: any) => {
+	return makeEverhourRequest<TimerResponse>('/timers/current', ctx.key);
 };
 
 export const startTimer = async (
-	apiKey: string,
+	ctx: any,
 	options: { task?: string; userDate?: string; comment?: string } = {},
 ) => {
 	const endpoint = options.task
 		? `/timers/start_for/${options.task}`
 		: '/timers';
-	return makeEverhourRequest<TimerResponse>(endpoint, apiKey, {
+	return makeEverhourRequest<TimerResponse>(endpoint, ctx.key, {
 		method: 'POST',
 		body: options,
 	});
 };
 
-export const stopTimer = async (apiKey: string) => {
-	return makeEverhourRequest<TimerResponse>('/timers/current', apiKey, {
+export const stopTimer = async (ctx: any) => {
+	return makeEverhourRequest<TimerResponse>('/timers/current', ctx.key, {
 		method: 'DELETE',
 	});
 };

@@ -28,8 +28,6 @@ import {
 import { errorHandlers } from './error-handlers';
 import { EverhourSchema } from './schema';
 import { EverhourWebhooks } from './webhooks';
-import { resolveEverhourOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchEverhourTenantWebhook } from './webhooks/tenant-matcher';
 
 export type EverhourPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -93,8 +91,41 @@ const everhourEndpointsNested = {
 } as const;
 
 const everhourWebhooksNested = {
-	'api:time:updated': {
-		'api:time:updated': EverhourWebhooks['api:time:updated'],
+	time: {
+		updated: EverhourWebhooks['api:time:updated'],
+	},
+	timer: {
+		started: EverhourWebhooks['api:timer:started'],
+		stopped: EverhourWebhooks['api:timer:stopped'],
+	},
+	project: {
+		created: EverhourWebhooks['api:project:created'],
+		updated: EverhourWebhooks['api:project:updated'],
+		removed: EverhourWebhooks['api:project:removed'],
+	},
+	task: {
+		created: EverhourWebhooks['api:task:created'],
+		updated: EverhourWebhooks['api:task:updated'],
+		removed: EverhourWebhooks['api:task:removed'],
+		recovered: EverhourWebhooks['api:task:recovered'],
+	},
+	estimate: {
+		updated: EverhourWebhooks['api:estimate:updated'],
+	},
+	section: {
+		created: EverhourWebhooks['api:section:created'],
+		updated: EverhourWebhooks['api:section:updated'],
+		removed: EverhourWebhooks['api:section:removed'],
+		recovered: EverhourWebhooks['api:section:recovered'],
+	},
+	client: {
+		created: EverhourWebhooks['api:client:created'],
+		updated: EverhourWebhooks['api:client:updated'],
+	},
+	invoice: {
+		created: EverhourWebhooks['api:invoice:created'],
+		updated: EverhourWebhooks['api:invoice:updated'],
+		deleted: EverhourWebhooks['api:invoice:deleted'],
 	},
 } as const;
 
@@ -174,8 +205,103 @@ export const everhourEndpointSchemas = {
 } as const;
 
 const everhourWebhookSchemas = {
-	'api:time:updated.api:time:updated': {
+	'time.updated': {
 		description: 'A time record is created or modified',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'timer.started': {
+		description: 'A timer was started',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'timer.stopped': {
+		description: 'A timer was stopped',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'project.created': {
+		description: 'A project was created',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'project.updated': {
+		description: 'A project was updated',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'project.removed': {
+		description: 'A project was removed',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'task.created': {
+		description: 'A task was created',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'task.updated': {
+		description: 'A task was updated',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'task.removed': {
+		description: 'A task was removed',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'task.recovered': {
+		description: 'A task was recovered',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'estimate.updated': {
+		description: 'A task estimate was updated',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'section.created': {
+		description: 'A section was created',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'section.updated': {
+		description: 'A section was updated',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'section.removed': {
+		description: 'A section was removed',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'section.recovered': {
+		description: 'A section was recovered',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'client.created': {
+		description: 'A client was created',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'client.updated': {
+		description: 'A client was updated',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'invoice.created': {
+		description: 'An invoice was created',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'invoice.updated': {
+		description: 'An invoice was updated',
+		payload: z.any(),
+		response: z.any(),
+	},
+	'invoice.deleted': {
+		description: 'An invoice was deleted',
 		payload: z.any(),
 		response: z.any(),
 	},
@@ -283,8 +409,6 @@ export function everhour<const T extends EverhourPluginOptions>(
 			const headers = request.headers;
 			return 'x-hook-secret' in headers;
 		},
-		pluginTenantWebhookMatcher: matchEverhourTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveEverhourOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

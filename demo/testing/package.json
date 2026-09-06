@@ -46,7 +46,6 @@
     "@corsair-dev/teams": "workspace:*",
     "@corsair-dev/twilio": "workspace:*",
     "@corsair-dev/vapi": "workspace:*",
-    "@corsair-dev/everhour": "workspace:*",
     "@corsair-dev/xquik": "workspace:*",
     "@corsair-dev/instagram": "workspace:*",
     "@tanstack/react-query": "^5.62.14",

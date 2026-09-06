@@ -2,7 +2,7 @@ import { makeEverhourRequest } from '../client';
 import type { EverhourTask } from '../schema/database';
 
 export const searchTasks = async (
-	apiKey: string,
+	ctx: any,
 	options: {
 		query: string;
 		project?: string;
@@ -10,18 +10,18 @@ export const searchTasks = async (
 		searchInClosed?: boolean;
 	},
 ) => {
-	return makeEverhourRequest<EverhourTask[]>('/tasks/search', apiKey, {
+	return makeEverhourRequest<EverhourTask[]>('/tasks/search', ctx.key, {
 		method: 'GET',
 		query: options,
 	});
 };
 
-export const getTask = async (apiKey: string, options: { taskId: string }) => {
-	return makeEverhourRequest<EverhourTask>(`/tasks/${options.taskId}`, apiKey);
+export const getTask = async (ctx: any, options: { taskId: string }) => {
+	return makeEverhourRequest<EverhourTask>(`/tasks/${options.taskId}`, ctx.key);
 };
 
 export const listTasksForProject = async (
-	apiKey: string,
+	ctx: any,
 	options: {
 		projectId: string;
 		query?: {
@@ -34,7 +34,7 @@ export const listTasksForProject = async (
 ) => {
 	return makeEverhourRequest<EverhourTask[]>(
 		`/projects/${options.projectId}/tasks/search`,
-		apiKey,
+		ctx.key,
 		{
 			method: 'GET',
 			query: options.query,

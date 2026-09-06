@@ -2,12 +2,12 @@ import { makeEverhourRequest } from '../client';
 import type { EverhourTimeEntry } from '../schema/database';
 
 export const listUserTime = async (
-	apiKey: string,
+	ctx: any,
 	options: { userId: string; query?: Record<string, any> },
 ) => {
 	return makeEverhourRequest<EverhourTimeEntry[]>(
 		`/users/${options.userId}/time`,
-		apiKey,
+		ctx.key,
 		{
 			method: 'GET',
 			query: options.query,
@@ -16,12 +16,12 @@ export const listUserTime = async (
 };
 
 export const listUserTimesheets = async (
-	apiKey: string,
+	ctx: any,
 	options: { userId: string; query?: Record<string, any> },
 ) => {
 	return makeEverhourRequest<any[]>(
 		`/users/${options.userId}/timesheets`,
-		apiKey,
+		ctx.key,
 		{
 			method: 'GET',
 			query: options.query,
@@ -30,7 +30,7 @@ export const listUserTimesheets = async (
 };
 
 export const logTime = async (
-	apiKey: string,
+	ctx: any,
 	options: {
 		time: number;
 		date?: string;
@@ -39,14 +39,14 @@ export const logTime = async (
 		comment?: string;
 	},
 ) => {
-	return makeEverhourRequest<EverhourTimeEntry>('/time', apiKey, {
+	return makeEverhourRequest<EverhourTimeEntry>('/time', ctx.key, {
 		method: 'POST',
 		body: options,
 	});
 };
 
 export const updateTimeEntry = async (
-	apiKey: string,
+	ctx: any,
 	options: {
 		timeId: string;
 		time: number;
@@ -58,7 +58,7 @@ export const updateTimeEntry = async (
 ) => {
 	return makeEverhourRequest<EverhourTimeEntry>(
 		`/time/${options.timeId}`,
-		apiKey,
+		ctx.key,
 		{
 			method: 'PUT',
 			body: options,
@@ -67,10 +67,10 @@ export const updateTimeEntry = async (
 };
 
 export const deleteTimeEntry = async (
-	apiKey: string,
+	ctx: any,
 	options: { timeId: string },
 ) => {
-	return makeEverhourRequest<void>(`/time/${options.timeId}`, apiKey, {
+	return makeEverhourRequest<void>(`/time/${options.timeId}`, ctx.key, {
 		method: 'DELETE',
 	});
 };

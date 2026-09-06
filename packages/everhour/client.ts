@@ -1,10 +1,11 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class EverhourAPIError extends Error {
 	constructor(
 		message: string,
-		public readonly code?: string,
+		public readonly status?: number,
+		public readonly body?: unknown,
 	) {
 		super(message);
 		this.name = 'EverhourAPIError';
@@ -49,7 +50,10 @@ export async function makeEverhourRequest<T>(
 
 	try {
 		return await request<T>(config, requestOptions);
-	} catch (error) {
+	} catch (error: any) {
+		if (error instanceof ApiError) {
+			throw new EverhourAPIError(error.message, error.status, error.body);
+		}
 		if (error instanceof Error) {
 			throw new EverhourAPIError(error.message);
 		}

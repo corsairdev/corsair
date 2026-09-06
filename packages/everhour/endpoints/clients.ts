@@ -2,21 +2,18 @@ import { makeEverhourRequest } from '../client';
 import type { EverhourClient } from '../schema/database';
 
 export const listClients = async (
-	apiKey: string,
+	ctx: any,
 	options: { query?: Record<string, any> } = {},
 ) => {
-	return makeEverhourRequest<EverhourClient[]>('/clients', apiKey, {
+	return makeEverhourRequest<EverhourClient[]>('/clients', ctx.key, {
 		method: 'GET',
 		query: options.query,
 	});
 };
 
-export const getClient = async (
-	apiKey: string,
-	options: { clientId: string },
-) => {
+export const getClient = async (ctx: any, options: { clientId: string }) => {
 	return makeEverhourRequest<EverhourClient>(
 		`/clients/${options.clientId}`,
-		apiKey,
+		ctx.key,
 	);
 };
