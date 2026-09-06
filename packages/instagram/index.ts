@@ -2,6 +2,7 @@ import type {
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
+	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
@@ -38,6 +39,7 @@ import {
 	InstagramEndpointInputSchemas,
 	InstagramEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import type { InstagramCredentials } from './schema';
 import { InstagramSchema } from './schema';
 import { InstagramWebhooks } from './webhooks/index';
@@ -534,6 +536,7 @@ export type InstagramPluginOptions = {
 	webhookVerifyToken?: string;
 	hooks?: InternalInstagramPlugin['hooks'];
 	webhookHooks?: InternalInstagramPlugin['webhookHooks'];
+	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof InstagramEndpointsNested>;
 };
 
@@ -610,6 +613,10 @@ export function instagram<const T extends InstagramPluginOptions>(
 
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
+		errorHandlers: {
+			...errorHandlers,
+			...options.errorHandlers,
+		},
 		endpoints: InstagramEndpointsNested,
 		webhooks: InstagramWebhooksNested,
 		endpointSchemas: InstagramEndpointSchemas,

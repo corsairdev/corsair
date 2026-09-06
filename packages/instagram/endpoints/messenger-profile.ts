@@ -58,7 +58,6 @@ export const updateProfile: InstagramEndpoints['UpdateMessengerProfile'] =
 					platform: 'instagram',
 				},
 				body: {
-					greeting: input.greeting,
 					persistent_menu: input.persistent_menu,
 					ice_breakers: input.ice_breakers,
 				},

@@ -478,7 +478,8 @@ const hasEnv = !!(appId && appSecret && accessToken);
 // ────────────────────────────────────────────────────────────────────────────
 
 describe('Instagram Schema Validation (credential-free)', () => {
-	const { InstagramEndpointInputSchemas } = require('./endpoints/types');
+	const { InstagramEndpointInputSchemas, InstagramEndpointOutputSchemas } =
+		require('./endpoints/types');
 
 	// ── Pagination cursor support ──────────────────────────────────────────
 	describe('pagination cursors', () => {
@@ -529,21 +530,10 @@ describe('Instagram Schema Validation (credential-free)', () => {
 		}
 	});
 
-	// ── Messenger greeting field ───────────────────────────────────────────
 	describe('UpdateMessengerProfile schema', () => {
-		it('accepts greeting with typed structure', () => {
+		it('does not expose greeting', () => {
 			const schema = InstagramEndpointInputSchemas.UpdateMessengerProfile;
-			expect(schema.shape.greeting).toBeDefined();
-			const result = schema.safeParse({
-				page_id: '12345',
-				greeting: [
-					{
-						locale: 'default',
-						text: 'Hello, welcome to our store!',
-					},
-				],
-			});
-			expect(result.success).toBe(true);
+			expect(schema.shape.greeting).toBeUndefined();
 		});
 
 		it('accepts persistent_menu with typed structure', () => {
@@ -650,6 +640,24 @@ describe('Instagram Schema Validation (credential-free)', () => {
 					ig_id: '12345',
 				});
 			expect(result.success).toBe(false);
+		});
+
+		it('container status accepts PUBLISHED', () => {
+			const result =
+				InstagramEndpointOutputSchemas.GetMediaContainerStatus.safeParse({
+					id: 'c123',
+					status_code: 'PUBLISHED',
+				});
+			expect(result.success).toBe(true);
+		});
+
+		it('media output accepts a sparse Graph object', () => {
+			const result = InstagramEndpointOutputSchemas.GetInstagramMedia.safeParse(
+				{
+					id: '17841400000000000',
+				},
+			);
+			expect(result.success).toBe(true);
 		});
 	});
 });

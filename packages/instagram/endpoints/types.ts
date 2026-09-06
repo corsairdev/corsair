@@ -777,7 +777,7 @@ const AttachmentSchema = z
 			),
 
 		payload: z
-			.record(z.string(), z.any())
+			.record(z.string(), z.unknown())
 			.describe(
 				'The attachment payload containing type-specific data such as media URLs, file information, template configuration, or other attachment metadata.',
 			),
@@ -1031,9 +1031,9 @@ const CreatePostInputSchema = z.object({
 const DeleteMessengerProfileInputSchema = z.object({
 	page_id: z.string().describe('The Facebook Page ID.'),
 	fields: z
-		.array(z.string())
+		.array(z.enum(['persistent_menu', 'ice_breakers']))
 		.optional()
-		.describe('The messenger profile fields to delete.'),
+		.describe('The Instagram Messenger Profile fields to delete.'),
 });
 
 // Get Conversation
@@ -1149,7 +1149,10 @@ const GetIgUserTagsInputSchema = z.object({
 // INSTAGRAM_GET_MESSENGER_PROFILE
 const GetMessengerProfileInputSchema = z.object({
 	page_id: z.string().describe('The Facebook Page ID.'),
-	fields: z.array(z.string()).optional().describe('Optional fields to query.'),
+	fields: z
+		.array(z.enum(['persistent_menu', 'ice_breakers']))
+		.optional()
+		.describe('Instagram Messenger Profile fields to query.'),
 });
 
 // Get Page Conversations
@@ -1362,63 +1365,47 @@ const SendTextMessageInputSchema = z.object({
 	message: z.string().describe('The text message to send via DM.'),
 });
 
+const PersistentMenuSchema = z.object({
+	locale: z.string().describe('The locale for this menu (e.g. "default").'),
+	composer_input_disabled: z
+		.boolean()
+		.optional()
+		.describe('Whether to disable composer input.'),
+	call_to_actions: z
+		.array(
+			z.object({
+				type: z
+					.string()
+					.describe('The menu item type (e.g. "postback", "web_url").'),
+				title: z.string().describe('The menu item label.'),
+				url: z.string().optional().describe('URL for web_url type items.'),
+				payload: z
+					.string()
+					.optional()
+					.describe('Payload for postback type items.'),
+			}),
+		)
+		.optional()
+		.describe('The menu items.'),
+});
+
+const IceBreakerSchema = z.object({
+	question: z.string().describe('The ice breaker question text.'),
+	payload: z
+		.string()
+		.describe('The payload sent when the user taps the ice breaker.'),
+});
+
 // Update Messenger Profile
 // INSTAGRAM_UPDATE_MESSENGER_PROFILE
 const UpdateMessengerProfileInputSchema = z.object({
 	page_id: z.string().describe('The Facebook Page ID.'),
-	greeting: z
-		.array(
-			z.object({
-				locale: z
-					.string()
-					.describe('The locale for this greeting (e.g. "default").'),
-				text: z.string().describe('The greeting text.'),
-			}),
-		)
-		.optional()
-		.describe('Greeting text configuration for new conversations.'),
 	persistent_menu: z
-		.array(
-			z.object({
-				locale: z
-					.string()
-					.describe('The locale for this menu (e.g. "default").'),
-				composer_input_disabled: z
-					.boolean()
-					.optional()
-					.describe('Whether to disable composer input.'),
-				call_to_actions: z
-					.array(
-						z.object({
-							type: z
-								.string()
-								.describe('The menu item type (e.g. "postback", "web_url").'),
-							title: z.string().describe('The menu item label.'),
-							url: z
-								.string()
-								.optional()
-								.describe('URL for web_url type items.'),
-							payload: z
-								.string()
-								.optional()
-								.describe('Payload for postback type items.'),
-						}),
-					)
-					.optional()
-					.describe('The menu items.'),
-			}),
-		)
+		.array(PersistentMenuSchema)
 		.optional()
 		.describe('Persistent menu configuration.'),
 	ice_breakers: z
-		.array(
-			z.object({
-				question: z.string().describe('The ice breaker question text.'),
-				payload: z
-					.string()
-					.describe('The payload sent when the user taps the ice breaker.'),
-			}),
-		)
+		.array(IceBreakerSchema)
 		.optional()
 		.describe('Ice breaker configuration.'),
 });
@@ -1517,7 +1504,7 @@ export const InstagramMedia = z
 			.optional()
 			.describe('The caption text associated with the media.'),
 
-		media_type: InstagramMediaType.describe(
+		media_type: InstagramMediaType.optional().describe(
 			'The type of Instagram media, such as IMAGE, VIDEO, REELS, STORY, or CAROUSEL_ALBUM.',
 		),
 
@@ -1539,16 +1526,19 @@ export const InstagramMedia = z
 
 		permalink: z
 			.url()
+			.optional()
 			.describe('The permanent public URL to view the media on Instagram.'),
 
 		timestamp: z.iso
 			.datetime()
+			.optional()
 			.describe(
 				'The ISO 8601 timestamp indicating when the media was created.',
 			),
 
 		username: z
 			.string()
+			.optional()
 			.describe('The Instagram username that published the media.'),
 
 		like_count: z
@@ -1563,6 +1553,7 @@ export const InstagramMedia = z
 
 		is_comment_enabled: z
 			.boolean()
+			.optional()
 			.describe('Indicates whether commenting is enabled for the media.'),
 
 		children: z
@@ -1830,21 +1821,12 @@ const GetMessengerProfileResponseSchema = z
 		data: z
 			.array(
 				z.object({
-					greeting: z
-						.array(
-							z.object({
-								locale: z.string().describe('The locale for this greeting.'),
-								text: z.string().describe('The greeting text.'),
-							}),
-						)
-						.optional()
-						.describe('Greeting configuration.'),
 					persistent_menu: z
-						.array(z.any())
+						.array(PersistentMenuSchema)
 						.optional()
 						.describe('Persistent menu options.'),
 					ice_breakers: z
-						.array(z.any())
+						.array(IceBreakerSchema)
 						.optional()
 						.describe('Ice breaker options.'),
 				}),
@@ -1891,7 +1873,13 @@ const GetPostInsightsResponseSchema = z
 const GetPostStatusResponseSchema = z
 	.object({
 		id: z.string().describe('The container ID.'),
-		status_code: z.enum(['IN_PROGRESS', 'FINISHED', 'ERROR', 'EXPIRED']),
+		status_code: z.enum([
+			'IN_PROGRESS',
+			'FINISHED',
+			'ERROR',
+			'EXPIRED',
+			'PUBLISHED',
+		]),
 	})
 	.passthrough();
 
@@ -2039,19 +2027,42 @@ const GetMediaContainerStatusOutputSchema = z
 			.describe('The Instagram media container ID whose status was requested.'),
 
 		status_code: z
-			.enum(['IN_PROGRESS', 'FINISHED', 'ERROR', 'EXPIRED'])
+			.enum(['IN_PROGRESS', 'FINISHED', 'ERROR', 'EXPIRED', 'PUBLISHED'])
 			.describe(
-				'The current processing status of the media container. IN_PROGRESS indicates processing is ongoing, FINISHED indicates the media is ready to publish, ERROR indicates processing failed, and EXPIRED indicates the container is no longer valid.',
+				'The current processing status of the media container. IN_PROGRESS indicates processing is ongoing, FINISHED indicates the media is ready to publish, PUBLISHED indicates it was already published, ERROR indicates processing failed, and EXPIRED indicates the container is no longer valid.',
 			),
 	})
 	.describe(
 		'Represents the processing status of an Instagram media container.',
 	);
 
+const InsightMetricSchema = z
+	.object({
+		name: z.string().describe('Insight metric name.'),
+		period: z.string().optional().describe('Aggregation period.'),
+		title: z.string().optional().describe('Human-readable metric title.'),
+		description: z.string().optional().describe('Metric description.'),
+		id: z.string().optional().describe('Insight object ID.'),
+		values: z
+			.array(
+				z.object({
+					value: z.union([
+						z.number(),
+						z.string(),
+						z.record(z.string(), z.unknown()),
+					]),
+					end_time: z.string().optional(),
+				}),
+			)
+			.optional()
+			.describe('Metric values.'),
+	})
+	.passthrough();
+
 const GetMediaInsightsOutputSchema = z
 	.object({
 		data: z
-			.array(z.record(z.string(), z.any()))
+			.array(InsightMetricSchema)
 			.describe(
 				'A collection of insight metrics and values returned for the requested Instagram media.',
 			),
