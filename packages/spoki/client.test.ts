@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals';
-import { SpokiApiError, SpokiClient } from './client';
+import { SpokiClient } from './client';
 
 describe('SpokiClient', () => {
 	afterEach(() => {
@@ -25,7 +25,7 @@ describe('SpokiClient', () => {
 		expect(result).toEqual({ id: '123' });
 		expect(mockFetch).toHaveBeenCalledTimes(1);
 
-		const [, options] = mockFetch.mock.calls[0];
+		const [, options] = mockFetch.mock.calls[0]!;
 
 		const headers = new Headers(options?.headers);
 
@@ -52,7 +52,7 @@ describe('SpokiClient', () => {
 			},
 		});
 
-		const [, options] = mockFetch.mock.calls[0];
+		const [, options] = mockFetch.mock.calls[0]!;
 
 		const headers = new Headers(options?.headers);
 
@@ -80,7 +80,7 @@ describe('SpokiClient', () => {
 			headers: customHeaders,
 		});
 
-		const [, options] = mockFetch.mock.calls[0];
+		const [, options] = mockFetch.mock.calls[0]!;
 
 		const headers = new Headers(options?.headers);
 
@@ -142,7 +142,7 @@ describe('SpokiClient', () => {
 			name: 'test',
 		});
 
-		const [url, options] = mockFetch.mock.calls[0];
+		const [url, options] = mockFetch.mock.calls[0]!;
 
 		expect(url).toContain('/test');
 		expect(options?.method).toBe('POST');
@@ -164,7 +164,7 @@ describe('SpokiClient', () => {
 			name: 'updated',
 		});
 
-		const [, options] = mockFetch.mock.calls[0];
+		const [, options] = mockFetch.mock.calls[0]!;
 
 		expect(options?.method).toBe('PUT');
 		expect(options?.body).toBe(JSON.stringify({ name: 'updated' }));
@@ -183,7 +183,7 @@ describe('SpokiClient', () => {
 
 		const result = await client.delete('/test');
 
-		const [, options] = mockFetch.mock.calls[0];
+		const [, options] = mockFetch.mock.calls[0]!;
 
 		expect(options?.method).toBe('DELETE');
 		expect(result).toBeUndefined();
