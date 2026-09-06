@@ -905,14 +905,6 @@
                 ]
               },
               {
-                "group": "CDR Platform",
-                "pages": [
-                  "plugins/cdrplatform/overview",
-                  "plugins/cdrplatform/api",
-                  "plugins/cdrplatform/database"
-                ]
-              },
-              {
                 "group": "Certifier",
                 "pages": [
                   "plugins/certifier/overview",
