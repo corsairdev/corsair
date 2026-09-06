@@ -50,28 +50,36 @@ export function createBorneoEndpoint<K extends BorneoOperationName>(
 			}
 		).signal;
 
-		const response = await executeBorneoTool<unknown>(toolSlug, input, {
-			composioApiKey,
-			connectedAccountId: ctx.options?.connectedAccountId,
-			userId: ctx.options?.userId,
-			composioBaseUrl: ctx.options?.composioBaseUrl,
-			borneoCredential: providerCredential,
-			borneoBaseUrl: ctx.options?.baseUrl,
-			credentialHeaderName: ctx.options?.credentialHeaderName,
-			credentialPrefix: ctx.options?.credentialPrefix,
-			riskLevel: BORNEO_TOOL_RISK[toolSlug],
-			signal: callerSignal,
-		});
+		let status: 'completed' | 'failed' = 'completed';
 
-		await logEventFromContext(
-			ctx,
-			eventPath,
-			{ provider: 'composio', tool: toolSlug },
-			'completed',
-		);
+		try {
+			const response = await executeBorneoTool<unknown>(toolSlug, input, {
+				composioApiKey,
+				connectedAccountId: ctx.options?.connectedAccountId,
+				userId: ctx.options?.userId,
+				composioBaseUrl: ctx.options?.composioBaseUrl,
+				borneoCredential: providerCredential,
+				borneoBaseUrl: ctx.options?.baseUrl,
+				credentialHeaderName: ctx.options?.credentialHeaderName,
+				credentialPrefix: ctx.options?.credentialPrefix,
+				riskLevel: BORNEO_TOOL_RISK[toolSlug],
+				timeoutMs: ctx.options?.timeoutMs,
+				signal: callerSignal,
+			});
 
-		const parsed = BorneoEndpointOutputSchemas[name].parse(response);
+			const parsed = BorneoEndpointOutputSchemas[name].parse(response);
 
-		return parsed;
+			return parsed;
+		} catch (error) {
+			status = 'failed';
+			throw error;
+		} finally {
+			await logEventFromContext(
+				ctx,
+				eventPath,
+				{ provider: 'composio', tool: toolSlug },
+				status,
+			);
+		}
 	}) as BorneoEndpoints[K];
 }

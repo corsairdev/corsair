@@ -1,4 +1,4 @@
-﻿import type {
+import type {
 	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
@@ -67,6 +67,7 @@ export type BorneoPluginOptions = {
 	baseUrl?: string;
 	credentialHeaderName?: string;
 	credentialPrefix?: string;
+	timeoutMs?: number;
 	hooks?: InternalBorneoPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof borneoEndpointsNested>;
