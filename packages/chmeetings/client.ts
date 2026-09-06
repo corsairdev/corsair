@@ -15,7 +15,12 @@ export class ChMeetingsAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: number,
-		options?: { cause?: Error; retryAfter?: number; body?: unknown },
+		options?: {
+			cause?: Error;
+			retryAfter?: number;
+			/** Raw provider error payload; shape varies by status. */
+			body?: unknown;
+		},
 	) {
 		super(message, options);
 		this.name = 'ChMeetingsAPIError';
@@ -40,6 +45,7 @@ export const CHMEETINGS_API_BASE = 'https://api.chmeetings.com/api/v1';
 
 export type ChMeetingsRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	/** JSON body fields accepted by the official DTO for this route. */
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	responseType?: 'json' | 'empty';
@@ -57,9 +63,11 @@ export function compactQuery(
 }
 
 export function compactBody(
+	/** Request body before dropping undefined keys. */
 	body: Record<string, unknown> | undefined,
 ): Record<string, unknown> | undefined {
 	if (!body) return undefined;
+	/** Same keys as `body`, without undefined values. */
 	const out: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(body)) {
 		if (value !== undefined) out[key] = value;
@@ -81,6 +89,7 @@ const EnvelopeSchema = z.object({
 	data: z.unknown().optional(),
 });
 
+/** `raw` is the untyped HTTP JSON body before envelope parse. */
 function envelopeErrors(raw: unknown): string {
 	const parsed = EnvelopeSchema.safeParse(raw);
 	if (!parsed.success || !parsed.data.errors?.length) return '';
@@ -88,6 +97,7 @@ function envelopeErrors(raw: unknown): string {
 }
 
 export function unwrapData<T>(
+	/** Unparsed HTTP JSON: envelope or bare resource. */
 	raw: unknown,
 	schema: z.ZodType<T>,
 	label: string,
@@ -108,6 +118,7 @@ export function unwrapData<T>(
 }
 
 export function unwrapList<T>(
+	/** Unparsed list envelope `{ paging, data }`. */
 	raw: unknown,
 	itemSchema: z.ZodType<T>,
 ): {
@@ -125,6 +136,7 @@ export function unwrapList<T>(
 	};
 }
 
+/** `raw` is empty, 204, or a `{ status_code, errors }` envelope. */
 export function unwrapEmpty(raw: unknown): { success: true } {
 	if (raw == null || raw === '') return { success: true };
 	const parsed = EnvelopeSchema.safeParse(raw);

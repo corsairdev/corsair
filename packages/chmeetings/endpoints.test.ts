@@ -29,9 +29,11 @@ jest.mock('corsair/http', () => {
 	};
 });
 
+/** Jest mock of corsair/http `request`; args/return stay untyped. */
 const requestMock = request as unknown as jest.Mock<
 	(config: unknown, options: unknown) => Promise<unknown>
 >;
+/** Jest mock of `logEventFromContext`. */
 const mockLog = logEventFromContext as unknown as jest.Mock<
 	() => Promise<void>
 >;
@@ -50,7 +52,9 @@ function lastCall() {
 		options: options as {
 			method: string;
 			url: string;
+			/** Compacted query object passed to the transport. */
 			query?: unknown;
+			/** Compacted JSON body passed to the transport. */
 			body?: unknown;
 		},
 	};
@@ -230,5 +234,175 @@ describe('events groups families', () => {
 		const notes = await Families.listNotes(ctx as never, { person_id: 9 });
 		expect(notes.data[0]?.note).toBe('hi');
 		expect(lastCall().options.url).toBe('people/9/notes');
+	});
+});
+
+describe('remaining official endpoints', () => {
+	it('lists a person organizations', async () => {
+		requestMock.mockResolvedValue({
+			data: [{ id: 'org-1', name: 'Main', type: 'church' }],
+		});
+		const result = await People.listOrganizations(ctx as never, {
+			person_id: 9,
+		});
+		expect(result.data[0]?.id).toBe('org-1');
+		expect(lastCall().options.url).toBe('people/9/organizations');
+	});
+
+	it('lists people in an organization', async () => {
+		requestMock.mockResolvedValue({ data: [{ id: 1, first_name: 'Ada' }] });
+		const result = await Organizations.listPeople(ctx as never, {
+			organization_id: 'org-1',
+		});
+		expect(result.data[0]?.id).toBe(1);
+		expect(lastCall().options.url).toBe('organizations/org-1/people');
+	});
+
+	it('adds a person to an organization', async () => {
+		requestMock.mockResolvedValue(undefined);
+		await expect(
+			Organizations.addPerson(ctx as never, {
+				organization_id: 'org-1',
+				person_id: 9,
+			}),
+		).resolves.toEqual({ success: true });
+		expect(lastCall().options).toMatchObject({
+			method: 'POST',
+			url: 'organizations/org-1/people',
+			body: { person_id: 9 },
+		});
+	});
+
+	it('removes a person from an organization', async () => {
+		requestMock.mockResolvedValue(undefined);
+		await expect(
+			Organizations.removePerson(ctx as never, {
+				organization_id: 'org-1',
+				person_id: 9,
+			}),
+		).resolves.toEqual({ success: true });
+		expect(lastCall().options).toMatchObject({
+			method: 'DELETE',
+			url: 'organizations/org-1/people/9',
+		});
+	});
+
+	it('gets an event by id', async () => {
+		requestMock.mockResolvedValue({ data: { id: 4, title: 'Sunday' } });
+		const result = await Events.get(ctx as never, { event_id: 4 });
+		expect(result.title).toBe('Sunday');
+		expect(lastCall().options.url).toBe('events/4');
+	});
+
+	it('lists event occurrences', async () => {
+		requestMock.mockResolvedValue({
+			data: [{ occurrence_id: 'occ-1', event_id: 4 }],
+		});
+		const result = await Events.listOccurrences(ctx as never, {
+			event_id: 4,
+			from: '2026-01-01',
+			to: '2026-01-31',
+		});
+		expect(result.data[0]?.occurrence_id).toBe('occ-1');
+		expect(lastCall().options.url).toBe('events/4/occurrences');
+	});
+
+	it('lists attendance for an occurrence', async () => {
+		requestMock.mockResolvedValue({
+			data: [{ status: 'attended', person: { person_id: 9 } }],
+		});
+		const result = await Events.listAttendance(ctx as never, {
+			occurrence_id: 'occ-1',
+		});
+		expect(result.data[0]?.status).toBe('attended');
+		expect(lastCall().options.url).toBe('occurrences/occ-1/attendance');
+	});
+
+	it('gets a group by id', async () => {
+		requestMock.mockResolvedValue({ data: { id: 2, name: 'Youth' } });
+		const result = await Groups.get(ctx as never, { group_id: 2 });
+		expect(result.name).toBe('Youth');
+		expect(lastCall().options.url).toBe('groups/2');
+	});
+
+	it('updates a group', async () => {
+		requestMock.mockResolvedValue({ data: { id: 2, name: 'Youth 2' } });
+		const result = await Groups.update(ctx as never, {
+			group_id: 2,
+			name: 'Youth 2',
+		});
+		expect(result.name).toBe('Youth 2');
+		expect(lastCall().options).toMatchObject({
+			method: 'PUT',
+			url: 'groups/2',
+		});
+	});
+
+	it('deletes a group', async () => {
+		requestMock.mockResolvedValue(undefined);
+		await expect(Groups.remove(ctx as never, { group_id: 2 })).resolves.toEqual(
+			{
+				success: true,
+			},
+		);
+		expect(lastCall().options).toMatchObject({
+			method: 'DELETE',
+			url: 'groups/2',
+		});
+	});
+
+	it('adds a group member', async () => {
+		requestMock.mockResolvedValue(undefined);
+		await expect(
+			Groups.addMember(ctx as never, { group_id: 2, person_id: 9 }),
+		).resolves.toEqual({ success: true });
+		expect(lastCall().options).toMatchObject({
+			method: 'POST',
+			url: 'groups/2/memberships',
+			body: { person_id: 9 },
+		});
+	});
+
+	it('removes a group member', async () => {
+		requestMock.mockResolvedValue(undefined);
+		await expect(
+			Groups.removeMember(ctx as never, { group_id: 2, person_id: 9 }),
+		).resolves.toEqual({ success: true });
+		expect(lastCall().options).toMatchObject({
+			method: 'DELETE',
+			url: 'groups/2/memberships/9',
+		});
+	});
+
+	it('gets a family by id', async () => {
+		requestMock.mockResolvedValue({ data: { family_id: 1, members: [] } });
+		const result = await Families.get(ctx as never, { id: 1 });
+		expect(result.family_id).toBe(1);
+		expect(lastCall().options.url).toBe('families/1');
+	});
+
+	it('creates a family', async () => {
+		requestMock.mockResolvedValue({
+			data: { family_id: 7, members: [{ person_id: 9, family_role: 'Head' }] },
+		});
+		const result = await Families.create(ctx as never, {
+			members: [{ person_id: 9, family_role: 'Head' }],
+		});
+		expect(result.family_id).toBe(7);
+		expect(lastCall().options).toMatchObject({
+			method: 'POST',
+			url: 'families',
+		});
+	});
+
+	it('deletes a family', async () => {
+		requestMock.mockResolvedValue(undefined);
+		await expect(Families.remove(ctx as never, { id: 7 })).resolves.toEqual({
+			success: true,
+		});
+		expect(lastCall().options).toMatchObject({
+			method: 'DELETE',
+			url: 'families/7',
+		});
 	});
 });
