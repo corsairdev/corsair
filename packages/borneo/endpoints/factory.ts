@@ -34,9 +34,7 @@ export function createBorneoEndpoint<K extends BorneoOperationName>(
 	eventPath: string,
 ): BorneoEndpoints[K] {
 	return (async (ctx, rawInput) => {
-		const input = BorneoEndpointInputSchemas[name].parse(
-			rawInput ?? {},
-		) as Record<string, unknown>;
+		const input = BorneoEndpointInputSchemas[name].parse(rawInput ?? {});
 
 		const composioApiKey = resolveComposioApiKey(ctx.options ?? {});
 
@@ -46,7 +44,7 @@ export function createBorneoEndpoint<K extends BorneoOperationName>(
 		let status: 'completed' | 'failed' = 'failed';
 
 		try {
-			const response = await executeBorneoTool<unknown>(toolSlug, input, {
+			const response = await executeBorneoTool(toolSlug, input, {
 				composioApiKey,
 				connectedAccountId: ctx.options?.connectedAccountId,
 				userId: ctx.options?.userId,

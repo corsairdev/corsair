@@ -10397,6 +10397,8 @@ export const BorneoEndpointOutputSchemas = Object.fromEntries(
 			successful: z.literal(true),
 		}),
 	]),
+	// Object.fromEntries drops the per-operation schema map; the assertion
+	// restores it after the successful-flag tightening above.
 ) as unknown as typeof GeneratedBorneoEndpointOutputSchemas;
 
 export type BorneoEndpointInputs = {

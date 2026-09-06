@@ -24,6 +24,50 @@ export type BorneoExecutionOptions = {
 	signal?: AbortSignal;
 };
 
+type ComposioJson =
+	| string
+	| number
+	| boolean
+	| null
+	| ComposioJson[]
+	| { [key: string]: ComposioJson };
+
+type ComposioCustomAuthParams = {
+	base_url?: string;
+	parameters?: Array<{
+		in: 'header';
+		name: string;
+		value: string;
+	}>;
+};
+
+type ComposioExecuteRequest = {
+	arguments: object;
+	version: string;
+	connected_account_id?: string;
+	user_id?: string;
+	custom_auth_params?: ComposioCustomAuthParams | '[REDACTED]';
+};
+
+export type ComposioToolResponse = {
+	successful?: boolean;
+	error?: string | { message?: string };
+	data?: ComposioJson;
+	log_id?: string;
+};
+
+function isJsonRecord(
+	value: ComposioJson | string | undefined,
+): value is { [key: string]: ComposioJson } {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isSuccessfulEnvelope(
+	value: ComposioJson | string | undefined,
+): value is ComposioToolResponse & { successful: true } {
+	return isJsonRecord(value) && value.successful === true;
+}
+
 /**
  * Validates and normalizes an absolute HTTPS base URL.
  */
@@ -163,7 +207,9 @@ function parseRetryAfterMs(response: Response): number | undefined {
  * Reads JSON/problem+json responses as structured data and other responses
  * as text.
  */
-async function readResponseBody(response: Response): Promise<unknown> {
+async function readResponseBody(
+	response: Response,
+): Promise<ComposioJson | string | undefined> {
 	if (response.status === 204) return undefined;
 
 	const contentType = response.headers.get('Content-Type') ?? '';
@@ -172,7 +218,8 @@ async function readResponseBody(response: Response): Promise<unknown> {
 		contentType.toLowerCase().startsWith('application/json') ||
 		contentType.toLowerCase().startsWith('application/problem+json')
 	) {
-		return await response.json();
+		// Response.json() has no schema; the value is JSON we narrow at the envelope.
+		return (await response.json()) as ComposioJson;
 	}
 
 	return await response.text();
@@ -183,8 +230,8 @@ async function readResponseBody(response: Response): Promise<unknown> {
  * to ApiError instances.
  */
 function redactRequestBody(
-	body: Record<string, unknown>,
-): Record<string, unknown> {
+	body: ComposioExecuteRequest,
+): ComposioExecuteRequest {
 	if (!('custom_auth_params' in body)) {
 		return { ...body };
 	}
@@ -199,21 +246,17 @@ function redactRequestBody(
  * Extracts the provider-supplied error message from a request-level error
  * body, covering both `{error: {message}}` and legacy `{error}` shapes.
  */
-function extractProviderErrorMessage(body: unknown): string | undefined {
-	if (typeof body !== 'object' || body === null) return undefined;
+function extractProviderErrorMessage(
+	body: ComposioJson | string | undefined,
+): string | undefined {
+	if (!isJsonRecord(body)) return undefined;
 
-	const record = body as Record<string, unknown>;
+	if (typeof body.message === 'string') return body.message;
 
-	if (typeof record.message === 'string') return record.message;
+	if (typeof body.error === 'string') return body.error;
 
-	if (typeof record.error === 'string') return record.error;
-
-	if (
-		typeof record.error === 'object' &&
-		record.error !== null &&
-		typeof (record.error as { message?: unknown }).message === 'string'
-	) {
-		return (record.error as { message: string }).message;
+	if (isJsonRecord(body.error) && typeof body.error.message === 'string') {
+		return body.error.message;
 	}
 
 	return undefined;
@@ -227,7 +270,7 @@ function createApiError(
 	requestOptions: ApiRequestOptions,
 	url: string,
 	response: Response,
-	body: unknown,
+	body: ComposioJson | string | undefined,
 	retryAfterMs?: number,
 ): ApiError {
 	const message =
@@ -259,9 +302,9 @@ function createApiError(
 function createNetworkApiError(
 	requestOptions: ApiRequestOptions,
 	url: string,
-	error: unknown,
+	error: Error,
 ): ApiError {
-	const reason = error instanceof Error ? error.message : String(error);
+	const reason = error.message;
 
 	return new ApiError(
 		requestOptions,
@@ -285,13 +328,9 @@ function assertExecutionSuccessful(
 	requestOptions: ApiRequestOptions,
 	url: string,
 	response: Response,
-	body: unknown,
+	body: ComposioJson | string | undefined,
 ): void {
-	if (
-		typeof body === 'object' &&
-		body !== null &&
-		(body as { successful?: unknown }).successful === true
-	) {
+	if (isSuccessfulEnvelope(body)) {
 		return;
 	}
 
@@ -349,11 +388,11 @@ function createRequestSignal(
  * Credential-bearing redirects are rejected, every request has a bounded
  * deadline, and caller cancellation is propagated when supplied.
  */
-export async function executeBorneoTool<T>(
+export async function executeBorneoTool(
 	toolSlug: string,
-	arguments_: Record<string, unknown>,
+	arguments_: object,
 	options: BorneoExecutionOptions,
-): Promise<T> {
+): Promise<ComposioToolResponse> {
 	if (!options.composioApiKey.trim()) {
 		throw new Error('[borneo] composioApiKey is required');
 	}
@@ -362,7 +401,7 @@ export async function executeBorneoTool<T>(
 	const url = `${base}/tools/execute/${encodeURIComponent(toolSlug)}`;
 	const timeoutMs = resolveTimeoutMs(options.timeoutMs);
 
-	const body: Record<string, unknown> = {
+	const body: ComposioExecuteRequest = {
 		arguments: arguments_,
 		version: BORNEO_TOOLKIT_VERSION,
 	};
@@ -407,7 +446,11 @@ export async function executeBorneoTool<T>(
 				signal: createRequestSignal(timeoutMs, options.signal),
 			});
 		} catch (error) {
-			throw createNetworkApiError(requestOptions, url, error);
+			throw createNetworkApiError(
+				requestOptions,
+				url,
+				error instanceof Error ? error : new Error(String(error)),
+			);
 		}
 
 		const responseBody = await readResponseBody(response);
@@ -415,7 +458,11 @@ export async function executeBorneoTool<T>(
 		if (response.ok) {
 			assertExecutionSuccessful(requestOptions, url, response, responseBody);
 
-			return responseBody as T;
+			if (!isSuccessfulEnvelope(responseBody)) {
+				throw new Error('[borneo] successful envelope narrowing failed');
+			}
+
+			return responseBody;
 		}
 
 		const retryAfterMs = parseRetryAfterMs(response);
